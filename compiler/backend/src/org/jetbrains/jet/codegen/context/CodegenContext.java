@@ -124,6 +124,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     public StackValue getOuterExpression(@Nullable StackValue prefix, boolean ignoreNoOuter) {
+        return getOuterExpression(prefix, ignoreNoOuter, true);
+    }
+
+    private StackValue getOuterExpression(@Nullable StackValue prefix, boolean ignoreNoOuter, boolean captureThis) {
         if (outerExpression == null) {
             if (ignoreNoOuter) {
                 return null;
@@ -132,8 +136,9 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                 throw new UnsupportedOperationException();
             }
         }
-
-        closure.setCaptureThis();
+        if (captureThis) {
+            closure.setCaptureThis();
+        }
         return prefix != null ? StackValue.composed(prefix, outerExpression) : outerExpression;
     }
 
@@ -286,6 +291,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
         MutableClosure top = closure;
+        StackValue myOuter = null;
         if (top != null) {
             EnclosedValueDescriptor answer = closure.getCaptureVariables().get(d);
             if (answer != null) {
@@ -306,11 +312,15 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                 }
             }
 
-            StackValue outer = getOuterExpression(null, ignoreNoOuter);
-            result = result == null || outer == null ? outer : StackValue.composed(result, outer);
+            myOuter = getOuterExpression(null, ignoreNoOuter, false);
+            result = result == null || myOuter == null ? myOuter : StackValue.composed(result, myOuter);
         }
 
-        return parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
+        StackValue resultValue = parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
+        if (myOuter != null && resultValue != null) {
+            closure.setCaptureThis();
+        }
+        return resultValue;
     }
 
     @NotNull
