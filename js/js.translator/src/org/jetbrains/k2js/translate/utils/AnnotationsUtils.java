@@ -68,6 +68,19 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
+    public static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor descriptor) {
+        for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
+            if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
+                continue;
+            }
+            String name = getNameForAnnotatedObject(descriptor, annotation);
+            return name != null ? name : descriptor.getName().asString();
+        }
+
+        return null;
+    }
+
+    @Nullable
     private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor,
             @NotNull PredefinedAnnotation annotation) {
         return getAnnotationByName(descriptor, annotation.getFQName());
