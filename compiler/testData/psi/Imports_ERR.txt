@@ -170,7 +170,7 @@ JetFile: Imports_ERR.kt
       PsiElement(DOT)('.')
       PsiElement(MUL)('*')
       PsiWhiteSpace(' ')
-      PsiErrorElement:Cannot rename a all imported items to one identifier
+      PsiErrorElement:Cannot rename all imported items to one identifier
         PsiElement(as)('as')
       PsiWhiteSpace(' ')
       PsiElement(SEMICOLON)(';')
