@@ -22,7 +22,6 @@ import com.intellij.codeInsight.folding.impl.JavaCodeFoldingSettingsImpl;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.editor.ex.FoldingModelEx;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PlatformTestCase;
@@ -41,14 +40,8 @@ public abstract class AbstractKotlinFoldingTest extends LightCodeInsightFixtureT
         myFixture.testFolding(path);
     }
 
-    protected void doSettingsFoldingTest(@NotNull String path) {
-        String fileText;
-        try {
-            fileText = StringUtil.convertLineSeparators(FileUtil.loadFile(new File(path)));
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    protected void doSettingsFoldingTest(@NotNull String path) throws IOException{
+        String fileText = FileUtil.loadFile(new File(path), true);
 
         String directText = fileText.replaceAll("~true~", "true").replaceAll("~false~", "false");
         directText += "\n\n// Generated from: " + path;
