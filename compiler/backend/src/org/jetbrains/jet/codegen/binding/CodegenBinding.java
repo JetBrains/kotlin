@@ -155,7 +155,7 @@ public class CodegenBinding {
                 null,
                 false);
 
-        recordClosure(bindingTrace, null, classDescriptor, null, asmType, false);
+        recordClosure(bindingTrace, null, classDescriptor, null, asmType);
 
         bindingTrace.record(CLASS_FOR_SCRIPT, scriptDescriptor, classDescriptor);
     }
@@ -199,8 +199,7 @@ public class CodegenBinding {
             @Nullable JetElement element,
             ClassDescriptor classDescriptor,
             @Nullable ClassDescriptor enclosing,
-            Type asmType,
-            boolean functionLiteral
+            Type asmType
     ) {
         JetDelegatorToSuperCall superCall = findSuperCall(bindingTrace.getBindingContext(), element);
 
