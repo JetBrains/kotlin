@@ -45,9 +45,9 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
+import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
 public class TypeHierarchyResolver {
     @NotNull

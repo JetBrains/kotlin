@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
@@ -42,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.List;
@@ -215,7 +215,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             // build descriptors for such class objects.
             final JetClassLikeInfo classObjectInfo = parentClassDescriptor.getClassObjectInfo(classObject);
             if (classObjectInfo != null) {
-                final Name name = DescriptorUtils.getClassObjectName(parentClassDescriptor.getName());
+                final Name name = SpecialNames.getClassObjectName(parentClassDescriptor.getName());
                 return storageManager.compute(new Function0<LazyClassDescriptor>() {
                     @Override
                     public LazyClassDescriptor invoke() {

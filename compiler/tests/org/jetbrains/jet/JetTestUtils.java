@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -663,7 +664,7 @@ public class JetTestUtils {
     public static NamespaceDescriptorImpl createTestNamespace(@NotNull Name testPackageName) {
         ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<test module>");
         NamespaceDescriptorImpl rootNamespace =
-                new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), DescriptorUtils.ROOT_NAMESPACE_NAME);
+                new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), SpecialNames.ROOT_NAMESPACE);
         module.setRootNamespace(rootNamespace);
         NamespaceDescriptorImpl test = new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), testPackageName);
         test.initialize(new WritableScopeImpl(JetScope.EMPTY, test, RedeclarationHandler.DO_NOTHING, "members of test namespace"));

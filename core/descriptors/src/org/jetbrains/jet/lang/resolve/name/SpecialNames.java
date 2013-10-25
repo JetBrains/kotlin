@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve;
+package org.jetbrains.jet.lang.resolve.name;
 
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.annotations.NotNull;
 
-public class JetModuleUtil {
-    public static NamespaceType getRootNamespaceType(JetElement expression) {
-        // TODO: this is a stub: at least the modules' root namespaces must be indexed here
-        return new NamespaceType(SpecialNames.ROOT_NAMESPACE, JetScope.EMPTY);
+public class SpecialNames {
+    public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
+    public static final Name ROOT_NAMESPACE = Name.special("<root namespace>");
+
+    private SpecialNames() {}
+
+    @NotNull
+    public static Name getClassObjectName(@NotNull Name className) {
+        return Name.special("<class-object-for-" + className.asString() + ">");
     }
 }

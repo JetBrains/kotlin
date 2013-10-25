@@ -50,8 +50,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
+import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
 public final class JavaClassResolver {
     @NotNull
@@ -401,7 +401,7 @@ public final class JavaClassResolver {
             if (JvmAbi.CLASS_OBJECT_CLASS_NAME.equals(segment.asString())) {
                 assert !correctedSegments.isEmpty();
                 Name previous = correctedSegments.get(correctedSegments.size() - 1);
-                correctedSegments.add(DescriptorUtils.getClassObjectName(previous));
+                correctedSegments.add(getClassObjectName(previous));
             }
             else {
                 correctedSegments.add(segment);

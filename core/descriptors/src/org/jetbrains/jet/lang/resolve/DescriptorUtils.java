@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -40,8 +41,6 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
 public class DescriptorUtils {
-    public static final Name ROOT_NAMESPACE_NAME = Name.special("<root namespace>");
-
     private DescriptorUtils() {
     }
 
@@ -304,11 +303,6 @@ public class DescriptorUtils {
 
         }
         return false;
-    }
-
-    @NotNull
-    public static Name getClassObjectName(@NotNull Name className) {
-        return Name.special("<class-object-for-" + className.asString() + ">");
     }
 
     public static boolean isEnumClassObject(@NotNull DeclarationDescriptor descriptor) {

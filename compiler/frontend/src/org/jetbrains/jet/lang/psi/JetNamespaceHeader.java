@@ -21,9 +21,9 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 
 import java.util.List;
 
@@ -67,7 +67,7 @@ public class JetNamespaceHeader extends JetReferenceExpression {
     @NotNull
     public Name getNameAsName() {
         PsiElement nameIdentifier = getNameIdentifier();
-        return nameIdentifier == null ? DescriptorUtils.ROOT_NAMESPACE_NAME : Name.identifier(nameIdentifier.getText());
+        return nameIdentifier == null ? SpecialNames.ROOT_NAMESPACE : Name.identifier(nameIdentifier.getText());
     }
 
     public boolean isRoot() {

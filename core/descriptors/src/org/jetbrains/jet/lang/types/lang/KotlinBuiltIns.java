@@ -28,14 +28,15 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.io.IOException;
 import java.util.*;
@@ -163,7 +164,7 @@ public class KotlinBuiltIns {
 
     private static void loadBuiltIns(@NotNull ModuleDescriptorImpl module) throws IOException {
         NamespaceDescriptorImpl rootNamespace =
-                        new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), DescriptorUtils.ROOT_NAMESPACE_NAME);
+                        new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), SpecialNames.ROOT_NAMESPACE);
         rootNamespace.initialize(
                 new WritableScopeImpl(JetScope.EMPTY, rootNamespace, RedeclarationHandler.DO_NOTHING, "members of root namespace"));
 
