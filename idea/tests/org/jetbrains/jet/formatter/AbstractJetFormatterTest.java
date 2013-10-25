@@ -23,7 +23,6 @@ import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.roots.LanguageLevelProjectExtension;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -124,12 +123,6 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         JetTestUtils.assertEqualsToFile(fileAfter, document.getText());
         manager.commitDocument(document);
         JetTestUtils.assertEqualsToFile(fileAfter, file.getText());
-    }
-
-    protected static String loadFile(String name) throws Exception {
-        String text = FileUtil.loadFile(new File(BASE_PATH, name));
-        text = StringUtil.convertLineSeparators(text);
-        return text;
     }
 
     public void doTest(String testFileNameWithExtension) throws Exception {
