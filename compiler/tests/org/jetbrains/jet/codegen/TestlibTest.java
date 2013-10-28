@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 import java.io.File;
@@ -80,16 +81,15 @@ public class TestlibTest extends UsefulTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL,
-                                                                                         TestJdkKind.FULL_JDK);
+        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.getAnnotationsJar());
 
         junitJar = new File("libraries/lib/junit-4.9.jar");
         assertTrue(junitJar.exists());
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, junitJar);
 
-        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestCaseBuilder.getTestDataPathBase() + "/../../libraries/stdlib/test");
-        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestCaseBuilder.getTestDataPathBase() + "/../../libraries/kunit/src");
+        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestCaseBuilder.getHomeDirectory() + "/libraries/stdlib/test");
+        configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, JetTestCaseBuilder.getHomeDirectory() + "/libraries/kunit/src");
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
                           new MessageCollectorPlainTextToStream(System.out, MessageCollectorPlainTextToStream.NON_VERBOSE));
 
@@ -100,11 +100,9 @@ public class TestlibTest extends UsefulTestCase {
             throw new RuntimeException("There were compilation errors");
         }
 
-        ClassFileFactory classFileFactory = generationState.getFactory();
-
-        classLoader = new GeneratedClassLoader(classFileFactory,
+        classLoader = new GeneratedClassLoader(generationState.getFactory(),
                                                new URLClassLoader(new URL[] {ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()},
-                                                        null)) {
+                                                                  null)) {
             @Override
             public Class<?> loadClass(String name) throws ClassNotFoundException {
                 if (name.startsWith("junit.") || name.startsWith("org.junit.")) {
@@ -119,35 +117,34 @@ public class TestlibTest extends UsefulTestCase {
 
         for (JetFile jetFile : myEnvironment.getSourceFiles()) {
             for (JetDeclaration declaration : jetFile.getDeclarations()) {
-                if (declaration instanceof JetClass) {
-                    ClassDescriptor descriptor = (ClassDescriptor) generationState.getBindingContext().get(
-                            BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+                if (!(declaration instanceof JetClass)) continue;
 
-                    assertNotNull("Descriptor for declaration " + declaration + " shouldn't be null", descriptor);
+                ClassDescriptor descriptor = (ClassDescriptor) BindingContextUtils.getNotNull(generationState.getBindingContext(),
+                                                                                              BindingContext.DECLARATION_TO_DESCRIPTOR,
+                                                                                              declaration);
 
-                    for (ClassDescriptor superClass : DescriptorUtils.getAllSuperClasses(descriptor)) {
-                        if ("junit/framework/Test".equals(typeMapper.mapClass(superClass).getInternalName())) {
-                            String name = typeMapper.mapClass(descriptor).getInternalName();
+                for (ClassDescriptor superClass : DescriptorUtils.getAllSuperClasses(descriptor)) {
+                    if (!"junit/framework/Test".equals(typeMapper.mapClass(superClass).getInternalName())) continue;
 
-                            System.out.println(name);
+                    String name = typeMapper.mapClass(descriptor).getInternalName();
 
-                            @SuppressWarnings("unchecked")
-                            Class<TestCase> aClass = (Class<TestCase>) classLoader.loadClass(name.replace('/', '.'));
+                    System.out.println(name);
 
-                            if (!Modifier.isAbstract(aClass.getModifiers()) && Modifier.isPublic(aClass.getModifiers())) {
-                                try {
-                                    if (Modifier.isPublic(aClass.getConstructor().getModifiers())) {
-                                        suite.addTestSuite(aClass);
-                                    }
-                                }
-                                catch (NoSuchMethodException e) {
-                                    // Ignore test classes we can't instantiate
-                                }
+                    @SuppressWarnings("unchecked")
+                    Class<TestCase> aClass = (Class<TestCase>) classLoader.loadClass(name.replace('/', '.'));
+
+                    if (!Modifier.isAbstract(aClass.getModifiers()) && Modifier.isPublic(aClass.getModifiers())) {
+                        try {
+                            if (Modifier.isPublic(aClass.getConstructor().getModifiers())) {
+                                suite.addTestSuite(aClass);
                             }
-
-                            break;
+                        }
+                        catch (NoSuchMethodException e) {
+                            // Ignore test classes we can't instantiate
                         }
                     }
+
+                    break;
                 }
             }
         }
