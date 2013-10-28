@@ -1,1 +1,0 @@
-var i : Short? = 10

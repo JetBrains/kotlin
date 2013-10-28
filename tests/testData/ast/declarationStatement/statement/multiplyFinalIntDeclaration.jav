@@ -1,1 +1,0 @@
-final int k, l, m;

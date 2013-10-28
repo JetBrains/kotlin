@@ -1,5 +1,5 @@
 public open class Identifier(_myName : String?, _myHasDollar : Boolean) {
-private val myName : String? = null
+private val myName : String?
 private var myHasDollar : Boolean = false
 private var myNullable : Boolean = true
 public open fun getName() : String? {

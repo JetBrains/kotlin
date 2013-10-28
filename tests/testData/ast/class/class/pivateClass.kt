@@ -1,2 +1,0 @@
-private open class Test() {
-}

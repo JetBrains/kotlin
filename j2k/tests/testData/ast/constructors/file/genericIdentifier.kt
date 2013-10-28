@@ -1,5 +1,5 @@
 public open class Identifier<T>(_myName : T?, _myHasDollar : Boolean) {
-private val myName : T? = null
+private val myName : T?
 private var myHasDollar : Boolean = false
 private var myNullable : Boolean = true
 public open fun getName() : T? {
@@ -30,8 +30,8 @@ public open class User() {
 class object {
 public open fun main() : Unit {
 var i1 : Identifier<*>? = Identifier.init<String?>("name", false, true)
-var i2 : Identifier<Any?>? = Identifier.init<String?>("name", false)
-var i3 : Identifier<Any?>? = Identifier.init<String?>("name")
+var i2 : Identifier<*>? = Identifier.init<String?>("name", false)
+var i3 : Identifier<*>? = Identifier.init<String?>("name")
 }
 }
 }

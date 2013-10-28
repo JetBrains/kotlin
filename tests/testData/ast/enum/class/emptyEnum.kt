@@ -1,2 +1,0 @@
-enum class A {
-}

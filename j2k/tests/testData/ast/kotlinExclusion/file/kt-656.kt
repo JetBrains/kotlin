@@ -1,5 +1,4 @@
 package demo
-import java.util.Iterator
 open class Test() : java.lang.Iterable<String?> {
 public override fun iterator() : java.util.Iterator<String?>? {
 return null

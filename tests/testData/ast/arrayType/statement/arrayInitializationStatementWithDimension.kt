@@ -1,1 +1,0 @@
-var d2 : Array<IntArray?>? = arrayOfNulls<IntArray?>(5)

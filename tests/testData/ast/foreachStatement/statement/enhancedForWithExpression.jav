@@ -1,1 +1,0 @@
-for (Node n : list) i++;

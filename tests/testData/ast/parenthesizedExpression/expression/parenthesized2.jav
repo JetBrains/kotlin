@@ -1,1 +1,0 @@
-(str.toString() + "abc")

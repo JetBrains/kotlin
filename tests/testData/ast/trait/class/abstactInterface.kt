@@ -1,2 +1,0 @@
-abstract trait I {
-}
