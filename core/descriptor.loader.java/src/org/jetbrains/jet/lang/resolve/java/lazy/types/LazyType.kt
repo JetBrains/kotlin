@@ -47,4 +47,14 @@ abstract class LazyType(storageManager: StorageManager) : AbstractJetType() {
     override fun isError()= getConstructor().getDeclarationDescriptor().inn({ d -> ErrorUtils.isError(d)}, false)
 
     override fun getAnnotations(): List<AnnotationDescriptor> = listOf()
+
+    override fun toString(): String? {
+        if (!_typeConstructor.isComputed()) {
+            return "Type constructor is not computed"
+        }
+        if (!_arguments.isComputed()) {
+            return "" + getConstructor() + "<arguments are not computed>"
+        }
+        return super<AbstractJetType>.toString()
+    }
 }
