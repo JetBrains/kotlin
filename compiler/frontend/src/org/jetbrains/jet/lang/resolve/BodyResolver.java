@@ -556,7 +556,7 @@ public class BodyResolver {
         JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, context.getOuterDataFlowInfo(), trace);
         if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor)) {
-            CompileTimeConstant<?> constant = annotationResolver.resolveExpressionToCompileTimeValue(initializer, expectedTypeForInitializer, trace);
+            CompileTimeConstant<?> constant = AnnotationResolver.resolveExpressionToCompileTimeValue(initializer, expectedTypeForInitializer, trace);
             if (constant != null) {
                 trace.record(BindingContext.COMPILE_TIME_INITIALIZER, propertyDescriptor, constant);
             }
