@@ -18,6 +18,7 @@ package org.jetbrains.jet.checkers;
 
 import com.google.common.base.Predicates;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -48,7 +49,7 @@ public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJe
             ok &= testFile.getActualText(bindingContext, actualText);
         }
 
-        assertSameLinesWithFile(testDataFile.getAbsolutePath(), actualText.toString());
+        JetTestUtils.assertEqualsToFile(testDataFile, actualText.toString());
 
         assertTrue("Diagnostics mismatch. See the output above", ok);
     }
