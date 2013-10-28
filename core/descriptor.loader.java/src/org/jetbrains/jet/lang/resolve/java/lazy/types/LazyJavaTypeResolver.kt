@@ -89,7 +89,6 @@ class LazyJavaTypeResolver(
             private val attr: JavaTypeAttributes
     ) : LazyType(c.storageManager) {
 
-
         override fun computeTypeConstructor(): TypeConstructor {
             val classifier = javaType.getClassifier()
             if (classifier == null) {
@@ -239,7 +238,7 @@ class LazyJavaTypeAttributes(
         computeHowThisTypeIsUsedAccrodingToAnnotations
     )
 
-    override val isMarkedNotNull: Boolean by c.storageManager.createLazyValue { annotationOwner.hasNotNullAnnotation() }
+    override val isMarkedNotNull: Boolean by c.storageManager.createLazyValue { c.hasNotNullAnnotation(annotationOwner) }
 }
 
 fun TypeUsage.toAttributes() = object : JavaTypeAttributes {

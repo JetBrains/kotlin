@@ -20,11 +20,15 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaAnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
+import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver
 
 fun LazyJavaResolverContextWithTypes.resolveAnnotations(javaAnnotations: Collection<JavaAnnotation>): List<AnnotationDescriptor>
         = javaAnnotations.map {jAnnotation -> LazyJavaAnnotationDescriptor(this, jAnnotation)}
 
-// TODO: These methods are a workaround for inability to refactor List<AnnotationDescriptor> -> Annotations at the moment
-fun JavaAnnotationOwner.hasMutableAnnotation(): Boolean = false
-fun JavaAnnotationOwner.hasReadOnlyAnnotation(): Boolean = false
-fun JavaAnnotationOwner.hasNotNullAnnotation(): Boolean = false
+private fun GlobalJavaResolverContext.hasAnnotation(owner: JavaAnnotationOwner, annotationFqName: FqName): Boolean
+        = owner.findAnnotation(annotationFqName) != null || externalAnnotationResolver.findExternalAnnotation(owner, annotationFqName) != null
+
+fun GlobalJavaResolverContext.hasMutableAnnotation(owner: JavaAnnotationOwner): Boolean = hasAnnotation(owner, JavaAnnotationResolver.JETBRAINS_MUTABLE_ANNOTATION)
+fun GlobalJavaResolverContext.hasReadOnlyAnnotation(owner: JavaAnnotationOwner): Boolean = hasAnnotation(owner, JavaAnnotationResolver.JETBRAINS_READONLY_ANNOTATION)
+fun GlobalJavaResolverContext.hasNotNullAnnotation(owner: JavaAnnotationOwner): Boolean = hasAnnotation(owner, JavaAnnotationResolver.JETBRAINS_NOT_NULL_ANNOTATION)
