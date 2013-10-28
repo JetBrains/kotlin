@@ -45,7 +45,14 @@ public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
         private val _containingDeclaration: DeclarationDescriptor
 ) : JetScope {
-    private val allDescriptors: NotNullLazyValue<MutableCollection<DeclarationDescriptor>> = c.storageManager.createLazyValue{computeAllDescriptors()}
+    private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
+            {computeAllDescriptors()},
+            // This is to avoid the following recursive case:
+            //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
+            //    it, in turn, asks JavaElementFinder for subpackages of Kotlin package foo, which calls getAllPackageNames() recursively
+            //    when on recursive call we return an empty collection, recursion collapses gracefully
+            Collections.emptyList()
+    )
 
     override fun getContainingDeclaration() = _containingDeclaration
 
