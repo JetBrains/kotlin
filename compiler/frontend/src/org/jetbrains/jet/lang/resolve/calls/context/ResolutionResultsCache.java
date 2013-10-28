@@ -27,9 +27,20 @@ import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
 public interface ResolutionResultsCache {
-    class MemberType<D extends CallableDescriptor> {}
-    MemberType<FunctionDescriptor> FUNCTION_MEMBER_TYPE = new MemberType<FunctionDescriptor>();
-    MemberType<VariableDescriptor> PROPERTY_MEMBER_TYPE = new MemberType<VariableDescriptor>();
+    class MemberType<D extends CallableDescriptor> {
+        public final String debugName;
+
+        public MemberType(String name) {
+            debugName = name;
+        }
+
+        @Override
+        public String toString() {
+            return debugName;
+        }
+    }
+    MemberType<FunctionDescriptor> FUNCTION_MEMBER_TYPE = new MemberType<FunctionDescriptor>("FUNCTION_MEMBER_TYPE");
+    MemberType<VariableDescriptor> PROPERTY_MEMBER_TYPE = new MemberType<VariableDescriptor>("PROPERTY_MEMBER_TYPE");
 
 
     <D extends CallableDescriptor> void recordResolutionResults(@NotNull CallKey callKey, @NotNull MemberType<D> memberType, @NotNull OverloadResolutionResultsImpl<D> results);
