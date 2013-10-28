@@ -118,16 +118,8 @@ class LazyJavaTypeResolver(
                         ?: ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.getPresentableText())
                 }
                 is JavaTypeParameter -> {
-                    val owner = classifier.getOwner()
-                    if (owner is JavaMethod && owner.isConstructor()) {
-                        // If a Java-constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
-                        // so we replace thwm by intersections of their upper bounds
-                        var supertypesJet = HashSet<JetType>()
-                        for (supertype in classifier.getUpperBounds()) {
-                            supertypesJet.add(transformJavaType(supertype, UPPER_BOUND.toAttributes()))
-                        }
-                        TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet)?.getConstructor()
-                            ?: ErrorUtils.createErrorTypeConstructor("Can't intersect upper bounds of " + javaType.getPresentableText())
+                    if (isConstructorTypeParameter()) {
+                        getConstructorTypeParameterSubstitute().getConstructor()
                     }
                     else {
                         typeParameterResolver.resolveTypeParameter(classifier)?.getTypeConstructor()
@@ -136,6 +128,26 @@ class LazyJavaTypeResolver(
                 }
                 else -> throw IllegalStateException("Unknown classifier kind: $classifier")
             }
+        }
+
+        private fun isConstructorTypeParameter(): Boolean {
+            val cl = classifier()
+            if (cl !is JavaTypeParameter) return false
+            val owner = cl.getOwner()
+            return owner is JavaMethod && owner.isConstructor()
+        }
+
+        // We do not memoize the results of this method, because it would consume much memory, and the real gain is little:
+        // the case this method accounts for is very rare, not point in optimizing it
+        private fun getConstructorTypeParameterSubstitute(): JetType {
+            // If a Java-constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
+            // so we replace thwm by intersections of their upper bounds
+            var supertypesJet = HashSet<JetType>()
+            for (supertype in (classifier() as JavaTypeParameter).getUpperBounds()) {
+                supertypesJet.add(transformJavaType(supertype, UPPER_BOUND.toAttributes()))
+            }
+            return TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet)
+                        ?: ErrorUtils.createErrorType("Can't intersect upper bounds of " + javaType.getPresentableText())
         }
 
         private fun isRaw(): Boolean {
@@ -168,6 +180,10 @@ class LazyJavaTypeResolver(
                     TypeProjectionImpl(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType())
                 }
             }
+            if (isConstructorTypeParameter()) {
+                return getConstructorTypeParameterSubstitute().getArguments()
+            }
+
             if (typeParameters.size() != javaType.getTypeArguments().size()) {
                 // Most of the time this means there is an error in the Java code
                 return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.getName().asString())) }
@@ -219,7 +235,12 @@ class LazyJavaTypeResolver(
             // nullability will be taken care of in individual member signatures
             when (classifier()) {
                 is JavaClass -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
-                is JavaTypeParameter -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT)
+                is JavaTypeParameter -> {
+                    if (isConstructorTypeParameter())
+                        getConstructorTypeParameterSubstitute().isNullable()
+                    else
+                        attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT)
+                }
                 else -> true
             }
         }
