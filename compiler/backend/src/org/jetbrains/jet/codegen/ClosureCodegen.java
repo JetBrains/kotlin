@@ -162,7 +162,10 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
-            genInitSingletonField(asmType, iv);
+            iv.anew(asmType);
+            iv.dup();
+            iv.invokespecial(asmType.getInternalName(), "<init>", "()V");
+            iv.putstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
             mv.visitInsn(RETURN);
             FunctionCodegen.endVisit(mv, "<clinit>", fun);
         }
