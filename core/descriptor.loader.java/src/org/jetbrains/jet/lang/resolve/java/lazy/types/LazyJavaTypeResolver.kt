@@ -89,8 +89,10 @@ class LazyJavaTypeResolver(
             private val attr: JavaTypeAttributes
     ) : LazyType(c.storageManager) {
 
+        private val classifier = c.storageManager.createNullableLazyValue { javaType.getClassifier() }
+
         override fun computeTypeConstructor(): TypeConstructor {
-            val classifier = javaType.getClassifier()
+            val classifier = classifier()
             if (classifier == null) {
                 return ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.getPresentableText())
             }
@@ -215,7 +217,11 @@ class LazyJavaTypeResolver(
             !attr.isMarkedNotNull &&
             // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
             // nullability will be taken care of in individual member signatures
-            (attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE))
+            when (classifier()) {
+                is JavaClass -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
+                is JavaTypeParameter -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT)
+                else -> true
+            }
         }
         override fun isNullable(): Boolean = _nullable()
     }
