@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -247,21 +248,35 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return c;
     }
 
-    public DeclarationDescriptor getAccessor(DeclarationDescriptor descriptor) {
+    @NotNull
+    public DeclarationDescriptor getAccessor(@NotNull DeclarationDescriptor descriptor) {
+        return getAccessor(descriptor, false, null);
+    }
+
+    @NotNull
+    public DeclarationDescriptor getAccessor(@NotNull DeclarationDescriptor descriptor, boolean isForBackingFieldInOuterClass, @Nullable JetType delegateType) {
         if (accessors == null) {
             accessors = new HashMap<DeclarationDescriptor, DeclarationDescriptor>();
         }
         descriptor = descriptor.getOriginal();
         DeclarationDescriptor accessor = accessors.get(descriptor);
         if (accessor != null) {
+            assert !isForBackingFieldInOuterClass ||
+                   accessor instanceof AccessorForPropertyBackingFieldInOuterClass : "There is already exists accessor with isForBackingFieldInOuterClass = false in this context";
             return accessor;
         }
 
+        int accessorIndex = accessors.size();
         if (descriptor instanceof SimpleFunctionDescriptor || descriptor instanceof ConstructorDescriptor) {
-            accessor = new AccessorForFunctionDescriptor((FunctionDescriptor) descriptor, contextDescriptor, accessors.size());
+            accessor = new AccessorForFunctionDescriptor((FunctionDescriptor) descriptor, contextDescriptor, accessorIndex);
         }
         else if (descriptor instanceof PropertyDescriptor) {
-            accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor, accessors.size());
+            if (isForBackingFieldInOuterClass) {
+                accessor = new AccessorForPropertyBackingFieldInOuterClass((PropertyDescriptor) descriptor, contextDescriptor,
+                                                                           accessorIndex, delegateType);
+            } else {
+                accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor, accessorIndex);
+            }
         }
         else {
             throw new UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor);

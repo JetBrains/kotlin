@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
@@ -29,17 +31,23 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.Collections;
 
 public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
-    public AccessorForPropertyDescriptor(PropertyDescriptor pd, DeclarationDescriptor containingDeclaration, int index) {
+    public AccessorForPropertyDescriptor(@NotNull PropertyDescriptor pd, @NotNull DeclarationDescriptor containingDeclaration, int index) {
+        this(pd, pd.getType(), DescriptorUtils.getReceiverParameterType(pd.getReceiverParameter()), pd.getExpectedThisObject(), containingDeclaration, index);
+    }
+
+    protected AccessorForPropertyDescriptor(
+            @NotNull PropertyDescriptor original,
+            @NotNull JetType propertyType,
+            @Nullable JetType receiverType,
+            @Nullable ReceiverParameterDescriptor expectedThisObject,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            int index
+    ) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibilities.LOCAL,
-              pd.isVar(), Name.identifier(pd.getName() + "$b$" + index),
+              original.isVar(), Name.identifier(original.getName() + "$b$" + index),
               Kind.DECLARATION);
 
-        boolean isStaticProperty = AsmUtil.isPropertyWithBackingFieldInOuterClass(pd)
-                                   && !AsmUtil.isClassObjectWithBackingFieldsInOuter(containingDeclaration);
-        JetType receiverType = !isStaticProperty ? DescriptorUtils.getReceiverParameterType(pd.getReceiverParameter()) : null;
-
-        setType(pd.getType(), Collections.<TypeParameterDescriptorImpl>emptyList(), isStaticProperty ? null : pd.getExpectedThisObject(),
-                receiverType);
+        setType(propertyType, Collections.<TypeParameterDescriptorImpl>emptyList(), expectedThisObject, receiverType);
         initialize(new Getter(this), new Setter(this));
     }
 

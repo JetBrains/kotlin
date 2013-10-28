@@ -1811,7 +1811,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
             skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || methodKind == MethodKind.SYNTHETIC_ACCESSOR || methodKind == MethodKind.INITIALIZER;
             if (!skipPropertyAccessors) {
-                propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor);
+                propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor, true, delegateType);
             }
         }
 

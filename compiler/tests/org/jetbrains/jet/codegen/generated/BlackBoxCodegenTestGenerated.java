@@ -1877,6 +1877,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/delegatedProperty/inferredPropertyType.kt");
         }
         
+        @TestMetadata("kt4138.kt")
+        public void testKt4138() throws Exception {
+            doTest("compiler/testData/codegen/box/delegatedProperty/kt4138.kt");
+        }
+        
         @TestMetadata("privateVar.kt")
         public void testPrivateVar() throws Exception {
             doTest("compiler/testData/codegen/box/delegatedProperty/privateVar.kt");
