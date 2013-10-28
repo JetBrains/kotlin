@@ -46,7 +46,7 @@ public fun runChangeSignature(project: Project,
                               configuration: JetChangeSignatureConfiguration,
                               bindingContext: BindingContext,
                               defaultValueContext: PsiElement,
-                              commandName: String? = null): Unit {
+                              commandName: String? = null) {
     JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, commandName).run()
 }
 
@@ -66,14 +66,14 @@ public class JetChangeSignature(val project: Project,
         }
 
         val closestModifiableDescriptors = getClosestModifiableDescriptors()
-        assert(!closestModifiableDescriptors.isEmpty()) { "Should contain functionDescriptor itself or some of its super declarations" }
+        assert(!closestModifiableDescriptors.isEmpty(), "Should contain functionDescriptor itself or some of its super declarations")
         val deepestSuperDeclarations = getDeepestSuperDeclarations()
         if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
             showChangeSignatureDialog(deepestSuperDeclarations)
             return
         }
 
-        if ((closestModifiableDescriptors.size()) == 1 && deepestSuperDeclarations.equals(closestModifiableDescriptors)) {
+        if (closestModifiableDescriptors.size() == 1 && deepestSuperDeclarations == closestModifiableDescriptors) {
             showChangeSignatureDialog(closestModifiableDescriptors)
             return
         }
@@ -81,7 +81,7 @@ public class JetChangeSignature(val project: Project,
         val isSingleFunctionSelected = closestModifiableDescriptors.size() == 1
         val selectedFunction = if (isSingleFunctionSelected) closestModifiableDescriptors.first() else functionDescriptor
         val optionsForDialog = buildDialogOptions(isSingleFunctionSelected)
-        val code = showSuperFunctionWarningDialog(deepestSuperDeclarations, selectedFunction, optionsForDialog.copyToArray())
+        val code = showSuperFunctionWarningDialog(deepestSuperDeclarations, selectedFunction, optionsForDialog)
         when {
             performForWholeHierarchy(optionsForDialog, code) -> {
                 showChangeSignatureDialog(deepestSuperDeclarations)
@@ -96,13 +96,17 @@ public class JetChangeSignature(val project: Project,
     }
 
     private fun getClosestModifiableDescriptors(): Set<FunctionDescriptor> {
-        val kind = functionDescriptor.getKind()
-        if (kind == DELEGATION || kind == FAKE_OVERRIDE) {
-            return getDirectlyOverriddenDeclarations(functionDescriptor)
+        return when (functionDescriptor.getKind()) {
+            DECLARATION -> {
+                Collections.singleton(functionDescriptor)
+            }
+            DELEGATION, FAKE_OVERRIDE -> {
+                getDirectlyOverriddenDeclarations(functionDescriptor)
+            }
+            else -> {
+                throw IllegalStateException("Unexpected callable kind: ${functionDescriptor.getKind()}")
+            }
         }
-
-        assert(kind == DECLARATION) { "Unexpected callable kind: " + kind }
-        return Collections.singleton(functionDescriptor)
     }
 
     fun getDeepestSuperDeclarations(): Set<FunctionDescriptor> {
@@ -120,9 +124,8 @@ public class JetChangeSignature(val project: Project,
             return
         }
 
-        val performSilently = configuration.performSilently(dialog.getMethodDescriptor().getAffectedFunctions())
-
-        if (performSilently || ApplicationManager.getApplication()!!.isUnitTestMode()) {
+        if (configuration.performSilently(dialog.getMethodDescriptor().getAffectedFunctions())
+                || ApplicationManager.getApplication()!!.isUnitTestMode()) {
             performRefactoringSilently(dialog)
         }
         else {
@@ -134,7 +137,7 @@ public class JetChangeSignature(val project: Project,
         val baseDescriptor = preferContainedInClass(descriptorsForSignatureChange)
         val functionDeclaration = callableDescriptorToDeclaration(bindingContext, baseDescriptor)
         if (functionDeclaration == null) {
-            LOG.error("Could not find declaration for " + baseDescriptor)
+            LOG.error("Could not find declaration for $baseDescriptor")
             return null
         }
 
@@ -156,24 +159,22 @@ public class JetChangeSignature(val project: Project,
             if (containingDeclaration is ClassDescriptor && containingDeclaration.getKind() != ClassKind.TRAIT) {
                 return descriptor
             }
-
         }
         //choose at random
         return descriptorsForSignatureChange.first()
     }
 
     private fun buildDialogOptions(isSingleFunctionSelected: Boolean): List<String> {
-        val optionsForDialog = ArrayList<String>()
-        optionsForDialog.add(if (isSingleFunctionSelected) Messages.YES_BUTTON else Messages.OK_BUTTON)
         if (isSingleFunctionSelected) {
-            optionsForDialog.add(Messages.NO_BUTTON)
+            return arrayListOf(Messages.YES_BUTTON, Messages.NO_BUTTON, Messages.CANCEL_BUTTON)
         }
-        optionsForDialog.add(Messages.CANCEL_BUTTON)
-        return optionsForDialog
+        else {
+            return arrayListOf(Messages.OK_BUTTON, Messages.CANCEL_BUTTON)
+        }
     }
 
-    private fun performForWholeHierarchy(optionsForDialog: List<String>, code: Int): Boolean {
-        return buttonPressed(code, optionsForDialog, Messages.YES_BUTTON) || buttonPressed(code, optionsForDialog, Messages.OK_BUTTON)
+    private fun performForWholeHierarchy(dialogButtons: List<String>, code: Int): Boolean {
+        return buttonPressed(code, dialogButtons, Messages.YES_BUTTON) || buttonPressed(code, dialogButtons, Messages.OK_BUTTON)
     }
 
     private fun performForSelectedFunctionOnly(dialogButtons: List<String>, code: Int): Boolean {
@@ -181,12 +182,12 @@ public class JetChangeSignature(val project: Project,
     }
 
     private fun buttonPressed(code: Int, dialogButtons: List<String>, button: String): Boolean {
-        return code == dialogButtons.indexOf(button) && dialogButtons.contains(button)
+        return code == dialogButtons indexOf button && button in dialogButtons
     }
 
     private fun showSuperFunctionWarningDialog(superFunctions: Collection<FunctionDescriptor>,
                                                functionFromEditor: FunctionDescriptor,
-                                               options: Array<String>): Int {
+                                               options: List<String>): Int {
         val superString = superFunctions.map {
             it.getContainingDeclaration().getName().asString()
         }.makeString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
@@ -194,9 +195,9 @@ public class JetChangeSignature(val project: Project,
                                         DescriptorRenderer.COMPACT.render(functionFromEditor),
                                         functionFromEditor.getContainingDeclaration().getName().asString(), superString,
                                         "refactor")
-        val title = IdeBundle.message("title.warning")
-        val icon = Messages.getQuestionIcon()
-        return Messages.showDialog(message, title!!, options, 0, icon!!)
+        val title = IdeBundle.message("title.warning")!!
+        val icon = Messages.getQuestionIcon()!!
+        return Messages.showDialog(message, title, options.copyToArray(), 0, icon)
     }
 }
 
