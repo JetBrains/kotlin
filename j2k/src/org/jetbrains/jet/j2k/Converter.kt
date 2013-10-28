@@ -16,29 +16,18 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.openapi.util.Pair
 import java.text.MessageFormat
 import com.intellij.psi.util.PsiUtil
-import org.jetbrains.jet.config.CompilerConfiguration
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import com.intellij.openapi.Disposable
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.util.QualifiedNamesUtil
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import com.intellij.openapi.project.Project
 
-public open class Converter() {
+public open class Converter(val project: Project) {
 
     private var classIdentifiersSet: MutableSet<String> = Sets.newHashSet()!!
 
     private val dispatcher: Dispatcher = Dispatcher(this)
 
     private val flags: MutableSet<J2KConverterFlags?>? = Sets.newHashSet()
-
-    private val jetCoreEnvironment = JetCoreEnvironment(
-                                                object : Disposable {
-                                                    public override fun dispose() {
-                                                    }
-                                                }, CompilerConfiguration())
-
-
-    private val project = jetCoreEnvironment.getProject();
 
     private val javaToKotlinClassMap: JavaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
 

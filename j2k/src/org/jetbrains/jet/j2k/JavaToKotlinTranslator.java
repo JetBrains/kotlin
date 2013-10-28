@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import com.intellij.core.JavaCoreApplicationEnvironment;
 import com.intellij.core.JavaCoreProjectEnvironment;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
@@ -35,10 +37,11 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 public class JavaToKotlinTranslator {
+
+    private static final Disposable DISPOSABLE = Disposer.newDisposable();
+
     private JavaToKotlinTranslator() {
     }
-
-    private static final Converter CONVERTER = new Converter();
 
     @Nullable
     private static PsiFile createFile(@NotNull String text) {
@@ -49,21 +52,16 @@ public class JavaToKotlinTranslator {
     }
 
     @Nullable
-    static PsiFile createFile(@NotNull JavaCoreProjectEnvironment javaCoreEnvironment, @NotNull String text) {
-        return PsiFileFactory.getInstance(javaCoreEnvironment.getProject()).createFileFromText(
+    static PsiFile createFile(@NotNull Project project, @NotNull String text) {
+        return PsiFileFactory.getInstance(project).createFileFromText(
                 "test.java", JavaLanguage.INSTANCE, text
         );
     }
 
     @NotNull
     static JavaCoreProjectEnvironment setUpJavaCoreEnvironment() {
-        Disposable parentDisposable = new Disposable() {
-            @Override
-            public void dispose() {
-            }
-        };
-        JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(parentDisposable);
-        JavaCoreProjectEnvironment javaCoreEnvironment = new JavaCoreProjectEnvironment(parentDisposable, applicationEnvironment);
+        JavaCoreApplicationEnvironment applicationEnvironment = new JavaCoreApplicationEnvironment(DISPOSABLE);
+        JavaCoreProjectEnvironment javaCoreEnvironment = new JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment);
 
         javaCoreEnvironment.addJarToClassPath(PathUtil.findRtJar());
         File annotations = findAnnotations();
@@ -90,7 +88,7 @@ public class JavaToKotlinTranslator {
     }
 
     @Nullable
-    private static File findAnnotations() {
+    public static File findAnnotations() {
         ClassLoader classLoader = JavaToKotlinTranslator.class.getClassLoader();
         while (classLoader != null) {
             if (classLoader instanceof URLClassLoader) {
@@ -116,8 +114,9 @@ public class JavaToKotlinTranslator {
     static String generateKotlinCode(@NotNull String javaCode) {
         PsiFile file = createFile(javaCode);
         if (file != null && file instanceof PsiJavaFile) {
-            setClassIdentifiers(CONVERTER, file);
-            return prettify(CONVERTER.fileToFile((PsiJavaFile) file).toKotlin());
+            Converter converter = new Converter(file.getProject());
+            setClassIdentifiers(converter, file);
+            return prettify(converter.fileToFile((PsiJavaFile) file).toKotlin());
         }
         return "";
     }
@@ -126,15 +125,16 @@ public class JavaToKotlinTranslator {
     static String generateKotlinCodeWithCompatibilityImport(@NotNull String javaCode) {
         PsiFile file = createFile(javaCode);
         if (file != null && file instanceof PsiJavaFile) {
-            setClassIdentifiers(CONVERTER, file);
-            return prettify(CONVERTER.fileToFileWithCompatibilityImport((PsiJavaFile) file).toKotlin());
+            Converter converter = new Converter(file.getProject());
+            setClassIdentifiers(converter, file);
+            return prettify(converter.fileToFileWithCompatibilityImport((PsiJavaFile) file).toKotlin());
         }
         return "";
     }
 
     public static void main(@NotNull String[] args) throws IOException {
         //noinspection UseOfSystemOutOrSystemErr
-        final PrintStream out = System.out;
+        PrintStream out = System.out;
         if (args.length == 1) {
             String kotlinCode = "";
             try {
@@ -154,6 +154,8 @@ public class JavaToKotlinTranslator {
         }
     }
 
+    // Used in the Kotlin Web Demo.
+    @SuppressWarnings("UnusedDeclaration")
     public static String translateToKotlin(String code) {
         return generateKotlinCode(code);
     }

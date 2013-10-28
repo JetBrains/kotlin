@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.j2k;
 
-import com.intellij.openapi.application.PathManager;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -37,27 +36,18 @@ abstract class TestCaseBuilder {
         }
     };
 
-    @NotNull
-    public static String getTestDataPathBase() {
-        return "testData";
-    }
-
-    public static String getHomeDirectory() {
-        return new File(PathManager.getResourceRoot(TestCaseBuilder.class, "/org/jetbrains/jet/TestCaseBuilder.class")).getParentFile().getParentFile().getParent();
-    }
-
     public interface NamedTestFactory {
         @NotNull
         Test createTest(@NotNull String dataPath, @NotNull String name);
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, @NotNull NamedTestFactory factory) {
+    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull String dataPath, @NotNull NamedTestFactory factory) {
         return suiteForDirectory(baseDataDir, dataPath, true, emptyFilter, factory);
     }
 
     @NotNull
-    private static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull final FilenameFilter filter, @NotNull NamedTestFactory factory) {
+    private static TestSuite suiteForDirectory(String baseDataDir, @NotNull String dataPath, boolean recursive, @NotNull final FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
         final String extensionJava = ".jav";
 
