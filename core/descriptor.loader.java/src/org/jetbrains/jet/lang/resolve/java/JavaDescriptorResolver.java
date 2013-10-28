@@ -111,7 +111,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
                                 @Override
                                 public ClassDescriptor resolveClassByFqName(FqName name) {
-                                    return null;
+                                    return javaResolverCache.getClassResolvedFromSource(name);
                                 }
                             },
                             externalAnnotationResolver,

@@ -24,7 +24,7 @@ public abstract class LazyJavaPackageFragmentScope(
         val fqName = fqName.child(name)
         val javaClass = c.finder.findClass(fqName)
         if (javaClass == null)
-            null
+            c.javaClassResolver.resolveClassByFqName(fqName)
         else
             LazyJavaClassDescriptor(c.withTypes(TypeParameterResolver.EMPTY), packageFragment, fqName, javaClass)
     }

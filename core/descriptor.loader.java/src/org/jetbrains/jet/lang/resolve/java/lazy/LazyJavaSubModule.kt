@@ -68,9 +68,9 @@ public open class LazyJavaSubModule(
 
         override fun resolveClassByFqName(fqName: FqName): ClassDescriptor? {
             val jClass = c.finder.findClass(fqName)
-            if (jClass == null) return null
+            if (jClass != null) return resolveClass(jClass)
 
-            return resolveClass(jClass)
+            return outerContext.javaClassResolver.resolveClassByFqName(fqName)
         }
     }
 }
