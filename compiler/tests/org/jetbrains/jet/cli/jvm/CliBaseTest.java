@@ -41,7 +41,6 @@ public class CliBaseTest {
     @NotNull
     private static String executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull String[] args) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        //noinspection UseOfSystemOutOrSystemErr
         PrintStream origOut = System.out;
         try {
             System.setOut(new PrintStream(bytes));

@@ -129,7 +129,6 @@ public class TestlibTest extends UsefulTestCase {
                         if ("junit/framework/Test".equals(typeMapper.mapClass(superClass).getInternalName())) {
                             String name = typeMapper.mapClass(descriptor).getInternalName();
 
-                            //noinspection UseOfSystemOutOrSystemErr
                             System.out.println(name);
 
                             @SuppressWarnings("unchecked")
