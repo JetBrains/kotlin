@@ -32,23 +32,35 @@ import org.jetbrains.jet.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver
 import org.jetbrains.jet.renderer.DescriptorRenderer
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+
+private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
+    override fun getName(): Name? = null
+    override fun getValue(): Any? = "Deprecated in Java"
+}
 
 class LazyJavaAnnotationDescriptor(
         private val c: LazyJavaResolverContextWithTypes,
         val javaAnnotation : JavaAnnotation
 ) : AnnotationDescriptor {
 
+    private val _fqName = c.storageManager.createNullableLazyValue { javaAnnotation.getFqName() }
     private val _type = c.storageManager.createLazyValue {() : JetType ->
-        val fqName = javaAnnotation.getFqName()
+        val fqName = _fqName()
         if (fqName == null) return@createLazyValue ErrorUtils.createErrorType("No fqName: $javaAnnotation")
-        val annotationClass = c.javaClassResolver.resolveClassByFqName(fqName)
+        val annotationClass = JavaToKotlinClassMap.getInstance().mapKotlinClass(fqName, TypeUsage.MEMBER_SIGNATURE_INVARIANT)
+                                ?: c.javaClassResolver.resolveClassByFqName(fqName)
         annotationClass?.getDefaultType() ?: ErrorUtils.createErrorType(fqName.asString())
     }
 
     override fun getType(): JetType = _type()
 
     private val _nameToArgument = c.storageManager.createLazyValue {
-        javaAnnotation.getArguments().valuesToMap { a -> a.getName() }
+        var arguments: Collection<JavaAnnotationArgument> = javaAnnotation.getArguments()
+        if (arguments.isEmpty() && _fqName() == JavaToKotlinClassMap.JAVA_LANG_DEPRECATED) {
+            arguments = listOf(DEPRECATED_IN_JAVA)
+        }
+        arguments.valuesToMap { a -> a.getName() }
     }
 
     private val _valueArguments = c.storageManager.createMemoizedFunctionWithNullableValues<ValueParameterDescriptor, CompileTimeConstant<out Any?>> {

@@ -41,7 +41,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
 public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
-    private static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
+    public static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
 
     private static JavaToKotlinClassMap instance = null;
 
