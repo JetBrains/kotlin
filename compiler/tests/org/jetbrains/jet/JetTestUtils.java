@@ -385,8 +385,8 @@ public class JetTestUtils {
             String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
 
             // compare with hard copy: make sure nothing is lost in output
-            String expectedText = StringUtil.convertLineSeparators(expected);
-            String actualText = StringUtil.convertLineSeparators(actual);
+            String expectedText = StringUtil.convertLineSeparators(expected.trim());
+            String actualText = StringUtil.convertLineSeparators(actual.trim());
             if (!Comparing.equal(expectedText, actualText)) {
                 throw new FileComparisonFailure("Expected and actual namespaces differ from " + expectedFile.getName(),
                                                 expected, actual, expectedFile.getAbsolutePath());
