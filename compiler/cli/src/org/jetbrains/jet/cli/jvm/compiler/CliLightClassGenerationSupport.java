@@ -33,15 +33,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
-import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -73,7 +72,21 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     public BindingTrace getTrace() {
         if (trace == null) {
-            trace = new BindingTraceContext();
+            trace = new BindingTraceContext() {
+                @Override
+                public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
+                    if (slice == BindingContext.RESOLUTION_SCOPE || slice == BindingContext.TYPE_RESOLUTION_SCOPE) {
+                        // In the compiler there's no need to keep scopes
+                        return;
+                    }
+                    super.record(slice, key, value);
+                }
+
+                @Override
+                public String toString() {
+                    return "Filtering trace for the CLI compiler: does not save scopes";
+                }
+            };
         }
         return trace;
     }
