@@ -24,21 +24,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 
 import java.util.Map;
 
 public class SamWrapperClasses {
     private final GenerationState state;
 
-    private final Map<Pair<ClassDescriptorFromJvmBytecode, JetFile>, Type> samInterfaceToWrapperClass = Maps.newHashMap();
+    private final Map<Pair<JavaClassDescriptor, JetFile>, Type> samInterfaceToWrapperClass = Maps.newHashMap();
 
     public SamWrapperClasses(GenerationState state) {
         this.state = state;
     }
 
     @NotNull
-    public Type getSamWrapperClass(@NotNull final ClassDescriptorFromJvmBytecode samInterface, @NotNull final JetFile file) {
+    public Type getSamWrapperClass(@NotNull final JavaClassDescriptor samInterface, @NotNull final JetFile file) {
         return ContainerUtil.getOrCreate(samInterfaceToWrapperClass, Pair.create(samInterface, file),
                                          new Factory<Type>() {
                                              @Override

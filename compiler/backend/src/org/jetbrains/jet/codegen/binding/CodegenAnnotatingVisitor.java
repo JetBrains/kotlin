@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -372,7 +372,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
         List<ResolvedValueArgument> valueArguments = call.getValueArgumentsByIndex();
         for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
-            ClassDescriptorFromJvmBytecode samInterface = getInterfaceIfSamType(valueParameter.getType());
+            JavaClassDescriptor samInterface = getInterfaceIfSamType(valueParameter.getType());
             if (samInterface == null) {
                 continue;
             }
@@ -399,7 +399,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(operationDescriptor);
         if (original == null) return;
 
-        ClassDescriptorFromJvmBytecode samInterfaceOfParameter = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
+        JavaClassDescriptor samInterfaceOfParameter = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
         if (samInterfaceOfParameter == null) return;
 
         IElementType token = expression.getOperationToken();
@@ -429,7 +429,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         List<JetExpression> indexExpressions = expression.getIndexExpressions();
         List<ValueParameterDescriptor> parameters = original.getValueParameters();
         for (ValueParameterDescriptor valueParameter : parameters) {
-            ClassDescriptorFromJvmBytecode samInterface = getInterfaceIfSamType(valueParameter.getType());
+            JavaClassDescriptor samInterface = getInterfaceIfSamType(valueParameter.getType());
             if (samInterface == null) {
                 continue;
             }
@@ -449,12 +449,12 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Nullable
-    private static ClassDescriptorFromJvmBytecode getInterfaceIfSamType(@NotNull JetType originalType) {
+    private static JavaClassDescriptor getInterfaceIfSamType(@NotNull JetType originalType) {
         if (!SingleAbstractMethodUtils.isSamType(originalType)) {
             return null;
         }
-        ClassDescriptorFromJvmBytecode samInterface =
-                (ClassDescriptorFromJvmBytecode) originalType.getConstructor().getDeclarationDescriptor();
+        JavaClassDescriptor samInterface =
+                (JavaClassDescriptor) originalType.getConstructor().getDeclarationDescriptor();
         assert samInterface != null;
         return samInterface;
     }

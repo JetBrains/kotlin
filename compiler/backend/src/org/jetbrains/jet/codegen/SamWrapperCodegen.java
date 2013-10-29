@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -45,11 +45,11 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 public class SamWrapperCodegen extends ParentCodegenAwareImpl {
     private static final String FUNCTION_FIELD_NAME = "function";
 
-    @NotNull private final ClassDescriptorFromJvmBytecode samInterface;
+    @NotNull private final JavaClassDescriptor samInterface;
 
     public SamWrapperCodegen(
             @NotNull GenerationState state,
-            @NotNull ClassDescriptorFromJvmBytecode samInterface,
+            @NotNull JavaClassDescriptor samInterface,
             @Nullable MemberCodegen parentCodegen
     ) {
         super(state, parentCodegen);

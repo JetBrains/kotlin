@@ -44,7 +44,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -200,8 +200,8 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         if (member instanceof PsiMethod) {
             if (((PsiMethod) member).isConstructor()) {
                 DeclarationDescriptor container = memberScope.getContainingDeclaration();
-                assert container instanceof ClassDescriptorFromJvmBytecode : container + "\n" + memberScope;
-                ((ClassDescriptorFromJvmBytecode) container).getConstructors();
+                assert container instanceof JavaClassDescriptor : container + "\n" + memberScope;
+                ((JavaClassDescriptor) container).getConstructors();
             }
             else {
                 memberScope.getFunctions(name);

@@ -22,12 +22,12 @@ import org.jetbrains.jet.lang.descriptors.SynthesizedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 
 public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl
-        implements SynthesizedCallableMemberDescriptor<ClassDescriptorFromJvmBytecode> {
-    private final ClassDescriptorFromJvmBytecode samInterface;
+        implements SynthesizedCallableMemberDescriptor<JavaClassDescriptor> {
+    private final JavaClassDescriptor samInterface;
 
     public SamConstructorDescriptor(
             @NotNull ClassOrNamespaceDescriptor containingDeclaration,
-            @NotNull ClassDescriptorFromJvmBytecode samInterface
+            @NotNull JavaClassDescriptor samInterface
     ) {
         super(containingDeclaration, samInterface.getAnnotations(), samInterface.getName(), Kind.SYNTHESIZED);
         this.samInterface = samInterface;
@@ -35,7 +35,7 @@ public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl
 
     @NotNull
     @Override
-    public ClassDescriptorFromJvmBytecode getBaseForSynthesized() {
+    public JavaClassDescriptor getBaseForSynthesized() {
         return samInterface;
     }
 }

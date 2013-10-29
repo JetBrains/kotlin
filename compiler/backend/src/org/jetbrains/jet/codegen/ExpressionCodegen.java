@@ -52,7 +52,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
@@ -248,7 +248,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 if (constant != null) {
                     return StackValue.constant(constant.getValue(), expressionType(expression));
                 }
-                ClassDescriptorFromJvmBytecode samInterface = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
+                JavaClassDescriptor samInterface = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
                 if (samInterface != null) {
                     return genSamInterfaceValue(expression, samInterface, visitor);
                 }
@@ -1922,7 +1922,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue invokeSamConstructor(
             JetCallExpression expression,
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
-            ClassDescriptorFromJvmBytecode samInterface
+            JavaClassDescriptor samInterface
     ) {
         ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
         if (!(argument instanceof ExpressionValueArgument)) {
@@ -1939,7 +1939,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue genSamInterfaceValue(
             @NotNull JetExpression expression,
-            @NotNull ClassDescriptorFromJvmBytecode samInterface,
+            @NotNull JavaClassDescriptor samInterface,
             @NotNull JetVisitor<StackValue, StackValue> visitor
     ) {
         if (expression instanceof JetFunctionLiteralExpression) {
