@@ -576,6 +576,7 @@
         <cleandir dir="${output}/classes/j2k"/>
 
         <javac2 destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
+            <withKotlin/>
             <src path="${basedir}/j2k/src"/>
             <classpath path="${kotlin-home}/lib/kotlin-compiler.jar"/>
         </javac2>
