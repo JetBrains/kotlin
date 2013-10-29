@@ -58,7 +58,7 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
         List<JetFile> files = new ArrayList<JetFile>(Collections.singleton(file));
 
         final BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(getProject()).getTrace();
-        assertNotNull(trace);
+        assertNotNull("No binding trace found for test", trace);
 
         AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 getProject(), files, trace,
@@ -88,11 +88,9 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
 
                     assertEquals(
                             "Bad detected tail recursions list for " + descriptor,
-                            Joiner.on(",\n").skipNulls().join(Lists.transform(expectedRecursions, new CallExpressionToText())),
-                            Joiner.on(",\n").skipNulls().join(Lists.transform(detectedRecursions, new CallExpressionToText()))
+                            stringListOfCallExpressions(expectedRecursions),
+                            stringListOfCallExpressions(detectedRecursions)
                     );
-
-                    assertEquals(detectedRecursions, expectedRecursions);
                 }
 
                 return null;
@@ -120,6 +118,10 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
         }, null);
     }
 
+    private static String stringListOfCallExpressions(List<JetCallExpression> expectedRecursions) {
+        return Joiner.on(",\n").skipNulls().join(Lists.transform(expectedRecursions, new CallExpressionToText()));
+    }
+
     private static class Data {
         public final SimpleFunctionDescriptor functionDescriptor;
         public final boolean isTail;
@@ -140,7 +142,7 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
         int size = argumentList.getArguments().size();
         boolean shouldBeTail = size == 0 || isLastArgumentTail(argumentList.getArguments());
         TailRecursionKind status = trace.get(BindingContext.TAIL_RECURSION_CALL, expression);
-        assertNotNull(status);
+        assertNotNull("Call is not checked for tail recursion", status);
         assertEquals("Tail-recursion detection failed for " + functionDescriptor.getName().asString() + " at " + expression.getText(),
                      shouldBeTail, status.isDoGenerateTailRecursion());
     }
@@ -172,7 +174,7 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
         @Override
         public String apply(JetCallExpression input) {
             if (input == null) return null;
-            return ("\"" + input.getText().replace("\"", "\\\"") + "\"");
+            return ("\"" + input.getText().replace("\"", "\\\"").trim() + "\"");
         }
     }
 }
