@@ -89,6 +89,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .beforeInside(GT, TYPE_ARGUMENT_LIST).spaces(0)
 
                 .betweenInside(FOR_KEYWORD, LPAR, FOR).spacing(1, 1, 0, false, 0)
+                .betweenInside(IF_KEYWORD, LPAR, IF).spacing(1, 1, 0, false, 0)
 
                 // TODO: Ask for better API
                 // Type of the declaration colon

@@ -107,6 +107,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         doTest("idea/testData/formatter/If.kt");
     }
     
+    @TestMetadata("IfSpacing.kt")
+    public void testIfSpacing() throws Exception {
+        doTest("idea/testData/formatter/IfSpacing.kt");
+    }
+    
     @TestMetadata("KDoc.kt")
     public void testKDoc() throws Exception {
         doTest("idea/testData/formatter/KDoc.kt");
