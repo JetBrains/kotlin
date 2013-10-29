@@ -401,6 +401,11 @@ public class CandidateResolver {
             }
 
             @Override
+            public JetExpression visitUnaryExpression(@NotNull JetUnaryExpression expression, Void data) {
+                return ExpressionTypingUtils.isUnaryExpressionDependentOnExpectedType(expression) ? expression : null;
+            }
+
+            @Override
             public JetExpression visitPrefixExpression(@NotNull JetPrefixExpression expression, Void data) {
                 return visitInnerExpression(JetPsiUtil.getBaseExpressionIfLabeledExpression(expression));
             }
