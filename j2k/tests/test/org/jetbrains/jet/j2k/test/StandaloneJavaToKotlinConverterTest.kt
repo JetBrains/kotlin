@@ -94,8 +94,8 @@ public abstract class StandaloneJavaToKotlinConverterTest(val dataPath: String, 
     }
 
     private fun expressionToKotlin(converter: Converter, code: String?): String {
-        var result = statementToKotlin(converter, "Object o =" + code + "}")
-        result = result.replaceFirst("var o : Any\\? =", "")
+        var result = statementToKotlin(converter, "final Object o =" + code + "}")
+        result = result.replaceFirst("val o : Any\\? =", "").replaceFirst("val o : Any = ", "")
         return prettify(result)
     }
 

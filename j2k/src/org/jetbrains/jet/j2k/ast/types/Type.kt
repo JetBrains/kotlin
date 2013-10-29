@@ -25,9 +25,13 @@ public abstract class Type(val nullable: Boolean) : Element() {
     }
 
     public open fun isNullableStr(): String? {
-        return (if (nullable)
+        return (if (nullable && !forceNotNullTypes)
             "?"
         else
             "")
+    }
+
+    class object {
+        public var forceNotNullTypes: Boolean = true
     }
 }

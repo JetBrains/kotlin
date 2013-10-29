@@ -31,7 +31,7 @@ public open class DeclarationStatement(val elements: List<Element>) : Statement(
     }
 
     private fun convertDeclaration(v: LocalVariable): String {
-        val varKeyword: String? = (if (v.hasModifier(Modifier.FINAL))
+        val varKeyword: String? = (if (v.isImmutable())
             "val"
         else
             "var")

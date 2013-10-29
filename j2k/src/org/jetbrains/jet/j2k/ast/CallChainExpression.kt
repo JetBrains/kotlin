@@ -24,9 +24,13 @@ public open class CallChainExpression(val expression: Expression, val identifier
 
     public override fun toKotlin(): String {
         if (!expression.isEmpty()) {
-            return expression.toKotlin() + (if (expression.isNullable()) "?." else ".") + identifier.toKotlin()
+            return expression.toKotlin() + (if (expression.isNullable() && !forceDotCall) "?." else ".") + identifier.toKotlin()
         }
 
         return identifier.toKotlin()
+    }
+
+    class object {
+        public var forceDotCall: Boolean = true
     }
 }

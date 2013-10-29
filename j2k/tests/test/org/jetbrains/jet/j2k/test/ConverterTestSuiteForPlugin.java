@@ -18,20 +18,31 @@ package org.jetbrains.jet.j2k.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.jetbrains.jet.j2k.ast.CallChainExpression;
+import org.jetbrains.jet.j2k.ast.LocalVariable;
+import org.jetbrains.jet.j2k.ast.types.Type;
 
 import static org.jetbrains.jet.j2k.test.TestPackage.suiteForDirectory;
 
-public class ConverterTestSuite {
-
-    private ConverterTestSuite() {
+public class ConverterTestSuiteForPlugin {
+    private ConverterTestSuiteForPlugin() {
     }
 
     public static Test suite() {
+
         TestSuite suite = new TestSuite();
-        suite.addTest(suiteForDirectory("j2k/tests/testData", "/ast", new NamedTestFactory() {
+        suite.addTest(suiteForDirectory("j2k/tests/testData", "/plugin", new NamedTestFactory() {
             public Test createTest(String dataPath, String name) {
                 //noinspection JUnitTestCaseWithNoTests
                 return new StandaloneJavaToKotlinConverterTest(dataPath, name) {
+                    @Override
+                    protected void runTest() {
+                        CallChainExpression.forceDotCall = true;
+                        LocalVariable.specifyTypeExplicitly = false;
+                        LocalVariable.forceImmutable = true;
+                        Type.forceNotNullTypes = true;
+                        super.runTest();
+                    }
                 };
             }
         }));
