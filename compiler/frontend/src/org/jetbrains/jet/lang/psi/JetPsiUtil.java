@@ -1021,16 +1021,16 @@ public class JetPsiUtil {
     }
 
     @NotNull
-    public static <T> T traceToRoot(
+    public static <T> T visitUpwardToRoot(
             @NotNull PsiElement element,
-            @NotNull JetVisitor<BacktraceVisitorStatus<T>, TraceData<T>> visitor,
+            @NotNull JetVisitor<BacktraceVisitorStatus<T>, VisitorData<T>> visitor,
             T def
     ) {
         ArrayList<PsiElement> track = new ArrayList<PsiElement>();
         List<PsiElement> view = Collections.unmodifiableList(track);
         @NotNull
         BacktraceVisitorStatus<T> lastStatus = new BacktraceVisitorStatus<T>(def, true);
-        TraceData<T> data = new TraceData<T>(view);
+        VisitorData<T> data = new VisitorData<T>(view);
 
         do {
             track.add(element);

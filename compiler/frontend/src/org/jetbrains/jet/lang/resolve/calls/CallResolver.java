@@ -589,7 +589,7 @@ public class CallResolver {
 
         if (KotlinBuiltIns.getInstance().isTailRecursive(descriptor)) {
             task.trace.record(TAIL_RECURSION_CALL, callExpression,
-                              JetPsiUtil.traceToRoot(callExpression, new TailRecursionDetectorVisitor(), RecursionStatus.MIGHT_BE));
+                              JetPsiUtil.visitUpwardToRoot(callExpression, new TailRecursionDetectorVisitor(), RecursionStatus.MIGHT_BE));
 
             List<JetCallExpression> callsList = task.trace.get(FUNCTION_RECURSIVE_CALL_EXPRESSIONS, descriptor);
             if (callsList == null) {

@@ -21,13 +21,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class TraceData<T> {
+public final class VisitorData<T> {
     public T data;
     @NotNull
-    public final List<PsiElement> track;
+    public final List<PsiElement> visitedPath;
     public PsiElement last;
 
-    public TraceData(@NotNull List<PsiElement> track) {
-        this.track = track;
+    public VisitorData(@NotNull List<PsiElement> visitedPath) {
+        this.visitedPath = visitedPath;
     }
 }
