@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -571,9 +572,8 @@ public class CallResolver {
     }
 
     private static <D extends CallableDescriptor, F extends D> void handleRecursion(ResolutionTask<D, F> task, DeclarationDescriptor descriptor) {
-        JetCallExpression callExpression = (JetCallExpression) JetPsiUtil
-                .getParentByTypeAndPredicate(task.reference.getOriginalElement(), JetCallExpression.class,
-                                             Predicates.<PsiElement>alwaysTrue(), false);
+        JetCallExpression callExpression = (JetCallExpression) PsiTreeUtil
+                .getParentOfType(task.reference.getOriginalElement(), JetCallExpression.class, false);
 
         assert callExpression != null;
 
