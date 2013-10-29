@@ -17,17 +17,15 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 public enum TailRecursionKind {
-    MIGHT_BE(true, false),
-    IN_RETURN(true, true),
-    IN_FINALLY(false, false),
-    NON_TAIL(false, false);
+    MIGHT_BE(true),
+    IN_RETURN(true),
+    IN_FINALLY(false),
+    NON_TAIL(false);
 
     private final boolean doGenerateTailRecursion;
-    private final boolean isReturn;
 
-    TailRecursionKind(boolean doGenerateTailRecursion, boolean aReturn) {
+    TailRecursionKind(boolean doGenerateTailRecursion) {
         this.doGenerateTailRecursion = doGenerateTailRecursion;
-        isReturn = aReturn;
     }
 
     public boolean isDoGenerateTailRecursion() {
@@ -35,7 +33,7 @@ public enum TailRecursionKind {
     }
 
     public boolean isReturn() {
-        return isReturn;
+        return this == IN_RETURN;
     }
 
     public TailRecursionKind and(TailRecursionKind b) {
