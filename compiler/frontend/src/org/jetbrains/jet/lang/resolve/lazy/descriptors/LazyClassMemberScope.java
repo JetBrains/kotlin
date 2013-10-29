@@ -261,10 +261,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             @NotNull final MemberExtractor<T> extractor,
             @NotNull Collection<? extends CallableDescriptor> existingDescriptors
     ) {
-        //class objects do not have delegated members
-        if (thisDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
+        JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
+        if (classOrObject == null) {
+            // Enum class objects do not have delegated members
             return Collections.emptySet();
         }
+
         DelegationResolver.TypeResolver lazyTypeResolver = new DelegationResolver.TypeResolver() {
             @Nullable
             @Override
@@ -283,8 +285,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 return extractor.extract(type, name);
             }
         };
-        JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-        assert classOrObject != null : "Should not be null for non class object class.";
         return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, resolveSession.getTrace(), lazyMemberExtractor,
                                         lazyTypeResolver);
     }
