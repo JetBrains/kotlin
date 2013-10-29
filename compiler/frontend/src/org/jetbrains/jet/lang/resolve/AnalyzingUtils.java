@@ -65,12 +65,15 @@ public class AnalyzingUtils {
     // --------------------------------------------------------------------------------------------------------------------------
 
     public static String formDebugNameForBindingTrace(@NotNull String debugName, @Nullable Object resolutionSubjectForMessage) {
+        StringBuilder debugInfo = new StringBuilder(debugName);
         if (resolutionSubjectForMessage instanceof PsiElement) {
-            resolutionSubjectForMessage = ((PsiElement) resolutionSubjectForMessage).getText();
+            PsiElement element = (PsiElement) resolutionSubjectForMessage;
+            debugInfo.append(" ").append(element.getText());
+            debugInfo.append(" in ").append(element.getContainingFile().getName());
         }
-        if (resolutionSubjectForMessage != null) {
-            return debugName + " '" + resolutionSubjectForMessage + "'";
+        else if (resolutionSubjectForMessage != null) {
+            debugInfo.append(" ").append(resolutionSubjectForMessage);
         }
-        return debugName;
+        return debugInfo.toString();
     }
 }
