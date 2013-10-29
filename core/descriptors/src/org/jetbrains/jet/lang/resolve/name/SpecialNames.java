@@ -22,10 +22,16 @@ public class SpecialNames {
     public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
     public static final Name ROOT_NAMESPACE = Name.special("<root namespace>");
 
+    private static final String CLASS_OBJECT_FOR = "<class-object-for-";
+
     private SpecialNames() {}
 
     @NotNull
     public static Name getClassObjectName(@NotNull Name className) {
-        return Name.special("<class-object-for-" + className.asString() + ">");
+        return Name.special(CLASS_OBJECT_FOR + className.asString() + ">");
+    }
+
+    public static boolean isClassObjectName(@NotNull Name name) {
+        return name.isSpecial() && name.asString().startsWith(CLASS_OBJECT_FOR);
     }
 }
