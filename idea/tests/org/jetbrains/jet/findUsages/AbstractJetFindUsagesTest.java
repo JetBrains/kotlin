@@ -22,16 +22,13 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
 import com.intellij.find.FindManager;
-import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.find.findUsages.FindUsagesOptions;
-import com.intellij.find.findUsages.JavaFindUsagesOptions;
+import com.intellij.find.findUsages.*;
 import com.intellij.find.impl.FindManagerImpl;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
@@ -140,6 +137,63 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
 
                 return options;
             }
+        },
+        JAVA_CLASS {
+            @NotNull
+            @Override
+            public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+                KotlinClassFindUsagesOptions options = new KotlinClassFindUsagesOptions(project);
+                options.isUsages = false;
+                options.setSearchConstructorUsages(false);
+                for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
+                    if (parseCommonOptions(options, s)) continue;
+
+                    if (s.equals("derivedInterfaces")) {
+                        options.isDerivedInterfaces = true;
+                    }
+                    else if (s.equals("derivedClasses")) {
+                        options.isDerivedClasses = true;
+                    }
+                    else if (s.equals("implementingClasses")) {
+                        options.isImplementingClasses = true;
+                    }
+                    else if (s.equals("methodUsages")) {
+                        options.isMethodsUsages = true;
+                    }
+                    else if (s.equals("fieldUsages")) {
+                        options.isFieldsUsages = true;
+                    }
+                    else fail("Invalid option: " + s);
+                }
+
+                return options;
+            }
+        },
+        JAVA_METHOD {
+            @NotNull
+            @Override
+            public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+                JavaMethodFindUsagesOptions options = new JavaMethodFindUsagesOptions(project);
+                options.isUsages = false;
+                for (String s : InTextDirectivesUtils.findListWithPrefixes(text, "// OPTIONS: ")) {
+                    if (parseCommonOptions(options, s)) continue;
+
+                    if (s.equals("overrides")) {
+                        options.isOverridingMethods = true;
+                        options.isImplementingMethods = true;
+                    }
+                    else fail("Invalid option: " + s);
+                }
+
+                return options;
+            }
+        },
+        JAVA_FIELD {
+            @NotNull
+            @Override
+            public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+                return new JavaVariableFindUsagesOptions(project);
+            }
         };
 
         protected static boolean parseCommonOptions(JavaFindUsagesOptions options, String s) {
@@ -169,6 +223,15 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
             }
             if (klass == JetClass.class) {
                 return CLASS;
+            }
+            if (klass == PsiMethod.class) {
+                return JAVA_METHOD;
+            }
+            if (klass == PsiClass.class) {
+                return JAVA_CLASS;
+            }
+            if (klass == PsiField.class) {
+                return JAVA_FIELD;
             }
 
             return null;
