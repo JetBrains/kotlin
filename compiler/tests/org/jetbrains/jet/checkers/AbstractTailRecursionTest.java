@@ -69,7 +69,7 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
             @Override
             public Void visitNamedFunction(@NotNull JetNamedFunction function, @Nullable Data outerData) {
                 SimpleFunctionDescriptor descriptor = trace.get(BindingContext.FUNCTION, function);
-                assert descriptor != null;
+                assert descriptor != null : "can't get function descriptor from binding by function declaration node";
 
                 Data data = new Data(descriptor);
                 super.visitNamedFunction(function, data);
@@ -104,10 +104,10 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
                     ResolvedCall<? extends CallableDescriptor> call =
                             trace.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
 
-                    assert call != null;
+                    assert call != null : "call node is not yet resolved";
                     if (data.functionDescriptor.equals(call.getCandidateDescriptor())) {
                         JetValueArgumentList argumentList = expression.getValueArgumentList();
-                        assert argumentList != null;
+                        assert argumentList != null : "function call have no arguments list";
 
                         checkCall(data.functionDescriptor, expression, argumentList, trace);
                         data.visitedCalls.add(expression);

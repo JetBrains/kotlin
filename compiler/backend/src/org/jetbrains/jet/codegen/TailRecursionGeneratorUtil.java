@@ -69,7 +69,7 @@ public class TailRecursionGeneratorUtil {
 
     public StackValue generateTailRecursion(ResolvedCall<? extends CallableDescriptor> resolvedCall, JetCallExpression callExpression) {
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
-        assert fd instanceof FunctionDescriptor;
+        assert fd instanceof FunctionDescriptor : "the resolved call is not refer to the function descriptor so why do we use generateTailRecursion for something strange?";
         CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false);
         List<Type> types = callable.getValueParameterTypes();
         List<ValueParameterDescriptor> parametersStored = prepareParameterValuesOnStack(fd, types, resolvedCall.getValueArgumentsByIndex());
