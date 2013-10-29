@@ -443,7 +443,7 @@
             <classpath>
                 <fileset dir="${kotlin-home}/lib" includes="kotlin-compiler.jar"/>
                 <file file="${bootstrap.runtime}"/>
-                <fileset dir="${basedir}/dependencies" includes="ant.jar"/>
+                <fileset dir="${basedir}/dependencies/ant-1.7/lib" includes="ant.jar"/>
             </classpath>
         </javac2>
 
@@ -576,6 +576,7 @@
         <cleandir dir="${output}/classes/j2k"/>
 
         <javac2 destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
+            <withKotlin/>
             <src path="${basedir}/j2k/src"/>
             <classpath path="${kotlin-home}/lib/kotlin-compiler.jar"/>
         </javac2>

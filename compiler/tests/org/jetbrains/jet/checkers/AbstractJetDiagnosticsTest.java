@@ -107,12 +107,11 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
                     }
                 });
 
-        analyzeAndCheck(file, expectedText, testFiles);
+        analyzeAndCheck(file, testFiles);
     }
 
     protected abstract void analyzeAndCheck(
             File testDataFile,
-            String expectedText,
             List<TestFile> files
     );
 

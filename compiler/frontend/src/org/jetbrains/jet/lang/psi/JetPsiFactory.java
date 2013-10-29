@@ -306,6 +306,12 @@ public class JetPsiFactory {
     }
 
     @NotNull
+    public static JetImportList createImportDirectiveWithImportList(Project project, @NotNull ImportPath importPath) {
+        JetImportDirective importDirective = createImportDirective(project, importPath);
+        return (JetImportList) importDirective.getParent();
+    }
+
+    @NotNull
     public static PsiElement createPrimaryConstructor(Project project) {
         JetClass aClass = createClass(project, "class A()");
         return aClass.findElementAt(7).getParent();

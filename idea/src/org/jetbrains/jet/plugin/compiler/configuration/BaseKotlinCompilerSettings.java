@@ -22,9 +22,8 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 
-public abstract class BaseKotlinCompilerSettings<T extends CommonCompilerArguments> implements PersistentStateComponent<Element> {
+public abstract class BaseKotlinCompilerSettings<T> implements PersistentStateComponent<Element> {
 
     private static final SkipDefaultValuesSerializationFilters SKIP_DEFAULT_VALUES = new SkipDefaultValuesSerializationFilters();
 

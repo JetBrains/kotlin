@@ -18,12 +18,9 @@ package org.jetbrains.jet.safeDelete;
 
 import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.safeDelete.SafeDeleteHandler;
@@ -133,8 +130,7 @@ public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightFixtureT
         try {
             SafeDeleteHandler.invoke(getProject(), new PsiElement[] {element}, null, true, null);
             for (int j = 0; j < filePaths.length; j++) {
-                String expectedText = FileUtil.loadFile(new File(filePaths[j] + ".after"));
-                assertEquals(StringUtil.convertLineSeparators(expectedText), editors[j].getDocument().getText());
+                assertSameLinesWithFile(new File(filePaths[j] + ".after").getAbsolutePath(), editors[j].getDocument().getText());
             }
         }
         catch (BaseRefactoringProcessor.ConflictsInTestsException e) {
@@ -142,8 +138,7 @@ public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightFixtureT
             Collections.sort(messages);
 
             File messageFile = new File(path + ".messages");
-            String expectedMessage = FileUtil.loadFile(messageFile, CharsetToolkit.UTF8, true);
-            assertEquals(expectedMessage, StringUtil.join(messages, "\n"));
+            assertSameLinesWithFile(messageFile.getAbsolutePath(), StringUtil.join(messages, "\n"));
         }
     }
 }

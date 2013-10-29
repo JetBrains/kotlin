@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -34,6 +35,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public final ContextDependency contextDependency;
     public final ResolutionResultsCache resolutionResultsCache;
     public final LabelResolver labelResolver;
+    public final CallResolverExtension callResolverExtension;
 
     protected ResolutionContext(
             @NotNull BindingTrace trace,
@@ -43,7 +45,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver
+            @NotNull LabelResolver labelResolver,
+            @NotNull CallResolverExtension callResolverExtension
     ) {
         this.trace = trace;
         this.scope = scope;
@@ -53,6 +56,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.contextDependency = contextDependency;
         this.resolutionResultsCache = resolutionResultsCache;
         this.labelResolver = labelResolver;
+        this.callResolverExtension = callResolverExtension;
     }
 
     protected abstract Context create(

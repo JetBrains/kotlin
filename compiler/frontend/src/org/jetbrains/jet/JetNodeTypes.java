@@ -51,6 +51,7 @@ public interface JetNodeTypes {
     IElementType VALUE_PARAMETER                    = JetStubElementTypes.VALUE_PARAMETER;
 
     JetNodeType CLASS_BODY                          = new JetNodeType("CLASS_BODY", JetClassBody.class);
+    JetNodeType IMPORT_LIST                         = new JetNodeType("IMPORT_LIST", JetImportList.class);
     JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
     JetNodeType MODIFIER_LIST                       = new JetNodeType("MODIFIER_LIST", JetModifierList.class);
     JetNodeType PRIMARY_CONSTRUCTOR_MODIFIER_LIST   = new JetNodeType("PRIMARY_CONSTRUCTOR_MODIFIER_LIST", JetModifierList.class);

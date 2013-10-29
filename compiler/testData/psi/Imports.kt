@@ -1,6 +1,5 @@
 package foo.bar.goo
 
-import package.foo
 import foo
 import foo.bar
 import foo as bar

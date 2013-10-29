@@ -17,9 +17,7 @@
 package org.jetbrains.jet.compiler.runner;
 
 import com.intellij.util.Function;
-import com.intellij.util.xmlb.XmlSerializer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -40,8 +38,6 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERRO
 
 public class CompilerRunnerUtil {
 
-    private static final String STRING_ARRAY_CLASS_NAME = String[].class.getName();
-    private static final String COMPILER_ARGUMENTS_CLASS_NAME = CommonCompilerArguments.class.getName();
     private static SoftReference<ClassLoader> ourClassLoaderRef = new SoftReference<ClassLoader>(null);
 
     public static List<File> kompilerClasspath(KotlinPaths paths, MessageCollector messageCollector) {
@@ -112,34 +108,17 @@ public class CompilerRunnerUtil {
     }
 
     public static Object invokeExecMethod(
-            String compilerClassName, CommonCompilerArguments arguments, CompilerEnvironment environment,
-            MessageCollector messageCollector, PrintStream out, boolean usePreloader
-    ) throws Exception {
-        return invokeExecMethod(compilerClassName, COMPILER_ARGUMENTS_CLASS_NAME, arguments, environment, messageCollector, out, usePreloader);
-    }
-
-    public static Object invokeExecMethod(
             String compilerClassName, String[] arguments, CompilerEnvironment environment,
-            MessageCollector messageCollector, PrintStream out, boolean usePreloader
-    ) throws Exception {
-        return invokeExecMethod(compilerClassName, STRING_ARRAY_CLASS_NAME, arguments, environment, messageCollector, out, usePreloader);
-    }
-
-    public static <T> Object invokeExecMethod(
-            String compilerClassName, String argumentsClassName, T arguments, CompilerEnvironment environment,
             MessageCollector messageCollector, PrintStream out, boolean usePreloader
     ) throws Exception {
         ClassLoader loader = usePreloader
                              ? getOrCreatePreloader(environment.getKotlinPaths(), messageCollector)
                              : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
 
-        Class<?> argumentsClass = Class.forName(argumentsClassName, true, loader);
-        Object argumentsInLoader = copyObject(arguments, loader);
-
         Class<?> kompiler = Class.forName(compilerClassName, true, loader);
-        Method exec = kompiler.getMethod("exec", PrintStream.class,  argumentsClass);
+        Method exec = kompiler.getMethod("exec", PrintStream.class,  String[].class);
 
-        return exec.invoke(kompiler.newInstance(), out, argumentsInLoader);
+        return exec.invoke(kompiler.newInstance(), out, arguments);
     }
 
     public static void outputCompilerMessagesAndHandleExitCode(@NotNull MessageCollector messageCollector,
@@ -153,10 +132,5 @@ public class CompilerRunnerUtil {
         BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString()));
         CompilerOutputParser.parseCompilerMessagesFromReader(messageCollector, reader, outputItemsCollector);
         handleProcessTermination(exitCode, messageCollector);
-    }
-
-    private static Object copyObject(Object object, ClassLoader loader) throws ClassNotFoundException {
-        Class<?> objectClassInLoader = Class.forName(object.getClass().getName(), true, loader);
-        return XmlSerializer.deserialize(XmlSerializer.serialize(object), objectClassInLoader);
     }
 }

@@ -23,6 +23,7 @@ import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.AnnotationOrderRootType;
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.util.io.FileUtil;
@@ -31,11 +32,16 @@ import com.intellij.util.Chunk;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.compiler.runner.*;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +54,7 @@ public class JetCompiler implements TranslatingCompiler {
             return false;
         }
         Module module = compileContext.getModuleByFile(virtualFile);
-        if (module != null && KotlinFrameworkDetector.isJsKotlinModule(module)) {
+        if (module != null && ProjectStructureUtil.isJsKotlinModule(module)) {
             return false;
         }
         return true;
@@ -91,13 +97,14 @@ public class JetCompiler implements TranslatingCompiler {
         doCompile(compileContext, moduleChunk, testFiles, module, outputSink, true);
     }
 
-    private void doCompile(
+    private static void doCompile(
             final CompileContext compileContext,
             Chunk<Module> moduleChunk,
             List<VirtualFile> files,
             Module module,
             OutputSink outputSink,
-            boolean tests) {
+            boolean tests
+    ) {
         if (files.isEmpty()) return;
 
         MessageCollector messageCollector = new MessageCollectorAdapter(compileContext);
@@ -108,7 +115,7 @@ public class JetCompiler implements TranslatingCompiler {
             return;
         }
 
-        final File outputDir = environment.getOutput();
+        File outputDir = environment.getOutput();
 
         File scriptFile = tryToWriteScriptFile(compileContext, moduleChunk, files, module, tests,
                                                compileContext.getModuleOutputDirectory(module),
@@ -123,27 +130,24 @@ public class JetCompiler implements TranslatingCompiler {
                 compileContext.getProgressIndicator().setText("Emitting: " + outputFile);
             }
         };
-        runCompiler(messageCollector, environment, scriptFile, collector);
+        runCompiler(module.getProject(), messageCollector, environment, scriptFile, collector);
 
         TranslatingCompilerUtils.reportOutputs(outputSink, outputDir, collector);
     }
 
     private static void runCompiler(
+            Project project,
             MessageCollector messageCollector,
             CompilerEnvironment environment,
             File scriptFile,
             OutputItemsCollector outputItemsCollector
     ) {
-        K2JVMCompilerArguments commonArguments = new K2JVMCompilerArguments();
-        commonArguments.verbose = true;
-        commonArguments.tags = true;
-        commonArguments.printArgs = true;
-        commonArguments.version = true;
+        CommonCompilerArguments commonArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings();
+        K2JVMCompilerArguments k2jvmArguments = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings();
+        CompilerSettings compilerSettings = KotlinCompilerSettings.getInstance(project).getSettings();
 
-        K2JVMCompilerArguments jvmArguments = new K2JVMCompilerArguments();
-        jvmArguments.module = scriptFile.getAbsolutePath();
-
-        KotlinCompilerRunner.runK2JvmCompiler(commonArguments, jvmArguments, messageCollector, environment, scriptFile, outputItemsCollector);
+        KotlinCompilerRunner.runK2JvmCompiler(commonArguments, k2jvmArguments, compilerSettings,
+                                              messageCollector, environment, scriptFile, outputItemsCollector);
     }
 
     public static File tryToWriteScriptFile(

@@ -11,67 +11,60 @@ JetFile: Imports.kt
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('goo')
   PsiWhiteSpace('\n\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    PsiElement(package)('package')
-    PsiElement(DOT)('.')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('foo')
-  PsiWhiteSpace('\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('foo')
-  PsiWhiteSpace('\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    DOT_QUALIFIED_EXPRESSION
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(as)('as')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+      PsiWhiteSpace(' ')
+      PsiElement(as)('as')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('bar')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('bar')
-  PsiWhiteSpace('\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('foo')
-    PsiWhiteSpace(' ')
-    PsiElement(as)('as')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('bar')
-  PsiWhiteSpace('\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    DOT_QUALIFIED_EXPRESSION
+      PsiElement(MUL)('*')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('bar')
-    PsiWhiteSpace(' ')
-    PsiElement(as)('as')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('bar')
-  PsiWhiteSpace('\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('foo')
-    PsiElement(DOT)('.')
-    PsiElement(MUL)('*')
-  PsiWhiteSpace('\n')
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('foo')
-    PsiElement(DOT)('.')
-    PsiWhiteSpace(' ')
-    PsiElement(MUL)('*')
+      PsiWhiteSpace(' ')
+      PsiElement(MUL)('*')

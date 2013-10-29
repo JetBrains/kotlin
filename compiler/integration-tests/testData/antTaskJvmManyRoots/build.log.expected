@@ -1,4 +1,4 @@
-OUT Buildfile: build.xml
+OUT Buildfile: [TestData]/build.xml
 OUT 
 OUT build:
 OUT   [kotlinc] Compiling [[[TestData]/root1, [TestData]/root2]] => [[Temp]/hello.jar]

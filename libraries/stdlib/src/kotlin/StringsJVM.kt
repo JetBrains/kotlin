@@ -333,6 +333,22 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
 }
 
 /**
+ *  Returns a new List containing the results of applying the given *transform* function to each character in this string
+ *
+ */
+public inline fun <R> String.map(transform: (Char) -> R): List<R> = mapTo(ArrayList<R>(), transform)
+
+/**
+ * Transforms each character of this string with the given *transform* function and
+ * adds each return value to the given *result* collection
+ *
+ */
+public inline fun <R, C: MutableCollection<in R>> String.mapTo(result: C, transform: (Char) -> R): C {
+    for (c in this) result.add(transform(c))
+    return result
+}
+
+/**
  * Returns the result of transforming each character to one or more values which are concatenated together into a single list
  *
  * @includeFunctionBody ../../test/StringTest.kt flatMap

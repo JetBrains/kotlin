@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
@@ -41,7 +41,7 @@ public class InjectorForTests {
     private final ExpressionTypingServices expressionTypingServices;
     private final TypeResolver typeResolver;
     private final CallResolver callResolver;
-    private final CompositeExtension compositeExtension;
+    private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
@@ -61,7 +61,7 @@ public class InjectorForTests {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.typeResolver = new TypeResolver();
         this.callResolver = new CallResolver();
-        this.compositeExtension = new CompositeExtension();
+        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.project = project;
@@ -82,6 +82,7 @@ public class InjectorForTests {
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        this.expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
         this.expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
@@ -93,7 +94,6 @@ public class InjectorForTests {
         this.callResolver.setArgumentTypeResolver(argumentTypeResolver);
         this.callResolver.setCandidateResolver(candidateResolver);
         this.callResolver.setExpressionTypingServices(expressionTypingServices);
-        this.callResolver.setExtension(compositeExtension);
         this.callResolver.setTypeResolver(typeResolver);
 
         annotationResolver.setCallResolver(callResolver);

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -39,11 +40,12 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
-            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
+            @NotNull CallResolverExtension callResolverExtension
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition,
-                resolutionResultsCache, labelResolver, dataFlowInfoForArguments);
+                resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension);
     }
 
     @NotNull
@@ -53,7 +55,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     ) {
         return create(
                 context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
-                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, dataFlowInfoForArguments);
+                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, dataFlowInfoForArguments, context.callResolverExtension);
     }
 
     @NotNull
@@ -67,10 +69,11 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             BindingTrace trace, JetScope scope, Call call, JetType expectedType,
             DataFlowInfo dataFlowInfo, ContextDependency contextDependency, CheckValueArgumentsMode checkArguments,
             ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache,
-            LabelResolver labelResolver, MutableDataFlowInfoForArguments dataFlowInfoForArguments
+            LabelResolver labelResolver, MutableDataFlowInfoForArguments dataFlowInfoForArguments,
+            CallResolverExtension callResolverExtension
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
-              labelResolver, dataFlowInfoForArguments);
+              labelResolver, dataFlowInfoForArguments, callResolverExtension);
     }
 
     @Override
@@ -85,7 +88,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull LabelResolver labelResolver
     ) {
         return create(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition,
-                      resolutionResultsCache, labelResolver, dataFlowInfoForArguments);
+                      resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension);
     }
 
     @Override

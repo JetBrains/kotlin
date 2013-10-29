@@ -1,2 +1,2 @@
-for (n : Node? in list)
+for (n in list)
 i++

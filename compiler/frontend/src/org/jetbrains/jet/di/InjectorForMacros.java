@@ -17,7 +17,7 @@
 package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -37,7 +37,7 @@ import javax.annotation.PreDestroy;
 public class InjectorForMacros {
     
     private final ExpressionTypingServices expressionTypingServices;
-    private final CompositeExtension compositeExtension;
+    private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
@@ -56,7 +56,7 @@ public class InjectorForMacros {
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.expressionTypingServices = new ExpressionTypingServices();
-        this.compositeExtension = new CompositeExtension();
+        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
@@ -74,6 +74,7 @@ public class InjectorForMacros {
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        this.expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
         this.expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
@@ -84,7 +85,6 @@ public class InjectorForMacros {
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setExtension(compositeExtension);
         callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);

@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve.calls.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -16,9 +17,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver
+            @NotNull LabelResolver labelResolver,
+            @NotNull CallResolverExtension callResolverExtension
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver,
+              callResolverExtension);
     }
 
     @Override
@@ -33,7 +36,8 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull LabelResolver labelResolver
     ) {
         return new SimpleResolutionContext(
-                trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver);
+                trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver,
+                callResolverExtension);
     }
 
     @Override

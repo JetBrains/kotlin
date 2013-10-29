@@ -27,6 +27,7 @@ import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
@@ -116,7 +117,8 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         OutputItemsCollectorImpl outputItemCollector = new OutputItemsCollectorImpl();
 
         JpsProject project = representativeTarget.getModule().getProject();
-        CommonCompilerArguments commonSettings = JpsKotlinCompilerSettings.getCommonSettings(project);
+        CommonCompilerArguments commonArguments = JpsKotlinCompilerSettings.getCommonCompilerArguments(project);
+        CompilerSettings compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project);
 
         if (JpsUtils.isJsKotlinModule(representativeTarget)) {
             if (chunk.getModules().size() > 1) {
@@ -138,10 +140,11 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             }
 
             File outputFile = new File(outputDir, representativeTarget.getModule().getName() + ".js");
-            Set<String> libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget);
-            K2JSCompilerArguments k2JsSettings = JpsKotlinCompilerSettings.getK2JsSettings(project);
+            List<String> libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget);
+            K2JSCompilerArguments k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project);
 
-            runK2JsCompiler(commonSettings, k2JsSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile);
+            runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment,
+                            outputItemCollector, sourceFiles, libraryFiles, outputFile);
         }
         else {
             if (chunk.getModules().size() > 1) {
@@ -158,9 +161,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 return ExitCode.NOTHING_DONE;
             }
 
-            K2JVMCompilerArguments k2JvmSettings = JpsKotlinCompilerSettings.getK2JvmSettings(project);
+            K2JVMCompilerArguments k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(project);
 
-            runK2JvmCompiler(commonSettings, k2JvmSettings, messageCollector, environment, moduleFile, outputItemCollector);
+            runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment,
+                             moduleFile, outputItemCollector);
         }
 
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below

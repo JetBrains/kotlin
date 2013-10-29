@@ -36,8 +36,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 import org.jetbrains.k2js.analyze.JsConfiguration;
@@ -125,21 +125,20 @@ public class ImportInsertHelper {
         writeImportToFile(importPath, file);
     }
 
-    public static void writeImportToFile(ImportPath importPath, JetFile file) {
-        JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
-        List<JetImportDirective> importDirectives = file.getImportDirectives();
-
-        if (!importDirectives.isEmpty()) {
-            JetImportDirective lastDirective = importDirectives.get(importDirectives.size() - 1);
-            lastDirective.getParent().addAfter(newDirective, lastDirective);
+    public static void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        JetImportList importList = file.getImportList();
+        if (importList != null) {
+            JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
+            importList.add(newDirective);
         }
         else {
+            JetImportList newDirective = JetPsiFactory.createImportDirectiveWithImportList(file.getProject(), importPath);
             JetNamespaceHeader header = file.getNamespaceHeader();
             if (header == null) {
                 throw new IllegalStateException("Scripts are not supported: " + file.getName());
             }
 
-            header.getParent().addAfter(newDirective, file.getNamespaceHeader());
+            header.getParent().addAfter(newDirective, header);
         }
     }
 
@@ -165,7 +164,7 @@ public class ImportInsertHelper {
 
         if (isImportedWithKotlinDefault(importPath)) return true;
 
-        if (KotlinFrameworkDetector.isJsKotlinModule(jetFile)) {
+        if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
             return isImportedWithJsDefault(importPath);
         }
         else {

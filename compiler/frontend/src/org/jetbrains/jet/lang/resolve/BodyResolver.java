@@ -73,6 +73,8 @@ public class BodyResolver {
     private AnnotationResolver annotationResolver;
     @NotNull
     private DelegatedPropertyResolver delegatedPropertyResolver;
+    @NotNull
+    private FunctionAnalyzerExtension functionAnalyzerExtension;
 
     @Inject
     public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
@@ -124,6 +126,11 @@ public class BodyResolver {
         this.delegatedPropertyResolver = delegatedPropertyResolver;
     }
 
+    @Inject
+    public void setFunctionAnalyzerExtension(@NotNull FunctionAnalyzerExtension functionAnalyzerExtension) {
+        this.functionAnalyzerExtension = functionAnalyzerExtension;
+    }
+
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext bodiesResolveContext) {
         // Initialize context
         context = bodiesResolveContext;
@@ -148,6 +155,7 @@ public class BodyResolver {
         resolveBehaviorDeclarationBodies(context);
         controlFlowAnalyzer.process(context);
         declarationsChecker.process(context);
+        functionAnalyzerExtension.process(context);
     }
 
     private void resolveDelegationSpecifierLists() {
@@ -209,7 +217,7 @@ public class BodyResolver {
                     if (type != null && supertype != null) {
                         SimpleResolutionContext simpleResolutionContext = new SimpleResolutionContext(
                                 trace, scope, supertype, context.getOuterDataFlowInfo(), ExpressionPosition.FREE, ContextDependency.INDEPENDENT,
-                                ResolutionResultsCacheImpl.create(), LabelResolver.create());
+                                ResolutionResultsCacheImpl.create(), LabelResolver.create(), expressionTypingServices.createExtension(scope));
                         DataFlowUtils.checkType(type, delegateExpression, simpleResolutionContext);
                     }
                 }

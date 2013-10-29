@@ -20,13 +20,14 @@ import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.util.TextOutputImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.js.compiler.JsSourceGenerationVisitor;
-import org.jetbrains.js.compiler.SourceMapBuilder;
 import org.jetbrains.js.compiler.sourcemap.SourceMap3Builder;
+import org.jetbrains.js.compiler.sourcemap.SourceMapBuilder;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
@@ -48,16 +49,35 @@ public final class K2JSTranslator {
     public static final String FLUSH_SYSTEM_OUT = "Kotlin.System.flush();\n";
     public static final String GET_SYSTEM_OUT = "Kotlin.System.output();\n";
 
-    public static void translateWithMainCallParametersAndSaveToFile(@NotNull MainCallParameters mainCall,
+    public static void translateWithMainCallParametersAndSaveToFile(
+            @NotNull MainCallParameters mainCall,
             @NotNull List<JetFile> files,
             @NotNull String outputPath,
-            @NotNull Config config) throws TranslationException, IOException {
+            @Nullable File outputPrefixFile,
+            @Nullable File outputPostfixFile,
+            @NotNull Config config
+    ) throws TranslationException, IOException {
         K2JSTranslator translator = new K2JSTranslator(config);
         File outFile = new File(outputPath);
         TextOutputImpl output = new TextOutputImpl();
         SourceMapBuilder sourceMapBuilder = config.isSourcemap() ? new SourceMap3Builder(outFile, output, new SourceMapBuilderConsumer()) : null;
         String programCode = translator.generateProgramCode(files, mainCall, output, sourceMapBuilder);
-        FileUtil.writeToFile(outFile, programCode);
+
+        if (outputPrefixFile != null) {
+            String prefix = FileUtil.loadFile(outputPrefixFile);
+            FileUtil.writeToFile(outFile, prefix);
+            if (sourceMapBuilder != null) {
+                sourceMapBuilder.skipLinesInBegin(StringUtil.getLineBreakCount(prefix));
+            }
+        }
+
+        FileUtil.writeToFile(outFile, programCode.getBytes(), outputPrefixFile != null);
+
+        if (outputPostfixFile != null) {
+            byte[] postfix = FileUtil.loadFileBytes(outputPostfixFile);
+            FileUtil.writeToFile(outFile, postfix, true);
+        }
+
         if (sourceMapBuilder != null) {
             FileUtil.writeToFile(sourceMapBuilder.getOutFile(), sourceMapBuilder.build());
         }

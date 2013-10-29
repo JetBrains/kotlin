@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ClientPropertiesManager">
+    <properties class="javax.swing.JPanel">
+      <property name="BorderFactoryClass" class="java.lang.String" />
+    </properties>
+  </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>

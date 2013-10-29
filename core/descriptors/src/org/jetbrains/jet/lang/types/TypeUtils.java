@@ -118,9 +118,6 @@ public class TypeUtils {
         if (type.isNullable() == nullable) {
             return type;
         }
-        if (type.isError()) {
-            return type;
-        }
 
         // Wrapping serves two purposes here
         // 1. It's requires less memory than copying with a changed nullability flag: a copy has many fields, while a wrapper has only one

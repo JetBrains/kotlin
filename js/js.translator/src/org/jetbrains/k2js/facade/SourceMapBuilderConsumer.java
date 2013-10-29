@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.PairConsumer;
-import org.jetbrains.js.compiler.SourceMapBuilder;
+import org.jetbrains.js.compiler.sourcemap.SourceMapBuilder;
 
 class SourceMapBuilderConsumer implements PairConsumer<SourceMapBuilder, Object> {
     @Override

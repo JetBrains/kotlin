@@ -31,6 +31,7 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetImportList;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
@@ -46,14 +47,16 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
         List<FoldingDescriptor> descriptors = new ArrayList<FoldingDescriptor>();
         JetFile file = (JetFile) root;
 
-        List<JetImportDirective> importList = file.getImportDirectives();
-        if (importList != null && importList.size() > 1) {
-            JetImportDirective firstImport = importList.get(0);
-            PsiElement importKeyword = firstImport.getFirstChild();
+        List<JetImportDirective> imports = file.getImportDirectives();
+        if (imports.size() > 1) {
+            PsiElement importKeyword = imports.get(0).getFirstChild();
             int startOffset = importKeyword.getTextRange().getEndOffset() + 1;
-            int endOffset = importList.get(importList.size() - 1).getTextRange().getEndOffset();
+
+            JetImportList importList = file.getImportList();
+            int endOffset = importList.getTextRange().getEndOffset();
+
             TextRange range = new TextRange(startOffset, endOffset);
-            descriptors.add(new FoldingDescriptor(firstImport, range));
+            descriptors.add(new FoldingDescriptor(importList, range));
         }
 
         appendDescriptors(root.getNode(), document, descriptors);
@@ -86,7 +89,7 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
         if (node.getElementType() == KDocTokens.KDOC) {
             return "/**...*/";
         }
-        if (node.getPsi() instanceof JetImportDirective) {
+        if (node.getPsi() instanceof JetImportList) {
             return "...";
         }
         return "{...}";
@@ -96,7 +99,7 @@ public class JetFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     public boolean isCollapsedByDefault(@NotNull ASTNode astNode) {
         JavaCodeFoldingSettings settings = JavaCodeFoldingSettings.getInstance();
 
-        if (astNode.getPsi() instanceof JetImportDirective) {
+        if (astNode.getPsi() instanceof JetImportList) {
             return settings.isCollapseImports();
         }
 

@@ -3,7 +3,6 @@ Comment 1
 */
 package sometest
 
-
 import java.io as JavaIO
 import java.text.Annotation as TextAnnotation
 import java.util.ArrayList

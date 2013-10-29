@@ -52,7 +52,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .after(NAMESPACE_HEADER).blankLines(1)
 
                 .between(IMPORT_DIRECTIVE, IMPORT_DIRECTIVE).lineBreakInCode()
-                .after(IMPORT_DIRECTIVE).blankLines(1)
+                .after(IMPORT_LIST).blankLines(1)
 
                 .before(DOC_COMMENT).lineBreakInCode()
                 .before(FUN).lineBreakInCode()
@@ -87,6 +87,9 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .beforeInside(RPAR, VALUE_ARGUMENT_LIST).spaces(0)
                 .afterInside(LT, TYPE_ARGUMENT_LIST).spaces(0)
                 .beforeInside(GT, TYPE_ARGUMENT_LIST).spaces(0)
+
+                .betweenInside(FOR_KEYWORD, LPAR, FOR).spacing(1, 1, 0, false, 0)
+                .betweenInside(IF_KEYWORD, LPAR, IF).spacing(1, 1, 0, false, 0)
 
                 // TODO: Ask for better API
                 // Type of the declaration colon

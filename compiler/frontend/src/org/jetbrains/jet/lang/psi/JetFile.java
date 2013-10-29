@@ -19,21 +19,9 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.FileASTNode;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileWithId;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLock;
-import com.intellij.psi.stubs.ObjectStubTree;
-import com.intellij.psi.stubs.StubBase;
-import com.intellij.psi.stubs.StubTree;
-import com.intellij.psi.stubs.StubTreeLoader;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +30,7 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLanguage;
 
+import java.util.Collections;
 import java.util.List;
 
 public class JetFile extends PsiFileBase implements JetDeclarationContainer, JetElement {
@@ -79,8 +68,15 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
     }
 
+    @Nullable
+    public JetImportList getImportList() {
+        return findChildByClass(JetImportList.class);
+    }
+
+    @NotNull
     public List<JetImportDirective> getImportDirectives() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetImportDirective.class);
+        JetImportList importList = getImportList();
+        return importList != null ? importList.getImports() : Collections.<JetImportDirective>emptyList();
     }
 
     @Nullable

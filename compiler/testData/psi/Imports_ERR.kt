@@ -1,21 +1,34 @@
 package foo.bar.goo
 
-import package ;
-import package.*
-import package. ;
+import
+
+import foo.
+import foo.*
+import foo.;
+import foo.*;
 
 import foo as
-import foo.
+import foo. as
+import foo.* as
+import foo. as ;
+import foo.* as;
+
+import foo as .
+import foo as ;
+import foo as *
+import foo as sdfsdf
+import foo.* as ;
+import foo.* as bar
 import foo.bar.
 import foo. as bar
+import foo. as bar ;
+
 import foo.bar.* as bar
 import foo.bar.* as
-
-import foo as ;
-import foo. ;
 import foo.bar. ;
-import foo. as bar ;
 import foo.bar.* as bar ;
 import foo.bar.* as ;
 
-class Foo {}
+fun foo() {
+
+}

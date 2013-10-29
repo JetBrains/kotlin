@@ -52,7 +52,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
@@ -251,7 +251,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 if (constant != null) {
                     return StackValue.constant(constant.getValue(), expressionType(expression));
                 }
-                ClassDescriptorFromJvmBytecode samInterface = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
+                JavaClassDescriptor samInterface = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
                 if (samInterface != null) {
                     return genSamInterfaceValue(expression, samInterface, visitor);
                 }
@@ -1824,7 +1824,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
             skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || methodKind == MethodKind.SYNTHETIC_ACCESSOR || methodKind == MethodKind.INITIALIZER;
             if (!skipPropertyAccessors) {
-                propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor);
+                propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor, true, delegateType);
             }
         }
 
@@ -1939,7 +1939,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue invokeSamConstructor(
             JetCallExpression expression,
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
-            ClassDescriptorFromJvmBytecode samInterface
+            JavaClassDescriptor samInterface
     ) {
         ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
         if (!(argument instanceof ExpressionValueArgument)) {
@@ -1956,7 +1956,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue genSamInterfaceValue(
             @NotNull JetExpression expression,
-            @NotNull ClassDescriptorFromJvmBytecode samInterface,
+            @NotNull JavaClassDescriptor samInterface,
             @NotNull JetVisitor<StackValue, StackValue> visitor
     ) {
         if (expression instanceof JetFunctionLiteralExpression) {
@@ -3038,10 +3038,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue invokeOperation(JetOperationExpression expression, FunctionDescriptor op, CallableMethod callable) {
+        //TODO: similar logic exists in visitSimpleNameExpression - extract common logic
         int functionLocalIndex = lookupLocalIndex(op);
         if (functionLocalIndex >= 0) {
             stackValueForLocal(op, functionLocalIndex).put(callable.getOwner(), v);
+        } else {
+            StackValue stackValue = context.lookupInContext(op, StackValue.local(0, OBJECT_TYPE), state, true);
+            if (stackValue != null) {
+                stackValue.put(callable.getOwner(), v);
+            }
         }
+
         ResolvedCall<? extends CallableDescriptor> resolvedCall =
                 bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
         assert resolvedCall != null;

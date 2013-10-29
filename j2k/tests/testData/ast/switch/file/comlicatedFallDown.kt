@@ -85,4 +85,4 @@ for (i in 1..12) test(i)
 }
 }
 }
-fun main(args : Array<String?>?) = SwitchDemo.main(args)
+fun main(args : Array<String>) = SwitchDemo.main(args as Array<String?>?)

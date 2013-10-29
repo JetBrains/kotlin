@@ -31,7 +31,7 @@ import java.util.Collection;
 /**
  * @see org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor
  */
-public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
+public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite implements JavaClassDescriptor {
     private JetType functionTypeForSamInterface;
     private JavaClassNonStaticMembersScope scopeForConstructorResolve;
     private ConstructorDescriptor primaryConstructor;
@@ -77,6 +77,7 @@ public class ClassDescriptorFromJvmBytecode extends MutableClassDescriptorLite {
         this.scopeForConstructorResolve = scopeForConstructorResolve;
     }
 
+    @Override
     @Nullable
     public JetType getFunctionTypeForSamInterface() {
         return functionTypeForSamInterface;

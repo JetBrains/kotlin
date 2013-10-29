@@ -189,8 +189,11 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             @NotNull MessageRenderer messageRenderer
     ) {
         if (arguments.printArgs) {
-            String freeArgs = StringUtil.join(arguments.freeArgs, "");
-            String argumentsAsString = ArgumentUtils.convertArgumentsToString(arguments, createArguments());
+            String freeArgs = !arguments.freeArgs.isEmpty() ? " " + StringUtil.join(arguments.freeArgs, " ") : "";
+
+            List<String> argumentsAsList = ArgumentUtils.convertArgumentsToStringList(arguments, createArguments());
+            String argumentsAsString = StringUtil.join(argumentsAsList, " ");
+
             String printArgsMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
                                                              "Invoking compiler " + getClass().getName() +
                                                              " with arguments " + argumentsAsString + freeArgs,

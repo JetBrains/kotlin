@@ -93,19 +93,41 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             reportCompiledSourcesList(messageCollector, environmentForJS);
         }
 
-        Config config = getConfig(arguments, project);
-        if (analyzeAndReportErrors(messageCollector, environmentForJS.getSourceFiles(), config)) {
-            return COMPILATION_ERROR;
-        }
-
         String outputFile = arguments.outputFile;
         if (outputFile == null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify output file via -output", CompilerMessageLocation.NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
         }
 
+        Config config = getConfig(arguments, project);
+        if (analyzeAndReportErrors(messageCollector, environmentForJS.getSourceFiles(), config)) {
+            return COMPILATION_ERROR;
+        }
+
+        File outputPrefixFile = null;
+        if (arguments.outputPrefix != null) {
+            outputPrefixFile = new File(arguments.outputPrefix);
+            if (!outputPrefixFile.exists()) {
+                messageCollector.report(CompilerMessageSeverity.ERROR,
+                                        "Output prefix file '" + arguments.outputPrefix + "' not found",
+                                        CompilerMessageLocation.NO_LOCATION);
+                return ExitCode.COMPILATION_ERROR;
+            }
+        }
+
+        File outputPostfixFile = null;
+        if (arguments.outputPostfix != null) {
+            outputPostfixFile = new File(arguments.outputPostfix);
+            if (!outputPostfixFile.exists()) {
+                messageCollector.report(CompilerMessageSeverity.ERROR,
+                                        "Output postfix file '" + arguments.outputPostfix + "' not found",
+                                        CompilerMessageLocation.NO_LOCATION);
+                return ExitCode.COMPILATION_ERROR;
+            }
+        }
+
         MainCallParameters mainCallParameters = createMainCallParameters(arguments.main);
-        return translateAndGenerateOutputFile(mainCallParameters, environmentForJS, config, outputFile);
+        return translateAndGenerateOutputFile(mainCallParameters, environmentForJS, config, outputFile, outputPrefixFile, outputPostfixFile);
     }
 
     private static void reportCompiledSourcesList(@NotNull MessageCollector messageCollector,
@@ -131,10 +153,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull MainCallParameters mainCall,
             @NotNull JetCoreEnvironment environmentForJS,
             @NotNull Config config,
-            @NotNull String outputFile
+            @NotNull String outputFile,
+            @Nullable File outputPrefix,
+            @Nullable File outputPostfix
     ) {
         try {
-            K2JSTranslator.translateWithMainCallParametersAndSaveToFile(mainCall, environmentForJS.getSourceFiles(), outputFile, config);
+            K2JSTranslator.translateWithMainCallParametersAndSaveToFile(mainCall, environmentForJS.getSourceFiles(),
+                                                                        outputFile, outputPrefix, outputPostfix, config);
         }
         catch (Exception e) {
             throw new RuntimeException(e);

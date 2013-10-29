@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 
 public class TargetPlatformDetector {
     public static final TargetPlatformDetector INSTANCE = new TargetPlatformDetector();
@@ -48,7 +47,7 @@ public class TargetPlatformDetector {
 
     @NotNull
     public static TargetPlatform getPlatform(@NotNull Module module) {
-        if (KotlinFrameworkDetector.isJsKotlinModule(module)) {
+        if (ProjectStructureUtil.isJsKotlinModule(module)) {
             return TargetPlatform.JS;
         }
         return TargetPlatform.JVM;

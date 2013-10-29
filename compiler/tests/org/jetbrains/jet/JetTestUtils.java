@@ -23,12 +23,14 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
+import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NonNls;
@@ -229,6 +231,7 @@ public class JetTestUtils {
         return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
     }
 
+    @NotNull
     public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull ConfigurationKind configurationKind) {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
     }
@@ -380,12 +383,15 @@ public class JetTestUtils {
                 FileUtil.writeToFile(expectedFile, actual);
                 Assert.fail("Expected data file did not exist. Generating: " + expectedFile);
             }
-            String expected = FileUtil.loadFile(expectedFile, true);
+            String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
 
             // compare with hard copy: make sure nothing is lost in output
-            Assert.assertEquals("Expected and actual namespaces differ from " + expectedFile.getName(),
-                                StringUtil.convertLineSeparators(expected),
-                                StringUtil.convertLineSeparators(actual));
+            String expectedText = StringUtil.convertLineSeparators(expected.trim());
+            String actualText = StringUtil.convertLineSeparators(actual.trim());
+            if (!Comparing.equal(expectedText, actualText)) {
+                throw new FileComparisonFailure("Expected and actual namespaces differ from " + expectedFile.getName(),
+                                                expected, actual, expectedFile.getAbsolutePath());
+            }
         }
         catch (IOException e) {
             throw new RuntimeException(e);

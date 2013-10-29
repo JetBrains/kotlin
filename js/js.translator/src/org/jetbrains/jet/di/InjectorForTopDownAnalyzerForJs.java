@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
 import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
+import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -59,7 +60,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final ControlFlowAnalyzer controlFlowAnalyzer;
     private final DeclarationsChecker declarationsChecker;
     private final DescriptorResolver descriptorResolver;
-    private final CompositeExtension compositeExtension;
+    private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
@@ -83,6 +84,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final OverrideResolver overrideResolver;
     private final TypeHierarchyResolver typeHierarchyResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
+    private final FunctionAnalyzerExtension functionAnalyzerExtension;
     private final ScriptBodyResolver scriptBodyResolver;
     
     public InjectorForTopDownAnalyzerForJs(
@@ -97,7 +99,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
         this.descriptorResolver = new DescriptorResolver();
-        this.compositeExtension = new CompositeExtension();
+        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
@@ -121,6 +123,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
+        this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.scriptBodyResolver = new ScriptBodyResolver();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
@@ -143,6 +146,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.bodyResolver.setDeclarationsChecker(declarationsChecker);
         this.bodyResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
+        this.bodyResolver.setFunctionAnalyzerExtension(functionAnalyzerExtension);
         this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.bodyResolver.setTrace(bindingTrace);
@@ -173,7 +177,6 @@ public class InjectorForTopDownAnalyzerForJs {
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setExtension(compositeExtension);
         callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
@@ -183,6 +186,7 @@ public class InjectorForTopDownAnalyzerForJs {
         expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
         expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
@@ -224,6 +228,8 @@ public class InjectorForTopDownAnalyzerForJs {
         typeHierarchyResolver.setTrace(bindingTrace);
 
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        functionAnalyzerExtension.setTrace(bindingTrace);
 
         scriptBodyResolver.setContext(topDownAnalysisContext);
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);

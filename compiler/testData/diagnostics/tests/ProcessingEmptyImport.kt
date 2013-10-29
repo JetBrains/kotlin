@@ -1,3 +1,3 @@
-import
+import<!SYNTAX!><!>
 
-<!SYNTAX!><!>fun firstFun() {}
+fun firstFun() {}

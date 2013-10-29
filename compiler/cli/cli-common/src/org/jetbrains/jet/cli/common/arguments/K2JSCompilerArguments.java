@@ -45,4 +45,10 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "main", description = "Whether a main function should be called; either '" + CALL +
                                             "' or '" + NO_CALL + "', default '" + CALL + "' (main function will be auto detected)")
     public String main;
+
+    @Argument(value = "outputPrefix", description = "Path to file which will be added to the begin of output file")
+    public String outputPrefix;
+
+    @Argument(value = "outputPostfix", description = "Path to file which will be added to the end of output file")
+    public String outputPostfix;
 }

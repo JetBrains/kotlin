@@ -30,10 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ConfigureKotlinInProjectUtils {
     public static boolean isProjectConfigured(@NotNull Project project) {
@@ -65,6 +62,10 @@ public class ConfigureKotlinInProjectUtils {
     }
 
     public static Collection<Module> getModulesWithKotlinFiles(@NotNull Project project) {
+        if (project.isDisposed()) {
+            return Collections.emptyList();
+        }
+
         List<Module> modulesWithKotlin = Lists.newArrayList();
         for (Module module : ModuleManager.getInstance(project).getModules()) {
             if (hasKotlinFilesInSources(module) || hasKotlinFilesOnlyInTests(module)) {
@@ -87,6 +88,7 @@ public class ConfigureKotlinInProjectUtils {
     }
 
     private static void showConfigureKotlinNotification(@NotNull Project project) {
+        //noinspection StaticFieldReferencedViaSubclass
         ConfigureKotlinNotificationManager.instance$.notify(project);
     }
 

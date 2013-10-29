@@ -334,6 +334,11 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getHashable() {
+        return getBuiltInClassByName("Hashable");
+    }
+
+    @NotNull
     public ClassDescriptor getUnit() {
         return getBuiltInClassByName("Unit");
     }

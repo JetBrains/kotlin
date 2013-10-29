@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jps.model.JpsElementChildRole;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.ex.JpsElementBase;
@@ -29,19 +30,22 @@ public class JpsKotlinCompilerSettings extends JpsElementBase<JpsKotlinCompilerS
     static final JpsElementChildRole<JpsKotlinCompilerSettings> ROLE = JpsElementChildRoleBase.create("Kotlin Compiler Settings");
 
     @NotNull
-    public CommonCompilerArguments commonCompilerSettings = new CommonCompilerArguments.DummyImpl();
+    private CommonCompilerArguments commonCompilerArguments = new CommonCompilerArguments.DummyImpl();
     @NotNull
-    public K2JVMCompilerArguments k2JvmCompilerSettings = new K2JVMCompilerArguments();
+    private K2JVMCompilerArguments k2JvmCompilerArguments = new K2JVMCompilerArguments();
     @NotNull
-    public K2JSCompilerArguments k2JsCompilerSettings = new K2JSCompilerArguments();
+    private K2JSCompilerArguments k2JsCompilerArguments = new K2JSCompilerArguments();
+    @NotNull
+    private CompilerSettings compilerSettings = new CompilerSettings();
 
     @NotNull
     @Override
     public JpsKotlinCompilerSettings createCopy() {
         JpsKotlinCompilerSettings copy = new JpsKotlinCompilerSettings();
-        copy.commonCompilerSettings = this.commonCompilerSettings;
-        copy.k2JvmCompilerSettings = this.k2JvmCompilerSettings;
-        copy.k2JsCompilerSettings = this.k2JsCompilerSettings;
+        copy.commonCompilerArguments = this.commonCompilerArguments;
+        copy.k2JvmCompilerArguments = this.k2JvmCompilerArguments;
+        copy.k2JsCompilerArguments = this.k2JsCompilerArguments;
+        copy.compilerSettings = this.compilerSettings;
         return copy;
     }
 
@@ -70,29 +74,38 @@ public class JpsKotlinCompilerSettings extends JpsElementBase<JpsKotlinCompilerS
     }
 
     @NotNull
-    public static CommonCompilerArguments getCommonSettings(@NotNull JpsProject project) {
-        return getSettings(project).commonCompilerSettings;
+    public static CommonCompilerArguments getCommonCompilerArguments(@NotNull JpsProject project) {
+        return getSettings(project).commonCompilerArguments;
     }
 
-    public static void setCommonSettings(@NotNull JpsProject project, @NotNull CommonCompilerArguments commonCompilerSettings) {
-        getOrCreateSettings(project).commonCompilerSettings = commonCompilerSettings;
-    }
-
-    @NotNull
-    public static K2JVMCompilerArguments getK2JvmSettings(@NotNull JpsProject project) {
-        return getSettings(project).k2JvmCompilerSettings;
-    }
-
-    public static void setK2JvmSettings(@NotNull JpsProject project, @NotNull K2JVMCompilerArguments k2JvmCompilerSettings) {
-        getOrCreateSettings(project).k2JvmCompilerSettings = k2JvmCompilerSettings;
+    public static void setCommonCompilerArguments(@NotNull JpsProject project, @NotNull CommonCompilerArguments commonCompilerSettings) {
+        getOrCreateSettings(project).commonCompilerArguments = commonCompilerSettings;
     }
 
     @NotNull
-    public static K2JSCompilerArguments getK2JsSettings(@NotNull JpsProject project) {
-        return getSettings(project).k2JsCompilerSettings;
+    public static K2JVMCompilerArguments getK2JvmCompilerArguments(@NotNull JpsProject project) {
+        return getSettings(project).k2JvmCompilerArguments;
     }
 
-    public static void setK2JsSettings(@NotNull JpsProject project, @NotNull K2JSCompilerArguments k2JsCompilerSettings) {
-        getOrCreateSettings(project).k2JsCompilerSettings = k2JsCompilerSettings;
+    public static void setK2JvmCompilerArguments(@NotNull JpsProject project, @NotNull K2JVMCompilerArguments k2JvmCompilerArguments) {
+        getOrCreateSettings(project).k2JvmCompilerArguments = k2JvmCompilerArguments;
+    }
+
+    @NotNull
+    public static K2JSCompilerArguments getK2JsCompilerArguments(@NotNull JpsProject project) {
+        return getSettings(project).k2JsCompilerArguments;
+    }
+
+    public static void setK2JsCompilerArguments(@NotNull JpsProject project, @NotNull K2JSCompilerArguments k2JsCompilerArguments) {
+        getOrCreateSettings(project).k2JsCompilerArguments = k2JsCompilerArguments;
+    }
+
+    @NotNull
+    public static CompilerSettings getCompilerSettings(@NotNull JpsProject project) {
+        return getSettings(project).compilerSettings;
+    }
+
+    public static void setCompilerSettings(@NotNull JpsProject project, @NotNull CompilerSettings compilerSettings) {
+        getOrCreateSettings(project).compilerSettings = compilerSettings;
     }
 }

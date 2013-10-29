@@ -27,10 +27,9 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.Tmpdir;
 import org.junit.ComparisonFailure;
 import org.junit.Rule;
@@ -123,9 +122,8 @@ public abstract class KotlinIntegrationTestBase {
             fail("No .expected file " + expectedFile);
         }
         else {
-            String goldContent = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
             try {
-                assertEquals(goldContent, normalizedContent);
+                JetTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
                 actualFile.delete();
             }
             catch (ComparisonFailure e) {

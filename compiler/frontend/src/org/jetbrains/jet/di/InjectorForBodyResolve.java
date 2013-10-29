@@ -17,8 +17,9 @@
 package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.resolve.BodyResolver;
-import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -45,8 +46,9 @@ import javax.annotation.PreDestroy;
 public class InjectorForBodyResolve {
     
     private final BodyResolver bodyResolver;
-    private final CompositeExtension compositeExtension;
+    private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final FunctionAnalyzerExtension functionAnalyzerExtension;
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
@@ -75,8 +77,9 @@ public class InjectorForBodyResolve {
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.bodyResolver = new BodyResolver();
-        this.compositeExtension = new CompositeExtension();
+        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
@@ -104,9 +107,12 @@ public class InjectorForBodyResolve {
         this.bodyResolver.setDeclarationsChecker(declarationsChecker);
         this.bodyResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
+        this.bodyResolver.setFunctionAnalyzerExtension(functionAnalyzerExtension);
         this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.bodyResolver.setTrace(bindingTrace);
+
+        functionAnalyzerExtension.setTrace(bindingTrace);
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setExpressionTypingServices(expressionTypingServices);
@@ -114,7 +120,6 @@ public class InjectorForBodyResolve {
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setExtension(compositeExtension);
         callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
@@ -124,6 +129,7 @@ public class InjectorForBodyResolve {
         expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
         expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
