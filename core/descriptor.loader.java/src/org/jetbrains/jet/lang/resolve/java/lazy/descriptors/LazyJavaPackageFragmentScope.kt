@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.utils.flatten
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver
+import org.jetbrains.kotlin.util.inn
 
 public abstract class LazyJavaPackageFragmentScope(
         c: LazyJavaResolverContext,
@@ -27,6 +28,16 @@ public abstract class LazyJavaPackageFragmentScope(
             c.javaClassResolver.resolveClassByFqName(fqName)
         else
             LazyJavaClassDescriptor(c.withTypes(TypeParameterResolver.EMPTY), packageFragment, fqName, javaClass)
+    }
+
+    protected fun computeMemberIndexForSamConstructors(delegate: MemberIndex): MemberIndex = object : MemberIndex by delegate {
+        override fun getAllMetodNames(): Collection<Name> {
+            val jClass = c.finder.findClass(fqName)
+            return delegate.getAllMetodNames() +
+                   // For SAM-constructors
+                   getAllClassNames() +
+                   jClass.inn({ jC -> jC.getInnerClasses().map { c -> c.getName() }}, listOf())
+        }
     }
 
     override fun addExtraDescriptors(result: MutableCollection<in DeclarationDescriptor>) {
@@ -48,12 +59,10 @@ public class LazyPackageFragmentScopeForJavaPackage(
         packageFragment: LazyJavaPackageFragment
 ) : LazyJavaPackageFragmentScope(c, packageFragment) {
 
-    override fun computeMemberIndex(): MemberIndex = EMPTY_MEMBER_INDEX
+    override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(EMPTY_MEMBER_INDEX)
 
     override fun getAllClassNames(): Collection<Name> {
-        val javaPackage = c.finder.findPackage(fqName)
-        assert(javaPackage != null) { "Package not found:  $fqName" }
-        return javaPackage!!.getClasses().map { c -> c.getName() }
+        return jPackage.getClasses().map { c -> c.getName() }
     }
 
     override fun getAllPackageNames(): Collection<Name> =
@@ -73,7 +82,8 @@ public class LazyPackageFragmentScopeForJavaClass(
         packageFragment: LazyJavaPackageFragment
 ) : LazyJavaPackageFragmentScope(c, packageFragment) {
 
-    override fun computeMemberIndex(): MemberIndex = ClassMemberIndex(jClass, mustBeStatic = true)
+    override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(ClassMemberIndex(jClass, mustBeStatic = true))
+
     // nested classes are loaded as members of their outer classes, not packages
     override fun getAllClassNames(): Collection<Name> = listOf()
     override fun getClassifier(name: Name): ClassifierDescriptor? = null

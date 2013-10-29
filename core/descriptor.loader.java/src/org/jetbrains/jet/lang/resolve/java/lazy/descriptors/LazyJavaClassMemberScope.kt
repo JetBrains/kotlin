@@ -57,7 +57,10 @@ public class LazyJavaClassMemberScope(
         private val jClass: JavaClass
 ) : LazyJavaMemberScope(c, containingDeclaration) {
 
-    override fun computeMemberIndex(): MemberIndex = ClassMemberIndex(jClass, mustBeStatic = false)
+    override fun computeMemberIndex(): MemberIndex = object : ClassMemberIndex(jClass, mustBeStatic = false) {
+        // For SAM-constructors
+        override fun getAllMetodNames(): Collection<Name> = super.getAllMetodNames() + getAllClassNames()
+    }
 
     internal val _constructors = c.storageManager.createLazyValue {
         jClass.getConstructors().flatMap {
