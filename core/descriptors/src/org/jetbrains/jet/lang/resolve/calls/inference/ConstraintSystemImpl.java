@@ -27,7 +27,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
@@ -54,8 +53,6 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
     private final Map<TypeParameterDescriptor, TypeBoundsImpl> typeParameterBounds = Maps.newLinkedHashMap();
     private final Set<ConstraintPosition> errorConstraintPositions = Sets.newHashSet();
-    private final TypeSubstitutor resultingSubstitutor;
-    private final TypeSubstitutor currentSubstitutor;
     private boolean hasErrorInConstrainingTypes;
 
     private final ConstraintSystemStatus constraintSystemStatus = new ConstraintSystemStatus() {
@@ -125,41 +122,32 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         }
     };
 
-    public ConstraintSystemImpl() {
-        this.resultingSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjectionImpl(
-                TypeUtils.CANT_INFER_TYPE_PARAMETER));
-        this.currentSubstitutor = createTypeSubstitutorWithDefaultForUnknownTypeParameter(new TypeProjectionImpl(TypeUtils.DONT_CARE));
+    @NotNull
+    private static Map<TypeParameterDescriptor, TypeProjection> getParameterToInferredValueMap(
+            @NotNull Map<TypeParameterDescriptor, TypeBoundsImpl> typeParameterBounds,
+            @Nullable TypeProjection defaultTypeProjection
+    ) {
+        Map<TypeParameterDescriptor, TypeProjection> substitutionContext = Maps.newHashMap();
+        for (Map.Entry<TypeParameterDescriptor, TypeBoundsImpl> entry : typeParameterBounds.entrySet()) {
+            TypeParameterDescriptor typeParameter = entry.getKey();
+            TypeBounds typeBounds = entry.getValue();
+
+            TypeProjection typeProjection;
+            JetType value = typeBounds.getValue();
+            if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, TypeUtils.DONT_CARE)) {
+                typeProjection = new TypeProjectionImpl(value);
+            }
+            else {
+                typeProjection = defaultTypeProjection;
+            }
+            substitutionContext.put(typeParameter, typeProjection);
+        }
+        return substitutionContext;
     }
 
-    private TypeSubstitutor createTypeSubstitutorWithDefaultForUnknownTypeParameter(@Nullable final TypeProjection defaultTypeProjection) {
-        return TypeSubstitutor.create(new TypeSubstitution() {
-            @Override
-            public TypeProjection get(TypeConstructor key) {
-                DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();
-                if (declarationDescriptor instanceof TypeParameterDescriptor) {
-                    TypeParameterDescriptor descriptor = (TypeParameterDescriptor) declarationDescriptor;
-
-                    if (typeParameterBounds.containsKey(descriptor)) {
-                        JetType value = getTypeBounds(descriptor).getValue();
-                        if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, TypeUtils.DONT_CARE)) {
-                            return new TypeProjectionImpl(value);
-                        }
-                        return defaultTypeProjection;
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public String toString() {
-                return typeParameterBounds.toString();
-            }
-        });
+    private TypeSubstitutor createTypeSubstitutorWithDefaultForUnknownTypeParameter(@NotNull JetType defaultType) {
+        return TypeUtils.makeSubstitutorForTypeParametersMap(
+                getParameterToInferredValueMap(typeParameterBounds, new TypeProjectionImpl(defaultType)));
     }
 
     @NotNull
@@ -486,13 +474,13 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
-        return resultingSubstitutor;
+        return createTypeSubstitutorWithDefaultForUnknownTypeParameter(TypeUtils.CANT_INFER_TYPE_PARAMETER);
     }
 
     @NotNull
     @Override
     public TypeSubstitutor getCurrentSubstitutor() {
-        return currentSubstitutor;
+        return createTypeSubstitutorWithDefaultForUnknownTypeParameter(TypeUtils.DONT_CARE);
     }
 
     @NotNull
