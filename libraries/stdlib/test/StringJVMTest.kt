@@ -142,6 +142,38 @@ class StringJVMTest {
         assertEquals("abc", pair.second, "pair.second")
     }
 
+    test fun map() {
+        assertEquals(arrayListOf('a', 'b', 'c'), "abc".map({ it }))
+
+        assertEquals(arrayListOf(true, false, true), "AbC".map({ it.isUpperCase() }))
+
+        assertEquals(arrayListOf<Boolean>(), "".map({ it.isUpperCase() }))
+
+        assertEquals(arrayListOf(97, 98, 99), "abc".map({ it.toInt() }))
+    }
+
+    test fun mapTo() {
+        val result1 = arrayListOf<Char>()
+        val return1 = "abc".mapTo(result1, { it })
+        assertEquals(result1, return1)
+        assertEquals(arrayListOf('a', 'b', 'c'), result1)
+
+        val result2 = arrayListOf<Boolean>()
+        val return2 = "AbC".mapTo(result2, { it.isUpperCase() })
+        assertEquals(result2, return2)
+        assertEquals(arrayListOf(true, false, true), result2)
+
+        val result3 = arrayListOf<Boolean>()
+        val return3 = "".mapTo(result3, { it.isUpperCase() })
+        assertEquals(result3, return3)
+        assertEquals(arrayListOf<Boolean>(), result3)
+
+        val result4 = arrayListOf<Int>()
+        val return4 = "abc".mapTo(result4, { it.toInt() })
+        assertEquals(result4, return4)
+        assertEquals(arrayListOf(97, 98, 99), result4)
+    }
+
     test fun flatMap() {
         val data = "abcd"
         val result = data.flatMap { listOf(it) }
