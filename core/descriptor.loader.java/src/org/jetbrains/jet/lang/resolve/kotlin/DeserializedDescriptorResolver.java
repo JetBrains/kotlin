@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.DescriptorFinder;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
@@ -97,15 +98,22 @@ public final class DeserializedDescriptorResolver {
     @Nullable
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass);
-        return data == null ? null : new DeserializedClassDescriptor(storageManager, annotationDeserializer, javaDescriptorFinder,
-                                                                     JavaProtoBufUtil.readClassDataFrom(data));
+        if (data != null) {
+            ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
+            return new DeserializedClassDescriptor(storageManager, annotationDeserializer, javaDescriptorFinder,
+                                                   classData.getNameResolver(), classData.getClassProto());
+        }
+        return null;
     }
 
     @Nullable
     public JetScope createKotlinPackageScope(@NotNull NamespaceDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass);
-        return data == null ? null : new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer,
-                                                                        javaDescriptorFinder, JavaProtoBufUtil.readPackageDataFrom(data));
+        if (data != null) {
+            return new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer, javaDescriptorFinder,
+                                                      JavaProtoBufUtil.readPackageDataFrom(data));
+        }
+        return null;
     }
 
     @Nullable

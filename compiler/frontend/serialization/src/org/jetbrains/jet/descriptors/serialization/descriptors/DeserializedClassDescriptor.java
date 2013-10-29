@@ -48,6 +48,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
     private final ClassId classId;
     private final ProtoBuf.Class classProto;
+    private final StorageManager storageManager;
     private final TypeDeserializer typeDeserializer;
     private final DescriptorDeserializer deserializer;
     private final DeserializedMemberScope memberScope;
@@ -74,14 +75,13 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             @NotNull StorageManager storageManager,
             @NotNull AnnotationDeserializer annotationResolver,
             @NotNull DescriptorFinder descriptorFinder,
-            @NotNull ClassData classData
+            @NotNull NameResolver nameResolver,
+            @NotNull ProtoBuf.Class classProto
     ) {
-        super(storageManager,
-              classData.getNameResolver().getClassId(classData.getClassProto().getFqName()).getRelativeClassName().shortName());
-        NameResolver nameResolver = classData.getNameResolver();
-        this.classProto = classData.getClassProto();
-
+        super(storageManager, nameResolver.getClassId(classProto.getFqName()).getRelativeClassName().shortName());
+        this.classProto = classProto;
         this.classId = nameResolver.getClassId(classProto.getFqName());
+        this.storageManager = storageManager;
         this.descriptorFinder = descriptorFinder;
 
         TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, null, nameResolver,
@@ -238,7 +238,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
     @Nullable
     private ClassDescriptor computeClassObjectDescriptor() {
-        if (!classProto.getClassObjectPresent()) {
+        if (!classProto.hasClassObject()) {
             return null;
         }
 
@@ -250,6 +250,16 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             }
 
             return classObject;
+        }
+
+        if (getKind() == ClassKind.OBJECT) {
+            ProtoBuf.Class.ClassObject classObjectProto = classProto.getClassObject();
+            if (!classObjectProto.hasData()) {
+                throw new IllegalStateException("Object should have a serialized class object: " + classId);
+            }
+
+            return new DeserializedClassDescriptor(storageManager, annotationDeserializer, descriptorFinder, deserializer.getNameResolver(),
+                                                   classObjectProto.getData());
         }
 
         return descriptorFinder.findClass(classId.createNestedClassId(getClassObjectName(getName())));

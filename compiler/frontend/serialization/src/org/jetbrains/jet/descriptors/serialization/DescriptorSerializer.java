@@ -29,17 +29,14 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getEnumEntriesScope;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTopLevelOrInnerClass;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 
 public class DescriptorSerializer {
 
     private static final DescriptorRenderer RENDERER = DescriptorRenderer.STARTS_FROM_NAME;
     private static final Comparator<DeclarationDescriptor> DESCRIPTOR_COMPARATOR = new Comparator<DeclarationDescriptor>() {
         @Override
-        public int compare(
-                DeclarationDescriptor o1, DeclarationDescriptor o2
-        ) {
+        public int compare(@NotNull DeclarationDescriptor o1, @NotNull DeclarationDescriptor o2) {
             int names = o1.getName().compareTo(o2.getName());
             if (names != 0) return names;
 
@@ -134,9 +131,9 @@ public class DescriptorSerializer {
             builder.addNestedObjectName(nameIndex);
         }
 
-        if (classDescriptor.getClassObjectDescriptor() != null) {
-            // false is default
-            builder.setClassObjectPresent(true);
+        ClassDescriptor classObject = classDescriptor.getClassObjectDescriptor();
+        if (classObject != null) {
+            builder.setClassObject(classObjectProto(classObject));
         }
 
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
@@ -148,6 +145,15 @@ public class DescriptorSerializer {
         }
 
         return builder;
+    }
+
+    @NotNull
+    private ProtoBuf.Class.ClassObject classObjectProto(@NotNull ClassDescriptor classObject) {
+        if (isObject(classObject.getContainingDeclaration())) {
+            return ProtoBuf.Class.ClassObject.newBuilder().setData(classProto(classObject)).build();
+        }
+
+        return ProtoBuf.Class.ClassObject.getDefaultInstance();
     }
 
     @NotNull

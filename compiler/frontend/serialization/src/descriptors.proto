@@ -110,6 +110,15 @@ message Class {
 
   required int32 fq_name = 3;
 
+  message ClassObject {
+    // If this field is present, it contains serialized data for a synthetic class object, for which there's no class file.
+    // Otherwise class object was compiled to a separate class file and serialized data can be found in the annotation on that class
+    optional Class data = 1;
+  }
+
+  // This field is present if and only if the class has a class object. Its proto should be found either here or in the separate file
+  optional ClassObject class_object = 4;
+
   repeated TypeParameter type_parameter = 5;
   repeated Type supertype = 6;
 
@@ -117,8 +126,6 @@ message Class {
   // to be obtainable through reflection at runtime
   repeated int32 nested_class_name = 7;
   repeated int32 nested_object_name = 8;
-
-  optional bool class_object_present = 9 [default = false];
 
   repeated Callable member = 11;
 

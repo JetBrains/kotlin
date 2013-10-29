@@ -210,14 +210,12 @@ public class NamespaceCodegen extends MemberCodegen {
      * @param namespaceFiles all files should have same package name
      * @return
      */
-    public static boolean shouldGenerateNSClass(Collection<JetFile> namespaceFiles) {
+    public static boolean shouldGenerateNSClass(@NotNull Collection<JetFile> namespaceFiles) {
         checkAllFilesHaveSameNamespace(namespaceFiles);
 
         for (JetFile file : namespaceFiles) {
             for (JetDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof JetProperty ||
-                    declaration instanceof JetNamedFunction ||
-                    declaration instanceof JetObjectDeclaration) {
+                if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
                     return true;
                 }
             }
