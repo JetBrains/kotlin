@@ -2544,6 +2544,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions/tail-recursion"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("insideElvis.kt")
+            public void testInsideElvis() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/insideElvis.kt");
+            }
+            
             @TestMetadata("labeledThisReferences.kt")
             public void testLabeledThisReferences() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/labeledThisReferences.kt");
@@ -2577,6 +2582,26 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("recursiveInnerFunction.kt")
             public void testRecursiveInnerFunction() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/recursiveInnerFunction.kt");
+            }
+            
+            @TestMetadata("returnInCatch.kt")
+            public void testReturnInCatch() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/returnInCatch.kt");
+            }
+            
+            @TestMetadata("returnInFinally.kt")
+            public void testReturnInFinally() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/returnInFinally.kt");
+            }
+            
+            @TestMetadata("returnInIfInFinally.kt")
+            public void testReturnInIfInFinally() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/returnInIfInFinally.kt");
+            }
+            
+            @TestMetadata("returnInTry.kt")
+            public void testReturnInTry() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/returnInTry.kt");
             }
             
             @TestMetadata("simpleBlock.kt")
