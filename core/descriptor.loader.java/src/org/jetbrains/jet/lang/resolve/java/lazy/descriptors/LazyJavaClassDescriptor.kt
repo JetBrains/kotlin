@@ -11,7 +11,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.types.TypeConstructor
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
-import org.jetbrains.jet.utils.emptyOrSingletonList
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
@@ -23,20 +22,21 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver
-import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
-import java.util.ArrayList
-import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
 import org.jetbrains.jet.utils.*
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.jet.lang.types.TypeUtils
+import java.util.ArrayList
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
 
 class LazyJavaClassDescriptor(
         private val c: LazyJavaResolverContextWithTypes,
         containingDeclaration: DeclarationDescriptor,
         internal val fqName: FqName,
         private val jClass: JavaClass
-) : ClassDescriptorBase(containingDeclaration, fqName.shortName()), LazyJavaDescriptor {
+) : ClassDescriptorBase(containingDeclaration, fqName.shortName()), LazyJavaDescriptor, JavaClassDescriptor {
 
     private val innerC: LazyJavaResolverContextWithTypes = c.child(this, jClass.getTypeParameters().toSet())
 
@@ -72,6 +72,29 @@ class LazyJavaClassDescriptor(
 
     private val _annotations = c.resolveAnnotations(jClass.getAnnotations())
     override fun getAnnotations(): List<AnnotationDescriptor> = _annotations
+
+    private val _functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
+        val samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(jClass);
+        if (samInterfaceMethod != null) {
+            val abstractMethod = resolveFunctionOfSamInterface(samInterfaceMethod);
+            SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod);
+        }
+        else null
+    }
+
+    override fun getFunctionTypeForSamInterface(): JetType? = _functionTypeForSamInterface()
+
+    private fun resolveFunctionOfSamInterface(samInterfaceMethod: JavaMethod): SimpleFunctionDescriptor {
+        val methodContainer = samInterfaceMethod.getContainingClass()
+        val containerFqName = methodContainer.getFqName()
+        assert(containerFqName != null, "qualified name is null for " + methodContainer)
+        if (fqName == containerFqName) {
+            return _scopeForMemberLookup.resolveMethodToFunctionDescriptor(samInterfaceMethod, false)
+        }
+        else {
+            return JavaClassResolver.findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(getDefaultType()))
+        }
+    }
 
     override fun toString() = "lazy java class $fqName"
 

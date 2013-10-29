@@ -60,8 +60,16 @@ public class LazyJavaClassMemberScope(
     override fun computeMemberIndex(): MemberIndex = ClassMemberIndex(jClass, mustBeStatic = false)
 
     internal val _constructors = c.storageManager.createLazyValue {
-        jClass.getConstructors().map {
-            jCtor -> resolveConstructor(jCtor, getContainingDeclaration(), jClass.isStatic())
+        jClass.getConstructors().flatMap {
+            jCtor ->
+            val constructor = resolveConstructor(jCtor, getContainingDeclaration(), jClass.isStatic())
+            val samAdapter = JavaConstructorResolver.resolveSamAdapter(constructor)
+            if (samAdapter != null) {
+                (samAdapter as ConstructorDescriptorImpl).setReturnType(containingDeclaration.getDefaultType())
+                listOf(constructor, samAdapter)
+            }
+            else
+                listOf(constructor)
         } ifEmpty {
             emptyOrSingletonList(createDefaultConstructor())
         }

@@ -66,7 +66,15 @@ public abstract class LazyJavaMemberScope(
         (name: Name): Collection<FunctionDescriptor>
         ->
         val methods = memberIndex().findMethodsByName(name)
-        val functions = LinkedHashSet(methods.map {m -> resolveMethodToFunctionDescriptor(m, true)})
+        val functions = LinkedHashSet(methods.flatMap {
+            m ->
+            val function = resolveMethodToFunctionDescriptor(m, true)
+            val samAdapter = JavaFunctionResolver.resolveSamAdapter(function)
+            if (samAdapter != null)
+                listOf(function, samAdapter)
+            else
+                listOf(function)
+        })
 
         if (_containingDeclaration is ClassDescriptor) {
             val functionsFromSupertypes = JavaFunctionResolver.getFunctionsFromSupertypes(name, _containingDeclaration);
@@ -84,7 +92,7 @@ public abstract class LazyJavaMemberScope(
         functions
     }
 
-    private fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): SimpleFunctionDescriptor {
+    internal fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): SimpleFunctionDescriptor {
 
         val functionDescriptorImpl = JavaMethodDescriptor(_containingDeclaration, c.resolveAnnotations(method.getAnnotations()), method.getName())
 

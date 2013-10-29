@@ -220,7 +220,7 @@ public final class JavaConstructorResolver {
     }
 
     @Nullable
-    private static ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
+    public static ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
         return isSamAdapterNecessary(original) ? (ConstructorDescriptor) createSamAdapterConstructor(original) : null;
     }
 }
