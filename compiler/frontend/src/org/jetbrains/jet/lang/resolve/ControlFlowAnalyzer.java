@@ -95,9 +95,9 @@ public class ControlFlowAnalyzer {
             PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
-            assert accessorDescriptor != null;
+            assert accessorDescriptor != null : "no property accessor descriptor";
             JetType returnType = accessorDescriptor.getReturnType();
-            assert returnType != null;
+            assert returnType != null : "property accessor has no return type";
             checkFunction(accessor, returnType);
         }
     }
