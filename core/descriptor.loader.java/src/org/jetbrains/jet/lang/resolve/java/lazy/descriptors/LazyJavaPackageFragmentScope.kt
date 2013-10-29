@@ -74,8 +74,10 @@ public class LazyPackageFragmentScopeForJavaClass(
 ) : LazyJavaPackageFragmentScope(c, packageFragment) {
 
     override fun computeMemberIndex(): MemberIndex = ClassMemberIndex(jClass, mustBeStatic = true)
+    // nested classes are loaded as members of their outer classes, not packages
+    override fun getAllClassNames(): Collection<Name> = listOf()
+    override fun getClassifier(name: Name): ClassifierDescriptor? = null
 
-    override fun getAllClassNames(): Collection<Name> = listOf() // nested classes are loaded as members of their outer classes, not packages
     override fun getAllPackageNames(): Collection<Name> = jClass.getInnerClasses().iterator()
                                                                 .filter { c -> c.isStatic() && JavaNamespaceResolver.hasStaticMembers(c) }
                                                                 .map { c -> c.getName() }.toList()
