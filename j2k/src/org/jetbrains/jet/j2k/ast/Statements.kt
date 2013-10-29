@@ -77,7 +77,7 @@ public open class DoWhileStatement(condition: Expression, body: Element) : While
 public open class ForeachStatement(val variable: Parameter,
                                    val expression: Expression,
                                    val body: Element) : Statement() {
-    public override fun toKotlin() = "for (" + variable.toKotlin() + " in " +
+    public override fun toKotlin() = "for (" + variable.identifier.name + " in " +
     expression.toKotlin() + ")\n" + body.toKotlin()
 }
 

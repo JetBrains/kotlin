@@ -1,4 +1,4 @@
-for (n : Node? in list)
+for (n in list)
 {
 var i : Int = 1
 i++
