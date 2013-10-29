@@ -1661,12 +1661,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetExpression r = getReceiverForSelector(expression);
             boolean isSuper = r instanceof JetSuperExpression;
             propertyDescriptor = accessiblePropertyDescriptor(propertyDescriptor);
-            StackValue iValue =
+            StackValue.Property iValue =
                 intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null);
             if (directToField) {
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
             }
-            receiver.put(receiver.type, v);
+
+            //pop receiver via put(VOID_TYPE) in case of access to backing field that moved to outer class!!!
+            receiver.put(!iValue.isPropertyWithBackingFieldInOuterClass() ? receiver.type : Type.VOID_TYPE, v);
 
             return iValue;
         }
@@ -1770,7 +1772,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    public StackValue intermediateValueForProperty(
+    public StackValue.Property intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
             @Nullable JetSuperExpression superExpression
@@ -1778,7 +1780,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return intermediateValueForProperty(propertyDescriptor, forceField, superExpression, MethodKind.GENERAL);
     }
 
-    public StackValue.StackValueWithSimpleReceiver intermediateValueForProperty(
+    public StackValue.Property intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
             @Nullable JetSuperExpression superExpression,
@@ -1789,7 +1791,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
         boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
-        boolean isStatic = containingDeclaration instanceof NamespaceDescriptor || isBackingFieldInAnotherClass;
+        boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         boolean isSuper = superExpression != null;
         boolean isInsideClass = isCallInsideSameClassAsDeclared(propertyDescriptor, context);
         boolean isInsideModule = isCallInsideSameModuleAsDeclared(propertyDescriptor, context);
@@ -1813,6 +1815,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (!skipPropertyAccessors) {
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor, true, delegateType);
             }
+            isStatic = true;
         }
 
         if (!skipPropertyAccessors) {
