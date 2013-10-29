@@ -20,8 +20,8 @@ import org.jetbrains.jet.j2k.ast.types.ArrayType
 import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.j2k.ast.types.PrimitiveType
 
-public open class ArrayWithoutInitializationExpression(val `type` : Type, val expressions : List<Expression>) : Expression() {
-    public override fun toKotlin() : String {
+public open class ArrayWithoutInitializationExpression(val `type`: Type, val expressions: List<Expression>) : Expression() {
+    public override fun toKotlin(): String {
         if (`type` is ArrayType) {
             return constructInnerType(`type`, expressions)
         }
@@ -29,7 +29,7 @@ public open class ArrayWithoutInitializationExpression(val `type` : Type, val ex
         return getConstructorName(`type`, expressions.size() != 0)
     }
 
-    private fun constructInnerType(hostType : ArrayType, expressions: List<Expression>) : String {
+    private fun constructInnerType(hostType: ArrayType, expressions: List<Expression>): String {
         if (expressions.size() == 1) {
             return oneDim(hostType, expressions[0])
         }
@@ -43,15 +43,15 @@ public open class ArrayWithoutInitializationExpression(val `type` : Type, val ex
     }
 
     class object {
-        private open fun oneDim(`type` : Type, size : Expression) : String {
+        private open fun oneDim(`type`: Type, size: Expression): String {
             return oneDim(`type`, size, "")
         }
 
-        private open fun oneDim(`type` : Type, size : Expression, init : String) : String {
+        private open fun oneDim(`type`: Type, size: Expression, init: String): String {
             return getConstructorName(`type`, !init.isEmpty()) + "(" + size.toKotlin() + init.withPrefix(", ") + ")"
         }
 
-        private open fun getConstructorName(`type` : Type, hasInit : Boolean) : String {
+        private open fun getConstructorName(`type`: Type, hasInit: Boolean): String {
             return if (`type` is ArrayType)
                 when (`type`.elementType) {
                     is PrimitiveType ->

@@ -21,7 +21,7 @@ fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: String =
     if (size() > 0) {
         result.append(prefix)
         var first = true
-        for(x in this) {
+        for (x in this) {
             if (!first) result.append(separator)
             first = false
             result.append(x.toKotlin())
@@ -33,7 +33,7 @@ fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: String =
 
 fun Collection<Modifier>.toKotlin(separator: String = " "): String {
     val result = StringBuilder()
-    for(x in this) {
+    for (x in this) {
         result.append(x.name)
         result.append(separator)
     }

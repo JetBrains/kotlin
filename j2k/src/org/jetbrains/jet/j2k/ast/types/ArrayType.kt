@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast.types
 
-public open class ArrayType(val elementType : Type, nullable: Boolean) : Type(nullable) {
-    public override fun toKotlin() : String {
+public open class ArrayType(val elementType: Type, nullable: Boolean) : Type(nullable) {
+    public override fun toKotlin(): String {
         if (elementType is PrimitiveType) {
             return elementType.toKotlin() + "Array" + isNullableStr()
         }
@@ -25,5 +25,5 @@ public open class ArrayType(val elementType : Type, nullable: Boolean) : Type(nu
         return "Array<" + elementType.toKotlin() + ">" + isNullableStr()
     }
 
-    public override fun convertedToNotNull() : Type = ArrayType(elementType, false)
+    public override fun convertedToNotNull(): Type = ArrayType(elementType, false)
 }

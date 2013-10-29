@@ -21,7 +21,7 @@ import org.jetbrains.jet.j2k.ast.types.Type
 public open class MethodCallExpression(val methodCall: Expression,
                                        val arguments: List<Expression>,
                                        val typeParameters: List<Type>,
-                                       val resultIsNullable: Boolean = false): Expression() {
+                                       val resultIsNullable: Boolean = false) : Expression() {
     public override fun isNullable(): Boolean = methodCall.isNullable() || resultIsNullable
 
     public override fun toKotlin(): String {
@@ -33,8 +33,8 @@ public open class MethodCallExpression(val methodCall: Expression,
     class object {
         fun build(receiver: Expression, methodName: String, arguments: List<Expression> = arrayList()): MethodCallExpression {
             return MethodCallExpression(CallChainExpression(receiver, Identifier(methodName, false)),
-                    arguments,
-                    arrayList(), false)
+                                        arguments,
+                                        arrayList(), false)
         }
     }
 }

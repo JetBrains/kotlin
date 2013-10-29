@@ -86,7 +86,7 @@ object JavaToKotlinTranslator {
         return null
     }
 
-    fun setClassIdentifiers(converter: Converter, psiFile: PsiElement): Unit {
+    fun setClassIdentifiers(converter: Converter, psiFile: PsiElement) {
         val c = ClassVisitor()
         psiFile.accept(c)
         converter.clearClassIdentifiers()

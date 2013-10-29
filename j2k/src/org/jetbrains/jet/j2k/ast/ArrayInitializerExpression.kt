@@ -18,11 +18,10 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import java.util.*
 import com.intellij.openapi.util.text.StringUtil
 
-public open class ArrayInitializerExpression(val `type` : Type, val initializers : List<Expression>) : Expression() {
-    public override fun toKotlin() : String {
+public open class ArrayInitializerExpression(val `type`: Type, val initializers: List<Expression>) : Expression() {
+    public override fun toKotlin(): String {
         return createArrayFunction() + "(" + createInitializers() + ")"
     }
 
@@ -30,8 +29,8 @@ public open class ArrayInitializerExpression(val `type` : Type, val initializers
         return initializers.map { explicitConvertIfNeeded(it) }.makeString(", ")
     }
 
-    private fun createArrayFunction() : String {
-        var sType : String? = innerTypeStr()
+    private fun createArrayFunction(): String {
+        var sType: String? = innerTypeStr()
         if (Node.PRIMITIVE_TYPES.contains(sType)) {
             return sType + "Array"
         }
@@ -39,13 +38,13 @@ public open class ArrayInitializerExpression(val `type` : Type, val initializers
         return StringUtil.decapitalize(`type`.convertedToNotNull().toKotlin())!!
     }
 
-    private fun innerTypeStr() : String {
+    private fun innerTypeStr(): String {
         return `type`.convertedToNotNull().toKotlin().replace("Array", "").toLowerCase()
     }
 
-    private fun explicitConvertIfNeeded(i : Expression) : String {
+    private fun explicitConvertIfNeeded(i: Expression): String {
         val doubleOrFloatTypes = hashSet("double", "float", "java.lang.double", "java.lang.float")
-        val afterReplace : String = innerTypeStr().replace(">", "").replace("<", "").replace("?", "")
+        val afterReplace: String = innerTypeStr().replace(">", "").replace("<", "").replace("?", "")
         if (doubleOrFloatTypes.contains(afterReplace))
         {
             if (i is LiteralExpression) {
@@ -63,7 +62,7 @@ public open class ArrayInitializerExpression(val `type` : Type, val initializers
     }
 
     class object {
-        private open fun getConversion(afterReplace : String) : String {
+        private open fun getConversion(afterReplace: String): String {
             if (afterReplace.contains("double"))
                 return "." + OperatorConventions.DOUBLE + "()"
 

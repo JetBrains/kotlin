@@ -18,20 +18,20 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
 
-public open class Constructor(identifier : Identifier,
+public open class Constructor(identifier: Identifier,
                               docComments: List<Node>,
-                              modifiers : Set<Modifier>,
-                              `type` : Type,
-                              typeParameters : List<Element>,
-                              params : Element,
-                              block : Block,
-                              val isPrimary : Boolean) : Function(identifier, docComments, modifiers, `type`, typeParameters, params, block) {
+                              modifiers: Set<Modifier>,
+                              `type`: Type,
+                              typeParameters: List<Element>,
+                              params: Element,
+                              block: Block,
+                              val isPrimary: Boolean) : Function(identifier, docComments, modifiers, `type`, typeParameters, params, block) {
 
-    public open fun primarySignatureToKotlin() : String {
+    public open fun primarySignatureToKotlin(): String {
         return "(" + params.toKotlin() + ")"
     }
 
-    public open fun primaryBodyToKotlin() : String {
+    public open fun primaryBodyToKotlin(): String {
         return block!!.toKotlin()
     }
 }

@@ -16,5 +16,5 @@
 
 package org.jetbrains.jet.j2k
 
-public open class SetupJavaCoreEnvironmentException(s: String?): RuntimeException() {
+public open class SetupJavaCoreEnvironmentException(s: String?) : RuntimeException() {
 }

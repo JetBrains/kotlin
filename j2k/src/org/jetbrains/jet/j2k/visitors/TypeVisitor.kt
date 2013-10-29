@@ -26,14 +26,14 @@ import java.util.LinkedList
 import com.intellij.openapi.util.text.StringUtil
 import java.util.ArrayList
 
-public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisitor<Type>() {
-    private var myResult : Type = EmptyType()
-    public open fun getResult() : Type {
+public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisitor<Type>() {
+    private var myResult: Type = EmptyType()
+    public open fun getResult(): Type {
         return myResult
     }
 
-    public override fun visitPrimitiveType(primitiveType: PsiPrimitiveType?) : Type {
-        val name : String = primitiveType?.getCanonicalText()!!
+    public override fun visitPrimitiveType(primitiveType: PsiPrimitiveType?): Type {
+        val name: String = primitiveType?.getCanonicalText()!!
         if (name == "void") {
             myResult = PrimitiveType(Identifier("Unit"))
         }
@@ -46,7 +46,7 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         return myResult
     }
 
-    public override fun visitArrayType(arrayType: PsiArrayType?) : Type {
+    public override fun visitArrayType(arrayType: PsiArrayType?): Type {
         if (myResult is EmptyType) {
             myResult = ArrayType(myConverter.typeToType(arrayType?.getComponentType()), true)
         }
@@ -54,12 +54,12 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         return myResult
     }
 
-    public override fun visitClassType(classType : PsiClassType?) : Type {
+    public override fun visitClassType(classType: PsiClassType?): Type {
         if (classType == null) return myResult
-        val identifier : Identifier = constructClassTypeIdentifier(classType)
-        val resolvedClassTypeParams : List<Type> = createRawTypesForResolvedReference(classType)
+        val identifier: Identifier = constructClassTypeIdentifier(classType)
+        val resolvedClassTypeParams: List<Type> = createRawTypesForResolvedReference(classType)
         if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0) {
-            val starParamList : ArrayList<Type> = ArrayList<Type>()
+            val starParamList: ArrayList<Type> = ArrayList<Type>()
             if (resolvedClassTypeParams.size() == 1) {
                 if ((resolvedClassTypeParams.get(0) as ClassType).`type`.name == "Any") {
                     starParamList.add(StarProjectionType())
@@ -79,8 +79,8 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         return myResult
     }
 
-    private fun constructClassTypeIdentifier(classType : PsiClassType) : Identifier {
-        val psiClass : PsiClass? = classType.resolve()
+    private fun constructClassTypeIdentifier(classType: PsiClassType): Identifier {
+        val psiClass: PsiClass? = classType.resolve()
         if (psiClass != null) {
             val qualifiedName: String? = psiClass.getQualifiedName()
             if (qualifiedName != null) {
@@ -110,15 +110,15 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         return Identifier(classTypeName)
     }
 
-    private fun createRawTypesForResolvedReference(classType : PsiClassType) : List<Type> {
+    private fun createRawTypesForResolvedReference(classType: PsiClassType): List<Type> {
         val typeParams = LinkedList<Type>()
         if (classType is PsiClassReferenceType) {
-            val reference : PsiJavaCodeReferenceElement? = (classType as PsiClassReferenceType).getReference()
-            val resolve : PsiElement? = reference?.resolve()
+            val reference: PsiJavaCodeReferenceElement? = (classType as PsiClassReferenceType).getReference()
+            val resolve: PsiElement? = reference?.resolve()
             if (resolve is PsiClass) {
                 for (p : PsiTypeParameter? in (resolve as PsiClass).getTypeParameters()) {
                     val superTypes = p!!.getSuperTypes()
-                    val boundType : Type = (if (superTypes.size > 0)
+                    val boundType: Type = (if (superTypes.size > 0)
                         ClassType(Identifier(getClassTypeName(superTypes[0])),
                                   myConverter.typesToTypeList(superTypes[0].getParameters()),
                                   true)
@@ -132,7 +132,7 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         return typeParams
     }
 
-    public override fun visitWildcardType(wildcardType : PsiWildcardType?) : Type {
+    public override fun visitWildcardType(wildcardType: PsiWildcardType?): Type {
         if (wildcardType!!.isExtends()) {
             myResult = OutProjectionType(myConverter.typeToType(wildcardType.getExtendsBound()))
         }
@@ -146,22 +146,22 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
         return myResult
     }
 
-    public override fun visitEllipsisType(ellipsisType : PsiEllipsisType?) : Type {
+    public override fun visitEllipsisType(ellipsisType: PsiEllipsisType?): Type {
         myResult = VarArg(myConverter.typeToType(ellipsisType?.getComponentType()))
         return myResult
     }
 
     class object {
-        private fun createQualifiedName(classType : PsiClassType) : String {
+        private fun createQualifiedName(classType: PsiClassType): String {
             if (classType is PsiClassReferenceType)
             {
-                val reference : PsiJavaCodeReferenceElement? = (classType as PsiClassReferenceType).getReference()
+                val reference: PsiJavaCodeReferenceElement? = (classType as PsiClassReferenceType).getReference()
                 if (reference != null && reference.isQualified()) {
-                    var result : String = Identifier(reference.getReferenceName()!!).toKotlin()
-                    var qualifier : PsiElement? = reference.getQualifier()
+                    var result: String = Identifier(reference.getReferenceName()!!).toKotlin()
+                    var qualifier: PsiElement? = reference.getQualifier()
                     while (qualifier != null)
                     {
-                        val p : PsiJavaCodeReferenceElement = (qualifier as PsiJavaCodeReferenceElement)
+                        val p: PsiJavaCodeReferenceElement = (qualifier as PsiJavaCodeReferenceElement)
                         result = Identifier(p.getReferenceName()!!).toKotlin() + "." + result
                         qualifier = p.getQualifier()
                     }
@@ -172,8 +172,8 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
             return ""
         }
 
-        private fun getClassTypeName(classType : PsiClassType) : String {
-            var canonicalTypeStr : String? = classType.getCanonicalText()
+        private fun getClassTypeName(classType: PsiClassType): String {
+            var canonicalTypeStr: String? = classType.getCanonicalText()
             return when(canonicalTypeStr) {
                 CommonClassNames.JAVA_LANG_OBJECT -> "Any"
                 CommonClassNames.JAVA_LANG_BYTE -> "Byte"
@@ -186,9 +186,9 @@ public open class TypeVisitor(private val myConverter : Converter) : PsiTypeVisi
                 CommonClassNames.JAVA_LANG_BOOLEAN -> "Boolean"
 
                 else -> (if (classType.getClassName() != null)
-                            classType.getClassName()!!
-                         else
-                            classType.getCanonicalText())!!
+                    classType.getClassName()!!
+                else
+                    classType.getCanonicalText())!!
             }
         }
     }

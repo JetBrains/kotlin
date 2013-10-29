@@ -17,7 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 
-public abstract class Element(): Node() {
+public abstract class Element() : Node() {
     public open fun isEmpty(): Boolean = false
 
     class object {
@@ -28,6 +28,6 @@ public abstract class Element(): Node() {
     }
 }
 
-public class Comment(val text: String): Element() {
+public class Comment(val text: String) : Element() {
     override fun toKotlin() = text
 }

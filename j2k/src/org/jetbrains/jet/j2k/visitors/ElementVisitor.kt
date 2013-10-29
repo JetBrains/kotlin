@@ -23,45 +23,45 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.j2k.isAnnotatedAsNotNull
 import org.jetbrains.jet.j2k.isDefinitelyNotNull
 
-public open class ElementVisitor(val myConverter : Converter) : JavaElementVisitor() {
-    protected var myResult : Element = Element.EMPTY_ELEMENT
+public open class ElementVisitor(val myConverter: Converter) : JavaElementVisitor() {
+    protected var myResult: Element = Element.EMPTY_ELEMENT
 
-    public fun getConverter() : Converter {
+    public fun getConverter(): Converter {
         return myConverter
     }
 
-    public open fun getResult() : Element {
+    public open fun getResult(): Element {
         return myResult
     }
 
-    public override fun visitLocalVariable(variable : PsiLocalVariable?) : Unit {
+    public override fun visitLocalVariable(variable: PsiLocalVariable?) {
         val theVariable = variable!!
         var kType = myConverter.typeToType(theVariable.getType(), isAnnotatedAsNotNull(theVariable.getModifierList()))
         if (theVariable.hasModifierProperty(PsiModifier.FINAL) && isDefinitelyNotNull(theVariable.getInitializer())) {
             kType = kType.convertedToNotNull();
         }
         myResult = LocalVariable(Identifier(theVariable.getName()!!),
-                Converter.modifiersListToModifiersSet(theVariable.getModifierList()),
-                kType,
-                myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()))
+                                 Converter.modifiersListToModifiersSet(theVariable.getModifierList()),
+                                 kType,
+                                 myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()))
     }
 
-    public override fun visitExpressionList(list : PsiExpressionList?) : Unit {
+    public override fun visitExpressionList(list: PsiExpressionList?) {
         myResult = ExpressionList(myConverter.expressionsToExpressionList(list!!.getExpressions()))
     }
 
-    public override fun visitReferenceElement(reference : PsiJavaCodeReferenceElement?) : Unit {
+    public override fun visitReferenceElement(reference: PsiJavaCodeReferenceElement?) {
         val theReference = reference!!
-        val types : List<Type> = myConverter.typesToTypeList(theReference.getTypeParameters())
+        val types: List<Type> = myConverter.typesToTypeList(theReference.getTypeParameters())
         if (!theReference.isQualified()) {
             myResult = ReferenceElement(Identifier(theReference.getReferenceName()!!), types)
         }
         else {
-            var result : String = Identifier(reference.getReferenceName()!!).toKotlin()
-            var qualifier : PsiElement? = theReference.getQualifier()
+            var result: String = Identifier(reference.getReferenceName()!!).toKotlin()
+            var qualifier: PsiElement? = theReference.getQualifier()
             while (qualifier != null)
             {
-                val p : PsiJavaCodeReferenceElement = (qualifier as PsiJavaCodeReferenceElement)
+                val p: PsiJavaCodeReferenceElement = (qualifier as PsiJavaCodeReferenceElement)
                 result = Identifier(p.getReferenceName()!!).toKotlin() + "." + result
                 qualifier = p.getQualifier()
             }
@@ -69,16 +69,16 @@ public open class ElementVisitor(val myConverter : Converter) : JavaElementVisit
         }
     }
 
-    public override fun visitTypeElement(`type` : PsiTypeElement?) : Unit {
+    public override fun visitTypeElement(`type`: PsiTypeElement?) {
         myResult = TypeElement(myConverter.typeToType(`type`!!.getType()))
     }
 
-    public override fun visitTypeParameter(classParameter : PsiTypeParameter?) : Unit {
+    public override fun visitTypeParameter(classParameter: PsiTypeParameter?) {
         myResult = TypeParameter(Identifier(classParameter!!.getName()!!),
-                                 classParameter.getExtendsListTypes().map { myConverter.typeToType(it) } )
+                                 classParameter.getExtendsListTypes().map { myConverter.typeToType(it) })
     }
 
-    public override fun visitParameterList(list : PsiParameterList?) : Unit {
+    public override fun visitParameterList(list: PsiParameterList?) {
         myResult = ParameterList(myConverter.parametersToParameterList(list!!.getParameters()).requireNoNulls())
     }
 

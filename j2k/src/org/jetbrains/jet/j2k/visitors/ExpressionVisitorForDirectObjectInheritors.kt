@@ -23,8 +23,8 @@ import org.jetbrains.jet.j2k.ast.Identifier
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import org.jetbrains.jet.j2k.ast.MethodCallExpression
 
-public open class ExpressionVisitorForDirectObjectInheritors(converter: Converter): ExpressionVisitor(converter) {
-    public override fun visitMethodCallExpression(expression: PsiMethodCallExpression?): Unit {
+public open class ExpressionVisitorForDirectObjectInheritors(converter: Converter) : ExpressionVisitor(converter) {
+    public override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
         val methodExpression = expression?.getMethodExpression()!!
         if (superMethodInvocation(methodExpression, "hashCode")) {
             myResult = MethodCallExpression.build(Identifier("System", false), "identityHashCode", arrayList(Identifier("this")))
@@ -34,7 +34,7 @@ public open class ExpressionVisitorForDirectObjectInheritors(converter: Converte
         }
         else if (superMethodInvocation(methodExpression, "toString")) {
             myResult = DummyStringExpression(java.lang.String.format("getJavaClass<%s>.getName() + '@' + Integer.toHexString(hashCode())",
-                    ExpressionVisitor.getClassName(methodExpression)))
+                                                                     ExpressionVisitor.getClassName(methodExpression)))
         }
         else {
             convertMethodCallExpression(expression!!)
