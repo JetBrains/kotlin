@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lexer.JetTokens;
 
 public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorStatus<TailRecursionKind>, VisitorData<TailRecursionKind>> {
 
@@ -116,6 +117,25 @@ public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorSta
     }
 
     @Override
+    public BacktraceVisitorStatus<TailRecursionKind> visitBinaryExpression(
+            @NotNull JetBinaryExpression expression, VisitorData<TailRecursionKind> data
+    ) {
+        if (expression.getOperationToken() == JetTokens.ELVIS) {
+            if (expression.getLeft() == data.last) {
+                return noTailRecursion();
+            }
+            else if (expression.getRight() == data.last) {
+                return continueTrace(data);
+            }
+            else {
+                return noTailRecursion();
+            }
+        }
+
+        return super.visitBinaryExpression(expression, data);
+    }
+
+    @Override
     public BacktraceVisitorStatus<TailRecursionKind> visitQualifiedExpression(
             @NotNull JetQualifiedExpression expression, VisitorData<TailRecursionKind> data
     ) {
@@ -135,11 +155,7 @@ public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorSta
             throw new IllegalStateException("Bad case: how could we reach void return?");
         }
 
-        if (returned != data.visitedPath.get(0)) {
-            return noTailRecursion();
-        }
-
-        return new BacktraceVisitorStatus<TailRecursionKind>(TailRecursionKind.IN_RETURN, false);
+        return continueTrace(data, TailRecursionKind.IN_RETURN);
     }
 
     @Override
