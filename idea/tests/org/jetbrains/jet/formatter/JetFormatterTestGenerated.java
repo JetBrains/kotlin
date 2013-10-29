@@ -67,6 +67,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         doTest("idea/testData/formatter/ForNoBraces.kt");
     }
     
+    @TestMetadata("ForSpacing.kt")
+    public void testForSpacing() throws Exception {
+        doTest("idea/testData/formatter/ForSpacing.kt");
+    }
+    
     @TestMetadata("FunctionCallParametersAlign.kt")
     public void testFunctionCallParametersAlign() throws Exception {
         doTest("idea/testData/formatter/FunctionCallParametersAlign.kt");
