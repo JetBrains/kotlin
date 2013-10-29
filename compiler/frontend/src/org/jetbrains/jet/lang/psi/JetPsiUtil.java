@@ -1028,7 +1028,7 @@ public class JetPsiUtil {
             @NotNull JetVisitor<BacktraceVisitorStatus<T>, VisitorData<T>> visitor,
             T def
     ) {
-        ArrayList<PsiElement> track = new ArrayList<PsiElement>();
+        List<PsiElement> track = new ArrayList<PsiElement>();
         List<PsiElement> view = Collections.unmodifiableList(track);
         @NotNull
         BacktraceVisitorStatus<T> lastStatus = new BacktraceVisitorStatus<T>(def, true);
