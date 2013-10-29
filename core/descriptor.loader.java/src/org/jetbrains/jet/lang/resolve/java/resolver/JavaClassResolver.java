@@ -168,7 +168,7 @@ public final class JavaClassResolver {
     }
 
     @Nullable
-    private static ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
+    public static ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
         if (!qualifiedName.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null;
 
         List<Name> segments = qualifiedName.pathSegments();

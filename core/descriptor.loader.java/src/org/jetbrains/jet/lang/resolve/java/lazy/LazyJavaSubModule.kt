@@ -9,6 +9,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaPackage
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaClass
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
 
 public open class LazyJavaSubModule(
         private val outerContext: GlobalJavaResolverContext,
@@ -52,6 +53,13 @@ public open class LazyJavaSubModule(
     private inner class SubModuleClassResolver : LazyJavaClassResolver {
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
             // TODO: there's no notion of module separation here. We must refuse to resolve classes from other modules
+            val fqName = javaClass.getFqName()
+            if (fqName != null) {
+                // TODO: this should be handled by module seperation logic
+                val builtinClass = JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName)
+                if (builtinClass != null) return builtinClass
+            }
+
             val outer = javaClass.getOuterClass()
             val scope = if (outer != null) {
                 val outerClass = resolveClass(outer)
@@ -59,7 +67,7 @@ public open class LazyJavaSubModule(
                 outerClass.getUnsubstitutedInnerClassesScope()
             }
             else {
-                val outerPackage = getPackageFragment(javaClass.getFqName()!!.parent())
+                val outerPackage = getPackageFragment(fqName!!.parent())
                 if (outerPackage == null) return outerContext.javaClassResolver.resolveClass(javaClass)
                 outerPackage.getMemberScope()
             }
