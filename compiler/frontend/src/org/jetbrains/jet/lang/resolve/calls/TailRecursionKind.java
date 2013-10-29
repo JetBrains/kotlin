@@ -16,16 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-public enum RecursionStatus {
+public enum TailRecursionKind {
     MIGHT_BE(true, false),
-    FOUND_IN_RETURN(true, true),
-    FOUND_IN_FINALLY(false, false),
-    NO_TAIL(false, false);
+    IN_RETURN(true, true),
+    IN_FINALLY(false, false),
+    NON_TAIL(false, false);
 
     private final boolean doGenerateTailRecursion;
     private final boolean isReturn;
 
-    RecursionStatus(boolean doGenerateTailRecursion, boolean aReturn) {
+    TailRecursionKind(boolean doGenerateTailRecursion, boolean aReturn) {
         this.doGenerateTailRecursion = doGenerateTailRecursion;
         isReturn = aReturn;
     }
@@ -38,7 +38,7 @@ public enum RecursionStatus {
         return isReturn;
     }
 
-    public RecursionStatus and(RecursionStatus b) {
+    public TailRecursionKind and(TailRecursionKind b) {
         if (this == b) {
             return this;
         }
@@ -49,14 +49,14 @@ public enum RecursionStatus {
             return this;
         }
 
-        if (isOneOf(this, b, FOUND_IN_RETURN)) {
-            return FOUND_IN_RETURN;
+        if (isOneOf(this, b, IN_RETURN)) {
+            return IN_RETURN;
         }
 
         return this;
     }
 
-    private static boolean isOneOf(RecursionStatus a, RecursionStatus b, RecursionStatus value) {
+    private static boolean isOneOf(TailRecursionKind a, TailRecursionKind b, TailRecursionKind value) {
         return a == value || b == value;
     }
 

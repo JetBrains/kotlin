@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.lang.resolve.calls.RecursionStatus;
+import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -139,7 +139,7 @@ public abstract class AbstractTailRecursionTest extends KotlinTestWithEnvironmen
     ) {
         int size = argumentList.getArguments().size();
         boolean shouldBeTail = size == 0 || isLastArgumentTail(argumentList.getArguments());
-        RecursionStatus status = trace.get(BindingContext.TAIL_RECURSION_CALL, expression);
+        TailRecursionKind status = trace.get(BindingContext.TAIL_RECURSION_CALL, expression);
         assertNotNull(status);
         assertEquals("Tail-recursion detection failed for " + functionDescriptor.getName().asString() + " at " + expression.getText(),
                      shouldBeTail, status.isDoGenerateTailRecursion());

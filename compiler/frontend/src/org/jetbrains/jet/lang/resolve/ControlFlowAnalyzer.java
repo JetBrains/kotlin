@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.calls.RecursionStatus;
+import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
@@ -139,13 +139,13 @@ public class ControlFlowAnalyzer {
             }
             else {
                 for (JetCallExpression call : calls) {
-                    RecursionStatus status = trace.get(BindingContext.TAIL_RECURSION_CALL, call);
+                    TailRecursionKind status = trace.get(BindingContext.TAIL_RECURSION_CALL, call);
                     if (status != null) {
                         switch (status) {
-                            case NO_TAIL:
+                            case NON_TAIL:
                                 trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(call));
                                 break;
-                            case FOUND_IN_FINALLY:
+                            case IN_FINALLY:
                                 trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(call));
                                 break;
                             default:

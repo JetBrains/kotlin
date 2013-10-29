@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
@@ -533,10 +532,12 @@ public class CallResolver {
             @NotNull CallTransformer<D, F> callTransformer
     ) {
 
+        DeclarationDescriptor descriptor = task.scope.getContainingDeclaration();
         for (ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
             TemporaryBindingTrace candidateTrace = TemporaryBindingTrace.create(
                     task.trace, "trace to resolve candidate");
-            Collection<CallCandidateResolutionContext<D>> contexts = callTransformer.createCallContexts(resolutionCandidate, task, candidateTrace);
+            Collection<CallCandidateResolutionContext<D>> contexts = callTransformer.createCallContexts(resolutionCandidate, task,
+                                                                                                        candidateTrace);
             for (CallCandidateResolutionContext<D> context : contexts) {
 
                 candidateResolver.performResolutionForCandidateCall(context, task);
@@ -553,10 +554,8 @@ public class CallResolver {
                     task.getResolvedCalls().add(call);
 
                     if (task.reference.getOriginalElement().getParent() instanceof JetCallExpression) {
-                        DeclarationDescriptor descriptor = task.scope.getContainingDeclaration();
-                        if (call.getCandidateDescriptor().equals(descriptor)) {
-                            // recursion! very interesting...
-                            handleRecursion(task, descriptor);
+                        if (isRecursion(descriptor, call) && isAnnotatedAsTailRecursive(descriptor)) {
+                            resolveIsTailRecursion(task, descriptor);
                         }
                     }
                 }
@@ -571,23 +570,28 @@ public class CallResolver {
         return results;
     }
 
-    private static <D extends CallableDescriptor, F extends D> void handleRecursion(ResolutionTask<D, F> task, DeclarationDescriptor descriptor) {
-        JetCallExpression callExpression = (JetCallExpression) PsiTreeUtil
-                .getParentOfType(task.reference.getOriginalElement(), JetCallExpression.class, false);
+    private static void resolveIsTailRecursion(ResolutionTask<?, ?> task, DeclarationDescriptor descriptor) {
+        JetCallExpression callExpression = PsiTreeUtil.getParentOfType(task.reference.getOriginalElement(), JetCallExpression.class, false);
 
-        assert callExpression != null;
+        assert callExpression != null : "we are trying to exam node that actually isn't call expression";
 
-        if (KotlinBuiltIns.getInstance().isTailRecursive(descriptor)) {
-            task.trace.record(TAIL_RECURSION_CALL, callExpression,
-                              JetPsiUtil.visitUpwardToRoot(callExpression, new TailRecursionDetectorVisitor(), RecursionStatus.MIGHT_BE));
+        task.trace.record(TAIL_RECURSION_CALL, callExpression,
+                          JetPsiUtil.visitUpwardToRoot(callExpression, new TailRecursionDetectorVisitor(), TailRecursionKind.MIGHT_BE));
 
-            List<JetCallExpression> callsList = task.trace.get(FUNCTION_RECURSIVE_CALL_EXPRESSIONS, descriptor);
-            if (callsList == null) {
-                callsList = new ArrayList<JetCallExpression>(4);
-                task.trace.record(FUNCTION_RECURSIVE_CALL_EXPRESSIONS, descriptor, callsList);
-            }
-
-            callsList.add(callExpression);
+        List<JetCallExpression> callsList = task.trace.get(FUNCTION_RECURSIVE_CALL_EXPRESSIONS, descriptor);
+        if (callsList == null) {
+            callsList = new ArrayList<JetCallExpression>(4);
+            task.trace.record(FUNCTION_RECURSIVE_CALL_EXPRESSIONS, descriptor, callsList);
         }
+
+        callsList.add(callExpression);
+    }
+
+    private static boolean isRecursion(DeclarationDescriptor descriptor, ResolvedCallWithTrace<?> resolvedCall) {
+        return resolvedCall.getCandidateDescriptor().equals(descriptor);
+    }
+
+    private static boolean isAnnotatedAsTailRecursive(DeclarationDescriptor descriptor) {
+        return KotlinBuiltIns.getInstance().isTailRecursive(descriptor);
     }
 }

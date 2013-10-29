@@ -21,39 +21,39 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 
-public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorStatus<RecursionStatus>, VisitorData<RecursionStatus>> {
+public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorStatus<TailRecursionKind>, VisitorData<TailRecursionKind>> {
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitNamedFunction(
-            @NotNull JetNamedFunction function, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitNamedFunction(
+            @NotNull JetNamedFunction function, VisitorData<TailRecursionKind> data
     ) {
-        return new BacktraceVisitorStatus<RecursionStatus>(data.data, true);
+        return new BacktraceVisitorStatus<TailRecursionKind>(data.data, true);
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitTryExpression(
-            @NotNull JetTryExpression expression, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitTryExpression(
+            @NotNull JetTryExpression expression, VisitorData<TailRecursionKind> data
     ) {
-        return noTailRecursion(RecursionStatus.FOUND_IN_FINALLY);
+        return noTailRecursion(TailRecursionKind.IN_FINALLY);
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitCatchSection(
-            @NotNull JetCatchClause catchClause, VisitorData<RecursionStatus> data
-    ) {
-        return continueTrace(data);
-    }
-
-    @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitFinallySection(
-            @NotNull JetFinallySection finallySection, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitCatchSection(
+            @NotNull JetCatchClause catchClause, VisitorData<TailRecursionKind> data
     ) {
         return continueTrace(data);
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitBlockExpression(
-            @NotNull JetBlockExpression expression, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitFinallySection(
+            @NotNull JetFinallySection finallySection, VisitorData<TailRecursionKind> data
+    ) {
+        return continueTrace(data);
+    }
+
+    @Override
+    public BacktraceVisitorStatus<TailRecursionKind> visitBlockExpression(
+            @NotNull JetBlockExpression expression, VisitorData<TailRecursionKind> data
     ) {
 
         if (data.data.isReturn()) return continueTrace(data);
@@ -80,8 +80,8 @@ public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorSta
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitWhenExpression(
-            @NotNull JetWhenExpression expression, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitWhenExpression(
+            @NotNull JetWhenExpression expression, VisitorData<TailRecursionKind> data
     ) {
         if (expression.getSubjectExpression() == data.last) {
             return noTailRecursion();
@@ -91,22 +91,22 @@ public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorSta
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitWhenEntry(
-            @NotNull JetWhenEntry jetWhenEntry, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitWhenEntry(
+            @NotNull JetWhenEntry jetWhenEntry, VisitorData<TailRecursionKind> data
     ) {
         return continueTrace(data);
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitWhenConditionExpression(
-            @NotNull JetWhenConditionWithExpression condition, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitWhenConditionExpression(
+            @NotNull JetWhenConditionWithExpression condition, VisitorData<TailRecursionKind> data
     ) {
         return noTailRecursion();
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitIfExpression(
-            @NotNull JetIfExpression expression, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitIfExpression(
+            @NotNull JetIfExpression expression, VisitorData<TailRecursionKind> data
     ) {
         if (expression.getCondition() == data.last) {
             return noTailRecursion();
@@ -116,8 +116,8 @@ public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorSta
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitQualifiedExpression(
-            @NotNull JetQualifiedExpression expression, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitQualifiedExpression(
+            @NotNull JetQualifiedExpression expression, VisitorData<TailRecursionKind> data
     ) {
         if (!(expression.getReceiverExpression() instanceof JetThisExpression)) {
             return noTailRecursion();
@@ -127,8 +127,8 @@ public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorSta
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitReturnExpression(
-            @NotNull JetReturnExpression expression, VisitorData<RecursionStatus> data
+    public BacktraceVisitorStatus<TailRecursionKind> visitReturnExpression(
+            @NotNull JetReturnExpression expression, VisitorData<TailRecursionKind> data
     ) {
         JetExpression returned = expression.getReturnedExpression();
         if (returned == null) {
@@ -139,39 +139,39 @@ public class TailRecursionDetectorVisitor extends JetVisitor<BacktraceVisitorSta
             return noTailRecursion();
         }
 
-        return new BacktraceVisitorStatus<RecursionStatus>(RecursionStatus.FOUND_IN_RETURN, false);
+        return new BacktraceVisitorStatus<TailRecursionKind>(TailRecursionKind.IN_RETURN, false);
     }
 
     @Override
-    public BacktraceVisitorStatus<RecursionStatus> visitJetElement(
-            @NotNull JetElement element, VisitorData<RecursionStatus> state
+    public BacktraceVisitorStatus<TailRecursionKind> visitJetElement(
+            @NotNull JetElement element, VisitorData<TailRecursionKind> state
     ) {
         if (element instanceof JetContainerNode) {
             return continueTrace(state);
         }
 
-        if (state.data == RecursionStatus.MIGHT_BE) {
+        if (state.data == TailRecursionKind.MIGHT_BE) {
             return noTailRecursion();
         }
 
         return continueTrace(state);
     }
 
-    private static BacktraceVisitorStatus<RecursionStatus> noTailRecursion() {
-        return new BacktraceVisitorStatus<RecursionStatus>(RecursionStatus.NO_TAIL, true);
+    private static BacktraceVisitorStatus<TailRecursionKind> noTailRecursion() {
+        return new BacktraceVisitorStatus<TailRecursionKind>(TailRecursionKind.NON_TAIL, true);
     }
 
-    private static BacktraceVisitorStatus<RecursionStatus> noTailRecursion(RecursionStatus status) {
-        return new BacktraceVisitorStatus<RecursionStatus>(status, true);
+    private static BacktraceVisitorStatus<TailRecursionKind> noTailRecursion(TailRecursionKind status) {
+        return new BacktraceVisitorStatus<TailRecursionKind>(status, true);
     }
 
-    private static BacktraceVisitorStatus<RecursionStatus> continueTrace(VisitorData<RecursionStatus> data) {
-        return continueTrace(data, RecursionStatus.MIGHT_BE);
+    private static BacktraceVisitorStatus<TailRecursionKind> continueTrace(VisitorData<TailRecursionKind> data) {
+        return continueTrace(data, TailRecursionKind.MIGHT_BE);
     }
 
-    private static BacktraceVisitorStatus<RecursionStatus> continueTrace(VisitorData<RecursionStatus> data, RecursionStatus desiredStatus) {
-        RecursionStatus newStatus = data.data.and(desiredStatus);
-        return new BacktraceVisitorStatus<RecursionStatus>(newStatus, !newStatus.isDoGenerateTailRecursion());
+    private static BacktraceVisitorStatus<TailRecursionKind> continueTrace(VisitorData<TailRecursionKind> data, TailRecursionKind desiredStatus) {
+        TailRecursionKind newStatus = data.data.and(desiredStatus);
+        return new BacktraceVisitorStatus<TailRecursionKind>(newStatus, !newStatus.isDoGenerateTailRecursion());
     }
 
     @Nullable

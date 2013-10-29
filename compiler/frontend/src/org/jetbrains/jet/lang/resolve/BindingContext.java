@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.resolve.calls.RecursionStatus;
+import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
@@ -88,8 +88,8 @@ public interface BindingContext {
             new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
     WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL =
             new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
-    WritableSlice<JetCallExpression, RecursionStatus> TAIL_RECURSION_CALL =
-            new BasicWritableSlice<JetCallExpression, RecursionStatus>(DO_NOTHING, true);
+    WritableSlice<JetCallExpression, TailRecursionKind> TAIL_RECURSION_CALL =
+            new BasicWritableSlice<JetCallExpression, TailRecursionKind>(DO_NOTHING, true);
     WritableSlice<DeclarationDescriptor, List<JetCallExpression>> FUNCTION_RECURSIVE_CALL_EXPRESSIONS =
             new BasicWritableSlice<DeclarationDescriptor, List<JetCallExpression>>(DO_NOTHING, false);
     WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
