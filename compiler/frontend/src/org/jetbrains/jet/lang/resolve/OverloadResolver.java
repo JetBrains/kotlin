@@ -26,12 +26,15 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 
 public class OverloadResolver {
     private TopDownAnalysisContext context;
@@ -55,93 +58,65 @@ public class OverloadResolver {
     }
 
     private void checkOverloads() {
-        Pair<MultiMap<ClassDescriptor, ConstructorDescriptor>, MultiMap<Key, ConstructorDescriptor>> pair = constructorsGrouped();
-        MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = pair.first;
-        MultiMap<Key, ConstructorDescriptor> inNamespaces = pair.second;
+        MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = MultiMap.create();
+        MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages = MultiMap.create();
+        fillGroupedConstructors(inClasses, inPackages);
 
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
         }
-        checkOverloadsInANamespace(inNamespaces);
+        checkOverloadsInPackages(inPackages);
     }
 
-    private static class Key extends Pair<String, Name> {
-        Key(String packageName, Name name) {
-            super(packageName, name);
-        }
-        
-        Key(PackageFragmentDescriptor fragment, Name name) {
-            this(fragment.getFqName().asString(), name);
-        }
-
-        public String getNamespace() {
-            return first;
-        }
-
-        public Name getFunctionName() {
-            return second;
-        }
-    }
-
-    
-    private Pair<MultiMap<ClassDescriptor, ConstructorDescriptor>, MultiMap<Key, ConstructorDescriptor>>
-            constructorsGrouped()
-    {
-        MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = MultiMap.create();
-        MultiMap<Key, ConstructorDescriptor> inPackages = MultiMap.create();
-
+    private void fillGroupedConstructors(
+            @NotNull MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses,
+            @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
+    ) {
         for (MutableClassDescriptor klass : context.getClasses().values()) {
             if (klass.getKind().isSingleton()) {
                 // Constructors of singletons aren't callable from the code, so they shouldn't participate in overload name checking
                 continue;
             }
             DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();
-            if (containingDeclaration instanceof PackageFragmentDescriptor) {
-                PackageFragmentDescriptor packageFragment = (PackageFragmentDescriptor) containingDeclaration;
-                inPackages.put(new Key(packageFragment, klass.getName()), klass.getConstructors());
-            }
-            else if (containingDeclaration instanceof ClassDescriptor) {
+            if (containingDeclaration instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
                 inClasses.put(classDescriptor, klass.getConstructors());
+            }
+            else if (containingDeclaration instanceof PackageFragmentDescriptor) {
+                inPackages.put(getFQName(klass), klass.getConstructors());
             }
             else if (!(containingDeclaration instanceof FunctionDescriptor)) {
                 throw new IllegalStateException();
             }
         }
-        
-        return Pair.create(inClasses, inPackages);
     }
 
-    private void checkOverloadsInANamespace(MultiMap<Key, ConstructorDescriptor> inNamespaces) {
+    private void checkOverloadsInPackages(MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages) {
 
-        MultiMap<Key, CallableMemberDescriptor> functionsByName = MultiMap.create();
+        MultiMap<FqNameUnsafe, CallableMemberDescriptor> functionsByName = MultiMap.create();
 
         for (SimpleFunctionDescriptor function : context.getFunctions().values()) {
-            DeclarationDescriptor containingDeclaration = function.getContainingDeclaration();
-            if (containingDeclaration instanceof PackageFragmentDescriptor) {
-                PackageFragmentDescriptor packageFragment = (PackageFragmentDescriptor) containingDeclaration;
-                functionsByName.putValue(new Key(packageFragment, function.getName()), function);
+            if (function.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
+                functionsByName.putValue(getFQName(function), function);
             }
         }
         
         for (PropertyDescriptor property : context.getProperties().values()) {
-            DeclarationDescriptor containingDeclaration = property.getContainingDeclaration();
-            if (containingDeclaration instanceof PackageFragmentDescriptor) {
-                PackageFragmentDescriptor packageFragment = (PackageFragmentDescriptor) containingDeclaration;
-                functionsByName.putValue(new Key(packageFragment, property.getName()), property);
+            if (property.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
+                functionsByName.putValue(getFQName(property), property);
             }
         }
         
-        for (Map.Entry<Key, Collection<ConstructorDescriptor>> entry : inNamespaces.entrySet()) {
+        for (Map.Entry<FqNameUnsafe, Collection<ConstructorDescriptor>> entry : inPackages.entrySet()) {
             functionsByName.putValues(entry.getKey(), entry.getValue());
         }
 
-        for (Map.Entry<Key, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
-            checkOverloadsWithSameName(e.getKey().getFunctionName(), e.getValue(), e.getKey().getNamespace());
+        for (Map.Entry<FqNameUnsafe, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
+            checkOverloadsWithSameName(e.getValue(), e.getKey().parent().asString());
         }
     }
 
-    private String nameForErrorMessage(ClassDescriptor classDescriptor, JetClassOrObject jetClass) {
+    private static String nameForErrorMessage(ClassDescriptor classDescriptor, JetClassOrObject jetClass) {
         String name = jetClass.getName();
         if (name != null) {
             return name;
@@ -178,16 +153,19 @@ public class OverloadResolver {
         }
         
         for (Map.Entry<Name, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
-            checkOverloadsWithSameName(e.getKey(), e.getValue(), nameForErrorMessage(classDescriptor, klass));
+            checkOverloadsWithSameName(e.getValue(), nameForErrorMessage(classDescriptor, klass));
         }
 
         // Kotlin has no secondary constructors at this time
 
     }
     
-    private void checkOverloadsWithSameName(@NotNull Name name, Collection<CallableMemberDescriptor> functions, @NotNull String functionContainer) {
+    private void checkOverloadsWithSameName(
+            Collection<CallableMemberDescriptor> functions,
+            @NotNull String functionContainer
+    ) {
         if (functions.size() == 1) {
-            // microoptimization
+            // micro-optimization
             return;
         }
         Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations = findRedeclarations(functions);
