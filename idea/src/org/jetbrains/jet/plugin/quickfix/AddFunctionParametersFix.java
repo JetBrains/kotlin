@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -26,14 +27,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetCallElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.*;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collection;
@@ -80,6 +86,22 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
             else
                 return JetBundle.message("add.parameters.to.function", subjectSuffix, functionName);
         }
+    }
+
+    @Override
+    public boolean isAvailable(
+            @NotNull Project project, Editor editor, PsiFile file
+    ) {
+        if (!super.isAvailable(project, editor, file)) {
+            return false;
+        }
+
+        int newParametersCnt = callElement.getValueArguments().size() - functionDescriptor.getValueParameters().size();
+        if (newParametersCnt <= 0) {
+            // psi for this quickfix is no longer valid
+            return false;
+        }
+        return true;
     }
 
     @Override
