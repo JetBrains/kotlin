@@ -2269,16 +2269,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type type = asmType(calleeContainingClass.getDefaultType());
         StackValue result = StackValue.local(0, type);
         while (cur != null) {
+            ClassDescriptor thisDescriptor = cur.getThisDescriptor();
+            if (!isSuper && thisDescriptor.equals(calleeContainingClass)
+                || isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
+                return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
+            }
+
             if (cur instanceof MethodContext && !(cur instanceof ConstructorContext)) {
                 cur = cur.getParentContext();
             }
 
             assert cur != null;
-            ClassDescriptor thisDescriptor = cur.getThisDescriptor();
-            if (!isSuper && thisDescriptor.equals(calleeContainingClass)
-            || isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
-                return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
-            }
+
 
             result = cur.getOuterExpression(result, false);
 
