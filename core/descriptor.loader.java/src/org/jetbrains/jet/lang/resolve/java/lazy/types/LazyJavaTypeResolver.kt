@@ -69,14 +69,14 @@ class LazyJavaTypeResolver(
         val javaComponentType = arrayType.getComponentType()
         if (javaComponentType is JavaPrimitiveType) {
             val jetType = JavaToKotlinClassMap.getInstance().mapPrimitiveKotlinClass("[" + javaComponentType.getCanonicalText())
-            if (jetType != null) return jetType
+            if (jetType != null) return TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
         }
 
         val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !isVararg) OUT_VARIANCE else INVARIANT
 
         val howArgumentTypeIsUsed = isVararg.iif(MEMBER_SIGNATURE_CONTRAVARIANT, TYPE_ARGUMENT)
         val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed.toAttributes())
-        return TypeUtils.makeNullable(KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType))
+        return TypeUtils.makeNullableAsSpecified(KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType), !attr.isMarkedNotNull)
     }
 
     private class LazyStarProjection(
