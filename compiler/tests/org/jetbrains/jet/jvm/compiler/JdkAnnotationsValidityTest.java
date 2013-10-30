@@ -105,7 +105,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
                     ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass, IGNORE_KOTLIN_SOURCES);
-                    PackageViewDescriptor topLevelPackage = javaDescriptorResolver.getPackageFragmentProvider().getModule().getPackage(javaClass);
+                    PackageViewDescriptor topLevelPackage = injector.getModule().getPackage(javaClass);
                     if (topLevelClass == null) {
                         continue;
                     }
@@ -176,11 +176,6 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         public AlternativeSignatureErrorFindingVisitor(BindingContext bindingContext, Map<String, List<String>> errors) {
             this.bindingContext = bindingContext;
             this.errors = errors;
-        }
-
-        @Override
-        public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
-            return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
         }
 
         @Override

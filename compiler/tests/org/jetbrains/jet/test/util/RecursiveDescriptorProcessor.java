@@ -78,12 +78,6 @@ public class RecursiveDescriptorProcessor {
         }
 
         @Override
-        public Boolean visitNamespaceDescriptor(NamespaceDescriptor descriptor, D data) {
-            return applyWorker(descriptor, data)
-                   && visitChildren(descriptor.getMemberScope().getAllDescriptors(), data);
-        }
-
-        @Override
         public Boolean visitVariableDescriptor(VariableDescriptor descriptor, D data) {
             return processCallable(descriptor, data);
         }

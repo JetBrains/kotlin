@@ -97,12 +97,6 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
             }
 
             @Override
-            public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
-                descriptors.add(descriptor);
-                return visitDescriptors(descriptor.getMemberScope().getAllDescriptors());
-            }
-
-            @Override
             public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
                 descriptors.add(descriptor);
                 return visitDescriptors(descriptor.getMemberScope().getAllDescriptors());

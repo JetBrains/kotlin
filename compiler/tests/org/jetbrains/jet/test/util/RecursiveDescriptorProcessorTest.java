@@ -92,12 +92,6 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
             }
 
             @Override
-            public Boolean visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
-                add(descriptor);
-                return true;
-            }
-
-            @Override
             public Boolean visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, Void data) {
                 add(descriptor);
                 return true;

@@ -112,8 +112,8 @@ public final class DecompiledNavigationUtils {
     private static FqName getContainerFqName(@NotNull DeclarationDescriptor referencedDescriptor) {
         ClassOrNamespaceDescriptor
                 containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrNamespaceDescriptor.class, false);
-        if (containerDescriptor instanceof NamespaceDescriptor) {
-            return PackageClassUtils.getPackageClassFqName(getFQName(containerDescriptor).toSafe());
+        if (containerDescriptor instanceof PackageFragmentDescriptor) {
+            return PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) containerDescriptor).getFqName());
         }
         if (containerDescriptor instanceof ClassDescriptor) {
             ClassKind classKind = ((ClassDescriptor) containerDescriptor).getKind();

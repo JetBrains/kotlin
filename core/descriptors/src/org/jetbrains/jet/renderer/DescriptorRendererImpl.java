@@ -745,11 +745,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         @Override
-        public Void visitNamespaceDescriptor(NamespaceDescriptor namespaceDescriptor, StringBuilder builder) {
-            return null;
-        }
-
-        @Override
         public Void visitPackageFragmentDescriptor(
                 PackageFragmentDescriptor descriptor, StringBuilder builder
         ) {

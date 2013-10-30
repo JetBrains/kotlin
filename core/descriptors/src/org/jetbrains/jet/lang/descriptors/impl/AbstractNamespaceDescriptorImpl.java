@@ -54,6 +54,6 @@ public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescrip
 
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitNamespaceDescriptor(this, data);
+        throw new UnsupportedOperationException("namespaces are retired");
     }
 }

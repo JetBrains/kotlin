@@ -175,14 +175,6 @@ public class DescriptorValidator {
         }
 
         @Override
-        public Boolean visitNamespaceDescriptor(
-                NamespaceDescriptor descriptor, DiagnosticCollector collector
-        ) {
-            validateScope(descriptor.getMemberScope(), collector);
-            return true;
-        }
-
-        @Override
         public Boolean visitPackageFragmentDescriptor(
                 PackageFragmentDescriptor descriptor, DiagnosticCollector collector
         ) {
@@ -375,13 +367,6 @@ public class DescriptorValidator {
             if (!found.contains(expected)) {
                 report(expected, "Not found in " + scope + ": " + found);
             }
-        }
-
-        @Override
-        public Void visitNamespaceDescriptor(
-                NamespaceDescriptor descriptor, JetScope scope
-        ) {
-            throw new IllegalStateException("namespace don't exist");
         }
 
         @Override
