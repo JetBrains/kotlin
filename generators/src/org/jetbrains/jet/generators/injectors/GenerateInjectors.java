@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
-import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
@@ -125,7 +124,6 @@ public class GenerateInjectors {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
         generator.implementInterface(InjectorForTopDownAnalyzer.class);
         generateInjectorForTopDownAnalyzerCommon(generator);
-        generator.addPublicField(JavaBridgeConfiguration.class);
         generator.addField(JavaDescriptorResolver.class);
         generator.addField(false, JavaToKotlinClassMap.class, null, new GivenExpression("org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap.getInstance()"));
         generator.addField(JavaClassFinderImpl.class);

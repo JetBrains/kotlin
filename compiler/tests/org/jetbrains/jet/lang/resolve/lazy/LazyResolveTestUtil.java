@@ -63,9 +63,7 @@ public class LazyResolveTestUtil {
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
         BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, module);
-        module.setModuleConfiguration(injector.getJavaBridgeConfiguration());
-        return injector;
+        return new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, module);
     }
 
     public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {

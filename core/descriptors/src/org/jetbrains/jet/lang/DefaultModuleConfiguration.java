@@ -17,25 +17,16 @@
 package org.jetbrains.jet.lang;
 
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.List;
 
-public class DefaultModuleConfiguration implements ModuleConfiguration {
+public class DefaultModuleConfiguration {
     public static final List<ImportPath> DEFAULT_JET_IMPORTS = ImmutableList.of(
             new ImportPath("kotlin.*"),
             new ImportPath("kotlin.io.*"),
             new ImportPath("jet.*"));
 
-    public static final ModuleConfiguration INSTANCE = new DefaultModuleConfiguration();
-
     private DefaultModuleConfiguration() {
-    }
-
-    @Override
-    public void extendNamespaceScope(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
     }
 }

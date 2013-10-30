@@ -21,7 +21,6 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -131,7 +130,6 @@ public class KotlinBuiltIns {
             this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
                                                            DefaultModuleConfiguration.DEFAULT_JET_IMPORTS,
                                                            PlatformToKotlinClassMap.EMPTY);
-            builtInsModule.setModuleConfiguration(ModuleConfiguration.EMPTY);
             loadBuiltIns(builtInsModule);
 
             this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);

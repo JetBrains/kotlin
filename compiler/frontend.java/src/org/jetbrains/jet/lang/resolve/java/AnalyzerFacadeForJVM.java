@@ -104,7 +104,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         ModuleDescriptorImpl module = injector.getModule();
 
-        module.setModuleConfiguration(DefaultModuleConfiguration.INSTANCE);
         module.addFragmentProvider(javaDescriptorResolver.getPackageFragmentProvider());
         if (addBuiltIns) {
             module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
@@ -182,7 +181,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project, topDownAnalysisParameters,
                 new ObservableBindingTrace(trace), owner);
-        owner.setModuleConfiguration(injector.getJavaBridgeConfiguration());
         try {
             injector.getTopDownAnalyzer().analyzeFiles(files, scriptParameters);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?

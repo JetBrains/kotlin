@@ -144,8 +144,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         // we need the same binding trace for resolve from Java and Kotlin
         BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
 
-        InjectorForJavaDescriptorResolver injectorForJava = new InjectorForJavaDescriptorResolver(environment.getProject(), trace);
-
         ModuleDescriptorImpl moduleDescriptor = AnalyzerFacadeForJVM.createJavaModule("<test module>");
 
         InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
@@ -154,7 +152,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                         Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
                 trace,
                 moduleDescriptor);
-        moduleDescriptor.setModuleConfiguration(injectorForAnalyzer.getJavaBridgeConfiguration());
 
         injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 

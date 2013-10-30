@@ -224,7 +224,6 @@ public class JetSourceNavigationHelper {
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
                                                                          DefaultModuleConfiguration.DEFAULT_JET_IMPORTS,
                                                                          PlatformToKotlinClassMap.EMPTY);
-        moduleDescriptor.setModuleConfiguration(DefaultModuleConfiguration.INSTANCE);
         KotlinCodeAnalyzer analyzer = new ResolveSession(
                 project,
                 storageManager,

@@ -55,7 +55,6 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
         final ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
-        lazyModule.setModuleConfiguration(injectorForTopDownAnalyzer.getModuleDescriptor().getModuleConfiguration());
         LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
         final ResolveSession resolveSession = new ResolveSession(getProject(), storageManager, lazyModule,
                                                                  new FileBasedDeclarationProviderFactory(storageManager, files));

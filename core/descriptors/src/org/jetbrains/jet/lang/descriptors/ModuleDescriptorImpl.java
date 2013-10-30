@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.descriptors;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.CompositePackageFragmentProvider;
@@ -36,7 +35,6 @@ import java.util.List;
 public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ModuleDescriptor {
     private final List<PackageFragmentProvider> fragmentProviders = Lists.newArrayList();
     private final CompositePackageFragmentProvider packageFragmentProvider = new CompositePackageFragmentProvider(fragmentProviders);
-    private ModuleConfiguration moduleConfiguration;
     private final List<ImportPath> defaultImports;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
 
@@ -76,19 +74,6 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements M
         return !fragments.isEmpty()
                ? new PackageViewDescriptorImpl(this, fqName, fragments)
                : null;
-    }
-
-    @NotNull
-    @Override
-    public ModuleConfiguration getModuleConfiguration() {
-        return moduleConfiguration;
-    }
-
-    @NotNull
-    public ModuleDescriptorImpl setModuleConfiguration(@NotNull ModuleConfiguration moduleConfiguration) {
-        assert this.moduleConfiguration == null : "Trying to set module configuration twice for " + this;
-        this.moduleConfiguration = moduleConfiguration;
-        return this;
     }
 
     @NotNull

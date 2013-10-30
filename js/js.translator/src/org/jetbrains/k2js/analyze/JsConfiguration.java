@@ -18,15 +18,12 @@ package org.jetbrains.k2js.analyze;
 
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
-public class JsConfiguration implements ModuleConfiguration {
+public class JsConfiguration {
 
     @NotNull
     public static final List<ImportPath> DEFAULT_IMPORT_PATHS = ImmutableList.of(
@@ -36,9 +33,5 @@ public class JsConfiguration implements ModuleConfiguration {
             new ImportPath("kotlin.*"));
 
     JsConfiguration() {
-    }
-
-    @Override
-    public void extendNamespaceScope(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
     }
 }

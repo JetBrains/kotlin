@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -37,9 +36,6 @@ public interface ModuleDescriptor extends DeclarationDescriptor, NamespaceDescri
 
     @Nullable
     PackageViewDescriptor getPackage(@NotNull FqName fqName);
-
-    @NotNull
-    ModuleConfiguration getModuleConfiguration();
 
     @NotNull
     List<ImportPath> getDefaultImports();

@@ -16,21 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class JavaBridgeConfiguration implements ModuleConfiguration {
+public class JavaBridgeConfiguration {
 
     public static final List<ImportPath> DEFAULT_JAVA_IMPORTS = Collections.unmodifiableList(Arrays.asList(new ImportPath("java.lang.*")));
     public static final List<ImportPath> ALL_JAVA_IMPORTS;
@@ -40,9 +34,5 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
         allJavaImports.addAll(DEFAULT_JAVA_IMPORTS);
         allJavaImports.addAll(DefaultModuleConfiguration.DEFAULT_JET_IMPORTS);
         ALL_JAVA_IMPORTS = Collections.unmodifiableList(allJavaImports);
-    }
-
-    @Override
-    public void extendNamespaceScope(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
     }
 }

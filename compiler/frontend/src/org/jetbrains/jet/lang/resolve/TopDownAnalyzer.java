@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
@@ -186,7 +185,6 @@ public class TopDownAnalyzer {
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<dummy for object>"),
                                                                          Collections.<ImportPath>emptyList(),
                                                                          PlatformToKotlinClassMap.EMPTY);
-        moduleDescriptor.setModuleConfiguration(ModuleConfiguration.EMPTY);
 
         TopDownAnalysisParameters topDownAnalysisParameters =
                 new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()),

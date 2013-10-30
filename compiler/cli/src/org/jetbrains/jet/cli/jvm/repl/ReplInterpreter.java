@@ -103,7 +103,6 @@ public class ReplInterpreter {
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
-        module.setModuleConfiguration(injector.getJavaBridgeConfiguration());
 
         List<URL> classpath = Lists.newArrayList();
 
