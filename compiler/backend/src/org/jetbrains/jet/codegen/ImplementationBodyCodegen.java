@@ -1129,7 +1129,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final MutableClosure closure = context.closure;
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, myClass);
 
-        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, closure);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             lookupConstructorExpressionsInClosureIfPresent(constructorContext);

@@ -15,7 +15,7 @@
     <orderEntry type="library" name="protobuf-java" level="project" />
     <orderEntry type="module" module-name="serialization.java" />
     <orderEntry type="module" module-name="descriptor.loader.java" />
-    <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="module" module-name="util" />
   </component>
 </module>
 
