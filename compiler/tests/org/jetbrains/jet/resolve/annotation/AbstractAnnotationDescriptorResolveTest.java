@@ -41,7 +41,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class AnnotationDescriptorResolveTest extends JetLiteFixture {
+public class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
     private static final String PATH = "compiler/testData/resolveAnnotations/testFile.kt";
 
     private static final FqName NAMESPACE = new FqName("test");
