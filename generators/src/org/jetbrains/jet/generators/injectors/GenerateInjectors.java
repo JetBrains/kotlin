@@ -55,9 +55,15 @@ public class GenerateInjectors {
     private GenerateInjectors() {
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Throwable {
         for (DependencyInjectorGenerator generator : createGenerators()) {
-            generator.generate();
+            try {
+                generator.generate();
+            }
+            catch (Throwable e) {
+                System.err.println(generator.getOutputFile());
+                throw e;
+            }
         }
     }
 
