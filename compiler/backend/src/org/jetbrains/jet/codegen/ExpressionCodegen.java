@@ -2218,9 +2218,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private void generateScript(@NotNull ScriptReceiver receiver) {
         CodegenContext cur = context;
         StackValue result = StackValue.local(0, OBJECT_TYPE);
+        boolean inStartConstructorContext = cur instanceof ConstructorContext;
         while (cur != null) {
-            if (cur instanceof MethodContext && !(cur instanceof ConstructorContext)) {
-                cur = cur.getParentContext();
+            if (!inStartConstructorContext) {
+                cur = getNotNullParentContextForMethod(cur);
             }
 
             if (cur instanceof ScriptContext) {
@@ -2239,13 +2240,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return;
             }
 
-            assert cur != null;
             result = cur.getOuterExpression(result, false);
 
-            if (cur instanceof ConstructorContext) {
-                cur = cur.getParentContext();
+            if (inStartConstructorContext) {
+                cur = getNotNullParentContextForMethod(cur);
+                inStartConstructorContext = false;
             }
-            assert cur != null;
+
             cur = cur.getParentContext();
         }
 
@@ -2268,6 +2269,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         CodegenContext cur = context;
         Type type = asmType(calleeContainingClass.getDefaultType());
         StackValue result = StackValue.local(0, type);
+        boolean inStartConstructorContext = cur instanceof ConstructorContext;
         while (cur != null) {
             ClassDescriptor thisDescriptor = cur.getThisDescriptor();
             if (!isSuper && thisDescriptor.equals(calleeContainingClass)
@@ -2275,24 +2277,32 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
             }
 
-            if (cur instanceof MethodContext && !(cur instanceof ConstructorContext)) {
-                cur = cur.getParentContext();
+            //for constructor super call we should access to outer instance through parameter in locals, in other cases through field for captured outer
+            if (inStartConstructorContext) {
+                result = cur.getOuterExpression(result, false);
+                cur = getNotNullParentContextForMethod(cur);
+                inStartConstructorContext = false;
+            }
+            else {
+                cur = getNotNullParentContextForMethod(cur);
+                result = cur.getOuterExpression(result, false);
             }
 
-            assert cur != null;
-
-
-            result = cur.getOuterExpression(result, false);
-
-            if (cur instanceof ConstructorContext) {
-                cur = cur.getParentContext();
-            }
-            assert cur != null;
             cur = cur.getParentContext();
         }
 
         throw new UnsupportedOperationException();
     }
+
+    @NotNull
+    private CodegenContext getNotNullParentContextForMethod(@NotNull CodegenContext cur) {
+        if (cur instanceof MethodContext) {
+            cur = cur.getParentContext();
+        }
+        assert cur != null;
+        return cur;
+    }
+
 
     private static boolean isReceiver(PsiElement expression) {
         PsiElement parent = expression.getParent();
