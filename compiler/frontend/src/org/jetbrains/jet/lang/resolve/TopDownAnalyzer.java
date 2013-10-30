@@ -17,16 +17,16 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicates;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
+import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilder;
+import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilderDummy;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -36,7 +36,10 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class TopDownAnalyzer {
 
@@ -145,36 +148,6 @@ public class TopDownAnalyzer {
             if(!namespaceScope.getKey().isScript())
                 namespaceScope.getValue().changeLockLevel(WritableScope.LockLevel.READING);
         }
-    }
-
-    public static void processStandardLibraryNamespace(
-            @NotNull Project project,
-            @NotNull BindingTrace trace,
-            @NotNull WritableScope outerScope,
-            @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
-            @NotNull List<JetFile> files) {
-
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
-        InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(trace),       
-                KotlinBuiltIns.getInstance().getBuiltInsModule(), PlatformToKotlinClassMap.EMPTY);
-
-        injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryNamespace, files);
-    }
-
-    private void doProcessStandardLibraryNamespace(
-            WritableScope outerScope, NamespaceDescriptorImpl standardLibraryNamespace, List<JetFile> files) {
-        ArrayList<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
-        for (JetFile file : files) {
-            // TODO 1 restore
-            //context.getPackageFragments().put(file, standardLibraryNamespace);
-            context.getNamespaceScopes().put(file, standardLibraryNamespace.getMemberScope());
-            toAnalyze.addAll(file.getDeclarations());
-        }
-//        context.getDeclaringScopes().put(file, outerScope);
-
-        doProcess(outerScope, standardLibraryNamespace.getBuilder(), toAnalyze);
     }
 
     public static void processClassOrObject(
