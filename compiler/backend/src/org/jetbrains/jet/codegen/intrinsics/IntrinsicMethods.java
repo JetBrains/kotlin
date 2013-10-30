@@ -39,6 +39,7 @@ import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 
 public class IntrinsicMethods {
     private static final IntrinsicMethod UNARY_MINUS = new UnaryMinus();
@@ -121,14 +122,13 @@ public class IntrinsicMethods {
         declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar());
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("get"), 1, new StringGetChar());
 
-        FqName builtInsPackageFqName = KotlinBuiltIns.getInstance().getBuiltInsPackageFqName();
-        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("toString"), 0, TO_STRING);
-        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("equals"), 1, EQUALS);
-        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
-        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("plus"), 1, STRING_PLUS);
-        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("arrayOfNulls"), 1, new NewArray());
-        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("synchronized"), 2, new StupidSync());
-        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("iterator"), 0, new IteratorIterator());
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("toString"), 0, TO_STRING);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("equals"), 1, EQUALS);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("plus"), 1, STRING_PLUS);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("arrayOfNulls"), 1, new NewArray());
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("synchronized"), 2, new StupidSync());
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("iterator"), 0, new IteratorIterator());
 
         for (PrimitiveType type : PrimitiveType.values()) {
             declareIntrinsicFunction(type.getTypeName(), Name.identifier("compareTo"), 1, new CompareTo());
@@ -200,11 +200,11 @@ public class IntrinsicMethods {
     }
 
     private void declareIntrinsicProperty(Name className, Name methodName, IntrinsicMethod implementation) {
-        intrinsicsMap.registerIntrinsic(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName().child(className), methodName, -1, implementation);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME.child(className), methodName, -1, implementation);
     }
 
     private void declareIntrinsicFunction(Name className, Name functionName, int arity, IntrinsicMethod implementation) {
-        intrinsicsMap.registerIntrinsic(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName().child(className), functionName, arity, implementation);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME.child(className), functionName, arity, implementation);
     }
 
     @Nullable

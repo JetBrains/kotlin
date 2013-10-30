@@ -81,8 +81,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             public void run() {
                 BindingTraceContext context = new BindingTraceContext();
                 FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
-                context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
-                               KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), jetNamespace);
+                context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, jetNamespace);
 
                 WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
                                                                 "Builtin classes scope");

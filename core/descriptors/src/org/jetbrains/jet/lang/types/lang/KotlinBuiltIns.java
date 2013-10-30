@@ -227,12 +227,6 @@ public class KotlinBuiltIns {
         return builtInsModule.getPackageFragmentProvider().getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME).get(0);
     }
 
-    //  TODO 1 inline
-    @NotNull
-    public FqName getBuiltInsPackageFqName() {
-        return BUILT_INS_PACKAGE_FQ_NAME;
-    }
-
     @Deprecated
     @NotNull
     public JetScope getBuiltInsScope() { // TODO 1 scope?
