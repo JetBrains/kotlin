@@ -239,7 +239,7 @@ class LazyJavaTypeResolver(
                     if (isConstructorTypeParameter())
                         getConstructorTypeParameterSubstitute().isNullable()
                     else
-                        attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT)
+                        attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
                 }
                 else -> true
             }
