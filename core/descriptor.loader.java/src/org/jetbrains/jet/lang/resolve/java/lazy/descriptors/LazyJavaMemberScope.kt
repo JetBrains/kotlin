@@ -252,7 +252,7 @@ public abstract class LazyJavaMemberScope(
 
     private fun getPropertyType(field: JavaField): JetType {
         // Fields do not have their own generic parameters
-        val propertyType = c.typeResolver.transformJavaType(field.getType(), TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes())
+        val propertyType = c.typeResolver.transformJavaType(field.getType(), LazyJavaTypeAttributes(c, field, TypeUsage.MEMBER_SIGNATURE_INVARIANT))
         if (JavaPropertyResolver.isStaticFinalField(field)) {
             return TypeUtils.makeNotNullable(propertyType)
         }

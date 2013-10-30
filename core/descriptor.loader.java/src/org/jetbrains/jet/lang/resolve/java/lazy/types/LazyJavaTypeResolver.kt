@@ -265,7 +265,7 @@ class LazyJavaTypeAttributes(
         c: LazyJavaResolverContext,
         val annotationOwner: JavaAnnotationOwner,
         override val howThisTypeIsUsed: TypeUsage,
-        computeHowThisTypeIsUsedAccrodingToAnnotations: () -> TypeUsage
+        computeHowThisTypeIsUsedAccrodingToAnnotations: () -> TypeUsage = {howThisTypeIsUsed}
 ): JavaTypeAttributes {
 
     override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage by c.storageManager.createLazyValue(
