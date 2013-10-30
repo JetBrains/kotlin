@@ -371,6 +371,12 @@ public class CandidateResolver {
                 type, expression, context.trace, isFairSafeCallExpression(expression, context.trace));
 
         contextForArgument.candidateCall.cleanInternalData();
+
+        // clean data for "invoke" calls
+        ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
+        assert resolvedCall != null : "Resolved call for '" + keyExpression + "' is not stored, but CallCandidateResolutionContext is.";
+        resolvedCall.cleanInternalData();
+
         DataFlowUtils.checkType(result, expression, contextForArgument);
     }
 
