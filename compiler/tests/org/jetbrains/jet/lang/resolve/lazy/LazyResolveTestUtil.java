@@ -48,37 +48,38 @@ public class LazyResolveTestUtil {
     }
 
     public static InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer(JetCoreEnvironment environment) {
-        ModuleDescriptorImpl eagerModuleForLazy = AnalyzerFacadeForJVM.createJavaModule("<eager module for lazy>");
-
-        InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(eagerModuleForLazy, environment);
+        InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(environment);
         // This line is required fro the 'jet' namespace to be filled in with functions
         tdaInjectorForLazy.getTopDownAnalyzer().analyzeFiles(
                 Collections.singletonList(JetPsiFactory.createFile(environment.getProject(), "")), Collections.<AnalyzerScriptParameter>emptyList());
         return tdaInjectorForLazy;
     }
 
-    public static InjectorForTopDownAnalyzer createInjectorForTDA(ModuleDescriptorImpl module, JetCoreEnvironment environment) {
+    public static InjectorForTopDownAnalyzer createInjectorForTDA(JetCoreEnvironment environment) {
         JetTestUtils.newTrace(environment);
 
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
                 Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
-        BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
-        return new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, module);
+        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
+        BindingTrace sharedTrace = support.getTrace();
+        ModuleDescriptorImpl sharedModule = support.getModule();
+        return new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, sharedModule);
     }
 
     public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
-        ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<test module>");
-        InjectorForTopDownAnalyzer injector = createInjectorForTDA(module, environment);
+        InjectorForTopDownAnalyzer injector = createInjectorForTDA(environment);
         injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
-        return module;
+        return injector.getModuleDescriptor();
     }
 
     public static KotlinCodeAnalyzer resolveLazilyWithSession(List<JetFile> files, JetCoreEnvironment environment, boolean addBuiltIns) {
         JetTestUtils.newTrace(environment);
 
         Project project = environment.getProject();
-        BindingTrace sharedTrace = CliLightClassGenerationSupport.getInstanceForCli(project).getTrace();
+        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(project);
+        BindingTrace sharedTrace = support.getTrace();
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, sharedTrace);
+        support.setModule(injector.getModule());
 
         return AnalyzerFacadeForJVM.createLazyResolveSession(project, files, sharedTrace, injector, addBuiltIns);
     }

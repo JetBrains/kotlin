@@ -142,20 +142,19 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         JetCoreEnvironment environment = JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
 
         // we need the same binding trace for resolve from Java and Kotlin
-        BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject()).getTrace();
-
-        ModuleDescriptorImpl moduleDescriptor = AnalyzerFacadeForJVM.createJavaModule("<test module>");
+        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
+        BindingTrace trace = support.getTrace();
 
         InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                 environment.getProject(),
                 new TopDownAnalysisParameters(
                         Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
                 trace,
-                moduleDescriptor);
+                support.getModule());
 
         injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 
-        PackageViewDescriptor packageView = moduleDescriptor.getPackage(TEST_PACKAGE_FQNAME);
+        PackageViewDescriptor packageView = support.getModule().getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null : "Test namespace not found";
 
         checkJavaPackage(expectedFile, packageView, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);

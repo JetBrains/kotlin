@@ -180,19 +180,29 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve
     ) {
-        ModuleDescriptorImpl owner = createJavaModule("<module>");
+        return analyzeFilesWithJavaIntegration(project, files, trace, scriptParameters, filesToAnalyzeCompletely,
+                                               storeContextForBodiesResolve, createJavaModule("<module>"));
+    }
+
+    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
+            Project project,
+            Collection<JetFile> files,
+            BindingTrace trace,
+            List<AnalyzerScriptParameter> scriptParameters,
+            Predicate<PsiFile> filesToAnalyzeCompletely,
+            boolean storeContextForBodiesResolve,
+            ModuleDescriptorImpl module
+    ) {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);
 
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
-                project, topDownAnalysisParameters,
-                new ObservableBindingTrace(trace), owner);
+        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         try {
             injector.getTopDownAnalyzer().analyzeFiles(files, scriptParameters);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
-            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, owner);
+            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, module);
         }
         finally {
             injector.destroy();

@@ -246,9 +246,6 @@ public interface BindingContext {
             Slices.<ClassDescriptor, FunctionDescriptor>sliceBuilder().build();
 
     WritableSlice<FqName, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqName, ClassDescriptor>(DO_NOTHING, true);
-    @Deprecated
-    WritableSlice<FqName, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR =
-            new BasicWritableSlice<FqName, NamespaceDescriptor>(DO_NOTHING);
     WritableSlice<JetFile, PackageFragmentDescriptor> FILE_TO_PACKAGE_FRAGMENT = Slices.createSimpleSlice();
     WritableSlice<FqName, Collection<JetFile>> PACKAGE_TO_FILES = Slices.createSimpleSlice();
 
