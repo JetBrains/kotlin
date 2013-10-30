@@ -338,7 +338,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             result = result == null || myOuter == null ? myOuter : StackValue.composed(result, myOuter);
         }
 
-        StackValue resultValue = parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
+        StackValue resultValue;
+        if (myOuter != null && getEnclosingClass() == d) {
+            resultValue = result;
+        } else {
+            resultValue = parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
+        }
+
         if (myOuter != null && resultValue != null) {
             closure.setCaptureThis();
         }
