@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
@@ -32,7 +31,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public final class JavaValueParameterResolver {
@@ -85,7 +83,7 @@ public final class JavaValueParameterResolver {
         return new ValueParameterDescriptorImpl(
                 containingDeclaration,
                 i,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                annotationResolver.resolveAnnotations(parameter),
                 getParameterName(i, parameter), // TODO: must be very slow, make it lazy?
                 outType,
                 false,

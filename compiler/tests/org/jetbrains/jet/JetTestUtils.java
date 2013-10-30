@@ -243,7 +243,7 @@ public class JetTestUtils {
             @NotNull TestJdkKind jdkKind
     ) {
         return JetCoreEnvironment.createForTests(disposable, compilerConfigurationForTests(
-                configurationKind, jdkKind, getAnnotationsJar(), getAnnotationsExtJar()));
+                configurationKind, jdkKind, getAnnotationsJar()));
     }
 
     public static File findMockJdkRtJar() {
@@ -252,10 +252,6 @@ public class JetTestUtils {
 
     public static File getAnnotationsJar() {
         return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
-    }
-
-    public static File getAnnotationsExtJar() {
-        return new File(JetTestCaseBuilder.getHomeDirectory(), "dist/kotlinc/lib/kotlin-annotations-ext.jar");
     }
 
     public static void mkdirs(File file) throws IOException {
