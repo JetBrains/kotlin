@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
@@ -597,7 +598,8 @@ public class SignaturesPropagationData {
             boolean annotatedAsNotNull = howThisTypeIsUsed != TYPE_ARGUMENT && !autoType.isNullable();
 
             if (annotatedAsNotNull && someSupersNotCovariantNullable) {
-                reportError("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + autoType);
+                DescriptorRenderer renderer = DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES;
+                reportError("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + renderer.renderType(autoType));
                 return true;
             }
 
