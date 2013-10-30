@@ -2544,6 +2544,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions/tail-recursion"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("defaultArgs.kt")
+            public void testDefaultArgs() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tail-recursion/defaultArgs.kt");
+            }
+            
             @TestMetadata("insideElvis.kt")
             public void testInsideElvis() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tail-recursion/insideElvis.kt");

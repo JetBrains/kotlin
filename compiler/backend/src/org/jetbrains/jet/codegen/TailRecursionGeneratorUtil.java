@@ -112,8 +112,8 @@ public class TailRecursionGeneratorUtil {
 
                 codegen.gen(argumentExpression, type);
             }
-            else if (arg instanceof DefaultValueArgument) { // what case is it?
-                pushDefaultValueOnStack(type, v);
+            else if (arg instanceof DefaultValueArgument) {
+                DefaultParameterValueLoader.DEFAULT.putValueOnStack(parameterDescriptor, codegen);
             }
             else if (arg instanceof VarargValueArgument) {
                 VarargValueArgument valueArgument = (VarargValueArgument) arg;
