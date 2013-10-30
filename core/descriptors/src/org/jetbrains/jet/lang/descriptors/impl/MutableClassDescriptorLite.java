@@ -98,6 +98,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     }
 
 
+    @Override
     @NotNull
     public JetScope getScopeForMemberLookup() {
         return scopeForMemberLookup;
@@ -176,7 +177,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
     public void setTypeParameterDescriptors(List<TypeParameterDescriptor> typeParameters) {
         if (this.typeParameters != null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Type parameters are already set for " + getName());
         }
         this.typeParameters = new ArrayList<TypeParameterDescriptor>();
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
