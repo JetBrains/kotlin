@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -27,10 +28,14 @@ import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaSubModule;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -45,6 +50,24 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
+    private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
+
+    private final MemoizedFunctionToNullable<FqName, ClassDescriptor> kotlinClassesFromBinaries = storageManager.createMemoizedFunctionWithNullableValues(
+            new Function1<FqName, ClassDescriptor>() {
+                @Override
+                public ClassDescriptor invoke(FqName fqName) {
+                    //TODO: correct scope
+                    KotlinJvmBinaryClass kotlinClass = kotlinClassFinder.find(fqName);
+                    if (kotlinClass != null) {
+                        ClassDescriptor deserializedDescriptor = deserializedDescriptorResolver.resolveClass(kotlinClass);
+                        if (deserializedDescriptor != null) {
+                            return deserializedDescriptor;
+                        }
+                    }
+                    return null;
+                }
+            }
+    );
 
     private JavaClassResolver classResolver;
     private JavaPackageFragmentProvider packageFragmentProvider;
@@ -55,6 +78,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private ErrorReporter errorReporter;
     private MethodSignatureChecker signatureChecker;
     private JavaResolverCache javaResolverCache;
+    private DeserializedDescriptorResolver deserializedDescriptorResolver;
+    private KotlinClassFinder kotlinClassFinder;
 
     @Inject
     public void setClassResolver(JavaClassResolver classResolver) {
@@ -96,22 +121,47 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         this.javaResolverCache = javaResolverCache;
     }
 
+    @Inject
+    public void setDeserializedDescriptorResolver(DeserializedDescriptorResolver deserializedDescriptorResolver) {
+        this.deserializedDescriptorResolver = deserializedDescriptorResolver;
+    }
+
+    @Inject
+    public void setKotlinClassFinder(KotlinClassFinder kotlinClassFinder) {
+        this.kotlinClassFinder = kotlinClassFinder;
+    }
+
     @NotNull
     private LazyJavaSubModule getSubModule() {
         if (subModule == null) {
             subModule = new LazyJavaSubModule(
                     new GlobalJavaResolverContext(
-                            new LockBasedStorageManager(),
+                            storageManager,
                             javaClassFinder,
                             new LazyJavaClassResolver() {
                                 @Override
                                 public ClassDescriptor resolveClass(JavaClass aClass) {
+                                    FqName fqName = aClass.getFqName();
+                                    if (fqName != null) {
+                                        return resolveClassByFqName(fqName);
+                                    }
+
                                     return null;
                                 }
 
                                 @Override
-                                public ClassDescriptor resolveClassByFqName(FqName name) {
-                                    return javaResolverCache.getClassResolvedFromSource(name);
+                                public ClassDescriptor resolveClassByFqName(FqName fqName) {
+                                    ClassDescriptor kotlinClassDescriptor = javaResolverCache.getClassResolvedFromSource(fqName);
+                                    if (kotlinClassDescriptor != null) {
+                                        return kotlinClassDescriptor;
+                                    }
+
+                                    ClassDescriptor classFromBinaries = kotlinClassesFromBinaries.invoke(fqName);
+                                    if (classFromBinaries != null) {
+                                        return classFromBinaries;
+                                    }
+
+                                    return null;
                                 }
                             },
                             externalAnnotationResolver,
