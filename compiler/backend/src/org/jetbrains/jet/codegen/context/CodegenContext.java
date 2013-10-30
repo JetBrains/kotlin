@@ -305,9 +305,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
-        MutableClosure top = closure;
         StackValue myOuter = null;
-        if (top != null) {
+        if (closure != null) {
             EnclosedValueDescriptor answer = closure.getCaptureVariables().get(d);
             if (answer != null) {
                 StackValue innerValue = answer.getInnerValue();
