@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
-import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeProjectionImpl;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -75,7 +75,7 @@ class PropagationHeuristics {
                                 arrayTypeFromSuper.getAnnotations(),
                                 arrayTypeFromSuper.getConstructor(),
                                 arrayTypeFromSuper.isNullable(),
-                                Arrays.asList(new TypeProjection(Variance.OUT_VARIANCE, elementTypeInSuper)),
+                                Arrays.asList(new TypeProjectionImpl(Variance.OUT_VARIANCE, elementTypeInSuper)),
                                 JetScope.EMPTY);
 
                         data.reportError("Return type is not a subtype of overridden method. " +

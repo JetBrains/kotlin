@@ -18,12 +18,13 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.NamedStub;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -79,5 +80,16 @@ abstract class JetNamedDeclarationStub<T extends NamedStub> extends JetDeclarati
     public int getTextOffset() {
         PsiElement identifier = getNameIdentifier();
         return identifier != null ? identifier.getTextRange().getStartOffset() : getTextRange().getStartOffset();
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        JetElement enclosingBlock = JetPsiUtil.getEnclosingBlockForLocalDeclaration(this);
+        if (enclosingBlock != null) {
+            return new LocalSearchScope(enclosingBlock);
+        }
+
+        return super.getUseScope();
     }
 }

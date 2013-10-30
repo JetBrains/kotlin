@@ -1,1 +1,1 @@
-getJavaClass<Any?>
+javaClass<Any>()

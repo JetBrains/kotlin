@@ -31,11 +31,13 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Arrays;
 
-public class JavaSerializerExtension extends SerializerExtension {
-    private final MemberMap memberMap;
+import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 
-    public JavaSerializerExtension(@NotNull MemberMap memberMap) {
-        this.memberMap = memberMap;
+public class JavaSerializerExtension extends SerializerExtension {
+    private final JvmSerializationBindings bindings;
+
+    public JavaSerializerExtension(@NotNull JvmSerializationBindings bindings) {
+        this.bindings = bindings;
     }
 
     @Override
@@ -45,7 +47,19 @@ public class JavaSerializerExtension extends SerializerExtension {
             @NotNull NameTable nameTable
     ) {
         saveSignature(callable, proto, nameTable);
-        saveSrcClassName(callable, proto, nameTable);
+        saveImplClassName(callable, proto, nameTable);
+    }
+
+    @Override
+    public void serializeValueParameter(
+            @NotNull ValueParameterDescriptor descriptor,
+            @NotNull ProtoBuf.Callable.ValueParameter.Builder proto,
+            @NotNull NameTable nameTable
+    ) {
+        Integer index = bindings.get(INDEX_FOR_VALUE_PARAMETER, descriptor);
+        if (index != null) {
+            proto.setExtension(JavaProtoBuf.index, index);
+        }
     }
 
     private void saveSignature(
@@ -54,7 +68,7 @@ public class JavaSerializerExtension extends SerializerExtension {
             @NotNull NameTable nameTable
     ) {
         if (callable instanceof FunctionDescriptor) {
-            Method method = memberMap.getMethodOfDescriptor((FunctionDescriptor) callable);
+            Method method = bindings.get(METHOD_FOR_FUNCTION, (FunctionDescriptor) callable);
             if (method != null) {
                 proto.setExtension(JavaProtoBuf.methodSignature, new SignatureSerializer(nameTable).methodSignature(method));
             }
@@ -64,10 +78,10 @@ public class JavaSerializerExtension extends SerializerExtension {
 
             PropertyGetterDescriptor getter = property.getGetter();
             PropertySetterDescriptor setter = property.getSetter();
-            Method getterMethod = getter == null ? null : memberMap.getMethodOfDescriptor(getter);
-            Method setterMethod = setter == null ? null : memberMap.getMethodOfDescriptor(setter);
+            Method getterMethod = getter == null ? null : bindings.get(METHOD_FOR_FUNCTION, getter);
+            Method setterMethod = setter == null ? null : bindings.get(METHOD_FOR_FUNCTION, setter);
 
-            Pair<Type, String> field = memberMap.getFieldOfProperty(property);
+            Pair<Type, String> field = bindings.get(FIELD_FOR_PROPERTY, property);
             Type fieldType;
             String fieldName;
             boolean isStaticInOuter;
@@ -75,14 +89,14 @@ public class JavaSerializerExtension extends SerializerExtension {
             if (field != null) {
                 fieldType = field.first;
                 fieldName = field.second;
-                isStaticInOuter = memberMap.isStaticFieldInOuterClass(property);
+                isStaticInOuter = bindings.get(STATIC_FIELD_IN_OUTER_CLASS, property);
                 syntheticMethod = null;
             }
             else {
                 fieldType = null;
                 fieldName = null;
                 isStaticInOuter = false;
-                syntheticMethod = memberMap.getSyntheticMethodOfProperty(property);
+                syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, property);
             }
 
             JavaProtoBuf.JavaPropertySignature signature = new SignatureSerializer(nameTable)
@@ -91,14 +105,14 @@ public class JavaSerializerExtension extends SerializerExtension {
         }
     }
 
-    private void saveSrcClassName(
+    private void saveImplClassName(
             @NotNull CallableMemberDescriptor callable,
             @NotNull ProtoBuf.Callable.Builder proto,
             @NotNull NameTable nameTable
     ) {
-        String name = memberMap.getSrcClassNameOfCallable(callable);
+        String name = bindings.get(IMPL_CLASS_NAME_FOR_CALLABLE, callable);
         if (name != null) {
-            proto.setExtension(JavaProtoBuf.srcClassName, nameTable.getSimpleNameIndex(Name.identifier(name)));
+            proto.setExtension(JavaProtoBuf.implClassName, nameTable.getSimpleNameIndex(Name.identifier(name)));
         }
     }
 

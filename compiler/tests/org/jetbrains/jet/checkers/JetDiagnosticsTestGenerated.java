@@ -4650,6 +4650,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/redeclarations/PropertyAndInnerClass.kt");
             }
             
+            @TestMetadata("RedeclarationInMultiFile.kt")
+            public void testRedeclarationInMultiFile() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationInMultiFile.kt");
+            }
+            
             @TestMetadata("Redeclarations.kt")
             public void testRedeclarations() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/redeclarations/Redeclarations.kt");
@@ -4856,6 +4861,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("kt287.kt")
             public void testKt287() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/regressions/kt287.kt");
+            }
+            
+            @TestMetadata("kt2956.kt")
+            public void testKt2956() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/regressions/kt2956.kt");
             }
             
             @TestMetadata("kt302.kt")

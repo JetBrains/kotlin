@@ -21,10 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 
-import static org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector.getLibLocationAndTargetForProject;
-
 public final class IDEAConfig extends LibrarySourcesConfig {
     public IDEAConfig(@NotNull Project project) {
-        super(project, "default", getLibLocationAndTargetForProject(project).first, EcmaVersion.defaultVersion(), false);
+        super(project, "default", ProjectStructureUtil.getLibLocationForProject(project), EcmaVersion.defaultVersion(), false);
     }
 }

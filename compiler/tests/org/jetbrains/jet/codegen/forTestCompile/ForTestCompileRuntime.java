@@ -64,6 +64,7 @@ public class ForTestCompileRuntime {
                 "-src", "./libraries/stdlib/src",
                 "-noStdlib",
                 "-noJdkAnnotations",
+                "-suppress", "warnings",
                 "-annotations", "./jdk-annotations",
                 "-classpath", "out/production/runtime");
         if (exitCode != ExitCode.OK) {

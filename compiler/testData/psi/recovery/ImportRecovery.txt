@@ -1,10 +1,10 @@
 JetFile: ImportRecovery.kt
   NAMESPACE_HEADER
     <empty list>
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    DOT_QUALIFIED_EXPRESSION
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('some')
@@ -12,7 +12,7 @@ JetFile: ImportRecovery.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('test')
       PsiElement(DOT)('.')
-      PsiErrorElement:Qualified name must be a '.'-separated identifier list
+      PsiErrorElement:Import must be placed on a single line
         <empty list>
   PsiWhiteSpace('\n\n')
   PsiComment(EOL_COMMENT)('// Some')

@@ -35,6 +35,7 @@ import java.util.List;
 import static org.jetbrains.asm4.Opcodes.ACC_STATIC;
 import static org.jetbrains.asm4.Opcodes.RETURN;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTopLevelOrInnerClass;
 
 public abstract class ClassBodyCodegen extends MemberCodegen {
     protected final JetClassOrObject myClass;
@@ -71,15 +72,17 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
 
         generateStaticInitializer();
 
-        generateKotlinAnnotation();
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL && isTopLevelOrInnerClass(descriptor)) {
+            generateKotlinAnnotation();
+        }
     }
 
     protected abstract void generateDeclaration();
 
-    protected void generateKotlinAnnotation() {
-    }
+    protected abstract void generateKotlinAnnotation();
 
-    protected abstract void generateSyntheticParts();
+    protected void generateSyntheticParts() {
+    }
 
     private void generateClassBody() {
         FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state, this);

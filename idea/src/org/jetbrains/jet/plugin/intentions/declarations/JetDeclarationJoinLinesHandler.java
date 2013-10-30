@@ -1,18 +1,19 @@
 package org.jetbrains.jet.plugin.intentions.declarations;
 
-import com.google.common.base.Predicate;
 import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import jet.Function1;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 
 public class JetDeclarationJoinLinesHandler implements JoinRawLinesHandlerDelegate {
-    private static final Predicate<PsiElement> IS_APPLICABLE = new Predicate<PsiElement>() {
+    private static final Function1<PsiElement, Boolean> IS_APPLICABLE = new Function1<PsiElement, Boolean>() {
         @Override
-        public boolean apply(@Nullable PsiElement input) {
+        public Boolean invoke(@Nullable PsiElement input) {
             return input != null && DeclarationUtils.checkAndGetPropertyAndInitializer(input) != null;
         }
     };
@@ -21,7 +22,7 @@ public class JetDeclarationJoinLinesHandler implements JoinRawLinesHandlerDelega
     public int tryJoinRawLines(Document document, PsiFile file, int start, int end) {
         PsiElement element = JetPsiUtil.skipSiblingsBackwardByPredicate(file.findElementAt(start), DeclarationUtils.SKIP_DELIMITERS);
 
-        PsiElement target = JetPsiUtil.getParentByTypeAndPredicate(element, JetElement.class, IS_APPLICABLE, false);
+        PsiElement target = PsiUtilPackage.getParentByTypeAndPredicate(element, JetElement.class, false, IS_APPLICABLE);
         if (target == null) return -1;
 
         return DeclarationUtils.joinPropertyDeclarationWithInitializer(target).getTextRange().getStartOffset();

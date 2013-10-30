@@ -51,9 +51,9 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil;
 
 import java.util.Collection;
@@ -163,7 +163,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file, @NotNull KotlinCodeAnalyzer analyzer) {
         Set<FqName> possibleResolveNames = Sets.newHashSet();
 
-        if (!KotlinFrameworkDetector.isJsKotlinModule(file)) {
+        if (!ProjectStructureUtil.isJsKotlinModule(file)) {
             possibleResolveNames.addAll(getClassesFromCache(referenceName, file));
         }
         else {
@@ -200,7 +200,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     }
 
     private static PsiShortNamesCache getShortNamesCache(@NotNull JetFile jetFile) {
-        if (KotlinFrameworkDetector.isJsKotlinModule(jetFile)) {
+        if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
             return JetShortNamesCache.getKotlinInstance(jetFile.getProject());
         }
 

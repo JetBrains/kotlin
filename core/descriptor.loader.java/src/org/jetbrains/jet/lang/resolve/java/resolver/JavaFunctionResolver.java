@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
@@ -229,10 +229,10 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    private static ClassDescriptorFromJvmBytecode findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
+    private static JavaClassDescriptor findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
         ClassifierDescriptor classifier = memberScope.getClassifier(name);
-        if (classifier instanceof ClassDescriptorFromJvmBytecode) {
-            return (ClassDescriptorFromJvmBytecode) classifier;
+        if (classifier instanceof JavaClassDescriptor) {
+            return (JavaClassDescriptor) classifier;
         }
         return null;
     }
@@ -244,9 +244,9 @@ public final class JavaFunctionResolver {
     // +-- namespace Bar
     // We need to find class 'Baz' in namespace 'foo.Bar'.
     @Nullable
-    private static ClassDescriptorFromJvmBytecode findClassInNamespace(@NotNull NamespaceDescriptor namespace, @NotNull Name name) {
+    private static JavaClassDescriptor findClassInNamespace(@NotNull NamespaceDescriptor namespace, @NotNull Name name) {
         // First, try to find in namespace directly
-        ClassDescriptorFromJvmBytecode found = findClassInScope(namespace.getMemberScope(), name);
+        JavaClassDescriptor found = findClassInScope(namespace.getMemberScope(), name);
         if (found != null) {
             return found;
         }
@@ -269,7 +269,7 @@ public final class JavaFunctionResolver {
     @Nullable
     public static SamConstructorDescriptor resolveSamConstructor(@NotNull NamespaceDescriptor owner, @NotNull NamedMembers namedMembers) {
         if (namedMembers.getSamInterface() != null) {
-            ClassDescriptorFromJvmBytecode klass = findClassInNamespace(owner, namedMembers.getName());
+            JavaClassDescriptor klass = findClassInNamespace(owner, namedMembers.getName());
             if (klass != null) {
                 return createSamConstructorFunction(owner, klass);
             }

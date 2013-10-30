@@ -176,10 +176,11 @@ public class DescriptorDeserializer {
                         modality(Flags.MODALITY.get(setterFlags)), visibility(Flags.VISIBILITY.get(setterFlags)),
                         isNotDefault, !isNotDefault, property.getKind()
                 );
-                setter.initialize(new ValueParameterDescriptorImpl(
-                        setter, 0, Collections.<AnnotationDescriptor>emptyList(),
-                        nameResolver.getName(proto.getSetterParameterName()),
-                        property.getReturnType(), false, null));
+                DescriptorDeserializer setterLocal = local.createChildDeserializer(setter, Collections.<TypeParameter>emptyList(),
+                                                                                   Collections.<TypeParameterDescriptor>emptyList());
+                List<ValueParameterDescriptor> valueParameters = setterLocal.valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER);
+                assert valueParameters.size() == 1 : "Property setter should have a single value parameter: " + setter;
+                setter.initialize(valueParameters.get(0));
             }
             else {
                 setter = DescriptorFactory.createDefaultSetter(property);
@@ -237,7 +238,7 @@ public class DescriptorDeserializer {
                 local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
                 getExpectedThisObject(),
                 typeParameters,
-                local.valueParameters(proto.getValueParameterList()),
+                local.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 local.typeDeserializer.type(proto.getReturnType()),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags)),
@@ -265,7 +266,7 @@ public class DescriptorDeserializer {
         DescriptorDeserializer local = createChildDeserializer(descriptor, Collections.<TypeParameter>emptyList(), typeParameters);
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
-                local.valueParameters(proto.getValueParameterList()),
+                local.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 visibility(Flags.VISIBILITY.get(proto.getFlags())),
                 DescriptorUtils.isConstructorOfStaticNestedClass(descriptor)
         );
@@ -384,29 +385,38 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private List<ValueParameterDescriptor> valueParameters(@NotNull List<Callable.ValueParameter> protos) {
+    private List<ValueParameterDescriptor> valueParameters(@NotNull Callable callable, @NotNull AnnotatedCallableKind kind) {
+        DeclarationDescriptor containerOfCallable = containingDeclaration.getContainingDeclaration();
+        assert containerOfCallable instanceof ClassOrNamespaceDescriptor
+                : "Only members in classes or namespaces should be serialized: " + containerOfCallable;
+        ClassOrNamespaceDescriptor classOrNamespace = (ClassOrNamespaceDescriptor) containerOfCallable;
+
+        List<Callable.ValueParameter> protos = callable.getValueParameterList();
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(protos.size());
         for (int i = 0; i < protos.size(); i++) {
             Callable.ValueParameter proto = protos.get(i);
-            result.add(valueParameter(proto, i));
+            result.add(new ValueParameterDescriptorImpl(
+                    containingDeclaration,
+                    i,
+                    getAnnotations(classOrNamespace, callable, kind, proto),
+                    nameResolver.getName(proto.getName()),
+                    typeDeserializer.type(proto.getType()),
+                    Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
+                    typeDeserializer.typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null))
+            );
         }
         return result;
     }
 
-    private ValueParameterDescriptor valueParameter(Callable.ValueParameter proto, int index) {
-        return new ValueParameterDescriptorImpl(
-                containingDeclaration,
-                index,
-                getAnnotations(proto),
-                nameResolver.getName(proto.getName()),
-                typeDeserializer.type(proto.getType()),
-                Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
-                typeDeserializer.typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null));
-    }
-
-    private List<AnnotationDescriptor> getAnnotations(Callable.ValueParameter proto) {
-        return Flags.HAS_ANNOTATIONS.get(proto.getFlags())
-               ? annotationDeserializer.loadValueParameterAnnotations(proto)
+    @NotNull
+    private List<AnnotationDescriptor> getAnnotations(
+            @NotNull ClassOrNamespaceDescriptor classOrNamespace,
+            @NotNull Callable callable,
+            @NotNull AnnotatedCallableKind kind,
+            @NotNull Callable.ValueParameter valueParameter
+    ) {
+        return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())
+               ? annotationDeserializer.loadValueParameterAnnotations(classOrNamespace, callable, nameResolver, kind, valueParameter)
                : Collections.<AnnotationDescriptor>emptyList();
     }
 }

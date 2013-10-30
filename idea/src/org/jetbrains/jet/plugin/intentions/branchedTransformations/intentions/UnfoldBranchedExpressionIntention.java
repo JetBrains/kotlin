@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions;
 
-import com.google.common.base.Predicate;
 import com.intellij.psi.PsiElement;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -28,9 +28,9 @@ public abstract class UnfoldBranchedExpressionIntention extends AbstractCodeTran
     protected UnfoldBranchedExpressionIntention(@NotNull final UnfoldableKind unfoldableKind) {
         super(
                 unfoldableKind,
-                new Predicate<PsiElement>() {
+                new Function1<PsiElement, Boolean>() {
                     @Override
-                    public boolean apply(@Nullable PsiElement input) {
+                    public Boolean invoke(@Nullable PsiElement input) {
                         return (input instanceof JetExpression) && BranchedUnfoldingUtils.getUnfoldableExpressionKind((JetExpression) input) == unfoldableKind;
                     }
                 }

@@ -44,8 +44,8 @@ import org.jetbrains.idea.maven.dom.model.*;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.jet.cli.common.KotlinVersion;
 import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
 import org.jetbrains.jet.plugin.framework.ui.ConfigureDialogWithModulesAndVersion;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class KotlinMavenConfigurator implements KotlinProjectConfigurator {
 
     @Override
     public boolean isConfigured(@NotNull Module module) {
-        if (KotlinFrameworkDetector.isJavaKotlinModule(module)) {
+        if (ProjectStructureUtil.isJavaKotlinModule(module)) {
             return true;
         }
 

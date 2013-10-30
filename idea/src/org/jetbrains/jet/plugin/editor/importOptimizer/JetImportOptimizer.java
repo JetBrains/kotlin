@@ -67,23 +67,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
-                        // Remove imports
-                        List<JetImportDirective> imports = jetFile.getImportDirectives();
-                        if (!imports.isEmpty()) {
-                            PsiElement firstForDelete = getWithPreviousWhitespaces(imports.get(0));
-                            PsiElement lastForDelete = getWithFollowedWhitespaces(imports.get(imports.size() - 1));
-
-                            // Should be found before deletion
-                            PsiElement elementBeforeImports = firstForDelete.getPrevSibling();
-
-                            jetFile.deleteChildRange(firstForDelete, lastForDelete);
-
-                            if (elementBeforeImports != null) {
-                                jetFile.addAfter(JetPsiFactory.createNewLine(jetFile.getProject()), elementBeforeImports);
-                            }
-                        }
-
-                        // Insert back only necessary imports in correct order
+                        // Remove only unnecessary imports
                         for (JetImportDirective anImport : directives) {
                             directivesAfterCurrent.remove(anImport);
 
@@ -95,8 +79,10 @@ public class JetImportOptimizer implements ImportOptimizer {
                             if (isUseful(importPath, usedQualifiedNames) &&
                                     doNeedImport(importPath, jetFile, directivesBeforeCurrent) &&
                                     doNeedImport(importPath, jetFile, directivesAfterCurrent)) {
-                                ImportInsertHelper.writeImportToFile(importPath, jetFile);
                                 directivesBeforeCurrent.add(anImport);
+                            }
+                            else {
+                               anImport.delete();
                             }
                         }
                     }

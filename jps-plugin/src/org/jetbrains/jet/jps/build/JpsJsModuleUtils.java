@@ -30,7 +30,9 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.util.JpsPathUtil;
 
-import java.util.HashSet;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 class JpsJsModuleUtils {
@@ -41,27 +43,27 @@ class JpsJsModuleUtils {
     }
 
     @NotNull
-    static Set<String> getLibraryFilesAndDependencies(@NotNull ModuleBuildTarget target) {
-        Set<String> result = new HashSet<String>();
+    static List<String> getLibraryFilesAndDependencies(@NotNull ModuleBuildTarget target) {
+        List<String> result = new ArrayList<String>();
         getLibraryFiles(target, result);
         getDependencyModulesAndSources(target, result);
         return result;
     }
 
-    static void getLibraryFiles(@NotNull ModuleBuildTarget target, @NotNull Set<String> result) {
+    static void getLibraryFiles(@NotNull ModuleBuildTarget target, @NotNull List<String> result) {
         Set<JpsLibrary> libraries = JpsUtils.getAllDependencies(target).getLibraries();
         for (JpsLibrary library : libraries) {
             for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
                 String path = urlToOsPath(root.getUrl());
                 // TODO: Do we need to add to dependency all libraries?
-                if (LibraryUtils.isJsRuntimeLibrary(JpsPathUtil.urlToFile(path))) {
+                if (LibraryUtils.isJsRuntimeLibrary(new File(path))) {
                     result.add(path);
                 }
             }
         }
     }
 
-    static void getDependencyModulesAndSources(@NotNull final ModuleBuildTarget target, @NotNull final Set<String> result) {
+    static void getDependencyModulesAndSources(@NotNull final ModuleBuildTarget target, @NotNull final List<String> result) {
         JpsUtils.getAllDependencies(target).processModules(new Consumer<JpsModule>() {
             @Override
             public void consume(JpsModule module) {

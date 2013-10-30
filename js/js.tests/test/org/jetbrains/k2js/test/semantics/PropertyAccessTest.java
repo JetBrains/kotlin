@@ -94,6 +94,10 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
+    public void testNativePropertiesNameClashes() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     @Override
     @NotNull
     protected List<String> additionalJSFiles(@NotNull EcmaVersion ecmaVersion) {

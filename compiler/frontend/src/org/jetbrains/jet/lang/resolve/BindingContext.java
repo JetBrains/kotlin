@@ -110,6 +110,8 @@ public interface BindingContext {
 
     WritableSlice<JetExpression, JetType> AUTOCAST = Slices.createSimpleSlice();
 
+    WritableSlice<JetWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
+
     /**
      * A scope where type of expression has been resolved
      */

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
@@ -45,9 +46,11 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
             @SuppressWarnings("NullableProblems")
-            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
+            @NotNull CallResolverExtension callResolverExtension
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver,
+              callResolverExtension);
         this.call = call;
         this.checkArguments = checkArguments;
         if (dataFlowInfoForArguments != null) {

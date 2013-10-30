@@ -63,13 +63,16 @@ public class BytecodeCompiler {
      * @param sourceRoots
      * @return compile environment instance
      */
-    private JetCoreEnvironment env(String stdlib, String[] classpath, String[] sourceRoots) {
-        CompilerConfiguration configuration = createConfiguration(stdlib, classpath, sourceRoots);
+    private JetCoreEnvironment env(String stdlib, String[] classpath, String[] externalAnnotationsPath, String[] sourceRoots) {
+        CompilerConfiguration configuration = createConfiguration(stdlib, classpath, externalAnnotationsPath, sourceRoots);
 
         return JetCoreEnvironment.createForProduction(Disposer.newDisposable(), configuration);
     }
 
-    private CompilerConfiguration createConfiguration(String stdlib, String[] classpath, String[] sourceRoots) {
+    private CompilerConfiguration createConfiguration(@Nullable String stdlib,
+            @Nullable String[] classpath,
+            @Nullable String[] externalAnnotationsPath,
+            @NotNull String[] sourceRoots) {
         KotlinPaths paths = getKotlinPathsForAntTask();
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.add(CLASSPATH_KEY, PathUtil.findRtJar());
@@ -85,6 +88,11 @@ public class BytecodeCompiler {
         if ((classpath != null) && (classpath.length > 0)) {
             for (String path : classpath) {
                 configuration.add(CLASSPATH_KEY, new File(path));
+            }
+        }
+        if ((externalAnnotationsPath != null) && (externalAnnotationsPath.length > 0)) {
+            for (String path : externalAnnotationsPath) {
+                configuration.add(ANNOTATIONS_PATH_KEY, new File(path));
             }
         }
         File jdkAnnotationsPath = paths.getJdkAnnotationsPath();
@@ -141,9 +149,13 @@ public class BytecodeCompiler {
      * @param stdlib    "kotlin-runtime.jar" path
      * @param classpath compilation classpath, can be <code>null</code> or empty
      */
-    public void sourcesToDir(@NotNull String[] src, @NotNull String output, @Nullable String stdlib, @Nullable String[] classpath) {
+    public void sourcesToDir(@NotNull String[] src,
+            @NotNull String output,
+            @Nullable String stdlib,
+            @Nullable String[] classpath,
+            @Nullable String[] externalAnnotationsPath) {
         try {
-            JetCoreEnvironment environment = env(stdlib, classpath, src);
+            JetCoreEnvironment environment = env(stdlib, classpath, externalAnnotationsPath, src);
 
             boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, null, new File(output), true);
             if (!success) {
@@ -169,9 +181,10 @@ public class BytecodeCompiler {
             @NotNull String jar,
             boolean includeRuntime,
             @Nullable String stdlib,
-            @Nullable String[] classpath) {
+            @Nullable String[] classpath,
+            @Nullable String[] externalAnnotationsPath) {
         try {
-            JetCoreEnvironment environment = env(stdlib, classpath, src);
+            JetCoreEnvironment environment = env(stdlib, classpath, externalAnnotationsPath, src);
 
             boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, new File(jar), null, includeRuntime);
             if (!success) {
@@ -197,7 +210,8 @@ public class BytecodeCompiler {
             @NotNull String jar,
             boolean includeRuntime,
             @Nullable String stdlib,
-            @Nullable String[] classpath) {
+            @Nullable String[] classpath,
+            @Nullable String[] externalAnnotationsPath) {
         try {
             ModuleChunk modules = CompileEnvironmentUtil.loadModuleDescriptions(getKotlinPathsForAntTask(), module,
                                                                                 MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
@@ -205,7 +219,7 @@ public class BytecodeCompiler {
             for (Module m : modules.getModules()) {
                 sourcesRoots.addAll(m.getSourceFiles());
             }
-            CompilerConfiguration configuration = createConfiguration(stdlib, classpath, sourcesRoots.toArray(new String[0]));
+            CompilerConfiguration configuration = createConfiguration(stdlib, classpath, externalAnnotationsPath, sourcesRoots.toArray(new String[0]));
             File directory = new File(module).getParentFile();
             boolean success = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules, directory, new File(jar), includeRuntime);
             if (!success) {

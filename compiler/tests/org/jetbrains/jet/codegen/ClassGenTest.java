@@ -127,7 +127,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testKt309() {
         loadText("fun box() = null");
         Method method = generateFunction("box");
-        assertEquals(method.getReturnType().getName(), "java.lang.Object");
+        assertEquals(method.getReturnType().getName(), "java.lang.Void");
     }
 
     /*

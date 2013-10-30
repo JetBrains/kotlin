@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
@@ -63,7 +63,7 @@ public class SingleAbstractMethodUtils {
             Variance kind = argument.getProjectionKind();
             if (kind != INVARIANT && variance != INVARIANT) {
                 if (kind == variance) {
-                    arguments.add(new TypeProjection(argument.getType()));
+                    arguments.add(new TypeProjectionImpl(argument.getType()));
                 }
                 else {
                     return null;
@@ -89,9 +89,9 @@ public class SingleAbstractMethodUtils {
         // e.g. samType == Comparator<String>?
 
         ClassifierDescriptor classifier = samType.getConstructor().getDeclarationDescriptor();
-        if (classifier instanceof ClassDescriptorFromJvmBytecode) {
+        if (classifier instanceof JavaClassDescriptor) {
             // Function2<T, T, Int>
-            JetType functionTypeDefault = ((ClassDescriptorFromJvmBytecode) classifier).getFunctionTypeForSamInterface();
+            JetType functionTypeDefault = ((JavaClassDescriptor) classifier).getFunctionTypeForSamInterface();
 
             if (functionTypeDefault != null) {
                 // Function2<String, String, Int>?
@@ -134,7 +134,7 @@ public class SingleAbstractMethodUtils {
     @NotNull
     public static SamConstructorDescriptor createSamConstructorFunction(
             @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull ClassDescriptorFromJvmBytecode samInterface
+            @NotNull JavaClassDescriptor samInterface
     ) {
         assert isSamInterface(samInterface) : samInterface;
 

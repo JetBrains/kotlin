@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
@@ -23,8 +24,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -33,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -46,11 +45,11 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 public class SamWrapperCodegen extends ParentCodegenAwareImpl {
     private static final String FUNCTION_FIELD_NAME = "function";
 
-    @NotNull private final ClassDescriptorFromJvmBytecode samInterface;
+    @NotNull private final JavaClassDescriptor samInterface;
 
     public SamWrapperCodegen(
             @NotNull GenerationState state,
-            @NotNull ClassDescriptorFromJvmBytecode samInterface,
+            @NotNull JavaClassDescriptor samInterface,
             @Nullable MemberCodegen parentCodegen
     ) {
         super(state, parentCodegen);
@@ -79,7 +78,7 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
         cv.visitSource(file.getName(), null);
 
         // e.g. ASM type for Function2
-        Type functionAsmType = state.getTypeMapper().mapType(functionType, JetTypeMapperMode.VALUE);
+        Type functionAsmType = state.getTypeMapper().mapType(functionType);
 
         cv.newField(null,
                     ACC_SYNTHETIC | ACC_PRIVATE | ACC_FINAL,
@@ -136,11 +135,12 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
 
     private String getWrapperName(@NotNull JetFile containingFile) {
         NamespaceDescriptor namespace = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, containingFile);
-        assert namespace != null : "couldn't find namespace for file: " + containingFile.getVirtualFile();
+        VirtualFile virtualFile = containingFile.getVirtualFile();
+        assert namespace != null : "couldn't find namespace for file: " + virtualFile;
         FqName fqName = DescriptorUtils.getFQName(namespace).toSafe();
         String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(
                 PackageClassUtils.getPackageClassFqName(fqName)).getInternalName();
         return packageInternalName + "$sam$" + samInterface.getName().asString() + "$" +
-               Integer.toHexString(CodegenUtil.getPathHashCode(containingFile) * 31 + DescriptorUtils.getFQName(samInterface).hashCode());
+               Integer.toHexString(CodegenUtil.getPathHashCode(virtualFile) * 31 + DescriptorUtils.getFQName(samInterface).hashCode());
     }
 }

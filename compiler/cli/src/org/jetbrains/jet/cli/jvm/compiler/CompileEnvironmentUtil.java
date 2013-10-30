@@ -251,10 +251,19 @@ public class CompileEnvironmentUtil {
         };
     }
 
-    public static void writeToOutputWithDirector(ClassFileFactory factory, @NotNull OutputDirector outputDirector) {
+    public static void writeToOutputWithDirector(
+            ClassFileFactory factory,
+            @NotNull OutputDirector outputDirector,
+            @NotNull MessageCollector messageCollector
+    ) {
         List<String> files = factory.files();
         for (String file : files) {
-            File target = new File(outputDirector.getOutputDirectory(factory.getSourceFiles(file)), file);
+            List<File> sourceFiles = factory.getSourceFiles(file);
+            File target = new File(outputDirector.getOutputDirectory(sourceFiles), file);
+            messageCollector.report(
+                    CompilerMessageSeverity.OUTPUT,
+                    OutputMessageUtil.formatOutputMessage(sourceFiles, target),
+                    CompilerMessageLocation.NO_LOCATION);
             try {
                 FileUtil.writeToFile(target, factory.asBytes(file));
             }
@@ -265,7 +274,7 @@ public class CompileEnvironmentUtil {
     }
 
     public static void writeToOutputDirectory(ClassFileFactory factory, @NotNull File outputDir) {
-        writeToOutputWithDirector(factory, singleDirectory(outputDir));
+        writeToOutputWithDirector(factory, singleDirectory(outputDir), MessageCollector.NONE);
     }
 
     // Used for debug output only
@@ -292,22 +301,10 @@ public class CompileEnvironmentUtil {
             writeToJar(jar, includeRuntime, mainClass, factory);
         }
         else if (outputDir != null) {
-            reportOutputs(factory, messageCollector);
-            writeToOutputWithDirector(factory, outputDir);
+            writeToOutputWithDirector(factory, outputDir, messageCollector);
         }
         else {
             throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
-        }
-    }
-
-    private static void reportOutputs(ClassFileFactory factory, MessageCollector messageCollector) {
-        for (String outputFile : factory.files()) {
-            List<File> sourceFiles = factory.getSourceFiles(outputFile);
-            messageCollector.report(
-                    CompilerMessageSeverity.OUTPUT,
-                    OutputMessageUtil.formatOutputMessage(sourceFiles, new File(outputFile)),
-                    CompilerMessageLocation.NO_LOCATION);
-
         }
     }
 

@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -147,7 +146,7 @@ public final class ClassFileFactory extends GenerationStateAware {
     }
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass, PsiFile sourceFile) {
-        Type type = state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.IMPL);
+        Type type = state.getTypeMapper().mapClass(aClass);
         if (isPrimitive(type)) {
             throw new IllegalStateException("Codegen for primitive type is not possible: " + aClass);
         }
@@ -161,8 +160,7 @@ public final class ClassFileFactory extends GenerationStateAware {
 
     @NotNull
     public ClassBuilder forTraitImplementation(@NotNull ClassDescriptor aClass, @NotNull GenerationState state, @NotNull PsiFile file) {
-        Type type = state.getTypeMapper().mapType(aClass.getDefaultType(), JetTypeMapperMode.TRAIT_IMPL);
-        return newVisitor(type, file);
+        return newVisitor(state.getTypeMapper().mapTraitImpl(aClass), file);
     }
 
     private static Collection<File> toIoFilesIgnoringNonPhysical(Collection<? extends PsiFile> psiFiles) {

@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -41,8 +42,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ExpressionPosition expressionPosition
     ) {
         return newContext(expressionTypingServices, trace, scope, dataFlowInfo, expectedType, expressionPosition,
-                          ContextDependency.INDEPENDENT, ResolutionResultsCacheImpl.create(), LabelResolver.create()
-        );
+                          ContextDependency.INDEPENDENT, ResolutionResultsCacheImpl.create(), LabelResolver.create(),
+                          expressionTypingServices.createExtension(scope));
     }
 
     @NotNull
@@ -52,8 +53,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return newContext(expressionTypingServices, resolutionContext.trace, resolutionContext.scope, resolutionContext.dataFlowInfo,
                           resolutionContext.expectedType, resolutionContext.expressionPosition, resolutionContext.contextDependency,
-                          resolutionContext.resolutionResultsCache, resolutionContext.labelResolver
-        );
+                          resolutionContext.resolutionResultsCache, resolutionContext.labelResolver,
+                          resolutionContext.callResolverExtension);
     }
 
     @NotNull
@@ -66,10 +67,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver
+            @NotNull LabelResolver labelResolver,
+            @NotNull CallResolverExtension callResolverExtension
     ) {
         return new ExpressionTypingContext(
-                expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition, contextDependency, resolutionResultsCache);
+                expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition, contextDependency, resolutionResultsCache,
+                callResolverExtension);
     }
 
     public final ExpressionTypingServices expressionTypingServices;
@@ -85,9 +88,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetType expectedType,
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
-            @NotNull ResolutionResultsCache resolutionResultsCache
+            @NotNull ResolutionResultsCache resolutionResultsCache,
+            @NotNull CallResolverExtension callResolverExtension
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver);
+        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver,
+              callResolverExtension);
         this.expressionTypingServices = expressionTypingServices;
     }
 
@@ -103,7 +108,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull LabelResolver labelResolver
     ) {
         return new ExpressionTypingContext(expressionTypingServices, this.labelResolver, trace, scope, dataFlowInfo, expectedType,
-                                           expressionPosition, contextDependency, resolutionResultsCache);
+                                           expressionPosition, contextDependency, resolutionResultsCache, callResolverExtension);
     }
 
     @Override

@@ -100,7 +100,7 @@ public class CallResolverUtil {
         List<TypeProjection> arguments = type.getArguments();
         List<TypeProjection> newArguments = Lists.newArrayList();
         newArguments.addAll(arguments.subList(0, arguments.size() - 1));
-        newArguments.add(new TypeProjection(Variance.INVARIANT, DONT_CARE));
+        newArguments.add(new TypeProjectionImpl(Variance.INVARIANT, DONT_CARE));
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
     }
 
@@ -156,7 +156,7 @@ public class CallResolverUtil {
         }
         List<TypeProjection> fakeTypeArguments = Lists.newArrayList();
         for (TypeProjection typeProjection : receiverType.getArguments()) {
-            fakeTypeArguments.add(new TypeProjection(typeProjection.getProjectionKind(), DONT_CARE));
+            fakeTypeArguments.add(new TypeProjectionImpl(typeProjection.getProjectionKind(), DONT_CARE));
         }
         return new JetTypeImpl(
                 receiverType.getAnnotations(), receiverType.getConstructor(), receiverType.isNullable(),

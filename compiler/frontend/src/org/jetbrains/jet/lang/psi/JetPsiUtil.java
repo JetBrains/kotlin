@@ -750,27 +750,6 @@ public class JetPsiUtil {
         return checkElement.apply(lastElement) ? lastElement : null;
     }
 
-    @Nullable
-    public static PsiElement getParentByTypeAndPredicate(
-            @Nullable PsiElement element, @NotNull Class<? extends PsiElement> aClass, @NotNull Predicate<PsiElement> predicate, boolean strict) {
-        if (element == null) return null;
-        if (strict) {
-            element = element.getParent();
-        }
-
-        while (element != null) {
-            //noinspection unchecked
-            if (aClass.isInstance(element) && predicate.apply(element)) {
-                //noinspection unchecked
-                return element;
-            }
-            if (element instanceof PsiFile) return null;
-            element = element.getParent();
-        }
-
-        return null;
-    }
-
     public static boolean checkVariableDeclarationInBlock(@NotNull JetBlockExpression block, @NotNull String varName) {
         for (JetElement element : block.getStatements()) {
             if (element instanceof JetVariableDeclaration) {
@@ -1028,16 +1007,18 @@ public class JetPsiUtil {
         return header != null ? header.getQualifiedName() : null;
     }
 
-    public static JetElement getEnclosingBlockForLocalDeclaration(@NotNull JetNamedDeclaration declaration) {
-        //noinspection unchecked
-        JetDeclaration container =
-                PsiTreeUtil.getParentOfType(declaration, JetNamedFunction.class, JetPropertyAccessor.class, JetClassInitializer.class);
+    @Nullable
+    public static JetElement getEnclosingBlockForLocalDeclaration(@Nullable JetNamedDeclaration declaration) {
+        if (declaration instanceof JetTypeParameter || declaration instanceof JetParameter) {
+            declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
+        }
 
+        //noinspection unchecked
+        JetElement container =
+                PsiTreeUtil.getParentOfType(declaration, JetBlockExpression.class, JetClassInitializer.class);
         if (container == null) return null;
 
-        return (container instanceof JetClassInitializer)
-               ? ((JetClassInitializer) container).getBody()
-               : ((JetDeclarationWithBody) container).getBodyExpression();
+        return (container instanceof JetClassInitializer) ? ((JetClassInitializer) container).getBody() : container;
     }
 
     public static boolean isLocal(@NotNull JetNamedDeclaration declaration) {

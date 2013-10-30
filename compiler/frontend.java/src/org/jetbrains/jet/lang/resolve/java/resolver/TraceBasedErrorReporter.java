@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
-import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -37,8 +36,8 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_INFER_VISIBILITY;
 public class TraceBasedErrorReporter implements ErrorReporter {
     private static final Logger LOG = Logger.getInstance(TraceBasedErrorReporter.class);
 
-    public static final WritableSlice<VirtualFileKotlinClass, Integer> ABI_VERSION_ERRORS =
-            new BasicWritableSlice<VirtualFileKotlinClass, Integer>(Slices.ONLY_REWRITE_TO_EQUAL, true);
+    public static final WritableSlice<VirtualFileKotlinClass, Integer> ABI_VERSION_ERRORS = Slices.createCollectiveSlice();
+
     private BindingTrace trace;
 
     @Inject

@@ -113,6 +113,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findClassUsages/kotlinClassAllUsages3.0.kt");
         }
         
+        @TestMetadata("kotlinClassAllUsagesNoImport.0.kt")
+        public void testKotlinClassAllUsagesNoImport() throws Exception {
+            doTest("idea/testData/findUsages/findClassUsages/kotlinClassAllUsagesNoImport.0.kt");
+        }
+        
         @TestMetadata("kotlinClassConstructorUsages.0.kt")
         public void testKotlinClassConstructorUsages() throws Exception {
             doTest("idea/testData/findUsages/findClassUsages/kotlinClassConstructorUsages.0.kt");
@@ -163,6 +168,21 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findClassUsages/kotlinDerivedInterfaceUsages2.0.kt");
         }
         
+        @TestMetadata("kotlinLocalClassUsages1.0.kt")
+        public void testKotlinLocalClassUsages1() throws Exception {
+            doTest("idea/testData/findUsages/findClassUsages/kotlinLocalClassUsages1.0.kt");
+        }
+        
+        @TestMetadata("kotlinLocalClassUsages2.0.kt")
+        public void testKotlinLocalClassUsages2() throws Exception {
+            doTest("idea/testData/findUsages/findClassUsages/kotlinLocalClassUsages2.0.kt");
+        }
+        
+        @TestMetadata("kotlinPrivateClassUsages.0.kt")
+        public void testKotlinPrivateClassUsages() throws Exception {
+            doTest("idea/testData/findUsages/findClassUsages/kotlinPrivateClassUsages.0.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/findUsages/findMethodUsages")
@@ -181,9 +201,29 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findMethodUsages/javaMethodUsages.0.kt");
         }
         
+        @TestMetadata("kotlinLocalMethodUsages1.0.kt")
+        public void testKotlinLocalMethodUsages1() throws Exception {
+            doTest("idea/testData/findUsages/findMethodUsages/kotlinLocalMethodUsages1.0.kt");
+        }
+        
+        @TestMetadata("kotlinLocalMethodUsages2.0.kt")
+        public void testKotlinLocalMethodUsages2() throws Exception {
+            doTest("idea/testData/findUsages/findMethodUsages/kotlinLocalMethodUsages2.0.kt");
+        }
+        
+        @TestMetadata("kotlinPrivateMethodUsages.0.kt")
+        public void testKotlinPrivateMethodUsages() throws Exception {
+            doTest("idea/testData/findUsages/findMethodUsages/kotlinPrivateMethodUsages.0.kt");
+        }
+        
         @TestMetadata("kotlinTopLevelMethodUsages.0.kt")
         public void testKotlinTopLevelMethodUsages() throws Exception {
             doTest("idea/testData/findUsages/findMethodUsages/kotlinTopLevelMethodUsages.0.kt");
+        }
+        
+        @TestMetadata("kotlinTopLevelMethodUsagesNoImport.0.kt")
+        public void testKotlinTopLevelMethodUsagesNoImport() throws Exception {
+            doTest("idea/testData/findUsages/findMethodUsages/kotlinTopLevelMethodUsagesNoImport.0.kt");
         }
         
     }
@@ -199,9 +239,24 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             doTest("idea/testData/findUsages/findObjectUsages/javaObjectUsages.0.kt");
         }
         
+        @TestMetadata("kotlinLocalObjectUsages1.0.kt")
+        public void testKotlinLocalObjectUsages1() throws Exception {
+            doTest("idea/testData/findUsages/findObjectUsages/kotlinLocalObjectUsages1.0.kt");
+        }
+        
+        @TestMetadata("kotlinLocalObjectUsages2.0.kt")
+        public void testKotlinLocalObjectUsages2() throws Exception {
+            doTest("idea/testData/findUsages/findObjectUsages/kotlinLocalObjectUsages2.0.kt");
+        }
+        
         @TestMetadata("kotlinObjectUsages.0.kt")
         public void testKotlinObjectUsages() throws Exception {
             doTest("idea/testData/findUsages/findObjectUsages/kotlinObjectUsages.0.kt");
+        }
+        
+        @TestMetadata("kotlinPrivateObjectUsages.0.kt")
+        public void testKotlinPrivateObjectUsages() throws Exception {
+            doTest("idea/testData/findUsages/findObjectUsages/kotlinPrivateObjectUsages.0.kt");
         }
         
     }
@@ -215,6 +270,21 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
         @TestMetadata("javaPropertyUsages.0.kt")
         public void testJavaPropertyUsages() throws Exception {
             doTest("idea/testData/findUsages/findPropertyUsages/javaPropertyUsages.0.kt");
+        }
+        
+        @TestMetadata("kotlinLocalPropertyUsages1.0.kt")
+        public void testKotlinLocalPropertyUsages1() throws Exception {
+            doTest("idea/testData/findUsages/findPropertyUsages/kotlinLocalPropertyUsages1.0.kt");
+        }
+        
+        @TestMetadata("kotlinLocalPropertyUsages2.0.kt")
+        public void testKotlinLocalPropertyUsages2() throws Exception {
+            doTest("idea/testData/findUsages/findPropertyUsages/kotlinLocalPropertyUsages2.0.kt");
+        }
+        
+        @TestMetadata("kotlinPrivatePropertyUsages.0.kt")
+        public void testKotlinPrivatePropertyUsages() throws Exception {
+            doTest("idea/testData/findUsages/findPropertyUsages/kotlinPrivatePropertyUsages.0.kt");
         }
         
         @TestMetadata("kotlinTopLevelPropertyUsages.0.kt")

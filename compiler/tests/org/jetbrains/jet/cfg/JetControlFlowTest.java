@@ -18,7 +18,6 @@ package org.jetbrains.jet.cfg;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -147,9 +146,8 @@ public class JetControlFlowTest extends JetLiteFixture {
             FileUtil.writeToFile(expectedInstructionsFile, instructionDump.toString());
             fail("No expected instructions for " + name + " generated result is written into " + expectedInstructionsFileName);
         }
-        String expectedInstructions = StringUtil.convertLineSeparators(FileUtil.loadFile(expectedInstructionsFile));
 
-        assertEquals(expectedInstructions, instructionDump.toString());
+        JetTestUtils.assertEqualsToFile(expectedInstructionsFile, instructionDump.toString());
 
 //                        StringBuilder graphDump = new StringBuilder();
 //                        for (Pseudocode pseudocode : pseudocodes) {

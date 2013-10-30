@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.modules.xml;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
@@ -43,8 +41,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s1"), new File("s2")),
                 false,
                 Collections.<File>emptySet()).asText().toString();
-        String expected = FileUtil.loadFile(new File("idea/testData/modules.xml/basic.xml"));
-        UsefulTestCase.assertSameLines(expected, actual);
+        JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
     }
 
     public void testFiltered() throws Exception {
@@ -61,8 +58,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Arrays.asList(new File("s1"), new File("s2")),
                 false,
                 Collections.singleton(new File("cp1"))).asText().toString();
-        String expected = FileUtil.loadFile(new File("idea/testData/modules.xml/filtered.xml"));
-        UsefulTestCase.assertSameLines(expected, actual);
+        JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
     }
 
     public void testMultiple() throws Exception {

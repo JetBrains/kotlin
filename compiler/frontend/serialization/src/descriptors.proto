@@ -171,7 +171,6 @@ message Callable {
    */
   optional int32 getter_flags = 9 /* absent => same as property */;
   optional int32 setter_flags = 10 /* absent => same as property */;
-  optional int32 setter_parameter_name = 11;
 
   repeated TypeParameter type_parameter = 4;
 
@@ -189,8 +188,10 @@ message Callable {
     required Type type = 3;
     optional Type vararg_element_type = 4;
 
+    extensions 100 to 199;
   }
 
+  // Value parameters for functions and constructors, or setter value parameter for properties
   repeated ValueParameter value_parameter = 7;
 
   required Type return_type = 8;

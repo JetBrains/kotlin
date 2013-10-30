@@ -17,7 +17,6 @@
 package org.jetbrains.jet.editor;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
@@ -51,8 +50,6 @@ public class JetCommenterTest  extends LightCodeInsightTestCase {
     }
 
     protected static String loadFile(String name) throws Exception {
-        String text = FileUtil.loadFile(new File(BASE_PATH, name));
-        text = StringUtil.convertLineSeparators(text);
-        return text;
+        return FileUtil.loadFile(new File(BASE_PATH, name), true);
     }
 }

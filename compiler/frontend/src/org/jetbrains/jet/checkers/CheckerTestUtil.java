@@ -17,10 +17,7 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multiset;
+import com.google.common.collect.*;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -28,8 +25,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -42,7 +39,7 @@ import java.util.regex.Pattern;
 public class CheckerTestUtil {
     public static final Comparator<Diagnostic> DIAGNOSTIC_COMPARATOR = new Comparator<Diagnostic>() {
         @Override
-        public int compare(Diagnostic o1, Diagnostic o2) {
+        public int compare(@NotNull Diagnostic o1, @NotNull Diagnostic o2) {
             List<TextRange> ranges1 = o1.getTextRanges();
             List<TextRange> ranges2 = o2.getTextRanges();
             if (ranges1.size() != ranges2.size()) return ranges1.size() - ranges2.size();
@@ -162,15 +159,16 @@ public class CheckerTestUtil {
                         Multiset<String> actualDiagnosticTypes = currentActual.getDiagnosticTypeStrings();
                         Multiset<String> expectedDiagnosticTypes = currentExpected.getDiagnostics();
                         if (!actualDiagnosticTypes.equals(expectedDiagnosticTypes)) {
-                            Multiset<String> expectedCopy = HashMultiset.create(expectedDiagnosticTypes);
-                            expectedCopy.removeAll(actualDiagnosticTypes);
-                            Multiset<String> actualCopy = HashMultiset.create(actualDiagnosticTypes);
-                            actualCopy.removeAll(expectedDiagnosticTypes);
+                            Multiset<String> notInActualTypes = HashMultiset.create(expectedDiagnosticTypes);
+                            Multisets.removeOccurrences(notInActualTypes, actualDiagnosticTypes);
 
-                            for (String type : expectedCopy) {
+                            Multiset<String> notInExpectedTypes = HashMultiset.create(actualDiagnosticTypes);
+                            Multisets.removeOccurrences(notInExpectedTypes, expectedDiagnosticTypes);
+
+                            for (String type : notInActualTypes) {
                                 callbacks.missingDiagnostic(type, expectedStart, expectedEnd);
                             }
-                            for (String type : actualCopy) {
+                            for (String type : notInExpectedTypes) {
                                 callbacks.unexpectedDiagnostic(type, actualStart, actualEnd);
                             }
                         }
@@ -180,13 +178,11 @@ public class CheckerTestUtil {
                 }
             }
             else {
-                if (currentActual != null) {
-                    unexpectedDiagnostics(currentActual.getDiagnostics(), callbacks);
-                    currentActual = safeAdvance(actualDiagnostics);
-                }
-                else {
-                    break;
-                }
+                //noinspection ConstantConditions
+                assert (currentActual != null);
+
+                unexpectedDiagnostics(currentActual.getDiagnostics(), callbacks);
+                currentActual = safeAdvance(actualDiagnostics);
             }
         }
     }

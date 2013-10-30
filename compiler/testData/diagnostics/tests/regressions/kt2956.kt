@@ -1,0 +1,1 @@
+val a: String = <!NO_CLASS_OBJECT!>Nothing<!>

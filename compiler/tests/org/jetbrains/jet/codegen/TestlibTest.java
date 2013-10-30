@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.testFramework.UsefulTestCase;
-import gnu.trove.THashSet;
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -34,7 +33,6 @@ import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -43,14 +41,11 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.types.JetType;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Set;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public class TestlibTest extends UsefulTestCase {
@@ -123,22 +118,16 @@ public class TestlibTest extends UsefulTestCase {
         typeMapper = generationState.getTypeMapper();
 
         for (JetFile jetFile : myEnvironment.getSourceFiles()) {
-            for (JetDeclaration decl : jetFile.getDeclarations()) {
-                if (decl instanceof JetClass) {
-                    JetClass jetClass = (JetClass) decl;
-
+            for (JetDeclaration declaration : jetFile.getDeclarations()) {
+                if (declaration instanceof JetClass) {
                     ClassDescriptor descriptor = (ClassDescriptor) generationState.getBindingContext().get(
-                            BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
+                            BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
-                    assertNotNull("Descriptor for declaration " + jetClass + " shouldn't be null", descriptor);
+                    assertNotNull("Descriptor for declaration " + declaration + " shouldn't be null", descriptor);
 
-                    Set<JetType> allSuperTypes = new THashSet<JetType>();
-                    DescriptorUtils.addSuperTypes(descriptor.getDefaultType(), allSuperTypes);
-
-                    for (JetType type : allSuperTypes) {
-                        String internalName = typeMapper.mapType(type, JetTypeMapperMode.IMPL).getInternalName();
-                        if (internalName.equals("junit/framework/Test")) {
-                            String name = typeMapper.mapType(descriptor.getDefaultType(), JetTypeMapperMode.IMPL).getInternalName();
+                    for (ClassDescriptor superClass : DescriptorUtils.getAllSuperClasses(descriptor)) {
+                        if ("junit/framework/Test".equals(typeMapper.mapClass(superClass).getInternalName())) {
+                            String name = typeMapper.mapClass(descriptor).getInternalName();
 
                             //noinspection UseOfSystemOutOrSystemErr
                             System.out.println(name);
@@ -146,10 +135,9 @@ public class TestlibTest extends UsefulTestCase {
                             @SuppressWarnings("unchecked")
                             Class<TestCase> aClass = (Class<TestCase>) classLoader.loadClass(name.replace('/', '.'));
 
-                            if ((aClass.getModifiers() & Modifier.ABSTRACT) == 0 && (aClass.getModifiers() & Modifier.PUBLIC) != 0) {
+                            if (!Modifier.isAbstract(aClass.getModifiers()) && Modifier.isPublic(aClass.getModifiers())) {
                                 try {
-                                    Constructor<TestCase> constructor = aClass.getConstructor();
-                                    if ((constructor.getModifiers() & Modifier.PUBLIC) != 0) {
+                                    if (Modifier.isPublic(aClass.getConstructor().getModifiers())) {
                                         suite.addTestSuite(aClass);
                                     }
                                 }

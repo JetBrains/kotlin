@@ -16,42 +16,38 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Chunk;
 import com.intellij.util.Function;
-import com.intellij.util.StringBuilderSpinAllocator;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
-import org.jetbrains.jet.compiler.runner.CompilerRunnerUtil;
+import org.jetbrains.jet.compiler.runner.KotlinCompilerRunner;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.compiler.configuration.Kotlin2JsCompilerArgumentsHolder;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCommonCompilerArgumentsHolder;
+import org.jetbrains.jet.plugin.compiler.configuration.KotlinCompilerSettings;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import static org.jetbrains.jet.compiler.runner.CompilerRunnerUtil.invokeExecMethod;
-import static org.jetbrains.jet.compiler.runner.CompilerRunnerUtil.outputCompilerMessagesAndHandleExitCode;
 
 public final class K2JSCompiler implements TranslatingCompiler {
     @Override
@@ -63,7 +59,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
         if (module == null) {
             return false;
         }
-        return KotlinFrameworkDetector.isJsKotlinModule(module);
+        return ProjectStructureUtil.isJsKotlinModule(module);
     }
 
     @Override
@@ -85,19 +81,40 @@ public final class K2JSCompiler implements TranslatingCompiler {
             return;
         }
 
-        doCompile(messageCollector, sink, module, environment);
+        doCompile(messageCollector, sink, module, environment, files);
     }
 
-    private static void doCompile(@NotNull final MessageCollector messageCollector, @NotNull OutputSink sink, @NotNull final Module module,
-            @NotNull final CompilerEnvironment environment) {
-        OutputItemsCollectorImpl collector = new OutputItemsCollectorImpl(environment.getOutput());
-        outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
+    private static void doCompile(
+            @NotNull MessageCollector messageCollector, @NotNull OutputSink sink, @NotNull Module module,
+            @NotNull CompilerEnvironment environment, VirtualFile[] files
+    ) {
+        List<File> srcFiles = ContainerUtil.map(files, new Function<VirtualFile, File>() {
             @Override
-            public Integer fun(PrintStream stream) {
-                return execInProcess(messageCollector, environment, stream, module);
+            public File fun(VirtualFile file) {
+                return new File(file.getPath());
             }
         });
-        TranslatingCompilerUtils.reportOutputs(sink, environment.getOutput(), collector);
+        List<String> libraryFiles = getLibraryFiles(module);
+        File outDir = environment.getOutput();
+        File outFile = new File(outDir, module.getName() + ".js");
+
+        OutputItemsCollectorImpl outputItemsCollector = new OutputItemsCollectorImpl();
+
+        Project project = module.getProject();
+        CommonCompilerArguments commonArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings();
+        K2JSCompilerArguments k2jsArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings();
+        CompilerSettings compilerSettings = KotlinCompilerSettings.getInstance(project).getSettings();
+
+        KotlinCompilerRunner.runK2JsCompiler(commonArguments, k2jsArguments, compilerSettings, messageCollector, environment,
+                                             outputItemsCollector, srcFiles, libraryFiles, outFile);
+
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(outDir);
+            assert virtualFile != null : "Virtual file not found for module output: " + outDir;
+            virtualFile.refresh(false, true);
+        }
+
+        TranslatingCompilerUtils.reportOutputs(sink, environment.getOutput(), outputItemsCollector);
     }
 
     @Nullable
@@ -107,48 +124,6 @@ public final class K2JSCompiler implements TranslatingCompiler {
             return null;
         }
         return moduleChunk.getNodes().iterator().next();
-    }
-
-    @NotNull
-    private static Integer execInProcess(@NotNull MessageCollector messageCollector,
-            @NotNull CompilerEnvironment environment, @NotNull PrintStream out, @NotNull Module module) {
-        try {
-            return doExec(messageCollector, environment, out, module);
-        }
-        catch (Throwable e) {
-            messageCollector.report(CompilerMessageSeverity.ERROR,
-                                    "Exception while executing compiler:\n" + e.getMessage(),
-                                    CompilerMessageLocation.NO_LOCATION);
-        }
-        return -1;
-    }
-
-    @NotNull
-    private static Integer doExec(@NotNull MessageCollector messageCollector, @NotNull CompilerEnvironment environment, @NotNull PrintStream out,
-            @NotNull Module module) throws Exception {
-        File outDir = environment.getOutput();
-        File outFile = new File(outDir, module.getName() + ".js");
-        String[] commandLineArgs = constructArguments(module, outFile);
-        // No preloading for in-process compiler
-        Object rc = invokeExecMethod("org.jetbrains.jet.cli.js.K2JSCompiler", commandLineArgs, environment, messageCollector, out, false);
-
-        if (!ApplicationManager.getApplication().isUnitTestMode()) {
-            VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(outDir);
-            assert virtualFile != null : "Virtual file not found for module output: " + outDir;
-            virtualFile.refresh(false, true);
-        }
-        return CompilerRunnerUtil.getReturnCodeFromObject(rc);
-    }
-
-    @NotNull
-    private static String[] constructArguments(@NotNull Module module, @NotNull File outFile) {
-        VirtualFile[] sourceFiles = getSourceFiles(module);
-
-        ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version");
-        addPathToSourcesDir(sourceFiles, args);
-        addOutputPath(outFile, args);
-        addLibLocationAndTarget(module, args);
-        return ArrayUtil.toStringArray(args);
     }
 
     // we cannot use OrderEnumerator because it has critical bug - try https://gist.github.com/2953261, processor will never be called for module dependency
@@ -178,67 +153,28 @@ public final class K2JSCompiler implements TranslatingCompiler {
                 .getFiles(JetFileType.INSTANCE, true);
     }
 
-    private static void addLibLocationAndTarget(@NotNull Module module, @NotNull ArrayList<String> args) {
-        Pair<List<String>, String> libLocationAndTarget = KotlinFrameworkDetector.getLibLocationAndTargetForProject(module);
+    private static List<String> getLibraryFiles(@NotNull Module module) {
+        List<String> result = new ArrayList<String>();
 
-        StringBuilder sb = StringBuilderSpinAllocator.alloc();
-        AccessToken token = ReadAction.start();
-        try {
-            THashSet<Module> modules = new THashSet<Module>();
-            collectModuleDependencies(module, modules);
-            if (!modules.isEmpty()) {
-                for (Module dependency : modules) {
-                    sb.append('@').append(dependency.getName()).append(',');
+        List<String> libLocationAndTarget = ProjectStructureUtil.getLibLocationForProject(module);
 
-                    for (VirtualFile file : getSourceFiles(dependency)) {
-                        sb.append(file.getPath()).append(',');
-                    }
+        THashSet<Module> modules = new THashSet<Module>();
+        collectModuleDependencies(module, modules);
+        if (!modules.isEmpty()) {
+            for (Module dependency : modules) {
+                result.add("@" + dependency.getName());
+
+                for (VirtualFile file : getSourceFiles(dependency)) {
+                    result.add(file.getPath());
                 }
             }
-
-            if (libLocationAndTarget.first != null) {
-                for (String file : libLocationAndTarget.first) {
-                    sb.append(file).append(',');
-                }
-            }
-
-            if (sb.length() > 0) {
-                args.add("-libraryFiles");
-                args.add(sb.substring(0, sb.length() - 1));
-            }
-        }
-        finally {
-            token.finish();
-            StringBuilderSpinAllocator.dispose(sb);
         }
 
-        if (libLocationAndTarget.second != null) {
-            args.add("-target");
-            args.add(libLocationAndTarget.second);
+        for (String file : libLocationAndTarget) {
+            result.add(file);
         }
 
-        //TODO drop later
-        args.add("-sourcemap");
-    }
-
-    private static void addPathToSourcesDir(@NotNull VirtualFile[] sourceFiles, @NotNull ArrayList<String> args) {
-        args.add("-sourceFiles");
-
-        StringBuilder sb = StringBuilderSpinAllocator.alloc();
-        try {
-            for (VirtualFile file : sourceFiles) {
-                sb.append(file.getPath()).append(',');
-            }
-            args.add(sb.substring(0, sb.length() - 1));
-        }
-        finally {
-            StringBuilderSpinAllocator.dispose(sb);
-        }
-    }
-
-    private static void addOutputPath(@NotNull File outFile, @NotNull ArrayList<String> args) {
-        args.add("-output");
-        args.add(outFile.getPath());
+        return result;
     }
 
     @NotNull

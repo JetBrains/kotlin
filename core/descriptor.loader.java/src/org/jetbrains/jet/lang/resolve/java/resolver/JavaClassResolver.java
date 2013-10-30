@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaEnumClassObjectDescriptor;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
@@ -237,7 +238,7 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassDescriptorFromJvmBytecode doCreateClassDescriptor(
+    private JavaClassDescriptor doCreateClassDescriptor(
             @NotNull FqName fqName,
             @NotNull JavaClass javaClass,
             @NotNull PostponedTasks taskList,
@@ -313,7 +314,7 @@ public final class JavaClassResolver {
     @NotNull
     private SimpleFunctionDescriptor resolveFunctionOfSamInterface(
             @NotNull JavaMethod samInterfaceMethod,
-            @NotNull ClassDescriptorFromJvmBytecode samInterface
+            @NotNull JavaClassDescriptor samInterface
     ) {
         JavaClass methodContainer = samInterfaceMethod.getContainingClass();
         FqName containerFqName = methodContainer.getFqName();

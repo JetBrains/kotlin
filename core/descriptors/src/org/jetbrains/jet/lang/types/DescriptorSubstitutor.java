@@ -77,7 +77,7 @@ public class DescriptorSubstitutor {
                     descriptor.getIndex());
             substituted.setInitialized();
 
-            mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjection(substituted.getDefaultType()));
+            mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjectionImpl(substituted.getDefaultType()));
 
             substitutedMap.put(descriptor, substituted);
             result.add(substituted);
@@ -106,7 +106,7 @@ public class DescriptorSubstitutor {
         for (TypeParameterDescriptor descriptor : topologicallySortTypeParameters(typeParameters)) {
             JetType upperBoundsAsType = descriptor.getUpperBoundsAsType();
             JetType substitutedUpperBoundsAsType = substitutor.substitute(upperBoundsAsType, Variance.INVARIANT);
-            mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjection(substitutedUpperBoundsAsType));
+            mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjectionImpl(substitutedUpperBoundsAsType));
         }
 
         return substitutor;

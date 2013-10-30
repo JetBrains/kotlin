@@ -31,7 +31,7 @@ public abstract class AbstractJavaWithLibCompletionTest extends JetFixtureComple
         if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
             return super.getProjectDescriptor();
         }
-        return new JdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(true) + "Src", false);
+        return new JdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(false) + "Src", false);
     }
 
     @Override

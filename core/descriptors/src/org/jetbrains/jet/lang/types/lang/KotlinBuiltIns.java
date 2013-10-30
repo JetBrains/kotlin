@@ -334,6 +334,11 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getHashable() {
+        return getBuiltInClassByName("Hashable");
+    }
+
+    @NotNull
     public ClassDescriptor getUnit() {
         return getBuiltInClassByName("Unit");
     }
@@ -685,7 +690,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
-        List<TypeProjection> types = Collections.singletonList(new TypeProjection(projectionType, argument));
+        List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return new JetTypeImpl(
                 Collections.<AnnotationDescriptor>emptyList(),
                 getArray().getTypeConstructor(),
@@ -703,7 +708,7 @@ public class KotlinBuiltIns {
     @NotNull
     public JetType getEnumType(@NotNull JetType argument) {
         Variance projectionType = Variance.INVARIANT;
-        List<TypeProjection> types = Collections.singletonList(new TypeProjection(projectionType, argument));
+        List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return new JetTypeImpl(
                 Collections.<AnnotationDescriptor>emptyList(),
                 getEnum().getTypeConstructor(),
@@ -798,7 +803,7 @@ public class KotlinBuiltIns {
     }
 
     private static TypeProjection defaultProjection(JetType returnType) {
-        return new TypeProjection(Variance.INVARIANT, returnType);
+        return new TypeProjectionImpl(Variance.INVARIANT, returnType);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

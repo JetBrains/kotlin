@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
-import org.jetbrains.jet.lang.resolve.calls.CompositeExtension;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
@@ -49,7 +49,7 @@ public class InjectorForLazyResolve {
     private final AnnotationResolver annotationResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final JetImportsFactory jetImportsFactory;
-    private final CompositeExtension compositeExtension;
+    private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final CallExpressionResolver callExpressionResolver;
@@ -72,7 +72,7 @@ public class InjectorForLazyResolve {
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.jetImportsFactory = new JetImportsFactory();
-        this.compositeExtension = new CompositeExtension();
+        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.callExpressionResolver = new CallExpressionResolver();
@@ -89,6 +89,7 @@ public class InjectorForLazyResolve {
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        this.expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
         this.expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
@@ -109,7 +110,6 @@ public class InjectorForLazyResolve {
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
         callResolver.setExpressionTypingServices(expressionTypingServices);
-        callResolver.setExtension(compositeExtension);
         callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);

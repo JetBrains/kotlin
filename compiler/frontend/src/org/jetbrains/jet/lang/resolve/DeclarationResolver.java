@@ -351,7 +351,7 @@ public class DeclarationResolver {
     }
 
     private void checkRedeclarationsInNamespaces() {
-        for (NamespaceDescriptorImpl descriptor : context.getNamespaceDescriptors().values()) {
+        for (NamespaceDescriptorImpl descriptor : Sets.newHashSet(context.getNamespaceDescriptors().values())) {
             Multimap<Name, DeclarationDescriptor> simpleNameDescriptors = descriptor.getMemberScope().getDeclaredDescriptorsAccessibleBySimpleName();
             for (Name name : simpleNameDescriptors.keySet()) {
                 // Keep only properties with no receiver

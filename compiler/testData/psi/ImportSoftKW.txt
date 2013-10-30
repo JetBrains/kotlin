@@ -1,24 +1,25 @@
 JetFile: ImportSoftKW.kt
   NAMESPACE_HEADER
     <empty list>
-  IMPORT_DIRECTIVE
-    PsiElement(import)('import')
-    PsiWhiteSpace(' ')
-    DOT_QUALIFIED_EXPRESSION
+  IMPORT_LIST
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('import')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('import')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('import')
           PsiElement(DOT)('.')
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('import')
         PsiElement(DOT)('.')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('import')
-      PsiElement(DOT)('.')
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('import')
-    PsiWhiteSpace(' ')
-    PsiElement(as)('as')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('import')
+      PsiWhiteSpace(' ')
+      PsiElement(as)('as')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('import')

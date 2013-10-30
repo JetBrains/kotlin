@@ -9,7 +9,8 @@ public final class JavaProtoBuf {
       com.google.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.methodSignature);
     registry.add(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.propertySignature);
-    registry.add(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.srcClassName);
+    registry.add(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.implClassName);
+    registry.add(org.jetbrains.jet.descriptors.serialization.JavaProtoBuf.index);
   }
   public interface JavaTypeOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
@@ -2075,17 +2076,29 @@ public final class JavaProtoBuf {
         null,
         101,
         com.google.protobuf.WireFormat.FieldType.MESSAGE);
-  public static final int SRC_CLASS_NAME_FIELD_NUMBER = 102;
+  public static final int IMPL_CLASS_NAME_FIELD_NUMBER = 102;
   public static final
     com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable,
-      java.lang.Integer> srcClassName = com.google.protobuf.GeneratedMessageLite
+      java.lang.Integer> implClassName = com.google.protobuf.GeneratedMessageLite
           .newSingularGeneratedExtension(
         org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.getDefaultInstance(),
         0,
         null,
         null,
         102,
+        com.google.protobuf.WireFormat.FieldType.INT32);
+  public static final int INDEX_FIELD_NUMBER = 100;
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter,
+      java.lang.Integer> index = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable.ValueParameter.getDefaultInstance(),
+        0,
+        null,
+        null,
+        100,
         com.google.protobuf.WireFormat.FieldType.INT32);
   
   static {

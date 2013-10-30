@@ -26,6 +26,8 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -42,13 +44,14 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.awt.event.MouseEvent;
@@ -83,6 +86,15 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
         Project project = elements.get(0).getProject();
         if (!isMarkersEnabled(project)) {
+            return;
+        }
+
+        Module module = ModuleUtilCore.findModuleForPsiElement(elements.get(0));
+        if (module == null) {
+            return;
+        }
+
+        if (!ProjectStructureUtil.isUsedInKotlinJavaModule(module)) {
             return;
         }
 
@@ -188,8 +200,8 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         if (member instanceof PsiMethod) {
             if (((PsiMethod) member).isConstructor()) {
                 DeclarationDescriptor container = memberScope.getContainingDeclaration();
-                assert container instanceof ClassDescriptorFromJvmBytecode : container + "\n" + memberScope;
-                ((ClassDescriptorFromJvmBytecode) container).getConstructors();
+                assert container instanceof JavaClassDescriptor : container + "\n" + memberScope;
+                ((JavaClassDescriptor) container).getConstructors();
             }
             else {
                 memberScope.getFunctions(name);
@@ -214,7 +226,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
 
     private static class MyLineMarkerInfo extends LineMarkerInfo<PsiModifierListOwner> {
         public MyLineMarkerInfo(PsiModifierListOwner element, @Nullable List<String> errors, boolean hasAnnotation) {
-            super(element, element.getTextOffset(), errors != null ? AllIcons.Ide.Error : JetIcons.SMALL_LOGO, Pass.UPDATE_ALL,
+            super(element, element.getTextOffset(), errors != null ? AllIcons.Ide.Error : JetIcons.SMALL_LOGO, Pass.UPDATE_OVERRIDEN_MARKERS,
                   new TooltipProvider(errors), hasAnnotation ? NAVIGATION_HANDLER : null);
         }
 
@@ -249,13 +261,11 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             if (annotation == null) return errorsString();
 
             String signature = KotlinSignatureUtil.getKotlinSignature(annotation);
-            String text = "Alternative Kotlin signature is available for this method:\n"
-                       + StringUtil.escapeXml(signature);
+            String text = "Alternative Kotlin signature is available for this method:\n" + StringUtil.escapeXml(signature);
             if (errors == null) {
                 return text;
             }
-            return text + "\nIt has the following " + StringUtil.pluralize("error", errors.size()) + ":\n"
-                   + errorsString();
+            return text + "\nIt has the following " + StringUtil.pluralize("error", errors.size()) + ":\n" + errorsString();
         }
 
         @NotNull

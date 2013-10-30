@@ -13,7 +13,7 @@ open class Test() {
 open fun putInt(i : Int) : Unit {
 }
 open fun test() : Unit {
-putInt((One.myContainer?.myInt)!!)
-IntContainer((One.myContainer?.myInt)!!)
+putInt(One.myContainer?.myInt!!)
+IntContainer(One.myContainer?.myInt!!)
 }
 }

@@ -85,7 +85,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
     @Nullable
     private PsiModifierList modifierList;
 
-    private NullableLazyValue<PsiTypeParameterList> typeParameterList = new NullableLazyValue<PsiTypeParameterList>() {
+    private final NullableLazyValue<PsiTypeParameterList> typeParameterList = new NullableLazyValue<PsiTypeParameterList>() {
         @Nullable
         @Override
         protected PsiTypeParameterList compute() {

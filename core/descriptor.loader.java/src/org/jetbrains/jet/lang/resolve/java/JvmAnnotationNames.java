@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import jet.KotlinClass;
 import jet.KotlinPackage;
 import jet.KotlinPackageFragment;
+import jet.KotlinTraitImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
@@ -29,6 +30,8 @@ public final class JvmAnnotationNames {
     public static final FqName KOTLIN_PACKAGE = fqNameByClass(KotlinPackage.class);
 
     public static final FqName KOTLIN_PACKAGE_FRAGMENT = fqNameByClass(KotlinPackageFragment.class);
+
+    public static final FqName KOTLIN_TRAIT_IMPL = fqNameByClass(KotlinTraitImpl.class);
 
     public static final String ABI_VERSION_FIELD_NAME = "abiVersion";
 

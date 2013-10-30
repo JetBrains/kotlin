@@ -1026,7 +1026,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         for (TypeProjection projection : type.getArguments()) {
             TypeParameterDescriptor typeParameter = typeParameters.get(i);
             JetType newArgument = substituteType(projection.getType(), substitution, typeParameter.getVariance());
-            newArguments.add(new TypeProjection(Variance.INVARIANT, newArgument));
+            newArguments.add(new TypeProjectionImpl(Variance.INVARIANT, newArgument));
             i++;
         }
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(),
@@ -1354,7 +1354,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 JetType[] returnJetTypeParameterTypes = guessTypesForExpression(variableExpr, context);
                 if (returnJetTypeParameterTypes.length != 1) return null;
 
-                TypeProjection returnJetTypeParameterType = new TypeProjection(returnJetTypeParameterTypes[0]);
+                TypeProjection returnJetTypeParameterType = new TypeProjectionImpl(returnJetTypeParameterTypes[0]);
                 List<TypeProjection> returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType);
                 returnJetType = new JetTypeImpl(returnJetType.getAnnotations(), returnJetType.getConstructor(), returnJetType.isNullable(),
                                                 returnJetTypeArguments, returnJetType.getMemberScope());

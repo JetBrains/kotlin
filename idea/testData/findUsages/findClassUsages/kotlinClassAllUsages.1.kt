@@ -2,7 +2,7 @@ package client
 
 import server.Server
 
-class Client: Server() {
+class Client(name: String = Server.NAME): Server() {
     var nextServer: Server? = new Server()
     val name = Server.NAME
 
@@ -19,13 +19,17 @@ class Client: Server() {
         super<Server>.work()
         println("Client")
     }
+
+    class object: Server() {
+
+    }
 }
 
 object ClientObject: Server() {
 
 }
 
-fun Client.bar(s: Server) {
+fun Client.bar(s: Server = Server.NAME) {
     foo(s)
 }
 

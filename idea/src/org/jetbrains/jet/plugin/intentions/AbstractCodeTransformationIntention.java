@@ -16,25 +16,25 @@
 
 package org.jetbrains.jet.plugin.intentions;
 
-import com.google.common.base.Predicate;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public abstract class AbstractCodeTransformationIntention extends BaseIntentionAction {
     private final Transformer transformer;
-    private final Predicate<PsiElement> isApplicable;
+    private final Function1<PsiElement, Boolean> isApplicable;
 
-    protected AbstractCodeTransformationIntention(@NotNull Transformer transformer, @NotNull Predicate<PsiElement> isApplicable) {
+    protected AbstractCodeTransformationIntention(@NotNull Transformer transformer, @NotNull Function1<PsiElement, Boolean> isApplicable) {
         this.transformer = transformer;
         this.isApplicable = isApplicable;
         setText(JetBundle.message(transformer.getKey()));
@@ -43,7 +43,7 @@ public abstract class AbstractCodeTransformationIntention extends BaseIntentionA
     @Nullable
     private PsiElement getTarget(@NotNull Editor editor, @NotNull PsiFile file) {
         PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-        return JetPsiUtil.getParentByTypeAndPredicate(element, JetElement.class, isApplicable, false);
+        return PsiUtilPackage.getParentByTypeAndPredicate(element, JetElement.class, false, isApplicable);
     }
 
     @NotNull

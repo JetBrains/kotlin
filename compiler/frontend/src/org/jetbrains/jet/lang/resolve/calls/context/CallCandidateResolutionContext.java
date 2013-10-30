@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
@@ -48,10 +49,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
-            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
+            @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
+            @NotNull CallResolverExtension callResolverExtension
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
-              labelResolver, dataFlowInfoForArguments);
+              labelResolver, dataFlowInfoForArguments, callResolverExtension);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
     }
@@ -63,7 +65,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
-                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments);
+                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments, context.callResolverExtension);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
@@ -78,7 +80,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.expressionPosition,
-                context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments);
+                context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments, context.callResolverExtension);
     }
 
     @Override
@@ -94,7 +96,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency,
-                checkArguments, expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments);
+                checkArguments, expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension);
     }
 
     @Override

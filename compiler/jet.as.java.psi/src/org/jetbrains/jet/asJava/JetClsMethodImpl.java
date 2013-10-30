@@ -19,6 +19,7 @@ package org.jetbrains.jet.asJava;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.ClsMethodImpl;
 import com.intellij.psi.impl.java.stubs.PsiMethodStub;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -58,5 +59,11 @@ public class JetClsMethodImpl extends ClsMethodImpl implements JetClsMethod {
     public boolean isEquivalentTo(PsiElement another) {
         if (another instanceof JetClsMethod && getOrigin().equals(((JetClsMethod) another).getOrigin())) return true;
         return super.isEquivalentTo(another);
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        return origin.getUseScope();
     }
 }

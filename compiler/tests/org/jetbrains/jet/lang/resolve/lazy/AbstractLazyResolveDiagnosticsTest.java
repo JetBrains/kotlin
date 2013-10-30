@@ -39,7 +39,7 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
     public static final File TEST_DATA_DIR = new File("compiler/testData/diagnostics/tests");
 
     @Override
-    protected void analyzeAndCheck(File testDataFile, String expectedText, List<TestFile> files) {
+    protected void analyzeAndCheck(File testDataFile, List<TestFile> files) {
         List<JetFile> jetFiles = getJetFiles(files);
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(jetFiles, getEnvironment());
         ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());

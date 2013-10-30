@@ -218,6 +218,11 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest("idea/testData/checker/RecursiveTypeInference.kt");
         }
         
+        @TestMetadata("Redeclaration.kt")
+        public void testRedeclaration() throws Exception {
+            doTest("idea/testData/checker/Redeclaration.kt");
+        }
+        
         @TestMetadata("Redeclarations.kt")
         public void testRedeclarations() throws Exception {
             doTest("idea/testData/checker/Redeclarations.kt");
@@ -226,6 +231,11 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         @TestMetadata("ResolveToJava.kt")
         public void testResolveToJava() throws Exception {
             doTest("idea/testData/checker/ResolveToJava.kt");
+        }
+        
+        @TestMetadata("Shadowing.kt")
+        public void testShadowing() throws Exception {
+            doTest("idea/testData/checker/Shadowing.kt");
         }
         
         @TestMetadata("StringTemplates.kt")

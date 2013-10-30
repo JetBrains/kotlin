@@ -16,11 +16,13 @@
 
 package org.jetbrains.jet.compiler.runner;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.Accessor;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.sampullara.cli.ArgumentUtils;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
@@ -28,64 +30,75 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorUtil;
+import org.jetbrains.jet.compiler.CompilerSettings;
 
 import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.Set;
 
 public class KotlinCompilerRunner {
     private static final String K2JVM_COMPILER = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
     private static final String K2JS_COMPILER = "org.jetbrains.jet.cli.js.K2JSCompiler";
+    private static final K2JVMCompilerArguments DEFAULT_K2JVM_ARGUMENTS = new K2JVMCompilerArguments();
+    private static final K2JSCompilerArguments DEFAULT_K2JS_ARGUMENTS = new K2JSCompilerArguments();
 
     public static void runK2JvmCompiler(
             CommonCompilerArguments commonArguments,
             K2JVMCompilerArguments k2jvmArguments,
+            CompilerSettings compilerSettings,
             MessageCollector messageCollector,
             CompilerEnvironment environment,
             File moduleFile,
             OutputItemsCollector collector
     ) {
         K2JVMCompilerArguments arguments = mergeBeans(commonArguments, k2jvmArguments);
-        setupK2JvmSettings(moduleFile, arguments);
+        setupK2JvmArguments(moduleFile, arguments);
 
-        runCompiler(K2JVM_COMPILER, arguments, messageCollector, collector, environment);
+        runCompiler(K2JVM_COMPILER, arguments, compilerSettings.getAdditionalArguments(),
+                    DEFAULT_K2JVM_ARGUMENTS, messageCollector, collector, environment);
     }
 
     public static void runK2JsCompiler(
             CommonCompilerArguments commonArguments,
             K2JSCompilerArguments k2jsArguments,
+            CompilerSettings compilerSettings,
             MessageCollector messageCollector,
             CompilerEnvironment environment,
             OutputItemsCollector collector,
             List<File> sourceFiles,
-            Set<String> libraryFiles,
+            List<String> libraryFiles,
             File outputFile
     ) {
         K2JSCompilerArguments arguments = mergeBeans(commonArguments, k2jsArguments);
-        setupK2JsSettings(outputFile, sourceFiles, libraryFiles, arguments);
+        setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments);
 
-        runCompiler(K2JS_COMPILER, arguments, messageCollector, collector, environment);
+        runCompiler(K2JS_COMPILER, arguments, compilerSettings.getAdditionalArguments(),
+                    DEFAULT_K2JS_ARGUMENTS, messageCollector, collector, environment);
     }
 
     private static void runCompiler(
             final String compilerClassName,
-            final CommonCompilerArguments arguments,
+            CommonCompilerArguments arguments,
+            String additionalArguments,
+            CommonCompilerArguments defaultArguments,
             final MessageCollector messageCollector,
             OutputItemsCollector collector,
             final CompilerEnvironment environment
     ) {
+        final List<String> argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments, defaultArguments);
+        argumentsList.addAll(StringUtil.split(additionalArguments, " "));
+
         CompilerRunnerUtil.outputCompilerMessagesAndHandleExitCode(messageCollector, collector, new Function<PrintStream, Integer>() {
             @Override
             public Integer fun(PrintStream stream) {
-                return execCompiler(compilerClassName, arguments, environment, stream, messageCollector);
+                return execCompiler(compilerClassName, ArrayUtil.toStringArray(argumentsList), environment, stream, messageCollector);
             }
         });
     }
 
     private static int execCompiler(
             String compilerClassName,
-            CommonCompilerArguments arguments,
+            String[] arguments,
             CompilerEnvironment environment,
             PrintStream out,
             MessageCollector messageCollector
@@ -120,11 +133,9 @@ public class KotlinCompilerRunner {
     private static void setupCommonSettings(CommonCompilerArguments settings) {
         settings.tags = true;
         settings.verbose = true;
-        settings.version = true;
-        settings.printArgs = true;
     }
 
-    private static void setupK2JvmSettings(
+    private static void setupK2JvmArguments(
             File moduleFile,
             K2JVMCompilerArguments settings
     ) {
@@ -138,10 +149,10 @@ public class KotlinCompilerRunner {
         settings.noJdk = true;
     }
 
-    private static void setupK2JsSettings(
+    private static void setupK2JsArguments(
             File outputFile,
             List<File> sourceFiles,
-            Set<String> libraryFiles,
+            List<String> libraryFiles,
             K2JSCompilerArguments settings
     ) {
         setupCommonSettings(settings);
@@ -155,7 +166,5 @@ public class KotlinCompilerRunner {
         settings.sourceFiles = ArrayUtil.toStringArray(sourceFilePaths);
         settings.outputFile = outputFile.getPath();
         settings.libraryFiles = ArrayUtil.toStringArray(libraryFiles);
-        //TODO drop later
-        settings.sourcemap = true;
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.compiler.CompilerSettings;
 import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
@@ -34,6 +35,7 @@ import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
+import org.jetbrains.jps.builders.BuildTarget;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
@@ -44,10 +46,7 @@ import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
 import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JsCompiler;
@@ -89,7 +88,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         ModuleBuildTarget representativeTarget = chunk.representativeTarget();
 
         // For non-incremental build: take all sources
-        if (!dirtyFilesHolder.hasDirtyFiles()) {
+        if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()) {
             return ExitCode.NOTHING_DONE;
         }
 
@@ -97,16 +96,21 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
         CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(PathUtil.getKotlinPathsForJpsPluginOrJpsTests(), outputDir);
         if (!environment.success()) {
+            if (!hasKotlinFiles(chunk)) {
+                // Configuration is bad, but there's nothing to compile anyways
+                return ExitCode.NOTHING_DONE;
+            }
             environment.reportErrorsTo(messageCollector);
             return ExitCode.ABORT;
         }
 
         assert outputDir != null : "CompilerEnvironment must have checked for outputDir to be not null, but it didn't";
 
-        OutputItemsCollectorImpl outputItemCollector = new OutputItemsCollectorImpl(outputDir);
+        OutputItemsCollectorImpl outputItemCollector = new OutputItemsCollectorImpl();
 
         JpsProject project = representativeTarget.getModule().getProject();
-        CommonCompilerArguments commonSettings = JpsKotlinCompilerSettings.getCommonSettings(project);
+        CommonCompilerArguments commonArguments = JpsKotlinCompilerSettings.getCommonCompilerArguments(project);
+        CompilerSettings compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project);
 
         if (JpsUtils.isJsKotlinModule(representativeTarget)) {
             if (chunk.getModules().size() > 1) {
@@ -128,10 +132,11 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             }
 
             File outputFile = new File(outputDir, representativeTarget.getModule().getName() + ".js");
-            Set<String> libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget);
-            K2JSCompilerArguments k2JsSettings = JpsKotlinCompilerSettings.getK2JsSettings(project);
+            List<String> libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget);
+            K2JSCompilerArguments k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project);
 
-            runK2JsCompiler(commonSettings, k2JsSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile);
+            runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment,
+                            outputItemCollector, sourceFiles, libraryFiles, outputFile);
         }
         else {
             if (chunk.getModules().size() > 1) {
@@ -148,19 +153,43 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 return ExitCode.NOTHING_DONE;
             }
 
-            K2JVMCompilerArguments k2JvmSettings = JpsKotlinCompilerSettings.getK2JvmSettings(project);
+            K2JVMCompilerArguments k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(project);
 
-            runK2JvmCompiler(commonSettings, k2JvmSettings, messageCollector, environment, moduleFile, outputItemCollector);
+            runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment,
+                             moduleFile, outputItemCollector);
+        }
+
+        // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
+        Map<File, BuildTarget<?>> sourceToTarget = new HashMap<File, BuildTarget<?>>();
+        if (chunk.getTargets().size() > 1) {
+            for (ModuleBuildTarget target : chunk.getTargets()) {
+                for (File file : KotlinSourceFileCollector.getAllKotlinSourceFiles(target)) {
+                    sourceToTarget.put(file, target);
+                }
+            }
         }
 
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
+            BuildTarget<?> target = sourceToTarget.get(outputItem.getSourceFiles().iterator().next());
             outputConsumer.registerOutputFile(
-                    representativeTarget,
+                    target != null ? target : representativeTarget,
                     outputItem.getOutputFile(),
                     paths(outputItem.getSourceFiles()));
         }
 
         return ExitCode.OK;
+    }
+
+    private static boolean hasKotlinFiles(@NotNull ModuleChunk chunk) {
+        boolean hasKotlinFiles = false;
+        for (ModuleBuildTarget target : chunk.getTargets()) {
+            List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(target);
+            if (!sourceFiles.isEmpty()) {
+                hasKotlinFiles = true;
+                break;
+            }
+        }
+        return hasKotlinFiles;
     }
 
     private static Collection<String> paths(Collection<File> files) {

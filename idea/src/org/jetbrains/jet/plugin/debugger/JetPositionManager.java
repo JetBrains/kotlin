@@ -40,7 +40,6 @@ import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegen.state.JetTypeMapperMode;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -169,14 +168,12 @@ public class JetPositionManager implements PositionManager {
         if (classDescriptor == null) {
             return null;
         }
-        JetTypeMapperMode mode;
+
         if (jetClass instanceof JetClass && ((JetClass) jetClass).isTrait()) {
-            mode = JetTypeMapperMode.TRAIT_IMPL;
+            return typeMapper.mapTraitImpl(classDescriptor).getInternalName();
         }
-        else {
-            mode = JetTypeMapperMode.IMPL;
-        }
-        return typeMapper.mapType(classDescriptor.getDefaultType(), mode).getInternalName();
+
+        return typeMapper.mapClass(classDescriptor).getInternalName();
     }
 
     private JetTypeMapper prepareTypeMapper(final JetFile file) {

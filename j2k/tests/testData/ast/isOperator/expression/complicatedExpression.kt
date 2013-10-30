@@ -1,1 +1,1 @@
-(c.getType().getName() is String?)
+c.getType().getName() is String

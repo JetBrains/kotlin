@@ -28,7 +28,7 @@ import static junit.framework.Assert.assertEquals;
 public class AntTaskTest extends KotlinIntegrationTestBase {
     private void doAntTest(String... extraJavaArgs) throws Exception {
         String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
-        String runtime = new File("dist/kotlinc/lib/kotlin-runtime.jar").getAbsolutePath();
+        String runtime = getKotlinRuntimePath();
 
         assertEquals("compilation failed", 0, runAnt("build.log", "build.xml", extraJavaArgs));
         runJava("hello.run", "-cp", jar + File.pathSeparator + runtime, "hello.HelloPackage");
@@ -46,7 +46,22 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
 
     @Test
     public void javacCompiler() throws Exception {
-        doAntTest("-cp", getCompilerLib() + "/kotlin-ant.jar");
+        doAntTest("-cp", getKotlinAntPath(),
+                  "-Dkotlin.home", getCompilerLib().getAbsolutePath());
+    }
+
+    @Test
+    public void externalAnnotations() throws Exception {
+        doAntTest("-cp", getKotlinAntPath(),
+                  "-Didea.sdk", getIdeaSdkHome(),
+                  "-Dkotlin.home", getCompilerLib().getAbsolutePath());
+    }
+
+    @Test
+    public void kotlinCompiler() throws Exception {
+        doAntTest("-cp", getKotlinAntPath(),
+                  "-Didea.sdk", getIdeaSdkHome(),
+                  "-Dkotlin.home", getCompilerLib().getAbsolutePath());
     }
 
     @Override
@@ -69,7 +84,15 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
         return runJava(logName, strings.toArray(new String[strings.size()]));
     }
 
+    private static String getKotlinAntPath() {
+        return getCompilerLib() + File.separator + "kotlin-ant.jar";
+    }
+
+    private static String getIdeaSdkHome() {
+        return getKotlinProjectHome().getAbsolutePath() + File.separator + "ideaSDK";
+    }
+
     private static String getAntHome() {
-        return getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant";
+        return getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant-1.8";
     }
 }

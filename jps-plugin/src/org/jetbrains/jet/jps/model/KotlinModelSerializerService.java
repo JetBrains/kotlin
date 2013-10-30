@@ -27,8 +27,9 @@ public class KotlinModelSerializerService extends JpsModelSerializerExtension {
     @NotNull
     @Override
     public List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
-        return Arrays.asList(new KotlinCommonCompilerSettingsSerializer(),
-                             new Kotlin2JvmCompilerSettingsSerializer(),
-                             new Kotlin2JsCompilerSettingsSerializer());
+        return Arrays.asList(new KotlinCommonCompilerArgumentsSerializer(),
+                             new Kotlin2JvmCompilerArgumentsSerializer(),
+                             new Kotlin2JsCompilerArgumentsSerializer(),
+                             new KotlinCompilerSettingsSerializer());
     }
 }

@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.framework.KotlinFrameworkDetector;
+import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 public class JetRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
     @Nullable
@@ -56,7 +56,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             return null;
         }
 
-        if (KotlinFrameworkDetector.isJsKotlinModule(module)) {
+        if (ProjectStructureUtil.isJsKotlinModule(module)) {
             return null;
         }
 
