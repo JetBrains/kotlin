@@ -347,21 +347,21 @@ public class CandidateResolver {
         context = context.replaceExpectedType(expectedType);
 
         JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
-        CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
+        CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
                 context.resolutionResultsCache.getDeferredComputation(keyExpression);
 
+        PsiElement parent = expression.getParent();
+        if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
+            || (expression instanceof JetFunctionLiteralExpression)) {
+            return;
+        }
         if (storedContextForArgument == null) {
-            PsiElement parent = expression.getParent();
-            if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
-                || (expression instanceof JetFunctionLiteralExpression)) {
-                return;
-            }
             JetType type = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
             checkResultArgumentType(type, argument, context);
             return;
         }
 
-        CallCandidateResolutionContext<FunctionDescriptor> contextForArgument = storedContextForArgument
+        CallCandidateResolutionContext<? extends CallableDescriptor> contextForArgument = storedContextForArgument
                 .replaceContextDependency(INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
         JetType type;
         if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {

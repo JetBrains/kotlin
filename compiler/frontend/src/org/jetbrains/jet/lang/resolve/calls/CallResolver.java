@@ -120,7 +120,7 @@ public class CallResolver {
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
                 TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
         return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE,
-                context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
+                                               context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
     }
 
     @NotNull
@@ -133,7 +133,8 @@ public class CallResolver {
     ) {
         return resolveFunctionCall(BasicCallResolutionContext.create(
                 trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null, expressionTypingServices.createExtension(scope)));
+                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null,
+                expressionTypingServices.createExtension(scope)));
     }
 
     @NotNull
@@ -384,10 +385,10 @@ public class CallResolver {
         context.resolutionResultsCache.recordResolutionResults(callKey, memberType, results);
         context.resolutionResultsCache.recordResolutionTrace(callKey, deltasTraceToCacheResolve);
 
-        if (results.isSingleResult() && memberType == ResolutionResultsCache.FUNCTION_MEMBER_TYPE) {
+        if (results.isSingleResult()) {
             CallCandidateResolutionContext<F> callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                     results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
-            context.resolutionResultsCache.recordDeferredComputationForCall(callKey, callCandidateResolutionContext, memberType);
+            context.resolutionResultsCache.recordDeferredComputationForCall(callKey, callCandidateResolutionContext);
         }
     }
 

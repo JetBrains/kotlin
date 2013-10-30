@@ -55,10 +55,9 @@ public interface ResolutionResultsCache {
 
     <D extends CallableDescriptor> void recordDeferredComputationForCall(
             @NotNull CallKey callKey,
-            @NotNull CallCandidateResolutionContext<D> deferredComputation,
-            @NotNull MemberType memberType
+            @NotNull CallCandidateResolutionContext<D> deferredComputation
     );
 
     @Nullable
-    CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputation(@Nullable JetExpression expression);
+    CallCandidateResolutionContext<? extends CallableDescriptor> getDeferredComputation(@Nullable JetExpression expression);
 }

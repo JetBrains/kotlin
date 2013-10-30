@@ -37,7 +37,7 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
             RESOLUTION_RESULTS_FOR_FUNCTION = Slices.createSimpleSlice();
     public static final WritableSlice<CallKey, OverloadResolutionResultsImpl<VariableDescriptor>> RESOLUTION_RESULTS_FOR_PROPERTY = Slices.createSimpleSlice();
     public static final WritableSlice<CallKey, DelegatingBindingTrace> TRACE_DELTAS_CACHE = Slices.createSimpleSlice();
-    public static final WritableSlice<CallKey, CallCandidateResolutionContext<FunctionDescriptor>> DEFERRED_COMPUTATION_FOR_CALL = Slices.createSimpleSlice();
+    public static final WritableSlice<CallKey, CallCandidateResolutionContext<? extends CallableDescriptor>> DEFERRED_COMPUTATION_FOR_CALL = Slices.createSimpleSlice();
 
     static {
         BasicWritableSlice.initSliceDebugNames(ResolutionResultsCacheImpl.class);
@@ -78,22 +78,19 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
     @Override
     public <D extends CallableDescriptor> void recordDeferredComputationForCall(
             @NotNull CallKey callKey,
-            @NotNull CallCandidateResolutionContext<D> deferredComputation,
-            @NotNull MemberType memberType
+            @NotNull CallCandidateResolutionContext<D> deferredComputation
     ) {
-        if (memberType == PROPERTY_MEMBER_TYPE) return;
-        //noinspection unchecked
-        trace.record(DEFERRED_COMPUTATION_FOR_CALL, callKey, (CallCandidateResolutionContext<FunctionDescriptor>) deferredComputation);
+        trace.record(DEFERRED_COMPUTATION_FOR_CALL, callKey, deferredComputation);
     }
 
     @Override
     @Nullable
-    public CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputation(@Nullable JetExpression expression) {
+    public CallCandidateResolutionContext<? extends CallableDescriptor> getDeferredComputation(@Nullable JetExpression expression) {
         if (expression == null) return null;
         for (Call.CallType callType : Lists
                 .newArrayList(Call.CallType.DEFAULT, Call.CallType.ARRAY_GET_METHOD, Call.CallType.ARRAY_SET_METHOD)) {
             CallKey callKey = CallKey.create(callType, expression);
-            CallCandidateResolutionContext<FunctionDescriptor> context = trace.get(DEFERRED_COMPUTATION_FOR_CALL, callKey);
+            CallCandidateResolutionContext<? extends CallableDescriptor> context = trace.get(DEFERRED_COMPUTATION_FOR_CALL, callKey);
             if (context != null) {
                 return context;
             }
