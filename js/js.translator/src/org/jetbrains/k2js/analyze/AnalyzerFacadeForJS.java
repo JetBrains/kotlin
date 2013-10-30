@@ -18,6 +18,7 @@ package org.jetbrains.k2js.analyze;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProv
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
@@ -42,6 +44,11 @@ import java.util.Collections;
 import java.util.List;
 
 public final class AnalyzerFacadeForJS {
+    public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
+            new ImportPath("js.*"),
+            new ImportPath("java.lang.*"),
+            new ImportPath("jet.*"),
+            new ImportPath("kotlin.*"));
 
     private AnalyzerFacadeForJS() {
     }
@@ -152,7 +159,7 @@ public final class AnalyzerFacadeForJS {
 
     @NotNull
     private static ModuleDescriptorImpl createJsModule(@NotNull String name) {
-        return new ModuleDescriptorImpl(Name.special(name), JsConfiguration.DEFAULT_IMPORT_PATHS, PlatformToKotlinClassMap.EMPTY);
+        return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, PlatformToKotlinClassMap.EMPTY);
     }
 
 }

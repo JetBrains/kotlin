@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,6 @@ import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -46,6 +46,12 @@ import java.util.List;
 public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     INSTANCE;
+
+    public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
+            new ImportPath("java.lang.*"),
+            new ImportPath("kotlin.*"),
+            new ImportPath("kotlin.io.*"),
+            new ImportPath("jet.*"));
 
     private AnalyzerFacadeForJVM() {
     }
@@ -195,6 +201,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     @NotNull
     public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
-        return new ModuleDescriptorImpl(Name.special(name), JavaBridgeConfiguration.ALL_JAVA_IMPORTS, JavaToKotlinClassMap.getInstance());
+        return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, JavaToKotlinClassMap.getInstance());
     }
 }

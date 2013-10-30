@@ -20,16 +20,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
@@ -128,7 +127,7 @@ public class KotlinBuiltIns {
     private KotlinBuiltIns() {
         try {
             this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
-                                                           DefaultModuleConfiguration.DEFAULT_JET_IMPORTS,
+                                                           Collections.<ImportPath>emptyList(),
                                                            PlatformToKotlinClassMap.EMPTY);
             loadBuiltIns(builtInsModule);
 

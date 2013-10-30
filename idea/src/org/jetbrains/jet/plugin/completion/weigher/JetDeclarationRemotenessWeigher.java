@@ -71,7 +71,7 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
                         return MyResult.notImported;
                     }
                     else {
-                        if (ImportInsertHelper.isImportedWithKotlinDefault(importPath)) {
+                        if (ImportInsertHelper.isImportedWithDefault(importPath, file)) {
                             return MyResult.kotlinDefaultImport;
                         }
                         return MyResult.imported;
