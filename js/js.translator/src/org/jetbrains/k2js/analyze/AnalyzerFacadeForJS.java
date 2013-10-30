@@ -84,14 +84,19 @@ public final class AnalyzerFacadeForJS {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
 
-        BindingContext libraryBindingContext = config.getLibraryBindingContext();
-        BindingTrace trace = libraryBindingContext == null ?
-                             new ObservableBindingTrace(new BindingTraceContext()) :
-                             new DelegatingBindingTrace(libraryBindingContext, "trace for analyzing library in js");
-        owner.setModuleConfiguration(new JsConfiguration(libraryBindingContext));
+        ModuleDescriptor libraryModule = config.getLibraryModule();
+        if (libraryModule != null) {
+            owner.addFragmentProvider(libraryModule.getPackageFragmentProvider()); // "import" analyzed library module
+        }
+
+        BindingContext libraryContext = config.getLibraryContext();
+        BindingTrace trace = libraryContext == null
+                             ? new BindingTraceContext()
+                             : new DelegatingBindingTrace(libraryContext, "trace with preanalyzed library");
+        owner.setModuleConfiguration(new JsConfiguration());
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(project, topDownAnalysisParameters, trace, owner);
         try {
-            Collection<JetFile> allFiles = libraryBindingContext != null ?
+            Collection<JetFile> allFiles = libraryModule != null ?
                                            files :
                                            Config.withJsLibAdded(files, config);
             injector.getTopDownAnalyzer().analyzeFiles(allFiles, Collections.<AnalyzerScriptParameter>emptyList());
@@ -144,7 +149,7 @@ public final class AnalyzerFacadeForJS {
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
         ModuleDescriptorImpl lazyModule = createJsModule("<lazy module>");
-        lazyModule.setModuleConfiguration(new JsConfiguration(null));
+        lazyModule.setModuleConfiguration(new JsConfiguration());
         return new ResolveSession(config.getProject(), storageManager, lazyModule, declarationProviderFactory);
     }
 
