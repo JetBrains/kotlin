@@ -187,11 +187,6 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
                 }
 
                 @Override
-                public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-                    superBuilder.addObjectDescriptor(objectDescriptor);
-                }
-
-                @Override
                 public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
                     superBuilder.addClassifierDescriptor(classDescriptor);
                     scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
