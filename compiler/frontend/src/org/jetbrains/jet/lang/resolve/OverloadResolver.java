@@ -62,9 +62,6 @@ public class OverloadResolver {
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
-        }
         checkOverloadsInANamespace(inNamespaces);
     }
 

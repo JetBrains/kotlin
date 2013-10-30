@@ -160,18 +160,13 @@ public class BodyResolver {
     private void resolveDelegationSpecifierLists() {
         // TODO : Make sure the same thing is not initialized twice
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            resolveDelegationSpecifierList(entry.getKey(), entry.getValue());
+            JetClassOrObject classOrObject = entry.getKey();
+            MutableClassDescriptor descriptor = entry.getValue();
+            resolveDelegationSpecifierList(classOrObject, descriptor,
+                                           descriptor.getUnsubstitutedPrimaryConstructor(),
+                                           descriptor.getScopeForSupertypeResolution(),
+                                           descriptor.getScopeForMemberResolution());
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            resolveDelegationSpecifierList(entry.getKey(), entry.getValue());
-        }
-    }
-
-    private void resolveDelegationSpecifierList(JetClassOrObject jetClass, MutableClassDescriptor descriptor) {
-        resolveDelegationSpecifierList(jetClass, descriptor,
-                                       descriptor.getUnsubstitutedPrimaryConstructor(),
-                                       descriptor.getScopeForSupertypeResolution(),
-                                       descriptor.getScopeForMemberResolution());
     }
 
     public void resolveDelegationSpecifierList(@NotNull JetClassOrObject jetClass, @NotNull final ClassDescriptor descriptor,
@@ -338,23 +333,15 @@ public class BodyResolver {
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             resolveAnnotationArguments(entry.getValue().getScopeForSupertypeResolution(), entry.getKey());
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            resolveAnnotationArguments(entry.getValue().getScopeForSupertypeResolution(), entry.getKey());
-        }
     }
 
     private void resolveAnonymousInitializers() {
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            resolveAnonymousInitializers(entry.getKey(), entry.getValue());
+            JetClassOrObject classOrObject = entry.getKey();
+            MutableClassDescriptor descriptor = entry.getValue();
+            resolveAnonymousInitializers(classOrObject, descriptor.getUnsubstitutedPrimaryConstructor(),
+                                         descriptor.getScopeForInitializers());
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            resolveAnonymousInitializers(entry.getKey(), entry.getValue());
-        }
-    }
-
-    private void resolveAnonymousInitializers(JetClassOrObject jetClassOrObject, MutableClassDescriptor classDescriptor) {
-        resolveAnonymousInitializers(jetClassOrObject, classDescriptor.getUnsubstitutedPrimaryConstructor(),
-                                     classDescriptor.getScopeForInitializers());
     }
 
     public void resolveAnonymousInitializers(JetClassOrObject jetClassOrObject,

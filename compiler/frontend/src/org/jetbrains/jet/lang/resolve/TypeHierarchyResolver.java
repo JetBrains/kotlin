@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -188,9 +187,6 @@ public class TypeHierarchyResolver {
                 initializeObject((JetObjectDeclaration) classOrObject, descriptor);
             }
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            initializeObject(entry.getKey(), entry.getValue());
-        }
     }
 
     private static void initializeObject(@NotNull JetObjectDeclaration declaration, @NotNull MutableClassDescriptor descriptor) {
@@ -209,23 +205,20 @@ public class TypeHierarchyResolver {
             JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             if (classOrObject instanceof JetClass) {
+                //noinspection unchecked
                 descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor.getScopeForSupertypeResolution(),
                                                         (List) descriptor.getTypeConstructor().getParameters(), trace);
             }
             descriptorResolver.resolveSupertypesForMutableClassDescriptor(classOrObject, descriptor, trace);
-        }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            JetClassOrObject jetClass = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveSupertypesForMutableClassDescriptor(jetClass, descriptor, trace);
         }
     }
 
     private List<MutableClassDescriptorLite> topologicallySortClassesAndObjects() {
         // A topsort is needed only for better diagnostics:
         //    edges that get removed to disconnect loops are more reasonable in this case
+        //noinspection unchecked
         return DFS.topologicalOrder(
-                ContainerUtil.<MutableClassDescriptorLite>concat(context.getClasses().values(), context.getObjects().values()),
+                (Iterable) context.getClasses().values(),
                 new DFS.Neighbors<MutableClassDescriptorLite>() {
                     @NotNull
                     @Override
@@ -425,12 +418,6 @@ public class TypeHierarchyResolver {
                 checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
             }
         }
-
-        for (JetObjectDeclaration object : context.getObjects().keySet()) {
-            for (JetDelegationSpecifier delegationSpecifier : object.getDelegationSpecifiers()) {
-                checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
-            }
-        }
     }
 
     private void checkBoundsForTypeInClassHeader(@Nullable JetTypeReference typeReference) {
@@ -523,7 +510,7 @@ public class TypeHierarchyResolver {
             MutableClassDescriptor classObjectDescriptor =
                     createClassDescriptorForObject(objectDeclaration, getClassObjectName(owner.getOwnerForChildren().getName()),
                                                    ClassKind.CLASS_OBJECT);
-            context.getObjects().put(objectDeclaration, classObjectDescriptor);
+            context.getClasses().put(objectDeclaration, classObjectDescriptor);
 
             NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
             switch (status) {

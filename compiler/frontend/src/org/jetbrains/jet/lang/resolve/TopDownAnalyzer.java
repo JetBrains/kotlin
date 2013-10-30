@@ -142,9 +142,6 @@ public class TopDownAnalyzer {
         for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
             mutableClassDescriptor.lockScopes();
         }
-        for (MutableClassDescriptor mutableClassDescriptor : context.getObjects().values()) {
-            mutableClassDescriptor.lockScopes();
-        }
         for (Map.Entry<JetFile, WritableScope> namespaceScope : context.getNamespaceScopes().entrySet()) {
             // todo: this is hack in favor of REPL
             if(!namespaceScope.getKey().isScript())

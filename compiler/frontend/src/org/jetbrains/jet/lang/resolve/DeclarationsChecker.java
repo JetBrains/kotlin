@@ -64,16 +64,6 @@ public class DeclarationsChecker {
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
         }
 
-        Map<JetObjectDeclaration, MutableClassDescriptor> objects = bodiesResolveContext.getObjects();
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
-            JetObjectDeclaration objectDeclaration = entry.getKey();
-            MutableClassDescriptor objectDescriptor = entry.getValue();
-
-            if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
-            checkObject(objectDeclaration);
-            modifiersChecker.checkModifiersForDeclaration(objectDeclaration, objectDescriptor);
-        }
-
         Map<JetNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : functions.entrySet()) {
             JetNamedFunction function = entry.getKey();

@@ -40,7 +40,6 @@ import java.util.Map;
 public class CachedBodiesResolveContext implements BodiesResolveContext {
     private final Collection<JetFile> files;
     private final Map<JetClassOrObject, MutableClassDescriptor> classes;
-    private final Map<JetObjectDeclaration, MutableClassDescriptor> objects;
     private final Map<JetProperty, PropertyDescriptor> properties;
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions;
     private final Function<JetDeclaration, JetScope> declaringScopes;
@@ -53,7 +52,6 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     public CachedBodiesResolveContext(TopDownAnalysisContext context) {
         files = Collections.unmodifiableCollection(context.getFiles());
         classes = Collections.unmodifiableMap(context.getClasses());
-        objects = Collections.unmodifiableMap(context.getObjects());
         properties = Collections.unmodifiableMap(context.getProperties());
         functions = Collections.unmodifiableMap(context.getFunctions());
         declaringScopes = context.getDeclaringScopes();
@@ -72,11 +70,6 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     @Override
     public Map<JetClassOrObject, MutableClassDescriptor> getClasses() {
         return classes;
-    }
-
-    @Override
-    public Map<JetObjectDeclaration, MutableClassDescriptor> getObjects() {
-        return objects;
     }
 
     @Override

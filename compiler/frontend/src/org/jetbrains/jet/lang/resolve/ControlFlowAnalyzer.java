@@ -52,10 +52,6 @@ public class ControlFlowAnalyzer {
             if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
             checkDeclarationContainer(aClass);
         }
-        for (JetObjectDeclaration objectDeclaration : bodiesResolveContext.getObjects().keySet()) {
-            if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
-            checkDeclarationContainer(objectDeclaration);
-        }
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : bodiesResolveContext.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();

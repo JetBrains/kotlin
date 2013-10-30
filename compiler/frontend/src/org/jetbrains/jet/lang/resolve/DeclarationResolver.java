@@ -150,18 +150,12 @@ public class DeclarationResolver {
 
     private void resolveAnnotationStubsOnClassesAndConstructors() {
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            resolveAnnotationsForClassOrObject(annotationResolver, entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            resolveAnnotationsForClassOrObject(annotationResolver, entry.getKey(), entry.getValue());
-        }
-    }
-
-    private void resolveAnnotationsForClassOrObject(AnnotationResolver annotationResolver, JetClassOrObject jetClass, MutableClassDescriptor descriptor) {
-        JetModifierList modifierList = jetClass.getModifierList();
-        if (modifierList != null) {
-            descriptor.getAnnotations().addAll(annotationResolver.resolveAnnotationsWithoutArguments(
-                    descriptor.getScopeForSupertypeResolution(), modifierList, trace));
+            JetModifierList modifierList = entry.getKey().getModifierList();
+            if (modifierList != null) {
+                MutableClassDescriptor descriptor = entry.getValue();
+                descriptor.getAnnotations().addAll(annotationResolver.resolveAnnotationsWithoutArguments(
+                        descriptor.getScopeForSupertypeResolution(), modifierList, trace));
+            }
         }
     }
 
@@ -186,14 +180,6 @@ public class DeclarationResolver {
                     classOrObject.getDeclarations(), classDescriptor.getScopeForMemberResolution(),
                     classDescriptor.getScopeForInitializers(), classDescriptor.getScopeForMemberResolution(),
                     classDescriptor.getBuilder());
-        }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            JetObjectDeclaration object = entry.getKey();
-            MutableClassDescriptor classDescriptor = entry.getValue();
-
-            resolveFunctionAndPropertyHeaders(object.getDeclarations(), classDescriptor.getScopeForMemberResolution(),
-                                              classDescriptor.getScopeForInitializers(), classDescriptor.getScopeForMemberResolution(),
-                                              classDescriptor.getBuilder());
         }
 
         scriptHeaderResolver.resolveScriptDeclarations();
@@ -389,8 +375,7 @@ public class DeclarationResolver {
     }
 
     private void checkRedeclarationsInInnerClassNames() {
-        Iterable<MutableClassDescriptor> classesAndObjects = Iterables.concat(context.getClasses().values(), context.getObjects().values());
-        for (MutableClassDescriptor classDescriptor : classesAndObjects) {
+        for (MutableClassDescriptor classDescriptor : context.getClasses().values()) {
             if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
                 // Class objects should be considered during analysing redeclarations in classes
                 continue;
