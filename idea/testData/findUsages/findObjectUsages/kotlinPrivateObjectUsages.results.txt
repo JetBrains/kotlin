@@ -1,3 +1,3 @@
-Selector (5: 26) println(Server().Foo)
 Value read (10: 33) open fun processRequest() = Foo
 Value read (14: 37) override fun processRequest() = Foo
+Value read (5: 26) println(Server().Foo)

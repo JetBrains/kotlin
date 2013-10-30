@@ -32,7 +32,7 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.JetBundle
 
-public class JetUsageTypeProvider() : UsageTypeProviderEx {
+public object JetUsageTypeProvider : UsageTypeProviderEx {
     public override fun getUsageType(element: PsiElement?): UsageType? {
         return getUsageType(element, UsageTarget.EMPTY_ARRAY)
     }
@@ -118,30 +118,27 @@ public class JetUsageTypeProvider() : UsageTypeProviderEx {
 
             val dotQualifiedExpression = element.getParentByType(javaClass<JetDotQualifiedExpression>())
 
-            return if (dotQualifiedExpression != null) {
+            if (dotQualifiedExpression != null) {
                 val parent = dotQualifiedExpression.getParent()
                 when {
                     dotQualifiedExpression.getReceiverExpression().isAncestor(element) ->
-                        JetUsageTypes.RECEIVER
+                        return JetUsageTypes.RECEIVER
 
                     parent is JetDotQualifiedExpression && parent.getReceiverExpression().isAncestor(element) ->
-                        JetUsageTypes.RECEIVER
-
-                    else -> JetUsageTypes.SELECTOR
+                        return JetUsageTypes.RECEIVER
                 }
             }
-            else {
-                when {
-                    element.getParentByTypeAndPredicate(
-                            javaClass<JetBinaryExpression>(), false, { JetPsiUtil.isAssignment(it) }
-                    )?.getLeft().isAncestor(element) ->
-                        UsageType.WRITE
 
-                    element.getParentByType(javaClass<JetSimpleNameExpression>()) != null ->
-                        UsageType.READ
+            return when {
+                element.getParentByTypeAndPredicate(
+                        javaClass<JetBinaryExpression>(), false, { JetPsiUtil.isAssignment(it) }
+                )?.getLeft().isAncestor(element) ->
+                    UsageType.WRITE
 
-                    else -> null
-                }
+                element.getParentByType(javaClass<JetSimpleNameExpression>()) != null ->
+                    UsageType.READ
+
+                else -> null
             }
         }
 
@@ -207,7 +204,6 @@ object JetUsageTypes {
 
     // values
     val RECEIVER = UsageType(JetBundle.message("usageType.receiver"))
-    val SELECTOR = UsageType(JetBundle.message("usageType.selector"))
     val DELEGATE = UsageType(JetBundle.message("usageType.delegate"))
 
     // common usage types
