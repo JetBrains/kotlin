@@ -137,4 +137,10 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     public DataFlowInfoForArguments getDataFlowInfoForArguments() {
         return functionCall.getDataFlowInfoForArguments();
     }
+
+    @Override
+    public void cleanInternalData() {
+        functionCall.cleanInternalData();
+        variableCall.cleanInternalData();
+    }
 }

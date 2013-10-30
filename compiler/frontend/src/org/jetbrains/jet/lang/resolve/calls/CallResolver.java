@@ -313,6 +313,10 @@ public class CallResolver {
 
         if (!prioritizedTasks.isEmpty() && context.contextDependency == ContextDependency.INDEPENDENT) {
             results = completeTypeInferenceDependentOnExpectedType(context, results, tracing);
+            if (results.isSingleResult()) {
+                //todo clean internal data for several resulting calls
+                results.getResultingCall().cleanInternalData();
+            }
         }
 
         context.callResolverExtension.run(results, context);

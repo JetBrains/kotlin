@@ -81,11 +81,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
 
     private boolean someArgumentHasNoType = false;
-    private final DelegatingBindingTrace trace;
-    private final TracingStrategy tracing;
+    private DelegatingBindingTrace trace;
+    private TracingStrategy tracing;
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
+    private boolean cleaned = false;
 
     private ResolvedCallImpl(
             @NotNull ResolutionCandidate<D> candidate,
@@ -130,11 +131,25 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     @NotNull
     public DelegatingBindingTrace getTrace() {
+        checkCallIsUnfinished("Trace");
         return trace;
+    }
+
+    @Override
+    public void cleanInternalData() {
+        trace = null;
+        constraintSystem = null;
+        tracing = null;
+        cleaned = true;
+    }
+
+    private void checkCallIsUnfinished(String elementName) {
+        if (cleaned) throw new IllegalStateException(elementName + " is erased after resolution completion.");
     }
 
     @NotNull
     public TracingStrategy getTracing() {
+        checkCallIsUnfinished("TracingStrategy");
         return tracing;
     }
 
@@ -181,6 +196,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @Nullable
     public ConstraintSystem getConstraintSystem() {
+        checkCallIsUnfinished("ConstraintSystem");
         return constraintSystem;
     }
 
