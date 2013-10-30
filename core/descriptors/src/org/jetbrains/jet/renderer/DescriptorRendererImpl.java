@@ -218,7 +218,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             return "???";
         }
         if (type.isError()) {
-            return type.toString();
+            return renderDefaultType(type);
         }
         if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type)) {
             return renderFunctionType(type);
@@ -230,7 +230,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private String renderDefaultType(@NotNull JetType type) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(renderTypeName(type.getConstructor()));
+        if (type.isError()) {
+            sb.append(type.getConstructor().toString()); // Debug name of an error type is more informative
+        }
+        else {
+            sb.append(renderTypeName(type.getConstructor()));
+        }
         if (!type.getArguments().isEmpty()) {
             sb.append("<");
             appendTypeProjections(type.getArguments(), sb);

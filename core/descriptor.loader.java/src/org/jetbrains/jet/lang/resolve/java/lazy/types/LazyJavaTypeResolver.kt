@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*
 import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.types.*
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.util.iif
 import org.jetbrains.kotlin.util.eq
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPrimitiveType
@@ -42,6 +43,8 @@ import org.jetbrains.jet.storage.*
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import java.util.HashSet
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+
+private val LOG = Logger.getInstance(javaClass<LazyJavaTypeResolver>())
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
@@ -234,14 +237,18 @@ class LazyJavaTypeResolver(
             // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
             // nullability will be taken care of in individual member signatures
             when (classifier()) {
-                is JavaClass -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
                 is JavaTypeParameter -> {
                     if (isConstructorTypeParameter())
                         getConstructorTypeParameterSubstitute().isNullable()
                     else
                         attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT, SUPERTYPE)
                 }
-                else -> true
+                is JavaClass,
+                null -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
+                else -> {
+                    LOG.error("Unknown classifier: ${classifier()}")
+                    true
+                }
             }
         }
         override fun isNullable(): Boolean = _nullable()
