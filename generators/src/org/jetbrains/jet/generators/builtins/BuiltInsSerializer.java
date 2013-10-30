@@ -54,6 +54,7 @@ public class BuiltInsSerializer {
     }
 
     public static void main(String[] args) throws IOException {
+        System.setProperty("java.awt.headless", "true");
         serializeToDir(new File(DEST_DIR), System.out);
     }
 
