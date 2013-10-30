@@ -17,18 +17,13 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 @Deprecated
-public interface NamespaceDescriptor extends ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
+public interface NamespaceDescriptor extends ClassOrNamespaceDescriptor {
     @NotNull
     JetScope getMemberScope();
-
-    @Override
-    @NotNull
-    NamespaceDescriptorParent getContainingDeclaration();
 
     @NotNull
     FqName getFqName();

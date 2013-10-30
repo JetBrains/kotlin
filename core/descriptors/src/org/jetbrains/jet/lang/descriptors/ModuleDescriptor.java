@@ -19,14 +19,13 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
-public interface ModuleDescriptor extends DeclarationDescriptor, NamespaceDescriptorParent {
+public interface ModuleDescriptor extends DeclarationDescriptor {
     @Override
     @Nullable
     DeclarationDescriptor getContainingDeclaration();
