@@ -100,7 +100,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
             if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) continue;
 
-            if (javaClass.getVisibility() != Visibilities.PUBLIC) continue;
+            if (javaClass.getVisibility() == Visibilities.PRIVATE) continue;
 
             ProgressChecker.getInstance().checkCanceled();
 
