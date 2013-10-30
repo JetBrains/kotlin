@@ -430,7 +430,7 @@ public class CandidateResolver {
         }, null);
     }
 
-    private boolean isFairSafeCallExpression(@NotNull JetExpression expression, @NotNull BindingTrace trace) {
+    private static boolean isFairSafeCallExpression(@NotNull JetExpression expression, @NotNull BindingTrace trace) {
         // We are interested in type of the last call:
         // 'a.b?.foo()' is safe call, but 'a?.b.foo()' is not.
         // Since receiver is 'a.b' and selector is 'foo()',
@@ -443,7 +443,7 @@ public class CandidateResolver {
         return type != null && type.isNullable();
     }
 
-    private <D extends CallableDescriptor> void checkResultArgumentType(
+    private static <D extends CallableDescriptor> void checkResultArgumentType(
             @Nullable JetType type,
             @NotNull ValueArgument argument,
             @NotNull CallCandidateResolutionContext<D> context
@@ -669,15 +669,14 @@ public class CandidateResolver {
         ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(
                 context, context.candidateCall, trace, resolveFunctionArgumentBodies);
         ResolutionStatus resultStatus = checkingResult.status;
-        resultStatus = resultStatus.combine(checkReceiver(context, trace, false));
+        resultStatus = resultStatus.combine(checkReceiver(context, trace));
 
         return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
     }
 
     private static <D extends CallableDescriptor> ResolutionStatus checkReceiver(
             @NotNull CallCandidateResolutionContext<D> context,
-            @NotNull BindingTrace trace,
-            boolean checkOnlyReceiverTypeError
+            @NotNull BindingTrace trace
     ) {
         ResolutionStatus resultStatus = SUCCESS;
         ResolvedCall<D> candidateCall = context.candidateCall;
