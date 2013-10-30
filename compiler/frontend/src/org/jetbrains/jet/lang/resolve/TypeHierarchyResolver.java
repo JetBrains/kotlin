@@ -181,22 +181,26 @@ public class TypeHierarchyResolver {
             MutableClassDescriptor descriptor = entry.getValue();
             if (classOrObject instanceof JetClass) {
                 descriptorResolver.resolveMutableClassDescriptor((JetClass) classOrObject, descriptor, trace);
-                descriptor.createTypeConstructor();
             }
             else if (classOrObject instanceof JetObjectDeclaration) {
-                initializeObject((JetObjectDeclaration) classOrObject, descriptor);
+                descriptor.setModality(Modality.FINAL);
+                descriptor.setVisibility(resolveVisibilityFromModifiers(classOrObject, getDefaultClassVisibility(descriptor)));
+                descriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
             }
-        }
-    }
 
-    private static void initializeObject(@NotNull JetObjectDeclaration declaration, @NotNull MutableClassDescriptor descriptor) {
-        descriptor.setModality(Modality.FINAL);
-        descriptor.setVisibility(resolveVisibilityFromModifiers(declaration, getDefaultClassVisibility(descriptor)));
-        descriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
-        descriptor.createTypeConstructor();
-        MutableClassDescriptorLite classObject = descriptor.getClassObjectDescriptor();
-        if (classObject != null) {
-            classObject.addSupertype(descriptor.getDefaultType());
+            descriptor.createTypeConstructor();
+
+            if (classOrObject instanceof JetEnumEntry ||
+                classOrObject instanceof JetObjectDeclaration && classOrObject.getNameIdentifier() != null) {
+                MutableClassDescriptorLite classObject = descriptor.getClassObjectDescriptor();
+                assert classObject != null : "Enum entries and named objects should have class objects: " + classOrObject.getText();
+
+                // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.
+                // We make this class object inherit from the singleton here, thus allowing to use the singleton's class object where
+                // the instance of the singleton is applicable. Effectively all members of the singleton would be present in its class
+                // object as fake overrides, so you can access them via standard class object notation: ObjectName.memberName()
+                classObject.addSupertype(descriptor.getDefaultType());
+            }
         }
     }
 
@@ -490,11 +494,10 @@ public class TypeHierarchyResolver {
         @Override
         public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
             // TODO: Bad casting
-            MutableClassDescriptorLite ownerClassDescriptor = (MutableClassDescriptorLite) owner.getOwnerForChildren();
-            MutableClassDescriptorLite classObjectDescriptor = ownerClassDescriptor.getClassObjectDescriptor();
-
-            assert classObjectDescriptor != null : enumEntry.getParent().getText();
-            createClassDescriptorForEnumEntry(enumEntry, classObjectDescriptor);
+            MutableClassDescriptorLite enumClass = (MutableClassDescriptorLite) owner.getOwnerForChildren();
+            MutableClassDescriptorLite enumClassObject = enumClass.getClassObjectDescriptor();
+            assert enumClassObject != null : enumEntry.getParent().getText();
+            createClassDescriptorForEnumEntry(enumEntry, enumClassObject);
         }
 
         @Override
@@ -572,11 +575,22 @@ public class TypeHierarchyResolver {
 
         @NotNull
         private MutableClassDescriptor createClassDescriptorForObject(
-                @NotNull JetObjectDeclaration declaration,
+                @NotNull JetClassOrObject declaration,
                 @NotNull Name name,
                 @NotNull ClassKind kind
         ) {
-            MutableClassDescriptor descriptor = new MutableClassDescriptor(owner.getOwnerForChildren(), outerScope, kind, false, name);
+            return createClassDescriptorForSingleton(owner.getOwnerForChildren(), outerScope, declaration, name, kind);
+        }
+
+        @NotNull
+        private MutableClassDescriptor createClassDescriptorForSingleton(
+                @NotNull DeclarationDescriptor containingDeclaration,
+                @NotNull JetScope scope,
+                @NotNull JetClassOrObject declaration,
+                @NotNull Name name,
+                @NotNull ClassKind kind
+        ) {
+            MutableClassDescriptor descriptor = new MutableClassDescriptor(containingDeclaration, scope, kind, false, name);
 
             prepareForDeferredCall(descriptor.getScopeForMemberResolution(), descriptor, declaration);
 
@@ -585,30 +599,29 @@ public class TypeHierarchyResolver {
             return descriptor;
         }
 
+        @NotNull
         private MutableClassDescriptor createClassDescriptorForEnumEntry(
                 @NotNull JetEnumEntry declaration,
-                @NotNull MutableClassDescriptorLite classObjectDescriptor
+                @NotNull MutableClassDescriptorLite enumClassObject
         ) {
-            NamespaceLikeBuilder owner = classObjectDescriptor.getBuilder();
-            MutableClassDescriptor mutableClassObjectDescriptor = (MutableClassDescriptor) classObjectDescriptor;
+            JetScope scope = ((MutableClassDescriptor) enumClassObject).getScopeForMemberResolution();
 
-            MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                    owner.getOwnerForChildren(), mutableClassObjectDescriptor.getScopeForMemberResolution(), ClassKind.ENUM_ENTRY,
-                    false, JetPsiUtil.safeName(declaration.getName()));
-            context.getClasses().put(declaration, mutableClassDescriptor);
+            MutableClassDescriptor descriptor =
+                    createClassDescriptorForSingleton(enumClassObject, scope, declaration, JetPsiUtil.safeName(declaration.getName()),
+                                                      ClassKind.ENUM_ENTRY);
 
-            prepareForDeferredCall(mutableClassDescriptor.getScopeForMemberResolution(), mutableClassDescriptor, declaration);
+            context.getClasses().put(declaration, descriptor);
+            enumClassObject.getBuilder().addClassifierDescriptor(descriptor);
 
-            // ??? - is enum entry object?
-            createPrimaryConstructorForObject(declaration, mutableClassDescriptor);
-            owner.addObjectDescriptor(mutableClassDescriptor);
-            trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
-            return mutableClassDescriptor;
+            descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObject(descriptor));
+
+            return descriptor;
         }
 
+        @NotNull
         private ConstructorDescriptorImpl createPrimaryConstructorForObject(
                 @Nullable PsiElement object,
-                MutableClassDescriptor mutableClassDescriptor
+                @NotNull MutableClassDescriptor mutableClassDescriptor
         ) {
             ConstructorDescriptorImpl constructorDescriptor = DescriptorResolver
                     .createAndRecordPrimaryConstructorForObject(object, mutableClassDescriptor, trace);

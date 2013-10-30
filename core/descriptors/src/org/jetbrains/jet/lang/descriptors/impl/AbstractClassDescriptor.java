@@ -31,6 +31,8 @@ import org.jetbrains.jet.storage.StorageManager;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
+
 public abstract class AbstractClassDescriptor implements ClassDescriptor {
     private final Name name;
     protected final NotNullLazyValue<JetType> defaultType;
@@ -79,6 +81,12 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
     public JetType getClassObjectType() {
         if (getKind() == ClassKind.OBJECT) {
             return getDefaultType();
+        }
+
+        if (getKind() == ClassKind.ENUM_ENTRY) {
+            DeclarationDescriptor enumClass = getContainingDeclaration();
+            assert isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + this;
+            return ((ClassDescriptor) enumClass).getDefaultType();
         }
 
         ClassDescriptor classObject = getClassObjectDescriptor();

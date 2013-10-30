@@ -230,17 +230,6 @@ public class DeclarationResolver {
                         context.registerDeclaringScope(setter, scopeForPropertyAccessors);
                     }
                 }
-
-                @Override
-                public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
-                    // FIX: Bad cast
-                    MutableClassDescriptorLite classObjectDescriptor =
-                            ((MutableClassDescriptorLite)namespaceLike.getOwnerForChildren()).getClassObjectDescriptor();
-                    assert classObjectDescriptor != null;
-                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(
-                            scopeForFunctions, classObjectDescriptor, enumEntry, context.getClasses().get(enumEntry), trace);
-                    classObjectDescriptor.getBuilder().addPropertyDescriptor(propertyDescriptor);
-                }
             });
         }
     }
