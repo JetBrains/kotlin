@@ -186,21 +186,6 @@ public class WriteThroughScope extends WritableScopeWithImports {
         writableWorker.addFunctionAlias(name, functionDescriptor);
     }
 
-    @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        checkMayWrite();
-
-        writableWorker.addNamespace(namespaceDescriptor);
-    }
-
-    @Override
-    @Nullable
-    public NamespaceDescriptor getDeclaredNamespace(@NotNull Name name) {
-        checkMayRead();
-
-        return writableWorker.getDeclaredNamespace(name);
-    }
-
     @NotNull
     @Override
     public Multimap<Name, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName() {

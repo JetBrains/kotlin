@@ -70,7 +70,7 @@ public final class JetDescriptorIconProvider {
     }
 
     public static Icon getBaseIcon(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof NamespaceDescriptor) {
+        if (descriptor instanceof PackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) {
             return PlatformIcons.PACKAGE_ICON;
         }
         if (descriptor instanceof FunctionDescriptor) {

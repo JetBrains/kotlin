@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -54,13 +53,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
         return classResolver.resolveClass(qualifiedName, IGNORE_KOTLIN_SOURCES);
-    }
-
-    @Deprecated
-    @Nullable
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        // TODO 1 remove this method
-        return null;
     }
 
     @NotNull

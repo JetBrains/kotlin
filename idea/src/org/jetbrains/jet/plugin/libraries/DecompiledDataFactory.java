@@ -84,10 +84,10 @@ public final class DecompiledDataFactory {
         appendDecompiledTextAndPackageName(packageFqName);
         SerializedDataHeader.Kind kind = classFileHeader.getKind();
         if (kind == SerializedDataHeader.Kind.PACKAGE) {
-            NamespaceDescriptor nd = javaDescriptorResolver.resolveNamespace(packageFqName, INCLUDE_KOTLIN_SOURCES);
-            if (nd != null) {
-                for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
-                    if (!(member instanceof ClassOrNamespaceDescriptor)) {
+            PackageFragmentDescriptor pf = javaDescriptorResolver.getPackageFragmentProvider().getOrCreatePackage(packageFqName);
+            if (pf != null) {
+                for (DeclarationDescriptor member : sortDeclarations(pf.getMemberScope().getAllDescriptors())) {
+                    if (!(member instanceof ClassDescriptor)) {
                         appendDescriptor(member, "");
                         builder.append("\n");
                     }

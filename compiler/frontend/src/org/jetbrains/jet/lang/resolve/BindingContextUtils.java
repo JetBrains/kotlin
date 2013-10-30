@@ -101,14 +101,6 @@ public class BindingContextUtils {
         return (JetFile) containingFile;
     }
 
-    // TODO these helper methods are added as a workaround to some compiler bugs in Kotlin...
-
-    // NOTE this is used by KDoc
-    @Nullable
-    public static NamespaceDescriptor namespaceDescriptor(@NotNull BindingContext context, @NotNull JetFile source) {
-        return context.get(BindingContext.FILE_TO_NAMESPACE, source);
-    }
-
     @Nullable
     private static PsiElement doGetDescriptorToDeclaration(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
         return context.get(DESCRIPTOR_TO_DECLARATION, descriptor);

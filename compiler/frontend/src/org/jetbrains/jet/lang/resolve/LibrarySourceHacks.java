@@ -22,7 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 
 import java.util.Collection;
 import java.util.List;
@@ -51,7 +51,7 @@ public class LibrarySourceHacks {
         if (!(original instanceof CallableMemberDescriptor)) {
             return false;
         }
-        if (!(original.getContainingDeclaration() instanceof NamespaceDescriptor)) {
+        if (!(original.getContainingDeclaration() instanceof PackageFragmentDescriptor)) {
             return false;
         }
 

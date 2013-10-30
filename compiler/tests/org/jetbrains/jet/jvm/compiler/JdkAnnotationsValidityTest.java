@@ -105,15 +105,15 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
                     ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass, IGNORE_KOTLIN_SOURCES);
-                    NamespaceDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass, IGNORE_KOTLIN_SOURCES);
+                    PackageViewDescriptor topLevelPackage = javaDescriptorResolver.getPackageFragmentProvider().getModule().getPackage(javaClass);
                     if (topLevelClass == null) {
                         continue;
                     }
 
                     topLevelClass.acceptVoid(visitor);
 
-                    if (topLevelNamespace != null) {
-                        topLevelNamespace.acceptVoid(visitor);
+                    if (topLevelPackage != null) {
+                        topLevelPackage.acceptVoid(visitor);
                     }
                 }
             }

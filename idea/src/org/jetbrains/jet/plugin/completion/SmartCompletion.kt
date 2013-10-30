@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -256,12 +257,9 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
     }
 
     if (classDescriptor is JavaClassDescriptor) {
-        val container = classDescriptor.getContainingDeclaration() //TODO: nested classes!
-        if (container is NamespaceDescriptor) {
-            val pseudoPackage: NamespaceDescriptor? = container.getMemberScope().getNamespace(classDescriptor.getName())
-            if (pseudoPackage != null) {
-              pseudoPackage.getMemberScope().getAllDescriptors().filterTo(descriptors, isSuitableCallable)
-            }
+        val pseudoPackage = JavaFunctionResolver.getPackageForCorrespondingJavaClass(classDescriptor)
+        if (pseudoPackage != null) {
+            pseudoPackage.getMemberScope().getAllDescriptors().filterTo(descriptors, isSuitableCallable)
         }
     }
 

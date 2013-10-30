@@ -292,6 +292,16 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
+    public static JavaPackageFragmentDescriptor getPackageForCorrespondingJavaClass(@NotNull JavaClassDescriptor javaClass) {
+        PackageFragmentDescriptor packageFragment = DescriptorUtils.getParentOfType(javaClass, PackageFragmentDescriptor.class);
+        assert packageFragment instanceof JavaPackageFragmentDescriptor :
+                "java class " + javaClass + " is under non-java fragment: " + packageFragment;
+
+        JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
+        return provider.getOrCreatePackage(getFQName(javaClass).toSafe());
+    }
+
+    @Nullable
     public static SamConstructorDescriptor resolveSamConstructor(@NotNull JavaPackageFragmentDescriptor owner, @NotNull NamedMembers namedMembers) {
         if (namedMembers.getSamInterface() != null) {
             JavaClassDescriptor klass = findClassInPackage(owner, namedMembers.getName());
