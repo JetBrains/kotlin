@@ -27,8 +27,6 @@ import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
-import java.util.ArrayList
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
 
 class LazyJavaClassDescriptor(
@@ -122,10 +120,13 @@ class LazyJavaClassDescriptor(
                     emptyOrSingletonList(jlObject ?: KotlinBuiltIns.getInstance().getAnyType())
                 }
             else
-                supertypes.map {
-                    supertype ->
-                    innerC.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
-                }
+                supertypes.iterator()
+                        .map {
+                            supertype ->
+                            innerC.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
+                        }
+                        .filter { supertype -> !supertype.isError() }
+                        .toList()
         }
 
         override fun getSupertypes(): Collection<JetType> = _supertypes()
