@@ -279,12 +279,18 @@ public abstract class LazyJavaMemberScope(
 
         for (name in getAllPackageNames()) {
             val descriptor = getNamespace(name)
-            result.add(descriptor ?: throw IllegalStateException("Descriptor not found for name $name in " + getContainingDeclaration()))
+            if (descriptor != null) {
+                // Null signifies that a package found in Java is not present in Kotlin
+                result.add(descriptor)
+            }
         }
 
         for (name in getAllClassNames()) {
             val descriptor = getClassifier(name)
-            result.add(descriptor ?: throw IllegalStateException("Descriptor not found for name $name in " + getContainingDeclaration()))
+            if (descriptor != null) {
+                // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
+                result.add(descriptor)
+            }
         }
 
         for (name in getAllFunctionNames()) {
