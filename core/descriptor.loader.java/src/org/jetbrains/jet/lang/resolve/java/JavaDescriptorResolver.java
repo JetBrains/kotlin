@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaSubModule;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
@@ -148,7 +149,26 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             subModule = new LazyJavaSubModule(
                     new GlobalJavaResolverContext(
                             storageManager,
-                            javaClassFinder,
+                            new JavaClassFinder() {
+                                @Nullable
+                                @Override
+                                public JavaClass findClass(@NotNull FqName fqName) {
+                                    JavaClass javaClass = javaClassFinder.findClass(fqName);
+                                    if (javaClass == null) {
+                                        return null;
+                                    }
+                                    if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass)) {
+                                        return null;
+                                    }
+                                    return javaClass;
+                                }
+
+                                @Nullable
+                                @Override
+                                public JavaPackage findPackage(@NotNull FqName fqName) {
+                                    return javaClassFinder.findPackage(fqName);
+                                }
+                            },
                             new LazyJavaClassResolver() {
                                 @Override
                                 public ClassDescriptor resolveClass(JavaClass aClass) {
