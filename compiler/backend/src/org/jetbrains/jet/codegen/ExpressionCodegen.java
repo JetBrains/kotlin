@@ -3092,7 +3092,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (isPrimitiveNumberClassDescriptor(cls)) {
-            receiver.put(receiver.type, v);
             JetExpression operand = expression.getBaseExpression();
             if (operand instanceof JetReferenceExpression && asmType == Type.INT_TYPE) {
                 int index = indexOfLocal((JetReferenceExpression) operand);
@@ -3100,8 +3099,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     return StackValue.postIncrement(index, increment);
                 }
             }
-            gen(operand, asmType);                               // old value
-            generateIncrement(increment, asmType, operand, receiver);   // increment in-place
+            StackValue value = gen(expression.getBaseExpression());
+            value.dupReceiver(v);
+
+            Type type = expressionType(expression.getBaseExpression());
+            value.put(type, v);
+
+            pushReceiverAndValueViaDup(value, type);
+
+            genIncrement(asmType, increment, v);
+            value.store(asmType, v);
             return StackValue.onStack(asmType);                                         // old value
         }
         else {
@@ -3117,32 +3124,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type type = expressionType(expression.getBaseExpression());
             value.put(type, v);
 
-            switch (value.receiverSize()) {
-                case 0:
-                    dup(v, type);
-                    break;
-
-                case 1:
-                    if (type.getSize() == 2) {
-                        v.dup2X1();
-                    }
-                    else {
-                        v.dupX1();
-                    }
-                    break;
-
-                case 2:
-                    if (type.getSize() == 2) {
-                        v.dup2X2();
-                    }
-                    else {
-                        v.dupX2();
-                    }
-                    break;
-
-                case -1:
-                    throw new UnsupportedOperationException();
-            }
+            pushReceiverAndValueViaDup(value, type);
 
             CallableMethod callableMethod = (CallableMethod) callable;
             callableMethod.invokeWithNotNullAssertion(v, state, resolvedCall);
@@ -3152,12 +3134,33 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private void generateIncrement(int increment, Type asmType, JetExpression operand, StackValue receiver) {
-        StackValue value = genQualified(receiver, operand);
-        value.dupReceiver(v);
-        value.put(asmType, v);
-        genIncrement(asmType, increment, v);
-        value.store(asmType, v);
+    private void pushReceiverAndValueViaDup(StackValue value, Type type) {
+        switch (value.receiverSize()) {
+            case 0:
+                dup(v, type);
+                break;
+
+            case 1:
+                if (type.getSize() == 2) {
+                    v.dup2X1();
+                }
+                else {
+                    v.dupX1();
+                }
+                break;
+
+            case 2:
+                if (type.getSize() == 2) {
+                    v.dup2X2();
+                }
+                else {
+                    v.dupX2();
+                }
+                break;
+
+            case -1:
+                throw new UnsupportedOperationException();
+        }
     }
 
     @Override
