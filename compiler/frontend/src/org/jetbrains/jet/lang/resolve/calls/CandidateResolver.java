@@ -310,7 +310,7 @@ public class CandidateResolver {
 
         context.tracing.typeInferenceFailed(context.trace, errorData);
         resolvedCall.addStatus(ResolutionStatus.OTHER_ERROR);
-        if (!CallResolverUtil.hasInferredReturnType(resolvedCall)) return null;
+        if (!resolvedCall.hasInferredReturnType()) return null;
         return resolvedCall.getResultingDescriptor().getReturnType();
     }
 

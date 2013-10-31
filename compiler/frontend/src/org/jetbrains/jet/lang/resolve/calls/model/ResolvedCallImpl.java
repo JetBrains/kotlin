@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
@@ -86,6 +87,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
+    private boolean hasInferredReturnType;
     private boolean cleaned = false;
 
     private ResolvedCallImpl(
@@ -137,10 +139,17 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @Override
     public void cleanInternalData() {
+        if (!cleaned) {
+            hasInferredReturnType = CallResolverUtil.hasInferredReturnType(candidateDescriptor, constraintSystem);
+        }
         trace = null;
         constraintSystem = null;
         tracing = null;
         cleaned = true;
+    }
+
+    public boolean hasInferredReturnType() {
+        return hasInferredReturnType;
     }
 
     private void checkCallIsUnfinished(String elementName) {
