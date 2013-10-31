@@ -4,5 +4,5 @@ fun foo() {
     }
 }
 
-// METHOD : invoke()V
+// METHOD : _DefaultPackage$foo$a$1.invoke()V
 // VARIABLE : NAME=this TYPE=L_DefaultPackage$foo$a$1; INDEX=0
