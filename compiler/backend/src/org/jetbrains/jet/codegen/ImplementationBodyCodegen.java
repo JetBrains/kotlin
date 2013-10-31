@@ -1036,7 +1036,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (isEnumClass(descriptor)) return;
+        if (isEnumClass(descriptor) || isEnumEntry(descriptor)) return;
 
         ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
         ClassDescriptor fieldTypeDescriptor;
