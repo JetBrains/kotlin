@@ -139,8 +139,8 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     }
 
     @Override
-    public void cleanInternalData() {
-        functionCall.cleanInternalData();
-        variableCall.cleanInternalData();
+    public void markCallAsCompleted() {
+        functionCall.markCallAsCompleted();
+        variableCall.markCallAsCompleted();
     }
 }

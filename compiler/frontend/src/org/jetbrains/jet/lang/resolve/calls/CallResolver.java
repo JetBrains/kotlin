@@ -317,7 +317,7 @@ public class CallResolver {
             results = completeTypeInferenceDependentOnExpectedType(context, results, tracing);
             if (results.isSingleResult()) {
                 //todo clean internal data for several resulting calls
-                results.getResultingCall().cleanInternalData();
+                results.getResultingCall().markCallAsCompleted();
             }
         }
 

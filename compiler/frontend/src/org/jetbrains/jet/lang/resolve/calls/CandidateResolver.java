@@ -370,12 +370,12 @@ public class CandidateResolver {
         JetType result = BindingContextUtils.updateRecordedType(
                 type, expression, context.trace, isFairSafeCallExpression(expression, context.trace));
 
-        contextForArgument.candidateCall.cleanInternalData();
+        contextForArgument.candidateCall.markCallAsCompleted();
 
         // clean data for "invoke" calls
         ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
         assert resolvedCall != null : "Resolved call for '" + keyExpression + "' is not stored, but CallCandidateResolutionContext is.";
-        resolvedCall.cleanInternalData();
+        resolvedCall.markCallAsCompleted();
 
         DataFlowUtils.checkType(result, expression, contextForArgument);
     }

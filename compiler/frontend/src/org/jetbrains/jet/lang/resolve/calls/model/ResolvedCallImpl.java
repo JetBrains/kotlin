@@ -88,7 +88,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
     private boolean hasInferredReturnType;
-    private boolean cleaned = false;
+    private boolean completed = false;
 
     private ResolvedCallImpl(
             @NotNull ResolutionCandidate<D> candidate,
@@ -133,32 +133,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     @NotNull
     public DelegatingBindingTrace getTrace() {
-        checkCallIsUnfinished("Trace");
+        assertNotCompleted("Trace");
         return trace;
-    }
-
-    @Override
-    public void cleanInternalData() {
-        if (!cleaned) {
-            hasInferredReturnType = CallResolverUtil.hasInferredReturnType(candidateDescriptor, constraintSystem);
-        }
-        trace = null;
-        constraintSystem = null;
-        tracing = null;
-        cleaned = true;
-    }
-
-    public boolean hasInferredReturnType() {
-        return hasInferredReturnType;
-    }
-
-    private void checkCallIsUnfinished(String elementName) {
-        if (cleaned) throw new IllegalStateException(elementName + " is erased after resolution completion.");
     }
 
     @NotNull
     public TracingStrategy getTracing() {
-        checkCallIsUnfinished("TracingStrategy");
+        assertNotCompleted("TracingStrategy");
         return tracing;
     }
 
@@ -205,7 +186,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @Nullable
     public ConstraintSystem getConstraintSystem() {
-        checkCallIsUnfinished("ConstraintSystem");
+        assertNotCompleted("ConstraintSystem");
         return constraintSystem;
     }
 
@@ -305,5 +286,25 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     public ResolvedCallImpl<D> getCallToCompleteTypeArgumentInference() {
         return this;
+    }
+
+    public boolean hasInferredReturnType() {
+        if (!completed) throw new IllegalStateException("Inferred return type is not known before resolution completion.");
+        return hasInferredReturnType;
+    }
+
+    @Override
+    public void markCallAsCompleted() {
+        if (!completed) {
+            hasInferredReturnType = CallResolverUtil.hasInferredReturnType(candidateDescriptor, constraintSystem);
+        }
+        trace = null;
+        constraintSystem = null;
+        tracing = null;
+        completed = true;
+    }
+
+    private void assertNotCompleted(String elementName) {
+        if (completed) throw new IllegalStateException(elementName + " is erased after resolution completion.");
     }
 }
