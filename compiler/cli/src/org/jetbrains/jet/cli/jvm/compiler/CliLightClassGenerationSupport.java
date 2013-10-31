@@ -72,21 +72,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     public BindingTrace getTrace() {
         if (trace == null) {
-            trace = new BindingTraceContext() {
-                @Override
-                public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-                    if (slice == BindingContext.RESOLUTION_SCOPE || slice == BindingContext.TYPE_RESOLUTION_SCOPE) {
-                        // In the compiler there's no need to keep scopes
-                        return;
-                    }
-                    super.record(slice, key, value);
-                }
-
-                @Override
-                public String toString() {
-                    return "Filtering trace for the CLI compiler: does not save scopes";
-                }
-            };
+            trace = new BindingTraceContextWithoutScopeRecording();
         }
         return trace;
     }
@@ -198,5 +184,21 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
         return  KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
+    }
+
+    public static class BindingTraceContextWithoutScopeRecording extends BindingTraceContext {
+        @Override
+        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
+            if (slice == BindingContext.RESOLUTION_SCOPE || slice == BindingContext.TYPE_RESOLUTION_SCOPE) {
+                // In the compiler there's no need to keep scopes
+                return;
+            }
+            super.record(slice, key, value);
+        }
+
+        @Override
+        public String toString() {
+            return "Filtering trace for the CLI compiler: does not save scopes";
+        }
     }
 }
