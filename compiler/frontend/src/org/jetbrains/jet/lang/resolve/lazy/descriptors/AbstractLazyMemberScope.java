@@ -198,23 +198,6 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             resolveSession.getInjector().getAnnotationResolver().resolveAnnotationsArguments(propertyDescriptor, resolveSession.getTrace(), resolutionScope);
         }
 
-        // Enum entries are also properties
-        Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
-        for (JetClassOrObject classOrObjectDeclaration : classOrObjectDeclarations) {
-            if (classOrObjectDeclaration instanceof JetEnumEntry) {
-                ClassDescriptor classifier = getObjectDescriptor(name);
-                if (classifier == null) {
-                    throw new IllegalStateException("Object declaration " + name + " found in the DeclarationProvider " + declarationProvider + " but not in the scope " + this);
-                }
-
-                JetScope scope = getScopeForMemberDeclarationResolution(classOrObjectDeclaration);
-
-                VariableDescriptor propertyDescriptor = resolveSession.getInjector().getDescriptorResolver()
-                        .resolveObjectDeclaration(scope, thisDescriptor, classOrObjectDeclaration, classifier, resolveSession.getTrace());
-                result.add(propertyDescriptor);
-            }
-        }
-
         getNonDeclaredProperties(name, result);
 
         return result;

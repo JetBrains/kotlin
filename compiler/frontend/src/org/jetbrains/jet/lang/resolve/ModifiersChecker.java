@@ -234,7 +234,7 @@ public class ModifiersChecker {
     public static Visibility getDefaultClassVisibility(@NotNull ClassDescriptor descriptor) {
         ClassKind kind = descriptor.getKind();
         if (kind == ClassKind.ENUM_ENTRY) {
-            return Visibilities.PRIVATE;
+            return Visibilities.PUBLIC;
         }
         if (kind == ClassKind.CLASS_OBJECT) {
             return ((ClassDescriptor) descriptor.getContainingDeclaration()).getVisibility();
