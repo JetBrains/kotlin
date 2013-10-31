@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
@@ -178,7 +179,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                             externalSignatureResolver,
                             errorReporter,
                             signatureChecker,
-                            javaResolverCache
+                            javaResolverCache,
+                            this
                     ),
                     module
             );

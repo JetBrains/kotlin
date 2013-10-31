@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.resolver.MethodSignatureChecker
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaResolverCache
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 
 open class GlobalJavaResolverContext(
         val storageManager: StorageManager,
@@ -35,7 +36,8 @@ open class GlobalJavaResolverContext(
         val externalSignatureResolver: ExternalSignatureResolver,
         val errorReporter: ErrorReporter,
         val methodSignatureChecker: MethodSignatureChecker,
-        val javaResolverCache: JavaResolverCache
+        val javaResolverCache: JavaResolverCache,
+        val javaDescriptorResolver: JavaDescriptorResolver
 )
 
 open class LazyJavaResolverContext(
@@ -47,10 +49,12 @@ open class LazyJavaResolverContext(
         externalSignatureResolver: ExternalSignatureResolver,
         errorReporter: ErrorReporter,
         methodSignatureChecker: MethodSignatureChecker,
-        javaResolverCache: JavaResolverCache
+        javaResolverCache: JavaResolverCache,
+        javaDescriptorResolver: JavaDescriptorResolver
 ) : GlobalJavaResolverContext(storageManager, finder, javaClassResolver,
                               externalAnnotationResolver, externalSignatureResolver,
-                              errorReporter, methodSignatureChecker, javaResolverCache)
+                              errorReporter, methodSignatureChecker, javaResolverCache,
+                              javaDescriptorResolver)
 
 fun LazyJavaResolverContext.withTypes(
         typeParameterResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
@@ -64,6 +68,7 @@ fun LazyJavaResolverContext.withTypes(
         errorReporter,
         methodSignatureChecker,
         javaResolverCache,
+        javaDescriptorResolver,
         LazyJavaTypeResolver(this, typeParameterResolver),
         typeParameterResolver)
 
@@ -77,11 +82,13 @@ class LazyJavaResolverContextWithTypes(
         errorReporter: ErrorReporter,
         methodSignatureChecker: MethodSignatureChecker,
         javaResolverCache: JavaResolverCache,
+        javaDescriptorResolver: JavaDescriptorResolver,
         val typeResolver: LazyJavaTypeResolver,
         val typeParameterResolver: TypeParameterResolver
 ) : LazyJavaResolverContext(subModule, storageManager, finder, javaClassResolver,
                             externalAnnotationResolver, externalSignatureResolver,
-                            errorReporter, methodSignatureChecker, javaResolverCache)
+                            errorReporter, methodSignatureChecker, javaResolverCache,
+                            javaDescriptorResolver)
 
 fun LazyJavaResolverContextWithTypes.child(
         containingDeclaration: DeclarationDescriptor,

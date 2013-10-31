@@ -24,7 +24,8 @@ public open class LazyJavaSubModule(
             outerContext.externalSignatureResolver,
             outerContext.errorReporter,
             outerContext.methodSignatureChecker,
-            outerContext.javaResolverCache
+            outerContext.javaResolverCache,
+            outerContext.javaDescriptorResolver
     )
 
     private val _packageFragments: MemoizedFunctionToNullable<FqName, NamespaceDescriptor> = c.storageManager.createMemoizedFunctionWithNullableValues {

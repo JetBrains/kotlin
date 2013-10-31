@@ -13,6 +13,7 @@ import org.jetbrains.jet.utils.flatten
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver
 import org.jetbrains.kotlin.util.inn
+import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule
 
 public abstract class LazyJavaPackageFragmentScope(
         c: LazyJavaResolverContext,
@@ -46,7 +47,7 @@ public abstract class LazyJavaPackageFragmentScope(
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = classes(name)
 
-    override fun getNamespace(name: Name): NamespaceDescriptor? = c.subModule.getPackageFragment(getContainingDeclaration().getFqName().child(name))
+    override fun getNamespace(name: Name): NamespaceDescriptor? = c.javaDescriptorResolver.resolveNamespace(getContainingDeclaration().getFqName().child(name), DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES)
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
 
@@ -62,7 +63,9 @@ public class LazyPackageFragmentScopeForJavaPackage(
     override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(EMPTY_MEMBER_INDEX)
 
     override fun getAllClassNames(): Collection<Name> {
-        return jPackage.getClasses().map { c -> c.getName() }
+        return jPackage.getClasses().iterator()
+                .filter { c -> c.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS }
+                .map { c -> c.getName() }.toList()
     }
 
     override fun getAllPackageNames(): Collection<Name> =
