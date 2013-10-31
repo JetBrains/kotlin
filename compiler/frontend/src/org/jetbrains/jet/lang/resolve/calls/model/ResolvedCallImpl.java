@@ -304,6 +304,11 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         completed = true;
     }
 
+    @Override
+    public boolean isCompleted() {
+        return completed;
+    }
+
     private void assertNotCompleted(String elementName) {
         if (completed) throw new IllegalStateException(elementName + " is erased after resolution completion.");
     }

@@ -143,4 +143,9 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
         functionCall.markCallAsCompleted();
         variableCall.markCallAsCompleted();
     }
+
+    @Override
+    public boolean isCompleted() {
+        return functionCall.isCompleted() && variableCall.isCompleted();
+    }
 }

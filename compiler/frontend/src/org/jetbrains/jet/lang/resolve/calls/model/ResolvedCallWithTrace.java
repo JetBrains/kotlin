@@ -47,4 +47,6 @@ public interface ResolvedCallWithTrace<D extends CallableDescriptor> extends Res
     ResolvedCallImpl<D> getCallToCompleteTypeArgumentInference();
 
     void markCallAsCompleted();
+
+    boolean isCompleted();
 }
