@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public abstract class FunctionGenerationStrategy {
-    private final Collection<String> localVariableNames = new ArrayList<String>();
+
     private FrameMap frameMap;
 
     public abstract void generateBody(
@@ -39,15 +39,6 @@ public abstract class FunctionGenerationStrategy {
             @NotNull MethodContext context,
             @Nullable MemberCodegen parentCodegen
     );
-
-    protected void addLocalVariableName(@NotNull String name) {
-        localVariableNames.add(name);
-    }
-
-    @NotNull
-    public Collection<String> getLocalVariableNames() {
-        return localVariableNames;
-    }
 
     @NotNull
     protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull MethodContext context) {
@@ -99,15 +90,8 @@ public abstract class FunctionGenerationStrategy {
             ExpressionCodegen codegen = new ExpressionCodegen(mv, getFrameMap(state.getTypeMapper(), context),
                                                               signature.getAsmMethod().getReturnType(), context, state, parentCodegen);
             doGenerateBody(codegen, signature);
-            generateLocalVarNames(codegen);
         }
 
         public abstract void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature);
-
-        private void generateLocalVarNames(@NotNull ExpressionCodegen codegen) {
-            for (String name : codegen.getLocalVariableNamesForExpression()) {
-                addLocalVariableName(name);
-            }
-        }
     }
 }
