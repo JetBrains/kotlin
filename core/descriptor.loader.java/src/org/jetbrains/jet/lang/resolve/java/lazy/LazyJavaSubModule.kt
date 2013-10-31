@@ -76,6 +76,9 @@ public open class LazyJavaSubModule(
         }
 
         override fun resolveClassByFqName(fqName: FqName): ClassDescriptor? {
+            val builtinClass = JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName)
+            if (builtinClass != null) return builtinClass
+
             val jClass = c.finder.findClass(fqName)
             if (jClass != null) return resolveClass(jClass)
 
