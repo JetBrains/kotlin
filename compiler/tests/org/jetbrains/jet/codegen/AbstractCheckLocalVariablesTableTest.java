@@ -69,7 +69,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
 
         String modifiedTestName = ktFile.getName().replace(".kt", ".class");
         boolean isClassFound = false;
-        for (String filename : factory.files()) {
+        for (String filename : factory.getOutputFiles()) {
             if (filename.equals(modifiedTestName)) {
                 isClassFound = true;
                 ClassReader cr = new ClassReader(factory.asBytes(filename));

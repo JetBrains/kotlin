@@ -82,7 +82,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         List<TestedObject> testedObjects = parseExpectedTestedObject(fileText);
         for (TestedObject testedObject : testedObjects) {
             String className = null;
-            for (String filename : factory.files()) {
+            for (String filename : factory.getOutputFiles()) {
                 if (testedObject.isFullContainingClassName && filename.equals(testedObject.containingClass + ".class")) {
                     className = filename;
                 }

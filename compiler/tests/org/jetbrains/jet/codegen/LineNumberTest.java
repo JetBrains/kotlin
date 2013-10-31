@@ -112,7 +112,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     private static List<Integer> extractActualLineNumbersFromBytecode(@NotNull GenerationState state, boolean testFunInvoke) {
         ClassFileFactory factory = state.getFactory();
         List<Integer> actualLineNumbers = Lists.newArrayList();
-        for (String filename : factory.files()) {
+        for (String filename : factory.getOutputFiles()) {
             if (PackageClassUtils.isPackageClassFqName(new FqName(FileUtil.getNameWithoutExtension(filename)))) {
                 // Don't test line numbers in *Package facade classes
                 continue;

@@ -40,7 +40,7 @@ public class DxChecker {
         array[0] = "testArgs";
         arguments.parse(array);
 
-        for (String file : factory.files()) {
+        for (String file : factory.getOutputFiles()) {
             try {
                 CfTranslator.translate(file, factory.asBytes(file), arguments.cfOptions, arguments.dexOptions);
             }

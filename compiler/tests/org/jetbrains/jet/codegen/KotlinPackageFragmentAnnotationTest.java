@@ -39,7 +39,7 @@ public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
         String facadeFileName = JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(NAMESPACE_NAME)).getInternalName() + ".class";
 
         ClassFileFactory factory = generateClassesInFile();
-        for (String fileName : factory.files()) {
+        for (String fileName : factory.getOutputFiles()) {
             if (!fileName.equals(facadeFileName)) {
                 // The file which is not a facade is a package fragment
                 String fqName = fileName.substring(0, fileName.length() - ".class".length()).replace('/', '.');
@@ -60,6 +60,6 @@ public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
             }
         }
 
-        fail("No package fragment was found: " + factory.files());
+        fail("No package fragment was found: " + factory.getOutputFiles());
     }
 }

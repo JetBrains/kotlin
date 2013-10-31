@@ -24,6 +24,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
+import org.jetbrains.jet.OutputFileFactory;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -38,7 +39,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClass
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
-public final class ClassFileFactory extends GenerationStateAware {
+public final class ClassFileFactory extends GenerationStateAware implements OutputFileFactory {
     @NotNull private ClassBuilderFactory builderFactory;
 
     private final Map<FqName, NamespaceCodegen> ns2codegen = new HashMap<FqName, NamespaceCodegen>();
@@ -78,21 +79,25 @@ public final class ClassFileFactory extends GenerationStateAware {
         }
     }
 
+    @Override
     public String asText(String file) {
         done();
         return builderFactory.asText(generators.get(file).classBuilder);
     }
 
+    @Override
     public byte[] asBytes(String file) {
         done();
         return builderFactory.asBytes(generators.get(file).classBuilder);
     }
 
-    public List<String> files() {
+    @Override
+    public List<String> getOutputFiles() {
         done();
         return new ArrayList<String>(generators.keySet());
     }
 
+    @Override
     public List<File> getSourceFiles(String relativeClassFilePath) {
         ClassBuilderAndSourceFileList pair = generators.get(relativeClassFilePath);
         if (pair == null) {
@@ -116,7 +121,7 @@ public final class ClassFileFactory extends GenerationStateAware {
     public String createText() {
         StringBuilder answer = new StringBuilder();
 
-        List<String> files = files();
+        List<String> files = getOutputFiles();
         for (String file : files) {
             //            if (!file.startsWith("kotlin/")) {
             answer.append("@").append(file).append('\n');

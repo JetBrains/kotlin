@@ -128,7 +128,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
 
     private static Map<String, ReferenceType> getReferenceMap(ClassFileFactory classFileFactory) {
         Map<String, ReferenceType> referencesByName = Maps.newHashMap();
-        for (String classFileName : classFileFactory.files()) {
+        for (String classFileName : classFileFactory.getOutputFiles()) {
             String name = classFileName.substring(0, classFileName.lastIndexOf('.'));
             referencesByName.put(name, new MockReferenceType(name));
         }

@@ -241,7 +241,7 @@ public class ReplInterpreter {
         compileScript(psiFile.getScript(), scriptClassType, earlierScripts, generationState,
                       CompilationErrorHandler.THROW_EXCEPTION);
 
-        for (String file : generationState.getFactory().files()) {
+        for (String file : generationState.getFactory().getOutputFiles()) {
             classLoader.addClass(JvmClassName.byInternalName(file.replaceFirst("\\.class$", "")), generationState.getFactory().asBytes(file));
         }
 

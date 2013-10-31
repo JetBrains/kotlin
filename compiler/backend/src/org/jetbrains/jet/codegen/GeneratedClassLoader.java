@@ -33,7 +33,7 @@ public class GeneratedClassLoader extends URLClassLoader {
     @Override
     protected Class<?> findClass(@NotNull String name) throws ClassNotFoundException {
         String file = name.replace('.', '/') + ".class";
-        if (state.files().contains(file)) {
+        if (state.getOutputFiles().contains(file)) {
             byte[] bytes = state.asBytes(file);
             return defineClass(name, bytes, 0, bytes.length);
         }

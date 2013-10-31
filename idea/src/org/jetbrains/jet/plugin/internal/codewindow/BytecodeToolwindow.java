@@ -106,7 +106,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
             StringBuilder answer = new StringBuilder();
 
             ClassFileFactory factory = state.getFactory();
-            for (String filename : factory.files()) {
+            for (String filename : factory.getOutputFiles()) {
                 answer.append("// ================");
                 answer.append(filename);
                 answer.append(" =================\n");

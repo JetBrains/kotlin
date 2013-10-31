@@ -51,7 +51,7 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
     public void testTopLevel() {
         loadFile();
         String packageClassName = PackageClassUtils.getPackageClassName(FqName.ROOT);
-        for (String fileName : generateClassesInFile().files()) {
+        for (String fileName : generateClassesInFile().getOutputFiles()) {
             if (fileName.startsWith(packageClassName) && !fileName.equals(packageClassName + ".class")) {
                 // This should be package$src class
                 Class<?> a = generateClass(fileName.substring(0, fileName.length() - ".class".length()));

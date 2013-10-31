@@ -26,6 +26,7 @@ import jet.modules.AllModules;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.OutputFileFactory;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.common.modules.ModuleDescription;
@@ -178,7 +179,7 @@ public class CompileEnvironmentUtil {
                 mainAttributes.putValue("Main-Class", mainClass.asString());
             }
             JarOutputStream stream = new JarOutputStream(fos, manifest);
-            for (String file : factory.files()) {
+            for (String file : factory.getOutputFiles()) {
                 stream.putNextEntry(new JarEntry(file));
                 stream.write(factory.asBytes(file));
             }
@@ -252,11 +253,11 @@ public class CompileEnvironmentUtil {
     }
 
     public static void writeToOutputWithDirector(
-            ClassFileFactory factory,
+            OutputFileFactory factory,
             @NotNull OutputDirector outputDirector,
             @NotNull MessageCollector messageCollector
     ) {
-        List<String> files = factory.files();
+        List<String> files = factory.getOutputFiles();
         for (String file : files) {
             List<File> sourceFiles = factory.getSourceFiles(file);
             File target = new File(outputDirector.getOutputDirectory(sourceFiles), file);

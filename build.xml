@@ -60,6 +60,7 @@
         <include name="core/descriptor.loader.java/src"/>
         <include name="compiler/frontend.java/src"/>
         <include name="core/serialization.java/src"/>
+        <include name="compiler/backend-common/src"/>
         <include name="compiler/backend/src"/>
         <include name="compiler/cli/src"/>
         <include name="compiler/cli/cli-common/src"/>
@@ -139,6 +140,7 @@
             <fileset dir="core/descriptors/src"/>
             <fileset dir="core/descriptor.loader.java/src"/>
             <fileset dir="compiler/frontend.java/src"/>
+            <fileset dir="compiler/backend-common/src"/>
             <fileset dir="compiler/backend/src"/>
             <fileset dir="compiler/cli/src"/>
             <fileset dir="j2k/src"/>
