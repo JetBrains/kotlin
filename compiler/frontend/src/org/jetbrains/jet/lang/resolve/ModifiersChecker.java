@@ -241,12 +241,4 @@ public class ModifiersChecker {
         }
         return Visibilities.INTERNAL;
     }
-
-    @NotNull
-    public static Visibility getDefaultVisibilityForObjectPropertyDescriptor(@NotNull ClassDescriptor objectClassDescriptor) {
-        if (objectClassDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            return Visibilities.PUBLIC;
-        }
-        return Visibilities.INTERNAL;
-    }
 }

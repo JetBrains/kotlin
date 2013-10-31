@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -363,24 +364,17 @@ public class AnnotationResolver {
     }
 
     private static boolean isEnumProperty(@NotNull PropertyDescriptor descriptor) {
+        // TODO: doesn't return true anymore
         ClassifierDescriptor classifier = descriptor.getType().getConstructor().getDeclarationDescriptor();
         return classifier != null &&
                DescriptorUtils.isEnumClass(classifier) &&
                DescriptorUtils.isEnumClassObject(descriptor.getContainingDeclaration());
     }
 
-    @NotNull
-    public List<AnnotationDescriptor> getResolvedAnnotations(@Nullable JetModifierList modifierList, BindingTrace trace) {
-        if (modifierList == null) {
-            return Collections.emptyList();
-        }
-        return getResolvedAnnotations(modifierList.getAnnotationEntries(), trace);
-    }
-
     @SuppressWarnings("MethodMayBeStatic")
     @NotNull
-    public List<AnnotationDescriptor> getResolvedAnnotations(List<JetAnnotationEntry> annotations, BindingTrace trace) {
-        List<AnnotationDescriptor> result = Lists.newArrayList();
+    public List<AnnotationDescriptor> getResolvedAnnotations(@NotNull List<JetAnnotationEntry> annotations, @NotNull BindingTrace trace) {
+        List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>(annotations.size());
         for (JetAnnotationEntry annotation : annotations) {
             AnnotationDescriptor annotationDescriptor = trace.get(BindingContext.ANNOTATION, annotation);
             if (annotationDescriptor == null) {

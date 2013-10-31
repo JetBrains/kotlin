@@ -817,77 +817,6 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public VariableDescriptor resolveObjectDeclaration(
-            @NotNull JetScope scope,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject objectDeclaration,
-            @NotNull ClassDescriptor classDescriptor, BindingTrace trace
-    ) {
-        boolean isProperty = (containingDeclaration instanceof NamespaceDescriptor) || (containingDeclaration instanceof ClassDescriptor);
-        if (isProperty) {
-            return resolveObjectDeclarationAsPropertyDescriptor(scope, containingDeclaration, objectDeclaration, classDescriptor, trace);
-        }
-        else {
-            return resolveObjectDeclarationAsLocalVariable(containingDeclaration, objectDeclaration, classDescriptor, trace);
-        }
-    }
-
-    @NotNull
-    public PropertyDescriptor resolveObjectDeclarationAsPropertyDescriptor(
-            @NotNull JetScope scope,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject objectDeclaration,
-            @NotNull ClassDescriptor classDescriptor, BindingTrace trace
-    ) {
-        JetModifierList modifierList = objectDeclaration.getModifierList();
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorForObjectImpl(
-                containingDeclaration,
-                annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace),
-                resolveVisibilityFromModifiers(objectDeclaration, getDefaultVisibilityForObjectPropertyDescriptor(classDescriptor)),
-                JetPsiUtil.safeName(objectDeclaration.getName()),
-                classDescriptor
-        );
-        propertyDescriptor.setType(getTypeForObjectDeclaration(classDescriptor), Collections.<TypeParameterDescriptor>emptyList(),
-                                   getExpectedThisObjectIfNeeded(containingDeclaration), NO_RECEIVER_PARAMETER);
-        propertyDescriptor.initialize(null, null);
-        JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
-        if (nameAsDeclaration != null) {
-            trace.record(BindingContext.OBJECT_DECLARATION, nameAsDeclaration, propertyDescriptor);
-        }
-        return propertyDescriptor;
-    }
-
-    @NotNull
-    private static JetType getTypeForObjectDeclaration(@NotNull ClassDescriptor objectClassDescriptor) {
-        if (objectClassDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            DeclarationDescriptor containingDeclaration = objectClassDescriptor.getContainingDeclaration().getContainingDeclaration();
-            assert containingDeclaration instanceof ClassDescriptor;
-            ClassDescriptor enumClass = (ClassDescriptor) containingDeclaration;
-            assert enumClass.getKind() == ClassKind.ENUM_CLASS;
-            return enumClass.getDefaultType();
-        }
-        return objectClassDescriptor.getDefaultType();
-    }
-
-    @NotNull
-    private VariableDescriptor resolveObjectDeclarationAsLocalVariable(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject objectDeclaration,
-            @NotNull ClassDescriptor classDescriptor, BindingTrace trace
-    ) {
-        VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptorForObject(
-                containingDeclaration,
-                annotationResolver.getResolvedAnnotations(objectDeclaration.getModifierList(), trace),
-                JetPsiUtil.safeName(objectDeclaration.getName()),
-                classDescriptor);
-        JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
-        if (nameAsDeclaration != null) {
-            trace.record(BindingContext.VARIABLE, nameAsDeclaration, variableDescriptor);
-        }
-        return variableDescriptor;
-    }
-
-    @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull JetScope scope,
@@ -895,7 +824,6 @@ public class DescriptorResolver {
             @NotNull BindingTrace trace,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-
         JetModifierList modifierList = property.getModifierList();
         boolean isVar = property.isVar();
 

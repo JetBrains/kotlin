@@ -88,9 +88,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration);
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
         if (classDescriptor != null) {
-            VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver()
-                    .resolveObjectDeclaration(scope, scope.getContainingDeclaration(), declaration, classDescriptor, context.trace);
-            scope.addVariableDescriptor(variableDescriptor);
+            scope.addClassifierDescriptor(classDescriptor);
         }
         return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);
     }
