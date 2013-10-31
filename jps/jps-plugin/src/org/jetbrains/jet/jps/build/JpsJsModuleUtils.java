@@ -49,7 +49,7 @@ class JpsJsModuleUtils {
         Set<JpsLibrary> libraries = JpsUtils.getAllDependencies(target).getLibraries();
         for (JpsLibrary library : libraries) {
             for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
-                String path = JpsPathUtil.urlToOsPath(root.getUrl());
+                String path = JpsPathUtil.urlToPath(root.getUrl());
                 // TODO: Do we need to add to dependency all libraries?
                 if (LibraryUtils.isJsRuntimeLibrary(new File(path))) {
                     result.add(path);
@@ -67,7 +67,7 @@ class JpsJsModuleUtils {
                 result.add("@" + module.getName());
 
                 for (JpsModuleSourceRoot root : module.getSourceRoots(JavaSourceRootType.SOURCE)) {
-                    result.add(JpsPathUtil.urlToOsPath(root.getUrl()));
+                    result.add(JpsPathUtil.urlToPath(root.getUrl()));
                 }
             }
         });
