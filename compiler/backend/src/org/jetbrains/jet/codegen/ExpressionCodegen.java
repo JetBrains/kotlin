@@ -3091,7 +3091,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new UnsupportedOperationException("Unsupported postfix operation: " + op);
         }
 
-        if (isPrimitiveNumberClassDescriptor(cls)) {
+        boolean isPrimitiveNumberClassDescriptor = isPrimitiveNumberClassDescriptor(cls);
+        if (isPrimitiveNumberClassDescriptor) {
             JetExpression operand = expression.getBaseExpression();
             if (operand instanceof JetReferenceExpression && asmType == Type.INT_TYPE) {
                 int index = indexOfLocal((JetReferenceExpression) operand);
@@ -3099,39 +3100,32 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     return StackValue.postIncrement(index, increment);
                 }
             }
-            StackValue value = gen(expression.getBaseExpression());
-            value.dupReceiver(v);
+        }
 
-            Type type = expressionType(expression.getBaseExpression());
-            value.put(type, v);
+        StackValue value = gen(expression.getBaseExpression());
+        value.dupReceiver(v);
 
-            pushReceiverAndValueViaDup(value, type);
+        Type type = expressionType(expression.getBaseExpression());
+        value.put(type, v); // old value
 
+        pushReceiverAndValueViaDup(value, type); // receiver and new value
+
+        Type storeType;
+        if (isPrimitiveNumberClassDescriptor) {
             genIncrement(asmType, increment, v);
-            value.store(asmType, v);
-            return StackValue.onStack(asmType);                                         // old value
+            storeType = type;
         }
         else {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                    bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
             assert resolvedCall != null;
-
             Callable callable = resolveToCallable((FunctionDescriptor) op, false);
-
-            StackValue value = gen(expression.getBaseExpression());
-            value.dupReceiver(v);
-
-            Type type = expressionType(expression.getBaseExpression());
-            value.put(type, v);
-
-            pushReceiverAndValueViaDup(value, type);
-
             CallableMethod callableMethod = (CallableMethod) callable;
             callableMethod.invokeWithNotNullAssertion(v, state, resolvedCall);
-
-            value.store(callableMethod.getReturnType(), v);
-            return StackValue.onStack(type);
+            storeType = callableMethod.getReturnType();
         }
+
+        value.store(storeType, v);
+        return StackValue.onStack(asmType);  // old value
     }
 
     private void pushReceiverAndValueViaDup(StackValue value, Type type) {
