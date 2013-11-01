@@ -78,12 +78,13 @@ public class CandidateResolver {
 
         if (ErrorUtils.isError(candidate)) {
             candidateCall.addStatus(SUCCESS);
-            argumentTypeResolver.checkTypesWithNoCallee(context.toBasic());
+            markAllArgumentsAsUnmapped(context);
             return;
         }
 
         if (!checkOuterClassMemberIsAccessible(context)) {
             candidateCall.addStatus(OTHER_ERROR);
+            markAllArgumentsAsUnmapped(context);
             return;
         }
 
@@ -93,6 +94,7 @@ public class CandidateResolver {
         if (invisibleMember != null) {
             candidateCall.addStatus(OTHER_ERROR);
             context.tracing.invisibleMember(context.trace, invisibleMember);
+            markAllArgumentsAsUnmapped(context);
             return;
         }
 
@@ -108,12 +110,11 @@ public class CandidateResolver {
                 else {
                     candidateCall.addStatus(OTHER_ERROR);
                 }
+                candidateCall.setUnmappedArguments(unmappedArguments);
                 if ((argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR && candidate.getTypeParameters().isEmpty()) ||
                     argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
-                    argumentTypeResolver.checkTypesWithNoCallee(context.toBasic());
                     return;
                 }
-                candidateCall.setUnmappedArguments(unmappedArguments);
             }
         }
 
@@ -169,6 +170,12 @@ public class CandidateResolver {
 
         AutoCastUtils.recordAutoCastIfNecessary(candidateCall.getReceiverArgument(), candidateCall.getTrace());
         AutoCastUtils.recordAutoCastIfNecessary(candidateCall.getThisObject(), candidateCall.getTrace());
+    }
+
+    private static void markAllArgumentsAsUnmapped(CallCandidateResolutionContext<?> context) {
+        if (context.checkArguments == CheckValueArgumentsMode.ENABLED) {
+            context.candidateCall.setUnmappedArguments(context.call.getValueArguments());
+        }
     }
 
     private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {

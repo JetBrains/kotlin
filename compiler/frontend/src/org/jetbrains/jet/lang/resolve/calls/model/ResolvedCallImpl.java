@@ -195,7 +195,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         valueArguments.put(valueParameter, valueArgument);
     }
 
-    public void setUnmappedArguments(@NotNull Collection<ValueArgument> unmappedArguments) {
+    public void setUnmappedArguments(@NotNull Collection<? extends ValueArgument> unmappedArguments) {
         this.unmappedArguments.addAll(unmappedArguments);
 
     }
