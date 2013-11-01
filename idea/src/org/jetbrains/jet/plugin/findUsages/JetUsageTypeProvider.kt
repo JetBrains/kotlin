@@ -43,7 +43,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
         fun getCommonUsageType(): UsageType? {
             return when {
                 element.getParentByType(javaClass<JetImportDirective>()) != null ->
-                    JetUsageTypes.IMPORT_DIRECTIVE
+                    UsageType.CLASS_IMPORT
                 element.getParentByTypeAndBranch(javaClass<JetCallableReferenceExpression>()) { getCallableReference() } != null ->
                     JetUsageTypes.CALLABLE_REFERENCE
                 else -> null
@@ -55,7 +55,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             if (property != null) {
                 when {
                     property.getTypeRef().isAncestor(element) ->
-                        return if (property.isLocal()) JetUsageTypes.LOCAL_VARIABLE_TYPE else JetUsageTypes.NON_LOCAL_PROPERTY_TYPE
+                        return if (property.isLocal()) UsageType.CLASS_LOCAL_VAR_DECLARATION else JetUsageTypes.NON_LOCAL_PROPERTY_TYPE
 
                     property.getReceiverTypeRef().isAncestor(element) ->
                         return JetUsageTypes.EXTENSION_RECEIVER_TYPE
@@ -85,7 +85,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
                     JetUsageTypes.TYPE_DEFINITION
 
                 element.getParentByType(javaClass<JetTypeProjection>()) != null ->
-                    JetUsageTypes.TYPE_ARGUMENT
+                    UsageType.TYPE_PARAMETER
 
                 element.getParentByTypeAndBranch(javaClass<JetParameter>()) { getTypeReference() } != null ->
                     JetUsageTypes.VALUE_PARAMETER_TYPE
@@ -97,7 +97,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
                     val opType = this?.getOperationReference()?.getReferencedNameElementType()
                     opType == JetTokens.AS_KEYWORD || opType == JetTokens.AS_SAFE
                 } ->
-                    JetUsageTypes.AS
+                    UsageType.CLASS_CAST_TO
 
                 with(element.getParentByTypeAndBranch(javaClass<JetDotQualifiedExpression>()) { getReceiverExpression() }) {
                     this?.getReceiverExpression() is JetSimpleNameExpression
@@ -149,12 +149,12 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
 
                 descriptor is ConstructorDescriptor
                 && element.getParentByTypeAndBranch(javaClass<JetAnnotationEntry>()) { getTypeReference() } != null ->
-                    JetUsageTypes.ANNOTATION_TYPE
+                    UsageType.ANNOTATION
 
                 with(element.getParentByTypeAndBranch(javaClass<JetCallExpression>()) { getCalleeExpression() }) {
                     this?.getCalleeExpression() is JetSimpleNameExpression
                 } ->
-                    if (descriptor is ConstructorDescriptor) JetUsageTypes.INSTANTIATION else JetUsageTypes.FUNCTION_CALL
+                    if (descriptor is ConstructorDescriptor) UsageType.CLASS_NEW_OPERATOR else JetUsageTypes.FUNCTION_CALL
 
                 else -> null
             }
@@ -183,23 +183,18 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
 
 object JetUsageTypes {
     // types
-    val ANNOTATION_TYPE = UsageType(JetBundle.message("usageType.annotation.type"))
     val TYPE_CONSTRAINT = UsageType(JetBundle.message("usageType.type.constraint"))
-    val TYPE_ARGUMENT = UsageType(JetBundle.message("usageType.type.argument"))
     val VALUE_PARAMETER_TYPE = UsageType(JetBundle.message("usageType.value.parameter.type"))
     val NON_LOCAL_PROPERTY_TYPE = UsageType(JetBundle.message("usageType.nonLocal.property.type"))
-    val LOCAL_VARIABLE_TYPE = UsageType(JetBundle.message("usageType.local.variable.type"))
     val FUNCTION_RETURN_TYPE = UsageType(JetBundle.message("usageType.function.return.type"))
     val SUPER_TYPE = UsageType(JetBundle.message("usageType.superType"))
     val TYPE_DEFINITION = UsageType(JetBundle.message("usageType.type.definition"))
-    val AS = UsageType(JetBundle.message("usageType.as"))
     val IS = UsageType(JetBundle.message("usageType.is"))
     val CLASS_OBJECT_ACCESS = UsageType(JetBundle.message("usageType.class.object"))
     val EXTENSION_RECEIVER_TYPE = UsageType(JetBundle.message("usageType.extension.receiver.type"))
     val SUPER_TYPE_QUALIFIER = UsageType(JetBundle.message("usageType.super.type.qualifier"))
 
     // functions
-    val INSTANTIATION = UsageType(JetBundle.message("usageType.instantiation"))
     val FUNCTION_CALL = UsageType(JetBundle.message("usageType.function.call"))
 
     // values
@@ -207,6 +202,5 @@ object JetUsageTypes {
     val DELEGATE = UsageType(JetBundle.message("usageType.delegate"))
 
     // common usage types
-    val IMPORT_DIRECTIVE = UsageType(JetBundle.message("usageType.import"))
     val CALLABLE_REFERENCE = UsageType(JetBundle.message("usageType.callable.reference"))
 }
