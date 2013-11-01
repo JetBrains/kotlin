@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.JetBundle
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor
 
 public object JetUsageTypeProvider : UsageTypeProviderEx {
     public override fun getUsageType(element: PsiElement?): UsageType? {
@@ -38,73 +39,78 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
     }
 
     public override fun getUsageType(element: PsiElement?, targets: Array<out UsageTarget>): UsageType? {
-        if (element == null) return null
+        val simpleName = element?.getParentByType(javaClass<JetSimpleNameExpression>())
+        if (simpleName == null) return null
 
         fun getCommonUsageType(): UsageType? {
             return when {
-                element.getParentByType(javaClass<JetImportDirective>()) != null ->
+                simpleName.getParentByType(javaClass<JetImportDirective>()) != null ->
                     UsageType.CLASS_IMPORT
-                element.getParentByTypeAndBranch(javaClass<JetCallableReferenceExpression>()) { getCallableReference() } != null ->
+                simpleName.getParentByTypeAndBranch(javaClass<JetCallableReferenceExpression>()) { getCallableReference() } != null ->
                     JetUsageTypes.CALLABLE_REFERENCE
                 else -> null
             }
         }
 
         fun getClassUsageType(): UsageType? {
-            val property = element.getParentByType(javaClass<JetProperty>())
+            val property = simpleName.getParentByType(javaClass<JetProperty>())
             if (property != null) {
                 when {
-                    property.getTypeRef().isAncestor(element) ->
+                    property.getTypeRef().isAncestor(simpleName) ->
                         return if (property.isLocal()) UsageType.CLASS_LOCAL_VAR_DECLARATION else JetUsageTypes.NON_LOCAL_PROPERTY_TYPE
 
-                    property.getReceiverTypeRef().isAncestor(element) ->
+                    property.getReceiverTypeRef().isAncestor(simpleName) ->
                         return JetUsageTypes.EXTENSION_RECEIVER_TYPE
                 }
             }
 
-            val function = element.getParentByType(javaClass<JetFunction>())
+            val function = simpleName.getParentByType(javaClass<JetFunction>())
             if (function != null) {
                 when {
-                    function.getReturnTypeRef().isAncestor(element) ->
+                    function.getReturnTypeRef().isAncestor(simpleName) ->
                         return JetUsageTypes.FUNCTION_RETURN_TYPE
-                    function.getReceiverTypeRef().isAncestor(element) ->
+                    function.getReceiverTypeRef().isAncestor(simpleName) ->
                         return JetUsageTypes.EXTENSION_RECEIVER_TYPE
                 }
             }
 
             return when {
-                element.getParentByTypeAndBranch(javaClass<JetTypeParameter>()) { getExtendsBound() } != null
-                || element.getParentByTypeAndBranch(javaClass<JetTypeConstraint>()) { getBoundTypeReference() } != null ->
+                simpleName.getParentByTypeAndBranch(javaClass<JetTypeParameter>()) { getExtendsBound() } != null
+                || simpleName.getParentByTypeAndBranch(javaClass<JetTypeConstraint>()) { getBoundTypeReference() } != null ->
                     JetUsageTypes.TYPE_CONSTRAINT
 
-                element is JetDelegationSpecifier
-                || element.getParentByTypeAndBranch(javaClass<JetDelegationSpecifier>()) { getTypeReference() } != null ->
+                simpleName is JetDelegationSpecifier
+                || simpleName.getParentByTypeAndBranch(javaClass<JetDelegationSpecifier>()) { getTypeReference() } != null ->
                     JetUsageTypes.SUPER_TYPE
 
-                element.getParentByTypeAndBranch(javaClass<JetTypedef>()) { getTypeReference() } != null ->
+                simpleName.getParentByTypeAndBranch(javaClass<JetTypedef>()) { getTypeReference() } != null ->
                     JetUsageTypes.TYPE_DEFINITION
 
-                element.getParentByType(javaClass<JetTypeProjection>()) != null ->
+                simpleName.getParentByType(javaClass<JetTypeProjection>()) != null ->
                     UsageType.TYPE_PARAMETER
 
-                element.getParentByTypeAndBranch(javaClass<JetParameter>()) { getTypeReference() } != null ->
+                simpleName.getParentByTypeAndBranch(javaClass<JetParameter>()) { getTypeReference() } != null ->
                     JetUsageTypes.VALUE_PARAMETER_TYPE
 
-                element.getParentByTypeAndBranch(javaClass<JetIsExpression>()) { getTypeRef() } != null ->
+                simpleName.getParentByTypeAndBranch(javaClass<JetIsExpression>()) { getTypeRef() } != null ->
                     JetUsageTypes.IS
 
-                with(element.getParentByTypeAndBranch(javaClass<JetBinaryExpressionWithTypeRHS>()) { getRight() }) {
+                with(simpleName.getParentByTypeAndBranch(javaClass<JetBinaryExpressionWithTypeRHS>()) { getRight() }) {
                     val opType = this?.getOperationReference()?.getReferencedNameElementType()
                     opType == JetTokens.AS_KEYWORD || opType == JetTokens.AS_SAFE
                 } ->
                     UsageType.CLASS_CAST_TO
 
-                with(element.getParentByTypeAndBranch(javaClass<JetDotQualifiedExpression>()) { getReceiverExpression() }) {
-                    this?.getReceiverExpression() is JetSimpleNameExpression
+                with(simpleName.getParentByType(javaClass<JetDotQualifiedExpression>())) {
+                    if (this == null) false
+                    else if (getReceiverExpression() == simpleName) true
+                    else
+                        getSelectorExpression() == simpleName
+                            && getParentByTypeAndBranch(javaClass<JetDotQualifiedExpression>(), true) { getReceiverExpression() } != null
                 } ->
                     JetUsageTypes.CLASS_OBJECT_ACCESS
 
-                element.getParentByTypeAndBranch(javaClass<JetSuperExpression>()) { getSuperTypeQualifier() } != null ->
+                simpleName.getParentByTypeAndBranch(javaClass<JetSuperExpression>()) { getSuperTypeQualifier() } != null ->
                     JetUsageTypes.SUPER_TYPE_QUALIFIER
 
                 else -> null
@@ -112,30 +118,30 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
         }
 
         fun getVariableUsageType(): UsageType? {
-            if (element.getParentByTypeAndBranch(javaClass<JetDelegatorByExpressionSpecifier>()) { getDelegateExpression() } != null) {
+            if (simpleName.getParentByTypeAndBranch(javaClass<JetDelegatorByExpressionSpecifier>()) { getDelegateExpression() } != null) {
                 return JetUsageTypes.DELEGATE
             }
 
-            val dotQualifiedExpression = element.getParentByType(javaClass<JetDotQualifiedExpression>())
+            val dotQualifiedExpression = simpleName.getParentByType(javaClass<JetDotQualifiedExpression>())
 
             if (dotQualifiedExpression != null) {
                 val parent = dotQualifiedExpression.getParent()
                 when {
-                    dotQualifiedExpression.getReceiverExpression().isAncestor(element) ->
+                    dotQualifiedExpression.getReceiverExpression().isAncestor(simpleName) ->
                         return JetUsageTypes.RECEIVER
 
-                    parent is JetDotQualifiedExpression && parent.getReceiverExpression().isAncestor(element) ->
+                    parent is JetDotQualifiedExpression && parent.getReceiverExpression().isAncestor(simpleName) ->
                         return JetUsageTypes.RECEIVER
                 }
             }
 
             return when {
-                element.getParentByTypeAndPredicate(
+                simpleName.getParentByTypeAndPredicate(
                         javaClass<JetBinaryExpression>(), false, { JetPsiUtil.isAssignment(it) }
-                )?.getLeft().isAncestor(element) ->
+                )?.getLeft().isAncestor(simpleName) ->
                     UsageType.WRITE
 
-                element.getParentByType(javaClass<JetSimpleNameExpression>()) != null ->
+                simpleName.getParentByType(javaClass<JetSimpleNameExpression>()) != null ->
                     UsageType.READ
 
                 else -> null
@@ -144,14 +150,14 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
 
         fun getFunctionUsageType(descriptor: FunctionDescriptor): UsageType? {
             return when {
-                element.getParentByTypeAndBranch(javaClass<JetDelegationSpecifier>()) { getTypeReference() } != null ->
+                simpleName.getParentByTypeAndBranch(javaClass<JetDelegationSpecifier>()) { getTypeReference() } != null ->
                     JetUsageTypes.SUPER_TYPE
 
                 descriptor is ConstructorDescriptor
-                && element.getParentByTypeAndBranch(javaClass<JetAnnotationEntry>()) { getTypeReference() } != null ->
+                && simpleName.getParentByTypeAndBranch(javaClass<JetAnnotationEntry>()) { getTypeReference() } != null ->
                     UsageType.ANNOTATION
 
-                with(element.getParentByTypeAndBranch(javaClass<JetCallExpression>()) { getCalleeExpression() }) {
+                with(simpleName.getParentByTypeAndBranch(javaClass<JetCallExpression>()) { getCalleeExpression() }) {
                     this?.getCalleeExpression() is JetSimpleNameExpression
                 } ->
                     if (descriptor is ConstructorDescriptor) UsageType.CLASS_NEW_OPERATOR else JetUsageTypes.FUNCTION_CALL
@@ -163,17 +169,17 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
         val usageType = getCommonUsageType()
         if (usageType != null) return usageType
 
-        val reference = element.getParentByType(javaClass<JetSimpleNameExpression>())
+        val reference = simpleName.getParentByType(javaClass<JetSimpleNameExpression>())
         if (reference == null) return null
 
-        val file = element.getContainingFile()
+        val file = simpleName.getContainingFile()
         if (file == null) return null
 
         val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file as JetFile).getBindingContext()
         val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, reference)
 
         return when (descriptor) {
-            is ClassifierDescriptor -> getClassUsageType()
+            is ClassifierDescriptor, is JavaNamespaceDescriptor -> getClassUsageType()
             is VariableDescriptor -> getVariableUsageType()
             is FunctionDescriptor -> getFunctionUsageType(descriptor)
             else -> null
