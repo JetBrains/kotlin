@@ -26,10 +26,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
-import org.jetbrains.jet.lang.types.error.ErrorClassDescriptor;
 import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.ArrayList;
@@ -128,7 +125,6 @@ public class DescriptorDeserializer {
                 return loadFunction(proto);
             case VAL:
             case VAR:
-            case OBJECT_PROPERTY:
                 return loadProperty(proto);
             case CONSTRUCTOR:
                 return loadConstructor(proto);
@@ -138,7 +134,17 @@ public class DescriptorDeserializer {
 
     @NotNull
     private PropertyDescriptor loadProperty(@NotNull Callable proto) {
-        PropertyDescriptorImpl property = createPropertyDescriptor(proto);
+        int flags = proto.getFlags();
+
+        PropertyDescriptorImpl property = new PropertyDescriptorImpl(
+                containingDeclaration,
+                getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
+                modality(Flags.MODALITY.get(flags)),
+                visibility(Flags.VISIBILITY.get(flags)),
+                Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
+                nameResolver.getName(proto.getName()),
+                memberKind(Flags.MEMBER_KIND.get(flags))
+        );
 
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
         DescriptorDeserializer local = createChildDeserializer(property, proto.getTypeParameterList(), typeParameters);
@@ -152,7 +158,7 @@ public class DescriptorDeserializer {
         PropertyGetterDescriptorImpl getter = null;
         PropertySetterDescriptorImpl setter = null;
 
-        if (Flags.HAS_GETTER.get(proto.getFlags())) {
+        if (Flags.HAS_GETTER.get(flags)) {
             int getterFlags = proto.getGetterFlags();
             boolean isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags);
             if (isNotDefault) {
@@ -168,7 +174,7 @@ public class DescriptorDeserializer {
             getter.initialize(property.getReturnType());
         }
 
-        if (Flags.HAS_SETTER.get(proto.getFlags())) {
+        if (Flags.HAS_SETTER.get(flags)) {
             int setterFlags = proto.getSetterFlags();
             boolean isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags);
             if (isNotDefault) {
@@ -191,37 +197,6 @@ public class DescriptorDeserializer {
         property.initialize(getter, setter);
 
         return property;
-    }
-
-    @NotNull
-    private PropertyDescriptorImpl createPropertyDescriptor(@NotNull Callable proto) {
-        int flags = proto.getFlags();
-        Name name = nameResolver.getName(proto.getName());
-        List<AnnotationDescriptor> annotations = getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY);
-        Visibility visibility = visibility(Flags.VISIBILITY.get(flags));
-        Callable.CallableKind callableKind = Flags.CALLABLE_KIND.get(flags);
-
-        if (callableKind == Callable.CallableKind.OBJECT_PROPERTY) {
-            FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration).child(name);
-            ClassId objectId = ClassId.fromFqNameAndContainingDeclaration(fqName, (ClassOrNamespaceDescriptor) containingDeclaration);
-            ClassDescriptor objectClass = typeDeserializer.getDescriptorFinder().findClass(objectId);
-            if (objectClass == null) {
-                // if we are not able to find the class for object property
-                // then something bad has happened since they should be in the same jar
-                objectClass = new ErrorClassDescriptor(objectId.asSingleFqName().asString());
-            }
-            return new PropertyDescriptorForObjectImpl(containingDeclaration, annotations, visibility, name, objectClass);
-        }
-
-        return new PropertyDescriptorImpl(
-                containingDeclaration,
-                annotations,
-                modality(Flags.MODALITY.get(flags)),
-                visibility,
-                callableKind == Callable.CallableKind.VAR,
-                name,
-                memberKind(Flags.MEMBER_KIND.get(flags))
-        );
     }
 
     @NotNull

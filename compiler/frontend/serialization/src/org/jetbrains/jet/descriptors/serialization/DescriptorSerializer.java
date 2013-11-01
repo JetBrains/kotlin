@@ -272,13 +272,10 @@ public class DescriptorSerializer {
         );
     }
 
-    private static ProtoBuf.Callable.CallableKind callableKind(CallableMemberDescriptor descriptor) {
-        if (descriptor instanceof VariableDescriptorForObject) {
-            return ProtoBuf.Callable.CallableKind.OBJECT_PROPERTY;
-        }
-        else if (descriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-            return propertyDescriptor.isVar() ? ProtoBuf.Callable.CallableKind.VAR : ProtoBuf.Callable.CallableKind.VAL;
+    @NotNull
+    private static ProtoBuf.Callable.CallableKind callableKind(@NotNull CallableMemberDescriptor descriptor) {
+        if (descriptor instanceof PropertyDescriptor) {
+            return ((PropertyDescriptor) descriptor).isVar() ? ProtoBuf.Callable.CallableKind.VAR : ProtoBuf.Callable.CallableKind.VAL;
         }
         if (descriptor instanceof ConstructorDescriptor) {
             return ProtoBuf.Callable.CallableKind.CONSTRUCTOR;

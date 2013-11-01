@@ -8380,7 +8380,7 @@ public final class ProtoBuf {
        * <code>FUN = 0;</code>
        *
        * <pre>
-       * 3 bits
+       * 2 bits
        * </pre>
        */
       FUN(0, 0),
@@ -8396,17 +8396,13 @@ public final class ProtoBuf {
        * <code>CONSTRUCTOR = 3;</code>
        */
       CONSTRUCTOR(3, 3),
-      /**
-       * <code>OBJECT_PROPERTY = 4;</code>
-       */
-      OBJECT_PROPERTY(4, 4),
       ;
 
       /**
        * <code>FUN = 0;</code>
        *
        * <pre>
-       * 3 bits
+       * 2 bits
        * </pre>
        */
       public static final int FUN_VALUE = 0;
@@ -8422,10 +8418,6 @@ public final class ProtoBuf {
        * <code>CONSTRUCTOR = 3;</code>
        */
       public static final int CONSTRUCTOR_VALUE = 3;
-      /**
-       * <code>OBJECT_PROPERTY = 4;</code>
-       */
-      public static final int OBJECT_PROPERTY_VALUE = 4;
 
 
       public final int getNumber() { return value; }
@@ -8436,7 +8428,6 @@ public final class ProtoBuf {
           case 1: return VAL;
           case 2: return VAR;
           case 3: return CONSTRUCTOR;
-          case 4: return OBJECT_PROPERTY;
           default: return null;
         }
       }

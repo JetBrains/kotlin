@@ -46,8 +46,7 @@ public abstract class DeserializedMemberScope implements JetScope {
         @Override
         public boolean accept(ProtoBuf.Callable.CallableKind value) {
             return value == ProtoBuf.Callable.CallableKind.VAL ||
-                   value == ProtoBuf.Callable.CallableKind.VAR ||
-                   value == ProtoBuf.Callable.CallableKind.OBJECT_PROPERTY;
+                   value == ProtoBuf.Callable.CallableKind.VAR;
         }
     };
 
