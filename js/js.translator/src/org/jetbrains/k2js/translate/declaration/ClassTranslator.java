@@ -44,6 +44,7 @@ import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createCl
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction;
 
@@ -220,16 +221,13 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsExpression> getSupertypesNameReferences() {
-        Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+        List<JetType> supertypes = getSupertypesWithoutFakes(descriptor);
         if (supertypes.isEmpty()) {
             return Collections.emptyList();
         }
         if (supertypes.size() == 1) {
-            JetType type = supertypes.iterator().next();
+            JetType type = supertypes.get(0);
             ClassDescriptor supertypeDescriptor = getClassDescriptorForType(type);
-            if (isAny(supertypeDescriptor)) {
-                return Collections.emptyList();
-            }
             return Collections.<JsExpression>singletonList(getClassReference(supertypeDescriptor));
         }
 
@@ -244,9 +242,7 @@ public final class ClassTranslator extends AbstractTranslator {
         for (TypeConstructor typeConstructor : sortedAllSuperTypes) {
             if (supertypeConstructors.contains(typeConstructor)) {
                 ClassDescriptor supertypeDescriptor = getClassDescriptorForTypeConstructor(typeConstructor);
-                if (!isAny(supertypeDescriptor)) {
-                    supertypesRefs.add(getClassReference(supertypeDescriptor));
-                }
+                supertypesRefs.add(getClassReference(supertypeDescriptor));
             }
         }
         return supertypesRefs;

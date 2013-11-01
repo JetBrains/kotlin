@@ -75,6 +75,9 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
     public void testKt3499() throws Exception {
         fooBoxTest();
     }
+    public void testFromFakeClasses() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
 
 
