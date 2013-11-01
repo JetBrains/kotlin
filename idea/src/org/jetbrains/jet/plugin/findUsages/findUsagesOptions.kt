@@ -63,51 +63,36 @@ public class KotlinPropertyFindUsagesOptions(project: Project): KotlinCallableFi
 }
 
 fun KotlinClassFindUsagesOptions.toClassHelper(): ClassUsagesSearchHelper =
-        ClassUsagesSearchHelper().let { builder ->
-            builder.constructorUsages = searchConstructorUsages
-            builder.nonConstructorUsages = isUsages
-            builder.skipImports = isSkipImportStatements
-
-            builder
-        }
+        ClassUsagesSearchHelper(
+            constructorUsages = searchConstructorUsages,
+            nonConstructorUsages = isUsages,
+            skipImports = isSkipImportStatements
+        )
 
 fun KotlinClassFindUsagesOptions.toClassDeclarationsHelper(): ClassDeclarationsUsagesSearchHelper =
-        ClassDeclarationsUsagesSearchHelper().let { builder ->
-            builder.functionUsages = isMethodsUsages
-            builder.propertyUsages = isFieldsUsages
-            builder.skipImports = isSkipImportStatements
-
-            builder
-        }
+        ClassDeclarationsUsagesSearchHelper(
+            functionUsages = isMethodsUsages,
+            propertyUsages = isFieldsUsages,
+            skipImports = isSkipImportStatements
+        )
 
 fun KotlinFunctionFindUsagesOptions.toHelper(): FunctionUsagesSearchHelper =
-        FunctionUsagesSearchHelper().let { builder ->
-            builder.selfUsages = isUsages
-            builder.overrideUsages = isUsages
-            builder.overloadUsages = isIncludeOverloadUsages
-            builder.extensionUsages = isIncludeOverloadUsages
-            builder.skipImports = isSkipImportStatements
-
-            builder
-        }
+        FunctionUsagesSearchHelper(
+            selfUsages = isUsages,
+            overrideUsages = isUsages,
+            overloadUsages = isIncludeOverloadUsages,
+            extensionUsages = isIncludeOverloadUsages,
+            skipImports = isSkipImportStatements
+        )
 
 fun KotlinPropertyFindUsagesOptions.toHelper(): PropertyUsagesSearchHelper =
-        PropertyUsagesSearchHelper().let { builder ->
-            builder.selfUsages = isUsages
-            builder.overrideUsages = isUsages
-            builder.readUsages = isReadAccess
-            builder.writeUsages = isWriteAccess
-            builder.skipImports = isSkipImportStatements
-
-            builder
-        }
-
-fun JavaFindUsagesOptions.toHelper(): DeclarationUsagesSearchHelper<PsiNamedElement> =
-        DeclarationUsagesSearchHelper<PsiNamedElement>().let { builder ->
-            builder.skipImports = isSkipImportStatements
-
-            builder
-        }
+        PropertyUsagesSearchHelper(
+            selfUsages = isUsages,
+            overrideUsages = isUsages,
+            readUsages = isReadAccess,
+            writeUsages = isWriteAccess,
+            skipImports = isSkipImportStatements
+        )
 
 fun <T : PsiNamedElement> FindUsagesOptions.toSearchTarget(element: T, restrictByTarget: Boolean): UsagesSearchTarget<T> {
     val location = if (isSearchForTextOccurrences && searchScope is GlobalSearchScope)

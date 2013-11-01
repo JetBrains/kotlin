@@ -84,9 +84,9 @@ object DefaultUsagesSearchHelper: UsagesSearchHelper<PsiNamedElement>()
 
 val isNotImportUsage = !((PsiReference::isImportUsage).searchFilter)
 
-open class DeclarationUsagesSearchHelper<T : PsiNamedElement> : UsagesSearchHelper<T>() {
-    public var skipImports: Boolean = false
-
+open class DeclarationUsagesSearchHelper<T : PsiNamedElement>(
+        public val skipImports: Boolean = false
+) : UsagesSearchHelper<T>() {
     protected val isFilteredImport: UsagesSearchFilter
         get() = isNotImportUsage.ifOrTrue(skipImports)
 
@@ -95,10 +95,11 @@ open class DeclarationUsagesSearchHelper<T : PsiNamedElement> : UsagesSearchHelp
 
 val isClassConstructorUsage = (PsiReference::isConstructorUsage).searchFilter
 
-class ClassUsagesSearchHelper : DeclarationUsagesSearchHelper<JetClassOrObject>() {
-    public var constructorUsages: Boolean = false
-    public var nonConstructorUsages: Boolean = false
-
+class ClassUsagesSearchHelper(
+        public val constructorUsages: Boolean = false,
+        public val nonConstructorUsages: Boolean = false,
+        skipImports: Boolean = false
+) : DeclarationUsagesSearchHelper<JetClassOrObject>(skipImports) {
     override fun makeFilter(target: UsagesSearchTarget<JetClassOrObject>): UsagesSearchFilter =
             super.makeFilter(target) and when {
                 constructorUsages && !nonConstructorUsages -> isClassConstructorUsage
@@ -108,10 +109,11 @@ class ClassUsagesSearchHelper : DeclarationUsagesSearchHelper<JetClassOrObject>(
             }
 }
 
-class ClassDeclarationsUsagesSearchHelper : DeclarationUsagesSearchHelper<JetClassOrObject>() {
-    public var functionUsages: Boolean = false
-    public var propertyUsages: Boolean = false
-
+class ClassDeclarationsUsagesSearchHelper(
+        public val functionUsages: Boolean = false,
+        public val propertyUsages: Boolean = false,
+        skipImports: Boolean = false
+) : DeclarationUsagesSearchHelper<JetClassOrObject>(skipImports) {
     override fun makeItemList(target: UsagesSearchTarget<JetClassOrObject>): List<UsagesSearchRequestItem> {
         val items = ArrayList<UsagesSearchRequestItem>()
         val declHelper = DeclarationUsagesSearchHelper<JetNamedDeclaration>(skipImports)
@@ -128,10 +130,11 @@ class ClassDeclarationsUsagesSearchHelper : DeclarationUsagesSearchHelper<JetCla
 
 val isOverrideUsage = (PsiReference::isCallableOverrideUsage).searchFilter
 
-abstract class CallableUsagesSearchHelper<T: JetCallableDeclaration>: DeclarationUsagesSearchHelper<T>() {
-    public var selfUsages: Boolean = true
-    public var overrideUsages: Boolean = true
-
+abstract class CallableUsagesSearchHelper<T: JetCallableDeclaration>(
+        public val selfUsages: Boolean = true,
+        public val overrideUsages: Boolean = true,
+        skipImports: Boolean = false
+): DeclarationUsagesSearchHelper<T>(skipImports) {
     val isTargetOrOverrideUsage: UsagesSearchFilter
         get() = isTargetUsage.ifOrFalse(selfUsages) or isOverrideUsage.ifOrFalse(overrideUsages)
 }
@@ -139,10 +142,13 @@ abstract class CallableUsagesSearchHelper<T: JetCallableDeclaration>: Declaratio
 val isOverloadUsage = (PsiReference::isUsageInContainingDeclaration).searchFilter
 val isExtensionUsage = (PsiReference::isExtensionOfDeclarationClassUsage).searchFilter
 
-class FunctionUsagesSearchHelper() : CallableUsagesSearchHelper<JetNamedFunction>() {
-    public var overloadUsages: Boolean = false
-    public var extensionUsages: Boolean = false
-
+class FunctionUsagesSearchHelper(
+        public val overloadUsages: Boolean = false,
+        public val extensionUsages: Boolean = false,
+        selfUsages: Boolean = true,
+        overrideUsages: Boolean = true,
+        skipImports: Boolean = false
+) : CallableUsagesSearchHelper<JetNamedFunction>(selfUsages, overrideUsages, skipImports) {
     override fun makeFilter(target: UsagesSearchTarget<JetNamedFunction>): UsagesSearchFilter {
         return (isTargetOrOverrideUsage
             or isOverloadUsage.ifOrFalse(overloadUsages)
@@ -152,10 +158,13 @@ class FunctionUsagesSearchHelper() : CallableUsagesSearchHelper<JetNamedFunction
 
 val isPropertyReadOnlyUsage = (PsiReference::isPropertyReadOnlyUsage).searchFilter
 
-class PropertyUsagesSearchHelper() : CallableUsagesSearchHelper<JetProperty>() {
-    public var readUsages: Boolean = true
-    public var writeUsages: Boolean = true
-
+class PropertyUsagesSearchHelper(
+        public val readUsages: Boolean = true,
+        public val writeUsages: Boolean = true,
+        selfUsages: Boolean = true,
+        overrideUsages: Boolean = true,
+        skipImports: Boolean = false
+) : CallableUsagesSearchHelper<JetProperty>(selfUsages, overrideUsages, skipImports) {
     override fun makeWordList(target: UsagesSearchTarget<JetProperty>): List<String> {
         return target.element.names(readable = readUsages, writable = writeUsages)
     }
