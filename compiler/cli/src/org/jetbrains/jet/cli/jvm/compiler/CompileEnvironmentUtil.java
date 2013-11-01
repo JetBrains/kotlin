@@ -26,11 +26,13 @@ import jet.modules.AllModules;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.OutputFileFactory;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
-import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 import org.jetbrains.jet.cli.common.modules.ModuleDescription;
 import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
+import org.jetbrains.jet.OutputDirector;
+import org.jetbrains.jet.cli.common.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
@@ -49,7 +51,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.jar.*;
 
@@ -236,48 +237,6 @@ public class CompileEnvironmentUtil {
         }
     }
 
-    public interface OutputDirector {
-        @NotNull
-        File getOutputDirectory(@NotNull Collection<File> sourceFiles);
-    }
-
-    public static OutputDirector singleDirectory(@Nullable final File file) {
-        if (file == null) return null;
-        return new OutputDirector() {
-            @NotNull
-            @Override
-            public File getOutputDirectory(@NotNull Collection<File> sourceFiles) {
-                return file;
-            }
-        };
-    }
-
-    public static void writeToOutputWithDirector(
-            OutputFileFactory factory,
-            @NotNull OutputDirector outputDirector,
-            @NotNull MessageCollector messageCollector
-    ) {
-        List<String> files = factory.getOutputFiles();
-        for (String file : files) {
-            List<File> sourceFiles = factory.getSourceFiles(file);
-            File target = new File(outputDirector.getOutputDirectory(sourceFiles), file);
-            messageCollector.report(
-                    CompilerMessageSeverity.OUTPUT,
-                    OutputMessageUtil.formatOutputMessage(sourceFiles, target),
-                    CompilerMessageLocation.NO_LOCATION);
-            try {
-                FileUtil.writeToFile(target, factory.asBytes(file));
-            }
-            catch (IOException e) {
-                throw new CompileEnvironmentException(e);
-            }
-        }
-    }
-
-    public static void writeToOutputDirectory(ClassFileFactory factory, @NotNull File outputDir) {
-        writeToOutputWithDirector(factory, singleDirectory(outputDir), MessageCollector.NONE);
-    }
-
     // Used for debug output only
     private static String loadModuleScriptText(String moduleScriptFile) {
         String moduleScriptText;
@@ -302,7 +261,7 @@ public class CompileEnvironmentUtil {
             writeToJar(jar, includeRuntime, mainClass, factory);
         }
         else if (outputDir != null) {
-            writeToOutputWithDirector(factory, outputDir, messageCollector);
+            OutputUtilsPackage.writeAll(factory, outputDir, messageCollector);
         }
         else {
             throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");

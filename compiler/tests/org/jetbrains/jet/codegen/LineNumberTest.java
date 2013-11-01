@@ -26,7 +26,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -70,7 +70,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
                                                environment.getProject());
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir);
+        OutputUtilsPackage.writeAllTo(classFileFactory, tmpdir);
     }
 
     @NotNull

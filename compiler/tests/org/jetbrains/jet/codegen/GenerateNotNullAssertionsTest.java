@@ -26,8 +26,8 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -84,7 +84,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         loadFile("notNullAssertions/noAssertionsForKotlin.kt");
         ClassFileFactory factory = generateClassesInFile();
         File compiledDirectory = new File(FileUtil.getTempDirectory(), "kotlin-classes");
-        CompileEnvironmentUtil.writeToOutputDirectory(factory, compiledDirectory);
+        OutputUtilsPackage.writeAllTo(factory, compiledDirectory);
 
         setUpEnvironment(true, false, compiledDirectory);
         loadFile("notNullAssertions/noAssertionsForKotlinMain.kt");

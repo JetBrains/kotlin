@@ -32,6 +32,8 @@ import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.OutputDirector;
+import org.jetbrains.jet.SingleDirectoryDirector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -112,7 +114,7 @@ public class KotlinToJVMBytecodeCompiler {
     private static void writeOutput(
             CompilerConfiguration configuration,
             ClassFileFactory moduleFactory,
-            CompileEnvironmentUtil.OutputDirector outputDir,
+            OutputDirector outputDir,
             File jarPath,
             boolean jarRuntime,
             FqName mainClass
@@ -137,10 +139,10 @@ public class KotlinToJVMBytecodeCompiler {
             if (moduleFactory == null) {
                 return false;
             }
-            CompileEnvironmentUtil.OutputDirector outputDir = new CompileEnvironmentUtil.OutputDirector() {
+            OutputDirector outputDir = new OutputDirector() {
                 @NotNull
                 @Override
-                public File getOutputDirectory(@NotNull Collection<File> sourceFiles) {
+                public File getOutputDirectory(@NotNull Collection<? extends File> sourceFiles) {
                     for (File sourceFile : sourceFiles) {
                         // Note that here we track original modules:
                         Module module = chunk.findModuleBySourceFile(sourceFile);
@@ -188,7 +190,7 @@ public class KotlinToJVMBytecodeCompiler {
         }
 
         try {
-            CompileEnvironmentUtil.OutputDirector outputDirector = CompileEnvironmentUtil.singleDirectory(outputDir);
+            OutputDirector outputDirector = outputDir != null ? new SingleDirectoryDirector(outputDir) : null;
             writeOutput(environment.getConfiguration(), generationState.getFactory(), outputDirector, jar, includeRuntime, mainClass);
             return true;
         }

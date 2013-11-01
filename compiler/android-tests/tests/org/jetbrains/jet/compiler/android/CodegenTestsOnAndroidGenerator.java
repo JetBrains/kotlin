@@ -23,7 +23,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
@@ -147,7 +147,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     }
                     Assert.assertTrue("Cannot create directory for compiled files", outputDir.exists());
 
-                    CompileEnvironmentUtil.writeToOutputDirectory(factory, outputDir);
+                    OutputUtilsPackage.writeAllTo(factory, outputDir);
                 }
             }
         }

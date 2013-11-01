@@ -24,7 +24,6 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
@@ -39,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.outputUtils.OutputUtilsPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public final class LoadDescriptorUtil {
         GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getJetFile().getProject(), fileAndExhaust.getExhaust(), Collections.singletonList(
                 fileAndExhaust.getJetFile()));
         ClassFileFactory classFileFactory = state.getFactory();
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, outDir);
+        OutputUtilsPackage.writeAllTo(classFileFactory, outDir);
         return fileAndExhaust.getExhaust();
     }
 

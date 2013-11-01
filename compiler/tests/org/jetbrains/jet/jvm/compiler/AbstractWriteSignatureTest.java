@@ -27,7 +27,7 @@ import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
@@ -72,7 +72,7 @@ public abstract class AbstractWriteSignatureTest extends TestCaseWithTmpdir {
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir);
+        OutputUtilsPackage.writeAllTo(classFileFactory, tmpdir);
 
         Disposer.dispose(myTestRootDisposable);
 
