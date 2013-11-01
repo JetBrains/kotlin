@@ -87,7 +87,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
-    private boolean hasInferredReturnType;
+    private Boolean hasInferredReturnType = null;
     private boolean completed = false;
 
     private ResolvedCallImpl(
@@ -289,14 +289,17 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     }
 
     public boolean hasInferredReturnType() {
-        if (!completed) throw new IllegalStateException("Inferred return type is not known before resolution completion.");
+        if (!completed) {
+            hasInferredReturnType = constraintSystem == null || CallResolverUtil.hasInferredReturnType(candidateDescriptor, constraintSystem);
+        }
+        assert hasInferredReturnType != null : "The property 'hasInferredReturnType' was not set when the call was completed.";
         return hasInferredReturnType;
     }
 
     @Override
     public void markCallAsCompleted() {
         if (!completed) {
-            hasInferredReturnType = CallResolverUtil.hasInferredReturnType(candidateDescriptor, constraintSystem);
+            hasInferredReturnType();
         }
         trace = null;
         constraintSystem = null;
