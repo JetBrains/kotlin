@@ -68,8 +68,8 @@ class LazyJavaClassDescriptor(
 
     override fun getClassObjectDescriptor(): ClassDescriptor? = null
 
-    private val _annotations = c.resolveAnnotations(jClass.getAnnotations())
-    override fun getAnnotations(): List<AnnotationDescriptor> = _annotations
+    private val _annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass.getAnnotations()) }
+    override fun getAnnotations(): List<AnnotationDescriptor> = _annotations()
 
     private val _functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
         val samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(jClass);
