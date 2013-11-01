@@ -88,6 +88,7 @@ public class BindingTraceContext implements BindingTrace {
         diagnosticList.clear();
     }
 
+    @NotNull
     @Override
     public BindingContext getBindingContext() {
         return bindingContext;

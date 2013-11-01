@@ -131,6 +131,7 @@ public class LockBasedLazyResolveStorageManager extends LockBasedStorageManager 
             this.context = new LockProtectedContext(lock, trace.getBindingContext());
         }
 
+        @NotNull
         @Override
         public BindingContext getBindingContext() {
             return context;

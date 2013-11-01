@@ -35,6 +35,7 @@ public class PseudocodeUtil {
 
     public static Pseudocode generatePseudocode(@NotNull JetDeclaration declaration, @NotNull final BindingContext bindingContext) {
         BindingTrace mockTrace = new BindingTrace() {
+            @NotNull
             @Override
             public BindingContext getBindingContext() {
                 return bindingContext;
