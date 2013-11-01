@@ -170,6 +170,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinDerivedInterfaceUsages2.0.kt");
             }
             
+            @TestMetadata("kotlinInnerClassAllUsages.0.kt")
+            public void testKotlinInnerClassAllUsages() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinInnerClassAllUsages.0.kt");
+            }
+            
             @TestMetadata("kotlinLocalClassUsages1.0.kt")
             public void testKotlinLocalClassUsages1() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinLocalClassUsages1.0.kt");
@@ -178,6 +183,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             @TestMetadata("kotlinLocalClassUsages2.0.kt")
             public void testKotlinLocalClassUsages2() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinLocalClassUsages2.0.kt");
+            }
+            
+            @TestMetadata("kotlinNestedClassAllUsages.0.kt")
+            public void testKotlinNestedClassAllUsages() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinNestedClassAllUsages.0.kt");
             }
             
             @TestMetadata("kotlinPrivateClassUsages.0.kt")
@@ -259,6 +269,11 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             @TestMetadata("kotlinLocalObjectUsages2.0.kt")
             public void testKotlinLocalObjectUsages2() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findObjectUsages/kotlinLocalObjectUsages2.0.kt");
+            }
+            
+            @TestMetadata("kotlinNestedObjectUsages.0.kt")
+            public void testKotlinNestedObjectUsages() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findObjectUsages/kotlinNestedObjectUsages.0.kt");
             }
             
             @TestMetadata("kotlinObjectUsages.0.kt")
@@ -416,6 +431,16 @@ public class JetFindUsagesTest extends AbstractJetFindUsagesTest {
             @TestMetadata("JKDerivedClasses3.0.java")
             public void testJKDerivedClasses3() throws Exception {
                 doTest("idea/testData/findUsages/java/findJavaClassUsages/JKDerivedClasses3.0.java");
+            }
+            
+            @TestMetadata("JKInnerClassAllUsages.0.java")
+            public void testJKInnerClassAllUsages() throws Exception {
+                doTest("idea/testData/findUsages/java/findJavaClassUsages/JKInnerClassAllUsages.0.java");
+            }
+            
+            @TestMetadata("JKNestedClassAllUsages.0.java")
+            public void testJKNestedClassAllUsages() throws Exception {
+                doTest("idea/testData/findUsages/java/findJavaClassUsages/JKNestedClassAllUsages.0.java");
             }
             
         }
