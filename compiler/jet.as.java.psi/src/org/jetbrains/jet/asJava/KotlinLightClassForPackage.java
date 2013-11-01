@@ -22,7 +22,6 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
-import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.impl.light.LightEmptyImplementsList;
 import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.javadoc.PsiDocComment;
@@ -40,8 +39,10 @@ import org.jetbrains.jet.plugin.JetLanguage;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-public class KotlinLightClassForPackage extends AbstractLightClass implements KotlinLightClass, JetJavaMirrorMarker {
+public class KotlinLightClassForPackage extends KotlinWrappingLightClass implements KotlinLightClass, JetJavaMirrorMarker {
     private final FqName packageFqName;
     private final FqName packageClassFqName; // derived from packageFqName
     private final GlobalSearchScope searchScope;
@@ -211,14 +212,20 @@ public class KotlinLightClassForPackage extends AbstractLightClass implements Ko
 
     @NotNull
     @Override
-    public PsiClassInitializer[] getInitializers() {
-        return PsiClassInitializer.EMPTY_ARRAY;
+    public List<PsiClass> getOwnInnerClasses() {
+        return Collections.emptyList();
     }
 
     @NotNull
     @Override
     public PsiClass[] getAllInnerClasses() {
         return PsiClass.EMPTY_ARRAY;
+    }
+
+    @NotNull
+    @Override
+    public PsiClassInitializer[] getInitializers() {
+        return PsiClassInitializer.EMPTY_ARRAY;
     }
 
     @Nullable

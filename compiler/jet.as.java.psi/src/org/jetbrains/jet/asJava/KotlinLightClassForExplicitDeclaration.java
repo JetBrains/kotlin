@@ -29,12 +29,12 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
-import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -52,12 +52,13 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass implements KotlinLightClass, JetJavaMirrorMarker {
+public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightClass implements KotlinLightClass, JetJavaMirrorMarker {
     private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     @Nullable
@@ -325,7 +326,7 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
             psiModifiers.add(PsiModifier.STATIC);
         }
 
-        return psiModifiers.toArray(new String[psiModifiers.size()]);
+        return ArrayUtil.toStringArray(psiModifiers);
     }
 
     private boolean isAbstract(@NotNull JetClassOrObject object) {
@@ -404,5 +405,12 @@ public class KotlinLightClassForExplicitDeclaration extends AbstractLightClass i
         catch (Throwable e) {
             return KotlinLightClass.class.getSimpleName() + ":" + e.toString();
         }
+    }
+
+    @NotNull
+    @Override
+    public List<PsiClass> getOwnInnerClasses() {
+        // TODO: Should return inner class wrapper
+        return Arrays.asList(getDelegate().getInnerClasses());
     }
 }
