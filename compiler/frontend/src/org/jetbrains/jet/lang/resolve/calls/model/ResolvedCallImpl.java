@@ -313,6 +313,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     }
 
     private void assertNotCompleted(String elementName) {
-        if (completed) throw new IllegalStateException(elementName + " is erased after resolution completion.");
+        assert !completed: elementName + " is erased after resolution completion.";
     }
 }
