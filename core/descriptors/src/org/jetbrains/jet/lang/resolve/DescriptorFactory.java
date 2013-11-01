@@ -35,6 +35,14 @@ public class DescriptorFactory {
     public static final Name VALUE_OF_METHOD_NAME = Name.identifier("valueOf");
     public static final Name VALUES_METHOD_NAME = Name.identifier("values");
 
+    private static class DefaultConstructorDescriptor extends ConstructorDescriptorImpl {
+        public DefaultConstructorDescriptor(@NotNull ClassDescriptor containingClass) {
+            super(containingClass, Collections.<AnnotationDescriptor>emptyList(), true);
+            initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
+                       getDefaultConstructorVisibility(containingClass));
+        }
+    }
+
     private DescriptorFactory() {
     }
 
@@ -68,12 +76,11 @@ public class DescriptorFactory {
 
     @NotNull
     public static ConstructorDescriptorImpl createPrimaryConstructorForObject(@NotNull ClassDescriptor containingClass) {
-        ConstructorDescriptorImpl constructorDescriptor =
-                new ConstructorDescriptorImpl(containingClass, Collections.<AnnotationDescriptor>emptyList(), true);
-        constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(),
-                                         Collections.<ValueParameterDescriptor>emptyList(),
-                                         getDefaultConstructorVisibility(containingClass));
-        return constructorDescriptor;
+        return new DefaultConstructorDescriptor(containingClass);
+    }
+
+    public static boolean isDefaultPrimaryConstructor(@NotNull ConstructorDescriptor constructor) {
+        return constructor instanceof DefaultConstructorDescriptor;
     }
 
     @NotNull

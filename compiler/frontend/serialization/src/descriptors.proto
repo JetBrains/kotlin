@@ -120,12 +120,19 @@ message Class {
 
   optional bool class_object_present = 9 [default = false];
 
-  optional Callable primary_constructor = 10;
-  // todo: other constructors?
-
   repeated Callable member = 11;
 
   repeated int32 enum_entry = 12;
+
+  message PrimaryConstructor {
+    // If this field is present, it contains serialized data for the primary constructor.
+    // Otherwise it's default and can be created manually upon deserialization
+    optional Callable data = 1;
+  }
+
+  // This field is present if and only if the class has a primary constructor
+  optional PrimaryConstructor primary_constructor = 13;
+  // todo: other constructors?
 }
 
 message Package {
