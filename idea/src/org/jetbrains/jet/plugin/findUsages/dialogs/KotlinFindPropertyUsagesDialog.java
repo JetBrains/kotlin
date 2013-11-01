@@ -95,15 +95,20 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
     protected void addUsagesOptions(JPanel optionsPanel) {
         super.addUsagesOptions(optionsPanel);
 
-        boolean isAbstract = ((JetProperty) getPsiElement()).hasModifier(JetTokens.ABSTRACT_KEYWORD);
-        cbOverrides = addCheckboxToPanel(
-                isAbstract
-                ? JetBundle.message("find.what.implementing.properties.checkbox")
-                : JetBundle.message("find.what.overriding.properties.checkbox"),
-                FindSettings.getInstance().isSearchOverloadedMethods(),
-                optionsPanel,
-                false
-        );
+        JetProperty property = (JetProperty) getPsiElement();
+
+        boolean isAbstract = property.hasModifier(JetTokens.ABSTRACT_KEYWORD);
+        boolean isOpen = property.hasModifier(JetTokens.OPEN_KEYWORD);
+        if (isOpen || isAbstract) {
+            cbOverrides = addCheckboxToPanel(
+                    isAbstract
+                    ? JetBundle.message("find.what.implementing.properties.checkbox")
+                    : JetBundle.message("find.what.overriding.properties.checkbox"),
+                    FindSettings.getInstance().isSearchOverloadedMethods(),
+                    optionsPanel,
+                    false
+            );
+        }
     }
 
     @Override
