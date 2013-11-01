@@ -20,24 +20,57 @@ import com.google.common.collect.Sets;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
+import com.intellij.psi.impl.light.AbstractLightClass;
+import com.intellij.psi.impl.light.LightEmptyImplementsList;
+import com.intellij.psi.impl.light.LightModifierList;
+import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 import javax.swing.*;
 import java.util.Collection;
 
-public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase implements KotlinLightClass, JetJavaMirrorMarker {
+public class KotlinLightClassForPackage extends AbstractLightClass implements KotlinLightClass, JetJavaMirrorMarker {
+    private final FqName packageFqName;
+    private final FqName packageClassFqName; // derived from packageFqName
+    private final GlobalSearchScope searchScope;
+    private final Collection<JetFile> files;
+    private final int hashCode;
+    private final CachedValue<PsiJavaFileStub> javaFileStub;
+    private final PsiModifierList modifierList;
+    private final LightEmptyImplementsList implementsList;
+
+    private KotlinLightClassForPackage(
+            @NotNull PsiManager manager,
+            @NotNull FqName packageFqName,
+            @NotNull GlobalSearchScope searchScope,
+            @NotNull Collection<JetFile> files
+    ) {
+        super(manager, JetLanguage.INSTANCE);
+        this.modifierList = new LightModifierList(manager, JetLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL);
+        this.implementsList = new LightEmptyImplementsList(manager);
+        this.packageFqName = packageFqName;
+        this.packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
+        this.searchScope = searchScope;
+        assert !files.isEmpty() : "No files for package " + packageFqName;
+        this.files = Sets.newHashSet(files); // needed for hashCode
+        this.hashCode = computeHashCode();
+        KotlinJavaFileStubProvider stubProvider =
+                KotlinJavaFileStubProvider.createForPackageClass(getProject(), packageFqName, searchScope);
+        this.javaFileStub = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider, /*trackValue = */false);
+    }
+
     @Nullable
     public static KotlinLightClassForPackage create(
             @NotNull PsiManager manager,
@@ -51,28 +84,147 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
         return new KotlinLightClassForPackage(manager, qualifiedName, searchScope, files);
     }
 
-    private final FqName packageFqName;
-    private final FqName packageClassFqName; // derived from packageFqName
-    private final GlobalSearchScope searchScope;
-    private final Collection<JetFile> files;
-    private final int hashCode;
-    private final CachedValue<PsiJavaFileStub> javaFileStub;
+    private static boolean allValid(Collection<JetFile> files) {
+        for (JetFile file : files) {
+            if (!file.isValid()) return false;
+        }
+        return true;
+    }
 
-    private KotlinLightClassForPackage(
-            @NotNull PsiManager manager,
-            @NotNull FqName packageFqName,
-            @NotNull GlobalSearchScope searchScope,
-            @NotNull Collection<JetFile> files
-    ) {
-        super(manager);
-        this.packageFqName = packageFqName;
-        this.packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName);
-        this.searchScope = searchScope;
-        assert !files.isEmpty() : "No files for package " + packageFqName;
-        this.files = Sets.newHashSet(files); // needed for hashCode
-        this.hashCode = computeHashCode();
-        KotlinJavaFileStubProvider stubProvider = KotlinJavaFileStubProvider.createForPackageClass(getProject(), packageFqName, searchScope);
-        this.javaFileStub = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider, /*trackValue = */false);
+    @Nullable
+    @Override
+    public PsiModifierList getModifierList() {
+        return modifierList;
+    }
+
+    @Override
+    public boolean hasModifierProperty(@NonNls @NotNull String name) {
+        return modifierList.hasModifierProperty(name);
+    }
+
+    @Override
+    public boolean isDeprecated() {
+        return false;
+    }
+
+    @Override
+    public boolean isInterface() {
+        return false;
+    }
+
+    @Override
+    public boolean isAnnotationType() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnum() {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public PsiClass getContainingClass() {
+        return null;
+    }
+
+    @Override
+    public boolean hasTypeParameters() {
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public PsiTypeParameter[] getTypeParameters() {
+        return PsiTypeParameter.EMPTY_ARRAY;
+    }
+
+    @Nullable
+    @Override
+    public PsiTypeParameterList getTypeParameterList() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public PsiDocComment getDocComment() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public PsiReferenceList getImplementsList() {
+        return implementsList;
+    }
+
+    @NotNull
+    @Override
+    public PsiClassType[] getImplementsListTypes() {
+        return PsiClassType.EMPTY_ARRAY;
+    }
+
+    @Nullable
+    @Override
+    public PsiReferenceList getExtendsList() {
+        // TODO: Find a way to return just Object
+        return super.getExtendsList();
+    }
+
+    @NotNull
+    @Override
+    public PsiClassType[] getExtendsListTypes() {
+        // TODO see getExtendsList()
+        return super.getExtendsListTypes();
+    }
+
+    @Nullable
+    @Override
+    public PsiClass getSuperClass() {
+        // TODO see getExtendsList()
+        return super.getSuperClass();
+    }
+
+    @NotNull
+    @Override
+    public PsiClass[] getSupers() {
+        // TODO see getExtendsList()
+        return super.getSupers();
+    }
+
+    @NotNull
+    @Override
+    public PsiClassType[] getSuperTypes() {
+        // TODO see getExtendsList()
+        return super.getSuperTypes();
+    }
+
+    @Override
+    public PsiClass[] getInterfaces() {
+        return PsiClass.EMPTY_ARRAY;
+    }
+
+    @NotNull
+    @Override
+    public PsiClass[] getInnerClasses() {
+        return PsiClass.EMPTY_ARRAY;
+    }
+
+    @NotNull
+    @Override
+    public PsiClassInitializer[] getInitializers() {
+        return PsiClassInitializer.EMPTY_ARRAY;
+    }
+
+    @NotNull
+    @Override
+    public PsiClass[] getAllInnerClasses() {
+        return PsiClass.EMPTY_ARRAY;
+    }
+
+    @Nullable
+    @Override
+    public PsiClass findInnerClassByName(@NonNls String name, boolean checkBases) {
+        return null;
     }
 
     @NotNull
@@ -96,13 +248,6 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
     @Override
     public boolean isValid() {
         return allValid(files);
-    }
-
-    private static boolean allValid(Collection<JetFile> files) {
-        for (JetFile file : files) {
-            if (!file.isValid()) return false;
-        }
-        return true;
     }
 
     @NotNull
@@ -180,5 +325,4 @@ public class KotlinLightClassForPackage extends KotlinLightClassForPackageBase i
             return KotlinLightClassForPackage.class.getSimpleName() + ":" + e.toString();
         }
     }
-
 }
