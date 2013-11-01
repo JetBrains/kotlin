@@ -377,18 +377,53 @@ public class CandidateResolver {
         JetType result = BindingContextUtils.updateRecordedType(
                 type, expression, context.trace, isFairSafeCallExpression(expression, context.trace));
 
-        contextForArgument.candidateCall.markCallAsCompleted();
+        markResultingCallAsCompleted(context, keyExpression);
+
+        DataFlowUtils.checkType(result, expression, contextForArgument);
+    }
+
+    public void completeNestedCallsForNotResolvedInvocation(@NotNull CallResolutionContext<?> context) {
+        completeNestedCallsForNotResolvedInvocation(context, context.call.getValueArguments());
+    }
+
+    public void completeNestedCallsForNotResolvedInvocation(@NotNull CallResolutionContext<?> context, @NotNull Collection<? extends ValueArgument> arguments) {
+        if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return;
+
+        for (ValueArgument argument : arguments) {
+            JetExpression expression = argument.getArgumentExpression();
+
+            JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
+            markResultingCallAsCompleted(context, keyExpression);
+
+            CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
+                    context.resolutionResultsCache.getDeferredComputation(keyExpression);
+            if (storedContextForArgument != null) {
+                completeNestedCallsForNotResolvedInvocation(storedContextForArgument);
+            }
+        }
+    }
+
+    private static void markResultingCallAsCompleted(
+            @NotNull CallResolutionContext<?> context,
+            @Nullable JetExpression keyExpression
+    ) {
+        if (keyExpression == null) return;
+
+        CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
+                context.resolutionResultsCache.getDeferredComputation(keyExpression);
+        if (storedContextForArgument == null) return;
+
+        storedContextForArgument.candidateCall.markCallAsCompleted();
 
         // clean data for "invoke" calls
         ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
         assert resolvedCall != null : "Resolved call for '" + keyExpression + "' is not stored, but CallCandidateResolutionContext is.";
         resolvedCall.markCallAsCompleted();
-
-        DataFlowUtils.checkType(result, expression, contextForArgument);
     }
 
     @Nullable
-    private JetExpression getDeferredComputationKeyExpression(@NotNull JetExpression expression) {
+    private JetExpression getDeferredComputationKeyExpression(@Nullable JetExpression expression) {
+        if (expression == null) return null;
         return expression.accept(new JetVisitor<JetExpression, Void>() {
             @Nullable
             private JetExpression visitInnerExpression(@Nullable JetElement expression) {

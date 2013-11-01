@@ -54,6 +54,7 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -313,11 +314,14 @@ public class CallResolver {
         }
         traceToResolveCall.commit();
 
-        if (!prioritizedTasks.isEmpty() && context.contextDependency == ContextDependency.INDEPENDENT) {
+        if (context.contextDependency == ContextDependency.INDEPENDENT) {
             results = completeTypeInferenceDependentOnExpectedType(context, results, tracing);
             if (results.isSingleResult()) {
                 //todo clean internal data for several resulting calls
                 results.getResultingCall().markCallAsCompleted();
+            }
+            else {
+                candidateResolver.completeNestedCallsForNotResolvedInvocation(context);
             }
         }
 
@@ -350,8 +354,9 @@ public class CallResolver {
             @NotNull TracingStrategy tracing
     ) {
         if (results.isSingleResult()) {
-            argumentTypeResolver.checkUnmappedArgumentTypes(
-                    context, results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments());
+            Set<ValueArgument> unmappedArguments = results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments();
+            argumentTypeResolver.checkUnmappedArgumentTypes(context, unmappedArguments);
+            candidateResolver.completeNestedCallsForNotResolvedInvocation(context, unmappedArguments);
         }
 
         if (!results.isSingleResult()) return results;
