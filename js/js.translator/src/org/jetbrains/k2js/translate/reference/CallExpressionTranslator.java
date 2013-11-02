@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -102,8 +103,8 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     private JsExpression getCalleeExpression() {
         assert argumentsInfo != null : "the results of this function depends on the argumentsInfo";
         if (isNativeFunctionCall && argumentsInfo.isHasSpreadOperator()) {
-            String functionName = resolvedCall.getCandidateDescriptor().getOriginal().getName().getIdentifier();
-            return new JsNameRef("apply", functionName);
+            JsName functionName = context().getNameForDescriptor(resolvedCall.getCandidateDescriptor());
+            return new JsNameRef("apply", functionName.makeRef());
         }
         CallableDescriptor candidateDescriptor = resolvedCall.getCandidateDescriptor();
         if (candidateDescriptor instanceof ExpressionAsFunctionDescriptor) {

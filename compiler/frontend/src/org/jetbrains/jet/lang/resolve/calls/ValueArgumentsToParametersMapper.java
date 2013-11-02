@@ -176,6 +176,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             ) {
                 report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(argument.asElement()));
                 setStatus(WEAK_ERROR);
+                unmappedArguments.add(argument);
 
                 return positionedThenNamed;
             }

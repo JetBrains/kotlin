@@ -52,7 +52,7 @@ public class OverloadResolutionResultsUtil {
             @NotNull ContextDependency contextDependency
     ) {
         if (results.isSingleResult() && contextDependency == ContextDependency.INDEPENDENT) {
-            if (!CallResolverUtil.hasInferredReturnType(results.getResultingCall())) {
+            if (!results.getResultingCall().getCallToCompleteTypeArgumentInference().hasInferredReturnType()) {
                 return null;
             }
         }

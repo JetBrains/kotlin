@@ -140,6 +140,16 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava("compiler/testData/codegen/boxWithJava/innerClass/kt3532.kt");
         }
         
+        @TestMetadata("kt3812.kt")
+        public void testKt3812() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/innerClass/kt3812.kt");
+        }
+        
+        @TestMetadata("kt4036.kt")
+        public void testKt4036() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/innerClass/kt4036.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithJava/property")

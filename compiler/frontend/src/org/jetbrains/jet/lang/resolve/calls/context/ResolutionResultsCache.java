@@ -24,12 +24,24 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.CallKey;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
 public interface ResolutionResultsCache {
-    class MemberType<D extends CallableDescriptor> {}
-    MemberType<FunctionDescriptor> FUNCTION_MEMBER_TYPE = new MemberType<FunctionDescriptor>();
-    MemberType<VariableDescriptor> PROPERTY_MEMBER_TYPE = new MemberType<VariableDescriptor>();
+    class MemberType<D extends CallableDescriptor> {
+        public final String debugName;
+
+        public MemberType(String name) {
+            debugName = name;
+        }
+
+        @Override
+        public String toString() {
+            return debugName;
+        }
+    }
+    MemberType<FunctionDescriptor> FUNCTION_MEMBER_TYPE = new MemberType<FunctionDescriptor>("FUNCTION_MEMBER_TYPE");
+    MemberType<VariableDescriptor> PROPERTY_MEMBER_TYPE = new MemberType<VariableDescriptor>("PROPERTY_MEMBER_TYPE");
 
 
     <D extends CallableDescriptor> void recordResolutionResults(@NotNull CallKey callKey, @NotNull MemberType<D> memberType, @NotNull OverloadResolutionResultsImpl<D> results);
@@ -42,12 +54,16 @@ public interface ResolutionResultsCache {
     @Nullable
     DelegatingBindingTrace getResolutionTrace(@NotNull CallKey callKey);
 
+    //For VariableAsFunctionCall deferredComputation is taken for its function call, but resolvedCall is the VariableAsFunctionCall itself.
     <D extends CallableDescriptor> void recordDeferredComputationForCall(
             @NotNull CallKey callKey,
-            @NotNull CallCandidateResolutionContext<D> deferredComputation,
-            @NotNull MemberType memberType
+            @NotNull ResolvedCallWithTrace<D> resolvedCall,
+            @NotNull CallCandidateResolutionContext<D> deferredComputation
     );
 
     @Nullable
-    CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputation(@Nullable JetExpression expression);
+    CallCandidateResolutionContext<? extends CallableDescriptor> getDeferredComputation(@Nullable JetExpression expression);
+
+    @Nullable
+    ResolvedCallWithTrace<? extends CallableDescriptor> getCallForArgument(@Nullable JetExpression expression);
 }

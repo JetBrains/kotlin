@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
@@ -55,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -64,6 +66,7 @@ import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionRes
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
+@SuppressWarnings("RedundantTypeArguments")
 public class CallResolver {
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
@@ -122,7 +125,7 @@ public class CallResolver {
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
                 TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
         return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE,
-                context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
+                                               context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
     }
 
     @NotNull
@@ -135,7 +138,8 @@ public class CallResolver {
     ) {
         return resolveFunctionCall(BasicCallResolutionContext.create(
                 trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null, expressionTypingServices.createExtension(scope)));
+                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null,
+                expressionTypingServices.createExtension(scope)));
     }
 
     @NotNull
@@ -312,8 +316,15 @@ public class CallResolver {
         }
         traceToResolveCall.commit();
 
-        if (!prioritizedTasks.isEmpty() && context.contextDependency == ContextDependency.INDEPENDENT) {
+        if (context.contextDependency == ContextDependency.INDEPENDENT) {
             results = completeTypeInferenceDependentOnExpectedType(context, results, tracing);
+            if (results.isSingleResult()) {
+                //todo clean internal data for several resulting calls
+                results.getResultingCall().markCallAsCompleted();
+            }
+            else {
+                candidateResolver.completeNestedCallsForNotResolvedInvocation(context);
+            }
         }
 
         context.callResolverExtension.run(results, context);
@@ -332,6 +343,8 @@ public class CallResolver {
             }
             return;
         }
+        //call for 'invoke' was completed earlier
+        if (results.getResultingCall() instanceof VariableAsFunctionResolvedCall) return;
         CallCandidateResolutionContext<D> candidateContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                 results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
         candidateResolver.completeTypeInferenceDependentOnFunctionLiteralsForCall(candidateContext);
@@ -343,8 +356,9 @@ public class CallResolver {
             @NotNull TracingStrategy tracing
     ) {
         if (results.isSingleResult()) {
-            argumentTypeResolver.checkUnmappedArgumentTypes(
-                    context, results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments());
+            Set<ValueArgument> unmappedArguments = results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments();
+            argumentTypeResolver.checkUnmappedArgumentTypes(context, unmappedArguments);
+            candidateResolver.completeNestedCallsForNotResolvedInvocation(context, unmappedArguments);
         }
 
         if (!results.isSingleResult()) return results;
@@ -386,10 +400,11 @@ public class CallResolver {
         context.resolutionResultsCache.recordResolutionResults(callKey, memberType, results);
         context.resolutionResultsCache.recordResolutionTrace(callKey, deltasTraceToCacheResolve);
 
-        if (results.isSingleResult() && memberType == ResolutionResultsCache.FUNCTION_MEMBER_TYPE) {
-            CallCandidateResolutionContext<F> callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
+        if (results.isSingleResult()) {
+            ResolvedCallWithTrace<F> resultingCall = results.getResultingCall();
+            CallCandidateResolutionContext<F> contextForCallToCompleteTypeArgumentInference = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                     results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
-            context.resolutionResultsCache.recordDeferredComputationForCall(callKey, callCandidateResolutionContext, memberType);
+            context.resolutionResultsCache.recordDeferredComputationForCall(callKey, resultingCall, contextForCallToCompleteTypeArgumentInference);
         }
     }
 

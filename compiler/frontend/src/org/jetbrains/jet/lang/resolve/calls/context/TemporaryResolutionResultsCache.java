@@ -19,10 +19,10 @@ package org.jetbrains.jet.lang.resolve.calls.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.CallKey;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
 public class TemporaryResolutionResultsCache implements ResolutionResultsCache {
@@ -77,20 +77,30 @@ public class TemporaryResolutionResultsCache implements ResolutionResultsCache {
     @Override
     public <D extends CallableDescriptor> void recordDeferredComputationForCall(
             @NotNull CallKey callKey,
-            @NotNull CallCandidateResolutionContext<D> deferredComputation,
-            @NotNull MemberType memberType
+            @NotNull ResolvedCallWithTrace<D> resolvedCall,
+            @NotNull CallCandidateResolutionContext<D> deferredComputation
     ) {
-        innerCache.recordDeferredComputationForCall(callKey, deferredComputation, memberType);
+        innerCache.recordDeferredComputationForCall(callKey, resolvedCall, deferredComputation);
     }
 
     @Nullable
     @Override
-    public CallCandidateResolutionContext<FunctionDescriptor> getDeferredComputation(@Nullable JetExpression expression) {
-        CallCandidateResolutionContext<FunctionDescriptor> computation = innerCache.getDeferredComputation(expression);
+    public CallCandidateResolutionContext<? extends CallableDescriptor> getDeferredComputation(@Nullable JetExpression expression) {
+        CallCandidateResolutionContext<? extends CallableDescriptor> computation = innerCache.getDeferredComputation(expression);
         if (computation != null) {
             return computation;
         }
         return parentCache.getDeferredComputation(expression);
+    }
+
+    @Nullable
+    @Override
+    public ResolvedCallWithTrace<? extends CallableDescriptor> getCallForArgument(@Nullable JetExpression expression) {
+        ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall = innerCache.getCallForArgument(expression);
+        if (resolvedCall != null) {
+            return resolvedCall;
+        }
+        return parentCache.getCallForArgument(expression);
     }
 
     public void commit() {

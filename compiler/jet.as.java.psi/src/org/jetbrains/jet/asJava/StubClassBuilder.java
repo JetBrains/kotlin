@@ -76,7 +76,7 @@ public class StubClassBuilder extends ClassBuilder {
             @NotNull String[] interfaces
     ) {
         assert v == null : "defineClass() called twice?";
-        v = new StubBuildingVisitor<Object>(null, EMPTY_STRATEGY, parent, access);
+        v = new StubBuildingVisitor<Object>(null, EMPTY_STRATEGY, parent, access, null);
 
         super.defineClass(origin, version, access, name, signature, superName, interfaces);
 

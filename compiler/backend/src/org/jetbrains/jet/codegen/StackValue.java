@@ -905,6 +905,10 @@ public abstract class StackValue {
         private String getPropertyName() {
             return name;
         }
+
+        public boolean isPropertyWithBackingFieldInOuterClass() {
+            return descriptor instanceof AccessorForPropertyBackingFieldInOuterClass;
+        }
     }
 
     private static class Expression extends StackValue {

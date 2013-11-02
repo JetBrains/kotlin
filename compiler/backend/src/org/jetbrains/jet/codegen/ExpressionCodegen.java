@@ -1674,12 +1674,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetExpression r = getReceiverForSelector(expression);
             boolean isSuper = r instanceof JetSuperExpression;
             propertyDescriptor = accessiblePropertyDescriptor(propertyDescriptor);
-            StackValue iValue =
+            StackValue.Property iValue =
                 intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression) r : null);
             if (directToField) {
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
             }
-            receiver.put(receiver.type, v);
+
+            //pop receiver via put(VOID_TYPE) in case of access to backing field that moved to outer class!!!
+            receiver.put(!iValue.isPropertyWithBackingFieldInOuterClass() ? receiver.type : Type.VOID_TYPE, v);
 
             return iValue;
         }
@@ -1783,7 +1785,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    public StackValue intermediateValueForProperty(
+    public StackValue.Property intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
             @Nullable JetSuperExpression superExpression
@@ -1791,7 +1793,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return intermediateValueForProperty(propertyDescriptor, forceField, superExpression, MethodKind.GENERAL);
     }
 
-    public StackValue.StackValueWithSimpleReceiver intermediateValueForProperty(
+    public StackValue.Property intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
             @Nullable JetSuperExpression superExpression,
@@ -1802,7 +1804,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
         boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
-        boolean isStatic = containingDeclaration instanceof NamespaceDescriptor || isBackingFieldInAnotherClass;
+        boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         boolean isSuper = superExpression != null;
         boolean isInsideClass = isCallInsideSameClassAsDeclared(propertyDescriptor, context);
         boolean isInsideModule = isCallInsideSameModuleAsDeclared(propertyDescriptor, context);
@@ -1826,6 +1828,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (!skipPropertyAccessors) {
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor, true, delegateType);
             }
+            isStatic = true;
         }
 
         if (!skipPropertyAccessors) {
@@ -2232,9 +2235,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private void generateScript(@NotNull ScriptReceiver receiver) {
         CodegenContext cur = context;
         StackValue result = StackValue.local(0, OBJECT_TYPE);
+        boolean inStartConstructorContext = cur instanceof ConstructorContext;
         while (cur != null) {
-            if (cur instanceof MethodContext && !(cur instanceof ConstructorContext)) {
-                cur = cur.getParentContext();
+            if (!inStartConstructorContext) {
+                cur = getNotNullParentContextForMethod(cur);
             }
 
             if (cur instanceof ScriptContext) {
@@ -2253,13 +2257,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return;
             }
 
-            assert cur != null;
             result = cur.getOuterExpression(result, false);
 
-            if (cur instanceof ConstructorContext) {
-                cur = cur.getParentContext();
+            if (inStartConstructorContext) {
+                cur = getNotNullParentContextForMethod(cur);
+                inStartConstructorContext = false;
             }
-            assert cur != null;
+
             cur = cur.getParentContext();
         }
 
@@ -2282,29 +2286,40 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         CodegenContext cur = context;
         Type type = asmType(calleeContainingClass.getDefaultType());
         StackValue result = StackValue.local(0, type);
+        boolean inStartConstructorContext = cur instanceof ConstructorContext;
         while (cur != null) {
-            if (cur instanceof MethodContext && !(cur instanceof ConstructorContext)) {
-                cur = cur.getParentContext();
-            }
-
-            assert cur != null;
             ClassDescriptor thisDescriptor = cur.getThisDescriptor();
             if (!isSuper && thisDescriptor.equals(calleeContainingClass)
-            || isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
+                || isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
                 return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
             }
 
-            result = cur.getOuterExpression(result, false);
-
-            if (cur instanceof ConstructorContext) {
-                cur = cur.getParentContext();
+            //for constructor super call we should access to outer instance through parameter in locals, in other cases through field for captured outer
+            if (inStartConstructorContext) {
+                result = cur.getOuterExpression(result, false);
+                cur = getNotNullParentContextForMethod(cur);
+                inStartConstructorContext = false;
             }
-            assert cur != null;
+            else {
+                cur = getNotNullParentContextForMethod(cur);
+                result = cur.getOuterExpression(result, false);
+            }
+
             cur = cur.getParentContext();
         }
 
         throw new UnsupportedOperationException();
     }
+
+    @NotNull
+    private CodegenContext getNotNullParentContextForMethod(@NotNull CodegenContext cur) {
+        if (cur instanceof MethodContext) {
+            cur = cur.getParentContext();
+        }
+        assert cur != null;
+        return cur;
+    }
+
 
     private static boolean isReceiver(PsiElement expression) {
         PsiElement parent = expression.getParent();
@@ -3093,8 +3108,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new UnsupportedOperationException("Unsupported postfix operation: " + op);
         }
 
-        if (isPrimitiveNumberClassDescriptor(cls)) {
-            receiver.put(receiver.type, v);
+        boolean isPrimitiveNumberClassDescriptor = isPrimitiveNumberClassDescriptor(cls);
+        if (isPrimitiveNumberClassDescriptor) {
             JetExpression operand = expression.getBaseExpression();
             if (operand instanceof JetReferenceExpression && asmType == Type.INT_TYPE) {
                 int index = indexOfLocal((JetReferenceExpression) operand);
@@ -3102,64 +3117,61 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     return StackValue.postIncrement(index, increment);
                 }
             }
-            gen(operand, asmType);                               // old value
-            generateIncrement(increment, asmType, operand, receiver);   // increment in-place
-            return StackValue.onStack(asmType);                                         // old value
+        }
+
+        StackValue value = gen(expression.getBaseExpression());
+        value.dupReceiver(v);
+
+        Type type = expressionType(expression.getBaseExpression());
+        value.put(type, v); // old value
+
+        pushReceiverAndValueViaDup(value, type); // receiver and new value
+
+        Type storeType;
+        if (isPrimitiveNumberClassDescriptor) {
+            genIncrement(asmType, increment, v);
+            storeType = type;
         }
         else {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                    bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
             assert resolvedCall != null;
-
             Callable callable = resolveToCallable((FunctionDescriptor) op, false);
-
-            StackValue value = gen(expression.getBaseExpression());
-            value.dupReceiver(v);
-
-            Type type = expressionType(expression.getBaseExpression());
-            value.put(type, v);
-
-            switch (value.receiverSize()) {
-                case 0:
-                    dup(v, type);
-                    break;
-
-                case 1:
-                    if (type.getSize() == 2) {
-                        v.dup2X1();
-                    }
-                    else {
-                        v.dupX1();
-                    }
-                    break;
-
-                case 2:
-                    if (type.getSize() == 2) {
-                        v.dup2X2();
-                    }
-                    else {
-                        v.dupX2();
-                    }
-                    break;
-
-                case -1:
-                    throw new UnsupportedOperationException();
-            }
-
             CallableMethod callableMethod = (CallableMethod) callable;
             callableMethod.invokeWithNotNullAssertion(v, state, resolvedCall);
-
-            value.store(callableMethod.getReturnType(), v);
-            return StackValue.onStack(type);
+            storeType = callableMethod.getReturnType();
         }
+
+        value.store(storeType, v);
+        return StackValue.onStack(asmType);  // old value
     }
 
-    private void generateIncrement(int increment, Type asmType, JetExpression operand, StackValue receiver) {
-        StackValue value = genQualified(receiver, operand);
-        value.dupReceiver(v);
-        value.put(asmType, v);
-        genIncrement(asmType, increment, v);
-        value.store(asmType, v);
+    private void pushReceiverAndValueViaDup(StackValue value, Type type) {
+        switch (value.receiverSize()) {
+            case 0:
+                dup(v, type);
+                break;
+
+            case 1:
+                if (type.getSize() == 2) {
+                    v.dup2X1();
+                }
+                else {
+                    v.dupX1();
+                }
+                break;
+
+            case 2:
+                if (type.getSize() == 2) {
+                    v.dup2X2();
+                }
+                else {
+                    v.dupX2();
+                }
+                break;
+
+            case -1:
+                throw new UnsupportedOperationException();
+        }
     }
 
     @Override

@@ -1716,6 +1716,12 @@
   <item name="java.lang.System java.util.Map&lt;java.lang.String,java.lang.String&gt; getenv()">
     <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
+  <item name="java.lang.System void arraycopy(java.lang.Object, int, java.lang.Object, int, int) 0">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="java.lang.System void arraycopy(java.lang.Object, int, java.lang.Object, int, int) 2">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
   <item name="java.lang.System void loadLibrary(java.lang.String) 0">
     <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>

@@ -35,14 +35,14 @@ import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 
-import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
+import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject;
+import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMangledName;
 
@@ -298,7 +298,12 @@ public final class StaticContext {
                         return null;
                     }
 
-                    String propertyName = propertyDescriptor.getName().asString();
+                    String nameFromAnnotation = getNameForAnnotatedObject(propertyDescriptor);
+                    if (nameFromAnnotation != null) {
+                        return declarePropertyOrPropertyAccessorName(descriptor, nameFromAnnotation, false);
+                    }
+
+                    String propertyName =  propertyDescriptor.getName().asString();
 
                     if (!isExtension(propertyDescriptor)) {
                         if (propertyDescriptor.getVisibility() == Visibilities.PRIVATE) {
@@ -321,17 +326,12 @@ public final class StaticContext {
             Rule<JsName> predefinedObjectsHasUnobfuscatableNames = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
-                        if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
-                            continue;
-                        }
-                        String name = getNameForAnnotatedObject(descriptor, annotation);
-                        name = (name != null) ? name : descriptor.getName().asString();
-                        return getEnclosingScope(descriptor).declareName(name);
-                    }
+                    String name = getNameForAnnotatedObject(descriptor);
+                    if (name != null) return getEnclosingScope(descriptor).declareName(name);
                     return null;
                 }
             };
+
             Rule<JsName> overridingDescriptorsReferToOriginalName = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {

@@ -25,16 +25,12 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
-import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
@@ -82,12 +78,13 @@ public class CandidateResolver {
 
         if (ErrorUtils.isError(candidate)) {
             candidateCall.addStatus(SUCCESS);
-            argumentTypeResolver.checkTypesWithNoCallee(context.toBasic());
+            markAllArgumentsAsUnmapped(context);
             return;
         }
 
         if (!checkOuterClassMemberIsAccessible(context)) {
             candidateCall.addStatus(OTHER_ERROR);
+            markAllArgumentsAsUnmapped(context);
             return;
         }
 
@@ -97,6 +94,7 @@ public class CandidateResolver {
         if (invisibleMember != null) {
             candidateCall.addStatus(OTHER_ERROR);
             context.tracing.invisibleMember(context.trace, invisibleMember);
+            markAllArgumentsAsUnmapped(context);
             return;
         }
 
@@ -112,12 +110,11 @@ public class CandidateResolver {
                 else {
                     candidateCall.addStatus(OTHER_ERROR);
                 }
+                candidateCall.setUnmappedArguments(unmappedArguments);
                 if ((argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR && candidate.getTypeParameters().isEmpty()) ||
                     argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
-                    argumentTypeResolver.checkTypesWithNoCallee(context.toBasic());
                     return;
                 }
-                candidateCall.setUnmappedArguments(unmappedArguments);
             }
         }
 
@@ -173,6 +170,12 @@ public class CandidateResolver {
 
         AutoCastUtils.recordAutoCastIfNecessary(candidateCall.getReceiverArgument(), candidateCall.getTrace());
         AutoCastUtils.recordAutoCastIfNecessary(candidateCall.getThisObject(), candidateCall.getTrace());
+    }
+
+    private static void markAllArgumentsAsUnmapped(CallCandidateResolutionContext<?> context) {
+        if (context.checkArguments == CheckValueArgumentsMode.ENABLED) {
+            context.candidateCall.setUnmappedArguments(context.call.getValueArguments());
+        }
     }
 
     private static boolean checkOuterClassMemberIsAccessible(@NotNull CallCandidateResolutionContext<?> context) {
@@ -314,7 +317,7 @@ public class CandidateResolver {
 
         context.tracing.typeInferenceFailed(context.trace, errorData);
         resolvedCall.addStatus(ResolutionStatus.OTHER_ERROR);
-        if (!CallResolverUtil.hasInferredReturnType(resolvedCall)) return null;
+        if (!resolvedCall.hasInferredReturnType()) return null;
         return resolvedCall.getResultingDescriptor().getReturnType();
     }
 
@@ -347,21 +350,21 @@ public class CandidateResolver {
         context = context.replaceExpectedType(expectedType);
 
         JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
-        CallCandidateResolutionContext<FunctionDescriptor> storedContextForArgument =
+        CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
                 context.resolutionResultsCache.getDeferredComputation(keyExpression);
 
+        PsiElement parent = expression.getParent();
+        if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
+            || (expression instanceof JetFunctionLiteralExpression)) {
+            return;
+        }
         if (storedContextForArgument == null) {
-            PsiElement parent = expression.getParent();
-            if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
-                || (expression instanceof JetFunctionLiteralExpression)) {
-                return;
-            }
             JetType type = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
             checkResultArgumentType(type, argument, context);
             return;
         }
 
-        CallCandidateResolutionContext<FunctionDescriptor> contextForArgument = storedContextForArgument
+        CallCandidateResolutionContext<? extends CallableDescriptor> contextForArgument = storedContextForArgument
                 .replaceContextDependency(INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
         JetType type;
         if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {
@@ -373,11 +376,54 @@ public class CandidateResolver {
         }
         JetType result = BindingContextUtils.updateRecordedType(
                 type, expression, context.trace, isFairSafeCallExpression(expression, context.trace));
+
+        markResultingCallAsCompleted(context, keyExpression);
+
         DataFlowUtils.checkType(result, expression, contextForArgument);
     }
 
+    public void completeNestedCallsForNotResolvedInvocation(@NotNull CallResolutionContext<?> context) {
+        completeNestedCallsForNotResolvedInvocation(context, context.call.getValueArguments());
+    }
+
+    public void completeNestedCallsForNotResolvedInvocation(@NotNull CallResolutionContext<?> context, @NotNull Collection<? extends ValueArgument> arguments) {
+        if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return;
+
+        for (ValueArgument argument : arguments) {
+            JetExpression expression = argument.getArgumentExpression();
+
+            JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
+            markResultingCallAsCompleted(context, keyExpression);
+
+            CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
+                    context.resolutionResultsCache.getDeferredComputation(keyExpression);
+            if (storedContextForArgument != null) {
+                completeNestedCallsForNotResolvedInvocation(storedContextForArgument);
+            }
+        }
+    }
+
+    private static void markResultingCallAsCompleted(
+            @NotNull CallResolutionContext<?> context,
+            @Nullable JetExpression keyExpression
+    ) {
+        if (keyExpression == null) return;
+
+        CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
+                context.resolutionResultsCache.getDeferredComputation(keyExpression);
+        if (storedContextForArgument == null) return;
+
+        storedContextForArgument.candidateCall.markCallAsCompleted();
+
+        // clean data for "invoke" calls
+        ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
+        assert resolvedCall != null : "Resolved call for '" + keyExpression + "' is not stored, but CallCandidateResolutionContext is.";
+        resolvedCall.markCallAsCompleted();
+    }
+
     @Nullable
-    private JetExpression getDeferredComputationKeyExpression(@NotNull JetExpression expression) {
+    private JetExpression getDeferredComputationKeyExpression(@Nullable JetExpression expression) {
+        if (expression == null) return null;
         return expression.accept(new JetVisitor<JetExpression, Void>() {
             @Nullable
             private JetExpression visitInnerExpression(@Nullable JetElement expression) {
@@ -401,6 +447,11 @@ public class CandidateResolver {
             }
 
             @Override
+            public JetExpression visitUnaryExpression(@NotNull JetUnaryExpression expression, Void data) {
+                return ExpressionTypingUtils.isUnaryExpressionDependentOnExpectedType(expression) ? expression : null;
+            }
+
+            @Override
             public JetExpression visitPrefixExpression(@NotNull JetPrefixExpression expression, Void data) {
                 return visitInnerExpression(JetPsiUtil.getBaseExpressionIfLabeledExpression(expression));
             }
@@ -421,7 +472,7 @@ public class CandidateResolver {
         }, null);
     }
 
-    private boolean isFairSafeCallExpression(@NotNull JetExpression expression, @NotNull BindingTrace trace) {
+    private static boolean isFairSafeCallExpression(@NotNull JetExpression expression, @NotNull BindingTrace trace) {
         // We are interested in type of the last call:
         // 'a.b?.foo()' is safe call, but 'a?.b.foo()' is not.
         // Since receiver is 'a.b' and selector is 'foo()',
@@ -434,7 +485,7 @@ public class CandidateResolver {
         return type != null && type.isNullable();
     }
 
-    private <D extends CallableDescriptor> void checkResultArgumentType(
+    private static <D extends CallableDescriptor> void checkResultArgumentType(
             @Nullable JetType type,
             @NotNull ValueArgument argument,
             @NotNull CallCandidateResolutionContext<D> context
@@ -660,15 +711,14 @@ public class CandidateResolver {
         ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(
                 context, context.candidateCall, trace, resolveFunctionArgumentBodies);
         ResolutionStatus resultStatus = checkingResult.status;
-        resultStatus = resultStatus.combine(checkReceiver(context, trace, false));
+        resultStatus = resultStatus.combine(checkReceiver(context, trace));
 
         return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
     }
 
     private static <D extends CallableDescriptor> ResolutionStatus checkReceiver(
             @NotNull CallCandidateResolutionContext<D> context,
-            @NotNull BindingTrace trace,
-            boolean checkOnlyReceiverTypeError
+            @NotNull BindingTrace trace
     ) {
         ResolutionStatus resultStatus = SUCCESS;
         ResolvedCall<D> candidateCall = context.candidateCall;

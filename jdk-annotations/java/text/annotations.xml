@@ -153,14 +153,23 @@
   <item name="java.text.DateFormat java.lang.Object clone()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
+  <item name="java.text.DateFormat java.lang.Object parseObject(java.lang.String, java.text.ParsePosition) 1">
+        <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
   <item name="java.text.DateFormat java.lang.String format(java.util.Date)">
         <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
   <item name="java.text.DateFormat java.lang.StringBuffer format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
+  <item name="java.text.DateFormat java.lang.StringBuffer format(java.util.Date, java.lang.StringBuffer, java.text.FieldPosition) 0">
+    <annotation name="org.jetbrains.annotations.NotNull"/>
+  </item>
+  <item name="java.text.DateFormat java.lang.StringBuffer format(java.util.Date, java.lang.StringBuffer, java.text.FieldPosition) 1">
+    <annotation name="org.jetbrains.annotations.NotNull"/>
+  </item>
   <item name="java.text.DateFormat java.lang.StringBuffer format(java.util.Date, java.lang.StringBuffer, java.text.FieldPosition) 2">
-        <annotation name="org.jetbrains.annotations.NotNull"/>
+    <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
   <item name="java.text.DateFormat java.text.DateFormat getDateInstance()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
@@ -318,6 +327,9 @@
   <item name="java.text.FieldPosition java.lang.String toString()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
+  <item name="java.text.Format java.lang.Object parseObject(java.lang.String, java.text.ParsePosition) 1">
+    <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
   <item name="java.text.Format java.lang.String format(java.lang.Object)">
         <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
@@ -326,6 +338,12 @@
   </item>
   <item name="java.text.Format java.lang.StringBuffer format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
+  </item>
+  <item name="java.text.Format java.lang.StringBuffer format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition) 1">
+        <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="java.text.Format java.lang.StringBuffer format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition) 2">
+        <annotation name="org.jetbrains.annotations.NotNull" />
   </item>
   <item name="java.text.Format java.text.AttributedCharacterIterator formatToCharacterIterator(java.lang.Object)">
         <annotation name="org.jetbrains.annotations.NotNull"/>
@@ -341,6 +359,11 @@
   </item>
   <item name="java.text.MessageFormat java.lang.Object clone()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
+  </item>
+  <item name="java.text.MessageFormat java.lang.String format(java.lang.String, java.lang.Object...)">
+    <annotation name="jet.runtime.typeinfo.KotlinSignature">
+      <val name="value" val="&quot;fun format(pattern : String, vararg arguments : Any?) : String&quot;" />
+    </annotation>
   </item>
   <item name="java.text.MessageFormat java.lang.String toPattern()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
@@ -376,8 +399,18 @@
       <val name="value" val="&quot;fun setFormatByArgumentIndex(argumentIndex : Int, newFormat : Format) : Unit&quot;" />
     </annotation>
   </item>
+  <item name='java.text.MessageFormat void setFormats(java.text.Format[])'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun setFormats(newFormats : Array&lt;out Format&gt;) : Unit&quot;"/>
+    </annotation>
+  </item>
   <item name="java.text.MessageFormat void setFormats(java.text.Format[]) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
+  </item>
+  <item name='java.text.MessageFormat void setFormatsByArgumentIndex(java.text.Format[])'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun setFormatsByArgumentIndex(newFormats : Array&lt;out Format&gt;) : Unit&quot;"/>
+    </annotation>
   </item>
   <item name="java.text.MessageFormat.Field java.lang.Object readResolve()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
@@ -499,6 +532,12 @@
   <item name="java.text.SimpleDateFormat java.lang.String toLocalizedPattern()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
+  <item name="java.text.SimpleDateFormat java.lang.StringBuffer format(java.util.Date, java.lang.StringBuffer, java.text.FieldPosition) 0">
+        <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="java.text.SimpleDateFormat java.lang.StringBuffer format(java.util.Date, java.lang.StringBuffer, java.text.FieldPosition) 1">
+        <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
   <item name="java.text.SimpleDateFormat java.lang.StringBuffer format(java.util.Date, java.lang.StringBuffer, java.text.FieldPosition) 2">
         <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
@@ -514,6 +553,12 @@
   <item name="java.text.SimpleDateFormat java.util.Date parse(java.lang.String, java.text.ParsePosition) 1">
         <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
+  <item name="java.text.SimpleDateFormat void applyLocalizedPattern(java.lang.String) 0">
+        <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
+  <item name="java.text.SimpleDateFormat void applyPattern(java.lang.String) 0">
+        <annotation name="org.jetbrains.annotations.NotNull" />
+  </item>
   <item name="java.text.SimpleDateFormat void set2DigitYearStart(java.util.Date) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
   </item>
@@ -528,21 +573,6 @@
   </item>
   <item name="java.text.StringCharacterIterator void setText(java.lang.String) 0">
     <annotation name="org.jetbrains.annotations.NotNull" />
-  </item>
-  <item name='java.text.MessageFormat void setFormats(java.text.Format[])'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun setFormats(newFormats : Array&lt;out Format&gt;) : Unit&quot;"/>
-    </annotation>
-  </item>
-  <item name='java.text.MessageFormat void setFormatsByArgumentIndex(java.text.Format[])'>
-    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
-      <val name="value" val="&quot;fun setFormatsByArgumentIndex(newFormats : Array&lt;out Format&gt;) : Unit&quot;"/>
-    </annotation>
-  </item>
-  <item name="java.text.MessageFormat java.lang.String format(java.lang.String, java.lang.Object...)">
-    <annotation name="jet.runtime.typeinfo.KotlinSignature">
-      <val name="value" val="&quot;fun format(pattern : String, vararg arguments : Any?) : String&quot;" />
-    </annotation>
   </item>
 </root>
 

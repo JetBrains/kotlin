@@ -1257,9 +1257,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/closures/kt2151.kt");
         }
         
+        @TestMetadata("kt3152.kt")
+        public void testKt3152() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/kt3152.kt");
+        }
+        
+        @TestMetadata("kt3523.kt")
+        public void testKt3523() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/kt3523.kt");
+        }
+        
         @TestMetadata("kt3905.kt")
         public void testKt3905() throws Exception {
             doTest("compiler/testData/codegen/box/closures/kt3905.kt");
+        }
+        
+        @TestMetadata("kt4106.kt")
+        public void testKt4106() throws Exception {
+            doTest("compiler/testData/codegen/box/closures/kt4106.kt");
         }
         
         @TestMetadata("kt4137.kt")
@@ -2808,6 +2823,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/intrinsics/longRangeWithExplicitDot.kt");
         }
         
+        @TestMetadata("prefixIncDec.kt")
+        public void testPrefixIncDec() throws Exception {
+            doTest("compiler/testData/codegen/box/intrinsics/prefixIncDec.kt");
+        }
+        
         @TestMetadata("rangeFromCollection.kt")
         public void testRangeFromCollection() throws Exception {
             doTest("compiler/testData/codegen/box/intrinsics/rangeFromCollection.kt");
@@ -3585,6 +3605,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/objects/kt3684.kt");
         }
         
+        @TestMetadata("kt4086.kt")
+        public void testKt4086() throws Exception {
+            doTest("compiler/testData/codegen/box/objects/kt4086.kt");
+        }
+        
         @TestMetadata("kt535.kt")
         public void testKt535() throws Exception {
             doTest("compiler/testData/codegen/box/objects/kt535.kt");
@@ -3647,6 +3672,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("assignmentOperations.kt")
         public void testAssignmentOperations() throws Exception {
             doTest("compiler/testData/codegen/box/operatorConventions/assignmentOperations.kt");
+        }
+        
+        @TestMetadata("incDecOnObject.kt")
+        public void testIncDecOnObject() throws Exception {
+            doTest("compiler/testData/codegen/box/operatorConventions/incDecOnObject.kt");
+        }
+        
+        @TestMetadata("kt4152.kt")
+        public void testKt4152() throws Exception {
+            doTest("compiler/testData/codegen/box/operatorConventions/kt4152.kt");
         }
         
         @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
@@ -4022,6 +4057,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt3556.kt")
         public void testKt3556() throws Exception {
             doTest("compiler/testData/codegen/box/properties/kt3556.kt");
+        }
+        
+        @TestMetadata("kt4140.kt")
+        public void testKt4140() throws Exception {
+            doTest("compiler/testData/codegen/box/properties/kt4140.kt");
         }
         
         @TestMetadata("kt613.kt")

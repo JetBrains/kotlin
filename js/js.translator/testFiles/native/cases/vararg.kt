@@ -5,8 +5,14 @@ import js.*
 native
 fun paramCount(vararg a : Int) : Int = js.noImpl
 
+native("paramCount")
+fun anotherParamCount(vararg a : Int) : Int = js.noImpl
+
 // test spread operator
 fun count(vararg a : Int) = paramCount(*a)
+
+// test spread operator
+fun anotherCount(vararg a : Int) = anotherParamCount(*a)
 
 native
 class Bar(val size: Int, order: Int = 0) {
@@ -49,11 +55,17 @@ fun box(): String {
   if (paramCount(1, 2 ,3) != 3)
     return "failed when call native function with some args"
 
+  if (anotherParamCount(1, 2 ,3) != 3)
+    return "failed when call native function with some args witch declareted with custom name"
+
   if (count() != 0)
     return "failed when call native function without args using spread operator"
 
   if (count(1, 1, 1, 1) != 4)
     return "failed when call native function with some args using spread operator"
+
+  if (anotherCount(1, 2 ,3) != 3)
+    return "failed when call native function with some args using spread operator witch declareted with custom name"
 
   if (!Bar(5).test(0, 1, 1, 2, 3, 4, 5))
     return "failed when call method with some args"
