@@ -90,15 +90,13 @@ fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean
 
     fun checkJavaUsage(): Boolean {
         val call = getParentByType(javaClass<PsiConstructorCall>())
-        return call != null && call == getParent()
-        && call.resolveConstructor()?.getContainingClass()?.getNavigationElement() == jetClassOrObject
+        return call == getParent() && call?.resolveConstructor()?.getContainingClass()?.getNavigationElement() == jetClassOrObject
     }
 
     fun checkKotlinUsage(): Boolean {
-        val file = getContainingFile()
-        if (file !is JetFile) return false
+        if (this !is JetElement) return false
 
-        val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext()
+        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(this)
 
         val descriptor = getCallDescriptor(bindingContext)
         if (descriptor !is ConstructorDescriptor) return false
