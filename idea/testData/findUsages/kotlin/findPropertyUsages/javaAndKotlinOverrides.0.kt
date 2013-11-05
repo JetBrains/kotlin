@@ -1,10 +1,10 @@
 // PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetProperty
 // OPTIONS: overrides
-open class A<T> {
-    open var <caret>foo: T
+open class A<T>(t: T) {
+    open var <caret>foo: T = t
 }
 
-open class B: A<String>() {
+open class B: A<String>("") {
     override var foo: String
         get() {
             println("get")
@@ -19,4 +19,8 @@ open class B: A<String>() {
         a.foo = ""
         println(a.foo)
     }
+}
+
+open class D: A<String>("") {
+    override var foo: String = ""
 }
