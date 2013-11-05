@@ -80,12 +80,12 @@ public class CallResolverExtensionProvider {
     // with default one at the end
     private void appendExtensionsFor(DeclarationDescriptor declarationDescriptor, List<CallResolverExtension> extensions) {
         // add your extensions here
-        extensions.add(DEFAULT);
-
         if (isAnnotatedAsTailRecursive(declarationDescriptor)) {
             extensions.add(RecursiveCallRecorderResolverExtension.INSTANCE);
             extensions.add(TailRecursionDetectorExtension.INSTANCE);
         }
+
+        extensions.add(DEFAULT);
     }
 
     private static boolean isAnnotatedAsTailRecursive(DeclarationDescriptor descriptor) {
