@@ -31,8 +31,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -126,13 +125,13 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
         List<PsiMethod> jetLightMethods = ContainerUtil.filter(overridingMethods, new Condition<PsiMethod>() {
             @Override
             public boolean value(PsiMethod method) {
-                return method instanceof JetClsMethod;
+                return method instanceof KotlinLightMethod;
             }
         });
         List<JetDeclaration> jetFunctions = ContainerUtil.map(jetLightMethods, new Function<PsiMethod, JetDeclaration>() {
             @Override
             public JetDeclaration fun(PsiMethod method) {
-                return ((JetClsMethod) method).getOrigin();
+                return ((KotlinLightMethod) method).getOrigin();
             }
         });
         result.addAll(jetFunctions);

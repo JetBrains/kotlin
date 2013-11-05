@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.psi.PsiReference
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.plugin.references.JetPsiReference
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
@@ -43,6 +43,7 @@ import org.jetbrains.jet.asJava.LightClassUtil
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.codegen.PropertyCodegen
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -161,7 +162,7 @@ fun PsiReference.isPropertyReadOnlyUsage(): Boolean {
     if (JetUsageTypeProvider.getUsageType(getElement()) == UsageType.READ) return true
 
     val refTarget = resolve()
-    if (refTarget is JetClsMethod) {
+    if (refTarget is KotlinLightMethod) {
         val origin = refTarget.getOrigin()
         val declaration: JetNamedDeclaration? = when (origin) {
             is JetPropertyAccessor -> origin.getParentByType(javaClass<JetProperty>())

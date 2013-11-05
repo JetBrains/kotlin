@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.jetAsJava;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 
-/** ClsMethod created for Kotlin declaration for it to be resolved from Java */
-public interface JetClsMethod extends PsiMethod {
+/** Java method created for Kotlin declaration to make it resolvable in Java */
+public interface KotlinLightMethod extends PsiMethod {
     JetDeclaration getOrigin();
 }
