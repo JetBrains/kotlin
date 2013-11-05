@@ -17,11 +17,13 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
+import org.jetbrains.jet.j2k.Converter
 
 public class LocalVariable(val identifier: Identifier,
                            val modifiersSet: Set<Modifier>,
                            val javaType: Type,
-                           val initializer: Expression) : Expression() {
+                           val initializer: Expression,
+                           val converter: Converter) : Expression() {
 
     public fun isImmutable(): Boolean = forceImmutable || modifiersSet.contains(Modifier.FINAL)
 

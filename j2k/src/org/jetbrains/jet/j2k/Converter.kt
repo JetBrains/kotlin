@@ -218,7 +218,7 @@ public open class Converter(val project: Project) {
                 }
             }
             members.add(Constructor(Identifier.EMPTY_IDENTIFIER, arrayListOf(), Collections.emptySet<Modifier>(),
-                                    ClassType(name, Collections.emptyList<Element>(), false),
+                                    ClassType(name, Collections.emptyList<Element>(), false, this),
                                     Collections.emptyList<Element>(),
                                     ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
                                     Block(createInitStatementsFromFields(finalOrWithEmptyInitializer)),

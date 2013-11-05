@@ -43,7 +43,8 @@ public open class ElementVisitor(val myConverter: Converter) : JavaElementVisito
         myResult = LocalVariable(Identifier(theVariable.getName()!!),
                                  Converter.modifiersListToModifiersSet(theVariable.getModifierList()),
                                  kType,
-                                 myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()))
+                                 myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()),
+                                 myConverter)
     }
 
     public override fun visitExpressionList(list: PsiExpressionList?) {

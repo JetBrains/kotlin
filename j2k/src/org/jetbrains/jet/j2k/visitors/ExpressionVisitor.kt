@@ -28,6 +28,7 @@ import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.types.lang.PrimitiveType
 import org.jetbrains.jet.j2k.isAnnotatedAsNotNull
+import org.jetbrains.jet.j2k.ast.types.ArrayType
 
 public open class ExpressionVisitor(converter: Converter) : StatementVisitor(converter) {
     {
@@ -47,7 +48,9 @@ public open class ExpressionVisitor(converter: Converter) : StatementVisitor(con
     }
 
     public override fun visitArrayInitializerExpression(expression: PsiArrayInitializerExpression?) {
-        myResult = ArrayInitializerExpression(getConverter().typeToType(expression?.getType()),
+        val expressionType = getConverter().typeToType(expression?.getType())
+        assert(expressionType is ArrayType) { "Array initializer must have array type" }
+        myResult = ArrayInitializerExpression(expressionType as ArrayType,
                                               getConverter().expressionsToExpressionList(expression?.getInitializers()!!))
     }
 

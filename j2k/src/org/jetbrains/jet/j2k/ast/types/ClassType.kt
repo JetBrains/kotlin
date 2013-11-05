@@ -19,8 +19,11 @@ package org.jetbrains.jet.j2k.ast.types
 import org.jetbrains.jet.j2k.ast.Element
 import org.jetbrains.jet.j2k.ast.Identifier
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.Converter
 
-public open class ClassType(val `type`: Identifier, val parameters: List<Element>, nullable: Boolean) : Type(nullable) {
+public open class ClassType(val `type`: Identifier, val parameters: List<Element>, nullable: Boolean,
+                            converter: Converter) : MayBeNullableType(nullable, converter) {
+
     public override fun toKotlin(): String {
         // TODO change to map() when KT-2051 is fixed
         val parametersToKotlin = ArrayList<String>()
@@ -35,5 +38,5 @@ public open class ClassType(val `type`: Identifier, val parameters: List<Element
     }
 
 
-    public override fun convertedToNotNull(): Type = ClassType(`type`, parameters, false)
+    public override fun convertedToNotNull(): Type = ClassType(`type`, parameters, false, converter)
 }

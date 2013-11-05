@@ -18,9 +18,9 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
 
-public open class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element() {
-    public open fun hasWhere(): Boolean = extendsTypes.size() > 1
-    public open fun getWhereToKotlin(): String {
+public class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element {
+    public fun hasWhere(): Boolean = extendsTypes.size() > 1
+    public fun getWhereToKotlin(): String {
         if (hasWhere()) {
             return name.toKotlin() + " : " + extendsTypes.get(1).toKotlin()
         }

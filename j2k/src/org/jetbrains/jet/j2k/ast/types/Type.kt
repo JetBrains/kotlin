@@ -17,14 +17,28 @@
 package org.jetbrains.jet.j2k.ast.types
 
 import org.jetbrains.jet.j2k.ast.Element
+import org.jetbrains.jet.j2k.Converter
 
-public abstract class Type(val nullable: Boolean) : Element() {
+public fun Type.isPrimitive(): Boolean = this is PrimitiveType
+
+public abstract class MayBeNullableType(override public val nullable: Boolean, val converter: Converter): Type {
+}
+
+public trait NotNullType : Type {
+    override public val nullable: Boolean
+        get() = false
+}
+
+public trait Type : Element {
+
+    public val nullable: Boolean
+
     public open fun convertedToNotNull(): Type {
         if (nullable) throw UnsupportedOperationException("convertedToNotNull must be defined")
         return this
     }
 
-    public open fun isNullableStr(): String? {
+    protected fun isNullableStr(): String? {
         return (if (nullable && !forceNotNullTypes)
             "?"
         else

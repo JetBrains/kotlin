@@ -25,6 +25,9 @@ import org.jetbrains.jet.j2k.ast.types.*
 import java.util.LinkedList
 import com.intellij.openapi.util.text.StringUtil
 import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
+
+private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 
 public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisitor<Type>() {
     private var myResult: Type = EmptyType()
@@ -37,7 +40,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         if (name == "void") {
             myResult = PrimitiveType(Identifier("Unit"))
         }
-        else if (Node.PRIMITIVE_TYPES.contains(name)) {
+        else if (PRIMITIVE_TYPES_NAMES.contains(name)) {
             myResult = PrimitiveType(Identifier(StringUtil.capitalize(name)))
         }
         else {
@@ -48,7 +51,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
 
     public override fun visitArrayType(arrayType: PsiArrayType?): Type {
         if (myResult is EmptyType) {
-            myResult = ArrayType(myConverter.typeToType(arrayType?.getComponentType()), true)
+            myResult = ArrayType(myConverter.typeToType(arrayType?.getComponentType()), true, myConverter)
         }
 
         return myResult
@@ -63,18 +66,18 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
             if (resolvedClassTypeParams.size() == 1) {
                 if ((resolvedClassTypeParams.get(0) as ClassType).`type`.name == "Any") {
                     starParamList.add(StarProjectionType())
-                    myResult = ClassType(identifier, starParamList, true)
+                    myResult = ClassType(identifier, starParamList, true, myConverter)
                 }
                 else {
-                    myResult = ClassType(identifier, resolvedClassTypeParams, true)
+                    myResult = ClassType(identifier, resolvedClassTypeParams, true, myConverter)
                 }
             }
             else {
-                myResult = ClassType(identifier, resolvedClassTypeParams, true)
+                myResult = ClassType(identifier, resolvedClassTypeParams, true, myConverter)
             }
         }
         else {
-            myResult = ClassType(identifier, myConverter.typesToTypeList(classType.getParameters()), true)
+            myResult = ClassType(identifier, myConverter.typesToTypeList(classType.getParameters()), true, myConverter)
         }
         return myResult
     }
@@ -121,7 +124,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
                     val boundType: Type = (if (superTypes.size > 0)
                         ClassType(Identifier(getClassTypeName(superTypes[0])),
                                   myConverter.typesToTypeList(superTypes[0].getParameters()),
-                                  true)
+                                  true, myConverter)
                     else
                         StarProjectionType())
                     typeParams.add(boundType)

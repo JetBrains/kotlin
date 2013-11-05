@@ -23,7 +23,7 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.HashSet
 import java.util.ArrayList
 
-public open class Class(converter: Converter,
+public open class Class(val converter: Converter,
                         val name: Identifier,
                         val docComments: List<Node>,
                         modifiers: Set<Modifier>,
@@ -80,7 +80,8 @@ public open class Class(converter: Converter,
         val constructorTypeParameters = ArrayList<Element>()
         constructorTypeParameters.addAll(typeParameters)
         constructorTypeParameters.addAll(f.typeParameters)
-        return Function(Identifier("init"), arrayList(), modifiers, ClassType(name, constructorTypeParameters, false),
+        return Function(Identifier("init"), arrayList(), modifiers,
+                        ClassType(name, constructorTypeParameters, false, converter),
                         constructorTypeParameters, f.params, block)
     }
 

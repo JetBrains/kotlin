@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-public abstract class Member(val modifiers: Set<Modifier>) : Node() {
+public abstract class Member(val modifiers: Set<Modifier>) : Node {
     open fun accessModifier(): Modifier? {
         return modifiers.find { m -> m == Modifier.PUBLIC || m == Modifier.PROTECTED || m == Modifier.PRIVATE }
     }
