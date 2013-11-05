@@ -28,37 +28,28 @@ fun main(args: Array<String>) {
     generateDomAPI(File(jsCoreDir, "dom.kt"))
     generateDomEventsAPI(File(jsCoreDir, "domEvents.kt"))
 
-    val otherArrayNames = arrayListOf("Boolean", "Byte", "Char", "Short", "Int", "Long", "Float", "Double")
-
-    iterators()
-    templates.writeTo(File(outDir, "_Iterators.kt")) {
+    iterators().writeTo(File(outDir, "_Iterators.kt")) {
         buildFor(Iterators, "")
     }
 
-    val iteratorSignatures = templates.map { it.erasedSignature.flat() }.toSet()
-    templates.clear()
-
-    collections()
-    templates.writeTo(File(outDir, "_Arrays.kt")) {
+    val iterables = iterables()
+    iterables.writeTo(File(outDir, "_Arrays.kt")) {
         buildFor(Arrays, "")
     }
 
+    val otherArrayNames = arrayListOf("Boolean", "Byte", "Char", "Short", "Int", "Long", "Float", "Double")
     for (a in otherArrayNames) {
-        templates.writeTo(File(outDir, "_${a}Arrays.kt")) {
+        iterables.writeTo(File(outDir, "_${a}Arrays.kt")) {
             buildFor(PrimitiveArrays, a)
         }
     }
 
-    templates.writeTo(File(outDir, "_Iterables.kt")) {
-        if (iteratorSignatures contains erasedSignature.flat()) "" else buildFor(Iterables, "")
+    iterables.writeTo(File(outDir, "_Iterables.kt")) {
+        buildFor(Iterables, "")
     }
 
-    templates.writeTo(File(outDir, "_IteratorsCommon.kt")) {
-        if (iteratorSignatures contains erasedSignature.flat()) "" else buildFor(Iterators, "")
-    }
-
-    templates.writeTo(File(outDir, "_Collections.kt")) {
-        if (iteratorSignatures contains erasedSignature.flat()) buildFor(Collections, "") else ""
+    collections().writeTo(File(outDir, "_Collections.kt")) {
+        buildFor(Collections, "")
     }
 
     generateDownTos(File(outDir, "_DownTo.kt"), "package kotlin")
