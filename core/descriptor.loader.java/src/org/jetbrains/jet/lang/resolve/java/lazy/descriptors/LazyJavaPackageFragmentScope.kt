@@ -70,7 +70,9 @@ public class LazyPackageFragmentScopeForJavaPackage(
 
     override fun getAllPackageNames(): Collection<Name> =
             listOf(
-                jPackage.getClasses().iterator().filter { c -> JavaNamespaceResolver.hasStaticMembers(c) }.map { c -> c.getName() }.toList(),
+                // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
+                // and there's no harm in having some names in the result that can not be resolved
+                jPackage.getClasses().map { c -> c.getName() },
                 jPackage.getSubPackages().map { sp -> sp.getFqName().shortName() }
             ).flatten()
 
@@ -91,7 +93,9 @@ public class LazyPackageFragmentScopeForJavaClass(
     override fun getAllClassNames(): Collection<Name> = listOf()
     override fun getClassifier(name: Name): ClassifierDescriptor? = null
 
+    // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
+    // and there's no harm in having some names in the result that can not be resolved
     override fun getAllPackageNames(): Collection<Name> = jClass.getInnerClasses().iterator()
-                                                                .filter { c -> c.isStatic() && JavaNamespaceResolver.hasStaticMembers(c) }
+                                                                .filter { c -> c.isStatic() }
                                                                 .map { c -> c.getName() }.toList()
 }
