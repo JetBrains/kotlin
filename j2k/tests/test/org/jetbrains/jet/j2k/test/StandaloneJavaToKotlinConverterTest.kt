@@ -31,12 +31,15 @@ import org.jetbrains.jet.j2k.JavaToKotlinTranslator
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.jet.j2k.ConverterSettings
 
-public abstract class StandaloneJavaToKotlinConverterTest(val dataPath: String, val name: String) : UsefulTestCase() {
+public abstract class StandaloneJavaToKotlinConverterTest(val dataPath: String,
+                                                          val name: String,
+                                                          val settings: ConverterSettings) : UsefulTestCase() {
 
     protected override fun runTest(): Unit {
         val jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(), ConfigurationKind.JDK_ONLY)
-        val converter = Converter(jetCoreEnvironment.getProject())
+        val converter = Converter(jetCoreEnvironment.getProject(), settings)
         val javaPath = "j2k/tests/testData/" + getTestFilePath()
         val kotlinPath = javaPath.replace(".jav", ".kt")
         val kotlinFile = File(kotlinPath)

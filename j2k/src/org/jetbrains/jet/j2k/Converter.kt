@@ -37,7 +37,7 @@ import org.jetbrains.jet.util.QualifiedNamesUtil
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import com.intellij.openapi.project.Project
 
-public open class Converter(val project: Project) {
+public class Converter(val project: Project, val settings: ConverterSettings) {
 
     private var classIdentifiersSet: MutableSet<String> = Sets.newHashSet()!!
 
@@ -47,35 +47,35 @@ public open class Converter(val project: Project) {
 
     private val javaToKotlinClassMap: JavaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
 
-    public open var methodReturnType: PsiType? = null
+    public var methodReturnType: PsiType? = null
         private set
 
-    public open fun addFlag(flag: J2KConverterFlags): Boolean {
+    public fun addFlag(flag: J2KConverterFlags): Boolean {
         return flags?.add(flag)!!
     }
 
-    public open fun hasFlag(flag: J2KConverterFlags): Boolean {
+    public fun hasFlag(flag: J2KConverterFlags): Boolean {
         return flags?.contains(flag)!!
     }
 
-    public open fun setClassIdentifiers(identifiers: MutableSet<String>) {
+    public fun setClassIdentifiers(identifiers: MutableSet<String>) {
         classIdentifiersSet = identifiers
     }
 
-    public open fun getClassIdentifiers(): Set<String> {
+    public fun getClassIdentifiers(): Set<String> {
         return Collections.unmodifiableSet(classIdentifiersSet)
     }
 
-    public open fun clearClassIdentifiers() {
+    public fun clearClassIdentifiers() {
         classIdentifiersSet.clear()
     }
 
-    public open fun elementToKotlin(element: PsiElement): String {
+    public fun elementToKotlin(element: PsiElement): String {
         val kElement = topElementToElement(element)
         return kElement?.toKotlin() ?: ""
     }
 
-    public open fun topElementToElement(element: PsiElement?): Node? = when(element) {
+    public fun topElementToElement(element: PsiElement?): Node? = when(element) {
         is PsiJavaFile -> fileToFile(element)
         is PsiClass -> classToClass(element)
         is PsiMethod -> methodToFunction(element)
@@ -86,11 +86,11 @@ public open class Converter(val project: Project) {
         else -> null
     }
 
-    public open fun fileToFile(javaFile: PsiJavaFile): File {
+    public fun fileToFile(javaFile: PsiJavaFile): File {
         return fileToFile(javaFile, Collections.emptyList<String>())
     }
 
-    public open fun fileToFileWithCompatibilityImport(javaFile: PsiJavaFile): File {
+    public fun fileToFileWithCompatibilityImport(javaFile: PsiJavaFile): File {
         return fileToFile(javaFile, Collections.singletonList("kotlin.compatibility.*"))
     }
 
@@ -124,7 +124,7 @@ public open class Converter(val project: Project) {
         return File(quoteKeywords(javaFile.getPackageName()), imports, body, createMainFunction(javaFile))
     }
 
-    public open fun anonymousClassToAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {
+    public fun anonymousClassToAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {
         return AnonymousClass(this, getMembers(anonymousClass))
     }
 
@@ -352,26 +352,26 @@ public open class Converter(val project: Project) {
 
         return false
     }
-    public open fun blockToBlock(block: PsiCodeBlock?, notEmpty: Boolean): Block {
+    public fun blockToBlock(block: PsiCodeBlock?, notEmpty: Boolean): Block {
         if (block == null)
             return Block.EMPTY_BLOCK
 
         return Block(removeEmpty(statementsToStatementList(block.getChildren())), notEmpty)
     }
 
-    public open fun blockToBlock(block: PsiCodeBlock?): Block {
+    public fun blockToBlock(block: PsiCodeBlock?): Block {
         return blockToBlock(block, true)
     }
 
-    public open fun statementsToStatementList(statements: Array<PsiElement>): List<Element> {
+    public fun statementsToStatementList(statements: Array<PsiElement>): List<Element> {
         return statements.filterNot { it is PsiWhiteSpace }.map { statementToStatement(it) }
     }
 
-    public open fun statementsToStatementList(statements: List<PsiElement>): List<Element> {
+    public fun statementsToStatementList(statements: List<PsiElement>): List<Element> {
         return statements.filterNot { it is PsiWhiteSpace }.map { statementToStatement(it) }
     }
 
-    public open fun statementToStatement(s: PsiElement?): Element {
+    public fun statementToStatement(s: PsiElement?): Element {
         if (s == null)
             return Statement.EMPTY_STATEMENT
 
@@ -380,14 +380,14 @@ public open class Converter(val project: Project) {
         return statementVisitor.getResult()
     }
 
-    public open fun expressionsToExpressionList(expressions: Array<PsiExpression>): List<Expression> {
+    public fun expressionsToExpressionList(expressions: Array<PsiExpression>): List<Expression> {
         val result = ArrayList<Expression>()
         for (e : PsiExpression? in expressions)
             result.add(expressionToExpression(e))
         return result
     }
 
-    public open fun expressionToExpression(e: PsiExpression?): Expression {
+    public fun expressionToExpression(e: PsiExpression?): Expression {
         if (e == null)
             return Expression.EMPTY_EXPRESSION
 
@@ -396,7 +396,7 @@ public open class Converter(val project: Project) {
         return expressionVisitor.getResult()
     }
 
-    public open fun elementToElement(e: PsiElement?): Element {
+    public fun elementToElement(e: PsiElement?): Element {
         if (e == null)
             return Element.EMPTY_ELEMENT
 
@@ -405,7 +405,7 @@ public open class Converter(val project: Project) {
         return elementVisitor.getResult()
     }
 
-    public open fun elementsToElementList(elements: Array<out PsiElement?>): List<Element> {
+    public fun elementsToElementList(elements: Array<out PsiElement?>): List<Element> {
         val result = ArrayList<Element>()
         for (element in elements) {
             result.add(elementToElement(element))
@@ -413,14 +413,14 @@ public open class Converter(val project: Project) {
         return result
     }
 
-    public open fun typeElementToTypeElement(element: PsiTypeElement?): TypeElement {
+    public fun typeElementToTypeElement(element: PsiTypeElement?): TypeElement {
         return TypeElement(if (element == null)
                                EmptyType()
                            else
                                typeToType(element.getType()))
     }
 
-    public open fun typeToType(`type`: PsiType?): Type {
+    public fun typeToType(`type`: PsiType?): Type {
         if (`type` == null)
             return EmptyType()
 
@@ -429,11 +429,11 @@ public open class Converter(val project: Project) {
         return typeVisitor.getResult()
     }
 
-    public open fun typesToTypeList(types: Array<PsiType>): List<Type> {
+    public fun typesToTypeList(types: Array<PsiType>): List<Type> {
         return types.map { typeToType(it) }
     }
 
-    public open fun typeToType(`type`: PsiType?, notNull: Boolean): Type {
+    public fun typeToType(`type`: PsiType?, notNull: Boolean): Type {
         val result: Type = typeToType(`type`)
         if (notNull) {
             return result.convertedToNotNull()
@@ -450,17 +450,17 @@ public open class Converter(val project: Project) {
         return result
     }
 
-    public open fun parametersToParameterList(parameters: Array<PsiParameter>): List<Parameter?> {
+    public fun parametersToParameterList(parameters: Array<PsiParameter>): List<Parameter?> {
         return parameters.map { parameterToParameter(it) }
     }
 
-    public open fun parameterToParameter(parameter: PsiParameter, forceNotNull: Boolean = false): Parameter {
+    public fun parameterToParameter(parameter: PsiParameter, forceNotNull: Boolean = false): Parameter {
         return Parameter(Identifier(parameter.getName()!!),
                          typeToType(parameter.getType(),
                                     forceNotNull || isAnnotatedAsNotNull(parameter.getModifierList())), true)
     }
 
-    public open fun argumentsToExpressionList(expression: PsiCallExpression): List<Expression> {
+    public fun argumentsToExpressionList(expression: PsiCallExpression): List<Expression> {
         val argumentList: PsiExpressionList? = expression.getArgumentList()
         val arguments: Array<PsiExpression> = (if (argumentList != null)
             argumentList.getExpressions()
@@ -485,7 +485,7 @@ public open class Converter(val project: Project) {
         return result
     }
 
-    public open fun expressionToExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
+    public fun expressionToExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
         if (argument == null)
             return Identifier.EMPTY_IDENTIFIER
 

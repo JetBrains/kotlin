@@ -25,18 +25,15 @@ public class LocalVariable(val identifier: Identifier,
                            val initializer: Expression,
                            val converter: Converter) : Expression() {
 
-    public fun isImmutable(): Boolean = forceImmutable || modifiersSet.contains(Modifier.FINAL)
+    public fun isImmutable(): Boolean =
+            converter.settings.forceLocalVariableImmutability || modifiersSet.contains(Modifier.FINAL)
 
     override fun toKotlin(): String {
         if (initializer.isEmpty()) {
             return "${identifier.toKotlin()} : ${javaType.toKotlin()}"
         }
 
-        return "${identifier.toKotlin()} ${if (specifyTypeExplicitly) ": ${javaType.toKotlin()} " else ""}= ${initializer.toKotlin()}"
-    }
-
-    class object {
-        public var specifyTypeExplicitly: Boolean = false
-        public var forceImmutable: Boolean = true
+        val shouldSpecifyType = converter.settings.specifyLocalVariableTypeByDefault
+        return "${identifier.toKotlin()} ${if (shouldSpecifyType) ": ${javaType.toKotlin()} " else ""}= ${initializer.toKotlin()}"
     }
 }

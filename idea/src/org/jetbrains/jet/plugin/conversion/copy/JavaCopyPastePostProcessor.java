@@ -28,6 +28,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
+import org.jetbrains.jet.j2k.J2kPackage;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.editor.JetEditorOptions;
 
@@ -116,7 +117,7 @@ public class JavaCopyPastePostProcessor implements CopyPastePostProcessor<TextBl
         Project project = file.getProject();
         StringBuilder result = new StringBuilder();
         for (PsiElement e : buffer) {
-            String converted = new Converter(project).elementToKotlin(e);
+            String converted = new Converter(project, J2kPackage.getPluginSettings()).elementToKotlin(e);
             if (!converted.isEmpty()) {
                 result.append(converted).append(EOL);
             }

@@ -27,6 +27,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.j2k.Converter;
+import org.jetbrains.jet.j2k.J2kPackage;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class JavaToKotlinAction extends AnAction {
         assert virtualFiles != null;
         final Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
         assert project != null;
-        final Converter converter = new Converter(project);
+        final Converter converter = new Converter(project, J2kPackage.getPluginSettings());
         int result = Messages.showYesNoCancelDialog(project,
                                                     "Would you like to backup Java files?",
                                                     "Backup",
