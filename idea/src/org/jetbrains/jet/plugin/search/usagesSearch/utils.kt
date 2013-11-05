@@ -43,6 +43,8 @@ import org.jetbrains.jet.asJava.LightClassUtil
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.codegen.PropertyCodegen
 
+// Navigation element of the resolved reference
+// For property accessor return enclosing property
 val PsiReference.navigationTarget: PsiElement?
     get() {
         val target = resolve()?.getNavigationElement()
@@ -107,6 +109,8 @@ fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean
     checkJavaUsage() || checkKotlinUsage()
 }
 
+// Check if reference resolves to extension function whose receiver is the same as declaration's parent (or its superclass)
+// Used in extension search
 fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclaration): Boolean =
         checkUsageVsOriginalDescriptor(declaration) { (usageDescriptor, targetDescriptor) ->
             when {
@@ -125,6 +129,8 @@ fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclara
             }
         }
 
+// Check if reference resolves to the declaration with the same parent
+// Used in overload search
 fun PsiReference.isUsageInContainingDeclaration(declaration: JetNamedDeclaration): Boolean =
         checkUsageVsOriginalDescriptor(declaration) { (usageDescriptor, targetDescriptor) ->
             usageDescriptor != targetDescriptor
