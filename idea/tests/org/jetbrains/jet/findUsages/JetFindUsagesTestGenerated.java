@@ -233,6 +233,11 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinOverloadAndExtensionUsages.0.kt");
             }
             
+            @TestMetadata("kotlinOverloadAndExtensionUsages2.0.kt")
+            public void testKotlinOverloadAndExtensionUsages2() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinOverloadAndExtensionUsages2.0.kt");
+            }
+            
             @TestMetadata("kotlinPrivateMethodUsages.0.kt")
             public void testKotlinPrivateMethodUsages() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinPrivateMethodUsages.0.kt");
