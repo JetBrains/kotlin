@@ -83,6 +83,10 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
 
     @Override
     public CompileTimeConstant<?> visitQualifiedExpression(@NotNull JetQualifiedExpression expression, Void data) {
+        CompileTimeConstant<?> compileTimeConstant = trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
+        if (compileTimeConstant != null) {
+            return compileTimeConstant;
+        }
         JetExpression selectorExpression = expression.getSelectorExpression();
         if (selectorExpression != null) {
             return selectorExpression.accept(this, null);

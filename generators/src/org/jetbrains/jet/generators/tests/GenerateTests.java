@@ -64,6 +64,7 @@ import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
 import org.jetbrains.jet.resolve.AbstractResolveBaseTest;
 import org.jetbrains.jet.resolve.AbstractResolveTest;
 import org.jetbrains.jet.resolve.AbstractResolveWithLibTest;
+import org.jetbrains.jet.resolve.annotation.AbstractAnnotationParameterTest;
 import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest;
 
 import java.io.File;
@@ -556,6 +557,13 @@ public class GenerateTests {
                 "RenameTestGenerated",
                 AbstractRenameTest.class,
                 new SingleClassTestModel(new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"), "doTest")
+        );
+
+        generateTest(
+                "compiler/tests",
+                "AnnotationParameterTestGenerated",
+                AbstractAnnotationParameterTest.class,
+                testModel("compiler/testData/resolveAnnotations/parameters")
         );
     }
 

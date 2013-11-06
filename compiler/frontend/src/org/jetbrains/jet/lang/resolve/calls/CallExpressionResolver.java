@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
-import org.jetbrains.jet.lang.resolve.constants.ConstantUtils;
+import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -417,14 +417,14 @@ public class CallExpressionResolver {
 
         context = context.replaceDataFlowInfo(receiverTypeInfo.getDataFlowInfo());
 
-        if (selectorExpression instanceof JetSimpleNameExpression) {
-            ConstantUtils.propagateConstantValues(expression, context.trace, (JetSimpleNameExpression) selectorExpression);
-        }
-
         JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
                 new ExpressionReceiver(receiverExpression, receiverType),
                 expression.getOperationTokenNode(), selectorExpression, context);
         JetType selectorReturnType = selectorReturnTypeInfo.getType();
+
+        if (receiverExpression instanceof JetConstantExpression && selectorExpression instanceof JetCallExpression) {
+            ConstantsPackage.propagateConstantValues(expression, context.trace, (JetCallExpression) selectorExpression);
+        }
 
         //TODO move further
         if (!(receiverType instanceof NamespaceType) && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
