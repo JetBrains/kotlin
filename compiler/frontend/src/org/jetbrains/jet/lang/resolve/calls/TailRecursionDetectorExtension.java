@@ -18,9 +18,11 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
@@ -34,9 +36,24 @@ public class TailRecursionDetectorExtension extends RecursiveCallResolverExtensi
             @NotNull OverloadResolutionResultsImpl<F> results,
             @NotNull BasicCallResolutionContext context
     ) {
+        BindingTrace trace = context.trace;
 
-        context.trace.record(BindingContext.TAIL_RECURSION_CALL,
-                             callExpression,
-                             JetPsiUtil.visitUpwardToRoot(callExpression, new TailRecursionDetectorVisitor(), TailRecursionKind.MIGHT_BE));
+        TailRecursionKind recursionKind =
+                JetPsiUtil.visitUpwardToRoot(callExpression, new TailRecursionDetectorVisitor(), TailRecursionKind.MIGHT_BE);
+
+        trace.record(BindingContext.TAIL_RECURSION_CALL,
+                     callExpression,
+                     recursionKind);
+
+        switch (recursionKind) {
+            case NON_TAIL:
+                trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(callExpression));
+                break;
+            case IN_FINALLY:
+                trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(callExpression));
+                break;
+            default:
+                break;
+        }
     }
 }

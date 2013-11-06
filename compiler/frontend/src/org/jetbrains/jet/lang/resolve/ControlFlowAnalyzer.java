@@ -124,34 +124,5 @@ public class ControlFlowAnalyzer {
         flowInformationProvider.markUnusedVariables();
 
         flowInformationProvider.markUnusedLiteralsInBlock();
-
-        checkTailRecursion(function);
-    }
-
-    private void checkTailRecursion(JetDeclarationWithBody declarationWithBody) {
-        FunctionDescriptor descriptor = (FunctionDescriptor) trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declarationWithBody);
-        if (descriptor != null && declarationWithBody instanceof JetNamedFunction && (KotlinBuiltIns.getInstance().isTailRecursive(descriptor))) {
-            List<JetCallExpression> calls = trace.get(BindingContext.FUNCTION_RECURSIVE_CALL_EXPRESSIONS, descriptor);
-            if (calls == null || calls.isEmpty()) {
-                trace.report(Errors.NO_TAIL_RECURSIONS_FOUND.on((JetNamedFunction) declarationWithBody));
-            }
-            else {
-                for (JetCallExpression call : calls) {
-                    TailRecursionKind status = trace.get(BindingContext.TAIL_RECURSION_CALL, call);
-                    if (status != null) {
-                        switch (status) {
-                            case NON_TAIL:
-                                trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(call));
-                                break;
-                            case IN_FINALLY:
-                                trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(call));
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            }
-        }
     }
 }

@@ -1,4 +1,4 @@
-tailRecursive fun test() : Unit {
+<!NO_TAIL_RECURSIONS_FOUND!>tailRecursive fun test() : Unit<!> {
     try {
         <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>test<!>()
     } catch (any : Exception) {
