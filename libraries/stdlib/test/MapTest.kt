@@ -123,8 +123,8 @@ class MapTest {
 
         val m2 = m1.mapValues{ it.value + "2" }
 
-        println("Got new map $m2")
-        assertEquals(arrayList("beer2", "Mells2"), m2.values().toList())
+        assertEquals("beer2", m2["beverage"])
+        assertEquals("Mells2", m2["location"])
     }
 
     test fun createUsingPairs() {

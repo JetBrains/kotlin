@@ -24,6 +24,25 @@ public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean) : Boolean {
 }
 
 /**
+ * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun <T> Array<out T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            val text = if (element == null) "null" else element.toString()
+            buffer.append(text)
+        } else break
+    }
+    if (limit >= 0 && count > limit) buffer.append(truncated)
+    buffer.append(postfix)
+}
+
+/**
  * Returns the number of elements which match the given *predicate*
  */
 public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean) : Int {
@@ -33,11 +52,33 @@ public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean) : Int {
 }
 
 /**
- * Returns the first element which matches the given *predicate* or *null* if none matched
+ * Returns a list containing everything but the first *n* elements
  */
-public inline fun <T:Any> Array<out T>.find(predicate: (T) -> Boolean) : T? {
-    for (element in this) if (predicate(element)) return element
-    return null
+public inline fun <T> Array<out T>.drop(n: Int) : List<T> {
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean) : List<T> {
+    return dropWhileTo(ArrayList<T>(), predicate)
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun <T, L: MutableList<in T>> Array<out T>.dropWhileTo(result: L, predicate: (T) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
 }
 
 /**
@@ -48,26 +89,10 @@ public inline fun <T> Array<out T>.filter(predicate: (T) -> Boolean) : List<T> {
 }
 
 /**
- * Filters all elements which match the given predicate into the given list
- */
-public inline fun <T, C: MutableCollection<in T>> Array<out T>.filterTo(result: C, predicate: (T) -> Boolean) : C {
-    for (element in this) if (predicate(element)) result.add(element)
-    return result
-}
-
-/**
  * Returns a list containing all elements which do not match the given *predicate*
  */
 public inline fun <T> Array<out T>.filterNot(predicate: (T) -> Boolean) : List<T> {
     return filterNotTo(ArrayList<T>(), predicate)
-}
-
-/**
- * Returns a list containing all elements which do not match the given *predicate*
- */
-public inline fun <T, C: MutableCollection<in T>> Array<out T>.filterNotTo(result: C, predicate: (T) -> Boolean) : C {
-    for (element in this) if (!predicate(element)) result.add(element)
-    return result
 }
 
 /**
@@ -86,36 +111,27 @@ public inline fun <T:Any, C: MutableCollection<in T>> Array<out T?>.filterNotNul
 }
 
 /**
- * Partitions this collection into a pair of collections
+ * Returns a list containing all elements which do not match the given *predicate*
  */
-public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean) : Pair<List<T>, List<T>> {
-    val first = ArrayList<T>()
-    val second = ArrayList<T>()
-    for (element in this) {
-        if (predicate(element)) {
-            first.add(element)
-        } else {
-            second.add(element)
-        }
-    }
-    return Pair(first, second)
-}
-
-/**
- * Returns a new List containing the results of applying the given *transform* function to each element in this collection
- */
-public inline fun <T, R> Array<out T>.map(transform : (T) -> R) : List<R> {
-    return mapTo(ArrayList<R>(), transform)
-}
-
-/**
- * Transforms each element of this collection with the given *transform* function and
- * adds each return value to the given *results* collection
- */
-public inline fun <T, R, C: MutableCollection<in R>> Array<out T>.mapTo(result: C, transform : (T) -> R) : C {
-    for (item in this)
-        result.add(transform(item))
+public inline fun <T, C: MutableCollection<in T>> Array<out T>.filterNotTo(result: C, predicate: (T) -> Boolean) : C {
+    for (element in this) if (!predicate(element)) result.add(element)
     return result
+}
+
+/**
+ * Filters all elements which match the given predicate into the given list
+ */
+public inline fun <T, C: MutableCollection<in T>> Array<out T>.filterTo(result: C, predicate: (T) -> Boolean) : C {
+    for (element in this) if (predicate(element)) result.add(element)
+    return result
+}
+
+/**
+ * Returns the first element which matches the given *predicate* or *null* if none matched
+ */
+public inline fun <T:Any> Array<out T>.find(predicate: (T) -> Boolean) : T? {
+    for (element in this) if (predicate(element)) return element
+    return null
 }
 
 /**
@@ -134,13 +150,6 @@ public inline fun <T, R, C: MutableCollection<in R>> Array<out T>.flatMapTo(resu
         for (r in list) result.add(r)
     }
     return result
-}
-
-/**
- * Performs the given *operation* on each element
- */
-public inline fun <T> Array<out T>.forEach(operation: (T) -> Unit) : Unit {
-    for (element in this) operation(element)
 }
 
 /**
@@ -164,6 +173,102 @@ public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, R) ->
     }
     
     return r
+}
+
+/**
+ * Performs the given *operation* on each element
+ */
+public inline fun <T> Array<out T>.forEach(operation: (T) -> Unit) : Unit {
+    for (element in this) operation(element)
+}
+
+/**
+ * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ */
+public inline fun <T, K> Array<out T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> {
+    return groupByTo(HashMap<K, MutableList<T>>(), toKey)
+}
+
+public inline fun <T, K> Array<out T>.groupByTo(result: MutableMap<K, MutableList<T>>, toKey: (T) -> K) : Map<K, MutableList<T>> {
+    for (element in this) {
+        val key = toKey(element)
+        val list = result.getOrPut(key) { ArrayList<T>() }
+        list.add(element)
+    }
+    return result
+}
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun <T> Array<out T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+    val buffer = StringBuilder()
+    appendString(buffer, separator, prefix, postfix, limit, truncated)
+    return buffer.toString()
+}
+
+/**
+ * Returns a new List containing the results of applying the given *transform* function to each element in this collection
+ */
+public inline fun <T, R> Array<out T>.map(transform : (T) -> R) : List<R> {
+    return mapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Transforms each element of this collection with the given *transform* function and
+ * adds each return value to the given *results* collection
+ */
+public inline fun <T, R, C: MutableCollection<in R>> Array<out T>.mapTo(result: C, transform : (T) -> R) : C {
+    for (item in this)
+        result.add(transform(item))
+    return result
+}
+
+/**
+ * Partitions this collection into a pair of collections
+ */
+public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean) : Pair<List<T>, List<T>> {
+    val first = ArrayList<T>()
+    val second = ArrayList<T>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following collection
+ */
+public inline fun <T> Array<out T>.plus(collection: Iterable<T>) : List<T> {
+    return plus(collection.iterator())
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
+ */
+public inline fun <T> Array<out T>.plus(element: T) : List<T> {
+    val answer = ArrayList<T>()
+    toCollection(answer)
+    answer.add(element)
+    return answer
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following iterator
+ */
+public inline fun <T> Array<out T>.plus(iterator: Iterator<T>) : List<T> {
+    val answer = ArrayList<T>()
+    toCollection(answer)
+    for (element in iterator) {
+        answer.add(element)
+    }
+    return answer
 }
 
 /**
@@ -203,49 +308,39 @@ public inline fun <T> Array<out T>.reduceRight(operation: (T, T) -> T) : T {
 }
 
 /**
- * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ * Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
-public inline fun <T, K> Array<out T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> {
-    return groupByTo(HashMap<K, MutableList<T>>(), toKey)
-}
-
-public inline fun <T, K> Array<out T>.groupByTo(result: MutableMap<K, MutableList<T>>, toKey: (T) -> K) : Map<K, MutableList<T>> {
+public inline fun <T:Any> Array<out T?>.requireNoNulls() : Array<out T> {
     for (element in this) {
-        val key = toKey(element)
-        val list = result.getOrPut(key) { ArrayList<T>() }
-        list.add(element)
-    }
-    return result
-}
-
-/**
- * Returns a list containing everything but the first *n* elements
- */
-public inline fun <T> Array<out T>.drop(n: Int) : List<T> {
-    return dropWhile(countTo(n))
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean) : List<T> {
-    return dropWhileTo(ArrayList<T>(), predicate)
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun <T, L: MutableList<in T>> Array<out T>.dropWhileTo(result: L, predicate: (T) -> Boolean) : L {
-    var start = true
-    for (element in this) {
-        if (start && predicate(element)) {
-            // ignore
-        } else {
-            start = false
-            result.add(element)
+        if (element == null) {
+            throw IllegalArgumentException("null element found in $this")
         }
     }
-    return result
+    return this as Array<out T>
+}
+
+/**
+ * Reverses the order the elements into a list
+ */
+public inline fun <T> Array<out T>.reverse() : List<T> {
+    val list = toCollection(ArrayList<T>())
+    Collections.reverse(list)
+    return list
+}
+
+/**
+ * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
+ * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
+ */
+public inline fun <T, R: Comparable<R>> Array<out T>.sortBy(f: (T) -> R) : List<T> {
+    val sortedList = toCollection(ArrayList<T>())
+    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) ->
+        val xr = f(x)
+        val yr = f(y)
+        xr.compareTo(yr)
+    }
+    java.util.Collections.sort(sortedList, sortBy)
+    return sortedList
 }
 
 /**
@@ -279,15 +374,6 @@ public inline fun <T, C: MutableCollection<in T>> Array<out T>.toCollection(resu
 }
 
 /**
- * Reverses the order the elements into a list
- */
-public inline fun <T> Array<out T>.reverse() : List<T> {
-    val list = toCollection(ArrayList<T>())
-    Collections.reverse(list)
-    return list
-}
-
-/**
  * Copies all elements into a [[LinkedList]]
  */
 public inline fun <T> Array<out T>.toLinkedList() : LinkedList<T> {
@@ -316,95 +402,9 @@ public inline fun <T> Array<out T>.toSortedSet() : SortedSet<T> {
 }
 
 /**
- * Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
- */
-public inline fun <T:Any> Array<out T?>.requireNoNulls() : Array<out T> {
-    for (element in this) {
-        if (element == null) {
-            throw IllegalArgumentException("null element found in $this")
-        }
-    }
-    return this as Array<out T>
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
- */
-public inline fun <T> Array<out T>.plus(element: T) : List<T> {
-    val answer = ArrayList<T>()
-    toCollection(answer)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following iterator
- */
-public inline fun <T> Array<out T>.plus(iterator: Iterator<T>) : List<T> {
-    val answer = ArrayList<T>()
-    toCollection(answer)
-    for (element in iterator) {
-        answer.add(element)
-    }
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following collection
- */
-public inline fun <T> Array<out T>.plus(collection: Iterable<T>) : List<T> {
-    return plus(collection.iterator())
-}
-
-/**
  * Returns an iterator of Pairs(index, data)
  */
 public inline fun <T> Array<out T>.withIndices() : Iterator<Pair<Int, T>> {
     return IndexIterator(iterator())
-}
-
-/**
- * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
- * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
- */
-public inline fun <T, R: Comparable<R>> Array<out T>.sortBy(f: (T) -> R) : List<T> {
-    val sortedList = toCollection(ArrayList<T>())
-    val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) ->
-        val xr = f(x)
-        val yr = f(y)
-        xr.compareTo(yr)
-    }
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun <T> Array<out T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
-    buffer.append(prefix)
-    var count = 0
-    for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
-            buffer.append(text)
-        } else break
-    }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-}
-
-/**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun <T> Array<out T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
-    val buffer = StringBuilder()
-    appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString()
 }
 
