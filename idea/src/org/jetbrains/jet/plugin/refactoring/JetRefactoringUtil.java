@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -169,6 +170,10 @@ public class JetRefactoringUtil {
                 AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
 
         DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+
+        if (declarationDescriptor instanceof LocalVariableDescriptor) {
+            return Collections.singletonList(declaration);
+        }
         if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return null;
 
         CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) declarationDescriptor;

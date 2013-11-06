@@ -1,0 +1,3 @@
+New instance creation (10: 33) open fun processRequest() = Foo()
+New instance creation (14: 44) override fun processRequest() = Server.Foo()
+New instance creation (5: 24) println(Server.Foo())

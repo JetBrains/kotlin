@@ -1,0 +1,5 @@
+Callable reference (6: 23) val methodRef = ::processRequest()
+Function call (10: 9) processRequest()
+Unclassified usage (6: 30) String s = ServerPackage.processRequest();
+Unclassified usage (9: 30) return ServerPackage.processRequest();
+Usage in import (3: 15) import server.processRequest

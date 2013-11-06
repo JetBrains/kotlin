@@ -34,33 +34,37 @@ public class Preloader {
         }
 
         String modeStr = args[3];
-        Mode mode = parseMode(modeStr);
+        final Mode mode = parseMode(modeStr);
         URL[] instrumentersClasspath = parseInstrumentersClasspath(mode, modeStr);
 
-        long startTime = System.nanoTime();
+        final long startTime = System.nanoTime();
 
         ClassLoader parent = Preloader.class.getClassLoader();
 
         ClassLoader withInstrumenter = instrumentersClasspath.length > 0 ? new URLClassLoader(instrumentersClasspath, parent) : parent;
 
-        Handler handler = getHandler(mode, withInstrumenter);
+        final Handler handler = getHandler(mode, withInstrumenter);
         ClassLoader preloaded = ClassPreloadingUtils.preloadClasses(files, classNumber, withInstrumenter, handler);
 
         Class<?> mainClass = preloaded.loadClass(mainClassCanonicalName);
         Method mainMethod = mainClass.getMethod("main", String[].class);
 
-        try {
-            mainMethod.invoke(0, new Object[] {Arrays.copyOfRange(args, PRELOADER_ARG_COUNT, args.length)});
-        }
-        finally {
-            if (mode != Mode.NO_TIME) {
-                System.out.println();
-                System.out.println("=== Preloader's measurements: ");
-                long dt = System.nanoTime() - startTime;
-                System.out.format("Total time: %.3fs\n", dt / 1e9);
-            }
-            handler.done();
-        }
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mode != Mode.NO_TIME) {
+                            System.out.println();
+                            System.out.println("=== Preloader's measurements: ");
+                            long dt = System.nanoTime() - startTime;
+                            System.out.format("Total time: %.3fs\n", dt / 1e9);
+                        }
+                        handler.done();
+                    }
+                })
+        );
+
+        mainMethod.invoke(0, new Object[] {Arrays.copyOfRange(args, PRELOADER_ARG_COUNT, args.length)});
     }
 
     private static URL[] parseInstrumentersClasspath(Mode mode, String modeStr)

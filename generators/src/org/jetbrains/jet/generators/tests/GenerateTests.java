@@ -484,9 +484,10 @@ public class GenerateTests {
 
         generateTest(
                 "idea/tests/",
-                "JetFindUsagesTest",
+                "JetFindUsagesTestGenerated",
                 AbstractJetFindUsagesTest.class,
-                testModelWithPattern("idea/testData/findUsages", "^(.+)\\.0\\.kt$", "doTest")
+                testModelWithPattern("idea/testData/findUsages/kotlin", "^(.+)\\.0\\.kt$", "doTest"),
+                testModelWithPattern("idea/testData/findUsages/java", "^(.+)\\.0\\.java$", "doTest")
         );
 
         generateTest(

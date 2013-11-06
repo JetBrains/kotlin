@@ -1,3 +1,0 @@
-Selector (10: 22) println("${x.a} ${x.b}")
-Selector (10: 29) println("${x.a} ${x.b}")
-Selector (11: 11) x.b = 12

@@ -1,3 +1,0 @@
-Instantiation (10: 33) open fun processRequest() = Foo()
-Instantiation (14: 44) override fun processRequest() = Server.Foo()
-Instantiation (5: 24) println(Server.Foo())

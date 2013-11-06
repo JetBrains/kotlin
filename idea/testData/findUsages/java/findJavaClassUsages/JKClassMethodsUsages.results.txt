@@ -1,0 +1,2 @@
+Function call (20: 18) super<A>.foo()
+Function call (7: 11) A.foos()

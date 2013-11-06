@@ -17,6 +17,6 @@ class StrMore {
 // EXIST: StrSome
 // EXIST: StrMore
 // EXIST: StrInFun
-// EXIST_JAVA_ONLY: StringBuilder
+// EXIST: StringBuilder
 // EXIST_JAVA_ONLY: StringBuffer
 // ABSENT: StrAbsent

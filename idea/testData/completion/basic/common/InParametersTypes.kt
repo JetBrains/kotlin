@@ -8,7 +8,7 @@ class SomeClass {
 // EXIST: SomeClass, SomeInternal
 // EXIST: String~(jet)
 // EXIST: IllegalStateException
-// EXIST_JAVA_ONLY: StringBuilder
+// EXIST: StringBuilder
 // EXIST_JAVA_ONLY: StringBuffer
 // ABSENT: HTMLStyleElement
 // ABSENT: Statement@Statement~(java.sql)

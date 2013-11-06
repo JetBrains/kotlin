@@ -30,7 +30,6 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
-import org.jetbrains.k2js.translate.declaration.ClassDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
@@ -93,8 +92,6 @@ public final class StaticContext {
 
     @NotNull
     private LiteralFunctionTranslator literalFunctionTranslator;
-    @NotNull
-    private ClassDeclarationTranslator classDeclarationTranslator;
 
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
@@ -111,17 +108,11 @@ public final class StaticContext {
 
     public void initTranslators(TranslationContext programContext) {
         literalFunctionTranslator = new LiteralFunctionTranslator(programContext);
-        classDeclarationTranslator = new ClassDeclarationTranslator(programContext);
     }
 
     @NotNull
     public LiteralFunctionTranslator getLiteralFunctionTranslator() {
         return literalFunctionTranslator;
-    }
-
-    @NotNull
-    public ClassDeclarationTranslator getClassDeclarationTranslator() {
-        return classDeclarationTranslator;
     }
 
     public boolean isEcma5() {
@@ -170,23 +161,6 @@ public final class StaticContext {
 
     @NotNull
     public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
-        ClassDescriptor classDescriptor;
-        if (descriptor instanceof ConstructorDescriptor) {
-            classDescriptor = ((ConstructorDescriptor) descriptor).getContainingDeclaration();
-        }
-        else if (descriptor instanceof ClassDescriptor) {
-            classDescriptor = (ClassDescriptor) descriptor;
-        }
-        else {
-            classDescriptor = null;
-        }
-
-        if (classDescriptor != null) {
-            JsNameRef reference = classDeclarationTranslator.getQualifiedReference((classDescriptor));
-            if (reference != null) {
-                return reference;
-            }
-        }
         return new JsNameRef(getNameForDescriptor(descriptor), getQualifierForDescriptor(descriptor));
     }
 

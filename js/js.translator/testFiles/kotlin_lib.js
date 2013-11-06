@@ -72,13 +72,13 @@ String.prototype.contains = function (s) {
 
     Kotlin.modules = {};
 
-    Kotlin.RuntimeException = Kotlin.createClass();
-    Kotlin.NullPointerException = Kotlin.createClass();
-    Kotlin.NoSuchElementException = Kotlin.createClass();
-    Kotlin.IllegalArgumentException = Kotlin.createClass();
-    Kotlin.IllegalStateException = Kotlin.createClass();
-    Kotlin.UnsupportedOperationException = Kotlin.createClass();
-    Kotlin.IOException = Kotlin.createClass();
+    Kotlin.RuntimeException = Kotlin.createClassNow();
+    Kotlin.NullPointerException = Kotlin.createClassNow();
+    Kotlin.NoSuchElementException = Kotlin.createClassNow();
+    Kotlin.IllegalArgumentException = Kotlin.createClassNow();
+    Kotlin.IllegalStateException = Kotlin.createClassNow();
+    Kotlin.UnsupportedOperationException = Kotlin.createClassNow();
+    Kotlin.IOException = Kotlin.createClassNow();
 
     Kotlin.throwNPE = function () {
         throw new Kotlin.NullPointerException();
@@ -96,12 +96,12 @@ String.prototype.contains = function (s) {
         };
     }
 
-    Kotlin.Iterator = Kotlin.createClass(null, null, {
+    Kotlin.Iterator = Kotlin.createClassNow(null, null, {
         next: throwAbstractFunctionInvocationError("Iterator#next"),
         hasNext: throwAbstractFunctionInvocationError("Iterator#hasNext")
     });
 
-    var ArrayIterator = Kotlin.createClass(Kotlin.Iterator,
+    var ArrayIterator = Kotlin.createClassNow(Kotlin.Iterator,
         function (array) {
             this.array = array;
             this.size = array.length;
@@ -115,7 +115,7 @@ String.prototype.contains = function (s) {
             }
     });
 
-    var ListIterator = Kotlin.createClass(ArrayIterator,
+    var ListIterator = Kotlin.createClassNow(ArrayIterator,
         function (list) {
             this.list = list;
             this.size = list.size();
@@ -126,9 +126,9 @@ String.prototype.contains = function (s) {
             }
     });
 
-    Kotlin.Collection = Kotlin.createClass();
+    Kotlin.Collection = Kotlin.createClassNow();
 
-    Kotlin.Enum = Kotlin.createClass(null,
+    Kotlin.Enum = Kotlin.createClassNow(null,
         function () {
             this.name$ = undefined;
             this.ordinal$ = undefined;
@@ -170,13 +170,13 @@ String.prototype.contains = function (s) {
         };
     })();
 
-    Kotlin.PropertyMetadata = Kotlin.createClass(null,
+    Kotlin.PropertyMetadata = Kotlin.createClassNow(null,
         function(name) {
             this.name = name;
         }
     );
 
-    Kotlin.AbstractCollection = Kotlin.createClass(Kotlin.Collection, null, {
+    Kotlin.AbstractCollection = Kotlin.createClassNow(Kotlin.Collection, null, {
         size: function () {
             return this.$size;
         },
@@ -229,7 +229,7 @@ String.prototype.contains = function (s) {
         }
     });
 
-    Kotlin.AbstractList = Kotlin.createClass(Kotlin.AbstractCollection, null, {
+    Kotlin.AbstractList = Kotlin.createClassNow(Kotlin.AbstractCollection, null, {
         iterator: function () {
             return new ListIterator(this);
         },
@@ -245,7 +245,7 @@ String.prototype.contains = function (s) {
     });
 
     //TODO: should be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
-    Kotlin.ArrayList = Kotlin.createClass(Kotlin.AbstractList,
+    Kotlin.ArrayList = Kotlin.createClassNow(Kotlin.AbstractList,
         function () {
             this.array = [];
             this.$size = 0;
@@ -313,19 +313,19 @@ String.prototype.contains = function (s) {
             }
     });
 
-    Kotlin.Runnable = Kotlin.createClass(null, null, {
+    Kotlin.Runnable = Kotlin.createClassNow(null, null, {
         run: throwAbstractFunctionInvocationError("Runnable#run")
     });
 
-    Kotlin.Comparable = Kotlin.createClass(null, null, {
+    Kotlin.Comparable = Kotlin.createClassNow(null, null, {
         compareTo: throwAbstractFunctionInvocationError("Comparable#compareTo")
     });
 
-    Kotlin.Appendable = Kotlin.createClass(null, null, {
+    Kotlin.Appendable = Kotlin.createClassNow(null, null, {
         append: throwAbstractFunctionInvocationError("Appendable#append")
     });
 
-    Kotlin.Closeable = Kotlin.createClass(null, null, {
+    Kotlin.Closeable = Kotlin.createClassNow(null, null, {
         close: throwAbstractFunctionInvocationError("Closeable#close")
     });
 
@@ -397,7 +397,7 @@ String.prototype.contains = function (s) {
         Kotlin.System.out().print(s);
     };
 
-    Kotlin.RangeIterator = Kotlin.createClass(Kotlin.Iterator,
+    Kotlin.RangeIterator = Kotlin.createClassNow(Kotlin.Iterator,
         function (start, end, increment) {
             this.start = start;
             this.end = end;
@@ -414,7 +414,7 @@ String.prototype.contains = function (s) {
             }
     });
 
-    Kotlin.NumberRange = Kotlin.createClass(null,
+    Kotlin.NumberRange = Kotlin.createClassNow(null,
         function (start, end) {
             this.start = start;
             this.end = end;
@@ -428,7 +428,7 @@ String.prototype.contains = function (s) {
             }
     });
 
-    Kotlin.Progression = Kotlin.createClass(null,
+    Kotlin.Progression = Kotlin.createClassNow(null,
         function (start, end, increment) {
             this.start = start;
             this.end = end;
@@ -439,11 +439,11 @@ String.prototype.contains = function (s) {
         }
     });
 
-    Kotlin.Comparator = Kotlin.createClass(null, null, {
+    Kotlin.Comparator = Kotlin.createClassNow(null, null, {
         compare: throwAbstractFunctionInvocationError("Comparator#compare")
     });
 
-    var ComparatorImpl = Kotlin.createClass(Kotlin.Comparator,
+    var ComparatorImpl = Kotlin.createClassNow(Kotlin.Comparator,
         function (comparator) {
             this.compare = comparator;
         }
@@ -504,7 +504,7 @@ String.prototype.contains = function (s) {
     };
 
 
-    Kotlin.StringBuilder = Kotlin.createClass(null,
+    Kotlin.StringBuilder = Kotlin.createClassNow(null,
         function () {
             this.string = "";
         }, {

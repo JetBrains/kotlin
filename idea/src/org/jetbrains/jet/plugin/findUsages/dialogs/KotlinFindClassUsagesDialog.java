@@ -12,7 +12,7 @@ import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions;
+import org.jetbrains.jet.plugin.findUsages.*;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 import javax.swing.*;
@@ -67,7 +67,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         );
         constructorUsages = addCheckboxToPanel(
                 JetBundle.message("find.what.constructor.usages.checkbox"),
-                getFindUsagesOptions().searchConstructorUsages,
+                getFindUsagesOptions().getSearchConstructorUsages(),
                 findWhatPanel,
                 true
         );
@@ -101,7 +101,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         super.calcFindUsagesOptions(options);
 
         KotlinClassFindUsagesOptions kotlinOptions = (KotlinClassFindUsagesOptions) options;
-        kotlinOptions.searchConstructorUsages = constructorUsages.isSelected();
+        kotlinOptions.setSearchConstructorUsages(constructorUsages.isSelected());
         kotlinOptions.isDerivedClasses = derivedClasses.isSelected();
         kotlinOptions.isDerivedInterfaces = derivedTraits.isSelected();
     }

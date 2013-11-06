@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.k2js.translate.declaration.ClassDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 
@@ -240,11 +239,6 @@ public class TranslationContext {
     @NotNull
     public LiteralFunctionTranslator literalFunctionTranslator() {
         return staticContext.getLiteralFunctionTranslator();
-    }
-
-    @NotNull
-    public ClassDeclarationTranslator classDeclarationTranslator() {
-        return staticContext.getClassDeclarationTranslator();
     }
 
     @NotNull

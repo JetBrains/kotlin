@@ -1,2 +1,0 @@
-Instantiation (6: 12) return Bar()
-

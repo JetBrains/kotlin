@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-var A = Kotlin.createClass();
-var B = Kotlin.createClass(A);
+var A = Kotlin.createClassNow();
+var B = Kotlin.createClassNow(A);
 var b = new B;
 
 function test() {
