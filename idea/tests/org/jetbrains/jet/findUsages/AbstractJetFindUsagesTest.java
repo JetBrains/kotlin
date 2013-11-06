@@ -42,9 +42,7 @@ import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
@@ -194,6 +192,13 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
             public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
                 return new JavaVariableFindUsagesOptions(project);
             }
+        },
+        DEFAULT {
+            @NotNull
+            @Override
+            public FindUsagesOptions parse(@NotNull String text, @NotNull Project project) {
+                return new FindUsagesOptions(project);
+            }
         };
 
         protected static boolean parseCommonOptions(JavaFindUsagesOptions options, String s) {
@@ -218,7 +223,7 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
             if (klass == JetNamedFunction.class) {
                 return FUNCTION;
             }
-            if (klass == JetProperty.class) {
+            if (klass == JetProperty.class || klass == JetParameter.class) {
                 return PROPERTY;
             }
             if (klass == JetClass.class) {
@@ -232,6 +237,9 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
             }
             if (klass == PsiField.class) {
                 return JAVA_FIELD;
+            }
+            if (klass == JetTypeParameter.class) {
+                return DEFAULT;
             }
 
             return null;

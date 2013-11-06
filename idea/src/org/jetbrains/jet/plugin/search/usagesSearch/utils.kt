@@ -42,6 +42,7 @@ import com.intellij.usages.impl.rules.UsageType
 import org.jetbrains.jet.asJava.LightClassUtil
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.codegen.PropertyCodegen
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -54,18 +55,23 @@ val PsiReference.navigationTarget: PsiElement?
 val JetDeclaration.descriptor: DeclarationDescriptor?
     get() = AnalyzerFacadeWithCache.getContextForElement(this).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
 
+val JetParameter.propertyDescriptor: PropertyDescriptor?
+    get() = AnalyzerFacadeWithCache.getContextForElement(this).get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+
 fun PsiReference.isTargetUsage(target: PsiElement): Boolean {
     return target.getNavigationElement() == navigationTarget
 }
 
 fun PsiReference.checkUsageVsOriginalDescriptor(
-        target: JetDeclaration, checker: (usageDescriptor: DeclarationDescriptor, targetDescriptor: DeclarationDescriptor) -> Boolean
+        target: JetDeclaration,
+        declarationToDescriptor: (JetDeclaration) -> DeclarationDescriptor? = {it.descriptor},
+        checker: (usageDescriptor: DeclarationDescriptor, targetDescriptor: DeclarationDescriptor) -> Boolean
 ): Boolean {
     val refTarget = navigationTarget
     if (refTarget !is JetDeclaration) return false
 
-    val usageDescriptor = refTarget.descriptor
-    val targetDescriptor = target.descriptor
+    val usageDescriptor = declarationToDescriptor(refTarget)
+    val targetDescriptor = declarationToDescriptor(target)
     return usageDescriptor != null && targetDescriptor != null && checker(usageDescriptor, targetDescriptor)
 }
 
@@ -137,22 +143,32 @@ fun PsiReference.isUsageInContainingDeclaration(declaration: JetNamedDeclaration
                 && usageDescriptor.getContainingDeclaration() == targetDescriptor.getContainingDeclaration()
         }
 
-fun PsiReference.isCallableOverrideUsage(declaration: JetCallableDeclaration): Boolean =
-        checkUsageVsOriginalDescriptor(declaration) { (usageDescriptor, targetDescriptor) ->
-            usageDescriptor is CallableDescriptor && targetDescriptor is CallableDescriptor
-                && OverridingUtil.overrides(usageDescriptor, targetDescriptor)
-        }
-
-fun PsiReference.isPropertyReadOnlyUsage(): Boolean {
-    if (this is JetPsiReference) {
-        return JetUsageTypeProvider.getUsageType(getElement()) != UsageType.WRITE
+fun PsiReference.isCallableOverrideUsage(declaration: JetNamedDeclaration): Boolean {
+    val decl2Desc = {(declaration: JetDeclaration) ->
+        if (declaration is JetParameter && declaration.getValOrVarNode() != null) declaration.propertyDescriptor else declaration.descriptor
     }
 
-    val refTarget = resolve()
+    return checkUsageVsOriginalDescriptor(declaration, decl2Desc) { (usageDescriptor, targetDescriptor) ->
+        usageDescriptor is CallableDescriptor && targetDescriptor is CallableDescriptor
+            && OverridingUtil.overrides(usageDescriptor, targetDescriptor)
+    }
+}
 
+
+// Check if reference resolves to property getter
+// Works for JetProperty and JetParameter
+fun PsiReference.isPropertyReadOnlyUsage(): Boolean {
+    if (JetUsageTypeProvider.getUsageType(getElement()) == UsageType.READ) return true
+
+    val refTarget = resolve()
     if (refTarget is JetClsMethod) {
-        val property = refTarget.getOrigin()?.getParentByType(javaClass<JetProperty>())
-        return property != null && refTarget.getName() == PropertyCodegen.getterName(property.getNameAsName())
+        val origin = refTarget.getOrigin()
+        val declaration: JetNamedDeclaration? = when (origin) {
+            is JetPropertyAccessor -> origin.getParentByType(javaClass<JetProperty>())
+            is JetProperty, is JetParameter -> origin as JetNamedDeclaration
+            else -> null
+        }
+        return declaration != null && refTarget.getName() == PropertyCodegen.getterName(declaration.getNameAsName())
     }
 
     return false

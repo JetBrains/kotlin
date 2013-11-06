@@ -32,8 +32,9 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.plugin.findUsages.*;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindFunctionUsagesDialog;
@@ -46,8 +47,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-public abstract class KotlinFindCallableUsagesHandler<T extends JetCallableDeclaration> extends KotlinFindUsagesHandler<T> {
-    private static class Function extends KotlinFindCallableUsagesHandler<JetNamedFunction> {
+public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaration> extends KotlinFindUsagesHandler<T> {
+    private static class Function extends KotlinFindMemberUsagesHandler<JetNamedFunction> {
         public Function(
                 @NotNull JetNamedFunction declaration,
                 @NotNull Collection<? extends PsiElement> elementsToSearch,
@@ -82,9 +83,9 @@ public abstract class KotlinFindCallableUsagesHandler<T extends JetCallableDecla
         }
     }
 
-    private static class Property extends KotlinFindCallableUsagesHandler<JetProperty> {
+    private static class Property extends KotlinFindMemberUsagesHandler<JetNamedDeclaration> {
         public Property(
-                @NotNull JetProperty declaration,
+                @NotNull JetNamedDeclaration declaration,
                 @NotNull Collection<? extends PsiElement> elementsToSearch,
                 @NotNull KotlinFindUsagesHandlerFactory factory
         ) {
@@ -92,7 +93,7 @@ public abstract class KotlinFindCallableUsagesHandler<T extends JetCallableDecla
         }
 
         @Override
-        protected UsagesSearchHelper<JetProperty> getSearchHelper(KotlinCallableFindUsagesOptions options) {
+        protected UsagesSearchHelper<JetNamedDeclaration> getSearchHelper(KotlinCallableFindUsagesOptions options) {
             return FindUsagesPackage.toHelper((KotlinPropertyFindUsagesOptions) options);
         }
 
@@ -105,19 +106,13 @@ public abstract class KotlinFindCallableUsagesHandler<T extends JetCallableDecla
         @NotNull
         @Override
         public AbstractFindUsagesDialog getFindUsagesDialog(boolean isSingleFile, boolean toShowInNewTab, boolean mustOpenInNewTab) {
-            KotlinPropertyFindUsagesOptions options = getFactory().getFindPropertyOptions();
-            Iterator<PsiMethod> lightMethods = getLightMethods(getElement()).iterator();
-            if (lightMethods.hasNext()) {
-                return new KotlinFindPropertyUsagesDialog(
-                        getElement(), getProject(), options, toShowInNewTab, mustOpenInNewTab, isSingleFile, this
-                );
-            }
-
-            return super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab);
+            return new KotlinFindPropertyUsagesDialog(
+                    getElement(), getProject(), getFactory().getFindPropertyOptions(), toShowInNewTab, mustOpenInNewTab, isSingleFile, this
+            );
         }
     }
 
-    protected KotlinFindCallableUsagesHandler(
+    protected KotlinFindMemberUsagesHandler(
             @NotNull T declaration,
             @NotNull Collection<? extends PsiElement> elementsToSearch,
             @NotNull KotlinFindUsagesHandlerFactory factory
@@ -127,7 +122,7 @@ public abstract class KotlinFindCallableUsagesHandler<T extends JetCallableDecla
 
     protected abstract UsagesSearchHelper<T> getSearchHelper(KotlinCallableFindUsagesOptions options);
 
-    private static Iterable<PsiMethod> getLightMethods(JetCallableDeclaration element) {
+    private static Iterable<PsiMethod> getLightMethods(JetNamedDeclaration element) {
         if (element instanceof JetNamedFunction) {
             PsiMethod method = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
             return method != null ? Collections.singletonList(method) : Collections.<PsiMethod>emptyList();
@@ -135,6 +130,10 @@ public abstract class KotlinFindCallableUsagesHandler<T extends JetCallableDecla
 
         if (element instanceof JetProperty) {
             return LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
+        }
+
+        if (element instanceof JetParameter) {
+            return LightClassUtil.getLightClassPropertyMethods((JetParameter) element);
         }
 
         return null;
@@ -157,7 +156,7 @@ public abstract class KotlinFindCallableUsagesHandler<T extends JetCallableDecla
         Iterator<PsiMethod> lightMethods = ApplicationManager.getApplication().runReadAction(new Computable<Iterator<PsiMethod>>() {
             @Override
             public Iterator<PsiMethod> compute() {
-                return getLightMethods((JetCallableDeclaration) element).iterator();
+                return getLightMethods((JetNamedDeclaration) element).iterator();
             }
         });
 
@@ -185,18 +184,18 @@ public abstract class KotlinFindCallableUsagesHandler<T extends JetCallableDecla
     }
 
     @NotNull
-    public static KotlinFindCallableUsagesHandler<? extends JetCallableDeclaration> getInstance(
-            @NotNull JetCallableDeclaration declaration,
+    public static KotlinFindMemberUsagesHandler<? extends JetNamedDeclaration> getInstance(
+            @NotNull JetNamedDeclaration declaration,
             @NotNull Collection<? extends PsiElement> elementsToSearch,
             @NotNull KotlinFindUsagesHandlerFactory factory) {
         return declaration instanceof JetNamedFunction
                ? new Function((JetNamedFunction) declaration, elementsToSearch, factory)
-               : new Property((JetProperty) declaration, elementsToSearch, factory);
+               : new Property(declaration, elementsToSearch, factory);
     }
 
     @NotNull
-    public static KotlinFindCallableUsagesHandler<? extends JetCallableDeclaration> getInstance(
-            @NotNull JetCallableDeclaration declaration,
+    public static KotlinFindMemberUsagesHandler<? extends JetNamedDeclaration> getInstance(
+            @NotNull JetNamedDeclaration declaration,
             @NotNull KotlinFindUsagesHandlerFactory factory) {
         return getInstance(declaration, Collections.<PsiElement>emptyList(), factory);
     }

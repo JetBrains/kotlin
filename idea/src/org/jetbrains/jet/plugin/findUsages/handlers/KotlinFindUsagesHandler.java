@@ -18,21 +18,15 @@ package org.jetbrains.jet.plugin.findUsages.handlers;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
-import com.intellij.find.findUsages.JavaFindUsagesOptions;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.findUsages.FindUsagesPackage;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
-import org.jetbrains.jet.plugin.search.usagesSearch.DeclarationUsagesSearchHelper;
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearch;
-import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchTarget;
 
 import java.util.Collection;
 import java.util.Collections;

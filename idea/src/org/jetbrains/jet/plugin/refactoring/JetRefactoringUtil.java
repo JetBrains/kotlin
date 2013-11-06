@@ -136,8 +136,15 @@ public class JetRefactoringUtil {
     }
 
     @NotNull
-    private static List<? extends PsiElement> getPropertySuperDeclarations(@NotNull JetProperty property) {
-        LightClassUtil.PropertyAccessorsPsiMethods lightMethods = LightClassUtil.getLightClassPropertyMethods(property);
+    private static List<? extends PsiElement> getPropertySuperDeclarations(@NotNull JetDeclaration declaration) {
+        LightClassUtil.PropertyAccessorsPsiMethods lightMethods;
+        if (declaration instanceof JetProperty) {
+            lightMethods = LightClassUtil.getLightClassPropertyMethods((JetProperty) declaration);
+        }
+        else if (declaration instanceof JetParameter) {
+            lightMethods = LightClassUtil.getLightClassPropertyMethods((JetParameter) declaration);
+        }
+        else return Collections.emptyList();
 
         Collection<PsiMethod> foundMethods = new HashSet<PsiMethod>();
         if (lightMethods.getGetter() != null) {
@@ -158,7 +165,7 @@ public class JetRefactoringUtil {
     @NotNull
     private static List<? extends PsiElement> getSuperDeclarations(@NotNull JetDeclaration declaration) {
         if (declaration instanceof JetNamedFunction) return getFunctionSuperDeclarations((JetNamedFunction) declaration);
-        if (declaration instanceof JetProperty) return getPropertySuperDeclarations((JetProperty) declaration);
+        if (declaration instanceof JetProperty || declaration instanceof JetParameter) return getPropertySuperDeclarations(declaration);
         return Collections.emptyList();
     }
 
@@ -174,9 +181,6 @@ public class JetRefactoringUtil {
         if (declarationDescriptor instanceof LocalVariableDescriptor) {
             return Collections.singletonList(declaration);
         }
-        if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return null;
-
-        CallableMemberDescriptor callableDescriptor = (CallableMemberDescriptor) declarationDescriptor;
 
         List<? extends PsiElement> superDeclarations = getSuperDeclarations(declaration);
         if (ignore != null) {
@@ -186,13 +190,13 @@ public class JetRefactoringUtil {
         if (superDeclarations.isEmpty()) return Collections.singletonList(declaration);
 
         java.util.List<String> superClasses = getClassDescriptions(bindingContext, superDeclarations);
-        return askUserForMethodsToSearch(declaration, callableDescriptor, superDeclarations, superClasses, actionStringKey);
+        return askUserForMethodsToSearch(declaration, declarationDescriptor, superDeclarations, superClasses, actionStringKey);
     }
 
     @NotNull
     private static List<? extends PsiElement> askUserForMethodsToSearch(
             @NotNull JetDeclaration declaration,
-            @NotNull CallableMemberDescriptor callableDescriptor,
+            @NotNull DeclarationDescriptor declarationDescriptor,
             @NotNull List<? extends PsiElement> superMethods,
             @NotNull List<String> superClasses,
             @NotNull String actionStringKey
@@ -200,8 +204,8 @@ public class JetRefactoringUtil {
         String superClassesStr = "\n" + StringUtil.join(superClasses, "");
         String message = JetBundle.message(
                 "x.overrides.y.in.class.list",
-                DescriptorRenderer.COMPACT.render(callableDescriptor),
-                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callableDescriptor.getContainingDeclaration()),
+                DescriptorRenderer.COMPACT.render(declarationDescriptor),
+                DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(declarationDescriptor.getContainingDeclaration()),
                 superClassesStr,
                 JetBundle.message(actionStringKey)
         );

@@ -23,8 +23,10 @@ import com.intellij.find.findUsages.JavaFindUsagesDialog;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.StateRestoringCheckBox;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.findUsages.KotlinPropertyFindUsagesOptions;
@@ -92,10 +94,15 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
     }
 
     @Override
+    public void configureLabelComponent(@NotNull SimpleColoredComponent coloredComponent) {
+        Utils.configureLabelComponent(coloredComponent, (JetNamedDeclaration) getPsiElement());
+    }
+
+    @Override
     protected void addUsagesOptions(JPanel optionsPanel) {
         super.addUsagesOptions(optionsPanel);
 
-        JetProperty property = (JetProperty) getPsiElement();
+        JetNamedDeclaration property = (JetNamedDeclaration) getPsiElement();
 
         boolean isAbstract = property.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         boolean isOpen = property.hasModifier(JetTokens.OPEN_KEYWORD);
