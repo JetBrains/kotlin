@@ -42,6 +42,10 @@ class LazyJavaClassDescriptor(
         private val jClass: JavaClass
 ) : ClassDescriptorBase(containingDeclaration, fqName.shortName()), LazyJavaDescriptor, JavaClassDescriptor {
 
+    {
+        c.javaResolverCache.recordClass(jClass, this)
+    }
+
     private val innerC: LazyJavaResolverContextWithTypes = c.child(this, jClass.getTypeParameters().toSet())
 
     private val _kind = JavaClassResolver.determineClassKind(jClass)
