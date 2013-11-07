@@ -305,7 +305,7 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private static FqNameUnsafe getFqNameForClassObject(@NotNull JavaClass javaClass) {
+    public static FqNameUnsafe getFqNameForClassObject(@NotNull JavaClass javaClass) {
         FqName fqName = javaClass.getFqName();
         assert fqName != null : "Reading java class with no qualified name";
         return fqName.toUnsafe().child(getClassObjectName(javaClass.getName()));
@@ -414,7 +414,7 @@ public final class JavaClassResolver {
         return javaClass.getOuterClass() != null && !javaClass.isStatic();
     }
 
-    private static void createEnumSyntheticMethods(@NotNull JavaEnumClassObjectDescriptor classObject, @NotNull JetType enumType) {
+    public static void createEnumSyntheticMethods(@NotNull JavaEnumClassObjectDescriptor classObject, @NotNull JetType enumType) {
         JetType valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(enumType);
         SimpleFunctionDescriptor valuesMethod = DescriptorFactory.createEnumClassObjectValuesMethod(classObject, valuesReturnType);
         classObject.getBuilder().addFunctionDescriptor(valuesMethod);

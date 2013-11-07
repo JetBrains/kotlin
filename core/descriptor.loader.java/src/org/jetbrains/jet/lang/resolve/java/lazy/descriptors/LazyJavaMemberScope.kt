@@ -41,6 +41,8 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptorForObject
+import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -67,15 +69,19 @@ public abstract class LazyJavaMemberScope(
         (name: Name): Collection<FunctionDescriptor>
         ->
         val methods = memberIndex().findMethodsByName(name)
-        val functions = LinkedHashSet(methods.flatMap {
-            m ->
-            val function = resolveMethodToFunctionDescriptor(m, true)
-            val samAdapter = JavaFunctionResolver.resolveSamAdapter(function)
-            if (samAdapter != null)
-                listOf(function, samAdapter)
-            else
-                listOf(function)
-        })
+        val functions = LinkedHashSet(
+                methods.iterator()
+                      // values() and valueOf() are added manually, see LazyJavaClassDescriptor::getClassObjectDescriptor()
+                      .filter{ m -> !DescriptorResolverUtils.shouldBeInEnumClassObject(m) }
+                      .flatMap {
+                              m ->
+                              val function = resolveMethodToFunctionDescriptor(m, true)
+                              val samAdapter = JavaFunctionResolver.resolveSamAdapter(function)
+                              if (samAdapter != null)
+                                  listOf(function, samAdapter).iterator()
+                              else
+                                  listOf(function).iterator()
+                      }.toList())
 
         if (_containingDeclaration is NamespaceDescriptor) {
             val klass = JavaFunctionResolver.findClassInNamespace(_containingDeclaration, name);
@@ -211,7 +217,9 @@ public abstract class LazyJavaMemberScope(
 
         val field = memberIndex().findFieldByName(name)
         if (field != null) {
-            properties.add(resolveProperty(field))
+            if (DescriptorResolverUtils.shouldBeInEnumClassObject(field) == DescriptorUtils.isEnumClassObject(_containingDeclaration)) {
+                properties.add(resolveProperty(field))
+            }
         }
 
         if (_containingDeclaration is ClassDescriptor) {
@@ -227,13 +235,7 @@ public abstract class LazyJavaMemberScope(
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
         val isVar = !field.isFinal()
-        val propertyDescriptor = JavaPropertyDescriptor(
-                getContainingDeclaration(),
-                c.resolveAnnotations(field.getAnnotations()),
-                field.getVisibility(),
-                isVar,
-                field.getName()
-        )
+        val propertyDescriptor = createPropertyDescriptor(field)
         propertyDescriptor.initialize(null, null)
 
         val propertyType = getPropertyType(field)
@@ -248,6 +250,38 @@ public abstract class LazyJavaMemberScope(
         c.javaResolverCache.recordField(field, propertyDescriptor);
 
         return propertyDescriptor
+    }
+
+    private fun createPropertyDescriptor(field: JavaField): PropertyDescriptorImpl {
+        val isVar = !field.isFinal()
+        val visibility = field.getVisibility()
+        val annotations = c.resolveAnnotations(field.getAnnotations())
+        val propertyName = field.getName()
+
+        if (field.isEnumEntry()) {
+            assert(!isVar, "Enum entries should be immutable.")
+            assert(DescriptorUtils.isEnumClassObject(_containingDeclaration), "Enum entries should be put into class object of enum only: " + _containingDeclaration)
+            //TODO: this is a hack to indicate that this enum entry is an object
+            // class descriptor for enum entries is not used by backends so for now this should be safe to use
+            val dummyClassDescriptorForEnumEntryObject = ClassDescriptorImpl(_containingDeclaration, Collections.emptyList(), Modality.FINAL, propertyName)
+            dummyClassDescriptorForEnumEntryObject.initialize(
+                    true,
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    JetScope.EMPTY,
+                    Collections.emptySet(),
+                    null,
+                    false)
+            return JavaPropertyDescriptorForObject(
+                    _containingDeclaration as ClassDescriptor,
+                    annotations,
+                    visibility,
+                    propertyName,
+                    dummyClassDescriptorForEnumEntryObject
+            )
+        }
+
+        return JavaPropertyDescriptor(_containingDeclaration, annotations, visibility, isVar, propertyName)
     }
 
     private fun getPropertyType(field: JavaField): JetType {

@@ -17,49 +17,38 @@
 package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.storage.NotNullLazyValue
-import org.jetbrains.jet.lang.resolve.name.LabelName
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.utils.emptyList
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
-import org.jetbrains.jet.lang.resolve.java.structure.JavaField
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.java.lazy.child
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.java.lazy.hasNotNullAnnotation
-import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeAttributes
-import org.jetbrains.jet.lang.resolve.java.lazy.hasMutableAnnotation
 import org.jetbrains.kotlin.util.iif
-import org.jetbrains.jet.lang.resolve.java.lazy.hasReadOnlyAnnotation
-import org.jetbrains.jet.utils.valuesToMap
-import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
 import java.util.Collections
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver
 import org.jetbrains.jet.utils.*
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
-import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMember
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.jet.storage.get
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
-        containingDeclaration: LazyJavaClassDescriptor,
-        private val jClass: JavaClass
+        containingDeclaration: ClassDescriptor,
+        private val jClass: JavaClass,
+        private val enumClassObject: Boolean = false
 ) : LazyJavaMemberScope(c, containingDeclaration) {
 
-    override fun computeMemberIndex(): MemberIndex = object : ClassMemberIndex(jClass, { m -> !m.isStatic() }) {
-        // For SAM-constructors
-        override fun getAllMetodNames(): Collection<Name> = super.getAllMetodNames() + getAllClassNames()
+    override fun computeMemberIndex(): MemberIndex {
+        return object : ClassMemberIndex(jClass, { !enumClassObject && !it.isStatic() }) {
+            // For SAM-constructors
+            override fun getAllMetodNames(): Collection<Name> = super.getAllMetodNames() + getAllClassNames()
+        }
     }
 
     internal val _constructors = c.storageManager.createLazyValue {
@@ -165,10 +154,10 @@ public class LazyJavaClassMemberScope(
         if (jNestedClass == null)
             null
         else
-            LazyJavaClassDescriptor(c, getContainingDeclaration(), getContainingDeclaration().fqName.child(name), jNestedClass)
+            LazyJavaClassDescriptor(c, getContainingDeclaration(), jNestedClass.getFqName()!!, jNestedClass)
     }
 
-    override fun getClassifier(name: Name): ClassifierDescriptor? = nestedClasses(name)
+    override fun getClassifier(name: Name): ClassifierDescriptor? = if (enumClassObject) null else nestedClasses(name)
     override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet()
 
     override fun addExtraDescriptors(result: MutableCollection<in DeclarationDescriptor>) {
@@ -179,8 +168,8 @@ public class LazyJavaClassMemberScope(
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
 
 
-    override fun getContainingDeclaration(): LazyJavaClassDescriptor {
-        return super.getContainingDeclaration() as LazyJavaClassDescriptor
+    override fun getContainingDeclaration(): ClassDescriptor {
+        return super.getContainingDeclaration() as ClassDescriptor
     }
 
     // namespaces should be resolved elsewhere

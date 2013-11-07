@@ -28,6 +28,12 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
+import org.jetbrains.kotlin.util.iif
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaEnumClassObjectDescriptor
+import org.jetbrains.jet.lang.descriptors.Modality
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope
 
 class LazyJavaClassDescriptor(
         private val c: LazyJavaResolverContextWithTypes,
@@ -62,11 +68,30 @@ class LazyJavaClassDescriptor(
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 
+    private val _classObjectDescriptor = c.storageManager.createNullableLazyValue {
+        if (jClass.isEnum()) {
+            val classObject = JavaEnumClassObjectDescriptor(this)
+            classObject.setModality(Modality.FINAL)
+            classObject.setVisibility(jClass.getVisibility())
+            classObject.setTypeParameterDescriptors(Collections.emptyList<TypeParameterDescriptor>())
+            classObject.createTypeConstructor()
+
+            val scope = LazyJavaClassMemberScope(innerC, classObject, jClass, enumClassObject = true)
+            val writableScope = WritableScopeImpl(scope, classObject, RedeclarationHandler.THROW_EXCEPTION, "Enum class object scope")
+            writableScope.changeLockLevel(WritableScope.LockLevel.BOTH)
+
+            classObject.setScopeForMemberLookup(writableScope)
+
+            JavaClassResolver.createEnumSyntheticMethods(classObject, this.getDefaultType())
+
+            classObject
+        }
+        else null
+    }
+    override fun getClassObjectDescriptor(): ClassDescriptor? = _classObjectDescriptor()
+    override fun getClassObjectType(): JetType? = getClassObjectDescriptor()?.let { d -> d.getDefaultType() }
+
     override fun getConstructors() = _scopeForMemberLookup._constructors()
-
-    override fun getClassObjectType(): JetType? = null
-
-    override fun getClassObjectDescriptor(): ClassDescriptor? = null
 
     private val _annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass.getAnnotations()) }
     override fun getAnnotations(): List<AnnotationDescriptor> = _annotations()
