@@ -36,22 +36,36 @@ import com.intellij.psi.search.SearchRequestCollector
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.jet.lang.psi.psiUtil.*
+import org.jetbrains.jet.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 
 val isTargetUsage = (PsiReference::isTargetUsage).searchFilter
 
-fun JetProperty.names(readable: Boolean = true, writable: Boolean = true): List<String> {
+fun JetNamedDeclaration.namesWithAccessors(readable: Boolean = true, writable: Boolean = true): List<String> {
     val name = getName()!!
 
-    if (isLocal()) return Collections.singletonList(name)
+    fun PropertyAccessorsPsiMethods.toNameList(): List<String> {
+        val getter = getGetter()
+        val setter = getSetter()
 
-    val lightMethods = LightClassUtil.getLightClassPropertyMethods(this)
-    val getter = lightMethods.getGetter()
-    val setter = lightMethods.getSetter()
+        val result = arrayListOf(name)
+        if (readable && getter != null) result.add(getter.getName())
+        if (writable && setter != null) result.add(setter.getName())
+        return result
+    }
 
-    val result = arrayListOf(name)
-    if (readable && getter != null) result.add(getter.getName())
-    if (writable && setter != null) result.add(setter.getName())
-    return result
+    if (JetPsiUtil.isLocal(this)) return Collections.singletonList(name)
+
+    when (this) {
+        is JetProperty ->
+            return LightClassUtil.getLightClassPropertyMethods(this).toNameList()
+        is JetParameter ->
+            if (getValOrVarNode() != null) {
+                return LightClassUtil.getLightClassPropertyMethods(this).toNameList()
+            }
+    }
+
+    return Collections.singletonList(name)
 }
 
 public abstract class UsagesSearchHelper<T : PsiNamedElement> {
@@ -63,7 +77,7 @@ public abstract class UsagesSearchHelper<T : PsiNamedElement> {
 
             when {
                 name == null -> Collections.emptyList<String>()
-                element is JetProperty -> element.names()
+                element is JetProperty, element is JetParameter -> (element as JetNamedDeclaration).namesWithAccessors()
                 else -> Collections.singletonList(name)
             }
         }
@@ -161,18 +175,19 @@ class FunctionUsagesSearchHelper(
 
 val isPropertyReadOnlyUsage = (PsiReference::isPropertyReadOnlyUsage).searchFilter
 
+// Used for JetProperty and JetParameter
 class PropertyUsagesSearchHelper(
         public val readUsages: Boolean = true,
         public val writeUsages: Boolean = true,
         public override val selfUsages: Boolean = true,
         public override val overrideUsages: Boolean = true,
         skipImports: Boolean = false
-) : DefaultSearchHelper<JetProperty>(skipImports), OverrideSearchHelper {
-    override fun makeWordList(target: UsagesSearchTarget<JetProperty>): List<String> {
-        return target.element.names(readable = readUsages, writable = writeUsages)
+) : DefaultSearchHelper<JetNamedDeclaration>(skipImports), OverrideSearchHelper {
+    override fun makeWordList(target: UsagesSearchTarget<JetNamedDeclaration>): List<String> {
+        return target.element.namesWithAccessors(readable = readUsages, writable = writeUsages)
     }
 
-    override fun makeFilter(target: UsagesSearchTarget<JetProperty>): UsagesSearchFilter {
+    override fun makeFilter(target: UsagesSearchTarget<JetNamedDeclaration>): UsagesSearchFilter {
         val readWriteUsage = when {
             readUsages && writeUsages -> True
             readUsages -> isPropertyReadOnlyUsage
