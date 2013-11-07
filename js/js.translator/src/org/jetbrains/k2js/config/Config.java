@@ -124,7 +124,6 @@ public abstract class Config {
             "/generated/_Collections.kt",
             "/generated/_Iterables.kt",
             "/generated/_Iterators.kt",
-            "/generated/_IteratorsCommon.kt",
             "/kotlin/support/AbstractIterator.kt",
             "/kotlin/Standard.kt",
             "/kotlin/Strings.kt",
