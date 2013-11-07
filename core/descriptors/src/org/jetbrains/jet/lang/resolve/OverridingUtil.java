@@ -109,21 +109,28 @@ public class OverridingUtil {
         return candidates;
     }
 
-    public static <Descriptor extends CallableDescriptor> boolean overrides(@NotNull Descriptor f, @NotNull Descriptor g) {
-        Set<CallableDescriptor> overriddenDescriptors = Sets.newHashSet();
-        getAllOverriddenDescriptors(f.getOriginal(), overriddenDescriptors);
+    public static <D extends CallableDescriptor> boolean overrides(@NotNull D f, @NotNull D g) {
         CallableDescriptor originalG = g.getOriginal();
-        for (CallableDescriptor overriddenFunction : overriddenDescriptors) {
+        for (CallableDescriptor overriddenFunction : getAllOverriddenDescriptors(f)) {
             if (originalG.equals(overriddenFunction.getOriginal())) return true;
         }
         return false;
     }
 
-    private static void getAllOverriddenDescriptors(@NotNull CallableDescriptor current, @NotNull Set<CallableDescriptor> overriddenDescriptors) {
-        if (overriddenDescriptors.contains(current)) return;
+    public static Set<CallableDescriptor> getAllOverriddenDescriptors(CallableDescriptor f) {
+        Set<CallableDescriptor> overriddenDescriptors = Sets.newHashSet();
+        collectAllOverriddenDescriptors(f.getOriginal(), overriddenDescriptors);
+        return overriddenDescriptors;
+    }
+
+    private static void collectAllOverriddenDescriptors(
+            @NotNull CallableDescriptor current,
+            @NotNull Set<CallableDescriptor> result
+    ) {
+        if (result.contains(current)) return;
         for (CallableDescriptor descriptor : current.getOriginal().getOverriddenDescriptors()) {
-            getAllOverriddenDescriptors(descriptor, overriddenDescriptors);
-            overriddenDescriptors.add(descriptor);
+            collectAllOverriddenDescriptors(descriptor, result);
+            result.add(descriptor);
         }
     }
 
