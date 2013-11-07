@@ -61,8 +61,7 @@ public final class DecompiledDataFactory {
     private DecompiledDataFactory(@NotNull VirtualFile classFile, @NotNull Project project) {
         this.classFile = classFile;
         this.project = project;
-        InjectorForJavaDescriptorResolver injector =
-                new InjectorForJavaDescriptorResolver(project, new BindingTraceContext());
+        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, new BindingTraceContext());
         this.javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         VirtualFileKotlinClass kotlinClass = new VirtualFileKotlinClass(classFile);
