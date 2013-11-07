@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -33,24 +33,24 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureDialog;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetFunctionPlatformDescriptorImpl;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
+import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
 
 public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     private final JetCallElement callElement;
     private final boolean hasTypeMismatches;
 
     public AddFunctionParametersFix(
-            @NotNull PsiElement declaration,
             @NotNull JetCallElement callElement,
             @NotNull FunctionDescriptor functionDescriptor,
             boolean hasTypeMismatches
     ) {
-        super(declaration, callElement, functionDescriptor);
+        super(callElement, functionDescriptor);
         this.callElement = callElement;
         this.hasTypeMismatches = hasTypeMismatches;
     }
@@ -64,7 +64,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
         assert newParametersCnt > 0;
         String subjectSuffix = newParametersCnt > 1 ? "s" : "";
 
-        if (functionDescriptor instanceof ConstructorDescriptor) {
+        if (isConstructor()) {
             String className = functionDescriptor.getContainingDeclaration().getName().asString();
 
             if (hasTypeMismatches)
@@ -85,56 +85,63 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
         BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) callElement.getContainingFile()).getBindingContext();
-        JetFunctionPlatformDescriptorImpl platformDescriptor = new JetFunctionPlatformDescriptorImpl(functionDescriptor, element);
-        final List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-        List<? extends ValueArgument> arguments = callElement.getValueArguments();
-        JetNameValidator validator = JetNameValidator.getCollectingValidator(callElement.getProject());
-
-        for (int i = 0; i < arguments.size(); i ++) {
-            ValueArgument argument = arguments.get(i);
-            JetExpression expression = argument.getArgumentExpression();
-
-            if (i < parameters.size()) {
-                validator.validateName(parameters.get(i).getName().asString());
-                JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
-                JetType parameterType = parameters.get(i).getType();
-
-                if (argumentType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(argumentType, parameterType))
-                    platformDescriptor.getParameters().get(i).setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(argumentType));
-            }
-            else {
-                JetParameterInfo parameterInfo = getNewParameterInfo(bindingContext, argument, validator);
-
-                if (expression != null)
-                    parameterInfo.setDefaultValueText(expression.getText());
-
-                platformDescriptor.addParameter(parameterInfo);
-            }
-        }
-
-        JetChangeSignatureDialog dialog = new JetChangeSignatureDialog(project, platformDescriptor, callElement, getText()) {
-            @Override
-            protected int getSelectedIdx() {
-                return parameters.size();
-            }
-        };
-
-        if (ApplicationManager.getApplication().isUnitTestMode() ||
-            !hasTypeMismatches && !(functionDescriptor instanceof ConstructorDescriptor) && !hasOtherUsages())
-            performRefactoringSilently(dialog);
-        else
-            dialog.show();
+        runChangeSignature(project, functionDescriptor, addParameterConfiguration(), bindingContext, callElement, getText());
     }
 
-    private boolean hasOtherUsages() {
-        for (PsiReference reference : ReferencesSearch.search(element)) {
-            PsiElement referenceElement = reference.getElement();
+    private JetChangeSignatureConfiguration addParameterConfiguration() {
+        return new JetChangeSignatureConfiguration() {
+            @Override
+            public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {
+                List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+                List<? extends ValueArgument> arguments = callElement.getValueArguments();
+                JetNameValidator validator = JetNameValidator.getCollectingValidator(callElement.getProject());
 
-            if (referenceElement != null && referenceElement.getParent() instanceof JetReferenceExpression &&
-                !callElement.equals(referenceElement.getParent().getParent()))
+                for (int i = 0; i < arguments.size(); i ++) {
+                    ValueArgument argument = arguments.get(i);
+                    JetExpression expression = argument.getArgumentExpression();
+
+                    if (i < parameters.size()) {
+                        validator.validateName(parameters.get(i).getName().asString());
+                        JetType argumentType = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
+                        JetType parameterType = parameters.get(i).getType();
+
+                        if (argumentType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(argumentType, parameterType))
+                            changeSignatureData.getParameters().get(i).setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(argumentType));
+                    }
+                    else {
+                        JetParameterInfo parameterInfo = getNewParameterInfo(bindingContext, argument, validator);
+
+                        if (expression != null)
+                            parameterInfo.setDefaultValueText(expression.getText());
+
+                        changeSignatureData.addParameter(parameterInfo);
+                    }
+                }
+            }
+
+            @Override
+            public boolean performSilently(Collection<? extends PsiElement> affectedFunctions) {
+                if (affectedFunctions.size() != 1) {
+                    return false;
+                }
+                PsiElement onlyFunction = affectedFunctions.iterator().next();
+                return !hasTypeMismatches && !isConstructor() && !hasOtherUsages(onlyFunction);
+            }
+        };
+    }
+
+    private boolean hasOtherUsages(@NotNull PsiElement function) {
+        for (PsiReference reference : ReferencesSearch.search(function)) {
+            JetCallElement call = PsiTreeUtil.getParentOfType(reference.getElement(), JetCallElement.class);
+            if (call != null && !callElement.equals(call)) {
                 return true;
+            }
         }
 
         return false;
+    }
+
+    private boolean isConstructor() {
+        return functionDescriptor instanceof ConstructorDescriptor;
     }
 }

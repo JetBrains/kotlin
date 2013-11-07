@@ -288,7 +288,8 @@ public class OverrideResolver {
         Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = collectOverriddenDeclarations(directOverridden);
 
         List<CallableMemberDescriptor> allOverriddenDeclarations = ContainerUtil.flatten(overriddenDeclarationsByDirectParent.values());
-        Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newLinkedHashSet(allOverriddenDeclarations));
+        Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations = OverridingUtil.filterOutOverridden(
+                Sets.newLinkedHashSet(allOverriddenDeclarations));
 
         Set<CallableMemberDescriptor> relevantDirectlyOverridden =
                 getRelevantDirectlyOverridden(overriddenDeclarationsByDirectParent, allFilteredOverriddenDeclarations);
@@ -394,7 +395,8 @@ public class OverrideResolver {
         Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = Maps.newLinkedHashMap();
         for (CallableMemberDescriptor descriptor : directOverriddenDescriptors) {
             Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
-            Set<CallableMemberDescriptor> filteredOverrides = OverridingUtil.filterOverrides(Sets.newLinkedHashSet(overriddenDeclarations));
+            Set<CallableMemberDescriptor> filteredOverrides = OverridingUtil.filterOutOverridden(
+                    Sets.newLinkedHashSet(overriddenDeclarations));
             Set<CallableMemberDescriptor> overridden = Sets.newLinkedHashSet();
             for (CallableMemberDescriptor memberDescriptor : filteredOverrides) {
                 overridden.add(memberDescriptor);
@@ -416,7 +418,7 @@ public class OverrideResolver {
         }
 
         // Only those actually inherited
-        Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOverrides(inheritedFunctions);
+        Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOutOverridden(inheritedFunctions);
 
         // Group members with "the same" signature
         Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = CommonSuppliers.newLinkedHashSetHashSetMultimap();

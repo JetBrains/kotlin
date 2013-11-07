@@ -10,10 +10,6 @@ package testData.libraries
         [public final val GREEN: testData.libraries.Color] /* compiled code */
 
         [public final val RED: testData.libraries.Color] /* compiled code */
-
-        [public final fun valueOf(value: jet.String): testData.libraries.Color { /* compiled code */ }]
-
-        [public final fun values(): jet.Array<testData.libraries.Color> { /* compiled code */ }]
     }]]
 
     [internal final val rgb: jet.Int] /* compiled code */

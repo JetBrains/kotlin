@@ -375,6 +375,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/changeSignature/beforeAddFunctionParameterAndChangeTypes.kt");
         }
         
+        @TestMetadata("beforeAddParameterToFakeOverride.kt")
+        public void testAddParameterToFakeOverride() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeAddParameterToFakeOverride.kt");
+        }
+        
         public void testAllFilesPresentInChangeSignature() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/changeSignature"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
@@ -387,6 +392,31 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeChangeFunctionLiteralParameters2.kt")
         public void testChangeFunctionLiteralParameters2() throws Exception {
             doTest("idea/testData/quickfix/changeSignature/beforeChangeFunctionLiteralParameters2.kt");
+        }
+        
+        @TestMetadata("beforeComplexHierarchy.kt")
+        public void testComplexHierarchy() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeComplexHierarchy.kt");
+        }
+        
+        @TestMetadata("beforeComplexHierarchyHead.kt")
+        public void testComplexHierarchyHead() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeComplexHierarchyHead.kt");
+        }
+        
+        @TestMetadata("beforeComplexHierarchyTail.kt")
+        public void testComplexHierarchyTail() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeComplexHierarchyTail.kt");
+        }
+        
+        @TestMetadata("beforeLinearHierarchy.kt")
+        public void testLinearHierarchy() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeLinearHierarchy.kt");
+        }
+        
+        @TestMetadata("beforeNotAvailableForSynthesized.kt")
+        public void testNotAvailableForSynthesized() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeNotAvailableForSynthesized.kt");
         }
         
         @TestMetadata("beforeRemoveConstructorParameter.kt")
@@ -412,6 +442,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeRemoveNamedParameter.kt")
         public void testRemoveNamedParameter() throws Exception {
             doTest("idea/testData/quickfix/changeSignature/beforeRemoveNamedParameter.kt");
+        }
+        
+        @TestMetadata("beforeRemoveParameterFromFakeOverride.kt")
+        public void testRemoveParameterFromFakeOverride() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeRemoveParameterFromFakeOverride.kt");
         }
         
         @TestMetadata("beforeRemoveUnusedParameter.kt")

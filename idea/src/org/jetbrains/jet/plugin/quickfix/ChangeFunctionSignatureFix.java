@@ -16,24 +16,17 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -41,20 +34,21 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.*;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
+
 public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiElement> {
-    private final PsiElement context;
+    protected final PsiElement context;
     protected final FunctionDescriptor functionDescriptor;
 
     public ChangeFunctionSignatureFix(
-            @NotNull PsiElement element,
             @NotNull PsiElement context,
             @NotNull FunctionDescriptor functionDescriptor
     ) {
-        super(element);
+        super(context);
         this.context = context;
         this.functionDescriptor = functionDescriptor;
     }
@@ -70,21 +64,13 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         return false;
     }
 
-    protected void showDialog(Project project, JetFunctionPlatformDescriptorImpl platformDescriptor) {
-        JetChangeSignatureDialog dialog = new JetChangeSignatureDialog(project, platformDescriptor, context, getText());
-
-        if (ApplicationManager.getApplication().isUnitTestMode())
-            performRefactoringSilently(dialog);
-        else
-            dialog.show();
-    }
-
     protected static String getNewArgumentName(ValueArgument argument, JetNameValidator validator) {
         JetValueArgumentName argumentName = argument.getArgumentName();
         JetExpression expression = argument.getArgumentExpression();
 
-        if (argumentName != null)
+        if (argumentName != null) {
             return validator.validateName(argumentName.getName());
+        }
         else if (expression != null) {
             return JetNameSuggester.suggestNames(expression, validator, "param")[0];
         }
@@ -92,7 +78,11 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         return validator.validateName("param");
     }
 
-    protected static JetParameterInfo getNewParameterInfo(BindingContext bindingContext, ValueArgument argument, JetNameValidator validator) {
+    protected static JetParameterInfo getNewParameterInfo(
+            BindingContext bindingContext,
+            ValueArgument argument,
+            JetNameValidator validator
+    ) {
         String name = getNewArgumentName(argument, validator);
         JetExpression expression = argument.getArgumentExpression();
         JetType type = expression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, expression) : null;
@@ -100,30 +90,24 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         return new JetParameterInfo(name, type);
     }
 
-    private static boolean hasTypeMismatches(List<ValueParameterDescriptor> parameters, List<? extends ValueArgument> arguments, BindingContext bindingContext) {
+    private static boolean hasTypeMismatches(
+            List<ValueParameterDescriptor> parameters,
+            List<? extends ValueArgument> arguments,
+            BindingContext bindingContext
+    ) {
         for (int i = 0; i < parameters.size(); i++) {
-            assert i < arguments.size(); // number of parameters must not be greater than the number of arguments (it's called only for TOO_MANY_ARGUMENTS error)
+            assert i < arguments .size(); // number of parameters must not be greater than the number of arguments (it's called only for TOO_MANY_ARGUMENTS error)
             JetExpression argumentExpression = arguments.get(i).getArgumentExpression();
-            JetType argumentType = argumentExpression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, argumentExpression) : null;
+            JetType argumentType =
+                    argumentExpression != null ? bindingContext.get(BindingContext.EXPRESSION_TYPE, argumentExpression) : null;
             JetType parameterType = parameters.get(i).getType();
 
-            if (argumentType == null || !JetTypeChecker.INSTANCE.isSubtypeOf(argumentType, parameterType))
+            if (argumentType == null || !JetTypeChecker.INSTANCE.isSubtypeOf(argumentType, parameterType)) {
                 return true;
+            }
         }
 
         return false;
-    }
-
-    protected void performRefactoringSilently(final JetChangeSignatureDialog dialog) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                JetChangeInfo changeInfo = dialog.evaluateChangeInfo();
-                JetChangeSignatureProcessor processor = new JetChangeSignatureProcessor(element.getProject(), changeInfo, getText());
-                processor.run();
-                Disposer.dispose(dialog.getDisposable());
-            }
-        });
     }
 
     public static JetSingleIntentionActionFactory createFactory() {
@@ -134,8 +118,9 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                 @SuppressWarnings("unchecked")
                 CallableDescriptor descriptor = ((DiagnosticWithParameters1<PsiElement, CallableDescriptor>) diagnostic).getA();
 
-                if (callElement != null)
+                if (callElement != null) {
                     return createFix(callElement, callElement, descriptor);
+                }
 
                 return null;
             }
@@ -150,13 +135,17 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                 DiagnosticWithParameters2<JetFunctionLiteral, Integer, List<JetType>> diagnosticWithParameters =
                         (DiagnosticWithParameters2<JetFunctionLiteral, Integer, List<JetType>>) diagnostic;
                 JetFunctionLiteral functionLiteral = diagnosticWithParameters.getPsiElement();
-                BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) functionLiteral.getContainingFile()).getBindingContext();
+                BindingContext bindingContext =
+                        AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) functionLiteral.getContainingFile()).getBindingContext();
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, functionLiteral);
 
-                if (descriptor instanceof FunctionDescriptor)
-                    return new ChangeFunctionLiteralSignatureFix(functionLiteral, (FunctionDescriptor) descriptor, diagnosticWithParameters.getB());
-                else
+                if (descriptor instanceof FunctionDescriptor) {
+                    return new ChangeFunctionLiteralSignatureFix(functionLiteral, (FunctionDescriptor) descriptor,
+                                                                 diagnosticWithParameters.getB());
+                }
+                else {
                     return null;
+                }
             }
         };
     }
@@ -168,10 +157,12 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                 @SuppressWarnings("unchecked")
                 Object descriptor = ((DiagnosticWithParameters1<PsiNameIdentifierOwner, Object>) diagnostic).getA();
 
-                if (descriptor instanceof ValueParameterDescriptor)
+                if (descriptor instanceof ValueParameterDescriptor) {
                     return createFix(null, diagnostic.getPsiElement(), (CallableDescriptor) descriptor);
-                else
+                }
+                else {
                     return null;
+                }
             }
         };
     }
@@ -180,31 +171,37 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
     private static ChangeFunctionSignatureFix createFix(JetCallElement callElement, PsiElement context, CallableDescriptor descriptor) {
         FunctionDescriptor functionDescriptor = null;
 
-        if (descriptor instanceof FunctionDescriptor)
+        if (descriptor instanceof FunctionDescriptor) {
             functionDescriptor = (FunctionDescriptor) descriptor;
+        }
         else if (descriptor instanceof ValueParameterDescriptor) {
             DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
 
-            if (containingDescriptor instanceof FunctionDescriptor)
+            if (containingDescriptor instanceof FunctionDescriptor) {
                 functionDescriptor = (FunctionDescriptor) containingDescriptor;
+            }
         }
 
-        if (functionDescriptor != null) {
-            BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) context.getContainingFile()).getBindingContext();
-            PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, functionDescriptor);
+        if (functionDescriptor == null) {
+            return null;
+        }
 
-            if (declaration != null) {
-                if (descriptor instanceof ValueParameterDescriptor)
-                    return new RemoveFunctionParametersFix(declaration, context, functionDescriptor, (ValueParameterDescriptor) descriptor);
-                else {
-                    List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-                    List<? extends ValueArgument> arguments = callElement.getValueArguments();
+        if (functionDescriptor.getKind() == SYNTHESIZED) {
+            return null;
+        }
 
-                    if (arguments.size() > parameters.size()) {
-                        boolean hasTypeMismatches = hasTypeMismatches(parameters, arguments, bindingContext);
-                        return new AddFunctionParametersFix(declaration, callElement, functionDescriptor, hasTypeMismatches);
-                    }
-                }
+        BindingContext bindingContext =
+                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) context.getContainingFile()).getBindingContext();
+        if (descriptor instanceof ValueParameterDescriptor) {
+            return new RemoveFunctionParametersFix(context, functionDescriptor, (ValueParameterDescriptor) descriptor);
+        }
+        else {
+            List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+            List<? extends ValueArgument> arguments = callElement.getValueArguments();
+
+            if (arguments.size() > parameters.size()) {
+                boolean hasTypeMismatches = hasTypeMismatches(parameters, arguments, bindingContext);
+                return new AddFunctionParametersFix(callElement, functionDescriptor, hasTypeMismatches);
             }
         }
 

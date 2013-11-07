@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -25,15 +26,22 @@ import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.getChangeSignatureDialog;
 
 public class JetChangeSignatureTest extends LightCodeInsightTestCase {
     public void testBadSelection() throws Exception {
@@ -71,6 +79,22 @@ public class JetChangeSignatureTest extends LightCodeInsightTestCase {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.setNewVisibility(Visibilities.PROTECTED);
         doTest(changeInfo);
+    }
+
+    public void testSynthesized() throws Exception {
+        try {
+            getChangeInfo();
+        }
+        catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
+            assertEquals(JetRefactoringBundle.message("cannot.refactor.synthesized.function", "component1"), e.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    public void testPreferContainedInClass() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        assertEquals("param", changeInfo.getNewParameters()[0].getName());
     }
 
     public void testAddConstructorVisibility() throws Exception {
@@ -134,6 +158,13 @@ public class JetChangeSignatureTest extends LightCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testFakeOverride() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo("i", KotlinBuiltIns.getInstance().getIntType());
+        changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
     public void testFunctionLiteral() throws Exception {
         JetChangeInfo changeInfo = getChangeInfo();
         changeInfo.getNewParameters()[1].setName("y1");
@@ -194,8 +225,15 @@ public class JetChangeSignatureTest extends LightCodeInsightTestCase {
         PsiFile file = getFile();
         PsiElement element = new JetChangeSignatureHandler().findTargetMember(file, editor);
         assertNotNull("Target element is null", element);
-        JetChangeSignatureDialog dialog =
-                JetChangeSignatureHandler.createDialog(element, file.findElementAt(editor.getCaretModel().getOffset()), getProject(), editor);
+        Project project = getProject();
+        BindingContext bindingContext =
+                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+        PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
+        assertNotNull(context);
+        FunctionDescriptor functionDescriptor = JetChangeSignatureHandler.findDescriptor(element, project, editor, bindingContext);
+        assertNotNull(functionDescriptor);
+        JetChangeSignatureDialog dialog = getChangeSignatureDialog(project, functionDescriptor,
+                                                                   JetChangeSignatureHandler.getConfiguration(), bindingContext, context);
         assertNotNull(dialog);
         dialog.canRun();
         Disposer.register(getTestRootDisposable(), dialog.getDisposable());

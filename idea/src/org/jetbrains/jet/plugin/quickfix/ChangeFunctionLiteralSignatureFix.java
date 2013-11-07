@@ -18,18 +18,25 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetFunctionPlatformDescriptorImpl;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 
+import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
 
 public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFix {
     private final List<JetType> parameterTypes;
@@ -38,7 +45,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
             @NotNull JetFunctionLiteral functionLiteral,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull List<JetType> parameterTypes) {
-        super(functionLiteral, functionLiteral, functionDescriptor);
+        super(functionLiteral, functionDescriptor);
         this.parameterTypes = parameterTypes;
     }
 
@@ -49,16 +56,23 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
     }
 
     @Override
-    protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
-        JetFunctionPlatformDescriptorImpl platformDescriptor = new JetFunctionPlatformDescriptorImpl(functionDescriptor, element);
-        JetNameValidator validator = JetNameValidator.getCollectingValidator(project);
-        platformDescriptor.clearParameters();
+    protected void invoke(@NotNull final Project project, Editor editor, JetFile file) {
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
+        runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
+            @Override
+            public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {
+                JetNameValidator validator = JetNameValidator.getCollectingValidator(project);
+                changeSignatureData.clearParameters();
+                for (JetType type : parameterTypes) {
+                    String name = JetNameSuggester.suggestNames(type, validator, "param")[0];
+                    changeSignatureData.addParameter(new JetParameterInfo(name, type));
+                }
+            }
 
-        for (JetType type : parameterTypes) {
-            String name = JetNameSuggester.suggestNames(type, validator, "param")[0];
-            platformDescriptor.addParameter(new JetParameterInfo(name, type));
-        }
-
-        showDialog(project, platformDescriptor);
+            @Override
+            public boolean performSilently(Collection<? extends PsiElement> elements) {
+                return false;
+            }
+        }, bindingContext, context, getText());
     }
 }

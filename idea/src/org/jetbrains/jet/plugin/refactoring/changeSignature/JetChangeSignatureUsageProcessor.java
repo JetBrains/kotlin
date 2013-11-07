@@ -66,12 +66,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     }
 
     private static void findAllMethodUsages(JetChangeInfo changeInfo, Set<UsageInfo> result) {
-        PsiElement method = changeInfo.getMethod();
-
-        if (method != null)
-            findOneMethodUsages(method, changeInfo, result, false);
-
-        //TODO overridden methods, tests for different parameter names in overridden methods
+        for (PsiElement affectedFunction : changeInfo.getAffectedFunctions()) {
+            findOneMethodUsages(affectedFunction, changeInfo, result, false);
+        }
     }
 
     private static void findOneMethodUsages(@NotNull PsiElement functionPsi, JetChangeInfo changeInfo,
