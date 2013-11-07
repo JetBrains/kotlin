@@ -41,10 +41,10 @@ object EMPTY_MEMBER_INDEX : MemberIndex {
     override fun getAllFieldNames() = listOf<Name>()
 }
 
-open class ClassMemberIndex(val jClass: JavaClass, mustBeStatic: Boolean) : MemberIndex {
+open class ClassMemberIndex(val jClass: JavaClass, filter: (JavaMember) -> Boolean) : MemberIndex {
     private val memberFilter = {
         (m: JavaMember) ->
-        m.isStatic() == mustBeStatic &&
+        filter(m) &&
         m.getVisibility() != Visibilities.PRIVATE
     }
 

@@ -57,7 +57,7 @@ public class LazyJavaClassMemberScope(
         private val jClass: JavaClass
 ) : LazyJavaMemberScope(c, containingDeclaration) {
 
-    override fun computeMemberIndex(): MemberIndex = object : ClassMemberIndex(jClass, mustBeStatic = false) {
+    override fun computeMemberIndex(): MemberIndex = object : ClassMemberIndex(jClass, { m -> !m.isStatic() }) {
         // For SAM-constructors
         override fun getAllMetodNames(): Collection<Name> = super.getAllMetodNames() + getAllClassNames()
     }
