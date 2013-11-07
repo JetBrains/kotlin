@@ -146,7 +146,7 @@ class LazyJavaClassDescriptor(
                 else {
                     val jlObject = innerC.javaClassResolver.resolveClassByFqName(JavaSupertypeResolver.OBJECT_FQ_NAME)?.getDefaultType()
                     // If java.lang.Object is not found, we simply use Any to recover
-                    emptyOrSingletonList(jlObject ?: KotlinBuiltIns.getInstance().getAnyType())
+                    listOf(jlObject ?: KotlinBuiltIns.getInstance().getAnyType())
                 }
             else
                 supertypes.iterator()
@@ -156,6 +156,9 @@ class LazyJavaClassDescriptor(
                         }
                         .filter { supertype -> !supertype.isError() }
                         .toList()
+                        .ifEmpty {
+                            listOf(KotlinBuiltIns.getInstance().getAnyType())
+                        }
         }
 
         override fun getSupertypes(): Collection<JetType> = _supertypes()
