@@ -575,11 +575,10 @@
 
         <cleandir dir="${output}/classes/j2k"/>
 
-        <javac2 destdir="${output}/classes/j2k" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" target="${java.target}">
-            <withKotlin/>
+        <kotlinc output="${output}/classes/j2k">
             <src path="${basedir}/j2k/src"/>
             <classpath path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-        </javac2>
+        </kotlinc>
 
         <jar jarfile="${kotlin-home}/lib/tools/j2k.jar">
             <fileset dir="${output}/classes/j2k" includes="org/jetbrains/jet/j2k/**"/>
