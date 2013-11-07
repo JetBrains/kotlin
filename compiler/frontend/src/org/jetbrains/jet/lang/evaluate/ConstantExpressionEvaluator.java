@@ -25,14 +25,16 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
-import javax.rmi.CORBA.ClassDesc;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.COMPILE_TIME_INITIALIZER;
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
+@SuppressWarnings("StaticMethodReferencedViaSubclass")
 public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<?>, Void> {
     @NotNull private final BindingTrace trace;
     @NotNull private final JetType expectedType;
@@ -56,7 +58,111 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
 
     @Override
     public CompileTimeConstant<?> visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, Void nothing) {
-        return trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
+        CompileTimeConstant<?> compileTimeConstant = trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
+        if (compileTimeConstant != null) {
+            return compileTimeConstant;
+        }
+
+        JetStringTemplateEntry[] stringTemplateEntries = expression.getEntries();
+        if (stringTemplateEntries.length == 1) {
+            CompileTimeConstant singleEntry = stringTemplateEntries[0].accept(this, nothing);
+            if (!(singleEntry instanceof StringValue) && singleEntry != null) {
+                return new StringValue(singleEntry.getValue().toString());
+            }
+            return singleEntry;
+        }
+        else if (stringTemplateEntries.length > 1) {
+            CompileTimeConstant<?> first = stringTemplateEntries[0].accept(this, nothing);
+            if (first == null) {
+                return null;
+            }
+            CompileTimeConstant<?> second;
+            String tmpResult = null;
+            for (int i = 1; i < stringTemplateEntries.length; i++) {
+                second = stringTemplateEntries[i].accept(this, nothing);
+                if (second == null) {
+                    return null;
+                }
+                Object object = EvaluatePackage.evaluateBinaryExpression(first, second, Name.identifier("plus"));
+                if (object instanceof String) {
+                    tmpResult = (String) object;
+                }
+                else {
+                    tmpResult = object.toString();
+                }
+                first = new StringValue(tmpResult);
+            }
+
+            return new StringValue(tmpResult);
+        }
+        return null;
+    }
+
+    @Override
+    public CompileTimeConstant<?> visitBlockStringTemplateEntry(@NotNull JetBlockStringTemplateEntry entry, Void data) {
+        JetExpression expression = entry.getExpression();
+        if (expression != null) {
+            return expression.accept(this, data);
+        }
+        return super.visitBlockStringTemplateEntry(entry, data);
+    }
+
+    @Override
+    public CompileTimeConstant<?> visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry, Void data) {
+        return new StringValue(entry.getText());
+    }
+
+    @Override
+    public CompileTimeConstant<?> visitSimpleNameStringTemplateEntry(@NotNull JetSimpleNameStringTemplateEntry entry, Void data) {
+        JetExpression expression = entry.getExpression();
+        if (expression != null) {
+            return expression.accept(this, data);
+        }
+        return super.visitSimpleNameStringTemplateEntry(entry, data);
+    }
+
+    @Override
+    public CompileTimeConstant<?> visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry, Void data) {
+        return new StringValue(entry.getUnescapedValue());
+    }
+
+    @Override
+    public CompileTimeConstant<?> visitBinaryExpression(@NotNull JetBinaryExpression expression, Void data) {
+        JetExpression leftExpression = expression.getLeft();
+        if (leftExpression == null) {
+            return null;
+        }
+        JetExpression rightExpression = expression.getRight();
+        if (rightExpression == null) {
+            return null;
+        }
+
+        CompileTimeConstant<?> leftConstant = leftExpression.accept(this, data);
+        if (leftConstant == null) {
+            return null;
+        }
+
+        CompileTimeConstant<?> rightConstant = rightExpression.accept(this, data);
+        if (rightConstant == null) {
+            return null;
+        }
+
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = trace.getBindingContext().get(RESOLVED_CALL, expression.getOperationReference());
+        if (resolvedCall != null) {
+            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
+            Object value = EvaluatePackage.evaluateBinaryExpression(leftConstant, rightConstant, resultingDescriptor.getName());
+            if (value != null) {
+                return createCompileTimeConstant(value);
+            }
+        }
+        return null;
+    }
+
+    private static CompileTimeConstant<?> createCompileTimeConstant(@NotNull Object value) {
+        if (value instanceof String) {
+            return new StringValue((String) value);
+        }
+        return null;
     }
 
     @Override
