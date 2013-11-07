@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 
@@ -171,6 +172,11 @@ public class TranslationContext {
     }
 
     @NotNull
+    public JsName getNameForPackage(@NotNull FqName fqName) {
+        return staticContext.getNameForPackage(fqName);
+    }
+
+    @NotNull
     public JsName declarePropertyOrPropertyAccessorName(@NotNull DeclarationDescriptor descriptor, @NotNull String name, boolean fresh) {
         return staticContext.declarePropertyOrPropertyAccessorName(descriptor, name, fresh);
     }
@@ -178,6 +184,11 @@ public class TranslationContext {
     @NotNull
     public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
         return staticContext.getQualifiedReference(descriptor);
+    }
+
+    @NotNull
+    public JsNameRef getQualifiedReference(@NotNull FqName packageFqName) {
+        return staticContext.getQualifiedReference(packageFqName);
     }
 
     @Nullable

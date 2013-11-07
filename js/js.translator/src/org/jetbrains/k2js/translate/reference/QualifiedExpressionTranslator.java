@@ -20,7 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
@@ -112,7 +112,7 @@ public final class QualifiedExpressionTranslator {
         if (receiverExpression instanceof JetReferenceExpression) {
             DeclarationDescriptor descriptorForReferenceExpression =
                 getDescriptorForReferenceExpression(context.bindingContext(), (JetReferenceExpression)receiverExpression);
-            if (descriptorForReferenceExpression instanceof NamespaceDescriptor) {
+            if (descriptorForReferenceExpression instanceof PackageViewDescriptor) {
                 return true;
             }
         }

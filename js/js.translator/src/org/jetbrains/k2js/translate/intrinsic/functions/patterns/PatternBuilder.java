@@ -18,10 +18,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -127,11 +124,6 @@ public final class PatternBuilder {
         return new DescriptorPredicateImpl(names);
     }
 
-    private static boolean isRootNamespace(DeclarationDescriptor declarationDescriptor) {
-        return declarationDescriptor instanceof NamespaceDescriptor && DescriptorUtils.isRootNamespace(
-                (NamespaceDescriptor) declarationDescriptor);
-    }
-
     public static class DescriptorPredicateImpl implements DescriptorPredicate {
         private final String[] names;
 
@@ -156,20 +148,21 @@ public final class PatternBuilder {
         private boolean matches(@NotNull CallableDescriptor callable) {
             DeclarationDescriptor descriptor = callable;
             int nameIndex = names.length - 1;
-            do {
+            while (true) {
                 if (nameIndex == -1) {
-                    return isRootNamespace(descriptor);
-                }
-                else if (isRootNamespace(descriptor)) {
                     return false;
                 }
 
-                if (!descriptor.getName().asString().equals(names[nameIndex--])) {
+                if (!descriptor.getName().asString().equals(names[nameIndex])) {
                     return false;
                 }
+
+                nameIndex--;
+                descriptor = descriptor.getContainingDeclaration();
+                if (descriptor instanceof PackageFragmentDescriptor) {
+                    return nameIndex == 0 && names[0].equals(((PackageFragmentDescriptor) descriptor).getFqName().asString());
+                }
             }
-            while ((descriptor = descriptor.getContainingDeclaration()) != null);
-            return true;
         }
 
         @Override

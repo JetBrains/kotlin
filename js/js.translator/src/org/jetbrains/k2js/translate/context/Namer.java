@@ -20,9 +20,8 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import static org.jetbrains.jet.lang.descriptors.ClassKind.TRAIT;
@@ -258,13 +257,8 @@ public final class Namer {
     }
 
     @NotNull
-    static String generateNamespaceName(@NotNull DeclarationDescriptor descriptor) {
-        if (DescriptorUtils.isRootNamespace((NamespaceDescriptor) descriptor)) {
-            return getRootNamespaceName();
-        }
-        else {
-            return descriptor.getName().asString();
-        }
+    static String generateNamespaceName(@NotNull FqName packageFqName) {
+        return packageFqName.isRoot() ? getRootNamespaceName() : packageFqName.shortName().asString();
     }
 
     @NotNull
