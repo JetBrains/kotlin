@@ -24,6 +24,25 @@ public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean) : Boolean {
 }
 
 /**
+ * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun BooleanArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            val text = if (element == null) "null" else element.toString()
+            buffer.append(text)
+        } else break
+    }
+    if (limit >= 0 && count > limit) buffer.append(truncated)
+    buffer.append(postfix)
+}
+
+/**
  * Returns the number of elements which match the given *predicate*
  */
 public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean) : Int {
@@ -33,11 +52,33 @@ public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean) : Int {
 }
 
 /**
- * Returns the first element which matches the given *predicate* or *null* if none matched
+ * Returns a list containing everything but the first *n* elements
  */
-public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean) : Boolean? {
-    for (element in this) if (predicate(element)) return element
-    return null
+public inline fun BooleanArray.drop(n: Int) : List<Boolean> {
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean) : List<Boolean> {
+    return dropWhileTo(ArrayList<Boolean>(), predicate)
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun <L: MutableList<in Boolean>> BooleanArray.dropWhileTo(result: L, predicate: (Boolean) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
 }
 
 /**
@@ -45,14 +86,6 @@ public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean) : Boolean? 
  */
 public inline fun BooleanArray.filter(predicate: (Boolean) -> Boolean) : List<Boolean> {
     return filterTo(ArrayList<Boolean>(), predicate)
-}
-
-/**
- * Filters all elements which match the given predicate into the given list
- */
-public inline fun <C: MutableCollection<in Boolean>> BooleanArray.filterTo(result: C, predicate: (Boolean) -> Boolean) : C {
-    for (element in this) if (predicate(element)) result.add(element)
-    return result
 }
 
 /**
@@ -71,36 +104,19 @@ public inline fun <C: MutableCollection<in Boolean>> BooleanArray.filterNotTo(re
 }
 
 /**
- * Partitions this collection into a pair of collections
+ * Filters all elements which match the given predicate into the given list
  */
-public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean) : Pair<List<Boolean>, List<Boolean>> {
-    val first = ArrayList<Boolean>()
-    val second = ArrayList<Boolean>()
-    for (element in this) {
-        if (predicate(element)) {
-            first.add(element)
-        } else {
-            second.add(element)
-        }
-    }
-    return Pair(first, second)
-}
-
-/**
- * Returns a new List containing the results of applying the given *transform* function to each element in this collection
- */
-public inline fun <R> BooleanArray.map(transform : (Boolean) -> R) : List<R> {
-    return mapTo(ArrayList<R>(), transform)
-}
-
-/**
- * Transforms each element of this collection with the given *transform* function and
- * adds each return value to the given *results* collection
- */
-public inline fun <R, C: MutableCollection<in R>> BooleanArray.mapTo(result: C, transform : (Boolean) -> R) : C {
-    for (item in this)
-        result.add(transform(item))
+public inline fun <C: MutableCollection<in Boolean>> BooleanArray.filterTo(result: C, predicate: (Boolean) -> Boolean) : C {
+    for (element in this) if (predicate(element)) result.add(element)
     return result
+}
+
+/**
+ * Returns the first element which matches the given *predicate* or *null* if none matched
+ */
+public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean) : Boolean? {
+    for (element in this) if (predicate(element)) return element
+    return null
 }
 
 /**
@@ -119,13 +135,6 @@ public inline fun <R, C: MutableCollection<in R>> BooleanArray.flatMapTo(result:
         for (r in list) result.add(r)
     }
     return result
-}
-
-/**
- * Performs the given *operation* on each element
- */
-public inline fun BooleanArray.forEach(operation: (Boolean) -> Unit) : Unit {
-    for (element in this) operation(element)
 }
 
 /**
@@ -149,6 +158,102 @@ public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, R)
     }
     
     return r
+}
+
+/**
+ * Performs the given *operation* on each element
+ */
+public inline fun BooleanArray.forEach(operation: (Boolean) -> Unit) : Unit {
+    for (element in this) operation(element)
+}
+
+/**
+ * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ */
+public inline fun <K> BooleanArray.groupBy(toKey: (Boolean) -> K) : Map<K, List<Boolean>> {
+    return groupByTo(HashMap<K, MutableList<Boolean>>(), toKey)
+}
+
+public inline fun <K> BooleanArray.groupByTo(result: MutableMap<K, MutableList<Boolean>>, toKey: (Boolean) -> K) : Map<K, MutableList<Boolean>> {
+    for (element in this) {
+        val key = toKey(element)
+        val list = result.getOrPut(key) { ArrayList<Boolean>() }
+        list.add(element)
+    }
+    return result
+}
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun BooleanArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+    val buffer = StringBuilder()
+    appendString(buffer, separator, prefix, postfix, limit, truncated)
+    return buffer.toString()
+}
+
+/**
+ * Returns a new List containing the results of applying the given *transform* function to each element in this collection
+ */
+public inline fun <R> BooleanArray.map(transform : (Boolean) -> R) : List<R> {
+    return mapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Transforms each element of this collection with the given *transform* function and
+ * adds each return value to the given *results* collection
+ */
+public inline fun <R, C: MutableCollection<in R>> BooleanArray.mapTo(result: C, transform : (Boolean) -> R) : C {
+    for (item in this)
+        result.add(transform(item))
+    return result
+}
+
+/**
+ * Partitions this collection into a pair of collections
+ */
+public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean) : Pair<List<Boolean>, List<Boolean>> {
+    val first = ArrayList<Boolean>()
+    val second = ArrayList<Boolean>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following collection
+ */
+public inline fun BooleanArray.plus(collection: Iterable<Boolean>) : List<Boolean> {
+    return plus(collection.iterator())
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
+ */
+public inline fun BooleanArray.plus(element: Boolean) : List<Boolean> {
+    val answer = ArrayList<Boolean>()
+    toCollection(answer)
+    answer.add(element)
+    return answer
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following iterator
+ */
+public inline fun BooleanArray.plus(iterator: Iterator<Boolean>) : List<Boolean> {
+    val answer = ArrayList<Boolean>()
+    toCollection(answer)
+    for (element in iterator) {
+        answer.add(element)
+    }
+    return answer
 }
 
 /**
@@ -188,49 +293,27 @@ public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Bool
 }
 
 /**
- * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ * Reverses the order the elements into a list
  */
-public inline fun <K> BooleanArray.groupBy(toKey: (Boolean) -> K) : Map<K, List<Boolean>> {
-    return groupByTo(HashMap<K, MutableList<Boolean>>(), toKey)
+public inline fun BooleanArray.reverse() : List<Boolean> {
+    val list = toCollection(ArrayList<Boolean>())
+    Collections.reverse(list)
+    return list
 }
 
-public inline fun <K> BooleanArray.groupByTo(result: MutableMap<K, MutableList<Boolean>>, toKey: (Boolean) -> K) : Map<K, MutableList<Boolean>> {
-    for (element in this) {
-        val key = toKey(element)
-        val list = result.getOrPut(key) { ArrayList<Boolean>() }
-        list.add(element)
+/**
+ * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
+ * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
+ */
+public inline fun <R: Comparable<R>> BooleanArray.sortBy(f: (Boolean) -> R) : List<Boolean> {
+    val sortedList = toCollection(ArrayList<Boolean>())
+    val sortBy: Comparator<Boolean> = comparator<Boolean> {(x: Boolean, y: Boolean) ->
+        val xr = f(x)
+        val yr = f(y)
+        xr.compareTo(yr)
     }
-    return result
-}
-
-/**
- * Returns a list containing everything but the first *n* elements
- */
-public inline fun BooleanArray.drop(n: Int) : List<Boolean> {
-    return dropWhile(countTo(n))
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean) : List<Boolean> {
-    return dropWhileTo(ArrayList<Boolean>(), predicate)
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun <L: MutableList<in Boolean>> BooleanArray.dropWhileTo(result: L, predicate: (Boolean) -> Boolean) : L {
-    var start = true
-    for (element in this) {
-        if (start && predicate(element)) {
-            // ignore
-        } else {
-            start = false
-            result.add(element)
-        }
-    }
-    return result
+    java.util.Collections.sort(sortedList, sortBy)
+    return sortedList
 }
 
 /**
@@ -264,15 +347,6 @@ public inline fun <C: MutableCollection<in Boolean>> BooleanArray.toCollection(r
 }
 
 /**
- * Reverses the order the elements into a list
- */
-public inline fun BooleanArray.reverse() : List<Boolean> {
-    val list = toCollection(ArrayList<Boolean>())
-    Collections.reverse(list)
-    return list
-}
-
-/**
  * Copies all elements into a [[LinkedList]]
  */
 public inline fun BooleanArray.toLinkedList() : LinkedList<Boolean> {
@@ -301,83 +375,9 @@ public inline fun BooleanArray.toSortedSet() : SortedSet<Boolean> {
 }
 
 /**
- * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
- */
-public inline fun BooleanArray.plus(element: Boolean) : List<Boolean> {
-    val answer = ArrayList<Boolean>()
-    toCollection(answer)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following iterator
- */
-public inline fun BooleanArray.plus(iterator: Iterator<Boolean>) : List<Boolean> {
-    val answer = ArrayList<Boolean>()
-    toCollection(answer)
-    for (element in iterator) {
-        answer.add(element)
-    }
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following collection
- */
-public inline fun BooleanArray.plus(collection: Iterable<Boolean>) : List<Boolean> {
-    return plus(collection.iterator())
-}
-
-/**
  * Returns an iterator of Pairs(index, data)
  */
 public inline fun BooleanArray.withIndices() : Iterator<Pair<Int, Boolean>> {
     return IndexIterator(iterator())
-}
-
-/**
- * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
- * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
- */
-public inline fun <R: Comparable<R>> BooleanArray.sortBy(f: (Boolean) -> R) : List<Boolean> {
-    val sortedList = toCollection(ArrayList<Boolean>())
-    val sortBy: Comparator<Boolean> = comparator<Boolean> {(x: Boolean, y: Boolean) ->
-        val xr = f(x)
-        val yr = f(y)
-        xr.compareTo(yr)
-    }
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun BooleanArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
-    buffer.append(prefix)
-    var count = 0
-    for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
-            buffer.append(text)
-        } else break
-    }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-}
-
-/**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun BooleanArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
-    val buffer = StringBuilder()
-    appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString()
 }
 
