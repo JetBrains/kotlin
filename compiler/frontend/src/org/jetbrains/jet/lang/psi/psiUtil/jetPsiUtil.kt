@@ -19,6 +19,10 @@ package org.jetbrains.jet.lang.psi.psiUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.psi.JetClass
+import java.util.ArrayList
+import org.jetbrains.jet.lang.psi.JetClassOrObject
 
 fun PsiElement.getParentByTypeAndPredicate<T: PsiElement>(
         parentClass : Class<T>, strict : Boolean = false, predicate: (T) -> Boolean
@@ -55,3 +59,11 @@ fun PsiElement.getParentByTypeAndBranch<T: PsiElement>(
         parentClass : Class<T>, strict : Boolean = false, branch: T.() -> PsiElement?) : T? {
     return getParentByType(parentClass, strict)?.getIfChildIsInBranch(this, branch)
 }
+
+fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
+        when(this) {
+            is JetClass ->
+                getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.getValOrVarNode() != null }
+            else ->
+                getDeclarations()
+        }

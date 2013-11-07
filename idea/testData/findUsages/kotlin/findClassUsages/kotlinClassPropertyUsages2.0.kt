@@ -18,7 +18,7 @@ trait X {
     }
 }
 
-open class <caret>A: X {
+open class <caret>A(val t: String, var u: String): X {
     override val a: String
         get() {
             return "?"

@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import org.jetbrains.jet.asJava.LightClassUtil.PropertyAccessorsPsiMethods
+import org.jetbrains.jet.lang.psi.psiUtil.*
 
 val isTargetUsage = (PsiReference::isTargetUsage).searchFilter
 
@@ -136,8 +137,8 @@ class ClassDeclarationsUsagesSearchHelper(
         val items = ArrayList<UsagesSearchRequestItem>()
         val declHelper = DefaultSearchHelper<JetNamedDeclaration>(skipImports)
 
-        for (decl in target.element.getDeclarations()) {
-            if ((decl is JetNamedFunction && functionUsages) || (decl is JetProperty && propertyUsages)) {
+        for (decl in target.element.effectiveDeclarations()) {
+            if ((decl is JetNamedFunction && functionUsages) || ((decl is JetProperty || decl is JetParameter) && propertyUsages)) {
                 items.add(declHelper.newItem(target.retarget(decl as JetNamedDeclaration)))
             }
         }
