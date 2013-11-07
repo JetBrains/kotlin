@@ -25,31 +25,31 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 
-public fun propagateConstantValues(expression : JetQualifiedExpression, trace : BindingTrace, selectorExpression : JetCallExpression) {
+public fun propagateConstantValues(expression : JetQualifiedExpression, trace : BindingTrace, selectorExpression : JetCallExpression): CompileTimeConstant<out Any>? {
     val wholeExpressionValue = trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression)
     if (wholeExpressionValue != null) {
-        return
+        return null
     }
 
     val receiverExpression = expression.getReceiverExpression()
     val receiverValue = trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, receiverExpression)
     if (receiverValue == null || receiverValue is ErrorValue) {
-        return
+        return null
     }
 
     val calleeExpression = selectorExpression.getCalleeExpression()
     if (calleeExpression !is JetSimpleNameExpression) {
-        return
+        return null
     }
 
     val declarationDescriptor = trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, calleeExpression)
     if (declarationDescriptor !is FunctionDescriptor) {
-        return
+        return null
     }
 
     val returnType = declarationDescriptor.getReturnType()
     if (returnType == null || !KotlinBuiltIns.getInstance().isPrimitiveType(returnType)) {
-        return
+        return null
     }
 
     val referencedName = calleeExpression.getReferencedNameAsName()
@@ -80,9 +80,7 @@ public fun propagateConstantValues(expression : JetQualifiedExpression, trace : 
         else -> null
     }
 
-    if (compileTimeValue != null) {
-        trace.record(BindingContext.COMPILE_TIME_VALUE, expression,compileTimeValue)
-    }
+    return compileTimeValue
 
 }
 
