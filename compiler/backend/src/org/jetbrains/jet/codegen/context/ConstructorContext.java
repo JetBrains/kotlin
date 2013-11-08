@@ -39,7 +39,11 @@ public class ConstructorContext extends MethodContext {
 
     @Override
     public StackValue getOuterExpression(StackValue prefix, boolean ignoreNoOuter) {
-        return closure != null && closure.getCaptureThis() != null ? local1 : null;
+        StackValue stackValue = closure != null && closure.getCaptureThis() != null ? local1 : null;
+        if (!ignoreNoOuter && stackValue == null) {
+            throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor().getContainingDeclaration());
+        }
+        return stackValue;
     }
 
     @Override
