@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.COMPILE_TIME_INITIALIZER;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
 @SuppressWarnings("StaticMethodReferencedViaSubclass")
 public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<?>, Void> {
@@ -58,9 +57,29 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
 
     @Override
     public CompileTimeConstant<?> visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, Void nothing) {
-        JetExpression innerExpression = expression.getExpression();
-        if (innerExpression == null) return null;
-        return innerExpression.accept(this, null);
+        JetExpression deparenthesizedExpression = getDeparenthesizedExpression(expression, nothing);
+        if (deparenthesizedExpression != null) {
+            return deparenthesizedExpression.accept(this, nothing);
+        }
+        return super.visitParenthesizedExpression(expression, nothing);
+    }
+
+    @Override
+    public CompileTimeConstant<?> visitPrefixExpression(@NotNull JetPrefixExpression expression, Void data) {
+        JetExpression deparenthesizedExpression = getDeparenthesizedExpression(expression, data);
+        if (deparenthesizedExpression != null) {
+            return deparenthesizedExpression.accept(this, data);
+        }
+        return super.visitPrefixExpression(expression, data);
+    }
+
+    @Nullable
+    private JetExpression getDeparenthesizedExpression(JetExpression expression, Void data) {
+        JetExpression deparenthesizedExpr = JetPsiUtil.deparenthesize(expression);
+        if (deparenthesizedExpr == expression) {
+            return null;
+        }
+        return deparenthesizedExpr;
     }
 
     @Override
