@@ -61,6 +61,11 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(STRING, FLOAT,  "plus", { a, b -> a + b }),
         bOp(STRING, CHAR,   "plus", { a, b -> a + b }),
 
+        // Boolean
+        bOp(BOOLEAN, BOOLEAN, "and", { a, b -> a and b }),
+        bOp(BOOLEAN, BOOLEAN, "or",  { a, b -> a or b }),
+        bOp(BOOLEAN, BOOLEAN, "xor", { a, b -> a xor b }),
+
         // Byte
         bOp(BYTE, DOUBLE, "plus", { a, b -> a + b }),
         bOp(BYTE, FLOAT,  "plus", { a, b -> a + b }),
@@ -171,6 +176,12 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(INT, SHORT,   "mod", { a, b -> a % b }),
         bOp(INT, BYTE,    "mod", { a, b -> a % b }),
         bOp(INT, CHAR,    "mod", { a, b -> a % b }),
+        bOp(INT, INT,     "shl", { a, b -> a shl b }),
+        bOp(INT, INT,     "shr", { a, b -> a shr b }),
+        bOp(INT, INT,     "ushr",{ a, b -> a ushr b }),
+        bOp(INT, INT,     "and", { a, b -> a and b }),
+        bOp(INT, INT,     "or",  { a, b -> a or b }),
+        bOp(INT, INT,     "xor", { a, b -> a xor b }),
 
         // Long
         bOp(LONG, DOUBLE, "plus", { a, b -> a + b }),
@@ -208,6 +219,12 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(LONG, SHORT,   "mod", { a, b -> a % b }),
         bOp(LONG, BYTE,    "mod", { a, b -> a % b }),
         bOp(LONG, CHAR,    "mod", { a, b -> a % b }),
+        bOp(LONG, INT,     "shl", { a, b -> a shl b }),
+        bOp(LONG, INT,     "shr", { a, b -> a shr b }),
+        bOp(LONG, INT,     "ushr",{ a, b -> a ushr b }),
+        bOp(LONG, LONG,    "and", { a, b -> a and b }),
+        bOp(LONG, LONG,    "or",  { a, b -> a or b }),
+        bOp(LONG, LONG,    "xor", { a, b -> a xor b }),
 
         // Double
         bOp(DOUBLE, DOUBLE, "plus", { a, b -> a + b }),
