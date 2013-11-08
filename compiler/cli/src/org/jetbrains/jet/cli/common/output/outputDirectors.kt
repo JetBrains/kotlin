@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet
+package org.jetbrains.jet.cli.common.output
 
 import java.io.File
 
-public trait OutputFileFactory {
-    public val outputFiles: List<String>
+public trait OutputDirector {
+    public fun getOutputDirectory(sourceFiles: Collection<File>): File
+}
 
-    public fun getSourceFiles(file: String): List<File>
-    public fun asBytes(file: String): ByteArray
-    public fun asText(file: String): String
+public class SingleDirectoryDirector(private val dir: File): OutputDirector {
+    override public fun getOutputDirectory(sourceFiles : Collection<File>) : File = dir
 }

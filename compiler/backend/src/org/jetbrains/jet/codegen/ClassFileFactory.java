@@ -23,8 +23,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.OutputFileFactory;
+import org.jetbrains.jet.OutputFile;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -39,7 +41,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClass
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
-public final class ClassFileFactory extends GenerationStateAware implements OutputFileFactory {
+public final class ClassFileFactory extends GenerationStateAware implements OutputFileCollection {
     @NotNull private ClassBuilderFactory builderFactory;
 
     private final Map<FqName, NamespaceCodegen> ns2codegen = new HashMap<FqName, NamespaceCodegen>();
@@ -49,7 +51,6 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
     public ClassFileFactory(@NotNull GenerationState state) {
         super(state);
     }
-
 
     @Inject
     public void setBuilderFactory(@NotNull ClassBuilderFactory builderFactory) {
@@ -80,53 +81,30 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
     }
 
     @Override
-    public String asText(String file) {
+    public List<OutputFile> asList() {
         done();
-        return builderFactory.asText(generators.get(file).classBuilder);
+        return ContainerUtil.map(generators.keySet(), new Function<String, OutputFile>() {
+            @Override
+            public OutputFile fun(String relativeClassFilePath) {
+                return new OutputClassFile(relativeClassFilePath);
+            }
+        });
     }
 
     @Override
-    public byte[] asBytes(String file) {
-        done();
-        return builderFactory.asBytes(generators.get(file).classBuilder);
-    }
+    @Nullable
+    public OutputFile get(@NotNull String relativePath) {
+        if (generators.containsKey(relativePath)) return new OutputClassFile(relativePath);
 
-    @Override
-    public List<String> getOutputFiles() {
-        done();
-        return new ArrayList<String>(generators.keySet());
-    }
-
-    @Override
-    public List<File> getSourceFiles(String relativeClassFilePath) {
-        ClassBuilderAndSourceFileList pair = generators.get(relativeClassFilePath);
-        if (pair == null) {
-            throw new IllegalStateException("No record for binary file " + relativeClassFilePath);
-        }
-
-        return ContainerUtil.mapNotNull(
-                pair.sourceFiles,
-                new Function<PsiFile, File>() {
-                    @Override
-                    public File fun(PsiFile file) {
-                        VirtualFile virtualFile = file.getVirtualFile();
-                        if (virtualFile == null) return null;
-
-                        return VfsUtilCore.virtualToIoFile(virtualFile);
-                    }
-                }
-        );
+        return null;
     }
 
     public String createText() {
         StringBuilder answer = new StringBuilder();
 
-        List<String> files = getOutputFiles();
-        for (String file : files) {
-            //            if (!file.startsWith("kotlin/")) {
-            answer.append("@").append(file).append('\n');
-            answer.append(asText(file));
-            //            }
+        for (OutputFile file : asList()) {
+            answer.append("@").append(file.getRelativePath()).append('\n');
+            answer.append(file.asText());
         }
 
         return answer.toString();
@@ -181,7 +159,53 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
         return result;
     }
 
-    private static class ClassBuilderAndSourceFileList {
+    private final class OutputClassFile implements OutputFile {
+        final String relativeClassFilePath;
+
+        OutputClassFile(String relativeClassFilePath) {
+            this.relativeClassFilePath = relativeClassFilePath;
+        }
+
+        @Override
+        public String getRelativePath() {
+            return relativeClassFilePath;
+        }
+
+        @Override
+        public List<File> getSourceFiles() {
+            ClassBuilderAndSourceFileList pair = generators.get(relativeClassFilePath);
+            if (pair == null) {
+                throw new IllegalStateException("No record for binary file " + relativeClassFilePath);
+            }
+
+            return ContainerUtil.mapNotNull(
+                    pair.sourceFiles,
+                    new Function<PsiFile, File>() {
+                        @Override
+                        public File fun(PsiFile file) {
+                            VirtualFile virtualFile = file.getVirtualFile();
+                            if (virtualFile == null) return null;
+
+                            return VfsUtilCore.virtualToIoFile(virtualFile);
+                        }
+                    }
+            );
+        }
+
+        @Override
+        public byte[] asByteArray() {
+            done();
+            return builderFactory.asBytes(generators.get(relativeClassFilePath).classBuilder);
+        }
+
+        @Override
+        public String asText() {
+            done();
+            return builderFactory.asText(generators.get(relativeClassFilePath).classBuilder);
+        }
+    }
+
+    private static final class ClassBuilderAndSourceFileList {
         private final ClassBuilder classBuilder;
         private final Collection<? extends PsiFile> sourceFiles;
 
@@ -190,5 +214,4 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
             this.sourceFiles = sourceFiles;
         }
     }
-
 }

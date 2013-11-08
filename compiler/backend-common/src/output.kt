@@ -18,10 +18,14 @@ package org.jetbrains.jet
 
 import java.io.File
 
-public trait OutputDirector {
-    public fun getOutputDirectory(sourceFiles: Collection<File>): File
+public trait OutputFileCollection {
+    public fun get(relativePath: String): OutputFile?
+    public fun asList(): List<OutputFile>
 }
 
-public class SingleDirectoryDirector(private val dir: File): OutputDirector {
-    override public fun getOutputDirectory(sourceFiles : Collection<File>) : File = dir
+public trait OutputFile {
+    public val relativePath: String
+    public val sourceFiles: List<File>
+    public fun asByteArray(): ByteArray
+    public fun asText(): String
 }
