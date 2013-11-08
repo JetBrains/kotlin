@@ -78,14 +78,114 @@ public class AnnotationParameterTestGenerated extends AbstractAnnotationParamete
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/resolveAnnotations/parameters/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("char.kt")
+        public void testChar() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/char.kt");
+        }
+        
+        @TestMetadata("compositeCallBinary.kt")
+        public void testCompositeCallBinary() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/compositeCallBinary.kt");
+        }
+        
+        @TestMetadata("divide.kt")
+        public void testDivide() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/divide.kt");
+        }
+        
+        @TestMetadata("double.kt")
+        public void testDouble() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/double.kt");
+        }
+        
+        @TestMetadata("eqeq.kt")
+        public void testEqeq() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/eqeq.kt");
+        }
+        
         @TestMetadata("escapedString.kt")
         public void testEscapedString() throws Exception {
             doTest("compiler/testData/resolveAnnotations/parameters/expressions/escapedString.kt");
         }
         
+        @TestMetadata("float.kt")
+        public void testFloat() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/float.kt");
+        }
+        
+        @TestMetadata("gt.kt")
+        public void testGt() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/gt.kt");
+        }
+        
+        @TestMetadata("gteq.kt")
+        public void testGteq() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/gteq.kt");
+        }
+        
+        @TestMetadata("infixCallBinary.kt")
+        public void testInfixCallBinary() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/infixCallBinary.kt");
+        }
+        
+        @TestMetadata("long.kt")
+        public void testLong() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/long.kt");
+        }
+        
+        @TestMetadata("lt.kt")
+        public void testLt() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/lt.kt");
+        }
+        
+        @TestMetadata("lteq.kt")
+        public void testLteq() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/lteq.kt");
+        }
+        
+        @TestMetadata("maxValue.kt")
+        public void testMaxValue() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/maxValue.kt");
+        }
+        
+        @TestMetadata("maxValueByte.kt")
+        public void testMaxValueByte() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/maxValueByte.kt");
+        }
+        
+        @TestMetadata("maxValueInt.kt")
+        public void testMaxValueInt() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/maxValueInt.kt");
+        }
+        
+        @TestMetadata("miltiply.kt")
+        public void testMiltiply() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/miltiply.kt");
+        }
+        
+        @TestMetadata("minus.kt")
+        public void testMinus() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/minus.kt");
+        }
+        
+        @TestMetadata("mod.kt")
+        public void testMod() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/mod.kt");
+        }
+        
         @TestMetadata("multilineString.kt")
         public void testMultilineString() throws Exception {
             doTest("compiler/testData/resolveAnnotations/parameters/expressions/multilineString.kt");
+        }
+        
+        @TestMetadata("plus.kt")
+        public void testPlus() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/plus.kt");
+        }
+        
+        @TestMetadata("simpleCallBinary.kt")
+        public void testSimpleCallBinary() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/simpleCallBinary.kt");
         }
         
         @TestMetadata("stringPlusInt.kt")

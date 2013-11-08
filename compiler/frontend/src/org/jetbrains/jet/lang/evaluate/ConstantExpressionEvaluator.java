@@ -20,6 +20,8 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -28,8 +30,11 @@ import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.COMPILE_TIME_INITIALIZER;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
@@ -132,35 +137,105 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
         if (leftExpression == null) {
             return null;
         }
-        JetExpression rightExpression = expression.getRight();
-        if (rightExpression == null) {
-            return null;
-        }
+        return getCallConstant(expression.getOperationReference(), leftExpression);
+    }
 
-        CompileTimeConstant<?> leftConstant = leftExpression.accept(this, data);
-        if (leftConstant == null) {
-            return null;
-        }
-
-        CompileTimeConstant<?> rightConstant = rightExpression.accept(this, data);
-        if (rightConstant == null) {
-            return null;
-        }
-
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = trace.getBindingContext().get(RESOLVED_CALL, expression.getOperationReference());
+    @Nullable
+    private CompileTimeConstant<?> getCallConstant(@NotNull JetExpression resolvedCallExpression, @NotNull JetExpression receiverExpression) {
+        ResolvedCall<?> resolvedCall = trace.getBindingContext().get(BindingContext.RESOLVED_CALL, resolvedCallExpression);
         if (resolvedCall != null) {
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-            Object value = EvaluatePackage.evaluateBinaryExpression(leftConstant, rightConstant, resultingDescriptor.getName());
-            if (value != null) {
-                return createCompileTimeConstant(value);
+            JetType receiverExpressionType = getReceiverExpressionType(resolvedCall);
+            if (receiverExpressionType == null) {
+                return null;
             }
+            ConstantExpressionEvaluator evaluator = new ConstantExpressionEvaluator(trace, receiverExpressionType);
+            CompileTimeConstant<?> receiverValue = receiverExpression.accept(evaluator, null);
+            if (receiverValue == null) {
+                return null;
+            }
+            List<CompileTimeConstant<?>> arguments = Lists.newArrayList();
+            for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> argumentEntry : resolvedCall.getValueArguments() .entrySet()) {
+                arguments.addAll(resolveArguments(argumentEntry.getValue().getArguments(), argumentEntry.getKey().getType(), trace));
+            }
+            return ConstantsPackage.resolveCallToCompileTimeValue(resultingDescriptor.getName(), receiverValue, arguments, expectedType);
+        }
+
+        return null;
+    }
+
+    public static CompileTimeConstant<?> createCompileTimeConstant(@NotNull Object value, @NotNull JetType expectedType) {
+        if (value instanceof Integer) {
+            return getIntegerValue(((Integer) value).longValue(), expectedType);
+        }
+        else if (value instanceof Byte) {
+            return getIntegerValue(((Byte) value).longValue(), expectedType);
+        }
+        else if (value instanceof Short) {
+            return getIntegerValue(((Short) value).longValue(), expectedType);
+        }
+        else if (value instanceof Long) {
+            return new LongValue((Long) value);
+        }
+        else if (value instanceof Float) {
+            if (CompileTimeConstantResolver.noExpectedTypeOrError(expectedType) ||
+                expectedType.equals(KotlinBuiltIns.getInstance().getDoubleType())) {
+                return new DoubleValue(((Float) value).doubleValue());
+            }
+            else {
+                return new FloatValue((Float) value);
+            }
+        }
+        else if (value instanceof Double) {
+            return new DoubleValue((Double) value);
+        }
+        else if (value instanceof Boolean) {
+            return ((Boolean) value) ? BooleanValue.TRUE : BooleanValue.FALSE;
+        }
+        else if (value instanceof Character) {
+            return new CharValue((Character) value);
+        }
+        else if (value instanceof String) {
+            return new StringValue((String) value);
         }
         return null;
     }
 
-    private static CompileTimeConstant<?> createCompileTimeConstant(@NotNull Object value) {
-        if (value instanceof String) {
-            return new StringValue((String) value);
+    @Nullable
+    private static CompileTimeConstant<?> getIntegerValue(@NotNull Long value, @NotNull JetType expectedType) {
+        if (CompileTimeConstantResolver.noExpectedTypeOrError(expectedType)) {
+            if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
+                return new IntValue(value.intValue());
+            }
+            return new LongValue(value);
+        }
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        if (expectedType.equals(builtIns.getIntType())) {
+            return new IntValue(value.intValue());
+        }
+        else if (expectedType.equals(builtIns.getLongType())) {
+            return new LongValue(value);
+        }
+        else if (expectedType.equals(builtIns.getShortType())) {
+            if (Short.MIN_VALUE <= value && value <= Short.MAX_VALUE) {
+                return new ShortValue(value.shortValue());
+            }
+            else if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
+                return new IntValue(value.intValue());
+            }
+            return new LongValue(value);
+        }
+        else if (expectedType.equals(builtIns.getByteType())) {
+            if (Byte.MIN_VALUE <= value && value <= Byte.MAX_VALUE) {
+                return new ByteValue(value.byteValue());
+            }
+            else if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
+                return new IntValue(value.intValue());
+            }
+            return new LongValue(value);
+        }
+        else if (expectedType.equals(builtIns.getCharType())) {
+            return new IntValue(value.intValue());
         }
         return null;
     }
@@ -187,14 +262,26 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
         return null;
     }
 
+    /* 1.toInt(); 1.plus(1); MyEnum.A */
     @Override
     public CompileTimeConstant<?> visitQualifiedExpression(@NotNull JetQualifiedExpression expression, Void data) {
+        CompileTimeConstant wholeExpressionValue = trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+        if (wholeExpressionValue != null) {
+            return wholeExpressionValue;
+        }
+
         JetExpression receiverExpression = expression.getReceiverExpression();
         JetExpression selectorExpression = expression.getSelectorExpression();
-        if (receiverExpression instanceof JetConstantExpression && selectorExpression instanceof JetCallExpression) {
-            CompileTimeConstant<?> constant = ConstantsPackage.propagateConstantValues(expression, trace, (JetCallExpression) selectorExpression);
-            if (constant != null) {
-                return constant;
+
+
+        if (selectorExpression instanceof JetCallExpression) {
+            JetExpression calleeExpression = ((JetCallExpression) selectorExpression).getCalleeExpression();
+            if (!(calleeExpression instanceof JetSimpleNameExpression)) {
+                return null;
+            }
+
+            if (((JetCallExpression) selectorExpression).getValueArguments().size() < 2) {
+                return getCallConstant(calleeExpression, receiverExpression);
             }
         }
 
@@ -202,6 +289,17 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
             return selectorExpression.accept(this, null);
         }
         return super.visitQualifiedExpression(expression, data);
+    }
+
+    @Nullable
+    private static JetType getReceiverExpressionType(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
+        switch(resolvedCall.getExplicitReceiverKind()) {
+            case THIS_OBJECT: return resolvedCall.getThisObject().getType();
+            case RECEIVER_ARGUMENT: return resolvedCall.getReceiverArgument().getType();
+            case NO_EXPLICIT_RECEIVER: return null;
+            case BOTH_RECEIVERS: return null;
+        }
+        return null;
     }
 
     @Override
@@ -238,7 +336,11 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
     }
 
     @NotNull
-    private static List<CompileTimeConstant<?>> resolveArguments(@NotNull List<ValueArgument> valueArguments, @NotNull JetType expectedType, @NotNull BindingTrace trace) {
+    private static List<CompileTimeConstant<?>> resolveArguments(
+            @NotNull List<ValueArgument> valueArguments,
+            @NotNull JetType expectedType,
+            @NotNull BindingTrace trace
+    ) {
         List<CompileTimeConstant<?>> constants = Lists.newArrayList();
         for (ValueArgument argument : valueArguments) {
             JetExpression argumentExpression = argument.getArgumentExpression();

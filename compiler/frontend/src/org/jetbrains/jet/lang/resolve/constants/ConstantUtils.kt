@@ -16,71 +16,56 @@
 
 package org.jetbrains.jet.lang.resolve.constants
 
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.resolve.BindingTrace
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.evaluate.evaluateBinaryExpression
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.jet.lang.types.JetType
 
-public fun propagateConstantValues(expression : JetQualifiedExpression, trace : BindingTrace, selectorExpression : JetCallExpression): CompileTimeConstant<out Any>? {
-    val wholeExpressionValue = trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression)
-    if (wholeExpressionValue != null) {
-        return null
-    }
-
-    val receiverExpression = expression.getReceiverExpression()
-    val receiverValue = trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, receiverExpression)
-    if (receiverValue == null || receiverValue is ErrorValue) {
-        return null
-    }
-
-    val calleeExpression = selectorExpression.getCalleeExpression()
-    if (calleeExpression !is JetSimpleNameExpression) {
-        return null
-    }
-
-    val declarationDescriptor = trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, calleeExpression)
-    if (declarationDescriptor !is FunctionDescriptor) {
-        return null
-    }
-
-    val returnType = declarationDescriptor.getReturnType()
-    if (returnType == null || !KotlinBuiltIns.getInstance().isPrimitiveType(returnType)) {
-        return null
-    }
-
-    val referencedName = calleeExpression.getReferencedNameAsName()
-    val value = receiverValue.getValue()
-    val compileTimeValue = when (value) {
-        is Number -> {
-            when(referencedName) {
-                OperatorConventions.DOUBLE -> DoubleValue(value.toDouble())
-                OperatorConventions.FLOAT -> FloatValue(value.toFloat())
-                OperatorConventions.LONG ->  LongValue(value.toLong())
-                OperatorConventions.SHORT -> ShortValue(value.toShort())
-                OperatorConventions.BYTE ->  ByteValue(value.toByte())
-                OperatorConventions.INT ->   IntValue(value.toInt())
-                OperatorConventions.CHAR ->  CharValue(value.toInt().toChar())
+public fun resolveCallToCompileTimeValue(
+        callName: Name,
+        receiverValue: CompileTimeConstant<*>,
+        arguments: Collection<CompileTimeConstant<*>>,
+        expectedType: JetType
+): CompileTimeConstant<*>? {
+    if (arguments.isEmpty()) {
+        val value = receiverValue.getValue()
+        return  when (value) {
+            is Number -> {
+                when(callName) {
+                    OperatorConventions.DOUBLE -> DoubleValue(value.toDouble())
+                    OperatorConventions.FLOAT -> FloatValue(value.toFloat())
+                    OperatorConventions.LONG -> LongValue(value.toLong())
+                    OperatorConventions.SHORT -> ShortValue(value.toShort())
+                    OperatorConventions.BYTE -> ByteValue(value.toByte())
+                    OperatorConventions.INT -> IntValue(value.toInt())
+                    OperatorConventions.CHAR -> CharValue(value.toInt().toChar())
+                    else -> null
+                }
             }
-        }
-        is Char -> {
-            when(referencedName) {
-                OperatorConventions.DOUBLE -> DoubleValue(value.toChar().toDouble())
-                OperatorConventions.FLOAT -> FloatValue(value.toChar().toFloat())
-                OperatorConventions.LONG ->  LongValue(value.toChar().toLong())
-                OperatorConventions.SHORT -> ShortValue(value.toChar().toShort())
-                OperatorConventions.BYTE ->  ByteValue(value.toChar().toByte())
-                OperatorConventions.INT ->   IntValue(value.toChar().toInt())
-                OperatorConventions.CHAR ->   CharValue(value.toChar())
+            is Char -> {
+                when(callName) {
+                    OperatorConventions.DOUBLE -> DoubleValue(value.toChar().toDouble())
+                    OperatorConventions.FLOAT -> FloatValue(value.toChar().toFloat())
+                    OperatorConventions.LONG -> LongValue(value.toChar().toLong())
+                    OperatorConventions.SHORT -> ShortValue(value.toChar().toShort())
+                    OperatorConventions.BYTE -> ByteValue(value.toChar().toByte())
+                    OperatorConventions.INT -> IntValue(value.toChar().toInt())
+                    OperatorConventions.CHAR -> CharValue(value.toChar())
+                    else -> null
+                }
             }
+            else -> null
         }
-        else -> null
+    }
+    else if (arguments.size() == 1) {
+        val result = evaluateBinaryExpression(receiverValue, arguments.iterator().next(), callName)
+        if (result == null) {
+            return null
+        }
+        return ConstantExpressionEvaluator.createCompileTimeConstant(result, expectedType)
     }
 
-    return compileTimeValue
-
+    return null
 }
 

@@ -347,7 +347,7 @@ public class CompileTimeConstantResolver {
         return createErrorValue(NULL_FOR_NONNULL_TYPE.on(expression, expectedType));
     }
 
-    private static boolean noExpectedTypeOrError(JetType expectedType) {
+    public static boolean noExpectedTypeOrError(JetType expectedType) {
         return TypeUtils.noExpectedType(expectedType) || expectedType.isError();
     }
 
