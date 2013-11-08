@@ -51,7 +51,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
+import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
 import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JsCompiler;
 import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler;
 
@@ -87,11 +89,11 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         MessageCollector messageCollector = new MessageCollectorAdapter(context);
         // Workaround for Android Studio
         if (!isJavaPluginEnabled(context)) {
-            messageCollector.report(INFO, "Kotlin JPS plugin is disabled", CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(INFO, "Kotlin JPS plugin is disabled", NO_LOCATION);
             return ExitCode.NOTHING_DONE;
         }
 
-        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION);
+        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION);
 
         ModuleBuildTarget representativeTarget = chunk.representativeTarget();
 
@@ -128,7 +130,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                         WARNING, "Circular dependencies are not supported. " +
                                  "The following JS modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
                                  "Kotlin is not compiled for these modules",
-                        CompilerMessageLocation.NO_LOCATION);
+                        NO_LOCATION);
                 return ExitCode.NOTHING_DONE;
             }
 
@@ -152,7 +154,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                         WARNING, "Circular dependencies are only partially supported. " +
                                  "The following modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
                                  "Kotlin will compile them, but some strange effect may happen",
-                        CompilerMessageLocation.NO_LOCATION);
+                        NO_LOCATION);
             }
 
             File moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk);
@@ -178,7 +180,17 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         }
 
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
-            BuildTarget<?> target = sourceToTarget.get(outputItem.getSourceFiles().iterator().next());
+            BuildTarget<?> target = null;
+            Collection<File> sourceFiles = outputItem.getSourceFiles();
+            if (sourceFiles != null && !sourceFiles.isEmpty()) {
+                target = sourceToTarget.get(sourceFiles.iterator().next());
+            }
+            else {
+                messageCollector.report(ERROR,
+                                        INTERNAL_ERROR_PREFIX + "outputItem.sourceFiles is null or empty, outputItem = " + outputItem,
+                                        NO_LOCATION);
+            }
+
             outputConsumer.registerOutputFile(
                     target != null ? target : representativeTarget,
                     outputItem.getOutputFile(),
@@ -235,7 +247,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         ) {
             String prefix = "";
             if (severity == EXCEPTION) {
-                prefix = CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
+                prefix = INTERNAL_ERROR_PREFIX;
             }
             context.processMessage(new CompilerMessage(
                     CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
