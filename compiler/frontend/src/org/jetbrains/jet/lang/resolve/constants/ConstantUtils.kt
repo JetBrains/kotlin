@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.evaluate.evaluateBinaryExpression
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.evaluate.evaluateUnaryExpression
 
 public fun resolveCallToCompileTimeValue(
         callName: Name,
@@ -30,7 +31,7 @@ public fun resolveCallToCompileTimeValue(
 ): CompileTimeConstant<*>? {
     if (arguments.isEmpty()) {
         val value = receiverValue.getValue()
-        return  when (value) {
+        val toTypeConstant = when (value) {
             is Number -> {
                 when(callName) {
                     OperatorConventions.DOUBLE -> DoubleValue(value.toDouble())
@@ -57,6 +58,14 @@ public fun resolveCallToCompileTimeValue(
             }
             else -> null
         }
+        if (toTypeConstant != null) {
+            return toTypeConstant
+        }
+        val result = evaluateUnaryExpression(receiverValue, callName)
+        if (result == null) {
+            return null
+        }
+        return ConstantExpressionEvaluator.createCompileTimeConstant(result, expectedType)
     }
     else if (arguments.size() == 1) {
         val result = evaluateBinaryExpression(receiverValue, arguments.iterator().next(), callName)

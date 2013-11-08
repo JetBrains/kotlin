@@ -21,6 +21,22 @@ fun evaluateBinaryExpression(firstCompileTimeConstant: CompileTimeConstant<*>, s
     return null
 }
 
+fun evaluateUnaryExpression(compileTimeConstant: CompileTimeConstant<*>, functionName: Name): Any? {
+    val compileTimeType = getCompileTimeType(compileTimeConstant)
+    if (compileTimeType == null) {
+        return null
+    }
+
+    val value = compileTimeConstant.getValue()
+
+    val function = unaryOperations[UnaryOperation(compileTimeType, functionName)]
+    if (function != null)  {
+        return function(value)
+    }
+
+    return null
+}
+
 fun getCompileTimeType(c: CompileTimeConstant<*>): CompileTimeType<out Any>? = when (c.getValue()) {
     is Int -> INT
     is Byte -> BYTE
@@ -47,8 +63,29 @@ private val BOOLEAN = CompileTimeType<Boolean>()
 private val STRING = CompileTimeType<String>()
 
 private fun <A, B> bOp(a: CompileTimeType<A>, b: CompileTimeType<B>, functionNameAsString: String, f: (A, B) -> Any) = BinaryOperation(a, b, Name.identifier(functionNameAsString)) to f  as Function2<Any?, Any?, Any>
+private fun <A> uOp(a: CompileTimeType<A>, functionNameAsString: String, f: (A) -> Any) = UnaryOperation(a, Name.identifier(functionNameAsString)) to f  as Function1<Any?, Any>
 
 private data class BinaryOperation<A, B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: Name)
+private data class UnaryOperation<A>(val f: CompileTimeType<out A>, val functionName: Name)
+
+private val unaryOperations = hashMapOf<UnaryOperation<*>, (Any?) -> Any>(
+        uOp(DOUBLE, "minus", { a -> a.minus() }),
+        uOp(FLOAT,  "minus", { a -> a.minus() }),
+        uOp(LONG,   "minus", { a -> a.minus() }),
+        uOp(INT,    "minus", { a -> a.minus() }),
+        uOp(SHORT,  "minus", { a -> a.minus() }),
+        uOp(BYTE,   "minus", { a -> a.minus() }),
+        uOp(CHAR,   "minus", { a -> a.minus() }),
+        uOp(DOUBLE, "plus",  { a -> a.plus() }),
+        uOp(FLOAT,  "plus",  { a -> a.plus() }),
+        uOp(LONG,   "plus",  { a -> a.plus() }),
+        uOp(INT,    "plus",  { a -> a.plus() }),
+        uOp(SHORT,  "plus",  { a -> a.plus() }),
+        uOp(BYTE,   "plus",  { a -> a.plus() }),
+        uOp(CHAR,   "plus",  { a -> a.plus() }),
+
+        uOp(BOOLEAN, "not", { a -> a.not() })
+)
 
 private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> Any>(
         // String

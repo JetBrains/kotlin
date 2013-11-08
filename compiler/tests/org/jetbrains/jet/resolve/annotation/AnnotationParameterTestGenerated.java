@@ -198,6 +198,11 @@ public class AnnotationParameterTestGenerated extends AbstractAnnotationParamete
             doTest("compiler/testData/resolveAnnotations/parameters/expressions/multilineString.kt");
         }
         
+        @TestMetadata("not.kt")
+        public void testNot() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/not.kt");
+        }
+        
         @TestMetadata("orOr.kt")
         public void testOrOr() throws Exception {
             doTest("compiler/testData/resolveAnnotations/parameters/expressions/orOr.kt");
@@ -231,6 +236,16 @@ public class AnnotationParameterTestGenerated extends AbstractAnnotationParamete
         @TestMetadata("strings.kt")
         public void testStrings() throws Exception {
             doTest("compiler/testData/resolveAnnotations/parameters/expressions/strings.kt");
+        }
+        
+        @TestMetadata("unaryMinus.kt")
+        public void testUnaryMinus() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/unaryMinus.kt");
+        }
+        
+        @TestMetadata("unaryPlus.kt")
+        public void testUnaryPlus() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/unaryPlus.kt");
         }
         
     }

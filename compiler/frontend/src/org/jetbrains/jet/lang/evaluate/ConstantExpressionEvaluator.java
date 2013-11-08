@@ -212,6 +212,15 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
         return null;
     }
 
+    @Override
+    public CompileTimeConstant<?> visitUnaryExpression(@NotNull JetUnaryExpression expression, Void data) {
+        JetExpression leftExpression = expression.getBaseExpression();
+        if (leftExpression == null) {
+            return null;
+        }
+        return getCallConstant(expression.getOperationReference(), leftExpression);
+    }
+
     public static CompileTimeConstant<?> createCompileTimeConstant(@NotNull Object value, @NotNull JetType expectedType) {
         if (value instanceof Integer) {
             return getIntegerValue(((Integer) value).longValue(), expectedType);
