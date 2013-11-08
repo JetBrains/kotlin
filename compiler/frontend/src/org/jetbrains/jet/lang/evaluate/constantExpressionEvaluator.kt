@@ -84,6 +84,62 @@ private val unaryOperations = hashMapOf<UnaryOperation<*>, (Any?) -> Any>(
         uOp(BYTE,   "plus",  { a -> a.plus() }),
         uOp(CHAR,   "plus",  { a -> a.plus() }),
 
+        uOp(DOUBLE, "toDouble",  { a -> a.toDouble() }),
+        uOp(FLOAT,  "toDouble",  { a -> a.toDouble() }),
+        uOp(LONG,   "toDouble",  { a -> a.toDouble() }),
+        uOp(INT,    "toDouble",  { a -> a.toDouble() }),
+        uOp(SHORT,  "toDouble",  { a -> a.toDouble() }),
+        uOp(BYTE,   "toDouble",  { a -> a.toDouble() }),
+        uOp(CHAR,   "toDouble",  { a -> a.toDouble() }),
+
+        uOp(DOUBLE, "toFloat",  { a -> a.toFloat() }),
+        uOp(FLOAT,  "toFloat",  { a -> a.toFloat() }),
+        uOp(LONG,   "toFloat",  { a -> a.toFloat() }),
+        uOp(INT,    "toFloat",  { a -> a.toFloat() }),
+        uOp(SHORT,  "toFloat",  { a -> a.toFloat() }),
+        uOp(BYTE,   "toFloat",  { a -> a.toFloat() }),
+        uOp(CHAR,   "toFloat",  { a -> a.toFloat() }),
+
+        uOp(DOUBLE, "toLong",  { a -> a.toLong() }),
+        uOp(FLOAT,  "toLong",  { a -> a.toLong() }),
+        uOp(LONG,   "toLong",  { a -> a.toLong() }),
+        uOp(INT,    "toLong",  { a -> a.toLong() }),
+        uOp(SHORT,  "toLong",  { a -> a.toLong() }),
+        uOp(BYTE,   "toLong",  { a -> a.toLong() }),
+        uOp(CHAR,   "toLong",  { a -> a.toLong() }),
+
+        uOp(DOUBLE, "toInt",  { a -> a.toInt() }),
+        uOp(FLOAT,  "toInt",  { a -> a.toInt() }),
+        uOp(LONG,   "toInt",  { a -> a.toInt() }),
+        uOp(INT,    "toInt",  { a -> a.toInt() }),
+        uOp(SHORT,  "toInt",  { a -> a.toInt() }),
+        uOp(BYTE,   "toInt",  { a -> a.toInt() }),
+        uOp(CHAR,   "toInt",  { a -> a.toInt() }),
+
+        uOp(DOUBLE, "toChar",  { a -> a.toChar() }),
+        uOp(FLOAT,  "toChar",  { a -> a.toChar() }),
+        uOp(LONG,   "toChar",  { a -> a.toChar() }),
+        uOp(INT,    "toChar",  { a -> a.toChar() }),
+        uOp(SHORT,  "toChar",  { a -> a.toChar() }),
+        uOp(BYTE,   "toChar",  { a -> a.toChar() }),
+        uOp(CHAR,   "toChar",  { a -> a.toChar() }),
+
+        uOp(DOUBLE, "toShort",  { a -> a.toShort() }),
+        uOp(FLOAT,  "toShort",  { a -> a.toShort() }),
+        uOp(LONG,   "toShort",  { a -> a.toShort() }),
+        uOp(INT,    "toShort",  { a -> a.toShort() }),
+        uOp(SHORT,  "toShort",  { a -> a.toShort() }),
+        uOp(BYTE,   "toShort",  { a -> a.toShort() }),
+        uOp(CHAR,   "toShort",  { a -> a.toShort() }),
+
+        uOp(DOUBLE, "toByte",  { a -> a.toByte() }),
+        uOp(FLOAT,  "toByte",  { a -> a.toByte() }),
+        uOp(LONG,   "toByte",  { a -> a.toByte() }),
+        uOp(INT,    "toByte",  { a -> a.toByte() }),
+        uOp(SHORT,  "toByte",  { a -> a.toByte() }),
+        uOp(BYTE,   "toByte",  { a -> a.toByte() }),
+        uOp(CHAR,   "toByte",  { a -> a.toByte() }),
+
         uOp(BOOLEAN, "not", { a -> a.not() })
 )
 

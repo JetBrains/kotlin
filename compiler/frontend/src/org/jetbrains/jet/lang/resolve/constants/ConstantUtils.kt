@@ -30,37 +30,6 @@ public fun resolveCallToCompileTimeValue(
         expectedType: JetType
 ): CompileTimeConstant<*>? {
     if (arguments.isEmpty()) {
-        val value = receiverValue.getValue()
-        val toTypeConstant = when (value) {
-            is Number -> {
-                when(callName) {
-                    OperatorConventions.DOUBLE -> DoubleValue(value.toDouble())
-                    OperatorConventions.FLOAT -> FloatValue(value.toFloat())
-                    OperatorConventions.LONG -> LongValue(value.toLong())
-                    OperatorConventions.SHORT -> ShortValue(value.toShort())
-                    OperatorConventions.BYTE -> ByteValue(value.toByte())
-                    OperatorConventions.INT -> IntValue(value.toInt())
-                    OperatorConventions.CHAR -> CharValue(value.toInt().toChar())
-                    else -> null
-                }
-            }
-            is Char -> {
-                when(callName) {
-                    OperatorConventions.DOUBLE -> DoubleValue(value.toChar().toDouble())
-                    OperatorConventions.FLOAT -> FloatValue(value.toChar().toFloat())
-                    OperatorConventions.LONG -> LongValue(value.toChar().toLong())
-                    OperatorConventions.SHORT -> ShortValue(value.toChar().toShort())
-                    OperatorConventions.BYTE -> ByteValue(value.toChar().toByte())
-                    OperatorConventions.INT -> IntValue(value.toChar().toInt())
-                    OperatorConventions.CHAR -> CharValue(value.toChar())
-                    else -> null
-                }
-            }
-            else -> null
-        }
-        if (toTypeConstant != null) {
-            return toTypeConstant
-        }
         val result = evaluateUnaryExpression(receiverValue, callName)
         if (result == null) {
             return null
