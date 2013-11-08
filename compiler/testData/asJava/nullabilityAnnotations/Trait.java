@@ -1,9 +1,9 @@
 public interface Trait extends jet.JetObject {
     @org.jetbrains.annotations.NotNull
-    java.lang.String notNull(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "a") java.lang.String p);
+    java.lang.String notNull(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "a") java.lang.String a);
 
     @org.jetbrains.annotations.Nullable
-    java.lang.String nullable(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "a", type = "?") java.lang.String p);
+    java.lang.String nullable(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "a", type = "?") java.lang.String a);
 
     @org.jetbrains.annotations.NotNull
     java.lang.String notNullWithNN();

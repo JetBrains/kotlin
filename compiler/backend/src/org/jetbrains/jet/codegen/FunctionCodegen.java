@@ -124,9 +124,21 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
-
-        if (isAbstractMethod(functionDescriptor, methodContext.getContextKind())) return;
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES ||
+            isAbstractMethod(functionDescriptor, methodContext.getContextKind())) {
+            generateLocalVariableTable(
+                    mv,
+                    jvmSignature,
+                    functionDescriptor,
+                    getThisTypeForFunction(functionDescriptor, methodContext),
+                    new Label(),
+                    new Label(),
+                    new HashSet<String>(getParameterNamesAsStrings(functionDescriptor)),
+                    Collections.<Name, Label>emptyMap(),
+                    methodContext.getContextKind()
+            );
+            return;
+        }
 
         generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy);
 
