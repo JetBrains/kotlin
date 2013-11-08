@@ -18,6 +18,7 @@ package org.jetbrains.jet.jps.build;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Processor;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
@@ -29,7 +30,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 public class KotlinSourceFileCollector {
     // For incremental compilation
@@ -48,6 +49,49 @@ public class KotlinSourceFileCollector {
             }
         });
         return sourceFiles;
+    }
+
+    public static Map<ModuleBuildTarget, List<File>> getMapTargetToDirtySources(
+            DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder
+    ) throws IOException {
+        final Map<ModuleBuildTarget, List<File>> target2sources = new HashMap<ModuleBuildTarget, List<File>>();
+
+        dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
+            @Override
+            public boolean apply(ModuleBuildTarget target, File file, JavaSourceRootDescriptor root) throws IOException {
+                List<File> sources = target2sources.get(target);
+                if (sources == null) {
+                    sources = new SmartList<File>();
+                    target2sources.put(target, sources);
+                }
+
+                if (isKotlinSourceFile(file)) {
+                    sources.add(file);
+                }
+                return true;
+            }
+        });
+
+        return target2sources;
+    }
+
+
+    public static Map<File, ModuleBuildTarget> getMapDirtySourcesToTarget(
+            DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder
+    ) throws IOException {
+        final Map<File, ModuleBuildTarget> source2target = new HashMap<File, ModuleBuildTarget>();
+
+        dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
+            @Override
+            public boolean apply(ModuleBuildTarget target, File file, JavaSourceRootDescriptor root) throws IOException {
+                if (isKotlinSourceFile(file)) {
+                    source2target.put(file, target);
+                }
+                return true;
+            }
+        });
+
+        return source2target;
     }
 
     @NotNull

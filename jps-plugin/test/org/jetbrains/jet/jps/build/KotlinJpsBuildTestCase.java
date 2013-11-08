@@ -19,6 +19,7 @@ package org.jetbrains.jet.jps.build;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -73,14 +74,34 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
     public void testKotlinProject() {
         doTest();
 
-        assertOutputDeleted("src/test1.kt", "_DefaultPackage", "kotlinProject");
+        assertOutputDeletedPackageInModule("kotlinProject", "src/test1.kt", "_DefaultPackage");
+    }
+
+    public void testExcludeFolderInSourceRoot() {
+        doTest();
+
+        JpsModule module = myProject.getModules().get(0);
+        assertFileExistsInOutput(module, "Foo.class");
+
+        assertOutputDeletedInModule("kotlinProject", "src/foo.kt", "Foo");
+    }
+
+    public void testExcludeModuleFolderInSourceRootOfAnotherModule() {
+        doTest();
+
+        for (JpsModule module : myProject.getModules()) {
+            assertFileExistsInOutput(module, "Foo.class");
+        }
+
+        assertOutputDeletedInModule("kotlinProject", "src/foo.kt", "Foo");
+        assertOutputDeletedInModule("module2", "src/module2/src/foo.kt", "Foo");
     }
 
     public void testKotlinProjectTwoFilesInOnePackage() {
         doTest();
 
-        assertOutputDeleted("src/test1.kt", "_DefaultPackage", "kotlinProject");
-        assertOutputDeleted("src/test2.kt", "_DefaultPackage", "kotlinProject");
+        assertOutputDeletedPackageInModule("kotlinProject", "src/test1.kt", "_DefaultPackage");
+        assertOutputDeletedPackageInModule("kotlinProject", "src/test2.kt", "_DefaultPackage");
     }
 
     public void testKotlinJavaProject() {
@@ -126,8 +147,8 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         }
         result.assertSuccessful();
 
-        assertOutputDeleted("src/kt2.kt", "kt2.Kt2Package", "kotlinProject");
-        assertOutputDeleted("module2/src/kt1.kt", "kt1.Kt1Package", "module2");
+        assertOutputDeletedPackageInModule("kotlinProject", "src/kt2.kt", "kt2.Kt2Package");
+        assertOutputDeletedPackageInModule("module2", "module2/src/kt1.kt", "kt1.Kt1Package");
     }
 
     public void testReexportedDependency() {
@@ -166,14 +187,35 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         return builder.toString();
     }
 
-    private void assertOutputDeleted(String sourceFileName, String packageClassFqName, String moduleName) {
+    private void assertOutputDeletedPackageInModule(String moduleName, String sourceFileName, String packageClassFqNames) {
+        File file = new File(workDir, sourceFileName);
+        String[] packageClasses = { packageClassFqNames, getInternalNameForPackagePartClass(file, packageClassFqNames) };
+
+        assertOutputDeletedInModule(moduleName, sourceFileName, packageClasses);
+    }
+
+    private void assertOutputDeletedInModule(final String moduleName, String sourceFileName, String... classFqNames) {
+        String[] paths = ContainerUtil.map2Array(classFqNames, String.class, new Function<String, String>() {
+            @Override
+            public String fun(String classFqName) {
+                return outputPathInModuleByClassFqName(moduleName, classFqName);
+            }
+        });
+
+        assertOutputDeleted(sourceFileName, paths);
+    }
+
+    private void assertOutputDeleted(String sourceFileName, String... paths) {
         File file = new File(workDir, sourceFileName);
         change(file.getAbsolutePath());
         makeAll().assertSuccessful();
 
+        assertDeleted(paths);
+    }
+
+    private static String outputPathInModuleByClassFqName(String moduleName, String classFqName) {
         String outputDirPrefix = "out/production/" + moduleName + "/";
-        assertDeleted(outputDirPrefix + packageClassFqName.replace('.', '/') + ".class",
-                      outputDirPrefix + getInternalNameForPackagePartClass(file, packageClassFqName) + ".class");
+        return outputDirPrefix + classFqName.replace('.', '/') + ".class";
     }
 
     private static String getInternalNameForPackagePartClass(File sourceFile, String packageClassFqName) {
