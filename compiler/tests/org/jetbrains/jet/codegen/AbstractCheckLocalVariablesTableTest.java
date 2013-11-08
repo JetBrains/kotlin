@@ -22,6 +22,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.*;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.OutputFile;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
@@ -65,14 +67,14 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
         assert psiFile != null;
 
-        ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
+        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
         String modifiedTestName = ktFile.getName().replace(".kt", ".class");
         boolean isClassFound = false;
-        for (String filename : factory.getOutputFiles()) {
-            if (filename.equals(modifiedTestName)) {
+        for (OutputFile outputFile : outputFiles.asList()) {
+            if (outputFile.getRelativePath().equals(modifiedTestName)) {
                 isClassFound = true;
-                ClassReader cr = new ClassReader(factory.asBytes(filename));
+                ClassReader cr = new ClassReader(outputFile.asByteArray());
                 List<LocalVariable> expectedLocalVariables = parseExpectations();
                 List<LocalVariable> actualLocalVariables = readLocalVariable(cr, parseMethodName());
 

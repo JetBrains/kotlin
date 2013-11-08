@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -51,10 +52,12 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
     public void testTopLevel() {
         loadFile();
         String packageClassName = PackageClassUtils.getPackageClassName(FqName.ROOT);
-        for (String fileName : generateClassesInFile().getOutputFiles()) {
-            if (fileName.startsWith(packageClassName) && !fileName.equals(packageClassName + ".class")) {
+        for (OutputFile outputFile : generateClassesInFile().asList()) {
+            String filPath = outputFile.getRelativePath();
+
+            if (filPath.startsWith(packageClassName) && !filPath.equals(packageClassName + ".class")) {
                 // This should be package$src class
-                Class<?> a = generateClass(fileName.substring(0, fileName.length() - ".class".length()));
+                Class<?> a = generateClass(filPath.substring(0, filPath.length() - ".class".length()));
                 assertAnnotatedSyntheticMethodExistence(true, a);
             }
         }

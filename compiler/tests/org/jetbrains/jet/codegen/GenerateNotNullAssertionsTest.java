@@ -23,10 +23,8 @@ import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.outputUtils.OutputUtilsPackage;
+import org.jetbrains.jet.*;
+import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -82,9 +80,9 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     public void testNoAssertionsForKotlinFromBinary() throws Exception {
         setUpEnvironment(true, false);
         loadFile("notNullAssertions/noAssertionsForKotlin.kt");
-        ClassFileFactory factory = generateClassesInFile();
+        OutputFileCollection outputFiles = generateClassesInFile();
         File compiledDirectory = new File(FileUtil.getTempDirectory(), "kotlin-classes");
-        OutputUtilsPackage.writeAllTo(factory, compiledDirectory);
+        OutputUtilsPackage.writeAllTo(outputFiles, compiledDirectory);
 
         setUpEnvironment(true, false, compiledDirectory);
         loadFile("notNullAssertions/noAssertionsForKotlinMain.kt");
@@ -163,8 +161,10 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     private void assertNoIntrinsicsMethodIsCalled(String className) {
-        ClassFileFactory classes = generateClassesInFile();
-        ClassReader reader = new ClassReader(classes.asBytes(className + ".class"));
+        OutputFileCollection classes = generateClassesInFile();
+        OutputFile file = classes.get(className + ".class");
+        assertNotNull(file);
+        ClassReader reader = new ClassReader(file.asByteArray());
 
         final String intrinsics = JvmClassName.byFqNameWithoutInnerClasses(Intrinsics.class.getName()).getInternalName();
 

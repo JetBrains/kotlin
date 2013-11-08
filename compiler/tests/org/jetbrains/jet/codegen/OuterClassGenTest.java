@@ -22,9 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
@@ -113,8 +111,10 @@ public class OuterClassGenTest extends CodegenTestCase {
 
     private ClassReader getKotlinClassReader(@NotNull String kotlinClassName) {
         loadFile("outerClassInfo/outerClassInfo.kt");
-        ClassFileFactory classFileFactory = generateClassesInFile();
-        return new ClassReader(classFileFactory.asBytes(kotlinClassName.replace('.', '/') + ".class"));
+        OutputFileCollection outputFiles = generateClassesInFile();
+        OutputFile outputFile = outputFiles.get(kotlinClassName.replace('.', '/') + ".class");
+        assertNotNull(outputFile);
+        return new ClassReader(outputFile.asByteArray());
     }
 
     private void checkInfo(ClassReader kotlinReader, ClassReader javaReader) {

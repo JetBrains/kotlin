@@ -21,8 +21,9 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.asm4.*;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.OutputFile;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 
@@ -77,35 +78,37 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), fileText, jetCoreEnvironment.getProject());
         assertTrue("Cannot create JetFile from text", psiFile != null);
 
-        ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
+        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
         List<TestedObject> testedObjects = parseExpectedTestedObject(fileText);
         for (TestedObject testedObject : testedObjects) {
             String className = null;
-            for (String filename : factory.getOutputFiles()) {
-                if (testedObject.isFullContainingClassName && filename.equals(testedObject.containingClass + ".class")) {
-                    className = filename;
+            for (OutputFile outputFile : outputFiles.asList()) {
+                String filePath = outputFile.getRelativePath();
+                if (testedObject.isFullContainingClassName && filePath.equals(testedObject.containingClass + ".class")) {
+                    className = filePath;
                 }
-                else if (!testedObject.isFullContainingClassName && filename.startsWith(testedObject.containingClass)) {
-                    className = filename;
+                else if (!testedObject.isFullContainingClassName && filePath.startsWith(testedObject.containingClass)) {
+                    className = filePath;
                 }
             }
 
-            if (className == null) {
-                throw new AssertionError("Couldn't find a class file with name " + testedObject.containingClass);
-            }
+            assertNotNull("Couldn't find a class file with name " + testedObject.containingClass, className);
 
-            ClassReader cr = new ClassReader(factory.asBytes(className));
+            OutputFile outputFile = outputFiles.get(className);
+            assertNotNull(outputFile);
+
+            ClassReader cr = new ClassReader(outputFile.asByteArray());
             TestClassVisitor classVisitor;
             classVisitor = getClassVisitor(testedObject.kind, testedObject.name);
             cr.accept(classVisitor, ClassReader.SKIP_CODE);
 
-            boolean isObjectExists = false == Boolean.valueOf(findStringWithPrefixes(testedObject.textData, "// ABSENT: "));
+            boolean isObjectExists = !Boolean.valueOf(findStringWithPrefixes(testedObject.textData, "// ABSENT: "));
             assertEquals( "Wrong object existence state: " + testedObject, isObjectExists, classVisitor.isExists());
             int expectedAccess = getExpectedFlags(testedObject.textData);
 
             if (isObjectExists) {
-                assertEquals("Wrong access flag for " + testedObject + " \n" + factory.asText(className), expectedAccess, classVisitor.getAccess());
+                assertEquals("Wrong access flag for " + testedObject + " \n" + outputFile.asText(), expectedAccess, classVisitor.getAccess());
             }
         }
     }

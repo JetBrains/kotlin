@@ -18,6 +18,8 @@ package org.jetbrains.jet.codegen;
 
 import jet.KotlinPackageFragment;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.OutputFile;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -38,11 +40,13 @@ public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
         loadText("package " + NAMESPACE_NAME + "\n\nfun foo() = 42\n");
         String facadeFileName = JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(NAMESPACE_NAME)).getInternalName() + ".class";
 
-        ClassFileFactory factory = generateClassesInFile();
-        for (String fileName : factory.getOutputFiles()) {
-            if (!fileName.equals(facadeFileName)) {
+        OutputFileCollection outputFiles = generateClassesInFile();
+        for (OutputFile outputFile : outputFiles.asList()) {
+            String filePath = outputFile.getRelativePath();
+
+            if (!filePath.equals(facadeFileName)) {
                 // The file which is not a facade is a package fragment
-                String fqName = fileName.substring(0, fileName.length() - ".class".length()).replace('/', '.');
+                String fqName = filePath.substring(0, filePath.length() - ".class".length()).replace('/', '.');
                 Class aClass = generateClass(fqName);
 
                 Class<? extends Annotation> annotationClass = getCorrespondingAnnotationClass(KotlinPackageFragment.class);
@@ -60,6 +64,6 @@ public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
             }
         }
 
-        fail("No package fragment was found: " + factory.getOutputFiles());
+        fail("No package fragment was found: " + outputFiles.asList());
     }
 }

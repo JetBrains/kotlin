@@ -26,13 +26,14 @@ import jet.modules.AllModules;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 import org.jetbrains.jet.cli.common.modules.ModuleDescription;
 import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
-import org.jetbrains.jet.OutputDirector;
-import org.jetbrains.jet.cli.common.outputUtils.OutputUtilsPackage;
+import org.jetbrains.jet.cli.common.output.OutputDirector;
+import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
@@ -170,7 +171,7 @@ public class CompileEnvironmentUtil {
     }
 
     // TODO: includeRuntime should be not a flag but a path to runtime
-    private static void doWriteToJar(ClassFileFactory factory, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
+    private static void doWriteToJar(ClassFileFactory outputFiles, OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
             Attributes mainAttributes = manifest.getMainAttributes();
@@ -180,9 +181,9 @@ public class CompileEnvironmentUtil {
                 mainAttributes.putValue("Main-Class", mainClass.asString());
             }
             JarOutputStream stream = new JarOutputStream(fos, manifest);
-            for (String file : factory.getOutputFiles()) {
-                stream.putNextEntry(new JarEntry(file));
-                stream.write(factory.asBytes(file));
+            for (OutputFile outputFile : outputFiles.asList()) {
+                stream.putNextEntry(new JarEntry(outputFile.getRelativePath()));
+                stream.write(outputFile.asByteArray());
             }
             if (includeRuntime) {
                 writeRuntimeToJar(stream);
@@ -194,11 +195,11 @@ public class CompileEnvironmentUtil {
         }
     }
 
-    public static void writeToJar(File jarPath, boolean jarRuntime, FqName mainClass, ClassFileFactory moduleFactory) {
+    public static void writeToJar(File jarPath, boolean jarRuntime, FqName mainClass, ClassFileFactory outputFiles) {
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(jarPath);
-            doWriteToJar(moduleFactory, outputStream, mainClass, jarRuntime);
+            doWriteToJar(outputFiles, outputStream, mainClass, jarRuntime);
             outputStream.close();
         }
         catch (FileNotFoundException e) {
@@ -212,7 +213,7 @@ public class CompileEnvironmentUtil {
         }
     }
 
-    private static void writeRuntimeToJar(final JarOutputStream stream) throws IOException {
+    private static void writeRuntimeToJar(JarOutputStream stream) throws IOException {
         File runtimeJarPath = getRuntimeJarPath();
         if (runtimeJarPath != null) {
             JarInputStream jis = new JarInputStream(new FileInputStream(runtimeJarPath));
@@ -254,14 +255,14 @@ public class CompileEnvironmentUtil {
             @Nullable OutputDirector outputDir,
             boolean includeRuntime,
             @Nullable FqName mainClass,
-            @NotNull ClassFileFactory factory,
+            @NotNull ClassFileFactory outputFiles,
             @NotNull MessageCollector messageCollector
     ) {
         if (jar != null) {
-            writeToJar(jar, includeRuntime, mainClass, factory);
+            writeToJar(jar, includeRuntime, mainClass, outputFiles);
         }
         else if (outputDir != null) {
-            OutputUtilsPackage.writeAll(factory, outputDir, messageCollector);
+            OutputUtilsPackage.writeAll(outputFiles, outputDir, messageCollector);
         }
         else {
             throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");

@@ -31,8 +31,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.OutputFile;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassBuilderFactories;
+import org.jetbrains.jet.codegen.CompilationErrorHandler;
+import org.jetbrains.jet.codegen.KotlinCodegenFacade;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -105,12 +109,12 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
 
             StringBuilder answer = new StringBuilder();
 
-            ClassFileFactory factory = state.getFactory();
-            for (String filename : factory.getOutputFiles()) {
+            OutputFileCollection outputFiles = state.getFactory();
+            for (OutputFile outputFile : outputFiles.asList()) {
                 answer.append("// ================");
-                answer.append(filename);
+                answer.append(outputFile.getRelativePath());
                 answer.append(" =================\n");
-                answer.append(factory.asText(filename)).append("\n\n");
+                answer.append(outputFile.asText()).append("\n\n");
             }
 
             return answer.toString();

@@ -19,6 +19,7 @@ import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.OutputFile;
 
 public class SourceInfoGenTest extends CodegenTestCase {
 
@@ -45,7 +46,10 @@ public class SourceInfoGenTest extends CodegenTestCase {
     }
 
     private String getProducerInfo(String name) {
-        ClassReader classReader = new ClassReader(generateClassesInFile().asBytes(name));
+        OutputFile file = generateClassesInFile().get(name);
+        assertNotNull(file);
+
+        ClassReader classReader = new ClassReader(file.asByteArray());
 
         final String [] producer = new String [1];
         classReader.accept(new ClassVisitor(Opcodes.ASM4) {
