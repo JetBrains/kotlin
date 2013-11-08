@@ -1008,8 +1008,10 @@ public class JetPsiUtil {
         }
 
         //noinspection unchecked
-        JetElement container =
-                PsiTreeUtil.getParentOfType(declaration, JetBlockExpression.class, JetClassInitializer.class);
+        JetElement container = PsiTreeUtil.getParentOfType(
+                declaration,
+                JetBlockExpression.class, JetClassInitializer.class, JetProperty.class, JetFunction.class
+        );
         if (container == null) return null;
 
         return (container instanceof JetClassInitializer) ? ((JetClassInitializer) container).getBody() : container;

@@ -27,9 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetFileStubBuilder;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -86,8 +84,9 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
     public void testFunctionInNotNamedObject() {
         doBuildTest("object { fun testing() = 12 }",
                     "PsiJetFileStubImpl[package=]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[name=testing]\n" +
-                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
+                    "  OBJECT_DECLARATION:PsiJetObjectStubImpl[top name=null fqName=null superNames=[]]\n" +
+                    "    FUN:PsiJetFunctionStubImpl[name=testing]\n" +
+                    "      VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
 
     public void testFunctionParameters() {
@@ -97,13 +96,6 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
                     "      VALUE_PARAMETER:PsiJetParameterStubImpl[val name=t typeText=Int defaultValue=null]\n" +
                     "      VALUE_PARAMETER:PsiJetParameterStubImpl[val name=other typeText=String defaultValue=\"hello\"]\n");
-    }
-
-    public void testNotStoreInFunction() {
-        doBuildTest("fun some() { val test = 12;\n fun fake() {}\n class FakeClass\n }",
-                    "PsiJetFileStubImpl[package=]\n" +
-                    "  FUN:PsiJetFunctionStubImpl[top topFQName=some name=some]\n" +
-                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n");
     }
 
     public void testPackageProperty() {
@@ -175,12 +167,51 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
                     "    CLASS:PsiJetClassStubImpl[inner name=B fqn=A.B superNames=[]]\n");
     }
 
+    public void testLocalClass() {
+        doBuildTest("class A\ntrait T\nfun foo() { class Test: A(), T }",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
+                    "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
+                    "    CLASS:PsiJetClassStubImpl[local name=Test fqn=null superNames=[AT]]\n");
+    }
+
+    public void testLocalClassInLocalFunction() {
+        doBuildTest("class A\ntrait T\nfun foo() { fun bar() { class Test: A(), T } }",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
+                    "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
+                    "    CLASS:PsiJetClassStubImpl[local name=Test fqn=null superNames=[AT]]\n");
+    }
+
     public void testNamedObject() {
         doBuildTest("class A\ntrait T\nobject Test: A(), T {}",
                     "PsiJetFileStubImpl[package=]\n" +
                     "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
                     "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
                     "  OBJECT_DECLARATION:PsiJetObjectStubImpl[top name=Test fqName=Test superNames=[AT]]\n");
+    }
+
+    public void testLocalNamedObject() {
+        doBuildTest("class A\ntrait T\nfun foo() { object O: A(), T }",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
+                    "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
+                    "  FUN:PsiJetFunctionStubImpl[top topFQName=foo name=foo]\n" +
+                    "    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl\n" +
+                    "    OBJECT_DECLARATION:PsiJetObjectStubImpl[local name=O fqName=null superNames=[AT]]\n");
+    }
+
+    public void testAnonymousObject() {
+        doBuildTest("class A\ntrait T\nval obj = object : A(), T",
+                    "PsiJetFileStubImpl[package=]\n" +
+                    "  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]\n" +
+                    "  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]\n" +
+                    "  PROPERTY:PsiJetPropertyStubImpl[val top topFQName=obj name=obj typeText=null bodyText=object : A(), T]\n" +
+                    "    OBJECT_DECLARATION:PsiJetObjectStubImpl[local name=null fqName=null superNames=[AT]]\n");
     }
 
     public void testAnnotationOnClass() {

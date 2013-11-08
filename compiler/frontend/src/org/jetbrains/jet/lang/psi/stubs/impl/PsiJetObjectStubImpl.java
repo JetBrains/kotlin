@@ -37,6 +37,7 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     private final StringRef[] superNames;
     private final boolean isTopLevel;
     private final boolean isClassObject;
+    private final boolean isLocal;
 
     public PsiJetObjectStubImpl(
             @NotNull IStubElementType elementType,
@@ -45,9 +46,10 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
             @Nullable FqName fqName,
             @NotNull List<String> superNames,
             boolean isTopLevel,
-            boolean isClassObject
+            boolean isClassObject,
+            boolean isLocal
     ) {
-        this(elementType, parent, StringRef.fromString(name), fqName, Utils.instance$.wrapStrings(superNames), isTopLevel, isClassObject);
+        this(elementType, parent, StringRef.fromString(name), fqName, Utils.instance$.wrapStrings(superNames), isTopLevel, isClassObject, isLocal);
     }
 
     public PsiJetObjectStubImpl(
@@ -57,7 +59,8 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
             @Nullable FqName fqName,
             @NotNull StringRef[] superNames,
             boolean isTopLevel,
-            boolean isClassObject) {
+            boolean isClassObject,
+            boolean isLocal) {
         super(parent, elementType);
 
         this.name = name;
@@ -65,6 +68,7 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
         this.superNames = superNames;
         this.isTopLevel = isTopLevel;
         this.isClassObject = isClassObject;
+        this.isLocal = isLocal;
     }
 
     @Override
@@ -99,6 +103,11 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     }
 
     @Override
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
@@ -110,6 +119,10 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
 
         if (isTopLevel) {
             builder.append("top ");
+        }
+
+        if (isLocal()) {
+            builder.append("local ");
         }
 
         builder.append("name=").append(getName());

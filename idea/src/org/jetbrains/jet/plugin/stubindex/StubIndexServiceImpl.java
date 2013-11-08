@@ -47,21 +47,14 @@ public class StubIndexServiceImpl implements StubIndexService {
         if (name != null) {
             sink.occurrence(JetShortClassNameIndex.getInstance().getKey(), name);
         }
-        
+
         FqName fqn = stub.getFqName();
         if (fqn != null) {
             sink.occurrence(JetFullClassNameIndex.getInstance().getKey(), fqn.asString());
         }
 
         indexSuperNames(stub, sink);
-
         recordClassOrObjectByPackage(stub, sink);
-    }
-
-    private static <T extends JetClassOrObject> void indexSuperNames(PsiJetClassOrObjectStub<T> stub, IndexSink sink) {
-        for (String superName : stub.getSuperNames()) {
-            sink.occurrence(JetSuperClassIndex.getInstance().getKey(), superName);
-        }
     }
 
     @Override
@@ -80,14 +73,13 @@ public class StubIndexServiceImpl implements StubIndexService {
                 fqName = parentFqName.child(Name.identifier(name));
             }
         }
-        else {
-            assert name != null;
-        }
 
-        sink.occurrence(JetShortClassNameIndex.getInstance().getKey(), name);
+        if (name != null) {
+            sink.occurrence(JetShortClassNameIndex.getInstance().getKey(), name);
 
-        if (stub.isTopLevel()) {
-            sink.occurrence(JetTopLevelShortObjectNameIndex.getInstance().getKey(), name);
+            if (stub.isTopLevel()) {
+                sink.occurrence(JetTopLevelShortObjectNameIndex.getInstance().getKey(), name);
+            }
         }
 
         if (fqName != null) {
@@ -95,8 +87,13 @@ public class StubIndexServiceImpl implements StubIndexService {
         }
 
         indexSuperNames(stub, sink);
-
         recordClassOrObjectByPackage(stub, sink);
+    }
+
+    private static void indexSuperNames(PsiJetClassOrObjectStub<? extends JetClassOrObject> stub, IndexSink sink) {
+        for (String superName : stub.getSuperNames()) {
+            sink.occurrence(JetSuperClassIndex.getInstance().getKey(), superName);
+        }
     }
 
     private static void recordClassOrObjectByPackage(StubElement<? extends JetClassOrObject> stub, IndexSink sink) {

@@ -51,12 +51,28 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     }
 
     @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        return true;
+    }
+
+    @Override
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
         FqName fqName = JetPsiUtil.getFQName(psi);
         boolean isEnumEntry = psi instanceof JetEnumEntry;
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
-        return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, fqName != null ? fqName.asString() : null, psi.getName(),
-                                       superNames, psi.isTrait(), psi.isEnum(), isEnumEntry, psi.isAnnotation(), psi.isInner());
+        return new PsiJetClassStubImpl(
+                getStubType(isEnumEntry),
+                parentStub,
+                fqName != null ? fqName.asString() : null,
+                psi.getName(),
+                superNames,
+                psi.isTrait(),
+                psi.isEnum(),
+                isEnumEntry,
+                psi.isAnnotation(),
+                psi.isInner(),
+                JetPsiUtil.isLocal(psi)
+        );
     }
 
     @Override
@@ -69,6 +85,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         dataStream.writeBoolean(stub.isEnumEntry());
         dataStream.writeBoolean(stub.isAnnotation());
         dataStream.writeBoolean(stub.isInner());
+        dataStream.writeBoolean(stub.isLocal());
 
         List<String> superNames = stub.getSuperNames();
         dataStream.writeVarInt(superNames.size());
@@ -87,6 +104,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         boolean isEnumEntry = dataStream.readBoolean();
         boolean isAnnotation = dataStream.readBoolean();
         boolean isInner = dataStream.readBoolean();
+        boolean isLocal = dataStream.readBoolean();
 
         int superCount = dataStream.readVarInt();
         StringRef[] superNames = StringRef.createArray(superCount);
@@ -95,7 +113,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         }
 
         return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, qualifiedName, name, superNames,
-                                       isTrait, isEnumClass, isEnumEntry, isAnnotation, isInner);
+                                       isTrait, isEnumClass, isEnumEntry, isAnnotation, isInner, isLocal);
     }
 
     @Override

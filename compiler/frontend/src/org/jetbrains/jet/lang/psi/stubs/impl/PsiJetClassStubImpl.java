@@ -40,6 +40,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     private final boolean isEnumEntry;
     private final boolean isAnnotation;
     private final boolean isInner;
+    private final boolean isLocal;
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
@@ -47,9 +48,9 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             @Nullable String qualifiedName,
             String name,
             List<String> superNames,
-            boolean isTrait, boolean isEnumClass, boolean isEnumEntry, boolean isAnnotation, boolean isInner) {
+            boolean isTrait, boolean isEnumClass, boolean isEnumEntry, boolean isAnnotation, boolean isInner, boolean isLocal) {
         this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames),
-             isTrait, isEnumClass, isEnumEntry, isAnnotation, isInner);
+             isTrait, isEnumClass, isEnumEntry, isAnnotation, isInner, isLocal);
     }
 
     public PsiJetClassStubImpl(
@@ -62,7 +63,8 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             boolean isEnumClass,
             boolean isEnumEntry,
             boolean isAnnotation,
-            boolean isInner) {
+            boolean isInner,
+            boolean isLocal) {
         super(parent, type);
         this.qualifiedName = qualifiedName;
         this.name = name;
@@ -72,6 +74,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
         this.isEnumEntry = isEnumEntry;
         this.isAnnotation = isAnnotation;
         this.isInner = isInner;
+        this.isLocal = isLocal;
     }
 
     private static StringRef[] wrapStrings(List<String> names) {
@@ -117,6 +120,11 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     }
 
     @Override
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    @Override
     public String getName() {
         return StringRef.toString(name);
     }
@@ -154,6 +162,10 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
 
         if (isInner()) {
             builder.append("inner ");
+        }
+
+        if (isLocal()) {
+            builder.append("local ");
         }
 
         builder.append("name=").append(getName());

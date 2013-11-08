@@ -22,6 +22,8 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import java.util.List;
 
 public interface PsiJetClassOrObjectStub<T extends JetClassOrObject> extends PsiJetStubWithFqName<T> {
+    boolean isLocal();
+
     @NotNull
     List<String> getSuperNames();
 }
