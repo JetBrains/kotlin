@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.evaluate;
 
 import com.google.common.collect.Lists;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
@@ -30,8 +31,9 @@ import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 import java.util.Map;
@@ -137,7 +139,34 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
         if (leftExpression == null) {
             return null;
         }
-        return getCallConstant(expression.getOperationReference(), leftExpression);
+
+        IElementType operationToken = expression.getOperationToken();
+        if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
+            JetType booleanType = KotlinBuiltIns.getInstance().getBooleanType();
+            CompileTimeConstant<?> leftConstant = leftExpression.accept(new ConstantExpressionEvaluator(trace, booleanType), null);
+            if (leftConstant == null) {
+                return null;
+            }
+            JetExpression rightExpression = expression.getRight();
+            if (rightExpression == null) {
+                return null;
+            }
+            CompileTimeConstant<?> rightConstant = rightExpression.accept(new ConstantExpressionEvaluator(trace, booleanType), null);
+            if (rightConstant == null) {
+                return null;
+            }
+
+            Name operationName = operationToken == JetTokens.ANDAND ? Name.identifier("andand") : Name.identifier("oror");
+            Object result = EvaluatePackage.evaluateBinaryExpression(leftConstant, rightConstant, operationName);
+            if (result == null) {
+                return null;
+            }
+            return createCompileTimeConstant(result, expectedType);
+        }
+        else {
+            return getCallConstant(expression.getOperationReference(), leftExpression);
+        }
+
     }
 
     @Nullable

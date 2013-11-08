@@ -78,6 +78,11 @@ public class AnnotationParameterTestGenerated extends AbstractAnnotationParamete
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/resolveAnnotations/parameters/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("andAnd.kt")
+        public void testAndAnd() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/andAnd.kt");
+        }
+        
         @TestMetadata("boolean.kt")
         public void testBoolean() throws Exception {
             doTest("compiler/testData/resolveAnnotations/parameters/expressions/boolean.kt");
@@ -186,6 +191,11 @@ public class AnnotationParameterTestGenerated extends AbstractAnnotationParamete
         @TestMetadata("multilineString.kt")
         public void testMultilineString() throws Exception {
             doTest("compiler/testData/resolveAnnotations/parameters/expressions/multilineString.kt");
+        }
+        
+        @TestMetadata("orOr.kt")
+        public void testOrOr() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/orOr.kt");
         }
         
         @TestMetadata("plus.kt")

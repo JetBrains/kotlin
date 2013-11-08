@@ -65,6 +65,8 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(BOOLEAN, BOOLEAN, "and", { a, b -> a and b }),
         bOp(BOOLEAN, BOOLEAN, "or",  { a, b -> a or b }),
         bOp(BOOLEAN, BOOLEAN, "xor", { a, b -> a xor b }),
+        bOp(BOOLEAN, BOOLEAN, "andand", { a, b -> a && b }),
+        bOp(BOOLEAN, BOOLEAN, "oror", { a, b -> a || b }),
 
         // Byte
         bOp(BYTE, DOUBLE, "plus", { a, b -> a + b }),
