@@ -89,7 +89,7 @@ public final class K2JSTranslator {
         List<SimpleOutputFile> outputFiles = new SmartList<SimpleOutputFile>(jsFile);
 
         if (sourceMapBuilder != null) {
-            sourceMapBuilder.skipLinesInBegin(StringUtil.getLineBreakCount(prefix));
+            sourceMapBuilder.skipLinesAtBeginning(StringUtil.getLineBreakCount(prefix));
             SimpleOutputFile sourcemapFile = new SimpleOutputFile(sourceFiles, sourceMapBuilder.getOutFile().getName(), sourceMapBuilder.build());
             outputFiles.add(sourcemapFile);
         }

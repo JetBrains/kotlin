@@ -79,7 +79,7 @@ public class SourceMap3Builder implements SourceMapBuilder {
     }
 
     @Override
-    public void skipLinesInBegin(int count) {
+    public void skipLinesAtBeginning(int count) {
         out.insert(0, StringUtil.repeatSymbol(';', count));
     }
 
