@@ -22,10 +22,11 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -38,7 +39,6 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.outputUtils.OutputUtilsPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,8 +79,8 @@ public final class LoadDescriptorUtil {
         JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(kotlinFile, disposable, configurationKind);
         GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getJetFile().getProject(), fileAndExhaust.getExhaust(), Collections.singletonList(
                 fileAndExhaust.getJetFile()));
-        ClassFileFactory classFileFactory = state.getFactory();
-        OutputUtilsPackage.writeAllTo(classFileFactory, outDir);
+        OutputFileCollection outputFiles = state.getFactory();
+        OutputUtilsPackage.writeAllTo(outputFiles, outDir);
         return fileAndExhaust.getExhaust();
     }
 

@@ -23,9 +23,9 @@ import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.outputUtils.OutputUtilsPackage;
+import org.jetbrains.jet.OutputFileCollection;
+import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.compiler.PathManager;
 import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil;
@@ -132,12 +132,12 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     String generatedTestName = generateTestName(file.getName());
                     String packageName = file.getPath().replaceAll("\\\\|-|\\.|/", "_");
                     text = changePackage(packageName, text);
-                    ClassFileFactory factory;
+                    OutputFileCollection outputFiles;
                     if (filesCompiledWithoutStdLib.contains(file.getName())) {
-                        factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithMockJdk);
+                        outputFiles = compileFromText(file.getAbsolutePath(), text, environmentWithMockJdk);
                     }
                     else {
-                        factory = getFactoryFromText(file.getAbsolutePath(), text, environmentWithFullJdk);
+                        outputFiles = compileFromText(file.getAbsolutePath(), text, environmentWithFullJdk);
                     }
 
                     generateTestMethod(p, generatedTestName, StringUtil.escapeStringCharacters(file.getPath()));
@@ -147,22 +147,22 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     }
                     Assert.assertTrue("Cannot create directory for compiled files", outputDir.exists());
 
-                    OutputUtilsPackage.writeAllTo(factory, outputDir);
+                    OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
                 }
             }
         }
     }
 
-    private static ClassFileFactory getFactoryFromText(String filePath, String text, JetCoreEnvironment jetEnvironment) {
+    private static OutputFileCollection compileFromText(String filePath, String text, JetCoreEnvironment jetEnvironment) {
         JetFile psiFile = JetTestUtils.createFile("dummy.kt", text, jetEnvironment.getProject());
-        ClassFileFactory factory;
+        OutputFileCollection outputFiles;
         try {
-            factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
+            outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
         }
         catch (Throwable e) {
             throw new RuntimeException("Cannot compile: " + filePath + "\n" + text, e);
         }
-        return factory;
+        return outputFiles;
     }
 
     private static boolean hasBoxMethod(String text) {
