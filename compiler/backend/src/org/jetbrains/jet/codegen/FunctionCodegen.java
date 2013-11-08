@@ -119,11 +119,12 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         }
 
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
 
         generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
+
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         if (isAbstractMethod(functionDescriptor, methodContext.getContextKind())) return;
 
@@ -210,7 +211,10 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         }
     }
 
-    private static void markEnumConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
+    private void markEnumConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
+        // IDEA's ClsPsi builder fails to annotate synthetic parameters
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
+
         // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
         // see MethodWriter.visitParameterAnnotation()
 
