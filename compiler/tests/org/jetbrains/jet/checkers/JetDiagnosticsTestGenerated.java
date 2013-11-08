@@ -5202,6 +5202,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/resolve/resolveWithGenerics.kt");
             }
             
+            @TestMetadata("resolveWithRedeclarationError.kt")
+            public void testResolveWithRedeclarationError() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/resolve/resolveWithRedeclarationError.kt");
+            }
+            
             @TestMetadata("resolveWithSpecifiedFunctionLiteralWithId.kt")
             public void testResolveWithSpecifiedFunctionLiteralWithId() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/resolve/resolveWithSpecifiedFunctionLiteralWithId.kt");
