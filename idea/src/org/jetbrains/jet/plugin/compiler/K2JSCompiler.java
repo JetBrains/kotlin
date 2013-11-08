@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.Function;
@@ -107,12 +105,6 @@ public final class K2JSCompiler implements TranslatingCompiler {
 
         KotlinCompilerRunner.runK2JsCompiler(commonArguments, k2jsArguments, compilerSettings, messageCollector, environment,
                                              outputItemsCollector, srcFiles, libraryFiles, outFile);
-
-        if (!ApplicationManager.getApplication().isUnitTestMode()) {
-            VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(outDir);
-            assert virtualFile != null : "Virtual file not found for module output: " + outDir;
-            virtualFile.refresh(false, true);
-        }
 
         TranslatingCompilerUtils.reportOutputs(sink, environment.getOutput(), outputItemsCollector);
     }

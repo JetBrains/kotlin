@@ -18,18 +18,24 @@ package org.jetbrains.jet.plugin.compiler;
 
 import com.intellij.diagnostic.PluginException;
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.Set;
 
 import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
 import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.KOTLIN_COMPILER_NAME;
@@ -39,6 +45,7 @@ public class JetCompilerManager implements ProjectComponent {
 
     // Comes from external make
     private static final String PREFIX_WITH_COMPILER_NAME = KOTLIN_COMPILER_NAME + ": " + INTERNAL_ERROR_PREFIX;
+    private static final Set<String> FILE_EXTS_WHICH_NEEDS_REFRESH = ContainerUtil.immutableSet(".js", ".map");
 
     public JetCompilerManager(Project project, CompilerManager manager) {
         manager.addTranslatingCompiler(new JetCompiler(),
@@ -64,6 +71,16 @@ public class JetCompilerManager implements ProjectComponent {
 
             @Override
             public void fileGenerated(String outputRoot, String relativePath) {
+                if (ApplicationManager.getApplication().isUnitTestMode()) return;
+
+                String ext = FileUtilRt.getExtension(relativePath).toLowerCase();
+
+                if (FILE_EXTS_WHICH_NEEDS_REFRESH.contains(ext)) {
+                    String outFile = outputRoot + "/" + relativePath;
+                    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(outFile);
+                    assert virtualFile != null : "Virtual file not found for generated file path: " + outFile;
+                    virtualFile.refresh(/*async =*/ false, /*recursive =*/ false);
+                }
             }
         }, project);
     }

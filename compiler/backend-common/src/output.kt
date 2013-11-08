@@ -23,9 +23,23 @@ public trait OutputFileCollection {
     public fun asList(): List<OutputFile>
 }
 
+public class SimpleOutputFileCollection(private val outputFiles: List<OutputFile>) : OutputFileCollection {
+    override fun get(relativePath: String): OutputFile? = outputFiles.find { it.relativePath == relativePath }
+    override fun asList(): List<OutputFile> = outputFiles
+}
+
 public trait OutputFile {
     public val relativePath: String
     public val sourceFiles: List<File>
     public fun asByteArray(): ByteArray
     public fun asText(): String
+}
+
+class SimpleOutputFile(
+        public override val sourceFiles: List<File>,
+        public override val relativePath: String,
+        private val content: String
+) : OutputFile {
+    override fun asByteArray(): ByteArray = content.toByteArray()
+    override fun asText(): String = content
 }

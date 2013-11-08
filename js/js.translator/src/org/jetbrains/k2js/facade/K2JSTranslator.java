@@ -19,12 +19,20 @@ package org.jetbrains.k2js.facade;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.google.dart.compiler.util.TextOutputImpl;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.Function;
+import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.OutputFileCollection;
+import org.jetbrains.jet.SimpleOutputFile;
+import org.jetbrains.jet.SimpleOutputFileCollection;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
 import org.jetbrains.js.compiler.JsSourceGenerationVisitor;
 import org.jetbrains.js.compiler.sourcemap.SourceMap3Builder;
 import org.jetbrains.js.compiler.sourcemap.SourceMapBuilder;
@@ -49,43 +57,48 @@ public final class K2JSTranslator {
     public static final String FLUSH_SYSTEM_OUT = "Kotlin.System.flush();\n";
     public static final String GET_SYSTEM_OUT = "Kotlin.System.output();\n";
 
-    public static void translateWithMainCallParametersAndSaveToFile(
+    public static OutputFileCollection translateWithMainCallParameters(
             @NotNull MainCallParameters mainCall,
             @NotNull List<JetFile> files,
-            @NotNull String outputPath,
+            @NotNull File outputFile,
             @Nullable File outputPrefixFile,
             @Nullable File outputPostfixFile,
             @NotNull Config config
     ) throws TranslationException, IOException {
         K2JSTranslator translator = new K2JSTranslator(config);
-        File outFile = new File(outputPath);
         TextOutputImpl output = new TextOutputImpl();
-        SourceMapBuilder sourceMapBuilder = config.isSourcemap() ? new SourceMap3Builder(outFile, output, new SourceMapBuilderConsumer()) : null;
+        SourceMapBuilder sourceMapBuilder = config.isSourcemap() ? new SourceMap3Builder(outputFile, output, new SourceMapBuilderConsumer()) : null;
         String programCode = translator.generateProgramCode(files, mainCall, output, sourceMapBuilder);
 
-        if (outputPrefixFile != null) {
-            String prefix = FileUtil.loadFile(outputPrefixFile);
-            FileUtil.writeToFile(outFile, prefix);
-            if (sourceMapBuilder != null) {
-                sourceMapBuilder.skipLinesInBegin(StringUtil.getLineBreakCount(prefix));
+        String prefix = FileUtilsPackage.readTextOrEmpty(outputPrefixFile);
+        String postfix = FileUtilsPackage.readTextOrEmpty(outputPostfixFile);
+
+        StringBuilder outBuilder = new StringBuilder(programCode.length() + prefix.length() + postfix.length());
+        outBuilder.append(prefix).append(programCode).append(postfix);
+
+        List<File> sourceFiles = ContainerUtil.map(files, new Function<JetFile, File>() {
+            @Override
+            public File fun(JetFile file) {
+                VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
+                if (virtualFile == null) return new File(file.getName());
+                return VfsUtilCore.virtualToIoFile(virtualFile);
             }
-        }
+        });
 
-        FileUtil.writeToFile(outFile, programCode.getBytes(), outputPrefixFile != null);
-
-        if (outputPostfixFile != null) {
-            byte[] postfix = FileUtil.loadFileBytes(outputPostfixFile);
-            FileUtil.writeToFile(outFile, postfix, true);
-        }
+        SimpleOutputFile jsFile = new SimpleOutputFile(sourceFiles, outputFile.getName(), outBuilder.toString());
+        List<SimpleOutputFile> outputFiles = new SmartList<SimpleOutputFile>(jsFile);
 
         if (sourceMapBuilder != null) {
-            FileUtil.writeToFile(sourceMapBuilder.getOutFile(), sourceMapBuilder.build());
+            sourceMapBuilder.skipLinesInBegin(StringUtil.getLineBreakCount(prefix));
+            SimpleOutputFile sourcemapFile = new SimpleOutputFile(sourceFiles, sourceMapBuilder.getOutFile().getName(), sourceMapBuilder.build());
+            outputFiles.add(sourcemapFile);
         }
+
+        return new SimpleOutputFileCollection(outputFiles);
     }
 
     @NotNull
     private final Config config;
-
 
     public K2JSTranslator(@NotNull Config config) {
         this.config = config;
