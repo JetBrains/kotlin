@@ -48,10 +48,10 @@ public class JetCompilerManager implements ProjectComponent {
     private static final Set<String> FILE_EXTS_WHICH_NEEDS_REFRESH = ContainerUtil.immutableSet(".js", ".map");
 
     public JetCompilerManager(Project project, CompilerManager manager) {
-        manager.addTranslatingCompiler(new JetCompiler(),
+        manager.addTranslatingCompiler(new K2JvmTranslatingCompiler(),
                                        Collections.<FileType>singleton(JetFileType.INSTANCE),
                                        Collections.singleton(StdFileTypes.CLASS));
-        manager.addTranslatingCompiler(new K2JSCompiler(),
+        manager.addTranslatingCompiler(new K2JsTranslatingCompiler(),
                                        Collections.<FileType>singleton(JetFileType.INSTANCE),
                                        Collections.<FileType>singleton(StdFileTypes.JS));
         manager.addCompilableFileType(JetFileType.INSTANCE);

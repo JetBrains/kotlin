@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public final class K2JSCompiler implements TranslatingCompiler {
+public final class K2JsTranslatingCompiler implements TranslatingCompiler {
     @Override
     public boolean isCompilableFile(VirtualFile file, CompileContext context) {
         if (!(file.getFileType() instanceof JetFileType)) {

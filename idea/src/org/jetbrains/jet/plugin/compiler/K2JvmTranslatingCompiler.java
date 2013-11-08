@@ -47,7 +47,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class JetCompiler implements TranslatingCompiler {
+public class K2JvmTranslatingCompiler implements TranslatingCompiler {
     @Override
     public boolean isCompilableFile(VirtualFile virtualFile, CompileContext compileContext) {
         if (!(virtualFile.getFileType() instanceof JetFileType)) {
