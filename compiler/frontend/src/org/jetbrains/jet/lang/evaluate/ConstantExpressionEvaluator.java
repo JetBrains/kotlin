@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.evaluate;
 
 import com.google.common.collect.Lists;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -203,12 +204,76 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
                 return null;
             }
             List<CompileTimeConstant<?>> arguments = Lists.newArrayList();
-            for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> argumentEntry : resolvedCall.getValueArguments() .entrySet()) {
+            for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> argumentEntry : resolvedCall.getValueArguments().entrySet()) {
                 arguments.addAll(resolveArguments(argumentEntry.getValue().getArguments(), argumentEntry.getKey().getType(), trace));
             }
-            return ConstantsPackage.resolveCallToCompileTimeValue(resultingDescriptor.getName(), receiverValue, arguments, expectedType);
+            Name resultingDescriptorName = resultingDescriptor.getName();
+            if (arguments.isEmpty()) {
+                Object result = EvaluatePackage.evaluateUnaryExpression(receiverValue, resultingDescriptorName);
+                if (result == null) {
+                    return null;
+                }
+                return createCompileTimeConstant(result, expectedType);
+            }
+            else if (arguments.size() == 1) {
+                Object result = EvaluatePackage.evaluateBinaryExpression(receiverValue, arguments.iterator().next(), resultingDescriptorName);
+                if (result == null) {
+                    return null;
+                }
+                if (OperatorConventions.COMPARE_TO.equals(resultingDescriptorName)) {
+                    PsiElement parentExpression = resolvedCallExpression.getParent();
+                    if (parentExpression instanceof JetBinaryExpression) {
+                        return createCompileTimeConstantForCompareTo(result, (JetBinaryExpression) parentExpression);
+                    }
+                }
+                else {
+                    return createCompileTimeConstant(result, expectedType);
+                }
+            }
+
+            return null;
         }
 
+        return null;
+    }
+
+    @Nullable
+    private static CompileTimeConstant<?> createCompileTimeConstantForCompareTo(
+            @NotNull Object result,
+            @NotNull JetBinaryExpression expression
+    ) {
+        if (result instanceof Integer) {
+            int resultCode = ((Integer) result).intValue();
+            IElementType operationToken = expression.getOperationToken();
+            if (resultCode == 0) {
+                if (operationToken == JetTokens.EQEQ ||
+                    operationToken == JetTokens.LTEQ ||
+                    operationToken == JetTokens.GTEQ) {
+                    return BooleanValue.TRUE;
+                }
+                else {
+                    return BooleanValue.FALSE;
+                }
+            }
+            if (resultCode == 1) {
+                if (operationToken == JetTokens.GT ||
+                    operationToken == JetTokens.GTEQ) {
+                    return BooleanValue.TRUE;
+                }
+                else {
+                    return BooleanValue.FALSE;
+                }
+            }
+            if (resultCode == -1) {
+                if (operationToken == JetTokens.LT ||
+                    operationToken == JetTokens.LTEQ) {
+                    return BooleanValue.TRUE;
+                }
+                else {
+                    return BooleanValue.FALSE;
+                }
+            }
+        }
         return null;
     }
 
