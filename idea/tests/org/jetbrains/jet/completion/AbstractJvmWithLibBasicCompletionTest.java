@@ -19,10 +19,22 @@ package org.jetbrains.jet.completion;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
+import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
-public abstract class AbstractKeywordCompletionTest extends JetFixtureCompletionBaseTestCase {
+public abstract class AbstractJvmWithLibBasicCompletionTest extends JetFixtureCompletionBaseTestCase {
+    private static final String TEST_PATH = PluginTestCaseBase.getTestDataPathBase() + "/completion/basic/custom";
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
+            return super.getProjectDescriptor();
+        }
+        return new JdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(false) + "Src", false);
+    }
+
     @Override
     public TargetPlatform getPlatform() {
         return TargetPlatform.JVM;
@@ -31,10 +43,4 @@ public abstract class AbstractKeywordCompletionTest extends JetFixtureCompletion
     @NotNull
     @Override
     protected CompletionType completionType() { return CompletionType.BASIC; }
-
-    @NotNull
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
-    }
 }

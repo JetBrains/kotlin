@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.JavaCompletionContributor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -43,7 +44,7 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
 
-public class CompletionSession {
+class CompletionSession {
     @Nullable
     private final DeclarationDescriptor inDescriptor;
     private final CompletionParameters parameters;
@@ -78,7 +79,9 @@ public class CompletionSession {
         });
     }
 
-    void completeForReference() {
+    public void completeForReference() {
+        assert parameters.getCompletionType() == CompletionType.BASIC;
+
         if (isOnlyKeywordCompletion(getPosition())) {
             return;
         }
@@ -123,6 +126,21 @@ public class CompletionSession {
 
         if (shouldRunExtensionsCompletion()) {
             addJetExtensions();
+        }
+    }
+
+    public void completeSmart() {
+        assert parameters.getCompletionType() == CompletionType.SMART;
+
+        //noinspection StaticMethodReferencedViaSubclass
+        final SmartCompletionFilter filter = CompletionPackage.buildSmartCompletionFilter(jetReference.getExpression(), getResolveSession());
+        if (filter != null) {
+            addReferenceVariants(new Condition<DeclarationDescriptor>() {
+                @Override
+                public boolean value(DeclarationDescriptor descriptor) {
+                    return filter.accepts(descriptor);
+                }
+            });
         }
     }
 

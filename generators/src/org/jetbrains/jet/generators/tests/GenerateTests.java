@@ -27,10 +27,7 @@ import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest;
 import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
-import org.jetbrains.jet.completion.AbstractJavaCompletionTest;
-import org.jetbrains.jet.completion.AbstractJavaWithLibCompletionTest;
-import org.jetbrains.jet.completion.AbstractJetJSCompletionTest;
-import org.jetbrains.jet.completion.AbstractKeywordCompletionTest;
+import org.jetbrains.jet.completion.*;
 import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest;
 import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest;
 import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
@@ -294,7 +291,7 @@ public class GenerateTests {
         generateTest(
                 "idea/tests/",
                 "JetBasicJSCompletionTestGenerated",
-                AbstractJetJSCompletionTest.class,
+                AbstractJSBasicCompletionTest.class,
                 testModel("idea/testData/completion/basic/common"),
                 testModel("idea/testData/completion/basic/js")
         );
@@ -302,9 +299,16 @@ public class GenerateTests {
         generateTest(
                 "idea/tests/",
                 "JetBasicJavaCompletionTestGenerated",
-                AbstractJavaCompletionTest.class,
+                AbstractJvmBasicCompletionTest.class,
                 testModel("idea/testData/completion/basic/common"),
                 testModel("idea/testData/completion/basic/java")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "JetSmartCompletionTestGenerated",
+                AbstractJvmSmartCompletionTest.class,
+                testModel("idea/testData/completion/smart")
         );
 
         generateTest(
@@ -317,7 +321,7 @@ public class GenerateTests {
         generateTest(
                 "idea/tests",
                 "JetJavaLibCompletionTestGenerated",
-                AbstractJavaWithLibCompletionTest.class,
+                AbstractJvmWithLibBasicCompletionTest.class,
                 testModel("idea/testData/completion/basic/custom", false, "doTest"));
 
         generateTest(

@@ -16,26 +16,25 @@
 
 package org.jetbrains.jet.completion;
 
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
-public abstract class AbstractJavaWithLibCompletionTest extends JetFixtureCompletionBaseTestCase {
-    private static final String TEST_PATH = PluginTestCaseBase.getTestDataPathBase() + "/completion/basic/custom";
-
+public abstract class AbstractJvmSmartCompletionTest extends JetFixtureCompletionBaseTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
-            return super.getProjectDescriptor();
-        }
-        return new JdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(false) + "Src", false);
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     @Override
     public TargetPlatform getPlatform() {
         return TargetPlatform.JVM;
     }
+
+    @NotNull
+    @Override
+    protected CompletionType completionType() { return CompletionType.SMART; }
 }

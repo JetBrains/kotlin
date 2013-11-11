@@ -16,12 +16,13 @@
 
 package org.jetbrains.jet.completion;
 
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetStdJSProjectDescriptor;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
-public abstract class AbstractJetJSCompletionTest extends JetFixtureCompletionBaseTestCase {
+public abstract class AbstractJSBasicCompletionTest extends JetFixtureCompletionBaseTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
@@ -32,4 +33,8 @@ public abstract class AbstractJetJSCompletionTest extends JetFixtureCompletionBa
     public TargetPlatform getPlatform() {
         return TargetPlatform.JS;
     }
+
+    @NotNull
+    @Override
+    protected CompletionType completionType() { return CompletionType.BASIC; }
 }

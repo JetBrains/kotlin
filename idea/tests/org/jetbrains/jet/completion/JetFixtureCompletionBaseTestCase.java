@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightFixtureTestCase {
@@ -42,6 +43,9 @@ public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightF
 
     public abstract TargetPlatform getPlatform();
 
+    @NotNull
+    protected abstract CompletionType completionType();
+
     public void doTest(String testPath) {
         myFixture.configureByFile(testPath);
 
@@ -49,7 +53,7 @@ public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightF
 
         Integer invocationCount = ExpectedCompletionUtils.getInvocationCount(fileText);
 
-        myFixture.complete(CompletionType.BASIC, invocationCount == null ? 0 : invocationCount);
+        myFixture.complete(completionType(), invocationCount == null ? 0 : invocationCount);
 
         ExpectedCompletionUtils.assertDirectivesValid(fileText);
 
