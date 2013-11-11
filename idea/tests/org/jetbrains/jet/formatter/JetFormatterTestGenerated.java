@@ -34,7 +34,8 @@ import org.jetbrains.jet.formatter.AbstractJetFormatterTest;
 @InnerTestClasses({JetFormatterTestGenerated.ModifierList.class})
 public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     public void testAllFilesPresentInFormatter() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests",
+                                                     new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
     @TestMetadata("BlockFor.kt")
@@ -210,6 +211,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     @TestMetadata("WhenLinesBeforeLbrace.kt")
     public void testWhenLinesBeforeLbrace() throws Exception {
         doTest("idea/testData/formatter/WhenLinesBeforeLbrace.kt");
+    }
+    
+    @TestMetadata("WhileSpacing.kt")
+    public void testWhileSpacing() throws Exception {
+        doTest("idea/testData/formatter/WhileSpacing.kt");
     }
     
     @TestMetadata("idea/testData/formatter/modifierList")
