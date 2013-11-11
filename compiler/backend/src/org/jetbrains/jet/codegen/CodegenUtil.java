@@ -129,7 +129,7 @@ public class CodegenUtil {
     }
 
     public static boolean isConst(CalculatedClosure closure) {
-        return closure.getCaptureThis() == null && closure.getCaptureReceiver() == null && closure.getCaptureVariables().isEmpty();
+        return closure.getCaptureThis() == null && closure.getCaptureReceiverType() == null && closure.getCaptureVariables().isEmpty();
     }
 
     public static <T> T peekFromStack(Stack<T> stack) {

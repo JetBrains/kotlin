@@ -249,9 +249,9 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
             Type type = typeMapper.mapType(captureThis);
             args.add(FieldInfo.createForHiddenField(ownerType, type, CAPTURED_THIS_FIELD));
         }
-        ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
-        if (captureReceiver != null) {
-            args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiver), CAPTURED_RECEIVER_FIELD));
+        JetType captureReceiverType = closure.getCaptureReceiverType();
+        if (captureReceiverType != null) {
+            args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), CAPTURED_RECEIVER_FIELD));
         }
 
         for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {
@@ -268,7 +268,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
                 args.add(FieldInfo.createForHiddenField(ownerType, classType, "$" + descriptor.getName().asString()));
             }
             else if (descriptor instanceof FunctionDescriptor) {
-                assert captureReceiver != null;
+                assert captureReceiverType != null;
             }
         }
         return args;

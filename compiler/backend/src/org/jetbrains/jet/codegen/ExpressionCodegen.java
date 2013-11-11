@@ -1374,9 +1374,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     generateThisOrOuter(captureThis, false).put(OBJECT_TYPE, v);
                 }
 
-                ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
+                JetType captureReceiver = closure.getCaptureReceiverType();
                 if (captureReceiver != null) {
-                    v.load(context.isStatic() ? 0 : 1, typeMapper.mapClass(captureReceiver));
+                    v.load(context.isStatic() ? 0 : 1, typeMapper.mapType(captureReceiver));
                 }
             }
 

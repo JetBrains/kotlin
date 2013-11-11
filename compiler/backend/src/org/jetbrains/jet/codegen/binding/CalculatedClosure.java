@@ -22,9 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
 import java.util.Map;
@@ -41,7 +41,7 @@ public interface CalculatedClosure {
     ClassDescriptor getCaptureThis();
 
     @Nullable
-    ClassifierDescriptor getCaptureReceiver();
+    JetType getCaptureReceiverType();
 
     @NotNull
     Map<DeclarationDescriptor, EnclosedValueDescriptor> getCaptureVariables();

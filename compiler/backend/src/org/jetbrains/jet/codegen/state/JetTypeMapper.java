@@ -812,10 +812,10 @@ public class JetTypeMapper extends BindingTraceAware {
             signatureWriter.writeParameterTypeEnd();
         }
 
-        ClassifierDescriptor captureReceiver = closure != null ? closure.getCaptureReceiver() : null;
-        if (captureReceiver != null) {
+        JetType captureReceiverType = closure != null ? closure.getCaptureReceiverType() : null;
+        if (captureReceiverType != null) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(captureReceiver.getDefaultType(), signatureWriter, JetTypeMapperMode.VALUE);
+            mapType(captureReceiverType, signatureWriter, JetTypeMapperMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 

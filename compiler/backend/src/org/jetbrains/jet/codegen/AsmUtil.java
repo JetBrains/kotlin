@@ -309,9 +309,9 @@ public class AsmUtil {
                        null);
         }
 
-        ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
-        if (captureReceiver != null) {
-            v.newField(null, access, CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiver).getDescriptor(),
+        JetType captureReceiverType = closure.getCaptureReceiverType();
+        if (captureReceiverType != null) {
+            v.newField(null, access, CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiverType).getDescriptor(),
                        null, null);
         }
 
