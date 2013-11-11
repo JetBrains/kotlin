@@ -60,6 +60,7 @@ import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults.Code.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
@@ -374,7 +375,9 @@ public class CallResolver {
             candidateResolver.checkValueArgumentTypes(callCandidateResolutionContext);
             return results;
         }
-        ResolvedCallImpl<D> copy = CallResolverUtil.copy(resolvedCall, context);
+        ResolvedCallImpl<D> copy = CallResolverUtil.copy(resolvedCall);
+        context.trace.record(RESOLVED_CALL, context.call.getCalleeExpression(), copy);
+
         CallCandidateResolutionContext<D> callCandidateResolutionContext =
                 CallCandidateResolutionContext.createForCallBeingAnalyzed(copy, context, tracing);
         candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
