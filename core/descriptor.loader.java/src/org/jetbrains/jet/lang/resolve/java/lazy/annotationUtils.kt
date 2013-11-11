@@ -24,7 +24,15 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver
 
 fun LazyJavaResolverContextWithTypes.resolveAnnotations(javaAnnotations: Collection<JavaAnnotation>): List<AnnotationDescriptor>
-        = javaAnnotations.map {jAnnotation -> LazyJavaAnnotationDescriptor(this, jAnnotation)}
+        = javaAnnotations.flatMap {
+            jAnnotation ->
+            // TODO: we resolve all annotations, which slightly compromises our laziness
+            val fqName = jAnnotation.getFqName()
+            if (fqName == null || JavaAnnotationResolver.isSpecialAnnotation(fqName)) {
+                listOf<AnnotationDescriptor>()
+            }
+            else listOf(LazyJavaAnnotationDescriptor(this, jAnnotation))
+        }
 
 private fun GlobalJavaResolverContext.hasAnnotation(owner: JavaAnnotationOwner, annotationFqName: FqName): Boolean
         = owner.findAnnotation(annotationFqName) != null || externalAnnotationResolver.findExternalAnnotation(owner, annotationFqName) != null
