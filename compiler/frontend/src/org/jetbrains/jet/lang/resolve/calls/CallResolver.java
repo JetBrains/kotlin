@@ -399,7 +399,7 @@ public class CallResolver {
         if (callKey == null) return;
 
         DelegatingBindingTrace deltasTraceToCacheResolve = new DelegatingBindingTrace(
-                new BindingTraceContext().getBindingContext(), "delta trace for caching resolve of", context.call);
+                BindingContext.EMPTY, "delta trace for caching resolve of", context.call);
         traceToResolveCall.addAllMyDataTo(deltasTraceToCacheResolve);
 
         context.resolutionResultsCache.recordResolutionResults(callKey, memberType, results);
