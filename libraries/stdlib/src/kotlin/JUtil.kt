@@ -3,17 +3,17 @@ package kotlin
 import java.util.*
 
 /** Returns the size of the collection */
-val Collection<*>.size : Int
+public val Collection<*>.size : Int
     get() = size()
 
 /** Returns true if this collection is empty */
-val Collection<*>.empty : Boolean
+public val Collection<*>.empty : Boolean
     get() = isEmpty()
 
-val Collection<*>.indices : IntRange
+public val Collection<*>.indices : IntRange
     get() = 0..size-1
 
-val Int.indices: IntRange
+public val Int.indices: IntRange
     get() = 0..this-1
 
 /** Returns true if the collection is not empty */

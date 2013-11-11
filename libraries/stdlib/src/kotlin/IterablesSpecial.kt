@@ -23,7 +23,7 @@ public fun <T> Iterable<T>.count() : Int {
   return number
 }
 
-private fun <T> countTo(n: Int): (T) -> Boolean {
+public fun <T> countTo(n: Int): (T) -> Boolean {
   var count = 0
   return { ++count; count <= n }
 }

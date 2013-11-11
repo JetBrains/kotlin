@@ -141,7 +141,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
 }))
 
 /** Reads a line of input from [[System.in]] */
-public inline fun readLine() : String? = stdin.readLine()
+public fun readLine() : String? = stdin.readLine()
 
 /** Uses the given resource then closes it down correctly whether an exception is thrown or not */
 public inline fun <T: Closeable, R> T.use(block: (T)-> R) : R {
@@ -178,33 +178,33 @@ object: ByteIterator() {
 }
 
 /** Creates a buffered input stream */
-public inline fun InputStream.buffered(bufferSize: Int = defaultBufferSize) : InputStream
+public fun InputStream.buffered(bufferSize: Int = defaultBufferSize) : InputStream
 = if (this is BufferedInputStream)
     this
 else
     BufferedInputStream(this, bufferSize)
 
-public inline fun InputStream.reader(encoding: Charset = defaultCharset) : InputStreamReader = InputStreamReader(this, encoding)
+public fun InputStream.reader(encoding: Charset = defaultCharset) : InputStreamReader = InputStreamReader(this, encoding)
 
 public inline fun InputStream.reader(encoding: String) : InputStreamReader = InputStreamReader(this, encoding)
 
 public inline fun InputStream.reader(encoding: CharsetDecoder) : InputStreamReader = InputStreamReader(this, encoding)
 
 
-public inline fun OutputStream.buffered(bufferSize: Int = defaultBufferSize) : BufferedOutputStream
+public fun OutputStream.buffered(bufferSize: Int = defaultBufferSize) : BufferedOutputStream
 = if (this is BufferedOutputStream) this else BufferedOutputStream(this, bufferSize)
 
-public inline fun OutputStream.writer(encoding: Charset = defaultCharset) : OutputStreamWriter = OutputStreamWriter(this, encoding)
+public fun OutputStream.writer(encoding: Charset = defaultCharset) : OutputStreamWriter = OutputStreamWriter(this, encoding)
 
-public inline fun OutputStream.writer(encoding: String) : OutputStreamWriter = OutputStreamWriter(this, encoding)
+public fun OutputStream.writer(encoding: String) : OutputStreamWriter = OutputStreamWriter(this, encoding)
 
-public inline fun OutputStream.writer(encoding: CharsetEncoder) : OutputStreamWriter = OutputStreamWriter(this, encoding)
+public fun OutputStream.writer(encoding: CharsetEncoder) : OutputStreamWriter = OutputStreamWriter(this, encoding)
 
 
-public inline fun Reader.buffered(bufferSize: Int = defaultBufferSize): BufferedReader
+public fun Reader.buffered(bufferSize: Int = defaultBufferSize): BufferedReader
 = if(this is BufferedReader) this else BufferedReader(this, bufferSize)
 
-public inline fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
+public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
 = if(this is BufferedWriter) this else BufferedWriter(this, bufferSize)
 
 
@@ -231,7 +231,7 @@ public inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T = this.
  * <br>
  * We suggest you try the method useLines() instead which closes the stream when the processing is complete.
  */
-public inline fun BufferedReader.lineIterator() : Iterator<String> = LineIterator(this)
+public fun BufferedReader.lineIterator() : Iterator<String> = LineIterator(this)
 
 class LineIterator(val reader: BufferedReader) : Iterator<String> {
     private var nextValue: String? = null

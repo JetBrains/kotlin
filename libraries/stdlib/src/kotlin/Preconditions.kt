@@ -9,7 +9,7 @@ import java.lang.IllegalStateException
  *
  * @includeFunctionBody ../../test/PreconditionsTest.kt failingRequireWithMessage
  */
-public inline fun require(value: Boolean, message: Any = "Failed requirement"): Unit {
+public fun require(value: Boolean, message: Any = "Failed requirement"): Unit {
     if (!value) {
         throw IllegalArgumentException(message.toString())
     }
@@ -33,7 +33,7 @@ public inline fun require(value: Boolean, lazyMessage: () -> String): Unit {
  *
  *  @includeFunctionBody ../../test/PreconditionsTest.kt requireNotNull
  */
-public inline fun <T:Any> requireNotNull(value: T?, message: Any = "Required value was null"): T {
+public fun <T:Any> requireNotNull(value: T?, message: Any = "Required value was null"): T {
     if (value == null) {
         throw IllegalArgumentException(message.toString())
     } else {
@@ -46,7 +46,7 @@ public inline fun <T:Any> requireNotNull(value: T?, message: Any = "Required val
  *
  * @includeFunctionBody ../../test/PreconditionsTest.kt failingCheckWithMessage
  */
-public inline fun check(value: Boolean, message: Any = "Check failed"): Unit {
+public fun check(value: Boolean, message: Any = "Check failed"): Unit {
     if (!value) {
         throw IllegalStateException(message.toString())
     }
@@ -70,7 +70,7 @@ public inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
  *
  *  @includeFunctionBody ../../test/PreconditionsTest.kt checkNotNull
  */
-public inline fun <T:Any> checkNotNull(value: T?, message: String = "Required value was null"): T {
+public fun <T:Any> checkNotNull(value: T?, message: String = "Required value was null"): T {
     if (value == null) {
         throw IllegalStateException(message)
     } else {
@@ -78,4 +78,4 @@ public inline fun <T:Any> checkNotNull(value: T?, message: String = "Required va
     }
 }
 
-public inline fun error(message: String): Nothing = throw RuntimeException(message)
+public fun error(message: String): Nothing = throw RuntimeException(message)

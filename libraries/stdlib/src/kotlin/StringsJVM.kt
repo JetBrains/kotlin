@@ -147,7 +147,7 @@ public inline fun CharSequence.toString() : String? = (this as java.lang.CharSeq
 public inline fun CharSequence.length() : Int = (this as java.lang.CharSequence).length()
 
 
-public inline fun String.toByteArray(encoding: String = Charset.defaultCharset().name()): ByteArray = (this as java.lang.String).getBytes(encoding)
+public fun String.toByteArray(encoding: String = Charset.defaultCharset().name()): ByteArray = (this as java.lang.String).getBytes(encoding)
 public inline fun String.toByteArray(encoding: Charset): ByteArray =  (this as java.lang.String).getBytes(encoding)
 
 public inline fun String.toBoolean() : Boolean = java.lang.Boolean.parseBoolean(this)
@@ -162,7 +162,7 @@ public inline fun String.toDouble() : Double = java.lang.Double.parseDouble(this
  * with the specified flags from [[Pattern]] or'd together
  * so that strings can be split or matched on.
  */
-public inline fun String.toRegex(flags: Int=0): java.util.regex.Pattern {
+public fun String.toRegex(flags: Int=0): java.util.regex.Pattern {
     return java.util.regex.Pattern.compile(this, flags)
 }
 
@@ -283,7 +283,7 @@ public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
  *
  * @includeFunctionBody ../../test/StringTest.kt appendString
  */
-public inline fun String.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): Unit {
+public fun String.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): Unit {
     buffer.append(prefix)
     var count = 0
     for (c in this) {
@@ -441,7 +441,7 @@ public inline fun <K> String.groupByTo(result: MutableMap<K, String>, toKey: (Ch
  *
  * @includeFunctionBody ../../test/StringTest.kt makeString
  */
-public inline fun String.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
+public fun String.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()

@@ -75,17 +75,17 @@ public inline fun  FloatArray.sort(fromIndex: Int, toIndex: Int) : Unit = Arrays
 public inline fun DoubleArray.sort(fromIndex: Int, toIndex: Int) : Unit = Arrays.sort(this, fromIndex, toIndex)
 public inline fun   CharArray.sort(fromIndex: Int, toIndex: Int) : Unit = Arrays.sort(this, fromIndex, toIndex)
 
-public inline fun BooleanArray.copyOf(newLength: Int = this.size) : BooleanArray = Arrays.copyOf(this, newLength)
-public inline fun    ByteArray.copyOf(newLength: Int = this.size) : ByteArray    = Arrays.copyOf(this, newLength)
-public inline fun   ShortArray.copyOf(newLength: Int = this.size) : ShortArray   = Arrays.copyOf(this, newLength)
-public inline fun     IntArray.copyOf(newLength: Int = this.size) : IntArray     = Arrays.copyOf(this, newLength)
-public inline fun    LongArray.copyOf(newLength: Int = this.size) : LongArray    = Arrays.copyOf(this, newLength)
-public inline fun   FloatArray.copyOf(newLength: Int = this.size) : FloatArray   = Arrays.copyOf(this, newLength)
-public inline fun  DoubleArray.copyOf(newLength: Int = this.size) : DoubleArray  = Arrays.copyOf(this, newLength)
-public inline fun    CharArray.copyOf(newLength: Int = this.size) : CharArray    = Arrays.copyOf(this, newLength)
+public fun BooleanArray.copyOf(newLength: Int = this.size) : BooleanArray = Arrays.copyOf(this, newLength)
+public fun    ByteArray.copyOf(newLength: Int = this.size) : ByteArray    = Arrays.copyOf(this, newLength)
+public fun   ShortArray.copyOf(newLength: Int = this.size) : ShortArray   = Arrays.copyOf(this, newLength)
+public fun     IntArray.copyOf(newLength: Int = this.size) : IntArray     = Arrays.copyOf(this, newLength)
+public fun    LongArray.copyOf(newLength: Int = this.size) : LongArray    = Arrays.copyOf(this, newLength)
+public fun   FloatArray.copyOf(newLength: Int = this.size) : FloatArray   = Arrays.copyOf(this, newLength)
+public fun  DoubleArray.copyOf(newLength: Int = this.size) : DoubleArray  = Arrays.copyOf(this, newLength)
+public fun    CharArray.copyOf(newLength: Int = this.size) : CharArray    = Arrays.copyOf(this, newLength)
 
 // TODO: resuling array may contain nulls even if T is non-nullable
-public inline fun  <T> Array<T>.copyOf(newLength: Int = this.size) : Array<T> = Arrays.copyOf(this, newLength) as Array<T>
+public fun  <T> Array<T>.copyOf(newLength: Int = this.size) : Array<T> = Arrays.copyOf(this, newLength) as Array<T>
 
 public inline fun BooleanArray.copyOfRange(from: Int, to: Int) : BooleanArray = Arrays.copyOfRange(this, from, to)
 public inline fun    ByteArray.copyOfRange(from: Int, to: Int) : ByteArray    = Arrays.copyOfRange(this, from, to)

@@ -36,7 +36,7 @@ public inline fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
 /**
  * Creates a comparator using the sequence of functions used to calculate a value to compare on
  */
-public inline fun <T> comparator(vararg functions: T.() -> Comparable<*>?): Comparator<T> {
+public fun <T> comparator(vararg functions: T.() -> Comparable<*>?): Comparator<T> {
     return FunctionComparator<T>(*functions)
 }
 
@@ -59,7 +59,7 @@ private class FunctionComparator<T>(vararg val functions: T.() -> Comparable<*>?
 /**
  * Creates a comparator using the sequence of functions used to calculate a value to compare on
  */
-public inline fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {
+public fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {
     return Function2Comparator<T>(fn)
 }
 private class Function2Comparator<T>(val compareFn: (T,T) -> Int):  Comparator<T> {

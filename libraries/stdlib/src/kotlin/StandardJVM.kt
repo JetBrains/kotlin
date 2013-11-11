@@ -42,7 +42,7 @@ public inline fun Throwable.printStackTrace(stream: PrintStream): Unit {
 /**
  * A helper method for creating a [[Callable]] from a function
  */
-public inline fun <T> callable(action: ()-> T): Callable<T> {
+public /*inline*/ fun <T> callable(action: ()-> T): Callable<T> {
     return object: Callable<T> {
         public override fun call() = action()
     }
@@ -51,7 +51,7 @@ public inline fun <T> callable(action: ()-> T): Callable<T> {
 /**
  * A helper method for creating a [[Runnable]] from a function
  */
-public inline fun runnable(action: ()-> Unit): Runnable {
+public /*inline*/ fun runnable(action: ()-> Unit): Runnable {
     return object: Runnable {
         public override fun run() {
             action()

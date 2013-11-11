@@ -35,7 +35,7 @@ public inline fun String?.isNotEmpty() : Boolean = this != null && this.length()
 /**
 Iterator for characters of given CharSequence
 */
-public inline fun CharSequence.iterator() : CharIterator = object: jet.CharIterator() {
+public fun CharSequence.iterator() : CharIterator = object: jet.CharIterator() {
     private var index = 0
 
     public override fun nextChar(): Char = get(index++)

@@ -6,11 +6,11 @@ import java.util.HashMap
 // Map APIs
 
 /** Returns the size of the map */
-val Map<*,*>.size : Int
+public val Map<*,*>.size : Int
 get() = size()
 
 /** Returns true if this map is empty */
-val Map<*,*>.empty : Boolean
+public val Map<*,*>.empty : Boolean
 get() = isEmpty()
 
 /** Provides [] access to maps */
@@ -22,11 +22,11 @@ public inline fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
 
 
 /** Returns the key of the entry */
-val <K,V> Map.Entry<K,V>.key : K
+public val <K,V> Map.Entry<K,V>.key : K
     get() = getKey()
 
 /** Returns the value of the entry */
-val <K,V> Map.Entry<K,V>.value : V
+public val <K,V> Map.Entry<K,V>.value : V
     get() = getValue()
 
 /** Returns the key of the entry */

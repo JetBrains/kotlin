@@ -34,7 +34,7 @@ public inline fun <K,V> Map<K,V>.toSortedMap(comparator: Comparator<K>): SortedM
  *
  * @includeFunctionBody ../../test/MapTest.kt toProperties
  */
-public inline fun Map<String, String>.toProperties(): Properties {
+public fun Map<String, String>.toProperties(): Properties {
     val answer = Properties()
     for (e in this) {
         answer.put(e.key, e.value)
