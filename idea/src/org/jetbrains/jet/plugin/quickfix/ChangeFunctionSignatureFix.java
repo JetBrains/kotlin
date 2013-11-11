@@ -16,17 +16,24 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -62,6 +69,27 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
     @Override
     public boolean startInWriteAction() {
         return false;
+    }
+
+    @Override
+    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+        if (!super.isAvailable(project, editor, file)) {
+            return false;
+        }
+
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
+        List<PsiElement> declarations = BindingContextUtils.callableDescriptorToDeclarations(bindingContext, functionDescriptor);
+        if (declarations.isEmpty()) {
+            return false;
+        }
+
+        for (PsiElement declaration : declarations) {
+            if (!QuickFixUtil.canModifyElement(declaration)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     protected static String getNewArgumentName(ValueArgument argument, JetNameValidator validator) {

@@ -195,7 +195,10 @@ public class BindingContextUtils {
     }
 
     @NotNull
-    private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
+    public static List<PsiElement> callableDescriptorToDeclarations(
+            @NotNull BindingContext context,
+            @NotNull CallableMemberDescriptor callable
+    ) {
         if (callable.getKind() == SYNTHESIZED) {
             CallableMemberDescriptor original = callable.getOriginal();
             if (original instanceof SynthesizedCallableMemberDescriptor<?>) {

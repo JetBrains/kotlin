@@ -375,6 +375,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/changeSignature/beforeAddFunctionParameterAndChangeTypes.kt");
         }
         
+        @TestMetadata("beforeAddParameterNotAvailableForBuiltins.kt")
+        public void testAddParameterNotAvailableForBuiltins() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeAddParameterNotAvailableForBuiltins.kt");
+        }
+        
+        @TestMetadata("beforeAddParameterNotAvailableForLibrary.kt")
+        public void testAddParameterNotAvailableForLibrary() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeAddParameterNotAvailableForLibrary.kt");
+        }
+        
         @TestMetadata("beforeAddParameterToFakeOverride.kt")
         public void testAddParameterToFakeOverride() throws Exception {
             doTest("idea/testData/quickfix/changeSignature/beforeAddParameterToFakeOverride.kt");
@@ -447,6 +457,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("beforeRemoveParameterFromFakeOverride.kt")
         public void testRemoveParameterFromFakeOverride() throws Exception {
             doTest("idea/testData/quickfix/changeSignature/beforeRemoveParameterFromFakeOverride.kt");
+        }
+        
+        @TestMetadata("beforeRemoveParameterNotAvailableForBuiltins.kt")
+        public void testRemoveParameterNotAvailableForBuiltins() throws Exception {
+            doTest("idea/testData/quickfix/changeSignature/beforeRemoveParameterNotAvailableForBuiltins.kt");
         }
         
         @TestMetadata("beforeRemoveUnusedParameter.kt")
