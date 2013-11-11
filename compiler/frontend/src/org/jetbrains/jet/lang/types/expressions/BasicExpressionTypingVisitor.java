@@ -878,8 +878,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             dataFlowInfo = leftTypeInfo.getDataFlowInfo();
             ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
 
-            OverloadResolutionResults<FunctionDescriptor> resolutionResults = resolveFakeCall(
-                    contextWithDataFlow, receiver, OperatorConventions.EQUALS, KotlinBuiltIns.getInstance().getNullableAnyType());
+            TemporaryBindingTrace traceInterpretingRightAsNullableAny = TemporaryBindingTrace.create(
+                    context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:" + right);
+            traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, KotlinBuiltIns.getInstance().getNullableAnyType());
+            traceInterpretingRightAsNullableAny.record(PROCESSED, right);
+
+            OverloadResolutionResults<FunctionDescriptor> resolutionResults =
+                    resolveFakeCall(receiver, context.replaceBindingTrace(traceInterpretingRightAsNullableAny),
+                                           Collections.singletonList(right), OperatorConventions.EQUALS);
 
             dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
 

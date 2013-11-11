@@ -362,7 +362,17 @@ public class ExpressionTypingUtils {
             @NotNull ReceiverValue receiver,
             @NotNull Name name
     ) {
-        return makeAndResolveFakeCall(receiver, context, Collections.<JetExpression>emptyList(), name).getSecond();
+        return resolveFakeCall(receiver, context, Collections.<JetExpression>emptyList(), name);
+    }
+
+    @NotNull
+    public static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(
+            @NotNull ReceiverValue receiver,
+            @NotNull ExpressionTypingContext context,
+            @NotNull List<JetExpression> valueArguments,
+            @NotNull Name name
+    ) {
+        return makeAndResolveFakeCall(receiver, context, valueArguments, name).getSecond();
     }
 
     @NotNull
