@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public final class JetChangeSignatureData implements JetMethodDescriptor {
 
     @NotNull
     private Collection<PsiElement> computeHierarchyFrom(@NotNull FunctionDescriptor baseDescriptor) {
-        PsiElement declaration = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, baseDescriptor);
+        PsiElement declaration = DescriptorToDeclarationUtil.getDeclaration(baseDeclaration.getProject(), baseDescriptor, bindingContext);
         Set<PsiElement> result = Sets.newHashSet();
         result.add(declaration);
         if (!(declaration instanceof JetNamedFunction)) {

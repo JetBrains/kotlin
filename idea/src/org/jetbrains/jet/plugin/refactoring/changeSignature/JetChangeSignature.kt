@@ -32,6 +32,7 @@ import java.util.*
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.jet.lang.resolve.BindingContextUtils.*
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 
 public trait JetChangeSignatureConfiguration {
     fun configure(changeSignatureData: JetChangeSignatureData, bindingContext: BindingContext)
@@ -135,7 +136,7 @@ public class JetChangeSignature(val project: Project,
 
     fun createChangeSignatureDialog(descriptorsForSignatureChange: Collection<FunctionDescriptor>): JetChangeSignatureDialog? {
         val baseDescriptor = preferContainedInClass(descriptorsForSignatureChange)
-        val functionDeclaration = callableDescriptorToDeclaration(bindingContext, baseDescriptor)
+        val functionDeclaration = DescriptorToDeclarationUtil.getDeclaration(project, baseDescriptor, bindingContext)
         if (functionDeclaration == null) {
             LOG.error("Could not find declaration for $baseDescriptor")
             return null
