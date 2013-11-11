@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -49,7 +48,7 @@ public class ControlFlowAnalyzer {
             if (!bodiesResolveContext.completeAnalysisNeeded(file)) continue;
             checkDeclarationContainer(file);
         }
-        for (JetClass aClass : bodiesResolveContext.getClasses().keySet()) {
+        for (JetClassOrObject aClass : bodiesResolveContext.getClasses().keySet()) {
             if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
             checkDeclarationContainer(aClass);
         }

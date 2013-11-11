@@ -31,7 +31,7 @@ import java.util.Map;
 
 public interface BodiesResolveContext {
     Collection<JetFile> getFiles();
-    Map<JetClass, MutableClassDescriptor> getClasses();
+    Map<JetClassOrObject, MutableClassDescriptor> getClasses();
     Map<JetObjectDeclaration, MutableClassDescriptor> getObjects();
     Map<JetProperty, PropertyDescriptor> getProperties();
     Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions();

@@ -20,7 +20,9 @@ import com.google.common.base.Function;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -37,7 +39,7 @@ import java.util.Map;
 */
 public class CachedBodiesResolveContext implements BodiesResolveContext {
     private final Collection<JetFile> files;
-    private final Map<JetClass, MutableClassDescriptor> classes;
+    private final Map<JetClassOrObject, MutableClassDescriptor> classes;
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects;
     private final Map<JetProperty, PropertyDescriptor> properties;
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions;
@@ -68,7 +70,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     }
 
     @Override
-    public Map<JetClass, MutableClassDescriptor> getClasses() {
+    public Map<JetClassOrObject, MutableClassDescriptor> getClasses() {
         return classes;
     }
 

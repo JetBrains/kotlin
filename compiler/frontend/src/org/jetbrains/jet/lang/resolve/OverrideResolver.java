@@ -213,7 +213,7 @@ public class OverrideResolver {
     }
 
     private void checkOverrides() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             checkOverridesInAClass(entry.getValue(), entry.getKey());
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {

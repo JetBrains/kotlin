@@ -149,7 +149,7 @@ public class TypeHierarchyResolver {
         checkTypesInClassHeaders(); // Check bounds in the types used in generic bounds and supertype lists
     }
 
-    @Nullable
+    @NotNull
     private Collection<JetDeclarationContainer> collectNamespacesAndClassifiers(
             @NotNull JetScope outerScope,
             @NotNull NamespaceLikeBuilder owner,
@@ -176,29 +176,38 @@ public class TypeHierarchyResolver {
     }
 
     private void createTypeConstructors() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            JetClass jetClass = entry.getKey();
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveMutableClassDescriptor(jetClass, descriptor, trace);
-            descriptor.createTypeConstructor();
+            if (classOrObject instanceof JetClass) {
+                descriptorResolver.resolveMutableClassDescriptor((JetClass) classOrObject, descriptor, trace);
+                descriptor.createTypeConstructor();
+            }
+            else if (classOrObject instanceof JetObjectDeclaration) {
+                initializeObject((JetObjectDeclaration) classOrObject, descriptor);
+            }
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            JetObjectDeclaration objectDeclaration = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
-            descriptor.setModality(Modality.FINAL);
-            descriptor.setVisibility(resolveVisibilityFromModifiers(objectDeclaration, getDefaultClassVisibility(descriptor)));
-            descriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
-            descriptor.createTypeConstructor();
+            initializeObject(entry.getKey(), entry.getValue());
         }
     }
 
+    private static void initializeObject(@NotNull JetObjectDeclaration declaration, @NotNull MutableClassDescriptor descriptor) {
+        descriptor.setModality(Modality.FINAL);
+        descriptor.setVisibility(resolveVisibilityFromModifiers(declaration, getDefaultClassVisibility(descriptor)));
+        descriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+        descriptor.createTypeConstructor();
+    }
+
     private void resolveTypesInClassHeaders() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            JetClass jetClass = entry.getKey();
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(),
-                                                    (List) descriptor.getTypeConstructor().getParameters(), trace);
-            descriptorResolver.resolveSupertypesForMutableClassDescriptor(jetClass, descriptor, trace);
+            if (classOrObject instanceof JetClass) {
+                descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor.getScopeForSupertypeResolution(),
+                                                        (List) descriptor.getTypeConstructor().getParameters(), trace);
+            }
+            descriptorResolver.resolveSupertypesForMutableClassDescriptor(classOrObject, descriptor, trace);
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             JetClassOrObject jetClass = entry.getKey();
@@ -395,10 +404,13 @@ public class TypeHierarchyResolver {
     }
 
     private void checkTypesInClassHeaders() {
-        for (JetClass jetClass : context.getClasses().keySet()) {
-            for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
+        for (JetClassOrObject classOrObject : context.getClasses().keySet()) {
+            for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
                 checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
             }
+
+            if (!(classOrObject instanceof JetClass)) continue;
+            JetClass jetClass = (JetClass) classOrObject;
 
             for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
                 checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());

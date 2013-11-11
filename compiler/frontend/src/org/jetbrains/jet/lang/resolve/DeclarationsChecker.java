@@ -48,14 +48,20 @@ public class DeclarationsChecker {
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
-        Map<JetClass, MutableClassDescriptor> classes = bodiesResolveContext.getClasses();
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
-            JetClass aClass = entry.getKey();
+        Map<JetClassOrObject, MutableClassDescriptor> classes = bodiesResolveContext.getClasses();
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : classes.entrySet()) {
+            JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
-            if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(classOrObject)) continue;
 
-            checkClass(aClass, classDescriptor);
-            modifiersChecker.checkModifiersForDeclaration(aClass, classDescriptor);
+            if (classOrObject instanceof JetClass) {
+                checkClass((JetClass) classOrObject, classDescriptor);
+            }
+            else if (classOrObject instanceof JetObjectDeclaration) {
+                checkObject((JetObjectDeclaration) classOrObject);
+            }
+
+            modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
         }
 
         Map<JetObjectDeclaration, MutableClassDescriptor> objects = bodiesResolveContext.getObjects();
