@@ -69,10 +69,18 @@ public class NullabilityAnnotationsTest extends KotlinAsJavaTestBase {
         doTest(getTestName(false));
     }
 
+    public void testPrivateInClass() throws Exception {
+        doTest(getTestName(false));
+    }
+
+    public void testPrivateInTrait() throws Exception {
+        doTest(getTestName(false));
+    }
+
     private void doTest(@NotNull String fqName) {
         PsiClass psiClass = finder.findClass(fqName, GlobalSearchScope.allScope(getProject()));
         if (!(psiClass instanceof KotlinLightClass)) {
-            throw new IllegalStateException("Not a light class: " + psiClass);
+            throw new IllegalStateException("Not a light class: " + psiClass + " (" + fqName + ")");
         }
 
         PsiClass delegate = ((KotlinLightClass) psiClass).getDelegate();

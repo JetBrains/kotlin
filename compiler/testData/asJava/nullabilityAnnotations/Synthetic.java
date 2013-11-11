@@ -1,5 +1,4 @@
 public final class Synthetic implements jet.JetObject {
-    @org.jetbrains.annotations.NotNull
     private final void foo() { /* compiled code */ }
 
     @org.jetbrains.annotations.NotNull

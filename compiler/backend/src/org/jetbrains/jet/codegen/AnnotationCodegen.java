@@ -99,8 +99,22 @@ public abstract class AnnotationCodegen {
 
     private void generateAdditionalAnnotations(@NotNull Annotated annotated, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
         if (annotated instanceof CallableDescriptor) {
-            generateNullabilityAnnotation(((CallableDescriptor) annotated).getReturnType(), annotationDescriptorsAlreadyPresent);
+            CallableDescriptor descriptor = (CallableDescriptor) annotated;
+
+            // No need to annotate privates, synthetic accessors and their parameters
+            if (isInvisibleFromTheOutside(descriptor)) return;
+            if (descriptor instanceof ValueParameterDescriptor && isInvisibleFromTheOutside(descriptor.getContainingDeclaration())) return;
+
+            generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
         }
+    }
+
+    private static boolean isInvisibleFromTheOutside(@Nullable DeclarationDescriptor descriptor) {
+        if (descriptor instanceof CallableMemberDescriptor && JetTypeMapper.isAccessor((CallableMemberDescriptor) descriptor)) return false;
+        if (descriptor instanceof MemberDescriptor) {
+            return AsmUtil.getVisibilityAccessFlag((MemberDescriptor) descriptor) == Opcodes.ACC_PRIVATE;
+        }
+        return false;
     }
 
     private void generateNullabilityAnnotation(@Nullable JetType type, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {

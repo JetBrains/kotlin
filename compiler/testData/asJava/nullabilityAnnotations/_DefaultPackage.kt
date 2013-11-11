@@ -28,3 +28,7 @@ val nullableValWithGet: String?
 var nullableVarWithGetSet: String?
     [NotNull] get() = ""
     [NotNull] set(v) {}
+
+private val privateNn: String = ""
+private val privateN: String? = ""
+private fun privateFun(a: String, b: String?): String? = null

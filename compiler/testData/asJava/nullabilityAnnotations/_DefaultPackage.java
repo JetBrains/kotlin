@@ -59,4 +59,13 @@ public final class _DefaultPackage {
 
     @org.jetbrains.annotations.NotNull
     public static final void setNullableVarWithGetSet(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "v", type = "?") java.lang.String p) { /* compiled code */ }
+
+    @org.jetbrains.annotations.NotNull
+    public static final java.lang.String getPrivateNn() { /* compiled code */ }
+
+    @org.jetbrains.annotations.Nullable
+    public static final java.lang.String getPrivateN() { /* compiled code */ }
+
+    @org.jetbrains.annotations.Nullable
+    public static final java.lang.String privateFun(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "a") java.lang.String p, @org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "b", type = "?") java.lang.String p1) { /* compiled code */ }
 }
