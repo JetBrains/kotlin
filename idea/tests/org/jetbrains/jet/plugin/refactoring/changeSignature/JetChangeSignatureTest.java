@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
+import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -24,7 +25,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
@@ -38,12 +38,13 @@ import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.getChangeSignatureDialog;
 
-public class JetChangeSignatureTest extends LightCodeInsightTestCase {
+public class JetChangeSignatureTest extends CodeInsightTestCase {
     public void testBadSelection() throws Exception {
         configureByFile(getTestName(false) + "Before.kt");
         Editor editor = getEditor();
@@ -182,6 +183,42 @@ public class JetChangeSignatureTest extends LightCodeInsightTestCase {
             return;
         }
 
+        fail("Exception expected");
+    }
+
+    public void testUnmodifiableFromLibrary() throws Exception {
+        doTestUnmodifiableCheck();
+    }
+
+
+    public void testUnmodifiableFromBuiltins() throws Exception {
+        doTestUnmodifiableCheck();
+    }
+
+    private void doTestUnmodifiableCheck() throws Exception {
+        try {
+            JetChangeInfo changeInfo = getChangeInfo();
+            PsiFile containingFile = changeInfo.getMethod().getContainingFile();
+            JetChangeSignatureConfiguration empty = new JetChangeSignatureConfiguration() {
+                @Override
+                public void configure(
+                        JetChangeSignatureData data, BindingContext bindingContext
+                ) {
+                }
+
+                @Override
+                public boolean performSilently(Collection<? extends PsiElement> elements) {
+                    return true;
+                }
+            };
+            BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) containingFile).getBindingContext();
+            ChangeSignaturePackage
+                    .runChangeSignature(getProject(), changeInfo.getOldDescriptor(), empty, context, changeInfo.getMethod(), "test");
+        }
+        catch (RuntimeException e) {
+            assertTrue(e.getMessage().startsWith("Refactoring cannot be"));
+            return;
+        }
         fail("Exception expected");
     }
 

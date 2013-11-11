@@ -33,6 +33,9 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.jet.lang.resolve.BindingContextUtils.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
+import com.intellij.CommonBundle
+import com.intellij.refactoring.RefactoringBundle
 
 public trait JetChangeSignatureConfiguration {
     fun configure(changeSignatureData: JetChangeSignatureData, bindingContext: BindingContext)
@@ -125,8 +128,14 @@ public class JetChangeSignature(val project: Project,
             return
         }
 
-        if (configuration.performSilently(dialog.getMethodDescriptor().getAffectedFunctions())
-                || ApplicationManager.getApplication()!!.isUnitTestMode()) {
+        val affectedFunctions = dialog.getMethodDescriptor().getAffectedFunctions()
+
+        if (affectedFunctions.any { !checkModifiable(it) }) {
+            return
+        }
+
+        if (configuration.performSilently(affectedFunctions)
+        || ApplicationManager.getApplication()!!.isUnitTestMode()) {
             performRefactoringSilently(dialog)
         }
         else {
@@ -142,9 +151,31 @@ public class JetChangeSignature(val project: Project,
             return null
         }
 
+        if (!checkModifiable(functionDeclaration)) {
+            return null
+        }
+
         val changeSignatureData = JetChangeSignatureData(baseDescriptor, functionDeclaration, bindingContext, descriptorsForSignatureChange)
         configuration.configure(changeSignatureData, bindingContext)
         return JetChangeSignatureDialog(project, changeSignatureData, defaultValueContext, commandName)
+    }
+
+    private fun checkModifiable(function: PsiElement): Boolean {
+        if (QuickFixUtil.canModifyElement(function)) {
+            return true
+        }
+
+        val unmodifiableFile = function.getContainingFile()?.getVirtualFile()?.getPresentableUrl()
+        if (unmodifiableFile != null) {
+            val message = RefactoringBundle.message("refactoring.cannot.be.performed") + "\n" +
+                IdeBundle.message("error.message.cannot.modify.file.0", unmodifiableFile)
+            Messages.showErrorDialog(project, message, CommonBundle.getErrorTitle()!!)
+        }
+        else {
+            LOG.error("Could not find file for Psi element: " + function.getText())
+        }
+
+        return false
     }
 
     private fun performRefactoringSilently(dialog: JetChangeSignatureDialog) {
