@@ -105,11 +105,7 @@ public final class JavaAnnotationResolver {
         }
 
         // Don't process internal jet annotations and jetbrains NotNull annotations
-        if (fqName.asString().startsWith("jet.runtime.typeinfo.")
-            || fqName.equals(JETBRAINS_NOT_NULL_ANNOTATION)
-            || fqName.equals(JvmAnnotationNames.KOTLIN_CLASS)
-            || fqName.equals(JvmAnnotationNames.KOTLIN_PACKAGE)
-        ) {
+        if (isSpecialAnnotation(fqName)) {
             return null;
         }
 
@@ -144,6 +140,13 @@ public final class JavaAnnotationResolver {
         }
 
         return annotation;
+    }
+
+    public static boolean isSpecialAnnotation(@NotNull FqName fqName) {
+        return fqName.asString().startsWith("jet.runtime.typeinfo.")
+            || fqName.equals(JETBRAINS_NOT_NULL_ANNOTATION)
+            || fqName.equals(JvmAnnotationNames.KOTLIN_CLASS)
+            || fqName.equals(JvmAnnotationNames.KOTLIN_PACKAGE);
     }
 
     @Nullable
