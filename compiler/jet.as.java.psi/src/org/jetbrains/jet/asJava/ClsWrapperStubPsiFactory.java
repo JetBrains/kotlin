@@ -17,23 +17,41 @@
 package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.impl.compiled.ClsEnumConstantImpl;
 import com.intellij.psi.impl.compiled.ClsFieldImpl;
+import com.intellij.psi.impl.compiled.ClsRepositoryPsiElement;
 import com.intellij.psi.impl.java.stubs.*;
 import com.intellij.psi.stubs.StubBase;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 
 class ClsWrapperStubPsiFactory extends StubPsiFactory {
     public static final Key<PsiElement> ORIGIN_ELEMENT = Key.create("ORIGIN_ELEMENT");
     private final StubPsiFactory delegate = new ClsStubPsiFactory();
-    
+
+    public static JetDeclaration getOriginalDeclaration(PsiMember member) {
+        if (member instanceof ClsRepositoryPsiElement<?>) {
+            StubElement stubElement = ((ClsRepositoryPsiElement<?>) member).getStub();
+            if (stubElement instanceof UserDataHolder) {
+                PsiElement original = ((UserDataHolder) stubElement).getUserData(ORIGIN_ELEMENT);
+                if (original instanceof JetDeclaration) {
+                    return (JetDeclaration) original;
+                }
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public PsiClass createClass(PsiClassStub stub) {
         final PsiElement origin = ((StubBase) stub).getUserData(ORIGIN_ELEMENT);
         if (origin == null) return delegate.createClass(stub);
-        
+
         return new ClsClassImpl(stub) {
             @NotNull
             @Override
@@ -94,12 +112,7 @@ class ClsWrapperStubPsiFactory extends StubPsiFactory {
 
     @Override
     public PsiMethod createMethod(PsiMethodStub stub) {
-        PsiElement origin = ((StubBase) stub).getUserData(ORIGIN_ELEMENT);
-        if (origin == null) {
-            return delegate.createMethod(stub);
-        }
-
-        return new JetClsMethodImpl(stub, origin);
+        return delegate.createMethod(stub);
     }
 
     @Override

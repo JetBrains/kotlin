@@ -25,6 +25,7 @@ import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
@@ -265,8 +266,8 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
     private static void checkDeclarationMethodWrapped(boolean shouldBeWrapped, JetDeclaration declaration, PsiMethod psiMethod) {
         if (shouldBeWrapped) {
             assertNotNull(String.format("Failed to wrap declaration '%s' to method", declaration.getText()), psiMethod);
-            assertInstanceOf(psiMethod, PsiCompiledElement.class);
-            assertEquals("Invalid original element for generated method", ((PsiCompiledElement) psiMethod).getMirror(), declaration);
+            assertInstanceOf(psiMethod, KotlinLightMethod.class);
+            assertEquals("Invalid original element for generated method", ((KotlinLightMethod) psiMethod).getOrigin(), declaration);
         }
         else {
             assertNull("There should be no wrapper for given method", psiMethod);
