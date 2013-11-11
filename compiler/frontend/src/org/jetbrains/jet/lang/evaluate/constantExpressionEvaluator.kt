@@ -154,6 +154,7 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(STRING, FLOAT,  "plus", { a, b -> a + b }),
         bOp(STRING, CHAR,   "plus", { a, b -> a + b }),
         bOp(STRING, STRING, "compareTo", { a, b -> a.compareTo(b) }),
+        bOp(STRING, STRING, "equals", { a, b -> a.equals(b) }),
 
         // Boolean
         bOp(BOOLEAN, BOOLEAN, "and", { a, b -> a and b }),
@@ -161,6 +162,7 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(BOOLEAN, BOOLEAN, "xor", { a, b -> a xor b }),
         bOp(BOOLEAN, BOOLEAN, "andand", { a, b -> a && b }),
         bOp(BOOLEAN, BOOLEAN, "oror", { a, b -> a || b }),
+        bOp(BOOLEAN, BOOLEAN, "equals", { a, b -> a == b }),
 
         // Byte
         bOp(BYTE, DOUBLE, "plus", { a, b -> a + b }),
@@ -205,6 +207,13 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(BYTE, SHORT,   "compareTo", { a, b -> a.compareTo(b) }),
         bOp(BYTE, BYTE,    "compareTo", { a, b -> a.compareTo(b) }),
         bOp(BYTE, CHAR,    "compareTo", { a, b -> a.compareTo(b) }),
+        bOp(BYTE, DOUBLE,  "equals", { a, b -> a.equals(b) }),
+        bOp(BYTE, FLOAT,   "equals", { a, b -> a.equals(b) }),
+        bOp(BYTE, LONG,    "equals", { a, b -> a.equals(b) }),
+        bOp(BYTE, INT,     "equals", { a, b -> a.equals(b) }),
+        bOp(BYTE, SHORT,   "equals", { a, b -> a.equals(b) }),
+        bOp(BYTE, BYTE,    "equals", { a, b -> a.equals(b) }),
+        bOp(BYTE, CHAR,    "equals", { a, b -> a.equals(b) }),
 
         // Short
         bOp(SHORT, DOUBLE, "plus", { a, b -> a + b }),
@@ -249,6 +258,13 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(SHORT, SHORT,   "compareTo", { a, b -> a.compareTo(b) }),
         bOp(SHORT, BYTE,    "compareTo", { a, b -> a.compareTo(b) }),
         bOp(SHORT, CHAR,    "compareTo", { a, b -> a.compareTo(b) }),
+        bOp(SHORT, DOUBLE,  "equals", { a, b -> a.equals(b) }),
+        bOp(SHORT, FLOAT,   "equals", { a, b -> a.equals(b) }),
+        bOp(SHORT, LONG,    "equals", { a, b -> a.equals(b) }),
+        bOp(SHORT, INT,     "equals", { a, b -> a.equals(b) }),
+        bOp(SHORT, SHORT,   "equals", { a, b -> a.equals(b) }),
+        bOp(SHORT, BYTE,    "equals", { a, b -> a.equals(b) }),
+        bOp(SHORT, CHAR,    "equals", { a, b -> a.equals(b) }),
 
         // Int
         bOp(INT, DOUBLE, "plus", { a, b -> a + b }),
@@ -299,6 +315,13 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(INT, SHORT,   "compareTo", { a, b -> a.compareTo(b) }),
         bOp(INT, BYTE,    "compareTo", { a, b -> a.compareTo(b) }),
         bOp(INT, CHAR,    "compareTo", { a, b -> a.compareTo(b) }),
+        bOp(INT, DOUBLE,  "equals", { a, b -> a.equals(b) }),
+        bOp(INT, FLOAT,   "equals", { a, b -> a.equals(b) }),
+        bOp(INT, LONG,    "equals", { a, b -> a.equals(b) }),
+        bOp(INT, INT,     "equals", { a, b -> a.equals(b) }),
+        bOp(INT, SHORT,   "equals", { a, b -> a.equals(b) }),
+        bOp(INT, BYTE,    "equals", { a, b -> a.equals(b) }),
+        bOp(INT, CHAR,    "equals", { a, b -> a.equals(b) }),
 
         // Long
         bOp(LONG, DOUBLE, "plus", { a, b -> a + b }),
@@ -349,6 +372,13 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(LONG, SHORT,   "compareTo", { a, b -> a.compareTo(b) }),
         bOp(LONG, BYTE,    "compareTo", { a, b -> a.compareTo(b) }),
         bOp(LONG, CHAR,    "compareTo", { a, b -> a.compareTo(b) }),
+        bOp(LONG, DOUBLE,  "equals", { a, b -> a.equals(b) }),
+        bOp(LONG, FLOAT,   "equals", { a, b -> a.equals(b) }),
+        bOp(LONG, LONG,    "equals", { a, b -> a.equals(b) }),
+        bOp(LONG, INT,     "equals", { a, b -> a.equals(b) }),
+        bOp(LONG, SHORT,   "equals", { a, b -> a.equals(b) }),
+        bOp(LONG, BYTE,    "equals", { a, b -> a.equals(b) }),
+        bOp(LONG, CHAR,    "equals", { a, b -> a.equals(b) }),
 
         // Double
         bOp(DOUBLE, DOUBLE, "plus", { a, b -> a + b }),
@@ -392,6 +422,13 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(DOUBLE, SHORT,   "compareTo", { a, b -> a.compareTo(b) }),
         bOp(DOUBLE, BYTE,    "compareTo", { a, b -> a.compareTo(b) }),
         bOp(DOUBLE, CHAR,    "compareTo", { a, b -> a.compareTo(b) }),
+        bOp(DOUBLE, DOUBLE,  "equals", { a, b -> a.equals(b) }),
+        bOp(DOUBLE, FLOAT,   "equals", { a, b -> a.equals(b) }),
+        bOp(DOUBLE, LONG,    "equals", { a, b -> a.equals(b) }),
+        bOp(DOUBLE, INT,     "equals", { a, b -> a.equals(b) }),
+        bOp(DOUBLE, SHORT,   "equals", { a, b -> a.equals(b) }),
+        bOp(DOUBLE, BYTE,    "equals", { a, b -> a.equals(b) }),
+        bOp(DOUBLE, CHAR,    "equals", { a, b -> a.equals(b) }),
 
         // Float
         bOp(FLOAT, DOUBLE, "plus", { a, b -> a + b }),
@@ -436,6 +473,13 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(FLOAT, SHORT,   "compareTo", { a, b -> a.compareTo(b) }),
         bOp(FLOAT, BYTE,    "compareTo", { a, b -> a.compareTo(b) }),
         bOp(FLOAT, CHAR,    "compareTo", { a, b -> a.compareTo(b) }),
+        bOp(FLOAT, DOUBLE,  "equals", { a, b -> a.equals(b) }),
+        bOp(FLOAT, FLOAT,   "equals", { a, b -> a.equals(b) }),
+        bOp(FLOAT, LONG,    "equals", { a, b -> a.equals(b) }),
+        bOp(FLOAT, INT,     "equals", { a, b -> a.equals(b) }),
+        bOp(FLOAT, SHORT,   "equals", { a, b -> a.equals(b) }),
+        bOp(FLOAT, BYTE,    "equals", { a, b -> a.equals(b) }),
+        bOp(FLOAT, CHAR,    "equals", { a, b -> a.equals(b) }),
 
         // Char
         bOp(CHAR, DOUBLE, "plus", { a, b -> a + b }),
@@ -475,6 +519,13 @@ private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> 
         bOp(CHAR, INT,     "compareTo", { a, b -> a.compareTo(b) }),
         bOp(CHAR, SHORT,   "compareTo", { a, b -> a.compareTo(b) }),
         bOp(CHAR, BYTE,    "compareTo", { a, b -> a.compareTo(b) }),
-        bOp(CHAR, CHAR,    "compareTo", { a, b -> a.compareTo(b) })
+        bOp(CHAR, CHAR,    "compareTo", { a, b -> a.compareTo(b) }),
+        bOp(CHAR, DOUBLE,  "equals", { a, b -> a.equals(b) }),
+        bOp(CHAR, FLOAT,   "equals", { a, b -> a.equals(b) }),
+        bOp(CHAR, LONG,    "equals", { a, b -> a.equals(b) }),
+        bOp(CHAR, INT,     "equals", { a, b -> a.equals(b) }),
+        bOp(CHAR, SHORT,   "equals", { a, b -> a.equals(b) }),
+        bOp(CHAR, BYTE,    "equals", { a, b -> a.equals(b) }),
+        bOp(CHAR, CHAR,    "equals", { a, b -> a.equals(b) })
 )
 

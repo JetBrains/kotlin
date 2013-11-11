@@ -203,6 +203,11 @@ public class AnnotationParameterTestGenerated extends AbstractAnnotationParamete
             doTest("compiler/testData/resolveAnnotations/parameters/expressions/not.kt");
         }
         
+        @TestMetadata("noteq.kt")
+        public void testNoteq() throws Exception {
+            doTest("compiler/testData/resolveAnnotations/parameters/expressions/noteq.kt");
+        }
+        
         @TestMetadata("orOr.kt")
         public void testOrOr() throws Exception {
             doTest("compiler/testData/resolveAnnotations/parameters/expressions/orOr.kt");

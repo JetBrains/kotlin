@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.evaluate;
 
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -184,13 +183,24 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
             return createCompileTimeConstant(result, expectedType);
         }
         else {
-            return getCallConstant(expression.getOperationReference(), leftExpression);
+            Object result = evaluateCall(expression.getOperationReference(), leftExpression);
+            if (result == null) {
+                return null;
+            }
+            if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationToken)) {
+                return createCompileTimeConstantForCompareTo(result, operationToken);
+            }
+            else if (OperatorConventions.EQUALS_OPERATIONS.contains(operationToken)) {
+                return createCompileTimeConstantForEquals(result, operationToken);
+            }
+            else {
+                return createCompileTimeConstant(result, expectedType);
+            }
         }
-
     }
 
     @Nullable
-    private CompileTimeConstant<?> getCallConstant(@NotNull JetExpression resolvedCallExpression, @NotNull JetExpression receiverExpression) {
+    private Object evaluateCall(@NotNull JetExpression resolvedCallExpression, @NotNull JetExpression receiverExpression) {
         ResolvedCall<?> resolvedCall = trace.getBindingContext().get(BindingContext.RESOLVED_CALL, resolvedCallExpression);
         if (resolvedCall != null) {
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
@@ -209,42 +219,40 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
             }
             Name resultingDescriptorName = resultingDescriptor.getName();
             if (arguments.isEmpty()) {
-                Object result = EvaluatePackage.evaluateUnaryExpression(receiverValue, resultingDescriptorName);
-                if (result == null) {
-                    return null;
-                }
-                return createCompileTimeConstant(result, expectedType);
+                return EvaluatePackage.evaluateUnaryExpression(receiverValue, resultingDescriptorName);
             }
             else if (arguments.size() == 1) {
-                Object result = EvaluatePackage.evaluateBinaryExpression(receiverValue, arguments.iterator().next(), resultingDescriptorName);
-                if (result == null) {
-                    return null;
-                }
-                if (OperatorConventions.COMPARE_TO.equals(resultingDescriptorName)) {
-                    PsiElement parentExpression = resolvedCallExpression.getParent();
-                    if (parentExpression instanceof JetBinaryExpression) {
-                        return createCompileTimeConstantForCompareTo(result, (JetBinaryExpression) parentExpression);
-                    }
-                }
-                else {
-                    return createCompileTimeConstant(result, expectedType);
-                }
+                return EvaluatePackage.evaluateBinaryExpression(receiverValue, arguments.iterator().next(), resultingDescriptorName);
             }
-
-            return null;
         }
 
         return null;
     }
 
     @Nullable
+    private static CompileTimeConstant<?> createCompileTimeConstantForEquals(
+            @NotNull Object result,
+            @NotNull IElementType operationToken
+    ) {
+        if (result instanceof Boolean) {
+            boolean resultCode = ((Boolean) result).booleanValue();
+            if (operationToken == JetTokens.EQEQ) {
+                return resultCode ? BooleanValue.TRUE : BooleanValue.FALSE;
+            }
+            else if (operationToken == JetTokens.EXCLEQ) {
+                return resultCode ? BooleanValue.FALSE : BooleanValue.TRUE;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
     private static CompileTimeConstant<?> createCompileTimeConstantForCompareTo(
             @NotNull Object result,
-            @NotNull JetBinaryExpression expression
+            @NotNull IElementType operationToken
     ) {
         if (result instanceof Integer) {
             int resultCode = ((Integer) result).intValue();
-            IElementType operationToken = expression.getOperationToken();
             if (resultCode == 0) {
                 if (operationToken == JetTokens.EQEQ ||
                     operationToken == JetTokens.LTEQ ||
@@ -283,7 +291,11 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
         if (leftExpression == null) {
             return null;
         }
-        return getCallConstant(expression.getOperationReference(), leftExpression);
+        Object result = evaluateCall(expression.getOperationReference(), leftExpression);
+        if (result == null) {
+            return null;
+        }
+        return createCompileTimeConstant(result, expectedType);
     }
 
     public static CompileTimeConstant<?> createCompileTimeConstant(@NotNull Object value, @NotNull JetType expectedType) {
@@ -403,7 +415,11 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
             }
 
             if (((JetCallExpression) selectorExpression).getValueArguments().size() < 2) {
-                return getCallConstant(calleeExpression, receiverExpression);
+                Object result = evaluateCall(calleeExpression, receiverExpression);
+                if (result == null) {
+                    return null;
+                }
+                return createCompileTimeConstant(result, expectedType);
             }
         }
 
