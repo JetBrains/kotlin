@@ -77,6 +77,14 @@ public class NullabilityAnnotationsTest extends KotlinAsJavaTestBase {
         doTest(getTestName(false));
     }
 
+    public void testClassObjectField() throws Exception {
+        doTest(getTestName(false));
+    }
+
+    public void testTraitClassObjectField() throws Exception {
+        doTest(getTestName(false));
+    }
+
     private void doTest(@NotNull String fqName) {
         PsiClass psiClass = finder.findClass(fqName, GlobalSearchScope.allScope(getProject()));
         if (!(psiClass instanceof KotlinLightClass)) {
