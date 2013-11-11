@@ -106,7 +106,10 @@ public abstract class AnnotationCodegen {
     private void generateNullabilityAnnotation(@Nullable JetType type, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
         if (type == null) return;
 
-        Class<?> annotationClass = CodegenUtil.isNullableType(type) ? Nullable.class : NotNull.class;
+        boolean isNullableType = CodegenUtil.isNullableType(type);
+        if (!isNullableType && KotlinBuiltIns.getInstance().isPrimitiveType(type)) return;
+
+        Class<?> annotationClass = isNullableType ? Nullable.class : NotNull.class;
 
         String descriptor = Type.getType(annotationClass).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.contains(descriptor)) {
