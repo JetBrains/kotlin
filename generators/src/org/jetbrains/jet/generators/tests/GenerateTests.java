@@ -444,7 +444,7 @@ public class GenerateTests {
                 "idea/tests/",
                 "JetQuickDocProviderTestGenerated",
                 AbstractJetQuickDocProviderTest.class,
-                testModel("idea/testData/editor/quickDoc", "doTest")
+                testModelWithPattern("idea/testData/editor/quickDoc", "^([^_]+)\\.[^\\.]*$", "doTest")
         );
 
         generateTest(
