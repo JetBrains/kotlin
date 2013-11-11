@@ -42,6 +42,8 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 public abstract class AnnotationCodegen {
+    private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM4) {};
+
     private final JetTypeMapper typeMapper;
     private final BindingContext bindingContext;
 
@@ -271,50 +273,61 @@ public abstract class AnnotationCodegen {
         return RetentionPolicy.CLASS;
     }
 
+    @NotNull
     abstract AnnotationVisitor visitAnnotation(String descr, boolean visible);
 
     public static AnnotationCodegen forClass(final ClassVisitor cv, JetTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
+            @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
-                return cv.visitAnnotation(descr, visible);
+                return safe(cv.visitAnnotation(descr, visible));
             }
         };
     }
 
     public static AnnotationCodegen forMethod(final MethodVisitor mv, JetTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
+            @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
-                return mv.visitAnnotation(descr, visible);
+                return safe(mv.visitAnnotation(descr, visible));
             }
         };
     }
 
     public static AnnotationCodegen forField(final FieldVisitor fv, JetTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
+            @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
-                return fv.visitAnnotation(descr, visible);
+                return safe(fv.visitAnnotation(descr, visible));
             }
         };
     }
 
     public static AnnotationCodegen forParameter(final int parameter, final MethodVisitor mv, JetTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
+            @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
-                return mv.visitParameterAnnotation(parameter, descr, visible);
+                return safe(mv.visitParameterAnnotation(parameter, descr, visible));
             }
         };
     }
 
     public static AnnotationCodegen forAnnotationDefaultValue(final MethodVisitor mv, JetTypeMapper mapper) {
         return new AnnotationCodegen(mapper) {
+            @NotNull
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
-                return mv.visitAnnotationDefault();
+                return safe(mv.visitAnnotationDefault());
             }
         };
+    }
+
+    @NotNull
+    private static AnnotationVisitor safe(@Nullable AnnotationVisitor av) {
+        return av == null ? NO_ANNOTATION_VISITOR : av;
     }
 }

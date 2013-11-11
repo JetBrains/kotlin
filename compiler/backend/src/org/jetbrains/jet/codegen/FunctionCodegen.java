@@ -203,11 +203,13 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
             AnnotationVisitor av =
                     mv.visitParameterAnnotation(i, asmDescByFqNameWithoutInnerClasses(fqNameByClass(JetValueParameter.class)), true);
-            av.visit("name", name);
-            if (nullableType) {
-                av.visit("type", "?");
+            if (av != null) {
+                av.visit("name", name);
+                if (nullableType) {
+                    av.visit("type", "?");
+                }
+                av.visitEnd();
             }
-            av.visitEnd();
         }
     }
 
@@ -219,7 +221,9 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         // see MethodWriter.visitParameterAnnotation()
 
         AnnotationVisitor av = mv.visitParameterAnnotation(i, "Ljava/lang/Synthetic;", true);
-        av.visitEnd();
+        if (av != null) {
+            av.visitEnd();
+        }
     }
 
     @Nullable
