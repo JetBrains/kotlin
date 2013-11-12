@@ -198,10 +198,10 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             resolveSession.getInjector().getAnnotationResolver().resolveAnnotationsArguments(propertyDescriptor, resolveSession.getTrace(), resolutionScope);
         }
 
-        // Objects are also properties
+        // Enum entries are also properties
         Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
         for (JetClassOrObject classOrObjectDeclaration : classOrObjectDeclarations) {
-            if (declaresObjectOrEnumConstant(classOrObjectDeclaration)) {
+            if (classOrObjectDeclaration instanceof JetEnumEntry) {
                 ClassDescriptor classifier = getObjectDescriptor(name);
                 if (classifier == null) {
                     throw new IllegalStateException("Object declaration " + name + " found in the DeclarationProvider " + declarationProvider + " but not in the scope " + this);
@@ -259,25 +259,19 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             if (declaration instanceof JetEnumEntry) {
                 JetEnumEntry jetEnumEntry = (JetEnumEntry) declaration;
                 Name name = safeNameForLazyResolve(jetEnumEntry);
-                if (name != null) {
-                    result.all.addAll(getProperties(name));
-                    result.objects.add(getObjectDescriptor(name));
-                }
+                result.all.addAll(getProperties(name));
+                result.objects.add(getObjectDescriptor(name));
             }
             else if (declaration instanceof JetObjectDeclaration) {
                 JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) declaration;
                 Name name = safeNameForLazyResolve(objectDeclaration.getNameAsDeclaration());
-                if (name != null) {
-                    result.all.addAll(getProperties(name));
-                    result.objects.add(getObjectDescriptor(name));
-                }
+                result.all.addAll(getProperties(name));
+                result.objects.add(getObjectDescriptor(name));
             }
             else if (declaration instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
                 Name name = safeNameForLazyResolve(classOrObject.getNameAsName());
-                if (name != null) {
-                    result.all.addAll(classDescriptors.invoke(name));
-                }
+                result.all.addAll(classDescriptors.invoke(name));
             }
             else if (declaration instanceof JetFunction) {
                 JetFunction function = (JetFunction) declaration;

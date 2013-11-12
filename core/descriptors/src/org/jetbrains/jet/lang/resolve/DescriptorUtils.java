@@ -327,6 +327,16 @@ public class DescriptorUtils {
         return false;
     }
 
+    public static boolean isSyntheticClassObject(@NotNull DeclarationDescriptor descriptor) {
+        if (isClassObject(descriptor)) {
+            DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+            if (containing != null) {
+                return isEnumClass(containing) || isObject(containing) || isEnumEntry(containing);
+            }
+        }
+        return false;
+    }
+
     @NotNull
     public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         ClassKind classKind = classDescriptor.getKind();
