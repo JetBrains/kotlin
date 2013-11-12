@@ -1643,9 +1643,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (descriptor instanceof VariableDescriptorForObject) {
-            VariableDescriptorForObject variableDescriptor = (VariableDescriptorForObject) descriptor;
-            ClassDescriptor objectClassDescriptor = variableDescriptor.getObjectClass();
-            return genObjectClassInstance(variableDescriptor, objectClassDescriptor);
+            return genObjectClassInstance((VariableDescriptorForObject) descriptor);
         }
 
         int index = lookupLocalIndex(descriptor);
@@ -1674,7 +1672,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            ClassDescriptor classObjectDescriptor = ((ClassDescriptor) descriptor).getClassObjectDescriptor();
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+                return StackValue.singleton(classDescriptor, typeMapper);
+            }
+            ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
             assert classObjectDescriptor != null : "Class object is not found for " + descriptor;
             return StackValue.singleton(classObjectDescriptor, typeMapper);
         }
@@ -1723,7 +1725,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
     }
 
-    private StackValue genObjectClassInstance(VariableDescriptor variableDescriptor, ClassDescriptor objectClassDescriptor) {
+    @NotNull
+    private StackValue genObjectClassInstance(@NotNull VariableDescriptorForObject variableDescriptor) {
         boolean isEnumEntry = DescriptorUtils.isEnumClassObject(variableDescriptor.getContainingDeclaration());
         if (isEnumEntry) {
             ClassDescriptor containing = (ClassDescriptor) variableDescriptor.getContainingDeclaration().getContainingDeclaration();
@@ -1732,7 +1735,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.field(type, type, variableDescriptor.getName().asString(), true);
         }
         else {
-            return StackValue.singleton(objectClassDescriptor, typeMapper);
+            return StackValue.singleton(variableDescriptor.getObjectClass(), typeMapper);
         }
     }
 
