@@ -36,6 +36,9 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
     private static final String PROJECT_NAME = "kotlinProject";
     private static final String JDK_NAME = "IDEA_JDK";
 
+    private static final String[] EXCLUDE_FILES = { "Excluded.class", "YetAnotherExcluded.class" };
+    private static final String[] NOTHING = {};
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -74,34 +77,88 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
     public void testKotlinProject() {
         doTest();
 
-        assertOutputDeletedPackageInModule("kotlinProject", "src/test1.kt", "_DefaultPackage");
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/test1.kt", "_DefaultPackage");
     }
 
     public void testExcludeFolderInSourceRoot() {
         doTest();
 
         JpsModule module = myProject.getModules().get(0);
-        assertFileExistsInOutput(module, "Foo.class");
+        assertFilesExistInOutput(module, "Foo.class");
+        assertFilesNotExistInOutput(module, EXCLUDE_FILES);
 
-        assertOutputDeletedInModule("kotlinProject", "src/foo.kt", "Foo");
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/foo.kt", "Foo");
     }
 
     public void testExcludeModuleFolderInSourceRootOfAnotherModule() {
         doTest();
 
         for (JpsModule module : myProject.getModules()) {
-            assertFileExistsInOutput(module, "Foo.class");
+            assertFilesExistInOutput(module, "Foo.class");
         }
 
-        assertOutputDeletedInModule("kotlinProject", "src/foo.kt", "Foo");
-        assertOutputDeletedInModule("module2", "src/module2/src/foo.kt", "Foo");
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/foo.kt", "Foo");
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "module2", "src/module2/src/foo.kt", "Foo");
+    }
+
+    public void testExcludeFileUsingCompilerSettings() {
+        doTest();
+
+        JpsModule module = myProject.getModules().get(0);
+        assertFilesExistInOutput(module, "Foo.class", "Bar.class");
+        assertFilesNotExistInOutput(module, EXCLUDE_FILES);
+
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/foo.kt", "Foo");
+        checkExcludesNotAffectedToOutput("kotlinProject", "src/Excluded.kt", "src/dir/YetAnotherExcluded.kt");
+    }
+
+    public void testExcludeFolderNonRecursivelyUsingCompilerSettings() {
+        doTest();
+
+        JpsModule module = myProject.getModules().get(0);
+        assertFilesExistInOutput(module, "Foo.class", "Bar.class");
+        assertFilesNotExistInOutput(module, EXCLUDE_FILES);
+
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/foo.kt", "Foo");
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/dir/subdir/bar.kt", "Bar");
+        checkExcludesNotAffectedToOutput("kotlinProject", "src/dir/Excluded.kt", "src/dir/subdir/YetAnotherExcluded.kt");
+    }
+
+    public void testExcludeFolderRecursivelyUsingCompilerSettings() {
+        doTest();
+
+        JpsModule module = myProject.getModules().get(0);
+        assertFilesExistInOutput(module, "Foo.class", "Bar.class");
+        assertFilesNotExistInOutput(module, EXCLUDE_FILES);
+
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/foo.kt", "Foo");
+        checkExcludesNotAffectedToOutput("kotlinProject",
+                                         "src/exclude/Excluded.kt", "src/exclude/YetAnotherExcluded.kt",
+                                         "src/exclude/subdir/Excluded.kt", "src/exclude/subdir/YetAnotherExcluded.kt");
+    }
+
+    public void testManyFiles() {
+        doTest();
+
+        JpsModule module = myProject.getModules().get(0);
+        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class");
+
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/main.kt", "foo.FooPackage");
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/boo.kt", "boo.BooPackage");
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/Bar.kt", "foo.Bar", "foo.FooPackage");
+
+        checkPackageDeletedFromOutputWhen(Operation.DELETE, "kotlinProject", "src/main.kt", "foo.FooPackage");
+        assertFilesNotExistInOutput(module, "foo/FooPackage.class");
+
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/boo.kt", "boo.BooPackage");
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/Bar.kt", "foo.Bar");
     }
 
     public void testKotlinProjectTwoFilesInOnePackage() {
         doTest();
 
-        assertOutputDeletedPackageInModule("kotlinProject", "src/test1.kt", "_DefaultPackage");
-        assertOutputDeletedPackageInModule("kotlinProject", "src/test2.kt", "_DefaultPackage");
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/test1.kt", "_DefaultPackage");
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/test2.kt", "_DefaultPackage");
     }
 
     public void testKotlinJavaProject() {
@@ -139,16 +196,16 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         // Check that outputs are located properly
         for (JpsModule module : myProject.getModules()) {
             if (module.getName().equals("module2")) {
-                assertFileExistsInOutput(module, "kt1/Kt1Package.class");
+                assertFilesExistInOutput(module, "kt1/Kt1Package.class");
             }
             if (module.getName().equals("kotlinProject")) {
-                assertFileExistsInOutput(module, "kt2/Kt2Package.class");
+                assertFilesExistInOutput(module, "kt2/Kt2Package.class");
             }
         }
         result.assertSuccessful();
 
-        assertOutputDeletedPackageInModule("kotlinProject", "src/kt2.kt", "kt2.Kt2Package");
-        assertOutputDeletedPackageInModule("module2", "module2/src/kt1.kt", "kt1.Kt1Package");
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/kt2.kt", "kt2.Kt2Package");
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "module2", "module2/src/kt1.kt", "kt1.Kt1Package");
     }
 
     public void testReexportedDependency() {
@@ -163,16 +220,35 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         makeAll().assertSuccessful();
     }
 
-    private static void assertFileExistsInOutput(JpsModule module, String relativePath) {
+    private static void assertFilesExistInOutput(JpsModule module, String... relativePaths) {
         String outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false);
         assertNotNull(outputUrl);
         File outputDir = new File(JpsPathUtil.urlToPath(outputUrl));
-        File outputFile = new File(outputDir, relativePath);
-        assertTrue("Output not written: " +
-                   outputFile.getAbsolutePath() +
-                   "\n Directory contents: \n" +
-                   dirContents(outputFile.getParentFile()),
-                   outputFile.exists());
+        for (String path : relativePaths) {
+            File outputFile = new File(outputDir, path);
+            assertTrue("Output not written: " +
+                       outputFile.getAbsolutePath() +
+                       "\n Directory contents: \n" +
+                       dirContents(outputFile.getParentFile()),
+                       outputFile.exists());
+        }
+    }
+
+    private void checkExcludesNotAffectedToOutput(String module, String... excludeRelativePaths) {
+        for (String path : excludeRelativePaths) {
+            checkClassesDeletedFromOutputWhen(Operation.CHANGE, module, path, NOTHING);
+        }
+    }
+
+    private static void assertFilesNotExistInOutput(JpsModule module, String... relativePaths) {
+        String outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false);
+        assertNotNull(outputUrl);
+        File outputDir = new File(JpsPathUtil.urlToPath(outputUrl));
+        for (String path : relativePaths) {
+            File outputFile = new File(outputDir, path);
+            assertFalse("Output directory \"" + outputFile.getAbsolutePath() + "\" contains \"" + path  + "\"",
+                        outputFile.exists());
+        }
     }
 
     private static String dirContents(File dir) {
@@ -187,30 +263,51 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         return builder.toString();
     }
 
-    private void assertOutputDeletedPackageInModule(String moduleName, String sourceFileName, String packageClassFqNames) {
+    private void checkPackageDeletedFromOutputWhen(
+            Operation operation,
+            String moduleName,
+            String sourceFileName,
+            String packageClassFqNamesToDelete
+    ) {
         File file = new File(workDir, sourceFileName);
-        String[] packageClasses = { packageClassFqNames, getInternalNameForPackagePartClass(file, packageClassFqNames) };
+        String[] packageClasses = { packageClassFqNamesToDelete, getInternalNameForPackagePartClass(file, packageClassFqNamesToDelete) };
 
-        assertOutputDeletedInModule(moduleName, sourceFileName, packageClasses);
+        checkClassesDeletedFromOutputWhen(operation, moduleName, sourceFileName, packageClasses);
     }
 
-    private void assertOutputDeletedInModule(final String moduleName, String sourceFileName, String... classFqNames) {
-        String[] paths = ContainerUtil.map2Array(classFqNames, String.class, new Function<String, String>() {
+    private void checkClassesDeletedFromOutputWhen(
+            Operation operation,
+            final String moduleName,
+            String sourceFileName,
+            String... classFqNamesToDelete
+    ) {
+        String[] paths = ContainerUtil.map2Array(classFqNamesToDelete, String.class, new Function<String, String>() {
             @Override
             public String fun(String classFqName) {
                 return outputPathInModuleByClassFqName(moduleName, classFqName);
             }
         });
 
-        assertOutputDeleted(sourceFileName, paths);
+        checkFilesDeletedFromOutputWhen(operation, sourceFileName, paths);
     }
 
-    private void assertOutputDeleted(String sourceFileName, String... paths) {
+    private void checkFilesDeletedFromOutputWhen(Operation operation, String sourceFileName, String... pathsToDelete) {
         File file = new File(workDir, sourceFileName);
-        change(file.getAbsolutePath());
+
+        if (operation == Operation.CHANGE) {
+            change(file.getAbsolutePath());
+        }
+        else if(operation == Operation.DELETE) {
+            assertTrue("Can not delete file \"" + file.getAbsolutePath() + "\"",
+                       file.delete());
+        }
+        else {
+            fail("Unknown operation");
+        }
+
         makeAll().assertSuccessful();
 
-        assertDeleted(paths);
+        assertDeleted(pathsToDelete);
     }
 
     private static String outputPathInModuleByClassFqName(String moduleName, String classFqName) {
@@ -227,5 +324,9 @@ public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
             }
         };
         return NamespaceCodegen.getNamespacePartType(new FqName(packageClassFqName), fakeVirtualFile).getInternalName();
+    }
+
+    private static enum Operation {
+        CHANGE, DELETE
     }
 }
