@@ -32,7 +32,7 @@ import org.jetbrains.jps.util.JpsPathUtil;
 import java.io.File;
 import java.io.IOException;
 
-public class KotlinJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
+public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     private static final String PROJECT_NAME = "kotlinProject";
     private static final String JDK_NAME = "IDEA_JDK";
 
