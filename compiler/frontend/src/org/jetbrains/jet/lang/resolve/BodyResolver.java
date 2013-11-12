@@ -217,7 +217,8 @@ public class BodyResolver {
                     if (type != null && supertype != null) {
                         SimpleResolutionContext simpleResolutionContext = new SimpleResolutionContext(
                                 trace, scope, supertype, context.getOuterDataFlowInfo(), ExpressionPosition.FREE, ContextDependency.INDEPENDENT,
-                                ResolutionResultsCacheImpl.create(), LabelResolver.create(), expressionTypingServices.createExtension(scope));
+                                ResolutionResultsCacheImpl.create(), LabelResolver.create(),
+                                expressionTypingServices.createExtension(scope, false), false);
                         DataFlowUtils.checkType(type, delegateExpression, simpleResolutionContext);
                     }
                 }
@@ -239,7 +240,7 @@ public class BodyResolver {
                 }
                 OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
                         trace, scopeForConstructor,
-                        CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, context.getOuterDataFlowInfo());
+                        CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, context.getOuterDataFlowInfo(), false);
                 if (results.isSuccess()) {
                     JetType supertype = results.getResultingDescriptor().getReturnType();
                     recordSupertype(typeReference, supertype);

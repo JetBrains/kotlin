@@ -47,10 +47,11 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull LabelResolver labelResolver,
             @SuppressWarnings("NullableProblems")
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
-            @NotNull CallResolverExtension callResolverExtension
+            @NotNull CallResolverExtension callResolverExtension,
+            boolean isAnnotationContext
     ) {
         super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver,
-              callResolverExtension);
+              callResolverExtension, isAnnotationContext);
         this.call = call;
         this.checkArguments = checkArguments;
         if (dataFlowInfoForArguments != null) {

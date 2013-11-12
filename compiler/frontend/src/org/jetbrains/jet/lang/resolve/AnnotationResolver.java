@@ -169,7 +169,8 @@ public class AnnotationResolver {
                 trace, scope,
                 CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, annotationEntry),
                 NO_EXPECTED_TYPE,
-                DataFlowInfo.EMPTY);
+                DataFlowInfo.EMPTY,
+                true);
     }
 
     public void resolveAnnotationsArguments(@NotNull JetScope scope, @Nullable JetModifierList modifierList, @NotNull BindingTrace trace) {

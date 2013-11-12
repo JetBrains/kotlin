@@ -50,10 +50,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
-            @NotNull CallResolverExtension callResolverExtension
+            @NotNull CallResolverExtension callResolverExtension,
+            boolean isAnnotationContext
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
-              labelResolver, dataFlowInfoForArguments, callResolverExtension);
+              labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
     }
@@ -65,7 +66,8 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
-                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments, context.callResolverExtension);
+                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments,
+                context.callResolverExtension, context.isAnnotationContext);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
@@ -80,7 +82,8 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.expressionPosition,
-                context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments, context.callResolverExtension);
+                context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments, context.callResolverExtension,
+                context.isAnnotationContext);
     }
 
     @Override
@@ -96,7 +99,8 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency,
-                checkArguments, expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension);
+                checkArguments, expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension,
+                isAnnotationContext);
     }
 
     @Override

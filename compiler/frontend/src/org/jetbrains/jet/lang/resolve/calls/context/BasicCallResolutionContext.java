@@ -41,11 +41,12 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
-            @NotNull CallResolverExtension callResolverExtension
+            @NotNull CallResolverExtension callResolverExtension,
+            boolean isAnnotationContext
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition,
-                resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension);
+                resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext);
     }
 
     @NotNull
@@ -55,7 +56,8 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     ) {
         return create(
                 context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
-                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, dataFlowInfoForArguments, context.callResolverExtension);
+                context.expressionPosition, context.resolutionResultsCache, context.labelResolver, dataFlowInfoForArguments,
+                context.callResolverExtension, context.isAnnotationContext);
     }
 
     @NotNull
@@ -70,10 +72,10 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             DataFlowInfo dataFlowInfo, ContextDependency contextDependency, CheckValueArgumentsMode checkArguments,
             ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache,
             LabelResolver labelResolver, MutableDataFlowInfoForArguments dataFlowInfoForArguments,
-            CallResolverExtension callResolverExtension
+            CallResolverExtension callResolverExtension, boolean isAnnotationContext
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
-              labelResolver, dataFlowInfoForArguments, callResolverExtension);
+              labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext);
     }
 
     @Override
@@ -88,7 +90,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull LabelResolver labelResolver
     ) {
         return create(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition,
-                      resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension);
+                      resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext);
     }
 
     @Override

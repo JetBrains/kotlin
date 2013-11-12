@@ -18,10 +18,11 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
-            @NotNull CallResolverExtension callResolverExtension
+            @NotNull CallResolverExtension callResolverExtension,
+            boolean isAnnotationContext
     ) {
         super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver,
-              callResolverExtension);
+              callResolverExtension, isAnnotationContext);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
     ) {
         return new SimpleResolutionContext(
                 trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver,
-                callResolverExtension);
+                callResolverExtension, isAnnotationContext);
     }
 
     @Override

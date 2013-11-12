@@ -353,7 +353,7 @@ public class ExpressionTypingServices {
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
         return ExpressionTypingContext.newContext(this, trace, scope, dataFlowInfo, expectedType, oldContext.expressionPosition,
                                                   oldContext.contextDependency, oldContext.resolutionResultsCache, oldContext.labelResolver,
-                                                  oldContext.callResolverExtension);
+                                                  oldContext.callResolverExtension, oldContext.isAnnotationContext);
     }
 
     @Nullable
@@ -410,7 +410,7 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public CallResolverExtension createExtension(@NotNull JetScope scope) {
-        return extensionProvider.createExtension(scope == JetScope.EMPTY ? null : scope.getContainingDeclaration());
+    public CallResolverExtension createExtension(@NotNull JetScope scope, boolean isAnnotationContext) {
+        return extensionProvider.createExtension(scope == JetScope.EMPTY ? null : scope.getContainingDeclaration(), isAnnotationContext);
     }
 }

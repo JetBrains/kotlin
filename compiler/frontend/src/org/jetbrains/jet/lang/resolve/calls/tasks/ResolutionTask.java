@@ -51,10 +51,10 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             DataFlowInfo dataFlowInfo, ContextDependency contextDependency, CheckValueArgumentsMode checkArguments,
             ExpressionPosition expressionPosition, ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver, @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
-            @NotNull CallResolverExtension callResolverExtension
+            @NotNull CallResolverExtension callResolverExtension, boolean isAnnotationContext
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, expressionPosition, resolutionResultsCache,
-              labelResolver, dataFlowInfoForArguments, callResolverExtension);
+              labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext);
         this.candidates = candidates;
         this.reference = reference;
         this.tracing = tracing;
@@ -69,7 +69,8 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         this(candidates, reference, tracing != null ? tracing : TracingStrategyImpl.create(reference, context.call),
              context.trace, context.scope, context.call,
              context.expectedType, context.dataFlowInfo, context.contextDependency, context.checkArguments,
-             context.expressionPosition, context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments, context.callResolverExtension);
+             context.expressionPosition, context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments,
+             context.callResolverExtension, context.isAnnotationContext);
     }
 
     public ResolutionTask(
@@ -114,7 +115,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     ) {
         ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(
                 candidates, reference, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension);
+                expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext);
         newTask.setCheckingStrategy(checkingStrategy);
         return newTask;
     }
@@ -127,7 +128,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
     public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
         return new ResolutionTask<D, F>(
                 candidates, reference, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension);
+                expressionPosition, resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext);
     }
 
     public interface DescriptorCheckStrategy {

@@ -43,7 +43,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return newContext(expressionTypingServices, trace, scope, dataFlowInfo, expectedType, expressionPosition,
                           ContextDependency.INDEPENDENT, ResolutionResultsCacheImpl.create(), LabelResolver.create(),
-                          expressionTypingServices.createExtension(scope));
+                          expressionTypingServices.createExtension(scope, false), false);
     }
 
     @NotNull
@@ -54,7 +54,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
         return newContext(expressionTypingServices, resolutionContext.trace, resolutionContext.scope, resolutionContext.dataFlowInfo,
                           resolutionContext.expectedType, resolutionContext.expressionPosition, resolutionContext.contextDependency,
                           resolutionContext.resolutionResultsCache, resolutionContext.labelResolver,
-                          resolutionContext.callResolverExtension);
+                          resolutionContext.callResolverExtension, resolutionContext.isAnnotationContext);
     }
 
     @NotNull
@@ -68,11 +68,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
-            @NotNull CallResolverExtension callResolverExtension
+            @NotNull CallResolverExtension callResolverExtension,
+            boolean isAnnotationContext
     ) {
         return new ExpressionTypingContext(
                 expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType, expressionPosition, contextDependency, resolutionResultsCache,
-                callResolverExtension);
+                callResolverExtension, isAnnotationContext);
     }
 
     public final ExpressionTypingServices expressionTypingServices;
@@ -89,10 +90,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull CallResolverExtension callResolverExtension
+            @NotNull CallResolverExtension callResolverExtension,
+            boolean isAnnotationContext
     ) {
         super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver,
-              callResolverExtension);
+              callResolverExtension, isAnnotationContext);
         this.expressionTypingServices = expressionTypingServices;
     }
 
@@ -108,7 +110,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull LabelResolver labelResolver
     ) {
         return new ExpressionTypingContext(expressionTypingServices, this.labelResolver, trace, scope, dataFlowInfo, expectedType,
-                                           expressionPosition, contextDependency, resolutionResultsCache, callResolverExtension);
+                                           expressionPosition, contextDependency, resolutionResultsCache, callResolverExtension, isAnnotationContext);
     }
 
     @Override
