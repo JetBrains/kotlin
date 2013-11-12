@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.jps.build;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +27,10 @@ import org.jetbrains.jps.builders.FileProcessor;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.java.JpsJavaExtensionService;
+import org.jetbrains.jps.model.java.compiler.JpsCompilerExcludes;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,17 +57,42 @@ public class KotlinSourceFileCollector {
 
     @NotNull
     public static List<File> getAllKotlinSourceFiles(@NotNull ModuleBuildTarget target) {
+        final List<File> moduleExcludes = ContainerUtil.map(target.getModule().getExcludeRootsList().getUrls(), new Function<String, File>() {
+            @Override
+            public File fun(String url) {
+                return JpsPathUtil.urlToFile(url);
+            }
+        });
+
+        final JpsCompilerExcludes compilerExcludes =
+                JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(target.getModule().getProject()).getCompilerExcludes();
+
         final List<File> result = ContainerUtil.newArrayList();
         for (JpsModuleSourceRoot sourceRoot : getRelevantSourceRoots(target)) {
-            FileUtil.processFilesRecursively(sourceRoot.getFile(), new Processor<File>() {
-                @Override
-                public boolean process(File file) {
-                    if (file.isFile() && isKotlinSourceFile(file)) {
-                        result.add(file);
-                    }
-                    return true;
-                }
-            });
+            FileUtil.processFilesRecursively(
+                    sourceRoot.getFile(),
+                    new Processor<File>() {
+                        @Override
+                        public boolean process(File file) {
+                            if (compilerExcludes.isExcluded(file)) return true;
+
+                            if (file.isFile() && isKotlinSourceFile(file)) {
+                                result.add(file);
+                            }
+                            return true;
+                        }
+                    },
+                    new Processor<File>() {
+                        @Override
+                        public boolean process(final File dir) {
+                            return ContainerUtil.find(moduleExcludes, new Condition<File>() {
+                                @Override
+                                public boolean value(File exclude) {
+                                    return FileUtil.filesEqual(exclude, dir);
+                                }
+                            }) == null;
+                        }
+                    });
         }
         return result;
     }
