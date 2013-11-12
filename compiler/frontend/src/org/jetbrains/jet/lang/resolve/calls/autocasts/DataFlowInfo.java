@@ -17,14 +17,22 @@
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.SetMultimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.Map;
 import java.util.Set;
 
 public interface DataFlowInfo {
     DataFlowInfo EMPTY = new DelegatingDataFlowInfo(null, ImmutableMap.<DataFlowValue, Nullability>of(),
                                                     DelegatingDataFlowInfo.newTypeInfo());
+
+    @NotNull
+    Map<DataFlowValue, Nullability> getCompleteNullabilityInfo();
+
+    @NotNull
+    SetMultimap<DataFlowValue, JetType> getCompleteTypeInfo();
 
     @NotNull
     Nullability getNullability(@NotNull DataFlowValue key);
