@@ -246,14 +246,6 @@ public class DeclarationResolver {
                 }
 
                 @Override
-                public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(
-                            scopeForFunctions, namespaceLike.getOwnerForChildren(), declaration, context.getObjects().get(declaration), trace);
-
-                    namespaceLike.addPropertyDescriptor(propertyDescriptor);
-                }
-
-                @Override
                 public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
                     // FIX: Bad cast
                     MutableClassDescriptorLite classObjectDescriptor =

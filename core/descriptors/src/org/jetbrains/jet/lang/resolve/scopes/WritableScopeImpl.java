@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -309,10 +308,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @Override
     public void addClassifierDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
         checkMayWrite();
-
-        if (DescriptorUtils.isSingleton(classDescriptor)) {
-            throw new IllegalStateException("must not be object: " + classDescriptor);
-        }
 
         addClassifierAlias(classDescriptor.getName(), classDescriptor);
     }

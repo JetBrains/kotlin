@@ -198,6 +198,10 @@ public class TypeHierarchyResolver {
         descriptor.setVisibility(resolveVisibilityFromModifiers(declaration, getDefaultClassVisibility(descriptor)));
         descriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         descriptor.createTypeConstructor();
+        MutableClassDescriptorLite classObject = descriptor.getClassObjectDescriptor();
+        if (classObject != null) {
+            classObject.addSupertype(descriptor.getDefaultType());
+        }
     }
 
     private void resolveTypesInClassHeaders() {
@@ -488,9 +492,12 @@ public class TypeHierarchyResolver {
 
             MutableClassDescriptor descriptor =
                     createClassDescriptorForObject(declaration, JetPsiUtil.safeName(declaration.getName()), ClassKind.OBJECT);
-            context.getObjects().put(declaration, descriptor);
-            owner.addObjectDescriptor(descriptor);
+
+            context.getClasses().put(declaration, descriptor);
+            owner.addClassifierDescriptor(descriptor);
             trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), descriptor);
+
+            descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObject(descriptor));
         }
 
         @Override
@@ -511,24 +518,24 @@ public class TypeHierarchyResolver {
         @Override
         public void visitClassObject(@NotNull JetClassObject classObject) {
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
-            if (objectDeclaration != null) {
-                MutableClassDescriptor classObjectDescriptor =
-                        createClassDescriptorForObject(objectDeclaration, getClassObjectName(owner.getOwnerForChildren().getName()),
-                                                       ClassKind.CLASS_OBJECT);
-                context.getObjects().put(objectDeclaration, classObjectDescriptor);
+            if (objectDeclaration == null) return;
 
-                NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
-                switch (status) {
-                    case DUPLICATE:
-                        trace.report(MANY_CLASS_OBJECTS.on(classObject));
-                        break;
-                    case NOT_ALLOWED:
-                        trace.report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
-                        break;
-                    case OK:
-                        // Everything is OK so no errors to trace.
-                        break;
-                }
+            MutableClassDescriptor classObjectDescriptor =
+                    createClassDescriptorForObject(objectDeclaration, getClassObjectName(owner.getOwnerForChildren().getName()),
+                                                   ClassKind.CLASS_OBJECT);
+            context.getObjects().put(objectDeclaration, classObjectDescriptor);
+
+            NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
+            switch (status) {
+                case DUPLICATE:
+                    trace.report(MANY_CLASS_OBJECTS.on(classObject));
+                    break;
+                case NOT_ALLOWED:
+                    trace.report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
+                    break;
+                case OK:
+                    // Everything is OK so no errors to trace.
+                    break;
             }
         }
 

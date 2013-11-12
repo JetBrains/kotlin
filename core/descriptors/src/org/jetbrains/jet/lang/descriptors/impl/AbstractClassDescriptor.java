@@ -77,6 +77,10 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
     @Nullable
     @Override
     public JetType getClassObjectType() {
+        if (getKind() == ClassKind.OBJECT) {
+            return getDefaultType();
+        }
+
         ClassDescriptor classObject = getClassObjectDescriptor();
         return classObject == null ? null : classObject.getDefaultType();
     }

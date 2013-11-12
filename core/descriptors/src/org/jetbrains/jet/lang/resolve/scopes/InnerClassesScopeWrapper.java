@@ -20,10 +20,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -86,7 +83,7 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
         return "Classes from " + actualScope;
     }
 
-    private static boolean isClass(DeclarationDescriptor descriptor) {
-        return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isSingleton();
+    private static boolean isClass(@Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.ENUM_ENTRY;
     }
 }

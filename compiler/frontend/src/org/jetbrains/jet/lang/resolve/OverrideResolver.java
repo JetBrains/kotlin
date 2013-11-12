@@ -93,6 +93,11 @@ public class OverrideResolver {
         for (MutableClassDescriptorLite klass : ContainerUtil.reverse(context.getClassesTopologicalOrder())) {
             if (klass instanceof MutableClassDescriptor && ourClasses.contains(klass)) {
                 generateOverridesAndDelegationInAClass((MutableClassDescriptor) klass, processed, ourClasses);
+
+                MutableClassDescriptorLite classObject = klass.getClassObjectDescriptor();
+                if (classObject instanceof MutableClassDescriptor) {
+                    generateOverridesAndDelegationInAClass((MutableClassDescriptor) classObject, processed, ourClasses);
+                }
             }
         }
     }
@@ -116,11 +121,14 @@ public class OverrideResolver {
 
         JetClassOrObject classOrObject = (JetClassOrObject) BindingContextUtils
                 .classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
-        DelegationResolver.generateDelegatesInAClass(classDescriptor, trace, classOrObject);
+        if (classOrObject != null) {
+            DelegationResolver.generateDelegatesInAClass(classDescriptor, trace, classOrObject);
+        }
+
         generateOverridesInAClass(classDescriptor);
     }
 
-    private void generateOverridesInAClass(final MutableClassDescriptor classDescriptor) {
+    private void generateOverridesInAClass(@NotNull final MutableClassDescriptor classDescriptor) {
         List<CallableMemberDescriptor> membersFromSupertypes = getCallableMembersFromSupertypes(classDescriptor);
 
         MultiMap<Name, CallableMemberDescriptor> membersFromSupertypesByName = groupDescriptorsByName(membersFromSupertypes);
