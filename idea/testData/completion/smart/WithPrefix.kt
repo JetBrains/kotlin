@@ -1,5 +1,5 @@
-class Foo
-class Bar : Foo
+open class Foo
+class Bar : Foo()
 
 val xfoo = Foo()
 val xbar = Bar()

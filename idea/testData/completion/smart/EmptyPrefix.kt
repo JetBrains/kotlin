@@ -1,5 +1,5 @@
-class Foo
-class Bar : Foo
+open class Foo
+class Bar : Foo()
 
 val foo = Foo()
 val bar = Bar()
@@ -24,3 +24,4 @@ fun f3() : String{}
 // EXIST: f1
 // EXIST: f2
 // ABSENT: f3
+// EXIST: Foo@Foo()

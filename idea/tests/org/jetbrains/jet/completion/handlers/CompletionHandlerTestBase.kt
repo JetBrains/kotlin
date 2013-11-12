@@ -32,112 +32,37 @@ import org.junit.Assert
 import com.intellij.openapi.application.Result
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import kotlin.properties.Delegates
+import com.intellij.openapi.util.io.FileUtil
 
-public class CompletionHandlerTest() : JetLightCodeInsightFixtureTestCase() {
-    fun testClassCompletionImport() = doTest(CompletionType.BASIC, 2, "SortedSet", null, '\n')
+public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTestCase() {
+    protected abstract val completionType : CompletionType
+    protected abstract val testDataRelativePath: String
 
-    fun testDoNotInsertImportForAlreadyImported() = doTest()
-
-    fun testDoNotInsertDefaultJsImports() = doTest()
-
-    fun testDoNotInsertImportIfResolvedIntoJavaConstructor() = doTest()
-
-    fun testNonStandardArray() = doTest(CompletionType.BASIC, 2, "Array", "java.lang.reflect", '\n')
-
-    fun testNoParamsFunction() = doTest()
-
-    fun testParamsFunction() = doTest()
-
-    fun testInsertJavaClassImport() = doTest()
-
-    fun testInsertVoidJavaMethod() = doTest()
-
-    fun testPropertiesSetter() = doTest()
-
-    fun testExistingSingleBrackets() = doTest()
-
-    fun testExtFunction() = doTest()
-
-    fun testFunctionLiteralInsertOnSpace() = doTest(CompletionType.BASIC, 2, null, null, ' ')
-
-    fun testInsertImportOnTab() = doTest(CompletionType.BASIC, 2, "ArrayList", null, '\t')
-
-    fun testHigherOrderFunction() = doTest()
-
-    fun testInsertFqnForJavaClass() = doTest(CompletionType.BASIC, 2, "SortedSet", "java.util", '\n')
-
-    fun testHigherOrderFunctionWithArg() = doTest(CompletionType.BASIC, 2, "filterNot", null, '\n')
-
-    fun testForceParenthesisForTabChar() = doTest(CompletionType.BASIC, 0, "some", null, '\t')
-
-    fun testTabInsertAtTheFileEnd() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testTabInsertBeforeBraces() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testTabInsertBeforeBrackets() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testTabInsertBeforeOperator() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testTabInsertBeforeParentheses() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testTabInsertInsideBraces() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testTabInsertInsideBrackets() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testTabInsertInsideEmptyParentheses() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testTabInsertInsideParentheses() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testTabInsertInSimpleName() = doTest(CompletionType.BASIC, 0, "vvvvv", null, '\t')
-
-    fun testInsertFunctionWithSingleParameterWithBrace() = doTest(CompletionType.BASIC, 0, "some", null, '{')
-
-    var fixture by Delegates.notNull<JavaCodeInsightTestFixture>()
+    protected var fixture: JavaCodeInsightTestFixture by Delegates.notNull<JavaCodeInsightTestFixture>()
 
     protected override fun setUp() {
         super.setUp()
         fixture = myFixture!!
     }
 
-    fun testSingleBrackets() {
-        fixture.configureByFile(fileName())
-        fixture.`type`('(')
-        fixture.checkResultByFile(afterFileName())
-    }
+    protected fun doTest() : Unit = doTest(2, null, null, '\n')
 
-    fun testInsertFunctionWithBothParentheses() {
-        fixture.configureByFile(fileName())
-        fixture.`type`("test()")
-        fixture.checkResultByFile(afterFileName())
-    }
-
-    fun testFunctionLiteralInsertWhenNoSpacesForBraces() {
-        val settings = CodeStyleSettingsManager.getSettings(getProject())
-        val jetSettings = settings.getCustomSettings(javaClass<JetCodeStyleSettings>())!!
-
-        try {
-            jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = false
-            doTest()
-        }
-        finally {
-            jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = true
-        }
-    }
-
-    fun doTest() = doTest(CompletionType.BASIC, 2, null, null, '\n')
-
-    private fun doTest(`type` : CompletionType, time : Int, lookupString : String?, tailText : String?, completionChar : Char) : Unit {
+    protected fun doTest(time : Int, lookupString : String?, tailText : String?, completionChar : Char) : Unit {
         fixture.configureByFile(fileName())
         if (lookupString != null || tailText != null) {
-            fixture.complete(`type`, time)
+            fixture.complete(completionType, time)
             val item = getExistentLookupElement(lookupString, tailText)
             if (item != null) {
                 selectItem(item, completionChar)
             }
         }
         else {
-            forceCompleteFirst(`type`, time)
+            forceCompleteFirst(completionType, time)
         }
+        checkResult()
+    }
+
+    protected fun checkResult(){
         fixture.checkResultByFile(afterFileName())
     }
 
@@ -180,9 +105,9 @@ public class CompletionHandlerTest() : JetLightCodeInsightFixtureTestCase() {
         return foundElement
     }
 
-    fun afterFileName() = getTestName(false) + ".kt.after"
+    protected fun afterFileName(): String = getTestName(false) + ".kt.after"
 
-    fun forceCompleteFirst(`type` : CompletionType, time : Int) {
+    private fun forceCompleteFirst(`type` : CompletionType, time : Int) {
         fixture.complete(`type`, time)
         val items : Array<LookupElement>? = fixture.getLookupElements()
         if (items != null && items.isNotEmpty()) {
@@ -190,7 +115,7 @@ public class CompletionHandlerTest() : JetLightCodeInsightFixtureTestCase() {
         }
     }
 
-    protected override fun getTestDataPath() : String = File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/").getPath() + File.separator
+    protected override fun getTestDataPath() : String = File(PluginTestCaseBase.getTestDataPathBase(), testDataRelativePath).getPath() + File.separator
 
     protected fun selectItem(item : LookupElement?) {
         selectItem(item, 0.toChar())

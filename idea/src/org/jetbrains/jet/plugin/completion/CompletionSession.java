@@ -22,6 +22,7 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.JavaCompletionContributor;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
@@ -133,14 +134,17 @@ class CompletionSession {
         assert parameters.getCompletionType() == CompletionType.SMART;
 
         //noinspection StaticMethodReferencedViaSubclass
-        final SmartCompletionFilter filter = CompletionPackage.buildSmartCompletionFilter(jetReference.getExpression(), getResolveSession());
-        if (filter != null) {
+        final SmartCompletionData data = CompletionPackage.buildSmartCompletionData(jetReference.getExpression(), getResolveSession());
+        if (data != null) {
             addReferenceVariants(new Condition<DeclarationDescriptor>() {
                 @Override
                 public boolean value(DeclarationDescriptor descriptor) {
-                    return filter.accepts(descriptor);
+                    return data.accepts(descriptor);
                 }
             });
+            for (LookupElement element : data.getAdditionalElements()) {
+                jetResult.addElement(element);
+            }
         }
     }
 

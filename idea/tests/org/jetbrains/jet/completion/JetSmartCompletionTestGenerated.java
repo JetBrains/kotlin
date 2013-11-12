@@ -41,6 +41,21 @@ public class JetSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/ChainedCall.kt");
     }
     
+    @TestMetadata("Constructor.kt")
+    public void testConstructor() throws Exception {
+        doTest("idea/testData/completion/smart/Constructor.kt");
+    }
+    
+    @TestMetadata("ConstructorForGenericType.kt")
+    public void testConstructorForGenericType() throws Exception {
+        doTest("idea/testData/completion/smart/ConstructorForGenericType.kt");
+    }
+    
+    @TestMetadata("ConstructorForNullable.kt")
+    public void testConstructorForNullable() throws Exception {
+        doTest("idea/testData/completion/smart/ConstructorForNullable.kt");
+    }
+    
     @TestMetadata("EmptyPrefix.kt")
     public void testEmptyPrefix() throws Exception {
         doTest("idea/testData/completion/smart/EmptyPrefix.kt");
@@ -54,6 +69,26 @@ public class JetSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("MethodCallArgument.kt")
     public void testMethodCallArgument() throws Exception {
         doTest("idea/testData/completion/smart/MethodCallArgument.kt");
+    }
+    
+    @TestMetadata("NoConstructorForAbstract.kt")
+    public void testNoConstructorForAbstract() throws Exception {
+        doTest("idea/testData/completion/smart/NoConstructorForAbstract.kt");
+    }
+    
+    @TestMetadata("NoConstructorForJavaInterface.kt")
+    public void testNoConstructorForJavaInterface() throws Exception {
+        doTest("idea/testData/completion/smart/NoConstructorForJavaInterface.kt");
+    }
+    
+    @TestMetadata("NoConstructorForTrait.kt")
+    public void testNoConstructorForTrait() throws Exception {
+        doTest("idea/testData/completion/smart/NoConstructorForTrait.kt");
+    }
+    
+    @TestMetadata("NoConstructorWithQualifier.kt")
+    public void testNoConstructorWithQualifier() throws Exception {
+        doTest("idea/testData/completion/smart/NoConstructorWithQualifier.kt");
     }
     
     @TestMetadata("NoSillyAssignment.kt")
