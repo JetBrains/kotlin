@@ -231,7 +231,7 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.CLASS_OBJECT);
     }
 
-    public static boolean isAnonymous(@NotNull ClassifierDescriptor descriptor) {
+    public static boolean isAnonymousObject(@NotNull ClassifierDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT) && descriptor.getName().isSpecial();
     }
 

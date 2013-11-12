@@ -230,7 +230,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         //JVMS7: A class must have an EnclosingMethod attribute if and only if it is a local class or an anonymous class.
         DeclarationDescriptor parentDescriptor = descriptor.getContainingDeclaration();
 
-        boolean isObjectLiteral = DescriptorUtils.isAnonymous(descriptor);
+        boolean isObjectLiteral = DescriptorUtils.isAnonymousObject(descriptor);
 
         boolean isLocalOrAnonymousClass = isObjectLiteral ||
                                           !(parentDescriptor instanceof NamespaceDescriptor || parentDescriptor instanceof ClassDescriptor);
