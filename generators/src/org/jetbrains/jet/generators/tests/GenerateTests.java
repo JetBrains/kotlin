@@ -523,6 +523,13 @@ public class GenerateTests {
                 AbstractOutOfBlockModificationTest.class,
                 testModel("idea/testData/codeInsight/outOfBlock")
         );
+
+        generateTest(
+                "idea/tests/",
+                "DataFlowValueRenderingTestGenerated",
+                AbstractDataFlowValueRenderingTest.class,
+                testModel("idea/testData/dataFlowValueRendering")
+        );
     }
 
     private static SimpleTestClassModel testModel(@NotNull String rootPath) {
