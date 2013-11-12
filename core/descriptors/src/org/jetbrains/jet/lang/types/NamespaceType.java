@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
 
@@ -29,12 +30,13 @@ import java.util.List;
  */
 public class NamespaceType implements JetType {
     private final Name name;
-    @NotNull
     private final JetScope memberScope;
+    private final ReceiverValue receiver;
 
-    public NamespaceType(@NotNull Name name, @NotNull JetScope memberScope) {
+    public NamespaceType(@NotNull Name name, @NotNull JetScope memberScope, @NotNull ReceiverValue receiver) {
         this.name = name;
         this.memberScope = memberScope;
+        this.receiver = receiver;
     }
 
     @NotNull
@@ -46,6 +48,11 @@ public class NamespaceType implements JetType {
     @Override
     public boolean isError() {
         return false;
+    }
+
+    @NotNull
+    public ReceiverValue getReceiverValue() {
+        return receiver;
     }
 
     @NotNull

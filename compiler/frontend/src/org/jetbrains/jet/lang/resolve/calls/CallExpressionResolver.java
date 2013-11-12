@@ -52,6 +52,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
+import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.psi.JetPsiUtil.isLHSOfDot;
 
@@ -113,7 +114,7 @@ public class CallExpressionResolver {
                                 return "Scope for the type parameter on the left hand side of dot";
                             }
                         };
-            return new NamespaceType(referencedName, scopeForStaticMembersResolution);
+            return new NamespaceType(referencedName, scopeForStaticMembersResolution, NO_RECEIVER);
         }
         temporaryTrace.commit();
         return result[0];
@@ -154,7 +155,7 @@ public class CallExpressionResolver {
             }
 
             JetScope scope = new ChainedScope(classifier, scopes.toArray(new JetScope[scopes.size()]));
-            return new NamespaceType(referencedName, scope);
+            return new NamespaceType(referencedName, scope, new ExpressionReceiver(expression, classObjectType));
         }
         return classObjectType;
     }
@@ -195,7 +196,7 @@ public class CallExpressionResolver {
         else {
             scope = namespace.getMemberScope();
         }
-        return new NamespaceType(name, scope);
+        return new NamespaceType(name, scope, NO_RECEIVER);
     }
 
     @Nullable

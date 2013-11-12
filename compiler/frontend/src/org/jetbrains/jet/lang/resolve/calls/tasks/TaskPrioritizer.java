@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -25,7 +26,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.LibrarySourceHacks;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -34,9 +34,11 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -82,20 +84,27 @@ public class TaskPrioritizer {
             @NotNull JetReferenceExpression functionReference,
             @NotNull List<CallableDescriptorCollector<? extends D>> callableDescriptorCollectors
     ) {
+        List<Pair<JetScope, ReceiverValue>> variants = new ArrayList<Pair<JetScope, ReceiverValue>>(2);
+
         ReceiverValue explicitReceiver = context.call.getExplicitReceiver();
-        JetScope scope;
         if (explicitReceiver.exists() && explicitReceiver.getType() instanceof NamespaceType) {
-            // Receiver is a namespace
-            scope = explicitReceiver.getType().getMemberScope();
-            explicitReceiver = NO_RECEIVER;
+            JetType receiverType = explicitReceiver.getType();
+            variants.add(Pair.create(receiverType.getMemberScope(), NO_RECEIVER));
+            ReceiverValue value = ((NamespaceType) receiverType).getReceiverValue();
+            if (value.exists()) {
+                variants.add(Pair.create(context.scope, value));
+            }
         }
         else {
-            scope = context.scope;
+            variants.add(Pair.create(context.scope, explicitReceiver));
         }
 
-        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, new MyPriorityProvider<D>(context), null);
-        TaskPrioritizerContext<D, F> c = new TaskPrioritizerContext<D, F>(name, result, context, scope, callableDescriptorCollectors);
-        doComputeTasks(explicitReceiver, c);
+        ResolutionTaskHolder<D, F> result =
+                new ResolutionTaskHolder<D, F>(functionReference, context, new MyPriorityProvider<D>(context), null);
+        for (Pair<JetScope, ReceiverValue> pair : variants) {
+            doComputeTasks(pair.second, new TaskPrioritizerContext<D, F>(name, result, context, pair.first, callableDescriptorCollectors));
+        }
+
         return result.getTasks();
     }
 
