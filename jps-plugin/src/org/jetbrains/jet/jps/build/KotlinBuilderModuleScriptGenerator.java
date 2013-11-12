@@ -17,14 +17,13 @@
 package org.jetbrains.jet.jps.build;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder;
 import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilderFactory;
 import org.jetbrains.jet.compiler.runner.KotlinModuleXmlBuilderFactory;
-import org.jetbrains.jps.builders.DirtyFilesHolder;
+import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
@@ -47,39 +46,27 @@ import java.util.*;
 import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder.DependencyProcessor;
 import static org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder.DependencyProvider;
 import static org.jetbrains.jet.jps.build.JpsUtils.getAllDependencies;
-import static org.jetbrains.jet.jps.build.KotlinSourceFileCollector.getMapTargetToDirtySources;
 
 public class KotlinBuilderModuleScriptGenerator {
 
     public static final KotlinModuleDescriptionBuilderFactory FACTORY = KotlinModuleXmlBuilderFactory.INSTANCE;
 
     @Nullable
-    public static File generateModuleDescription(
-            CompileContext context,
-            DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder
-    ) throws IOException {
+    public static File generateModuleDescription(CompileContext context, ModuleChunk chunk)
+            throws IOException
+    {
         KotlinModuleDescriptionBuilder builder = FACTORY.create();
 
         boolean noSources = true;
 
-        Map<ModuleBuildTarget, List<File>> target2sources = getMapTargetToDirtySources(dirtyFilesHolder);
-
-        Set<ModuleBuildTarget> targets = target2sources.keySet();
-        Set<File> outputDirs = ContainerUtil.map2Set(targets, new Function<ModuleBuildTarget, File>() {
-            @Override
-            public File fun(ModuleBuildTarget target) {
-                return getOutputDir(target);
-            }
-        });
-
-        for (ModuleBuildTarget target : targets) {
+        Set<File> outputDirs = new HashSet<File>();
+        for (ModuleBuildTarget target : chunk.getTargets()) {
+            outputDirs.add(getOutputDir(target));
+        }
+        for (ModuleBuildTarget target : chunk.getTargets()) {
             File outputDir = getOutputDir(target);
 
-            List<File> sourceFiles = target2sources.get(target);
-            if (sourceFiles == null) {
-                sourceFiles = Collections.emptyList();
-            }
-
+            List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(target);
             noSources &= sourceFiles.isEmpty();
 
             builder.addModule(
@@ -95,8 +82,7 @@ public class KotlinBuilderModuleScriptGenerator {
 
         if (noSources) return null;
 
-        ModuleBuildTarget representativeTarget = targets.iterator().next();
-        File scriptFile = new File(getOutputDir(representativeTarget), "script." + FACTORY.getFileExtension());
+        File scriptFile = new File(getOutputDir(chunk.representativeTarget()), "script." + FACTORY.getFileExtension());
 
         writeScriptToFile(context, builder.asText(), scriptFile);
 
