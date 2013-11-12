@@ -40,11 +40,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/Abstract.kt");
         }
         
-        @TestMetadata("AbstractEnum.kt")
-        public void testAbstractEnum() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/AbstractEnum.kt");
-        }
-        
         @TestMetadata("AbstractInAbstractClass.kt")
         public void testAbstractInAbstractClass() throws Exception {
             doTest("compiler/testData/diagnostics/tests/AbstractInAbstractClass.kt");
@@ -53,11 +48,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         @TestMetadata("AbstractInClass.kt")
         public void testAbstractInClass() throws Exception {
             doTest("compiler/testData/diagnostics/tests/AbstractInClass.kt");
-        }
-        
-        @TestMetadata("AbstractInEnum.kt")
-        public void testAbstractInEnum() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/AbstractInEnum.kt");
         }
         
         @TestMetadata("AbstractInTrait.kt")
@@ -2513,8 +2503,23 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         @TestMetadata("compiler/testData/diagnostics/tests/enum")
         @InnerTestClasses({Enum.Inner.class})
         public static class Enum extends AbstractDiagnosticsTestWithEagerResolve {
+            @TestMetadata("AbstractEnum.kt")
+            public void testAbstractEnum() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/AbstractEnum.kt");
+            }
+            
+            @TestMetadata("AbstractInEnum.kt")
+            public void testAbstractInEnum() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/AbstractInEnum.kt");
+            }
+            
             public void testAllFilesPresentInEnum() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/enum"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("entryShouldBeOfEnumType.kt")
+            public void testEntryShouldBeOfEnumType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/entryShouldBeOfEnumType.kt");
             }
             
             @TestMetadata("enumInheritance.kt")
