@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
@@ -83,10 +82,10 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
 
         RecursiveDescriptorComparator.validateAndCompareDescriptors(
                 expected, actual, RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
-                new Predicate<FqNameUnsafe>() {
+                new Predicate<FqName>() {
                     @Override
-                    public boolean apply(FqNameUnsafe fqName) {
-                        return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.toUnsafe().equals(fqName);
+                    public boolean apply(FqName fqName) {
+                        return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
                     }
                 })
                 .checkPrimaryConstructors(checkPrimaryConstructors)

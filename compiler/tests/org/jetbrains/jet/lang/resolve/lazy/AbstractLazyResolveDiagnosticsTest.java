@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.File;
@@ -56,9 +55,9 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
         final Set<Name> names = LazyResolveTestUtil.getTopLevelPackagesFromFileList(jetFiles);
         validateAndCompareDescriptors(
                 expected, actual,
-                RECURSIVE.filterRecursion(new Predicate<FqNameUnsafe>() {
+                RECURSIVE.filterRecursion(new Predicate<FqName>() {
                     @Override
-                    public boolean apply(FqNameUnsafe fqName) {
+                    public boolean apply(FqName fqName) {
                         if (fqName.isRoot()) return true;
                         if (fqName.parent().isRoot()) {
                             return names.contains(fqName.shortName());

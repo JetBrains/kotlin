@@ -28,7 +28,6 @@ import org.jetbrains.jet.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -51,14 +50,14 @@ public class RecursiveDescriptorComparator {
             .setVerbose(true).build();
 
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, 
-                                                                                         Predicates.<FqNameUnsafe>alwaysTrue(),
+                                                                                         Predicates.<FqName>alwaysTrue(),
                                                                                          FORBID_ERROR_TYPES, DEFAULT_RENDERER);
     public static final Configuration RECURSIVE = new Configuration(false, false, true, 
-                                                                    Predicates.<FqNameUnsafe>alwaysTrue(),
+                                                                    Predicates.<FqName>alwaysTrue(),
                                                                     FORBID_ERROR_TYPES, DEFAULT_RENDERER);
 
     public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, 
-                                                                        Predicates.<FqNameUnsafe>alwaysTrue(),
+                                                                        Predicates.<FqName>alwaysTrue(),
                                                                         FORBID_ERROR_TYPES, DEFAULT_RENDERER);
 
     private static final ImmutableSet<String> JAVA_OBJECT_METHOD_NAMES = ImmutableSet.of(
@@ -145,7 +144,8 @@ public class RecursiveDescriptorComparator {
                 && JAVA_OBJECT_METHOD_NAMES.contains(subDescriptor.getName().asString())
                 && !conf.includeMethodsOfJavaObject
             ||
-                subDescriptor instanceof PackageViewDescriptor && !conf.recurseIntoPackage.apply(((PackageViewDescriptor) subDescriptor).getFqName().toUnsafe()); // TODO 2 accept safe fq name instead
+                subDescriptor instanceof PackageViewDescriptor
+                && !conf.recurseIntoPackage.apply(((PackageViewDescriptor) subDescriptor).getFqName());
     }
 
     private void appendSubDescriptors(
@@ -232,7 +232,7 @@ public class RecursiveDescriptorComparator {
         private final boolean checkPrimaryConstructors;
         private final boolean checkPropertyAccessors;
         private final boolean includeMethodsOfJavaObject;
-        private final Predicate<FqNameUnsafe> recurseIntoPackage;
+        private final Predicate<FqName> recurseIntoPackage;
         private final DescriptorRenderer renderer;
 
         private final DescriptorValidator.ValidationVisitor validationStrategy;
@@ -241,7 +241,7 @@ public class RecursiveDescriptorComparator {
                 boolean checkPrimaryConstructors,
                 boolean checkPropertyAccessors,
                 boolean includeMethodsOfJavaObject,
-                Predicate<FqNameUnsafe> recurseIntoPackage,
+                Predicate<FqName> recurseIntoPackage,
                 DescriptorValidator.ValidationVisitor validationStrategy,
                 DescriptorRenderer renderer
         ) {
@@ -253,7 +253,7 @@ public class RecursiveDescriptorComparator {
             this.renderer = renderer;
         }
 
-        public Configuration filterRecursion(@NotNull Predicate<FqNameUnsafe> recurseIntoPackage) {
+        public Configuration filterRecursion(@NotNull Predicate<FqName> recurseIntoPackage) {
             return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
                                      validationStrategy, renderer);
         }
