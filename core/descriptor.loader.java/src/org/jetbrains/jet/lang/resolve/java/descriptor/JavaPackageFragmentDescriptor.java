@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.descriptor;
 
+import com.intellij.util.NullableFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -34,15 +35,27 @@ import java.util.Collections;
 public class JavaPackageFragmentDescriptor extends DeclarationDescriptorImpl implements PackageFragmentDescriptor {
     private final JavaPackageFragmentProvider provider;
     private final FqName fqName;
-    private JetScope memberScope;
+    private final JetScope memberScope;
 
-    public JavaPackageFragmentDescriptor(
+    private JavaPackageFragmentDescriptor(
             @NotNull JavaPackageFragmentProvider provider,
-            @NotNull FqName fqName
+            @NotNull FqName fqName,
+            @NotNull NullableFunction<JavaPackageFragmentDescriptor, JetScope> scopeFactory
     ) {
         super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
         this.provider = provider;
         this.fqName = fqName;
+        this.memberScope = scopeFactory.fun(this);
+    }
+
+    @Nullable
+    public static JavaPackageFragmentDescriptor create(
+            @NotNull JavaPackageFragmentProvider provider,
+            @NotNull FqName fqName,
+            @NotNull NullableFunction<JavaPackageFragmentDescriptor, JetScope> scopeFactory
+    ) {
+        JavaPackageFragmentDescriptor descriptor = new JavaPackageFragmentDescriptor(provider, fqName, scopeFactory);
+        return descriptor.memberScope == null ? null : descriptor;
     }
 
     @NotNull
@@ -60,10 +73,6 @@ public class JavaPackageFragmentDescriptor extends DeclarationDescriptorImpl imp
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitPackageFragmentDescriptor(this, data);
-    }
-
-    public void setMemberScope(@NotNull JetScope memberScope) {
-        this.memberScope = memberScope;
     }
 
     @NotNull
