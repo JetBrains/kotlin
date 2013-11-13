@@ -18,12 +18,16 @@ package org.jetbrains.jet.descriptors.serialization.descriptors;
 
 import jet.Function0;
 import jet.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.descriptors.impl.AbstractClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
@@ -41,7 +45,6 @@ import org.jetbrains.jet.storage.StorageManager;
 import java.util.*;
 
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
-import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
 public class DeserializedClassDescriptor extends AbstractClassDescriptor implements ClassDescriptor {
@@ -61,7 +64,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
     private final NestedClassDescriptors nestedClasses;
-    private final NestedClassDescriptors nestedObjects;
 
     private final NotNullLazyValue<DeclarationDescriptor> containingDeclaration;
     private final DeserializedClassTypeConstructor typeConstructor;
@@ -129,17 +131,8 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                 return computeClassObjectDescriptor();
             }
         });
-        this.nestedClasses = new NestedClassDescriptors(storageManager, names(classProto.getNestedClassNameList(), nameResolver));
-        this.nestedObjects = new NestedClassDescriptors(storageManager, names(classProto.getNestedObjectNameList(), nameResolver));
-    }
 
-    @NotNull
-    private static Set<Name> names(@NotNull List<Integer> nameIndices, @NotNull NameResolver nameResolver) {
-        Set<Name> result = new HashSet<Name>(nameIndices.size());
-        for (Integer index : nameIndices) {
-            result.add(nameResolver.getName(index));
-        }
-        return result;
+        this.nestedClasses = new NestedClassDescriptors();
     }
 
     @NotNull
@@ -243,13 +236,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         }
 
         if (getKind() == ClassKind.ENUM_CLASS) {
-            MutableClassDescriptor classObject = createEnumClassObject();
-
-            for (int enumEntry : classProto.getEnumEntryList()) {
-                createEnumEntry(classObject, deserializer.getNameResolver().getName(enumEntry));
-            }
-
-            return classObject;
+            return createEnumClassObject();
         }
 
         if (getKind() == ClassKind.OBJECT) {
@@ -281,20 +268,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         classObject.getBuilder().addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, enumType));
 
         return classObject;
-    }
-
-    private void createEnumEntry(@NotNull MutableClassDescriptor enumClassObject, @NotNull Name name) {
-        PropertyDescriptorImpl property = new PropertyDescriptorForObjectImpl(enumClassObject,
-                                                                              Collections.<AnnotationDescriptor>emptyList(),
-                                                                              Visibilities.PUBLIC, name, this);
-        property.setType(getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(),
-                         enumClassObject.getThisAsReceiverParameter(), NO_RECEIVER_PARAMETER);
-
-        PropertyGetterDescriptorImpl getter = DescriptorFactory.createDefaultGetter(property);
-        getter.initialize(property.getReturnType());
-        property.initialize(getter, null);
-
-        enumClassObject.getBuilder().addPropertyDescriptor(property);
     }
 
     @Nullable
@@ -463,36 +436,102 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         @Nullable
         @Override
         public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-            return classDescriptor.nestedObjects.findClass.invoke(name);
+            return null;
         }
 
         @NotNull
         @Override
         protected Collection<ClassDescriptor> computeAllObjectDescriptors() {
-            return classDescriptor.nestedObjects.getAllDescriptors();
+            return Collections.emptySet();
         }
     }
 
     private class NestedClassDescriptors {
-        private final Set<Name> declaredNames;
+        private final Set<Name> nestedClassNames;
         private final MemoizedFunctionToNullable<Name, ClassDescriptor> findClass;
+        private final Set<Name> enumEntryNames;
 
-        public NestedClassDescriptors(@NotNull StorageManager storageManager, @NotNull Set<Name> declaredNames) {
-            this.declaredNames = declaredNames;
+        public NestedClassDescriptors() {
+            this.nestedClassNames = nestedClassNames();
+            this.enumEntryNames = enumEntryNames();
+
+            final NotNullLazyValue<Collection<Name>> enumMemberNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
+                @Override
+                public Collection<Name> invoke() {
+                    return computeEnumMemberNames();
+                }
+            });
+
             this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function1<Name, ClassDescriptor>() {
                 @Override
                 public ClassDescriptor invoke(Name name) {
-                    return NestedClassDescriptors.this.declaredNames.contains(name) ?
-                           descriptorFinder.findClass(classId.createNestedClassId(name)) :
-                           null;
+                    if (enumEntryNames.contains(name)) {
+                        return EnumEntrySyntheticClassDescriptor
+                                .create(storageManager, DeserializedClassDescriptor.this, name, enumMemberNames);
+                    }
+                    if (nestedClassNames.contains(name)) {
+                        return descriptorFinder.findClass(classId.createNestedClassId(name));
+                    }
+                    return null;
+                }
+            });
+        }
+
+        @NotNull
+        private Set<Name> nestedClassNames() {
+            Set<Name> result = new HashSet<Name>();
+            NameResolver nameResolver = deserializer.getNameResolver();
+            for (Integer index : classProto.getNestedClassNameList()) {
+                result.add(nameResolver.getName(index));
+            }
+            return result;
+        }
+
+        @NotNull
+        private Set<Name> enumEntryNames() {
+            if (getKind() != ClassKind.ENUM_CLASS) {
+                return Collections.emptySet();
+            }
+
+            Set<Name> result = new HashSet<Name>();
+            NameResolver nameResolver = deserializer.getNameResolver();
+            for (Integer index : classProto.getEnumEntryList()) {
+                result.add(nameResolver.getName(index));
+            }
+            return result;
+        }
+
+        @NotNull
+        private Collection<Name> computeEnumMemberNames() {
+            Collection<Name> result = new HashSet<Name>();
+
+            for (JetType supertype : getTypeConstructor().getSupertypes()) {
+                for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
+                    if (descriptor instanceof SimpleFunctionDescriptor || descriptor instanceof PropertyDescriptor) {
+                        result.add(descriptor.getName());
+                    }
+                }
+            }
+
+            final NameResolver nameResolver = deserializer.getNameResolver();
+            return KotlinPackage.mapTo(classProto.getMemberList(), result, new Function1<ProtoBuf.Callable, Name>() {
+                @Override
+                public Name invoke(@NotNull ProtoBuf.Callable callable) {
+                    return nameResolver.getName(callable.getName());
                 }
             });
         }
 
         @NotNull
         public Collection<ClassDescriptor> getAllDescriptors() {
-            Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(declaredNames.size());
-            for (Name name : declaredNames) {
+            Collection<ClassDescriptor> result = new ArrayList<ClassDescriptor>(nestedClassNames.size() + enumEntryNames.size());
+            for (Name name : nestedClassNames) {
+                ClassDescriptor descriptor = findClass.invoke(name);
+                if (descriptor != null) {
+                    result.add(descriptor);
+                }
+            }
+            for (Name name : enumEntryNames) {
                 ClassDescriptor descriptor = findClass.invoke(name);
                 if (descriptor != null) {
                     result.add(descriptor);
