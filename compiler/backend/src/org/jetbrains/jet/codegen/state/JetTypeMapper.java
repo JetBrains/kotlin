@@ -347,8 +347,9 @@ public class JetTypeMapper extends BindingTraceAware {
             }
         }
 
-        return String.format("Error types are not allowed when classBuilderMode = %s. For declaration %s:%s in %s:%s",
+        return String.format("Error types are not allowed when classBuilderMode = %s. Descriptor: %s. For declaration %s:%s in %s:%s",
                       classBuilderMode,
+                      descriptor,
                       declarationElement,
                       declarationElement != null ? declarationElement.getText() : "null",
                       parentDeclarationElement,
