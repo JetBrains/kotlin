@@ -123,6 +123,8 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
 
                 .aroundInside(ELSE_KEYWORD, IF).spaces(1)
                 .betweenInside(RPAR, THEN, IF).spaces(1)
+
+                .between(RPAR, BODY).spaces(1)
                 ;
     }
 
