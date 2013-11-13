@@ -104,11 +104,11 @@ public class DeclarationsChecker {
         if (aClass.isTrait()) {
             checkTraitModifiers(aClass);
         }
-        else if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+        else if (aClass.isEnum()) {
             checkEnumModifiers(aClass);
         }
-        else if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            checkEnumEntry(aClass, classDescriptor);
+        else if (aClass instanceof JetEnumEntry) {
+            checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
         }
     }
 
@@ -332,17 +332,16 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkEnumEntry(JetClass aClass, ClassDescriptor classDescriptor) {
-        DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration().getContainingDeclaration();
-        assert declaration instanceof ClassDescriptor;
+    private void checkEnumEntry(@NotNull JetEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
+        DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
+        assert DescriptorUtils.isEnumClass(declaration) : "Enum entry should be declared in enum class: " + classDescriptor;
         ClassDescriptor enumClass = (ClassDescriptor) declaration;
-        assert enumClass.getKind() == ClassKind.ENUM_CLASS;
 
-        List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
+        List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
         ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
         assert constructor != null;
         if (!constructor.getValueParameters().isEmpty() && delegationSpecifiers.isEmpty()) {
-            trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(aClass, enumClass));
+            trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry, enumClass));
         }
 
         for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {

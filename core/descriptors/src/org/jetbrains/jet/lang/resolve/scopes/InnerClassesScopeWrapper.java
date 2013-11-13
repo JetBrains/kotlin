@@ -17,10 +17,13 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -29,9 +32,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
+    private static final Predicate<Object> IS_CLASS = Predicates.instanceOf(ClassDescriptor.class);
+
     private final JetScope actualScope;
 
-    public InnerClassesScopeWrapper(JetScope actualScope) {
+    public InnerClassesScopeWrapper(@NotNull JetScope actualScope) {
         this.actualScope = actualScope;
     }
 
@@ -44,32 +49,19 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassifierDescriptor classifier = actualScope.getClassifier(name);
-        if (isClass(classifier)) return classifier;
-        return null;
+        return IS_CLASS.apply(classifier) ? classifier : null;
     }
 
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
-        Collection<DeclarationDescriptor> declarationsByLabel = actualScope.getDeclarationsByLabel(labelName);
-        return Collections2.filter(declarationsByLabel, new Predicate<DeclarationDescriptor>() {
-            @Override
-            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
-                return isClass(descriptor);
-            }
-        });
+        return Collections2.filter(actualScope.getDeclarationsByLabel(labelName), IS_CLASS);
     }
 
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        Collection<DeclarationDescriptor> allDescriptors = actualScope.getAllDescriptors();
-        return Collections2.filter(allDescriptors, new Predicate<DeclarationDescriptor>() {
-            @Override
-            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
-                return isClass(descriptor);
-            }
-        });
+        return Collections2.filter(actualScope.getAllDescriptors(), IS_CLASS);
     }
 
     @NotNull
@@ -81,9 +73,5 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     @Override
     public String toString() {
         return "Classes from " + actualScope;
-    }
-
-    private static boolean isClass(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.ENUM_ENTRY;
     }
 }

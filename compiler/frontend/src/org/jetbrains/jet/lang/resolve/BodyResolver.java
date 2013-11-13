@@ -279,11 +279,10 @@ public class BodyResolver {
             delegationSpecifier.accept(visitor);
         }
 
-
-        Set<TypeConstructor> parentEnum = Collections.emptySet();
-        if (jetClass instanceof JetEnumEntry) {
-            parentEnum = Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration().getContainingDeclaration()).getTypeConstructor());
-        }
+        Set<TypeConstructor> parentEnum =
+                jetClass instanceof JetEnumEntry
+                ? Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor())
+                : Collections.<TypeConstructor>emptySet();
 
         checkSupertypeList(descriptor, supertypes, parentEnum);
     }

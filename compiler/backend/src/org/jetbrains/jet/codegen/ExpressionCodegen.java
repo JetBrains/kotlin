@@ -1677,9 +1677,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return StackValue.singleton(classDescriptor, typeMapper);
             }
             if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-                DeclarationDescriptor enumClass = classDescriptor.getContainingDeclaration().getContainingDeclaration();
-                assert enumClass != null && DescriptorUtils.isEnumClass(enumClass)
-                        : "Enum entry should be declared in enum class object: " + descriptor;
+                DeclarationDescriptor enumClass = classDescriptor.getContainingDeclaration();
+                assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
                 Type type = typeMapper.mapType((ClassDescriptor) enumClass);
                 return StackValue.field(type, type, descriptor.getName().asString(), true);
             }

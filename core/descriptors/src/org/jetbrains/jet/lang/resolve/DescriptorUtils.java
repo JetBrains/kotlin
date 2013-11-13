@@ -490,9 +490,7 @@ public class DescriptorUtils {
 
     @NotNull
     public static JetScope getEnumEntriesScope(@NotNull ClassDescriptor enumClass) {
-        assert enumClass.getKind() == ClassKind.ENUM_CLASS : "Only enum classes have enum entries: " + enumClass;
-        ClassDescriptor classObject = enumClass.getClassObjectDescriptor();
-        assert classObject != null : "Enum class should have a class object: " + enumClass;
-        return classObject.getDefaultType().getMemberScope();
+        assert isEnumClass(enumClass) : "Only enum classes have enum entries: " + enumClass;
+        return enumClass.getUnsubstitutedInnerClassesScope();
     }
 }

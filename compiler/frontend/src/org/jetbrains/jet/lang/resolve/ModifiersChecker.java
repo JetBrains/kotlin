@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -106,7 +107,7 @@ public class ModifiersChecker {
             }
         }
         else {
-            if (modifierListOwner instanceof JetClass && isIllegalNestedClass(descriptor)) {
+            if (modifierListOwner instanceof JetClass && !(modifierListOwner instanceof JetEnumEntry) && isIllegalNestedClass(descriptor)) {
                 PsiElement name = ((JetClass) modifierListOwner).getNameIdentifier();
                 if (name != null) {
                     trace.report(Errors.NESTED_CLASS_NOT_ALLOWED.on(name));
