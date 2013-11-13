@@ -114,7 +114,7 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
         PsiField psiField = ((JavaFieldImpl) field).getPsi();
         trace.record(VARIABLE, psiField, descriptor);
 
-        if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(descriptor)) {
+        if (AnnotationUtils.isPropertyCompileTimeConstant(descriptor)) {
             PsiExpression initializer = psiField.getInitializer();
             if (initializer instanceof PsiLiteralExpression) {
                 CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver

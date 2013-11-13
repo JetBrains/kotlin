@@ -62,20 +62,27 @@ private val CHAR = CompileTimeType<Char>()
 private val BOOLEAN = CompileTimeType<Boolean>()
 private val STRING = CompileTimeType<String>()
 
-private fun <A, B> bOp(a: CompileTimeType<A>, b: CompileTimeType<B>, functionNameAsString: String, f: (A, B) -> Any) = BinaryOperation(a, b, Name.identifier(functionNameAsString)) to f  as Function2<Any?, Any?, Any>
+[suppress("UNCHECKED_CAST")]
+private fun <A, B> bOp(
+        a: CompileTimeType<A>,
+        b: CompileTimeType<B>,
+        functionNameAsString: String,
+        f: (A, B) -> Any
+) = BinaryOperation(a, b, Name.identifier(functionNameAsString)) to f as Function2<Any?, Any?, Any>
+
 private fun <A> uOp(a: CompileTimeType<A>, functionNameAsString: String, f: (A) -> Any) = UnaryOperation(a, Name.identifier(functionNameAsString)) to f  as Function1<Any?, Any>
 
 private data class BinaryOperation<A, B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: Name)
 private data class UnaryOperation<A>(val f: CompileTimeType<out A>, val functionName: Name)
 
 private val unaryOperations = hashMapOf<UnaryOperation<*>, (Any?) -> Any>(
-        uOp(DOUBLE, "minus", { a -> a.minus() }),
-        uOp(FLOAT,  "minus", { a -> a.minus() }),
-        uOp(LONG,   "minus", { a -> a.minus() }),
-        uOp(INT,    "minus", { a -> a.minus() }),
-        uOp(SHORT,  "minus", { a -> a.minus() }),
-        uOp(BYTE,   "minus", { a -> a.minus() }),
-        uOp(CHAR,   "minus", { a -> a.minus() }),
+        uOp(DOUBLE, "minus", { -it }),
+        uOp(FLOAT,  "minus", { -it }),
+        uOp(LONG,   "minus", { -it }),
+        uOp(INT,    "minus", { -it }),
+        uOp(SHORT,  "minus", { -it }),
+        uOp(BYTE,   "minus", { -it }),
+        uOp(CHAR,   "minus", { -it }),
         uOp(DOUBLE, "plus",  { a -> a.plus() }),
         uOp(FLOAT,  "plus",  { a -> a.plus() }),
         uOp(LONG,   "plus",  { a -> a.plus() }),

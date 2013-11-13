@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -32,7 +32,8 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
-import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -47,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
-import static org.jetbrains.jet.lang.resolve.BindingContext.COMPILE_TIME_INITIALIZER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class AnnotationResolver {
@@ -257,7 +257,7 @@ public class AnnotationResolver {
             @NotNull JetType expectedType,
             @NotNull BindingTrace trace
     ) {
-        return ConstantExpressionEvaluator.evaluate(expression, trace, expectedType);
+        return EvaluatePackage.evaluate(expression, trace, expectedType);
     }
 
     @NotNull
