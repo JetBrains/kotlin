@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -31,15 +32,12 @@ public class NeedSyntheticCallResolverExtension implements CallResolverExtension
 
     @Override
     public  <F extends CallableDescriptor> void run(
-            @NotNull OverloadResolutionResultsImpl<F> results,
+            @NotNull ResolvedCall<F> resolvedCall,
             @NotNull BasicCallResolutionContext context
     ) {
-        if (results.isSingleResult()) {
-            ResolvedCallWithTrace<F> resolvedCall = results.getResultingCall();
-            CallableDescriptor targetDescriptor = resolvedCall.getResultingDescriptor();
-            if (needSyntheticAccessor(context.scope, targetDescriptor)) {
-                context.trace.record(NEED_SYNTHETIC_ACCESSOR, (CallableMemberDescriptor) targetDescriptor.getOriginal(), Boolean.TRUE);
-            }
+        CallableDescriptor targetDescriptor = resolvedCall.getResultingDescriptor();
+        if (needSyntheticAccessor(context.scope, targetDescriptor)) {
+            context.trace.record(NEED_SYNTHETIC_ACCESSOR, (CallableMemberDescriptor) targetDescriptor.getOriginal(), Boolean.TRUE);
         }
     }
 

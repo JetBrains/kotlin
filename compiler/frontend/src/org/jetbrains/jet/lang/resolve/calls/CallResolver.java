@@ -326,7 +326,9 @@ public class CallResolver {
             }
         }
 
-        context.callResolverExtension.run(results, context);
+        if (results.isSingleResult()) {
+            context.callResolverExtension.run(results.getResultingCall(), context);
+        }
 
         return results;
     }
