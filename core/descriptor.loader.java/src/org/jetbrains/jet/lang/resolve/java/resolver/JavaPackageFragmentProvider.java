@@ -48,8 +48,6 @@ import java.util.*;
 public final class JavaPackageFragmentProvider implements PackageFragmentProvider {
     @NotNull
     private final Map<FqName, JavaPackageFragmentDescriptor> packageFragments = Maps.newHashMap();
-    @NotNull
-    private final Set<FqName> unresolvedCache = new HashSet<FqName>();
 
     private JavaClassFinder javaClassFinder;
     private JavaResolverCache cache;
@@ -119,16 +117,11 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
 
     @Nullable
     public JavaPackageFragmentDescriptor getOrCreatePackage(@NotNull final FqName fqName) {
-        // TODO 1 use one cache
-        if (unresolvedCache.contains(fqName)) {
-            return null;
-        }
-        JavaPackageFragmentDescriptor packageFragment = packageFragments.get(fqName);
-        if (packageFragment != null) {
-            return packageFragment;
+        if (packageFragments.containsKey(fqName)) {
+            return packageFragments.get(fqName);
         }
 
-        packageFragment = JavaPackageFragmentDescriptor.create(this, fqName, new NullableFunction<JavaPackageFragmentDescriptor, JetScope>() {
+        JavaPackageFragmentDescriptor packageFragment = JavaPackageFragmentDescriptor.create(this, fqName, new NullableFunction<JavaPackageFragmentDescriptor, JetScope>() {
             @Override
             @Nullable
             public JetScope fun(JavaPackageFragmentDescriptor packageFragment) {
@@ -136,7 +129,7 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
             }
         });
 
-        cache(fqName, packageFragment);
+        packageFragments.put(fqName, packageFragment);
         return packageFragment;
     }
 
@@ -173,17 +166,6 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
     // TODO 2 move to more decent place
     public static boolean shouldCreateStaticMembersPackage(@NotNull JavaClass javaClass) {
         return !DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass) && hasStaticMembers(javaClass);
-    }
-
-    private void cache(@NotNull FqName fqName, @Nullable JavaPackageFragmentDescriptor packageFragment) {
-        if (packageFragment == null) {
-            unresolvedCache.add(fqName);
-            return;
-        }
-        JavaPackageFragmentDescriptor oldValue = packageFragments.put(fqName, packageFragment);
-        if (oldValue != null) {
-            throw new IllegalStateException("rewrite at " + fqName);
-        }
     }
 
     private static boolean hasStaticMembers(@NotNull JavaClass javaClass) {
