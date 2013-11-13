@@ -32,12 +32,16 @@ public open class LazyJavaSubModule(
         fqName ->
         val jPackage = c.finder.findPackage(fqName)
         if (jPackage != null) {
-            LazyPackageFragmentForJavaPackage(c, findParent(fqName), jPackage)
+            val result = LazyPackageFragmentForJavaPackage(c, findParent(fqName), jPackage)
+            c.javaResolverCache.recordPackage(jPackage, result)
+            result
         }
         else {
             val jClass = c.finder.findClass(fqName)
             if (jClass != null && JavaNamespaceResolver.hasStaticMembers(jClass)) {
-                LazyPackageFragmentForJavaClass(c, findParent(fqName), jClass)
+                val result = LazyPackageFragmentForJavaClass(c, findParent(fqName), jClass)
+                c.javaResolverCache.recordPackage(jClass, result)
+                result
             }
             else null
         }
