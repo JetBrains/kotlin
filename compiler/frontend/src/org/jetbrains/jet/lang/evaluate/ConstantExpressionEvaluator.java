@@ -42,39 +42,61 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.COMPILE_TIME_INITIAL
 
 @SuppressWarnings("StaticMethodReferencedViaSubclass")
 public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<?>, Void> {
-    @NotNull private final BindingTrace trace;
-    @NotNull private final JetType expectedType;
+    private final BindingTrace trace;
+    private final JetType expectedType;
 
-    public ConstantExpressionEvaluator(@NotNull BindingTrace trace, @NotNull JetType expectedType) {
+    private ConstantExpressionEvaluator(@NotNull BindingTrace trace, @NotNull JetType expectedType) {
         this.trace = trace;
         this.expectedType = expectedType;
     }
 
+    @Nullable
+    public static CompileTimeConstant<?> evaluate(@NotNull JetExpression expression, @NotNull BindingTrace trace, @NotNull JetType expectedType) {
+        ConstantExpressionEvaluator evaluator = new ConstantExpressionEvaluator(trace, expectedType);
+        return evaluator.evaluate(expression);
+    }
+
+    @Nullable
+    public CompileTimeConstant<?> evaluate(@NotNull JetExpression expression) {
+        CompileTimeConstant<?> recordedCompileTimeConstant = trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
+        if (recordedCompileTimeConstant != null) {
+            return recordedCompileTimeConstant;
+        }
+
+        CompileTimeConstant<?> compileTimeConstant = expression.accept(this, null);
+
+        if (compileTimeConstant != null) {
+            trace.record(BindingContext.COMPILE_TIME_VALUE, expression, compileTimeConstant);
+            return compileTimeConstant;
+        }
+        return null;
+    }
+
     @Override
-    public CompileTimeConstant<?> visitConstantExpression(@NotNull JetConstantExpression expression, Void nothing) {
+    public CompileTimeConstant<?> visitConstantExpression(@NotNull JetConstantExpression expression, Void data) {
         return trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
     }
 
     @Override
-    public CompileTimeConstant<?> visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, Void nothing) {
-        JetExpression deparenthesizedExpression = getDeparenthesizedExpression(expression, nothing);
+    public CompileTimeConstant<?> visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, Void data) {
+        JetExpression deparenthesizedExpression = getDeparenthesizedExpression(expression);
         if (deparenthesizedExpression != null) {
-            return deparenthesizedExpression.accept(this, nothing);
+            return evaluate(deparenthesizedExpression);
         }
-        return super.visitParenthesizedExpression(expression, nothing);
+        return null;
     }
 
     @Override
     public CompileTimeConstant<?> visitPrefixExpression(@NotNull JetPrefixExpression expression, Void data) {
-        JetExpression deparenthesizedExpression = getDeparenthesizedExpression(expression, data);
+        JetExpression deparenthesizedExpression = getDeparenthesizedExpression(expression);
         if (deparenthesizedExpression != null) {
-            return deparenthesizedExpression.accept(this, data);
+            return evaluate(deparenthesizedExpression);
         }
-        return super.visitPrefixExpression(expression, data);
+        return null;
     }
 
     @Nullable
-    private JetExpression getDeparenthesizedExpression(JetExpression expression, Void data) {
+    private static JetExpression getDeparenthesizedExpression(JetExpression expression) {
         JetExpression deparenthesizedExpr = JetPsiUtil.deparenthesize(expression);
         if (deparenthesizedExpr == expression) {
             return null;
@@ -83,29 +105,26 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
     }
 
     @Override
-    public CompileTimeConstant<?> visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, Void nothing) {
-        CompileTimeConstant<?> compileTimeConstant = trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
-        if (compileTimeConstant != null) {
-            return compileTimeConstant;
-        }
-
+    public CompileTimeConstant<?> visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, Void data) {
         JetStringTemplateEntry[] stringTemplateEntries = expression.getEntries();
         if (stringTemplateEntries.length == 1) {
-            CompileTimeConstant singleEntry = stringTemplateEntries[0].accept(this, nothing);
+            CompileTimeConstant singleEntry = stringTemplateEntries[0].accept(this, null);
             if (!(singleEntry instanceof StringValue) && singleEntry != null) {
                 return new StringValue(singleEntry.getValue().toString());
             }
-            return singleEntry;
+            else {
+                return singleEntry;
+            }
         }
         else if (stringTemplateEntries.length > 1) {
-            CompileTimeConstant<?> first = stringTemplateEntries[0].accept(this, nothing);
+            CompileTimeConstant<?> first = stringTemplateEntries[0].accept(this, null);
             if (first == null) {
                 return null;
             }
             CompileTimeConstant<?> second;
             String tmpResult = null;
             for (int i = 1; i < stringTemplateEntries.length; i++) {
-                second = stringTemplateEntries[i].accept(this, nothing);
+                second = stringTemplateEntries[i].accept(this, null);
                 if (second == null) {
                     return null;
                 }
@@ -125,26 +144,17 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
     }
 
     @Override
-    public CompileTimeConstant<?> visitBlockStringTemplateEntry(@NotNull JetBlockStringTemplateEntry entry, Void data) {
+    public CompileTimeConstant<?> visitStringTemplateEntryWithExpression(@NotNull JetStringTemplateEntryWithExpression entry, Void data) {
         JetExpression expression = entry.getExpression();
         if (expression != null) {
-            return expression.accept(this, data);
+            return evaluate(expression);
         }
-        return super.visitBlockStringTemplateEntry(entry, data);
+        return null;
     }
 
     @Override
     public CompileTimeConstant<?> visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry, Void data) {
         return new StringValue(entry.getText());
-    }
-
-    @Override
-    public CompileTimeConstant<?> visitSimpleNameStringTemplateEntry(@NotNull JetSimpleNameStringTemplateEntry entry, Void data) {
-        JetExpression expression = entry.getExpression();
-        if (expression != null) {
-            return expression.accept(this, data);
-        }
-        return super.visitSimpleNameStringTemplateEntry(entry, data);
     }
 
     @Override
@@ -162,7 +172,7 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
         IElementType operationToken = expression.getOperationToken();
         if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
             JetType booleanType = KotlinBuiltIns.getInstance().getBooleanType();
-            CompileTimeConstant<?> leftConstant = leftExpression.accept(new ConstantExpressionEvaluator(trace, booleanType), null);
+            CompileTimeConstant<?> leftConstant = evaluate(leftExpression, trace, booleanType);
             if (leftConstant == null) {
                 return null;
             }
@@ -170,23 +180,17 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
             if (rightExpression == null) {
                 return null;
             }
-            CompileTimeConstant<?> rightConstant = rightExpression.accept(new ConstantExpressionEvaluator(trace, booleanType), null);
+            CompileTimeConstant<?> rightConstant = evaluate(rightExpression, trace, booleanType);
             if (rightConstant == null) {
                 return null;
             }
 
             Name operationName = operationToken == JetTokens.ANDAND ? Name.identifier("andand") : Name.identifier("oror");
             Object result = EvaluatePackage.evaluateBinaryExpression(leftConstant, rightConstant, operationName);
-            if (result == null) {
-                return null;
-            }
             return createCompileTimeConstant(result, expectedType);
         }
         else {
             Object result = evaluateCall(expression.getOperationReference(), leftExpression);
-            if (result == null) {
-                return null;
-            }
             if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationToken)) {
                 return createCompileTimeConstantForCompareTo(result, operationToken);
             }
@@ -231,7 +235,7 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
 
     @Nullable
     private static CompileTimeConstant<?> createCompileTimeConstantForEquals(
-            @NotNull Object result,
+            @Nullable Object result,
             @NotNull IElementType operationToken
     ) {
         if (result instanceof Boolean) {
@@ -248,7 +252,7 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
 
     @Nullable
     private static CompileTimeConstant<?> createCompileTimeConstantForCompareTo(
-            @NotNull Object result,
+            @Nullable Object result,
             @NotNull IElementType operationToken
     ) {
         if (result instanceof Integer) {
@@ -292,14 +296,15 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
             return null;
         }
         Object result = evaluateCall(expression.getOperationReference(), leftExpression);
-        if (result == null) {
-            return null;
-        }
         return createCompileTimeConstant(result, expectedType);
     }
 
-    public static CompileTimeConstant<?> createCompileTimeConstant(@NotNull Object value, @NotNull JetType expectedType) {
-        if (value instanceof Integer) {
+    @Nullable
+    public static CompileTimeConstant<?> createCompileTimeConstant(@Nullable Object value, @NotNull JetType expectedType) {
+        if (value == null) {
+            return null;
+        }
+        else if (value instanceof Integer) {
             return getIntegerValue(((Integer) value).longValue(), expectedType);
         }
         else if (value instanceof Byte) {
@@ -399,11 +404,6 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
     /* 1.toInt(); 1.plus(1); MyEnum.A */
     @Override
     public CompileTimeConstant<?> visitQualifiedExpression(@NotNull JetQualifiedExpression expression, Void data) {
-        CompileTimeConstant wholeExpressionValue = trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
-        if (wholeExpressionValue != null) {
-            return wholeExpressionValue;
-        }
-
         JetExpression receiverExpression = expression.getReceiverExpression();
         JetExpression selectorExpression = expression.getSelectorExpression();
 
@@ -416,17 +416,14 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
 
             if (((JetCallExpression) selectorExpression).getValueArguments().size() < 2) {
                 Object result = evaluateCall(calleeExpression, receiverExpression);
-                if (result == null) {
-                    return null;
-                }
                 return createCompileTimeConstant(result, expectedType);
             }
         }
 
         if (selectorExpression != null) {
-            return selectorExpression.accept(this, null);
+            return evaluate(selectorExpression);
         }
-        return super.visitQualifiedExpression(expression, data);
+        return null;
     }
 
     @Nullable
@@ -483,7 +480,7 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
         for (ValueArgument argument : valueArguments) {
             JetExpression argumentExpression = argument.getArgumentExpression();
             if (argumentExpression != null) {
-                CompileTimeConstant<?> constant = argumentExpression.accept(new ConstantExpressionEvaluator(trace, expectedType), null);
+                CompileTimeConstant<?> constant = evaluate(argumentExpression, trace, expectedType);
                 if (constant != null) {
                     constants.add(constant);
                 }
@@ -493,7 +490,7 @@ public class ConstantExpressionEvaluator extends JetVisitor<CompileTimeConstant<
     }
 
     @Override
-    public CompileTimeConstant<?> visitJetElement(@NotNull JetElement element, Void nothing) {
+    public CompileTimeConstant<?> visitJetElement(@NotNull JetElement element, Void data) {
         return null;
     }
 }
