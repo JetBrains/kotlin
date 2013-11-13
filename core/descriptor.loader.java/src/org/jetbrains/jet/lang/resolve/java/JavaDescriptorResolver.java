@@ -153,11 +153,19 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                                 @Nullable
                                 @Override
                                 public JavaClass findClass(@NotNull FqName fqName) {
+                                    // Do not look for JavaClasses for Kotlin binaries
+                                    if (kotlinClassesFromBinaries.invoke(fqName) != null
+                                        || kotlinNamespacesFromBinaries.invoke(fqName) != null) {
+                                        return null;
+                                    }
+
                                     JavaClass javaClass = javaClassFinder.findClass(fqName);
                                     if (javaClass == null) {
                                         return null;
                                     }
-                                    if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass)) {
+
+                                    // Light classes are not proper binaries either
+                                    if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
                                         return null;
                                     }
                                     return javaClass;
