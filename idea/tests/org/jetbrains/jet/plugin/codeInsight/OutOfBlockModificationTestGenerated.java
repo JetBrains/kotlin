@@ -105,4 +105,5 @@ public class OutOfBlockModificationTestGenerated extends AbstractOutOfBlockModif
     public void testInPropertyWithInference() throws Exception {
         doTest("idea/testData/codeInsight/outOfBlock/InPropertyWithInference.kt");
     }
+    
 }
