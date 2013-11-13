@@ -11,37 +11,37 @@ public final enum class EnumMembers : jet.Enum<test.EnumMembers> {
         private constructor <class-object-for-EnumMembers>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.EnumMembers
         public final /*synthesized*/ fun values(): jet.Array<test.EnumMembers>
+    }
+    
+    public enum entry FIRST : test.EnumMembers {
+        private constructor FIRST()
+        public final override /*1*/ /*fake_override*/ val isFirst: jet.Boolean
+        public open override /*1*/ /*fake_override*/ fun first(): jet.Boolean
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
         
-        public enum entry FIRST : test.EnumMembers {
-            private constructor FIRST()
+        public class object <class-object-for-FIRST> : test.EnumMembers.FIRST {
+            private constructor <class-object-for-FIRST>()
             public final override /*1*/ /*fake_override*/ val isFirst: jet.Boolean
             public open override /*1*/ /*fake_override*/ fun first(): jet.Boolean
             public final override /*1*/ /*fake_override*/ fun name(): jet.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-            
-            public class object <class-object-for-FIRST> : test.EnumMembers.FIRST {
-                private constructor <class-object-for-FIRST>()
-                public final override /*1*/ /*fake_override*/ val isFirst: jet.Boolean
-                public open override /*1*/ /*fake_override*/ fun first(): jet.Boolean
-                public final override /*1*/ /*fake_override*/ fun name(): jet.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-            }
         }
+    }
+    
+    public enum entry SECOND : test.EnumMembers {
+        private constructor SECOND()
+        public final override /*1*/ /*fake_override*/ val isFirst: jet.Boolean
+        public open override /*1*/ /*fake_override*/ fun first(): jet.Boolean
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
         
-        public enum entry SECOND : test.EnumMembers {
-            private constructor SECOND()
+        public class object <class-object-for-SECOND> : test.EnumMembers.SECOND {
+            private constructor <class-object-for-SECOND>()
             public final override /*1*/ /*fake_override*/ val isFirst: jet.Boolean
             public open override /*1*/ /*fake_override*/ fun first(): jet.Boolean
             public final override /*1*/ /*fake_override*/ fun name(): jet.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-            
-            public class object <class-object-for-SECOND> : test.EnumMembers.SECOND {
-                private constructor <class-object-for-SECOND>()
-                public final override /*1*/ /*fake_override*/ val isFirst: jet.Boolean
-                public open override /*1*/ /*fake_override*/ fun first(): jet.Boolean
-                public final override /*1*/ /*fake_override*/ fun name(): jet.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-            }
         }
     }
 }

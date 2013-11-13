@@ -303,9 +303,6 @@ public class AnnotationResolver {
                     CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
                     if (callableDescriptor instanceof PropertyDescriptor) {
                         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) callableDescriptor;
-                        if (isEnumProperty(propertyDescriptor)) {
-                            return new EnumValue(((VariableDescriptorForObject) propertyDescriptor).getObjectClass());
-                        }
                         if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor)) {
                             return trace.getBindingContext().get(COMPILE_TIME_INITIALIZER, propertyDescriptor);
                         }
@@ -364,14 +361,6 @@ public class AnnotationResolver {
             }
         };
         return expression.accept(visitor, null);
-    }
-
-    private static boolean isEnumProperty(@NotNull PropertyDescriptor descriptor) {
-        // TODO: this is true only for enum entries loaded from Java, refactor JDR to use classes with class objects instead
-        ClassifierDescriptor classifier = descriptor.getType().getConstructor().getDeclarationDescriptor();
-        return classifier != null &&
-               DescriptorUtils.isEnumClass(classifier) &&
-               DescriptorUtils.isEnumClassObject(descriptor.getContainingDeclaration());
     }
 
     @SuppressWarnings("MethodMayBeStatic")

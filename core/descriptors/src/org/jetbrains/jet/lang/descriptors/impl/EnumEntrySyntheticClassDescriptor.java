@@ -53,14 +53,13 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @NotNull
     public static EnumEntrySyntheticClassDescriptor create(
             @NotNull StorageManager storageManager,
-            @NotNull ClassDescriptor enumClassObject,
+            @NotNull ClassDescriptor enumClass,
             @NotNull Name name,
             @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames
     ) {
-        JetType enumType = ((ClassDescriptor) enumClassObject.getContainingDeclaration()).getDefaultType();
+        JetType enumType = enumClass.getDefaultType();
 
-        return new EnumEntrySyntheticClassDescriptor(storageManager, enumClassObject, enumType, name, ClassKind.ENUM_ENTRY,
-                                                     enumMemberNames);
+        return new EnumEntrySyntheticClassDescriptor(storageManager, enumClass, enumType, name, ClassKind.ENUM_ENTRY, enumMemberNames);
     }
 
     private EnumEntrySyntheticClassDescriptor(

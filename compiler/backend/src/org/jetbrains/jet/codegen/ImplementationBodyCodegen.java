@@ -279,7 +279,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (inner == null || isTopLevelDeclaration(inner)) {
                 break;
             }
-            if (inner instanceof ClassDescriptor && !isEnumClassObject(inner)) {
+            if (inner instanceof ClassDescriptor) {
                 writeInnerClass((ClassDescriptor) inner);
             }
             inner = inner.getContainingDeclaration();

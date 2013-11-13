@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.resolveOverrides;
 
@@ -79,7 +80,7 @@ public final class JavaPropertyResolver {
         assert fields.size() <= 1;
         if (fields.size() == 1) {
             JavaField field = fields.iterator().next();
-            if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(owner, field)) {
+            if (!field.isEnumEntry()) {
                 propertiesFromCurrent.add(resolveProperty(owner, propertyName, field));
             }
         }

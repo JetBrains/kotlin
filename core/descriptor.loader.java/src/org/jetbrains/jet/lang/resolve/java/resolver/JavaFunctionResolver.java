@@ -101,7 +101,7 @@ public final class JavaFunctionResolver {
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
             boolean record
     ) {
-        if (!DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, method)) {
+        if (!DescriptorResolverUtils.isCorrectOwnerForEnumMethod(ownerDescriptor, method)) {
             return null;
         }
 
