@@ -52,8 +52,13 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
         return memberResolver.resolveFunctionGroupForClass(members, descriptor);
     }
 
-    @NotNull
-    private Map<Name, ClassDescriptor> getInnerClassesMap() {
+    @Override
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
+        return null;
+    }
+
+    @Override
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
         if (innerClassesMap == null) {
             Collection<ClassDescriptor> innerClasses = getInnerClasses();
             innerClassesMap = new HashMap<Name, ClassDescriptor>();
@@ -61,24 +66,6 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
                 innerClassesMap.put(innerClass.getName(), innerClass);
             }
         }
-        return innerClassesMap;
-    }
-
-    @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        ClassDescriptor innerClass = getInnerClassesMap().get(name);
-        if (innerClass != null && innerClass.getKind().isSingleton()) {
-            return innerClass;
-        }
-        return null;
-    }
-
-    @Override
-    public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        ClassDescriptor innerClass = getInnerClassesMap().get(name);
-        if (innerClass == null || innerClass.getKind().isSingleton()) {
-            return null;
-        }
-        return innerClass;
+        return innerClassesMap.get(name);
     }
 }

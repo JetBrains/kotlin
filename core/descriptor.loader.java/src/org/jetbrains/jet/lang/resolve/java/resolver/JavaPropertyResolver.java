@@ -18,22 +18,19 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.resolveOverrides;
 
 public final class JavaPropertyResolver {
@@ -70,6 +67,10 @@ public final class JavaPropertyResolver {
 
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
+        if (isEnumClassObject(owner)) {
+            return Collections.emptySet();
+        }
+
         Name propertyName = members.getName();
 
         List<JavaField> fields = members.getFields();
@@ -100,9 +101,12 @@ public final class JavaPropertyResolver {
 
     @NotNull
     private PropertyDescriptor resolveProperty(@NotNull ClassOrNamespaceDescriptor owner, @NotNull Name name, @NotNull JavaField field) {
+        assert !field.isEnumEntry() : "Enum entries are resolved into classes, not into properties: " + name;
+
         boolean isVar = !field.isFinal();
 
-        PropertyDescriptorImpl propertyDescriptor = createPropertyDescriptor(owner, name, field, isVar);
+        PropertyDescriptorImpl propertyDescriptor =
+                new JavaPropertyDescriptor(owner, annotationResolver.resolveAnnotations(field), field.getVisibility(), isVar, name);
         propertyDescriptor.initialize(null, null);
 
         TypeVariableResolver typeVariableResolver =
@@ -127,31 +131,6 @@ public final class JavaPropertyResolver {
         cache.recordField(field, propertyDescriptor);
 
         return propertyDescriptor;
-    }
-
-    @NotNull
-    private PropertyDescriptorImpl createPropertyDescriptor(
-            @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull Name propertyName,
-            @NotNull JavaField field,
-            boolean isVar
-    ) {
-        List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(field);
-        Visibility visibility = field.getVisibility();
-
-        if (field.isEnumEntry()) {
-            assert !isVar : "Enum entries should be immutable.";
-            assert DescriptorUtils.isEnumClassObject(owner) : "Enum entries should be put into class object of enum only: " + owner;
-            //TODO: this is a hack to indicate that this enum entry is an object
-            // class descriptor for enum entries is not used by backends so for now this should be safe to use
-            ClassDescriptorImpl dummyClassDescriptorForEnumEntryObject =
-                    new ClassDescriptorImpl(owner, propertyName, Modality.FINAL, Collections.<JetType>emptyList());
-            dummyClassDescriptorForEnumEntryObject.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
-            return new JavaPropertyDescriptorForObject(owner, annotations, visibility, propertyName,
-                                                       dummyClassDescriptorForEnumEntryObject);
-        }
-
-        return new JavaPropertyDescriptor(owner, annotations, visibility, isVar, propertyName);
     }
 
     @NotNull
