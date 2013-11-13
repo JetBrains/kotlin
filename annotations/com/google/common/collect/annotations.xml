@@ -1,0 +1,5 @@
+<root>
+  <item name='com.google.common.collect.Multimap java.util.Set&lt;K&gt; keySet()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

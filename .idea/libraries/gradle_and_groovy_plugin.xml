@@ -1,5 +1,8 @@
 <component name="libraryTable">
   <library name="gradle-and-groovy-plugin">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="file://$PROJECT_DIR$/ideaSDK/plugins/gradle/lib" />
       <root url="file://$PROJECT_DIR$/ideaSDK/plugins/Groovy/lib" />
