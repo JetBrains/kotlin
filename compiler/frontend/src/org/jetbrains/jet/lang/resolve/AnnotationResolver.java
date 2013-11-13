@@ -47,6 +47,7 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.jet.lang.resolve.BindingContext.COMPILE_TIME_INITIALIZER;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class AnnotationResolver {
@@ -286,22 +287,24 @@ public class AnnotationResolver {
             }
 
             @Override
-            public CompileTimeConstant<?> visitStringTemplateExpression(
-                    @NotNull JetStringTemplateExpression expression,
-                                                                        Void nothing) {
+            public CompileTimeConstant<?> visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, Void nothing) {
                 return trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
             }
 
             @Override
             public CompileTimeConstant<?> visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, Void data) {
-                ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                        trace.getBindingContext().get(BindingContext.RESOLVED_CALL, expression);
+                DeclarationDescriptor descriptor = trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, expression);
+                if (descriptor != null && isEnumEntry(descriptor)) {
+                    return new EnumValue((ClassDescriptor) descriptor);
+                }
+
+                ResolvedCall<?> resolvedCall = trace.getBindingContext().get(BindingContext.RESOLVED_CALL, expression);
                 if (resolvedCall != null) {
                     CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
                     if (callableDescriptor instanceof PropertyDescriptor) {
                         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) callableDescriptor;
                         if (isEnumProperty(propertyDescriptor)) {
-                            return new EnumValue(propertyDescriptor);
+                            return new EnumValue(((VariableDescriptorForObject) propertyDescriptor).getObjectClass());
                         }
                         if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(propertyDescriptor)) {
                             return trace.getBindingContext().get(COMPILE_TIME_INITIALIZER, propertyDescriptor);
@@ -364,7 +367,7 @@ public class AnnotationResolver {
     }
 
     private static boolean isEnumProperty(@NotNull PropertyDescriptor descriptor) {
-        // TODO: doesn't return true anymore
+        // TODO: this is true only for enum entries loaded from Java, refactor JDR to use classes with class objects instead
         ClassifierDescriptor classifier = descriptor.getType().getConstructor().getDeclarationDescriptor();
         return classifier != null &&
                DescriptorUtils.isEnumClass(classifier) &&

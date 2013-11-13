@@ -19,9 +19,8 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -141,13 +140,10 @@ public final class JavaAnnotationArgumentResolver {
         ClassDescriptor enumClass = classResolver.resolveClass(fqName, INCLUDE_KOTLIN_SOURCES, taskList);
         if (enumClass == null) return null;
 
-        for (VariableDescriptor variableDescriptor : getEnumEntriesScope(enumClass).getProperties(field.getName())) {
-            if (variableDescriptor.getReceiverParameter() == null) {
-                return new EnumValue((PropertyDescriptor) variableDescriptor);
-            }
-        }
+        ClassifierDescriptor classifier = getEnumEntriesScope(enumClass).getClassifier(field.getName());
+        if (!(classifier instanceof ClassDescriptor)) return null;
 
-        return null;
+        return new EnumValue((ClassDescriptor) classifier);
     }
 
     @Nullable

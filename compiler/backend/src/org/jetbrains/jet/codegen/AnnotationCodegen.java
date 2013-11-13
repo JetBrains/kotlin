@@ -143,9 +143,10 @@ public abstract class AnnotationCodegen {
     }
 
     @Nullable
-    private String genAnnotation(AnnotationDescriptor annotationDescriptor) {
+    private String genAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
         ClassifierDescriptor classifierDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        RetentionPolicy rp = getRetentionPolicy(classifierDescriptor, typeMapper);
+        assert classifierDescriptor != null : "Annotation descriptor has no class: " + annotationDescriptor;
+        RetentionPolicy rp = getRetentionPolicy(classifierDescriptor);
         if (rp == RetentionPolicy.SOURCE) {
             return null;
         }
@@ -273,17 +274,21 @@ public abstract class AnnotationCodegen {
         value.accept(argumentVisitor, null);
     }
 
-    private static RetentionPolicy getRetentionPolicy(ClassifierDescriptor descriptor, JetTypeMapper typeMapper) {
+    @NotNull
+    private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
         for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
             String internalName = typeMapper.mapType(annotationDescriptor.getType()).getInternalName();
-            if("java/lang/annotation/Retention".equals(internalName)) {
-                CompileTimeConstant<?> compileTimeConstant = annotationDescriptor.getAllValueArguments().values().iterator().next();
-                assert compileTimeConstant instanceof EnumValue : "Retention argument should be Enum value " + compileTimeConstant;
-                PropertyDescriptor propertyDescriptor = ((EnumValue) compileTimeConstant).getValue();
-                assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(propertyDescriptor.getType()).getInternalName()) :
-                                                                        "Retention argument should be of type RetentionPolicy";
-                String propertyDescriptorName = propertyDescriptor.getName().asString();
-                return RetentionPolicy.valueOf(propertyDescriptorName);
+            if ("java/lang/annotation/Retention".equals(internalName)) {
+                Collection<CompileTimeConstant<?>> valueArguments = annotationDescriptor.getAllValueArguments().values();
+                assert valueArguments.size() == 1 : "Retention should have an argument: " + annotationDescriptor;
+                CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
+                assert compileTimeConstant instanceof EnumValue : "Retention argument should be enum value: " + compileTimeConstant;
+                ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
+                JetType classObjectType = enumEntry.getClassObjectType();
+                assert classObjectType != null : "Enum entry should have a class object: " + enumEntry;
+                assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName()) :
+                        "Retention argument should be of type RetentionPolicy: " + enumEntry;
+                return RetentionPolicy.valueOf(enumEntry.getName().asString());
             }
         }
 

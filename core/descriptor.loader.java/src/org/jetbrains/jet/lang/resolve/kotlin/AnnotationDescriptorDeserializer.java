@@ -44,8 +44,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
@@ -185,15 +184,9 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             private CompileTimeConstant<?> enumEntryValue(@NotNull JvmClassName enumClassName, @NotNull Name name) {
                 ClassDescriptor enumClass = resolveClass(enumClassName);
                 if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-                    ClassDescriptor classObject = enumClass.getClassObjectDescriptor();
-                    if (classObject != null) {
-                        Collection<VariableDescriptor> properties = classObject.getDefaultType().getMemberScope().getProperties(name);
-                        if (properties.size() == 1) {
-                            VariableDescriptor property = properties.iterator().next();
-                            if (property instanceof PropertyDescriptor) {
-                                return new EnumValue((PropertyDescriptor) property);
-                            }
-                        }
+                    ClassifierDescriptor classifier = getEnumEntriesScope(enumClass).getClassifier(name);
+                    if (classifier instanceof ClassDescriptor) {
+                        return new EnumValue((ClassDescriptor) classifier);
                     }
                 }
                 return ErrorValue.create("Unresolved enum entry: " + enumClassName.getInternalName() + "." + name);
