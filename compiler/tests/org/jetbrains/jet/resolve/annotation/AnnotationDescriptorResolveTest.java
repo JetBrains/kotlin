@@ -162,7 +162,7 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
         checkDescriptor(expectedAnnotation, topProp.getGetter());
         checkDescriptor(expectedAnnotation, topProp.getSetter());
 
-        checkDescriptor(expectedAnnotation, getObjectDescriptor(test, "MyObject"));
+        checkDescriptor(expectedAnnotation, getClassDescriptor(test, "MyObject"));
 
         checkDescriptor(expectedAnnotation, getConstructorParameterDescriptor(myClass, "consProp"));
         checkDescriptor(expectedAnnotation, getConstructorParameterDescriptor(myClass, "param"));
@@ -209,16 +209,8 @@ public class AnnotationDescriptorResolveTest extends JetLiteFixture {
         Name className = Name.identifier(name);
         ClassifierDescriptor aClass = namespaceDescriptor.getMemberScope().getClassifier(className);
         assertNotNull("Failed to find class: " + namespaceDescriptor.getName() + "." + className, aClass);
-        assert aClass instanceof ClassDescriptor;
+        assert aClass instanceof ClassDescriptor : "Not a class: " + aClass;
         return (ClassDescriptor) aClass;
-    }
-
-    @NotNull
-    private static ClassDescriptor getObjectDescriptor(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull String name) {
-        Name className = Name.identifier(name);
-        ClassDescriptor aClass = namespaceDescriptor.getMemberScope().getObjectDescriptor(className);
-        assertNotNull("Failed to find class: " + namespaceDescriptor.getName() + "." + className, aClass);
-        return aClass;
     }
 
     @NotNull
