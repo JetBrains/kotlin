@@ -16,52 +16,146 @@
 
 package org.jetbrains.kotlin;
 
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.utils.fileUtils.FileUtilsPackage;
+import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
+import org.jetbrains.k2js.test.rhino.RhinoUtils;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class AntTaskTest extends KotlinIntegrationTestBase {
-    private void doAntTest(String... extraJavaArgs) throws Exception {
-        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
+    private static final int SUCCESSFUL = 0;
+    private static final int FAILED = 1;
+
+    private static final String JS_OUT_FILE = "out.js";
+    private static final String JVM_OUT_FILE = "hello.jar";
+
+    private void doAntTest(int expectedExitCode, String... extraArgs) throws Exception {
+        assertEquals("compilation failed", expectedExitCode, runAnt("build.log", "build.xml", extraArgs));
+    }
+
+    private void doJvmAntTest(String... extraJavaArgs) throws Exception {
+        doAntTest(SUCCESSFUL, extraJavaArgs);
+
+        String jar = getOutputFileByName(JVM_OUT_FILE).getAbsolutePath();
         String runtime = getKotlinRuntimePath();
 
-        assertEquals("compilation failed", 0, runAnt("build.log", "build.xml", extraJavaArgs));
         runJava("hello.run", "-cp", jar + File.pathSeparator + runtime, "hello.HelloPackage");
+    }
+
+    private void doJsAntTest() throws Exception {
+        doAntTest(SUCCESSFUL);
+
+        String outputFilePath = getOutputFileByName(JS_OUT_FILE).getAbsolutePath();
+        RhinoUtils.runRhinoTest(Collections.singletonList(outputFilePath),
+                                new RhinoFunctionResultChecker("out", "foo", "box", "OK"));
+    }
+
+    private void doJsAntTestForPostfixPrefix(@Nullable String prefix, @Nullable String postfix) throws Exception {
+        doJsAntTest();
+        File outputFile = getOutputFileByName(JS_OUT_FILE);
+
+        File prefixFile = null;
+        if (prefix != null) {
+            prefixFile = new File(testDataDir, prefix);
+        }
+
+        File postfixFile = null;
+        if (postfix != null) {
+            postfixFile = new File(testDataDir, postfix);
+        }
+
+        checkFilePrefixPostfix(outputFile, prefixFile, postfixFile);
     }
 
     @Test
     public void antTaskJvm() throws Exception {
-        doAntTest();
+        doJvmAntTest();
     }
 
     @Test
     public void antTaskJvmManyRoots() throws Exception {
-        doAntTest();
+        doJvmAntTest();
     }
 
     @Test
     public void javacCompiler() throws Exception {
-        doAntTest("-cp", getKotlinAntPath(),
-                  "-Dkotlin.home", getCompilerLib().getAbsolutePath());
+        doJvmAntTest("-cp", getKotlinAntPath(),
+                     "-Dkotlin.home", getCompilerLib().getAbsolutePath());
     }
 
     @Test
     public void externalAnnotations() throws Exception {
-        doAntTest("-cp", getKotlinAntPath(),
-                  "-Didea.sdk", getIdeaSdkHome(),
-                  "-Dkotlin.home", getCompilerLib().getAbsolutePath());
+        doJvmAntTest("-cp", getKotlinAntPath(),
+                     "-Didea.sdk", getIdeaSdkHome(),
+                     "-Dkotlin.home", getCompilerLib().getAbsolutePath());
     }
 
     @Test
     public void kotlinCompiler() throws Exception {
-        doAntTest("-cp", getKotlinAntPath(),
-                  "-Didea.sdk", getIdeaSdkHome(),
-                  "-Dkotlin.home", getCompilerLib().getAbsolutePath());
+        doJvmAntTest("-cp", getKotlinAntPath(),
+                     "-Didea.sdk", getIdeaSdkHome(),
+                     "-Dkotlin.home", getCompilerLib().getAbsolutePath());
+    }
+
+    @Test
+    public void k2jsSimple() throws Exception {
+        doJsAntTest();
+    }
+
+    @Test
+    public void k2jsWithMain() throws Exception {
+        doJsAntTest();
+    }
+
+    @Test
+    public void k2jsManySources() throws Exception {
+        doJsAntTest();
+    }
+
+    @Test
+    public void k2jsWithoutSrcParam() throws Exception {
+        doAntTest(FAILED);
+    }
+
+    @Test
+    public void k2jsWithoutOutputParam() throws Exception {
+        doAntTest(FAILED);
+    }
+
+    @Test
+    public void k2jsWithPrefix() throws Exception {
+        doJsAntTestForPostfixPrefix("prefix", null);
+    }
+
+    @Test
+    public void k2jsWithPostfix() throws Exception {
+        doJsAntTestForPostfixPrefix(null, "postfix");
+    }
+
+    @Test
+    public void k2jsWithPrefixAndPostfix() throws Exception {
+        doJsAntTestForPostfixPrefix("prefix", "postfix");
+    }
+
+    @Test
+    public void k2jsWithSourcemap() throws Exception {
+        doJsAntTest();
+
+        File sourcemap = getOutputFileByName(JS_OUT_FILE + ".map");
+        assertTrue("Sourcemap file \"" + sourcemap.getAbsolutePath() + "\" not found", sourcemap.exists());
     }
 
     @Override
@@ -81,7 +175,7 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
         List<String> strings = new ArrayList<String>();
         strings.addAll(Arrays.asList(basicArgs));
         strings.addAll(Arrays.asList(extraJavaArgs));
-        return runJava(logName, strings.toArray(new String[strings.size()]));
+        return runJava(logName, ArrayUtil.toStringArray(strings));
     }
 
     private static String getKotlinAntPath() {
@@ -94,5 +188,19 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
 
     private static String getAntHome() {
         return getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant-1.8";
+    }
+
+    private static void checkFilePrefixPostfix(@NotNull File file, @Nullable File prefix, @Nullable File postfix) throws IOException {
+        String fileContent = FileUtil.loadFile(file);
+
+        String prefixContent = FileUtilsPackage.readTextOrEmpty(prefix);
+        assertTrue(fileContent.startsWith(prefixContent));
+
+        String postfixContent = FileUtilsPackage.readTextOrEmpty(postfix);
+        assertTrue(fileContent.endsWith(postfixContent));
+    }
+
+    private File getOutputFileByName(@NotNull String name) {
+        return new File(tmpdir.getTmpDir(), name);
     }
 }
