@@ -9,29 +9,29 @@ internal final enum class Test : jet.Enum<test.Test> {
         /*primary*/ private constructor <class-object-for-Test>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.Test
         public final /*synthesized*/ fun values(): jet.Array<test.Test>
+    }
+    
+    public enum entry A : test.Test {
+        /*primary*/ private constructor A()
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
         
-        public enum entry A : test.Test {
-            /*primary*/ private constructor A()
+        public class object <class-object-for-A> : test.Test.A {
+            /*primary*/ private constructor <class-object-for-A>()
             public final override /*1*/ /*fake_override*/ fun name(): jet.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-            
-            public class object <class-object-for-A> : test.Test.A {
-                /*primary*/ private constructor <class-object-for-A>()
-                public final override /*1*/ /*fake_override*/ fun name(): jet.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-            }
         }
+    }
+    
+    public enum entry B : test.Test {
+        /*primary*/ private constructor B()
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
         
-        public enum entry B : test.Test {
-            /*primary*/ private constructor B()
+        public class object <class-object-for-B> : test.Test.B {
+            /*primary*/ private constructor <class-object-for-B>()
             public final override /*1*/ /*fake_override*/ fun name(): jet.String
             public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-            
-            public class object <class-object-for-B> : test.Test.B {
-                /*primary*/ private constructor <class-object-for-B>()
-                public final override /*1*/ /*fake_override*/ fun name(): jet.String
-                public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
-            }
         }
     }
 }

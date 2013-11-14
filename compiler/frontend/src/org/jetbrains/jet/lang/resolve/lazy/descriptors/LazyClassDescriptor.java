@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
@@ -37,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
-import org.jetbrains.jet.lang.resolve.lazy.data.FilteringClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.SyntheticClassObjectInfo;
@@ -58,8 +56,6 @@ import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDescriptor, ClassDescriptor {
-
-    private static final Predicate<Object> ONLY_ENUM_ENTRIES = Predicates.instanceOf(JetEnumEntry.class);
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
         @Override
         public boolean apply(JetType type) {
@@ -100,9 +96,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         }
 
         this.originalClassInfo = classLikeInfo;
-        JetClassLikeInfo classLikeInfoForMembers = classLikeInfo.getClassKind() != ClassKind.ENUM_CLASS ? classLikeInfo : noEnumEntries();
-        this.declarationProvider =
-                resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
+        this.declarationProvider = resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);
 
         this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this);
 
@@ -271,12 +265,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                 return JetClassInfoUtil.createClassLikeInfo(objectDeclaration);
             }
         }
-        else if (getKind() == ClassKind.OBJECT || getKind() == ClassKind.ENUM_ENTRY) {
+        else if (getKind() == ClassKind.OBJECT || getKind() == ClassKind.ENUM_ENTRY || getKind() == ClassKind.ENUM_CLASS) {
             return new SyntheticClassObjectInfo(originalClassInfo, this);
-        }
-        else if (getKind() == ClassKind.ENUM_CLASS) {
-            // Enum classes always have class objects, and enum constants are their members
-            return enumClassObjectInfo();
         }
         return null;
     }
@@ -479,41 +469,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     @NotNull
-    private JetClassLikeInfo noEnumEntries() {
-        return new FilteringClassLikeInfo(resolveSession.getStorageManager(), originalClassInfo, Predicates.not(ONLY_ENUM_ENTRIES));
-    }
-
-    @NotNull
-    private JetClassLikeInfo enumClassObjectInfo() {
-        return new FilteringClassLikeInfo(resolveSession.getStorageManager(), originalClassInfo, ONLY_ENUM_ENTRIES) {
-            @Override
-            public JetClassOrObject getCorrespondingClassOrObject() {
-                return null;
-            }
-
-            @NotNull
-            @Override
-            public ClassKind getClassKind() {
-                return ClassKind.CLASS_OBJECT;
-            }
-
-            @NotNull
-            @Override
-            public List<? extends JetParameter> getPrimaryConstructorParameters() {
-                return Collections.emptyList();
-            }
-
-            @NotNull
-            @Override
-            public List<JetTypeParameter> getTypeParameters() {
-                return Collections.emptyList();
-            }
-        };
-    }
-
-    @NotNull
     private ScopeProvider getScopeProvider() {
         return resolveSession.getInjector().getScopeProvider();
     }
-
 }
