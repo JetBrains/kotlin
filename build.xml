@@ -24,20 +24,22 @@
 
     <property name="external.annotations.path" value="${basedir}/annotations"/>
 
+    <property name="dependencies.dir" value="${basedir}/dependencies" />
+
     <path id="classpath">
         <file file="${bootstrap.runtime}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <fileset dir="${idea.sdk}" includes="lib/protobuf-2.5.0.jar"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
-        <fileset dir="${basedir}/dependencies" includes="jline.jar"/>
-        <fileset dir="${basedir}/dependencies" includes="jansi.jar"/>
-        <fileset dir="${basedir}/dependencies" includes="cli-parser-1.1.1.jar"/>
+        <fileset dir="${dependencies.dir}" includes="jline.jar"/>
+        <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
+        <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
     </path>
 
     <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${bootstrap.compiler.home}/lib/kotlin-ant.jar"/>
-    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${dependencies.dir}/ant-contrib.jar"/>
 
     <taskdef name="javac2" classname="org.apache.tools.ant.taskdefs.Javac"/>
     <if>
@@ -219,25 +221,26 @@
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
-        <java classname="com.google.javascript.jscomp.CommandLineRunner" failonerror="true">
-            <classpath>
-                <pathelement location="${basedir}\js\js.tests\testLib\closure-compiler.jar"/>
-            </classpath>
-            <arg value="--formatting"/>
-            <arg value="PRETTY_PRINT"/>
-            <arg value="--language_in"/>
-            <arg value="ECMASCRIPT5_STRICT"/>
-            <arg value="--compilation_level"/>
-            <arg value="SIMPLE_OPTIMIZATIONS"/>
-            <arg value="--js"/>
-            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib_ecma5.js"/>
-            <arg value="--js"/>
-            <arg value="${basedir}/js/js.translator/testFiles/kotlin_lib.js"/>
-            <arg value="--js"/>
-            <arg value="${basedir}/js/js.translator/testFiles/maps.js"/>
-            <arg value="--js_output_file"/>
-            <arg value="${kotlin-home}/lib/kotlin.js"/>
-        </java>
+
+        <taskdef name="closure-compiler"
+                 classname="com.google.javascript.jscomp.ant.CompileTask"
+                 classpath="${dependencies.dir}/closure-compiler.jar" />
+
+        <closure-compiler
+            compilationLevel="simple"
+            prettyprint="true"
+            languagein="ECMASCRIPT5_STRICT"
+            warning="verbose"
+            debug="false"
+            output="${kotlin-home}/lib/kotlin.js" >
+
+          <sources dir="${basedir}/js/js.translator/testFiles">
+            <file name="kotlin_lib_ecma5.js"/>
+            <file name="kotlin_lib.js"/>
+            <file name="maps.js"/>
+          </sources>
+
+        </closure-compiler>
     </target>
 
     <target name="preloader">
@@ -277,8 +280,8 @@
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="protobuf-2.5.0.jar"/>
               <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
-              <zipgroupfileset dir="${basedir}/dependencies" includes="jline.jar"/>
-              <zipgroupfileset dir="${basedir}/dependencies" includes="cli-parser-1.1.1.jar"/>
+              <zipgroupfileset dir="${dependencies.dir}" includes="jline.jar"/>
+              <zipgroupfileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
 
               <manifest>
                   <attribute name="Built-By" value="${manifest.impl.vendor}"/>
@@ -308,7 +311,7 @@
     </target>
 
     <target name="compiler">
-        <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
+        <taskdef resource="proguard/ant/task.properties" classpath="${dependencies.dir}/proguard.jar"/>
 
         <cleandir dir="${output}/classes/compiler"/>
 
@@ -449,7 +452,7 @@
             <classpath>
                 <fileset dir="${kotlin-home}/lib" includes="kotlin-compiler.jar"/>
                 <file file="${bootstrap.runtime}"/>
-                <fileset dir="${basedir}/dependencies/ant-1.7/lib" includes="ant.jar"/>
+                <fileset dir="${dependencies.dir}/ant-1.7/lib" includes="ant.jar"/>
             </classpath>
         </javac2>
 
@@ -577,7 +580,7 @@
     </target>
 
     <target name="j2kConverter">
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${dependencies.dir}/ant-contrib.jar"/>
 
         <cleandir dir="${output}/classes/j2k"/>
 

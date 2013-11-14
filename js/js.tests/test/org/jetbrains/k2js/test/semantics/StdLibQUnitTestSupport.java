@@ -17,12 +17,12 @@
  */
 package org.jetbrains.k2js.test.semantics;
 
-import closurecompiler.internal.com.google.common.collect.Maps;
 import com.google.common.collect.Lists;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.rhino.RhinoQUnitResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
@@ -38,7 +38,7 @@ public abstract class StdLibQUnitTestSupport extends StdLibTestBase {
     }
 
     protected void runQUnitTestCase(String path, EcmaVersion version) throws Exception {
-        runQUnitTestCase(path, version, Maps.<String, Object>newHashMap());
+        runQUnitTestCase(path, version, new HashMap<String, Object>());
     }
 
     protected void runQUnitTestCase(String path, EcmaVersion version, Map<String, Object> variables) throws Exception {

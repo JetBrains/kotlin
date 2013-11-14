@@ -16,8 +16,8 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import closurecompiler.internal.com.google.common.collect.Maps;
 import com.google.common.collect.Lists;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.rhino.CompositeRhinoResultsChecker;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
@@ -38,7 +38,7 @@ public class StdLibJsArrayScriptTest extends StdLibTestBase {
 
     @Override
     protected void performChecksOnGeneratedJavaScript(String path, EcmaVersion version) throws Exception {
-        Map<String, Object> variables = Maps.newHashMap();
+        Map<String, Object> variables = ContainerUtil.newHashMap();
         String moduleId = moduleIdFromOutputFile(path);
         RhinoResultChecker checker = new CompositeRhinoResultsChecker(
                 new RhinoFunctionResultChecker(moduleId, "jstest", "testSize", 3.0),
