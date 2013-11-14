@@ -27,8 +27,14 @@ public abstract class LazyJavaPackageFragmentScope(
         val javaClass = c.finder.findClass(fqName)
         if (javaClass == null)
             c.javaClassResolver.resolveClassByFqName(fqName)
-        else
-            LazyJavaClassDescriptor(c.withTypes(TypeParameterResolver.EMPTY), packageFragment, fqName, javaClass)
+        else {
+            // TODO: this caching is a temporary workaround, should be replaced with properly caching the whole LazyJavaSubModule
+            val cached = c.javaResolverCache.getClass(javaClass)
+            if (cached != null)
+                cached
+            else
+                LazyJavaClassDescriptor(c.withTypes(TypeParameterResolver.EMPTY), packageFragment, fqName, javaClass)
+        }
     }
 
     protected fun computeMemberIndexForSamConstructors(delegate: MemberIndex): MemberIndex = object : MemberIndex by delegate {

@@ -151,11 +151,16 @@ public class LazyJavaClassMemberScope(
         val jNestedClass = nestedClassIndex()[name]
         if (jNestedClass == null)
             null
-        else
-            LazyJavaClassDescriptor(c,
+        else {
+            // TODO: this caching is a temporary workaround, should be replaced with properly caching the whole LazyJavaSubModule
+            val alreadyResolved = c.javaResolverCache.getClass(jNestedClass)
+            if (alreadyResolved != null)
+                alreadyResolved
+            else LazyJavaClassDescriptor(c,
                                     getContainingDeclaration(),
                                     DescriptorUtils.getFQName(getContainingDeclaration()).child(name).toSafe(),
                                     jNestedClass)
+        }
     }
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = if (enumClassObject) null else nestedClasses(name)
