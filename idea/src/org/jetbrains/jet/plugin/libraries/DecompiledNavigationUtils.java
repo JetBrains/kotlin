@@ -83,12 +83,6 @@ public final class DecompiledNavigationUtils {
                 return getEffectiveReferencedDescriptor(overriddenDescriptors.iterator().next());
             }
         }
-        if (referencedDescriptor instanceof VariableDescriptorForObject) {
-            ClassDescriptor objectClass = ((VariableDescriptorForObject) referencedDescriptor).getObjectClass();
-            if (objectClass.getKind() == ClassKind.OBJECT) {
-                return objectClass;
-            }
-        }
         return referencedDescriptor;
     }
 
