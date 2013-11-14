@@ -513,32 +513,25 @@ public class TypeHierarchyResolver {
             }
         }
 
-        private void createClassObjectForEnumClass(JetClass klass, MutableClassDescriptor mutableClassDescriptor) {
+        private void createClassObjectForEnumClass(@NotNull MutableClassDescriptor mutableClassDescriptor) {
             if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-                MutableClassDescriptor classObjectDescriptor =
-                        createClassObjectDescriptor(mutableClassDescriptor, resolveVisibilityFromModifiers(klass));
-                mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
-                classObjectDescriptor.getBuilder().addFunctionDescriptor(
-                        DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
-                classObjectDescriptor.getBuilder().addFunctionDescriptor(
-                        DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
+                MutableClassDescriptor classObject = createSyntheticClassObject(mutableClassDescriptor);
+                mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObject);
+                classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObject, trace));
+                classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObject, trace));
             }
         }
 
         @NotNull
-        private MutableClassDescriptor createClassObjectDescriptor(
-                @NotNull ClassDescriptor classDescriptor,
-                @NotNull Visibility visibility
-        ) {
-            MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
-                    classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false, getClassObjectName(classDescriptor.getName()));
-            classObjectDescriptor.setModality(Modality.FINAL);
-            classObjectDescriptor.setVisibility(visibility);
-            classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
-            classObjectDescriptor.createTypeConstructor();
-            ConstructorDescriptorImpl primaryConstructorForObject = createPrimaryConstructorForObject(null, classObjectDescriptor);
-            primaryConstructorForObject.setReturnType(classObjectDescriptor.getDefaultType());
-            return classObjectDescriptor;
+        private MutableClassDescriptor createSyntheticClassObject(@NotNull ClassDescriptor classDescriptor) {
+            MutableClassDescriptor classObject = new MutableClassDescriptor(classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false,
+                                                                            getClassObjectName(classDescriptor.getName()));
+            classObject.setModality(Modality.FINAL);
+            classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
+            classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+            createPrimaryConstructorForObject(null, classObject);
+            classObject.createTypeConstructor();
+            return classObject;
         }
 
         @NotNull
@@ -555,7 +548,7 @@ public class TypeHierarchyResolver {
             context.getClasses().put(klass, mutableClassDescriptor);
             trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
 
-            createClassObjectForEnumClass(klass, mutableClassDescriptor);
+            createClassObjectForEnumClass(mutableClassDescriptor);
 
             JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
 

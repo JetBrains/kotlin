@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
@@ -270,20 +271,15 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         MutableClassDescriptor classObject = new MutableClassDescriptor(this, getScopeForMemberLookup(), ClassKind.CLASS_OBJECT,
                                                                         false, getClassObjectName(getName()));
         classObject.setModality(Modality.FINAL);
-        classObject.setVisibility(getVisibility());
+        classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
         classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+        classObject.setPrimaryConstructor(DescriptorFactory.createPrimaryConstructorForObject(classObject));
         classObject.createTypeConstructor();
 
-        ConstructorDescriptorImpl primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(classObject);
-        primaryConstructor.setReturnType(classObject.getDefaultType());
-        classObject.setPrimaryConstructor(primaryConstructor);
-
-        JetType defaultType = getDefaultType();
-        JetType defaultTypeArray = KotlinBuiltIns.getInstance().getArrayType(defaultType);
-        classObject.getBuilder().addFunctionDescriptor(
-                DescriptorFactory.createEnumClassObjectValuesMethod(classObject, defaultTypeArray));
-        classObject.getBuilder().addFunctionDescriptor(
-                DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, defaultType));
+        JetType enumType = getDefaultType();
+        JetType enumArrayType = KotlinBuiltIns.getInstance().getArrayType(enumType);
+        classObject.getBuilder().addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValuesMethod(classObject, enumArrayType));
+        classObject.getBuilder().addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, enumType));
 
         return classObject;
     }

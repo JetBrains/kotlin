@@ -53,6 +53,7 @@ import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
@@ -111,8 +112,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
-        JetModifierList modifierList = classLikeInfo.getModifierList();
         this.kind = classLikeInfo.getClassKind();
+
+        JetModifierList modifierList = classLikeInfo.getModifierList();
         if (kind.isObject()) {
             this.modality = Modality.FINAL;
         }
@@ -120,7 +122,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
             Modality defaultModality = kind == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
             this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
         }
-        this.visibility = resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
+        this.visibility = isEnumClassObject(this)
+                          ? DescriptorUtils.getSyntheticClassObjectVisibility()
+                          : resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
         this.isInner = isInnerClass(modifierList);
 
         StorageManager storageManager = resolveSession.getStorageManager();

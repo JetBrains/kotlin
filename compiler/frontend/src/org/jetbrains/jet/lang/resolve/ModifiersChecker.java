@@ -213,11 +213,6 @@ public class ModifiersChecker {
     }
 
     @NotNull
-    public static Visibility resolveVisibilityFromModifiers(@NotNull JetModifierListOwner modifierListOwner) {
-        return resolveVisibilityFromModifiers(modifierListOwner, Visibilities.INTERNAL);
-    }
-
-    @NotNull
     public static Visibility resolveVisibilityFromModifiers(@NotNull JetModifierListOwner modifierListOwner, @NotNull Visibility defaultVisibility) {
         return resolveVisibilityFromModifiers(modifierListOwner.getModifierList(), defaultVisibility);
     }
