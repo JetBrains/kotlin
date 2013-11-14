@@ -52,21 +52,38 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         return null
     }
 
+    private val stringExpressionEvaluator = object : JetVisitor<StringValue, Nothing>() {
+        fun evaluate(entry: JetStringTemplateEntry): StringValue? {
+            return entry.accept(this, null)
+        }
+
+        override fun visitStringTemplateEntryWithExpression(entry: JetStringTemplateEntryWithExpression, data: Nothing?): StringValue? {
+            val expression = entry.getExpression()
+            if (expression == null) return null
+
+            return createStringConstant(this@ConstantExpressionEvaluator.evaluate(expression, KotlinBuiltIns.getInstance().getStringType()))
+        }
+
+        override fun visitLiteralStringTemplateEntry(entry: JetLiteralStringTemplateEntry, data: Nothing?) = StringValue(entry.getText())
+
+        override fun visitEscapeStringTemplateEntry(entry: JetEscapeStringTemplateEntry, data: Nothing?) = StringValue(entry.getUnescapedValue())
+    }
+
     override fun visitConstantExpression(expression: JetConstantExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         return trace.get(BindingContext.COMPILE_TIME_VALUE, expression)
     }
 
     override fun visitParenthesizedExpression(expression: JetParenthesizedExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        val deparenthesizedExpression = getDeparenthesizedExpression(expression)
-        if (deparenthesizedExpression != null) {
+        val deparenthesizedExpression = JetPsiUtil.deparenthesize(expression)
+        if (deparenthesizedExpression != null && deparenthesizedExpression != expression) {
             return evaluate(deparenthesizedExpression, expectedType)
         }
         return null
     }
 
     override fun visitPrefixExpression(expression: JetPrefixExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        val deparenthesizedExpression = getDeparenthesizedExpression(expression)
-        return if (deparenthesizedExpression != null) {
+        val deparenthesizedExpression = JetPsiUtil.deparenthesize(expression)
+        return if (deparenthesizedExpression != null && deparenthesizedExpression != expression) {
             evaluate(deparenthesizedExpression, expectedType)
         } else {
             super.visitPrefixExpression(expression, expectedType)
@@ -74,41 +91,21 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 
     override fun visitStringTemplateExpression(expression: JetStringTemplateExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        val stringTemplateEntries = expression.getEntries()
-        if (stringTemplateEntries.size == 1) {
-            return stringTemplateEntries[0].accept(this, null)
-        }
-        else if (stringTemplateEntries.size > 1) {
-            return stringTemplateEntries.fold(StringValue(""): CompileTimeConstant<*>?) {
-                f, s ->
-                if (f != null) {
-                    val second = s.accept(this, null)
-                    if (second == null) {
-                        null
-                    }
-                    else {
-                        createCompileTimeConstant(evaluateBinaryExpression(f, second, Name.identifier("plus")), expectedType)
-                    }
+        return with(StringBuilder()) {
+            var interupted = false
+            for (entry in expression.getEntries()) {
+                val constant = stringExpressionEvaluator.evaluate(entry)
+                if (constant == null) {
+                    interupted = true
+                    break
                 }
                 else {
-                    null
+                    append(constant.getValue())
                 }
             }
+            if (!interupted) createCompileTimeConstant(toString(), expectedType) else null
         }
-        return null
     }
-
-    override fun visitStringTemplateEntryWithExpression(entry: JetStringTemplateEntryWithExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        val expression = entry.getExpression()
-        if (expression != null) {
-            return createStringConstant(evaluate(expression, expectedType))
-        }
-        return null
-    }
-
-    override fun visitLiteralStringTemplateEntry(entry: JetLiteralStringTemplateEntry, expectedType: JetType?) = StringValue(entry.getText())
-
-    override fun visitEscapeStringTemplateEntry(entry: JetEscapeStringTemplateEntry, expectedType: JetType?) = StringValue(entry.getUnescapedValue())
 
     override fun visitBinaryExpression(expression: JetBinaryExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val leftExpression = expression.getLeft()
@@ -298,15 +295,6 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 }
 
-private fun getDeparenthesizedExpression(expression: JetExpression): JetExpression? {
-    val deparenthesizedExpr = JetPsiUtil.deparenthesize(expression)
-    if (deparenthesizedExpr == expression) {
-        return null
-    }
-
-    return deparenthesizedExpr
-}
-
 private fun createCompileTimeConstantForEquals(result: Any?, operationToken: IElementType): CompileTimeConstant<*>? {
     if (result is Boolean) {
         return when (operationToken) {
@@ -342,7 +330,7 @@ private fun createCompileTimeConstantForCompareTo(result: Any?, operationToken: 
     return null
 }
 
-private fun createStringConstant(value: CompileTimeConstant<*>?): CompileTimeConstant<*>? {
+private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
     return when (value) {
         null -> null
         is StringValue -> value
