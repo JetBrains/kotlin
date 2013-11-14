@@ -22,6 +22,8 @@
 
     <property name="java.target" value="1.6"/>
 
+    <property name="external.annotations.path" value="${basedir}/annotations"/>
+
     <path id="classpath">
         <file file="${bootstrap.runtime}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
@@ -436,6 +438,7 @@
     <target name="antTools">
         <cleandir dir="${output}/classes/buildTools"/>
         <javac2 destdir="${output}/classes/buildTools" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" source="${java.target}" target="${java.target}">
+            <withKotlin externalannotations="${external.annotations.path}"/>
             <src>
                 <dirset dir="${basedir}/build-tools">
                     <include name="core/src"/>
