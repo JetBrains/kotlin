@@ -36,17 +36,17 @@ import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope
 
 class LazyJavaClassDescriptor(
-        private val c: LazyJavaResolverContextWithTypes,
+        private val outerC: LazyJavaResolverContextWithTypes,
         containingDeclaration: DeclarationDescriptor,
         internal val fqName: FqName,
         private val jClass: JavaClass
 ) : ClassDescriptorBase(containingDeclaration, fqName.shortName()), LazyJavaDescriptor, JavaClassDescriptor {
 
+    private val c: LazyJavaResolverContextWithTypes = outerC.child(this, jClass.getTypeParameters().toSet());
+
     {
         c.javaResolverCache.recordClass(jClass, this)
     }
-
-    private val innerC: LazyJavaResolverContextWithTypes = c.child(this, jClass.getTypeParameters().toSet())
 
     private val _kind = JavaClassResolver.determineClassKind(jClass)
     private val _modality = JavaClassResolver.determineClassModality(jClass)
@@ -61,7 +61,7 @@ class LazyJavaClassDescriptor(
     private val _typeConstructor = c.storageManager.createLazyValue { LazyJavaClassTypeConstructor() }
     override fun getTypeConstructor(): TypeConstructor = _typeConstructor()
 
-    private val _scopeForMemberLookup = LazyJavaClassMemberScope(innerC, this, jClass)
+    private val _scopeForMemberLookup = LazyJavaClassMemberScope(c, this, jClass)
     override fun getScopeForMemberLookup() = _scopeForMemberLookup
 
     private val _thisAsReceiverParameter = c.storageManager.createLazyValue { DescriptorFactory.createLazyReceiverParameterDescriptor(this) }
@@ -80,7 +80,7 @@ class LazyJavaClassDescriptor(
             classObject.setTypeParameterDescriptors(Collections.emptyList<TypeParameterDescriptor>())
             classObject.createTypeConstructor()
 
-            val scope = LazyJavaClassMemberScope(innerC, classObject, jClass, enumClassObject = true)
+            val scope = LazyJavaClassMemberScope(c, classObject, jClass, enumClassObject = true)
             val writableScope = WritableScopeImpl(scope, classObject, RedeclarationHandler.THROW_EXCEPTION, "Enum class object scope")
             writableScope.changeLockLevel(WritableScope.LockLevel.BOTH)
 
@@ -128,11 +128,11 @@ class LazyJavaClassDescriptor(
     private inner class LazyJavaClassTypeConstructor : TypeConstructor {
 
         private val _parameters = c.storageManager.createLazyValue {
-            this@LazyJavaClassDescriptor.jClass.getTypeParameters().map {
+            jClass.getTypeParameters().map({
                 p ->
-                innerC.typeParameterResolver.resolveTypeParameter(p)
-                    ?: throw AssertionError("Parameter $p surely belongs to class $jClass, so it must be resolved")
-            }
+                c.typeParameterResolver.resolveTypeParameter(p)
+                    ?: throw AssertionError("Parameter $p surely belongs to class ${jClass}, so it must be resolved")
+            })
         }
 
         override fun getParameters(): List<TypeParameterDescriptor> = _parameters()
@@ -144,7 +144,7 @@ class LazyJavaClassDescriptor(
                     listOf(KotlinBuiltIns.getInstance().getAnyType())
                 }
                 else {
-                    val jlObject = innerC.javaClassResolver.resolveClassByFqName(JavaSupertypeResolver.OBJECT_FQ_NAME)?.getDefaultType()
+                    val jlObject = c.javaClassResolver.resolveClassByFqName(JavaSupertypeResolver.OBJECT_FQ_NAME)?.getDefaultType()
                     // If java.lang.Object is not found, we simply use Any to recover
                     listOf(jlObject ?: KotlinBuiltIns.getInstance().getAnyType())
                 }
@@ -152,7 +152,7 @@ class LazyJavaClassDescriptor(
                 supertypes.iterator()
                         .map {
                             supertype ->
-                            innerC.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
+                            c.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
                         }
                         .filter { supertype -> !supertype.isError() }
                         .toList()

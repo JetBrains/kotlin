@@ -110,10 +110,10 @@ public abstract class LazyJavaMemberScope(
 
         val functionDescriptorImpl = JavaMethodDescriptor(_containingDeclaration, c.resolveAnnotations(method.getAnnotations()), method.getName())
 
-        val innerC = c.child(functionDescriptorImpl, method.getTypeParameters().toSet())
+        val c = c.child(functionDescriptorImpl, method.getTypeParameters().toSet())
 
-        val methodTypeParameters = method.getTypeParameters().map { p -> innerC.typeParameterResolver.resolveTypeParameter(p)!! }
-        val valueParameters = resolveValueParameters(innerC, functionDescriptorImpl, method.getValueParameters())
+        val methodTypeParameters = method.getTypeParameters().map { p -> c.typeParameterResolver.resolveTypeParameter(p)!! }
+        val valueParameters = resolveValueParameters(c, functionDescriptorImpl, method.getValueParameters())
 
         val returnTypeAttrs = LazyJavaTypeAttributes(c, method, TypeUsage.MEMBER_SIGNATURE_COVARIANT) {
             if (c.hasReadOnlyAnnotation(method) && !c.hasMutableAnnotation(method))
@@ -123,7 +123,7 @@ public abstract class LazyJavaMemberScope(
         }
 
         val returnJavaType = method.getReturnType() ?: throw IllegalStateException("Constructor passed as method: $method")
-        val returnType = innerC.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs)
+        val returnType = c.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs)
 
         val signatureErrors: MutableList<String>
         val superFunctions: List<FunctionDescriptor>
