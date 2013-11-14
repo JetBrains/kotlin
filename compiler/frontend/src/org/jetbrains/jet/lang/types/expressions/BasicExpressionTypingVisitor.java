@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
@@ -281,10 +280,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitSuperExpression(@NotNull JetSuperExpression expression, ExpressionTypingContext context) {
         LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, true);
 
-        if (context.expressionPosition == ExpressionPosition.FREE) {
+        if (!JetPsiUtil.isLHSOfDot(expression)) {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(expression, expression.getText()));
             return errorInSuper(expression, context);
         }
+
         switch (resolutionResult.getCode()) {
             case LABEL_RESOLUTION_ERROR:
                 // The error is already reported
@@ -1124,7 +1124,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression, ExpressionTypingContext context) {
-        if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT) {
+        if (JetPsiUtil.isLHSOfDot(expression)) {
             return DataFlowUtils.checkType(JetModuleUtil.getRootNamespaceType(expression), expression, context, context.dataFlowInfo);
         }
         context.trace.report(NAMESPACE_IS_NOT_AN_EXPRESSION.on(expression));

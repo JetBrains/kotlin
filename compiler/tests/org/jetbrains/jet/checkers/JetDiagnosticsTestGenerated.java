@@ -1374,6 +1374,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/classObjects/invisibleClassObjects.kt");
             }
             
+            @TestMetadata("kt3866.kt")
+            public void testKt3866() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/classObjects/kt3866.kt");
+            }
+            
             @TestMetadata("nestedClassInPrivateClassObject.kt")
             public void testNestedClassInPrivateClassObject() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/classObjects/nestedClassInPrivateClassObject.kt");

@@ -53,6 +53,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.psi.JetPsiUtil.isLHSOfDot;
 
 public class CallExpressionResolver {
     @NotNull
@@ -71,7 +72,7 @@ public class CallExpressionResolver {
             JetType classObjectType = classifier.getClassObjectType();
             if (classObjectType != null) {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
-                JetType result = getExtendedClassObjectType(classObjectType, referencedName, classifier, context);
+                JetType result = getExtendedClassObjectType(expression, classObjectType, classifier, context);
                 checkClassObjectVisibility(classifier, expression, context);
                 return DataFlowUtils.checkType(result, expression, context);
             }
@@ -86,14 +87,14 @@ public class CallExpressionResolver {
         // To report NO_CLASS_OBJECT when no namespace found
         if (classifier != null) {
             if (classifier instanceof TypeParameterDescriptor) {
-                if (context.expressionPosition == ExpressionPosition.FREE) {
-                    context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(expression, (TypeParameterDescriptor) classifier));
-                }
-                else {
+                if (isLHSOfDot(expression)) {
                     context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(expression, (TypeParameterDescriptor) classifier));
                 }
+                else {
+                    context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(expression, (TypeParameterDescriptor) classifier));
+                }
             }
-            else if (context.expressionPosition == ExpressionPosition.FREE) {
+            else if (!isLHSOfDot(expression)) {
                 context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
             }
             context.trace.record(REFERENCE_TARGET, expression, classifier);
@@ -134,17 +135,18 @@ public class CallExpressionResolver {
 
     @NotNull
     private static JetType getExtendedClassObjectType(
+            @NotNull JetSimpleNameExpression expression,
             @NotNull JetType classObjectType,
-            @NotNull Name referencedName,
             @NotNull ClassifierDescriptor classifier,
             @NotNull ResolutionContext context
     ) {
-        if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT && classifier instanceof ClassDescriptor) {
+        if (isLHSOfDot(expression) && classifier instanceof ClassDescriptor) {
             List<JetScope> scopes = new ArrayList<JetScope>(3);
 
             scopes.add(classObjectType.getMemberScope());
             scopes.add(getStaticNestedClassesScope((ClassDescriptor) classifier));
 
+            Name referencedName = expression.getReferencedNameAsName();
             NamespaceDescriptor namespace = context.scope.getNamespace(referencedName);
             if (namespace != null) {
                 //for enums loaded from java binaries
@@ -166,7 +168,7 @@ public class CallExpressionResolver {
         if (namespaceType == null) {
             return false;
         }
-        if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT) {
+        if (isLHSOfDot(expression)) {
             result[0] = namespaceType;
             return true;
         }
@@ -266,7 +268,7 @@ public class CallExpressionResolver {
         JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
         if (result[0]) {
             temporaryForVariable.commit();
-            if (type instanceof NamespaceType && context.expressionPosition == ExpressionPosition.FREE) {
+            if (type instanceof NamespaceType && !isLHSOfDot(nameExpression)) {
                 type = null;
             }
             return JetTypeInfo.create(type, context.dataFlowInfo);

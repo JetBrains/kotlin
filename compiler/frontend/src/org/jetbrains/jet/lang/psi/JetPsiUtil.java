@@ -431,6 +431,13 @@ public class JetPsiUtil {
         return selectorParent instanceof JetQualifiedExpression && (((JetQualifiedExpression) selectorParent).getSelectorExpression() == selector);
     }
 
+    public static boolean isLHSOfDot(@NotNull JetExpression expression) {
+        PsiElement parent = expression.getParent();
+        if (!(parent instanceof JetQualifiedExpression)) return false;
+        JetQualifiedExpression qualifiedParent = (JetQualifiedExpression) parent;
+        return qualifiedParent.getReceiverExpression() == expression || isLHSOfDot(qualifiedParent);
+    }
+
     public static boolean isVoidType(@Nullable JetTypeReference typeReference) {
         if (typeReference == null) {
             return false;
