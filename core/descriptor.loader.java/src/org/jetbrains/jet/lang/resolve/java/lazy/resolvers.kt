@@ -40,26 +40,14 @@ trait TypeParameterResolver {
     fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor?
 }
 
-class TypeParameterResolverImpl(
-        _typeParameters: Collection<LazyJavaTypeParameterDescriptor>,
-        private val parent: TypeParameterResolver = TypeParameterResolver.EMPTY
-) : TypeParameterResolver {
-
-    private val parameters = _typeParameters.valuesToMap { p -> p.javaTypeParameter }
-
-    override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? {
-        return parameters[javaTypeParameter] ?: parent.resolveTypeParameter(javaTypeParameter)
-    }
-}
-
 class LazyJavaTypeParameterResolver(
         val c: LazyJavaResolverContextWithTypes,
         private val containingDeclaration: DeclarationDescriptor,
         private val typeParameters: Set<JavaTypeParameter>
 ) : TypeParameterResolver {
 
-    private val resolve: (JavaTypeParameter) -> TypeParameterDescriptor? = c.storageManager.createMemoizedFunctionWithNullableValues {
-                javaTypeParameter ->
+    private val resolve = c.storageManager.createMemoizedFunctionWithNullableValues {
+                (javaTypeParameter: JavaTypeParameter) ->
                 if (javaTypeParameter in typeParameters)
                     LazyJavaTypeParameterDescriptor(
                             c.withTypes(this),

@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptorForObject
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.jet.utils.Printer
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,

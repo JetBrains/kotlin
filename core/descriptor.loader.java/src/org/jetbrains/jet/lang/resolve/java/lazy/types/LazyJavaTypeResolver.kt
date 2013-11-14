@@ -145,7 +145,7 @@ class LazyJavaTypeResolver(
         private fun getConstructorTypeParameterSubstitute(): JetType {
             // If a Java-constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
             // so we replace thwm by intersections of their upper bounds
-            var supertypesJet = HashSet<JetType>()
+            val supertypesJet = HashSet<JetType>()
             for (supertype in (classifier() as JavaTypeParameter).getUpperBounds()) {
                 supertypesJet.add(transformJavaType(supertype, UPPER_BOUND.toAttributes()))
             }
