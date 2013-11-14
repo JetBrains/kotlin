@@ -335,14 +335,11 @@ public abstract class LazyJavaMemberScope(
             result.addAll(getProperties(name))
         }
 
-        addExtraDescriptors(result)
-
         return result
     }
 
     protected abstract fun getAllPackageNames(): Collection<Name>
     protected abstract fun getAllClassNames(): Collection<Name>
-    protected abstract fun addExtraDescriptors(result: MutableCollection<in DeclarationDescriptor>)
 
     override fun toString() = "Lazy scope for ${getContainingDeclaration()}"
     

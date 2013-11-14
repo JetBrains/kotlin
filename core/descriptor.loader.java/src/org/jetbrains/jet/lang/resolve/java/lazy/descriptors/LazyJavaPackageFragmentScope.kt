@@ -47,10 +47,6 @@ public abstract class LazyJavaPackageFragmentScope(
         }
     }
 
-    override fun addExtraDescriptors(result: MutableCollection<in DeclarationDescriptor>) {
-        // no extra descriptors
-    }
-
     override fun getClassifier(name: Name): ClassifierDescriptor? = classes(name)
 
     override fun getNamespace(name: Name): NamespaceDescriptor? = c.javaDescriptorResolver.resolveNamespace(getContainingDeclaration().getFqName().child(name), DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES)

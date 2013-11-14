@@ -166,10 +166,6 @@ public class LazyJavaClassMemberScope(
     override fun getClassifier(name: Name): ClassifierDescriptor? = if (enumClassObject) null else nestedClasses(name)
     override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet()
 
-    override fun addExtraDescriptors(result: MutableCollection<in DeclarationDescriptor>) {
-        // TODO
-    }
-
     // TODO
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
 
