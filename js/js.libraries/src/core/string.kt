@@ -35,11 +35,13 @@ native public fun String.match(regex : String) : Array<String> = js.noImpl
 
 native public fun String.trim() : String = js.noImpl
 
-public val String.size: Int
-    get() = js.noImpl
+library
+public val String.size: Int = js.noImpl
 
+library
 public fun String.length(): Int = js.noImpl
 
+library
 public fun String.isEmpty(): Boolean = js.noImpl
 
 /*

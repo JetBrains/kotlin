@@ -11,5 +11,5 @@ import org.w3c.dom.views.*
 */
 
 public trait EventListener {
-    public fun handleEvent(arg1: Event?): Unit = js.noImpl
+    public fun handleEvent(arg1: Event?): Unit
 }
