@@ -81,6 +81,7 @@
         <include name="frontend.java/**"/>
         <include name="serialization.java/**"/>
         <include name="backend/**"/>
+        <include name="backend-common/**"/>
         <include name="cli/**"/>
         <include name="cli-common/**"/>
         <include name="util/**"/>
