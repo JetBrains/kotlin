@@ -34,8 +34,7 @@ import org.jetbrains.jet.formatter.AbstractJetFormatterTest;
 @InnerTestClasses({JetFormatterTestGenerated.ModifierList.class})
 public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     public void testAllFilesPresentInFormatter() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests",
-                                                     new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
     @TestMetadata("BlockFor.kt")
