@@ -68,7 +68,6 @@ class CompletionSession {
 
         inDescriptor = scope != null ? scope.getContainingDeclaration() : null;
 
-        //noinspection StaticMethodReferencedViaSubclass
         this.jetResult = new JetCompletionResultSet(
                 WeigherPackage.addJetSorting(result, parameters),
                 resolveSession,
@@ -133,7 +132,6 @@ class CompletionSession {
     public void completeSmart() {
         assert parameters.getCompletionType() == CompletionType.SMART;
 
-        //noinspection StaticMethodReferencedViaSubclass
         final SmartCompletionData data = CompletionPackage.buildSmartCompletionData(jetReference.getExpression(), getResolveSession());
         if (data != null) {
             addReferenceVariants(new Condition<DeclarationDescriptor>() {

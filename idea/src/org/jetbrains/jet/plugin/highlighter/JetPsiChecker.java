@@ -102,10 +102,8 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
         if (analyzeExhaust.isError()) {
-            //noinspection StaticMethodReferencedViaSubclass
             HighlighterPackage.updateHighlightingResult(file, true);
 
-            // Force stop highlighting annotate cycle
             throw new ProcessCanceledException(analyzeExhaust.getError());
         }
 
