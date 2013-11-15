@@ -111,15 +111,6 @@ public class JetScopeSelectorUtil {
                 }
             };
 
-    public static final ScopeDescriptorSelector<ClassDescriptor> OBJECTS_SCOPE_SELECTOR =
-            new ScopeDescriptorSelector<ClassDescriptor>() {
-                @NotNull
-                @Override
-                public Collection<ClassDescriptor> get(@NotNull JetScope scope) {
-                    return scope.getObjectDescriptors();
-                }
-            };
-
     public static final ScopeDescriptorSelector<DeclarationDescriptor> ALL_DESCRIPTORS_SCOPE_SELECTOR =
             new ScopeDescriptorSelector<DeclarationDescriptor>() {
                 @NotNull

@@ -126,11 +126,6 @@ public class DescriptorSerializer {
             }
         }
 
-        for (ClassDescriptor descriptor : sort(classDescriptor.getUnsubstitutedInnerClassesScope().getObjectDescriptors())) {
-            int nameIndex = nameTable.getSimpleNameIndex(descriptor.getName());
-            builder.addNestedObjectName(nameIndex);
-        }
-
         ClassDescriptor classObject = classDescriptor.getClassObjectDescriptor();
         if (classObject != null) {
             builder.setClassObject(classObjectProto(classObject));

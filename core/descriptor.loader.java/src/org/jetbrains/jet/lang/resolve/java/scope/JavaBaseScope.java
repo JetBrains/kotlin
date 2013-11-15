@@ -128,12 +128,6 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     }
 
     @NotNull
-    @Override
-    public Set<ClassDescriptor> getObjectDescriptors() {
-        return Collections.emptySet();
-    }
-
-    @NotNull
     protected abstract Collection<ClassDescriptor> computeInnerClasses();
 
     @NotNull

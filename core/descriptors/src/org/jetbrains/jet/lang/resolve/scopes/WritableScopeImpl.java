@@ -395,19 +395,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return super.getObjectDescriptor(name);
     }
 
-    @NotNull
-    @Override
-    public Set<ClassDescriptor> getObjectDescriptors() {
-        if (allObjectDescriptors == null) {
-            allObjectDescriptors = Sets.newHashSet(getObjectDescriptorsMap().values());
-            allObjectDescriptors.addAll(getWorkerScope().getObjectDescriptors());
-            for (JetScope imported : getImports()) {
-                allObjectDescriptors.addAll(imported.getObjectDescriptors());
-            }
-        }
-        return allObjectDescriptors;
-    }
-
     @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         checkMayWrite();

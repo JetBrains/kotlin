@@ -130,9 +130,6 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 classes.add((ClassDescriptor) descriptor);
             }
         }
-        for (ClassDescriptor descriptor : scope.getObjectDescriptors()) {
-            classes.add(descriptor);
-        }
         return classes;
     }
 

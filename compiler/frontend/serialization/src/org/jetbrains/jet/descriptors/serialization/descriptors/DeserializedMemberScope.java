@@ -179,12 +179,6 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     protected abstract Collection<ClassDescriptor> computeAllObjectDescriptors();
 
-    @NotNull
-    @Override
-    public Collection<ClassDescriptor> getObjectDescriptors() {
-        return objectDescriptors.invoke();
-    }
-
     @Nullable
     @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {

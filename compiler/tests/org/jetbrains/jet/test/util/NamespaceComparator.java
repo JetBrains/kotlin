@@ -153,7 +153,6 @@ public class NamespaceComparator {
         List<DeclarationDescriptor> subDescriptors = Lists.newArrayList();
 
         subDescriptors.addAll(memberScope.getAllDescriptors());
-        subDescriptors.addAll(memberScope.getObjectDescriptors());
         subDescriptors.addAll(extraSubDescriptors);
 
         Collections.sort(subDescriptors, MemberComparator.INSTANCE);

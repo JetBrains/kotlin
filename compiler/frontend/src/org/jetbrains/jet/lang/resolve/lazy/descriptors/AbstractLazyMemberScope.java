@@ -183,12 +183,6 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     protected abstract void getNonDeclaredProperties(@NotNull Name name, @NotNull Set<VariableDescriptor> result);
 
-    @NotNull
-    @Override
-    public Collection<ClassDescriptor> getObjectDescriptors() {
-        return Collections.emptySet();
-    }
-
     @Override
     public VariableDescriptor getLocalVariable(@NotNull Name name) {
         return null;

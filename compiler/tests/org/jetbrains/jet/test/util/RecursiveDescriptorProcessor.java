@@ -100,7 +100,6 @@ public class RecursiveDescriptorProcessor {
                    && visitChildren(descriptor.getConstructors(), data)
                    && visitChildren(descriptor.getTypeConstructor().getParameters(), data)
                    && visitChildren(descriptor.getClassObjectDescriptor(), data)
-                   && visitChildren(descriptor.getDefaultType().getMemberScope().getObjectDescriptors(), data)
                    && visitChildren(descriptor.getDefaultType().getMemberScope().getAllDescriptors(), data);
         }
 

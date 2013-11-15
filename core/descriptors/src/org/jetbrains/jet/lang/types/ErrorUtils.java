@@ -95,12 +95,6 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<ClassDescriptor> getObjectDescriptors() {
-            return Collections.emptySet();
-        }
-
-        @NotNull
-        @Override
         public Set<VariableDescriptor> getProperties(@NotNull Name name) {
             return ERROR_PROPERTY_GROUP;
         }
@@ -178,12 +172,6 @@ public class ErrorUtils {
         @Nullable
         @Override
         public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
-        public Collection<ClassDescriptor> getObjectDescriptors() {
             throw new IllegalStateException();
         }
 
