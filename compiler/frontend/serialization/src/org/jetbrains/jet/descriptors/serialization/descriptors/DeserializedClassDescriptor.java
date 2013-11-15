@@ -432,18 +432,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         protected void addAllClassDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
             result.addAll(classDescriptor.nestedClasses.getAllDescriptors());
         }
-
-        @Nullable
-        @Override
-        public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-            return null;
-        }
-
-        @NotNull
-        @Override
-        protected Collection<ClassDescriptor> computeAllObjectDescriptors() {
-            return Collections.emptySet();
-        }
     }
 
     private class NestedClassDescriptors {

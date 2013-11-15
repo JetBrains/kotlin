@@ -127,19 +127,6 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        checkMayRead();
-
-        ClassDescriptor objectDescriptor = writableWorker.getObjectDescriptor(name);
-        if (objectDescriptor != null) return objectDescriptor;
-
-        objectDescriptor = getWorkerScope().getObjectDescriptor(name);
-        if (objectDescriptor != null) return objectDescriptor;
-
-        return super.getObjectDescriptor(name); // Imports
-    }
-
-    @Override
     public void addLabeledDeclaration(@NotNull DeclarationDescriptor descriptor) {
         checkMayWrite();
 
@@ -259,13 +246,6 @@ public class WriteThroughScope extends WritableScopeWithImports {
             }
         }
         return allDescriptors;
-    }
-
-    @NotNull
-    public JetScope getOuterScope() {
-        checkMayRead();
-
-        return getWorkerScope();
     }
 
     @TestOnly

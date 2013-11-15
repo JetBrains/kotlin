@@ -53,11 +53,6 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return null;
-    }
-
-    @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         if (innerClassesMap == null) {
             Collection<ClassDescriptor> innerClasses = getInnerClasses();

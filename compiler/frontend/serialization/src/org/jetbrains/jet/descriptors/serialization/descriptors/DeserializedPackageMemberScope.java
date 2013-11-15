@@ -19,7 +19,10 @@ package org.jetbrains.jet.descriptors.serialization.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -27,7 +30,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class DeserializedPackageMemberScope extends DeserializedMemberScope {
     private final DescriptorFinder descriptorFinder;
@@ -62,36 +64,19 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
 
     @Nullable
     @Override
-    protected ClassifierDescriptor getClassDescriptor(@NotNull Name name) {
-        return findClassDescriptor(name);
-    }
-
-    @Nullable
-    @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return null;
-    }
-
-    @Nullable
-    private ClassDescriptor findClassDescriptor(Name name) {
+    protected ClassDescriptor getClassDescriptor(@NotNull Name name) {
         return descriptorFinder.findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
     }
 
     @Override
     protected void addAllClassDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
         for (Name className : descriptorFinder.getClassNames(packageFqName)) {
-            ClassDescriptor classDescriptor = findClassDescriptor(className);
+            ClassDescriptor classDescriptor = getClassDescriptor(className);
 
             if (classDescriptor != null) {
                 result.add(classDescriptor);
             }
         }
-    }
-
-    @NotNull
-    @Override
-    protected Collection<ClassDescriptor> computeAllObjectDescriptors() {
-        return Collections.emptySet();
     }
 
     @Override

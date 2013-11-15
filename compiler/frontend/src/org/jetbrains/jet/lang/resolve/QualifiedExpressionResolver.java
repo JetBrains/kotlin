@@ -268,13 +268,7 @@ public class QualifiedExpressionResolver {
             descriptors.add(classifierDescriptor);
         }
 
-        if (lookupMode == LookupMode.ONLY_CLASSES) {
-            ClassDescriptor objectDescriptor = outerScope.getObjectDescriptor(referencedName);
-            if (objectDescriptor != null) {
-                descriptors.add(objectDescriptor);
-            }
-        }
-        else {
+        if (lookupMode == LookupMode.EVERYTHING) {
             descriptors.addAll(outerScope.getFunctions(referencedName));
             descriptors.addAll(outerScope.getProperties(referencedName));
 

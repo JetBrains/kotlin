@@ -33,11 +33,6 @@ public abstract class JetScopeImpl implements JetScope {
         return null;
     }
 
-    @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return null;
-    }
-
     @NotNull
     @Override
     public Collection<VariableDescriptor> getProperties(@NotNull Name name) {

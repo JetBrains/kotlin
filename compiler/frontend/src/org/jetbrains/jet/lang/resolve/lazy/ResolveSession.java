@@ -181,11 +181,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         DeclarationDescriptor declaration = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (declaration == null) {
-            // Why not use the result here. See the comment
-            resolutionScope.getObjectDescriptor(name);
-            declaration = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
-        }
-        if (declaration == null) {
             throw new IllegalArgumentException("Could not find a classifier for " + classOrObject + " " + classOrObject.getText());
         }
         return (ClassDescriptor) declaration;
