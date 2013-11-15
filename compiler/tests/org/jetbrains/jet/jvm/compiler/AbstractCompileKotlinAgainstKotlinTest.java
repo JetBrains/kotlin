@@ -23,10 +23,10 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -91,9 +91,9 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
 
         JetFile psiFile = JetTestUtils.createFile(file.getName(), text, jetCoreEnvironment.getProject());
 
-        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
+        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, outputDir);
+        OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
 
         Disposer.dispose(disposable);
     }

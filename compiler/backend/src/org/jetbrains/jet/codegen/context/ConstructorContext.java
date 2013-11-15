@@ -17,9 +17,10 @@
 package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -30,17 +31,19 @@ public class ConstructorContext extends MethodContext {
     public ConstructorContext(
             @NotNull ConstructorDescriptor contextDescriptor,
             @NotNull OwnerKind kind,
-            @NotNull CodegenContext parent
+            @NotNull CodegenContext parent,
+            @Nullable MutableClosure closure
     ) {
-        super(contextDescriptor, kind, parent);
-
-        ClassDescriptor type = getEnclosingClass();
-        outerExpression = type != null ? local1 : null;
+        super(contextDescriptor, kind, parent, closure);
     }
 
     @Override
     public StackValue getOuterExpression(StackValue prefix, boolean ignoreNoOuter) {
-        return outerExpression;
+        StackValue stackValue = closure != null && closure.getCaptureThis() != null ? local1 : null;
+        if (!ignoreNoOuter && stackValue == null) {
+            throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor().getContainingDeclaration());
+        }
+        return stackValue;
     }
 
     @Override

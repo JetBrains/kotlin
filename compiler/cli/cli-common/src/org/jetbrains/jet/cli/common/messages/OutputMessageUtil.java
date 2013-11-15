@@ -28,6 +28,7 @@ public class OutputMessageUtil {
     private static final String SOURCE_FILES_PREFIX = "Sources:";
     private static final String OUTPUT_FILES_PREFIX = "Output:";
 
+    @NotNull
     public static String formatOutputMessage(Collection<File> sourceFiles, File outputFile) {
         return OUTPUT_FILES_PREFIX + "\n" + outputFile.getPath() + "\n" +
                SOURCE_FILES_PREFIX + "\n" + StringUtil.join(sourceFiles, "\n");

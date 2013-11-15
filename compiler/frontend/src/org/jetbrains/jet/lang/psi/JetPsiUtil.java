@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
@@ -47,9 +48,6 @@ import java.util.List;
 import java.util.Set;
 
 public class JetPsiUtil {
-
-    public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
-
     private JetPsiUtil() {
     }
 
@@ -131,7 +129,7 @@ public class JetPsiUtil {
 
     @NotNull
     public static Name safeName(@Nullable String name) {
-        return name == null ? NO_NAME_PROVIDED : Name.identifier(name);
+        return name == null ? SpecialNames.NO_NAME_PROVIDED : Name.identifier(name);
     }
 
     @NotNull

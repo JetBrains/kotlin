@@ -57,6 +57,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         doTest("idea/testData/formatter/ConsecutiveCalls.kt");
     }
     
+    @TestMetadata("DoWhileSpacing.kt")
+    public void testDoWhileSpacing() throws Exception {
+        doTest("idea/testData/formatter/DoWhileSpacing.kt");
+    }
+    
     @TestMetadata("EmptyLineAfterPackage.kt")
     public void testEmptyLineAfterPackage() throws Exception {
         doTest("idea/testData/formatter/EmptyLineAfterPackage.kt");
@@ -210,6 +215,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     @TestMetadata("WhenLinesBeforeLbrace.kt")
     public void testWhenLinesBeforeLbrace() throws Exception {
         doTest("idea/testData/formatter/WhenLinesBeforeLbrace.kt");
+    }
+    
+    @TestMetadata("WhileSpacing.kt")
+    public void testWhileSpacing() throws Exception {
+        doTest("idea/testData/formatter/WhileSpacing.kt");
     }
     
     @TestMetadata("idea/testData/formatter/modifierList")

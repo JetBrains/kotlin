@@ -347,8 +347,9 @@ public class JetTypeMapper extends BindingTraceAware {
             }
         }
 
-        return String.format("Error types are not allowed when classBuilderMode = %s. For declaration %s:%s in %s:%s",
+        return String.format("Error types are not allowed when classBuilderMode = %s. Descriptor: %s. For declaration %s:%s in %s:%s",
                       classBuilderMode,
+                      descriptor,
                       declarationElement,
                       declarationElement != null ? declarationElement.getText() : "null",
                       parentDeclarationElement,
@@ -812,10 +813,10 @@ public class JetTypeMapper extends BindingTraceAware {
             signatureWriter.writeParameterTypeEnd();
         }
 
-        ClassifierDescriptor captureReceiver = closure != null ? closure.getCaptureReceiver() : null;
-        if (captureReceiver != null) {
+        JetType captureReceiverType = closure != null ? closure.getCaptureReceiverType() : null;
+        if (captureReceiverType != null) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(captureReceiver.getDefaultType(), signatureWriter, JetTypeMapperMode.VALUE);
+            mapType(captureReceiverType, signatureWriter, JetTypeMapperMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 

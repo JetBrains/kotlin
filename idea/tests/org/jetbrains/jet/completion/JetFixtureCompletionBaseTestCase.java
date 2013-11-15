@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightFixtureTestCase {
@@ -29,18 +30,34 @@ public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightF
     protected void setUp() throws Exception {
         super.setUp();
 
-        autocompleteSetting = CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION;
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false;
+        autocompleteSetting = setAutocompleteSetting(false);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = autocompleteSetting;
+        setAutocompleteSetting(autocompleteSetting);
 
         super.tearDown();
     }
 
+    private boolean setAutocompleteSetting(boolean value){
+        CodeInsightSettings settings = CodeInsightSettings.getInstance();
+        boolean oldValue;
+        if (completionType() == CompletionType.SMART){
+            oldValue = settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION;
+            settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = value;
+        }
+        else{
+            oldValue = settings.AUTOCOMPLETE_COMMON_PREFIX;
+            settings.AUTOCOMPLETE_ON_CODE_COMPLETION = value;
+        }
+        return oldValue;
+    }
+
     public abstract TargetPlatform getPlatform();
+
+    @NotNull
+    protected abstract CompletionType completionType();
 
     public void doTest(String testPath) {
         myFixture.configureByFile(testPath);
@@ -49,7 +66,7 @@ public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightF
 
         Integer invocationCount = ExpectedCompletionUtils.getInvocationCount(fileText);
 
-        myFixture.complete(CompletionType.BASIC, invocationCount == null ? 0 : invocationCount);
+        myFixture.complete(completionType(), invocationCount == null ? 0 : invocationCount);
 
         ExpectedCompletionUtils.assertDirectivesValid(fileText);
 

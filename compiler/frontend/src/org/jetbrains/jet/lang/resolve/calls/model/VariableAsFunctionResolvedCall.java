@@ -137,4 +137,15 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     public DataFlowInfoForArguments getDataFlowInfoForArguments() {
         return functionCall.getDataFlowInfoForArguments();
     }
+
+    @Override
+    public void markCallAsCompleted() {
+        functionCall.markCallAsCompleted();
+        variableCall.markCallAsCompleted();
+    }
+
+    @Override
+    public boolean isCompleted() {
+        return functionCall.isCompleted() && variableCall.isCompleted();
+    }
 }

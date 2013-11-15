@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsFunction;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
 import com.intellij.util.SmartList;
+import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -42,6 +43,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 
 public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
+    @KotlinSignature("val result: MutableList<JsPropertyInitializer>")
     protected final List<JsPropertyInitializer> result;
     protected final List<JsPropertyInitializer> staticResult;
     protected final List<JsPropertyInitializer> enumEntryList = new SmartList<JsPropertyInitializer>();
@@ -65,7 +67,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitClass(@NotNull JetClass expression, @NotNull TranslationContext context) {
+    public Void visitClass(@NotNull JetClass expression, TranslationContext context) {
         return null;
     }
 
@@ -85,9 +87,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitClassObject(
-            @NotNull JetClassObject classObject, TranslationContext context
-    ) {
+    public Void visitClassObject(@NotNull JetClassObject classObject, TranslationContext context) {
         JetObjectDeclaration declaration = classObject.getObjectDeclaration();
         assert declaration != null : "Declaration for class object must be not null";
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
@@ -99,13 +99,13 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, @NotNull TranslationContext context) {
+    public Void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, TranslationContext context) {
         // parsed it in initializer visitor => no additional actions are needed
         return null;
     }
 
     @Override
-    public Void visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
+    public Void visitNamedFunction(@NotNull JetNamedFunction expression, TranslationContext context) {
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         if (descriptor.getModality() == Modality.ABSTRACT) {
             return null;
@@ -117,14 +117,14 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
+    public Void visitProperty(@NotNull JetProperty expression, TranslationContext context) {
         PropertyDescriptor propertyDescriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), expression);
         PropertyTranslator.translateAccessors(propertyDescriptor, expression, result, context);
         return null;
     }
 
     @Override
-    public Void visitAnonymousInitializer(@NotNull JetClassInitializer expression, @NotNull TranslationContext context) {
+    public Void visitAnonymousInitializer(@NotNull JetClassInitializer expression, TranslationContext context) {
         // parsed it in initializer visitor => no additional actions are needed
         return null;
     }

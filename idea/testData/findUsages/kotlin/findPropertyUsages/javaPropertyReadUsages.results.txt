@@ -1,0 +1,2 @@
+Unclassified usage (13: 32) println("b.foo = " + b.getFoo());
+Unclassified usage (9: 32) println("a.foo = " + a.getFoo());

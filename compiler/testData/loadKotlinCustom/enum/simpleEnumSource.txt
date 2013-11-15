@@ -8,8 +8,8 @@ internal final enum class MyEnum : jet.Enum<test.MyEnum> {
     internal class object <class-object-for-MyEnum> {
         /*primary*/ private constructor <class-object-for-MyEnum>()
         public final val ENTRY: test.MyEnum
-        public final fun valueOf(/*0*/ value: jet.String): test.MyEnum
-        public final fun values(): jet.Array<test.MyEnum>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.MyEnum
+        public final /*synthesized*/ fun values(): jet.Array<test.MyEnum>
         
         private enum entry ENTRY : test.MyEnum {
             /*primary*/ private constructor ENTRY()

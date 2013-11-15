@@ -17,18 +17,27 @@
 package org.jetbrains.jet.checkers;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJetDiagnosticsTest {
 
@@ -52,5 +61,28 @@ public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJe
         JetTestUtils.assertEqualsToFile(testDataFile, actualText.toString());
 
         assertTrue("Diagnostics mismatch. See the output above", ok);
+
+        checkAllResolvedCallsAreCompleted(jetFiles, bindingContext);
+    }
+
+    private static void checkAllResolvedCallsAreCompleted(@NotNull List<JetFile> jetFiles, @NotNull BindingContext bindingContext) {
+        for (JetFile file : jetFiles) {
+            if (!AnalyzingUtils.getSyntaxErrorRanges(file).isEmpty()) {
+                return;
+            }
+        }
+
+        ImmutableMap<JetElement,ResolvedCall<? extends CallableDescriptor>> resolvedCallsEntries =
+                bindingContext.getSliceContents(BindingContext.RESOLVED_CALL);
+        for (Map.Entry<JetElement, ResolvedCall<? extends CallableDescriptor>> entry : resolvedCallsEntries.entrySet()) {
+            JetElement element = entry.getKey();
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = entry.getValue();
+
+            DiagnosticUtils.LineAndColumn lineAndColumn =
+                    DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange());
+
+            assertTrue("Resolved call for '" + element.getText() + "'" + lineAndColumn + " in not completed",
+                       ((ResolvedCallWithTrace<? extends CallableDescriptor>)resolvedCall).isCompleted());
+        }
     }
 }

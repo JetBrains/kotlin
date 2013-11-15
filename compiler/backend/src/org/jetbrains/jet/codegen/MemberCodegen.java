@@ -26,6 +26,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
 
@@ -77,7 +78,7 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
     public void genClassOrObject(CodegenContext parentContext, JetClassOrObject aClass) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
 
-        if (descriptor == null || ErrorUtils.isError(descriptor) || descriptor.getName().equals(JetPsiUtil.NO_NAME_PROVIDED)) {
+        if (descriptor == null || ErrorUtils.isError(descriptor) || descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED)) {
             if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
                 throw new IllegalStateException(
                         "Generating bad descriptor in ClassBuilderMode = " + state.getClassBuilderMode() + ": " + descriptor);

@@ -104,11 +104,10 @@ public class CallResolverUtil {
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
     }
 
-    private static boolean hasReturnTypeDependentOnNotInferredParams(@NotNull ResolvedCallImpl<?> callToComplete) {
-        ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
-        if (constraintSystem == null) return false;
-
-        CallableDescriptor candidateDescriptor = callToComplete.getCandidateDescriptor();
+    private static boolean hasReturnTypeDependentOnNotInferredParams(
+            @NotNull CallableDescriptor candidateDescriptor,
+            @NotNull ConstraintSystem constraintSystem
+    ) {
         JetType returnType = candidateDescriptor.getReturnType();
         if (returnType == null) return false;
 
@@ -123,13 +122,14 @@ public class CallResolverUtil {
         return false;
     }
 
-    public static boolean hasInferredReturnType(ResolvedCallWithTrace<?> call) {
-        ResolvedCallImpl<?> callToComplete = call.getCallToCompleteTypeArgumentInference();
-        if (hasReturnTypeDependentOnNotInferredParams(callToComplete)) return false;
+    public static boolean hasInferredReturnType(
+            @NotNull CallableDescriptor candidateDescriptor,
+            @NotNull ConstraintSystem constraintSystem
+    ) {
+        if (hasReturnTypeDependentOnNotInferredParams(candidateDescriptor, constraintSystem)) return false;
 
         // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
-        ConstraintSystem constraintSystem = callToComplete.getConstraintSystem();
-        if (constraintSystem != null && constraintSystem.getStatus().hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION)) return false;
+        if (constraintSystem.getStatus().hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION)) return false;
         return true;
     }
 

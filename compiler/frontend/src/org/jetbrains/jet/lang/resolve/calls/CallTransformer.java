@@ -191,7 +191,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
             final ResolvedCallWithTrace<VariableDescriptor> variableResolvedCall = (ResolvedCallWithTrace)context.candidateCall;
 
-            Call functionCall = new CallForImplicitInvoke(context, task, returnType);
+            Call functionCall = new CallForImplicitInvoke(context.receiverForVariableAsFunctionSecondCall, task, returnType);
 
             DelegatingBindingTrace variableCallTrace = context.candidateCall.getTrace();
             BasicCallResolutionContext basicCallResolutionContext = BasicCallResolutionContext.create(
@@ -212,22 +212,22 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
     public static class CallForImplicitInvoke extends DelegatingCall {
         final Call outerCall;
-        final CallCandidateResolutionContext<CallableDescriptor> context;
+        final ReceiverValue receiverForVariableAsFunctionSecondCall;
         final ExpressionReceiver receiverFromVariable;
         final JetSimpleNameExpression invokeExpression;
 
-        private CallForImplicitInvoke(CallCandidateResolutionContext<CallableDescriptor> context,
+        private CallForImplicitInvoke(ReceiverValue receiverForVariableAsFunctionSecondCall,
                         ResolutionTask<CallableDescriptor, FunctionDescriptor> task, JetType returnType) {
             super(task.call);
             this.outerCall = task.call;
-            this.context = context;
+            this.receiverForVariableAsFunctionSecondCall = receiverForVariableAsFunctionSecondCall;
             this.receiverFromVariable = new ExpressionReceiver(task.reference, returnType);
             this.invokeExpression = (JetSimpleNameExpression) JetPsiFactory.createExpression(task.call.getCallElement().getProject(), "invoke");
         }
         @NotNull
         @Override
         public ReceiverValue getExplicitReceiver() {
-            return context.receiverForVariableAsFunctionSecondCall;
+            return receiverForVariableAsFunctionSecondCall;
         }
 
         @NotNull

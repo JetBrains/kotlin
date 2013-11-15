@@ -22,7 +22,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeType;
 
-abstract class JetExpressionImpl extends JetElementImpl implements JetExpression {
+public abstract class JetExpressionImpl extends JetElementImpl implements JetExpression {
     public JetExpressionImpl(@NotNull ASTNode node) {
         super(node);
     }

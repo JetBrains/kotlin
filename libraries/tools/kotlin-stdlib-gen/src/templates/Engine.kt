@@ -15,7 +15,7 @@ enum class Family {
     PrimitiveArrays
 }
 
-class GenericFunction(val signature : String, val erasedSignature: String) {
+class GenericFunction(val signature : String): Comparable<GenericFunction> {
     var doc : String = ""
     var toNullableT : Boolean = false
     val isInline : Boolean = true;
@@ -141,6 +141,8 @@ class GenericFunction(val signature : String, val erasedSignature: String) {
 
         return builder.toString().trimTrailingSpaces() + "\n}\n\n"
     }
+
+    public override fun compareTo(other : GenericFunction) : Int = this.signature.compareTo(other.signature)
 }
 
 fun String.trimTrailingSpaces() : String {
@@ -149,16 +151,14 @@ fun String.trimTrailingSpaces() : String {
     return answer
 }
 
-val templates = ArrayList<GenericFunction>()
-
-fun f(signature : String, erasedSignature: String = signature, init : GenericFunction.() -> Unit) {
-    val gf = GenericFunction(signature, erasedSignature)
+fun f(signature : String, init : GenericFunction.() -> Unit): GenericFunction {
+    val gf = GenericFunction(signature)
     gf.init()
-    templates.add(gf)
+    return gf
 }
 
 fun main(args : Array<String>) {
-    collections()
+    val templates = collections()
     for (t in templates) {
         print(t.buildFor(PrimitiveArrays, "Byte"))
     }

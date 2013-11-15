@@ -195,7 +195,10 @@ public class BindingContextUtils {
     }
 
     @NotNull
-    private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
+    public static List<PsiElement> callableDescriptorToDeclarations(
+            @NotNull BindingContext context,
+            @NotNull CallableMemberDescriptor callable
+    ) {
         if (callable.getKind() == SYNTHESIZED) {
             CallableMemberDescriptor original = callable.getOriginal();
             if (original instanceof SynthesizedCallableMemberDescriptor<?>) {
@@ -355,6 +358,37 @@ public class BindingContextUtils {
                 throw new AssertionError("Unexpected callable kind " + kind);
             }
         }
-        return OverridingUtil.filterOverrides(result);
+        return OverridingUtil.filterOutOverridden(result);
+    }
+
+    @NotNull
+    public static Set<FunctionDescriptor> getDirectlyOverriddenDeclarations(@NotNull FunctionDescriptor descriptor) {
+        //noinspection unchecked
+        return (Set) getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+    }
+
+    @NotNull
+    public static Set<PropertyDescriptor> getDirectlyOverriddenDeclarations(@NotNull PropertyDescriptor descriptor) {
+        //noinspection unchecked
+        return (Set) getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+    }
+
+    @NotNull
+    public static Set<FunctionDescriptor> getAllOverriddenDeclarations(@NotNull FunctionDescriptor functionDescriptor) {
+        Set<FunctionDescriptor> result = Sets.newHashSet();
+        for (FunctionDescriptor overriddenDeclaration : functionDescriptor.getOverriddenDescriptors()) {
+            CallableMemberDescriptor.Kind kind = overriddenDeclaration.getKind();
+            if (kind == DECLARATION) {
+                result.add(overriddenDeclaration);
+            }
+            else if (kind == DELEGATION || kind == FAKE_OVERRIDE || kind == SYNTHESIZED) {
+                //do nothing
+            }
+            else {
+                throw new AssertionError("Unexpected callable kind " + kind);
+            }
+            result.addAll(getAllOverriddenDeclarations(overriddenDeclaration));
+        }
+        return result;
     }
 }

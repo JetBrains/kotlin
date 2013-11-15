@@ -24,10 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.AnnotationVisitor;
-import org.jetbrains.asm4.Label;
-import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.*;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
@@ -233,7 +230,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         //JVMS7: A class must have an EnclosingMethod attribute if and only if it is a local class or an anonymous class.
         DeclarationDescriptor parentDescriptor = descriptor.getContainingDeclaration();
 
-        boolean isObjectLiteral = DescriptorUtils.isAnonymous(descriptor);
+        boolean isObjectLiteral = DescriptorUtils.isAnonymousObject(descriptor);
 
         boolean isLocalOrAnonymousClass = isObjectLiteral ||
                                           !(parentDescriptor instanceof NamespaceDescriptor || parentDescriptor instanceof ClassDescriptor);
@@ -1072,8 +1069,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             for (PropertyAndDefaultValue propertyInfo : classObjectPropertiesToCopy) {
                 PropertyDescriptor propertyDescriptor = propertyInfo.propertyDescriptor;
 
-                v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(propertyDescriptor),
-                           typeMapper.mapType(propertyDescriptor).getDescriptor(), null, propertyInfo.defaultValue);
+                FieldVisitor fv = v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(propertyDescriptor),
+                                                  typeMapper.mapType(propertyDescriptor).getDescriptor(), null, propertyInfo.defaultValue);
+
+                AnnotationCodegen.forField(fv, typeMapper).genAnnotations(propertyDescriptor);
 
                 //This field are always static and final so if it has constant initializer don't do anything in clinit,
                 //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
@@ -1129,7 +1128,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         final MutableClosure closure = context.closure;
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, myClass);
 
-        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, closure);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             lookupConstructorExpressionsInClosureIfPresent(constructorContext);
@@ -1358,14 +1357,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @Override
             public void visitThisExpression(JetThisExpression expression) {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
-                if (descriptor instanceof ClassDescriptor) {
-                    // @todo for now all our classes are inner so no need to lookup this. change it when we have real inners
-                }
-                else {
-                    assert descriptor instanceof CallableDescriptor;
-                    if (context.getCallableDescriptorWithReceiver() != descriptor) {
-                        context.lookupInContext(descriptor, null, state, true);
-                    }
+                assert descriptor instanceof CallableDescriptor ||
+                       descriptor instanceof ClassDescriptor : "'This' reference target should be class or callable descriptor but was " + descriptor;
+                if (context.getCallableDescriptorWithReceiver() != descriptor) {
+                    context.lookupInContext(descriptor, null, state, true);
                 }
             }
         };
@@ -1838,7 +1833,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
 
             Collection<CallableMemberDescriptor> filteredOverriddenDeclarations =
-                    OverridingUtil.filterOverrides(Sets.newLinkedHashSet(overriddenDeclarations));
+                    OverridingUtil.filterOutOverridden(Sets.newLinkedHashSet(overriddenDeclarations));
 
             int count = 0;
             CallableMemberDescriptor candidate = null;

@@ -21,13 +21,13 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.asm4.*;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.OutputFile;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +68,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         super.tearDown();
     }
 
-    protected void doTest(String path) throws IOException {
+    protected void doTest(String path) throws Exception {
         File ktFile = new File(path);
         assertTrue("Cannot find a file " + ktFile.getAbsolutePath(), ktFile.exists());
 
@@ -77,70 +77,69 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), fileText, jetCoreEnvironment.getProject());
         assertTrue("Cannot create JetFile from text", psiFile != null);
 
-        ClassFileFactory factory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
+        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
         List<TestedObject> testedObjects = parseExpectedTestedObject(fileText);
         for (TestedObject testedObject : testedObjects) {
             String className = null;
-            for (String filename : factory.files()) {
-                if (testedObject.isFullContainingClassName && filename.equals(testedObject.containingClass + ".class")) {
-                    className = filename;
+            for (OutputFile outputFile : outputFiles.asList()) {
+                String filePath = outputFile.getRelativePath();
+                if (testedObject.isFullContainingClassName && filePath.equals(testedObject.containingClass + ".class")) {
+                    className = filePath;
                 }
-                else if (!testedObject.isFullContainingClassName && filename.startsWith(testedObject.containingClass)) {
-                    className = filename;
+                else if (!testedObject.isFullContainingClassName && filePath.startsWith(testedObject.containingClass)) {
+                    className = filePath;
                 }
             }
 
-            if (className == null) {
-                throw new AssertionError("Couldn't find a class file with name " + testedObject.containingClass);
-            }
+            assertNotNull("Couldn't find a class file with name " + testedObject.containingClass, className);
 
-            ClassReader cr = new ClassReader(factory.asBytes(className));
-            TestClassVisitor classVisitor;
-            classVisitor = getClassVisitor(testedObject.kind, testedObject.name);
+            OutputFile outputFile = outputFiles.get(className);
+            assertNotNull(outputFile);
+
+            ClassReader cr = new ClassReader(outputFile.asByteArray());
+            TestClassVisitor classVisitor = getClassVisitor(testedObject.kind, testedObject.name);
             cr.accept(classVisitor, ClassReader.SKIP_CODE);
 
-            boolean isObjectExists = false == Boolean.valueOf(findStringWithPrefixes(testedObject.textData, "// ABSENT: "));
-            assertEquals( "Wrong object existence state: " + testedObject, isObjectExists, classVisitor.isExists());
-            int expectedAccess = getExpectedFlags(testedObject.textData);
+            boolean isObjectExists = !Boolean.valueOf(findStringWithPrefixes(testedObject.textData, "// ABSENT: "));
+            assertEquals("Wrong object existence state: " + testedObject, isObjectExists, classVisitor.isExists());
 
             if (isObjectExists) {
-                assertEquals("Wrong access flag for " + testedObject + " \n" + factory.asText(className), expectedAccess, classVisitor.getAccess());
+                assertEquals("Wrong access flag for " + testedObject + " \n" + outputFile.asText(),
+                             getExpectedFlags(testedObject.textData), classVisitor.getAccess());
             }
         }
     }
 
     private static List<TestedObject> parseExpectedTestedObject(String testDescription) {
-        testDescription = testDescription.substring(testDescription.indexOf("// TESTED_OBJECT_KIND"));
-        String [] testObjectData = testDescription.split("\n\n");
+        String[] testObjectData = testDescription.substring(testDescription.indexOf("// TESTED_OBJECT_KIND")).split("\n\n");
         ArrayList<TestedObject> objects = new ArrayList<TestedObject>();
 
-        for (int i = 0; i < testObjectData.length; i++) {
-            String testData = testObjectData[i];
-            if (!testData.isEmpty()) {
-                TestedObject testObject = new TestedObject();
-                testObject.textData = testData;
-                List<String> testedObjects = findListWithPrefixes(testData, "// TESTED_OBJECTS: ");
-                assertTrue("Cannot find TESTED_OBJECTS instruction", !testedObjects.isEmpty());
-                testObject.containingClass = testedObjects.get(0);
-                if (testedObjects.size() == 1) {
-                    testObject.name = testedObjects.get(0);
-                }
-                else if (testedObjects.size() == 2) {
-                    testObject.name = testedObjects.get(1);
-                }
-                else {
-                    throw new IllegalArgumentException(
-                            "TESTED_OBJECTS instruction must contains one (for class) or two (for function and property) values");
-                }
+        for (String testData : testObjectData) {
+            if (testData.isEmpty()) continue;
 
-                testObject.kind = findStringWithPrefixes(testData, "// TESTED_OBJECT_KIND: ");
-                List<String> isFullName = findListWithPrefixes(testData, "// IS_FULL_CONTAINING_CLASS_NAME: ");
-                if (isFullName.size() == 1) {
-                    testObject.isFullContainingClassName = Boolean.parseBoolean(isFullName.get(0));
-                }
-                objects.add(testObject);
+            TestedObject testObject = new TestedObject();
+            testObject.textData = testData;
+            List<String> testedObjects = findListWithPrefixes(testData, "// TESTED_OBJECTS: ");
+            assertTrue("Cannot find TESTED_OBJECTS instruction", !testedObjects.isEmpty());
+            testObject.containingClass = testedObjects.get(0);
+            if (testedObjects.size() == 1) {
+                testObject.name = testedObjects.get(0);
             }
+            else if (testedObjects.size() == 2) {
+                testObject.name = testedObjects.get(1);
+            }
+            else {
+                throw new IllegalArgumentException(
+                        "TESTED_OBJECTS instruction must contain one (for class) or two (for function and property) values");
+            }
+
+            testObject.kind = findStringWithPrefixes(testData, "// TESTED_OBJECT_KIND: ");
+            List<String> isFullName = findListWithPrefixes(testData, "// IS_FULL_CONTAINING_CLASS_NAME: ");
+            if (isFullName.size() == 1) {
+                testObject.isFullContainingClassName = Boolean.parseBoolean(isFullName.get(0));
+            }
+            objects.add(testObject);
         }
         assertTrue("Test description not present!", !objects.isEmpty());
         return objects;

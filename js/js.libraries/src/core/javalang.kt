@@ -39,7 +39,17 @@ public trait Comparable<T> {
 
 library
 public trait Appendable {
-    public open fun append(csq: CharSequence?): Appendable?
-    public open fun append(csq: CharSequence?, start: Int, end: Int): Appendable?
-    public open fun append(c: Char): Appendable?
+    public open fun append(csq: CharSequence?): Appendable
+    //public open fun append(csq: CharSequence?, start: Int, end: Int): Appendable
+    public open fun append(c: Char): Appendable
+}
+
+library
+public class StringBuilder() : Appendable {
+    override fun append(c: Char): StringBuilder = js.noImpl
+    override fun append(csq: CharSequence?): StringBuilder = js.noImpl
+    //TODO
+    //override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder = js.noImpl
+    public fun append(obj: Any?): StringBuilder = js.noImpl
+    public fun toString(): String = js.noImpl
 }

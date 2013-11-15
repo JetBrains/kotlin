@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.completion;
 
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
@@ -26,6 +27,10 @@ public abstract class AbstractKeywordCompletionTest extends JetFixtureCompletion
     public TargetPlatform getPlatform() {
         return TargetPlatform.JVM;
     }
+
+    @NotNull
+    @Override
+    protected CompletionType completionType() { return CompletionType.BASIC; }
 
     @NotNull
     @Override

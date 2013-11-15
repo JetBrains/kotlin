@@ -151,6 +151,7 @@ public class LightClassUtil {
         return extractPropertyAccessors(property, getterWrapper, setterWrapper);
     }
 
+    @NotNull
     public static PropertyAccessorsPsiMethods getLightClassPropertyMethods(@NotNull JetParameter parameter) {
         return extractPropertyAccessors(parameter, null, null);
     }
@@ -255,6 +256,7 @@ public class LightClassUtil {
         return packageName == null ? null : PackageClassUtils.getPackageClassFqName(new FqName(packageName));
     }
 
+    @NotNull
     private static PropertyAccessorsPsiMethods extractPropertyAccessors(
             @NotNull JetDeclaration jetDeclaration,
             @Nullable PsiMethod specialGetter, @Nullable PsiMethod specialSetter

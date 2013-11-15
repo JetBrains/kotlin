@@ -24,6 +24,7 @@
             <element id="directory" name="jet">
               <element id="dir-copy" path="$PROJECT_DIR$/idea/builtinsSrc/jet" />
             </element>
+            <element id="module-output" name="backend-common" />
           </element>
           <element id="library" level="project" name="js-libs" />
           <element id="library" level="project" name="javax.inject" />

@@ -135,7 +135,6 @@ public final class RhinoUtils {
                 String problems = lintIt(context, filename, scope);
                 if (problems != null) {
                     //fail(problems);
-                    //noinspection UseOfSystemOutOrSystemErr
                     System.out.print(problems);
                 }
             }

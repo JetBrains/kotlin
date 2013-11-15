@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
@@ -81,11 +82,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
 
     private boolean someArgumentHasNoType = false;
-    private final DelegatingBindingTrace trace;
-    private final TracingStrategy tracing;
+    private DelegatingBindingTrace trace;
+    private TracingStrategy tracing;
     private ResolutionStatus status = UNKNOWN_STATUS;
     private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
+    private Boolean hasInferredReturnType = null;
+    private boolean completed = false;
 
     private ResolvedCallImpl(
             @NotNull ResolutionCandidate<D> candidate,
@@ -130,11 +133,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     @NotNull
     public DelegatingBindingTrace getTrace() {
+        assertNotCompleted("Trace");
         return trace;
     }
 
     @NotNull
     public TracingStrategy getTracing() {
+        assertNotCompleted("TracingStrategy");
         return tracing;
     }
 
@@ -181,6 +186,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @Nullable
     public ConstraintSystem getConstraintSystem() {
+        assertNotCompleted("ConstraintSystem");
         return constraintSystem;
     }
 
@@ -189,7 +195,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         valueArguments.put(valueParameter, valueArgument);
     }
 
-    public void setUnmappedArguments(@NotNull Collection<ValueArgument> unmappedArguments) {
+    public void setUnmappedArguments(@NotNull Collection<? extends ValueArgument> unmappedArguments) {
         this.unmappedArguments.addAll(unmappedArguments);
 
     }
@@ -280,5 +286,33 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     public ResolvedCallImpl<D> getCallToCompleteTypeArgumentInference() {
         return this;
+    }
+
+    public boolean hasInferredReturnType() {
+        if (!completed) {
+            hasInferredReturnType = constraintSystem == null || CallResolverUtil.hasInferredReturnType(candidateDescriptor, constraintSystem);
+        }
+        assert hasInferredReturnType != null : "The property 'hasInferredReturnType' was not set when the call was completed.";
+        return hasInferredReturnType;
+    }
+
+    @Override
+    public void markCallAsCompleted() {
+        if (!completed) {
+            hasInferredReturnType();
+        }
+        trace = null;
+        constraintSystem = null;
+        tracing = null;
+        completed = true;
+    }
+
+    @Override
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    private void assertNotCompleted(String elementName) {
+        assert !completed: elementName + " is erased after resolution completion.";
     }
 }

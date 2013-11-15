@@ -17,8 +17,8 @@
 package org.jetbrains.jet.plugin.references;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -56,8 +56,8 @@ import java.util.List;
 import java.util.Set;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
-    private BindingContext bindingContext = null;
-    private Set<? extends PsiFile> builtInsSources = Sets.newHashSet();
+    private volatile BindingContext bindingContext = null;
+    private volatile Set<? extends PsiFile> builtInsSources = Sets.newHashSet();
 
     public BuiltInsReferenceResolver(Project project) {
         super(project);
@@ -76,20 +76,39 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private void initialize() {
         assert bindingContext == null : "Attempt to initialize twice";
 
-        BindingTraceContext context = new BindingTraceContext();
-        FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
-        context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), jetNamespace);
+        final List<JetFile> jetBuiltInsFiles = getJetBuiltInsFiles();
 
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
-                                                        "Builtin classes scope");
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        jetNamespace.setMemberScope(scope);
+        final Runnable initializeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                BindingTraceContext context = new BindingTraceContext();
+                FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
+                context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
+                               KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), jetNamespace);
 
-        List<JetFile> jetBuiltInsFiles = getJetBuiltInsFiles();
-        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, jetBuiltInsFiles);
+                WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
+                                                                "Builtin classes scope");
+                scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+                jetNamespace.setMemberScope(scope);
 
-        builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
-        bindingContext = context.getBindingContext();
+                TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, jetBuiltInsFiles);
+
+                builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
+                bindingContext = context.getBindingContext();
+            }
+        };
+
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            initializeRunnable.run();
+        }
+        else {
+            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+                @Override
+                public void run() {
+                    ApplicationManager.getApplication().runReadAction(initializeRunnable);
+                }
+            });
+        }
     }
 
     private List<JetFile> getJetBuiltInsFiles() {
@@ -172,7 +191,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             @Nullable JetReferenceExpression referenceExpression
     ) {
         if (bindingContext == null) {
-            assert DumbService.getInstance(myProject).isDumb() : "Builtins component wasn't initialized properly";
             return Collections.emptyList();
         }
 
@@ -184,7 +202,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     @NotNull
     public Collection<PsiElement> resolveBuiltInSymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
         if (bindingContext == null) {
-            assert DumbService.getInstance(myProject).isDumb() : "Builtins component wasn't initialized properly";
             return Collections.emptyList();
         }
 

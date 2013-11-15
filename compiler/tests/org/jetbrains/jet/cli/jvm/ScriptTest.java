@@ -79,7 +79,6 @@ public class ScriptTest extends CliBaseTest {
             @NotNull List<JetScriptDefinition> scriptDefinitions
     ) {
         KotlinPaths paths = new KotlinPathsFromHomeDir(new File("dist/kotlinc"));
-        //noinspection UseOfSystemOutOrSystemErr
         GroupingMessageCollector messageCollector =
                 new GroupingMessageCollector(new PrintingMessageCollector(System.err, MessageRenderer.PLAIN, false));
         Disposable rootDisposable = Disposer.newDisposable();

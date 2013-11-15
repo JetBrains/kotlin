@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.jps.build;
 
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.LibraryUtils;
@@ -38,10 +37,6 @@ import java.util.Set;
 class JpsJsModuleUtils {
     private JpsJsModuleUtils() {}
 
-    public static String urlToOsPath(String url) {
-        return FileUtilRt.toSystemDependentName(JpsPathUtil.urlToPath(url));
-    }
-
     @NotNull
     static List<String> getLibraryFilesAndDependencies(@NotNull ModuleBuildTarget target) {
         List<String> result = new ArrayList<String>();
@@ -54,7 +49,7 @@ class JpsJsModuleUtils {
         Set<JpsLibrary> libraries = JpsUtils.getAllDependencies(target).getLibraries();
         for (JpsLibrary library : libraries) {
             for (JpsLibraryRoot root : library.getRoots(JpsOrderRootType.COMPILED)) {
-                String path = urlToOsPath(root.getUrl());
+                String path = JpsPathUtil.urlToPath(root.getUrl());
                 // TODO: Do we need to add to dependency all libraries?
                 if (LibraryUtils.isJsRuntimeLibrary(new File(path))) {
                     result.add(path);
@@ -72,7 +67,7 @@ class JpsJsModuleUtils {
                 result.add("@" + module.getName());
 
                 for (JpsModuleSourceRoot root : module.getSourceRoots(JavaSourceRootType.SOURCE)) {
-                    result.add(urlToOsPath(root.getUrl()));
+                    result.add(JpsPathUtil.urlToPath(root.getUrl()));
                 }
             }
         });

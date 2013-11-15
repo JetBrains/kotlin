@@ -44,10 +44,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.codegen.CodegenUtil.peekFromStack;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getSuperTypeForClosure;
@@ -59,9 +56,32 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private static final TokenSet BINARY_OPERATIONS = TokenSet.orSet(
             AUGMENTED_ASSIGNMENTS, TokenSet.create(PLUS, MINUS, MUL, DIV, PERC, RANGE, LT, GT, LTEQ, GTEQ, IDENTIFIER));
 
+    private static class ClassDescriptorWithState {
+
+        private boolean isDelegationToSuperCall;
+
+        private ClassDescriptor descriptor;
+
+        public ClassDescriptorWithState(ClassDescriptor descriptor) {
+            this.descriptor = descriptor;
+        }
+
+        public boolean isDelegationToSuperCall() {
+            return isDelegationToSuperCall;
+        }
+
+        public void setDelegationToSuperCall(boolean isDelegationToSuperCall) {
+            this.isDelegationToSuperCall = isDelegationToSuperCall;
+        }
+
+        public ClassDescriptor getDescriptor() {
+            return descriptor;
+        }
+    }
+
     private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
 
-    private final Stack<ClassDescriptor> classStack = new Stack<ClassDescriptor>();
+    private final Stack<ClassDescriptorWithState> classStack = new Stack<ClassDescriptorWithState>();
     private final Stack<String> nameStack = new Stack<String>();
     private final BindingTrace bindingTrace;
     private final BindingContext bindingContext;
@@ -129,7 +149,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (file.isScript()) {
             //noinspection ConstantConditions
             ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, bindingContext.get(SCRIPT, file.getScript()));
-            classStack.push(classDescriptor);
+            pushClassDescriptor(classDescriptor);
             //noinspection ConstantConditions
             nameStack.push(asmTypeForScriptPsi(bindingContext, file.getScript()).getInternalName());
         }
@@ -139,7 +159,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         file.acceptChildren(this);
         nameStack.pop();
         if (file.isScript()) {
-            classStack.pop();
+            popClassDescriptor();
         }
     }
 
@@ -154,7 +174,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             super.visitEnumEntry(enumEntry);
         }
         else {
-            Type asmType = bindingTrace.get(ASM_TYPE, peekFromStack(classStack));
+            Type asmType = bindingTrace.get(ASM_TYPE, getOuterClassDescriptor());
             assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, asmType);
             bindingTrace.record(ASM_TYPE, descriptor, asmType);
         }
@@ -166,13 +186,13 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         assert classDescriptor != null;
 
         String name = peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX;
-        recordClosure(classObject, classDescriptor, name, false);
+        recordClosure(classObject, classDescriptor, name);
 
-        classStack.push(classDescriptor);
+        pushClassDescriptor(classDescriptor);
         nameStack.push(name);
         super.visitClassObject(classObject);
         nameStack.pop();
-        classStack.pop();
+        popClassDescriptor();
     }
 
     @Override
@@ -186,13 +206,13 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             if (classDescriptor == null) return;
 
             String name = getName(classDescriptor);
-            recordClosure(declaration, classDescriptor, name, false);
+            recordClosure(declaration, classDescriptor, name);
 
-            classStack.push(classDescriptor);
+            pushClassDescriptor(classDescriptor);
             nameStack.push(name);
             super.visitObjectDeclaration(declaration);
             nameStack.pop();
-            classStack.pop();
+            popClassDescriptor();
         }
     }
 
@@ -203,13 +223,13 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (classDescriptor == null) return;
 
         String name = getName(classDescriptor);
-        recordClosure(klass, classDescriptor, name, false);
+        recordClosure(klass, classDescriptor, name);
 
-        classStack.push(classDescriptor);
+        pushClassDescriptor(classDescriptor);
         nameStack.push(name);
         super.visitClass(klass);
         nameStack.pop();
-        classStack.pop();
+        popClassDescriptor();
     }
 
     private String getName(ClassDescriptor classDescriptor) {
@@ -228,14 +248,14 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
 
         String name = inventAnonymousClassName(expression.getObjectDeclaration());
-        recordClosure(expression.getObjectDeclaration(), classDescriptor, name, false);
+        recordClosure(expression.getObjectDeclaration(), classDescriptor, name);
 
-        classStack.push(classDescriptor);
+        pushClassDescriptor(classDescriptor);
         //noinspection ConstantConditions
         nameStack.push(bindingContext.get(ASM_TYPE, classDescriptor).getInternalName());
         super.visitObjectLiteralExpression(expression);
         nameStack.pop();
-        classStack.pop();
+        popClassDescriptor();
     }
 
     @Override
@@ -249,13 +269,41 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         String name = inventAnonymousClassName(expression);
         JetType superType = getSuperTypeForClosure(functionDescriptor, false);
         ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, superType);
-        recordClosure(functionLiteral, classDescriptor, name, true);
+        recordClosure(functionLiteral, classDescriptor, name);
 
-        classStack.push(classDescriptor);
+        pushClassDescriptor(classDescriptor);
         nameStack.push(name);
         super.visitFunctionLiteralExpression(expression);
         nameStack.pop();
+        popClassDescriptor();
+    }
+
+    private void pushClassDescriptor(ClassDescriptor classDescriptor) {
+        classStack.push(new ClassDescriptorWithState(classDescriptor));
+    }
+
+    private void popClassDescriptor() {
         classStack.pop();
+    }
+
+    private ClassDescriptor getOuterClassDescriptor() {
+        ListIterator<ClassDescriptorWithState> iterator = classStack.listIterator(classStack.size());
+        while(iterator.hasPrevious()) {
+            ClassDescriptorWithState previous = iterator.previous();
+            if (!previous.isDelegationToSuperCall()) {//find last not delegated to super call
+                return previous.getDescriptor();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+        ClassDescriptorWithState state = peekFromStack(classStack);
+        assert state != null : "Class descriptor should be recorded before " + call + " processing";
+        state.setDelegationToSuperCall(true);
+        super.visitDelegationToSuperCallSpecifier(call);
+        state.setDelegationToSuperCall(false);
     }
 
     @Override
@@ -271,23 +319,23 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         String name = inventAnonymousClassName(expression);
         ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, superType);
-        recordClosure(expression, classDescriptor, name, true);
+        recordClosure(expression, classDescriptor, name);
 
-        classStack.push(classDescriptor);
+        pushClassDescriptor(classDescriptor);
         nameStack.push(name);
         super.visitCallableReferenceExpression(expression);
         nameStack.pop();
-        classStack.pop();
+        popClassDescriptor();
     }
+
 
     private void recordClosure(
             @NotNull JetElement element,
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull String name,
-            boolean functionLiteral
+            @NotNull String name
     ) {
-        CodegenBinding.recordClosure(bindingTrace, element, classDescriptor, peekFromStack(classStack),
-                                     Type.getObjectType(name), functionLiteral);
+        CodegenBinding.recordClosure(bindingTrace, element, classDescriptor, getOuterClassDescriptor(),
+                                     Type.getObjectType(name));
     }
 
     @Override
@@ -323,13 +371,13 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             String name = inventAnonymousClassName(function);
             JetType superType = getSuperTypeForClosure(functionDescriptor, false);
             ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, superType);
-            recordClosure(function, classDescriptor, name, true);
+            recordClosure(function, classDescriptor, name);
 
-            classStack.push(classDescriptor);
+            pushClassDescriptor(classDescriptor);
             nameStack.push(name);
             super.visitNamedFunction(function);
             nameStack.pop();
-            classStack.pop();
+            popClassDescriptor();
         }
     }
 

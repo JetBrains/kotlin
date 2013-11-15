@@ -1,0 +1,18 @@
+<root>
+  <item name='org.jetbrains.asm4.ClassVisitor org.jetbrains.asm4.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='org.jetbrains.asm4.FieldVisitor org.jetbrains.asm4.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='org.jetbrains.asm4.MethodVisitor org.jetbrains.asm4.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='org.jetbrains.asm4.MethodVisitor org.jetbrains.asm4.AnnotationVisitor visitAnnotationDefault()'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item
+      name='org.jetbrains.asm4.MethodVisitor org.jetbrains.asm4.AnnotationVisitor visitParameterAnnotation(int, java.lang.String, boolean)'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+</root>

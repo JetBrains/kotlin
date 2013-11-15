@@ -1,0 +1,11 @@
+<root>
+  <item name='com.intellij.CommonBundle java.lang.String getNoButtonText()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.CommonBundle java.lang.String getOkButtonText()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.CommonBundle java.lang.String getYesButtonText()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

@@ -23,7 +23,7 @@ import com.intellij.util.PathUtil;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.compiler.K2JSCompiler;
+import org.jetbrains.jet.plugin.compiler.K2JsTranslatingCompiler;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
@@ -95,7 +95,7 @@ public final class K2JSCompilerMessagingTest extends IDECompilerMessagingTest {
     }
 
     private void doTest(@NotNull Function1<MessageChecker, Void> whatToExpect) {
-        performTest(whatToExpect, getCompiler(K2JSCompiler.class), TEST_DATA_PATH);
+        performTest(whatToExpect, getCompiler(K2JsTranslatingCompiler.class), TEST_DATA_PATH);
     }
 
     @Override

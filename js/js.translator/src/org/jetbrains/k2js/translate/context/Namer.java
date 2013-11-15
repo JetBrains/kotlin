@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.JetLanguage;
 
+import java.util.List;
+
 /**
  * Encapuslates different types of constants and naming conventions.
  */
@@ -45,7 +47,6 @@ public final class Namer {
     private static final String SUPER_METHOD_NAME = "baseInitializer";
     private static final String ROOT_NAMESPACE = "_";
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
-    private static final String CLASSES_OBJECT_NAME = "_c";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String CLASS_OBJECT_GETTER = "object";
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
@@ -68,11 +69,6 @@ public final class Namer {
     @NotNull
     public static JsNameRef superMethodNameRef(@NotNull JsName superClassJsName) {
         return new JsNameRef(SUPER_METHOD_NAME, superClassJsName.makeRef());
-    }
-
-    @NotNull
-    public static String nameForClassesVariable() {
-        return CLASSES_OBJECT_NAME;
     }
 
     @NotNull
@@ -271,18 +267,18 @@ public final class Namer {
     }
 
     @NotNull
-    public JsInvocation classCreateInvocation(@NotNull ClassDescriptor descriptor) {
+    public JsInvocation classCreateInvocation(@NotNull ClassDescriptor descriptor, @NotNull List<JsExpression> arguments) {
         switch (descriptor.getKind()) {
             case TRAIT:
-                return new JsInvocation(traitCreationMethodReference());
+                return new JsInvocation(traitCreationMethodReference(), arguments);
 
             case OBJECT:
             case CLASS_OBJECT:
             case ENUM_ENTRY:
-                return new JsInvocation(objectCreationMethodReference());
+                return new JsInvocation(objectCreationMethodReference(), arguments);
 
             default:
-                return new JsInvocation(classCreationMethodReference());
+                return new JsInvocation(classCreationMethodReference(), arguments);
         }
     }
 

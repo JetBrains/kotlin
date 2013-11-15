@@ -39,6 +39,7 @@ import org.jetbrains.jps.builders.BuildTarget;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.*;
+import org.jetbrains.jps.incremental.java.JavaBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.model.JpsProject;
@@ -46,9 +47,13 @@ import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
+import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.*;
+import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
 import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JsCompiler;
 import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCompiler;
 
@@ -120,7 +125,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                         WARNING, "Circular dependencies are not supported. " +
                                  "The following JS modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
                                  "Kotlin is not compiled for these modules",
-                        CompilerMessageLocation.NO_LOCATION);
+                        NO_LOCATION);
                 return ExitCode.NOTHING_DONE;
             }
 
@@ -144,7 +149,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                         WARNING, "Circular dependencies are only partially supported. " +
                                  "The following modules depend on each other: " + StringUtil.join(chunk.getModules(), MODULE_NAME, ", ") + ". " +
                                  "Kotlin will compile them, but some strange effect may happen",
-                        CompilerMessageLocation.NO_LOCATION);
+                        NO_LOCATION);
             }
 
             File moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk);
@@ -170,11 +175,16 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         }
 
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
-            BuildTarget<?> target = sourceToTarget.get(outputItem.getSourceFiles().iterator().next());
-            outputConsumer.registerOutputFile(
-                    target != null ? target : representativeTarget,
-                    outputItem.getOutputFile(),
-                    paths(outputItem.getSourceFiles()));
+            BuildTarget<?> target = null;
+            Collection<File> sourceFiles = outputItem.getSourceFiles();
+            if (sourceFiles != null && !sourceFiles.isEmpty()) {
+                target = sourceToTarget.get(sourceFiles.iterator().next());
+            }
+            else {
+                messageCollector.report(EXCEPTION, "KotlinBuilder: outputItem.sourceFiles is null or empty, outputItem = " + outputItem, NO_LOCATION);
+            }
+
+            outputConsumer.registerOutputFile(target != null ? target : representativeTarget, outputItem.getOutputFile(), paths(sourceFiles));
         }
 
         return ExitCode.OK;
@@ -216,7 +226,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         ) {
             String prefix = "";
             if (severity == EXCEPTION) {
-                prefix = CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
+                prefix = INTERNAL_ERROR_PREFIX;
             }
             context.processMessage(new CompilerMessage(
                     CompilerRunnerConstants.KOTLIN_COMPILER_NAME,

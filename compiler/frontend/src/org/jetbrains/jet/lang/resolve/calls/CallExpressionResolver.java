@@ -72,6 +72,7 @@ public class CallExpressionResolver {
             if (classObjectType != null) {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
                 JetType result = getExtendedClassObjectType(classObjectType, referencedName, classifier, context);
+                checkClassObjectVisibility(classifier, expression, context);
                 return DataFlowUtils.checkType(result, expression, context);
             }
         }
@@ -117,8 +118,22 @@ public class CallExpressionResolver {
         return result[0];
     }
 
+    private static void checkClassObjectVisibility(
+            @NotNull ClassifierDescriptor classifier,
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull ResolutionContext context
+    ) {
+        if (!(classifier instanceof ClassDescriptor)) return;
+        ClassDescriptor classObject = ((ClassDescriptor) classifier).getClassObjectDescriptor();
+        assert classObject != null : "This check should be done only for classes with class objects: " + classifier;
+        DeclarationDescriptor from = context.scope.getContainingDeclaration();
+        if (!Visibilities.isVisible(classObject, from)) {
+            context.trace.report(INVISIBLE_MEMBER.on(expression, classObject, classObject.getVisibility(), from));
+        }
+    }
+
     @NotNull
-    private JetType getExtendedClassObjectType(
+    private static JetType getExtendedClassObjectType(
             @NotNull JetType classObjectType,
             @NotNull Name referencedName,
             @NotNull ClassifierDescriptor classifier,

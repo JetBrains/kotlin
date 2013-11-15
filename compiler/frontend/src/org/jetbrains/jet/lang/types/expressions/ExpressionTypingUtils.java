@@ -493,4 +493,9 @@ public class ExpressionTypingUtils {
         return (operationType == JetTokens.IDENTIFIER || OperatorConventions.BINARY_OPERATION_NAMES.containsKey(operationType)
                 || operationType == JetTokens.ELVIS);
     }
+
+    public static boolean  isUnaryExpressionDependentOnExpectedType(@NotNull JetUnaryExpression expression) {
+        IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
+        return JetTokens.LABELS.contains(operationType) || operationType == JetTokens.EXCLEXCL;
+    }
 }

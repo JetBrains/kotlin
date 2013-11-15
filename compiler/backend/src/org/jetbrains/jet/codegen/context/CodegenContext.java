@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.context;
 
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
@@ -30,6 +31,8 @@ import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.NullableLazyValue;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,7 +65,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     private Map<DeclarationDescriptor, CodegenContext> childContexts;
 
-    protected StackValue outerExpression;
+    private NullableLazyValue<StackValue> lazyOuterExpression;
 
     private final LocalLookup enclosingLocalLookup;
 
@@ -129,7 +132,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     private StackValue getOuterExpression(@Nullable StackValue prefix, boolean ignoreNoOuter, boolean captureThis) {
-        if (outerExpression == null) {
+        if (lazyOuterExpression == null || lazyOuterExpression.invoke() == null) {
             if (ignoreNoOuter) {
                 return null;
             }
@@ -140,7 +143,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         if (captureThis) {
             closure.setCaptureThis();
         }
-        return prefix != null ? StackValue.composed(prefix, outerExpression) : outerExpression;
+        return prefix != null ? StackValue.composed(prefix, lazyOuterExpression.invoke()) : lazyOuterExpression.invoke();
     }
 
     @NotNull
@@ -184,13 +187,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public ConstructorContext intoConstructor(ConstructorDescriptor descriptor) {
+    public ConstructorContext intoConstructor(@Nullable ConstructorDescriptor descriptor, @Nullable MutableClosure closure) {
         if (descriptor == null) {
             descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Collections.<AnnotationDescriptor>emptyList(), true)
                     .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                 Visibilities.PUBLIC);
         }
-        return new ConstructorContext(descriptor, getContextKind(), this);
+        return new ConstructorContext(descriptor, getContextKind(), this, closure);
     }
 
     @NotNull
@@ -294,20 +297,24 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     public abstract boolean isStatic();
 
-    protected void initOuterExpression(JetTypeMapper typeMapper, ClassDescriptor classDescriptor) {
-        ClassDescriptor enclosingClass = getEnclosingClass();
-        outerExpression = enclosingClass != null && canHaveOuter(typeMapper.getBindingContext(), classDescriptor)
-                          ? StackValue.field(typeMapper.mapType(enclosingClass),
-                                             CodegenBinding.getAsmType(typeMapper.getBindingTrace(), classDescriptor),
-                                             CAPTURED_THIS_FIELD,
-                                             false)
-                          : null;
+    protected void initOuterExpression(@NotNull final JetTypeMapper typeMapper, @NotNull final ClassDescriptor classDescriptor) {
+        lazyOuterExpression = LockBasedStorageManager.NO_LOCKS.createNullableLazyValue(new Function0<StackValue>() {
+            @Override
+            public StackValue invoke() {
+                ClassDescriptor enclosingClass = getEnclosingClass();
+                return enclosingClass != null && canHaveOuter(typeMapper.getBindingContext(), classDescriptor)
+                       ? StackValue.field(typeMapper.mapType(enclosingClass),
+                                          CodegenBinding.getAsmType(typeMapper.getBindingTrace(), classDescriptor),
+                                          CAPTURED_THIS_FIELD,
+                                          false)
+                       : null;
+            }
+        });
     }
 
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
-        MutableClosure top = closure;
         StackValue myOuter = null;
-        if (top != null) {
+        if (closure != null) {
             EnclosedValueDescriptor answer = closure.getCaptureVariables().get(d);
             if (answer != null) {
                 StackValue innerValue = answer.getInnerValue();
@@ -331,7 +338,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             result = result == null || myOuter == null ? myOuter : StackValue.composed(result, myOuter);
         }
 
-        StackValue resultValue = parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
+        StackValue resultValue;
+        if (myOuter != null && getEnclosingClass() == d) {
+            resultValue = result;
+        } else {
+            resultValue = parentContext != null ? parentContext.lookupInContext(d, result, state, ignoreNoOuter) : null;
+        }
+
         if (myOuter != null && resultValue != null) {
             closure.setCaptureThis();
         }

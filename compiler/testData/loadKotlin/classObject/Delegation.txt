@@ -1,0 +1,15 @@
+package test
+
+internal final class A : test.T {
+    /*primary*/ public constructor A()
+    internal open override /*1*/ fun foo(): jet.Int
+    
+    internal class object <class-object-for-A> : test.T {
+        /*primary*/ private constructor <class-object-for-A>()
+        internal open override /*1*/ /*delegation*/ fun foo(): jet.Int
+    }
+}
+
+internal trait T {
+    internal abstract fun foo(): jet.Int
+}

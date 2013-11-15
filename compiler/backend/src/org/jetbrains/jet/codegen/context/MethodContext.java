@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
@@ -27,14 +28,24 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 
 public class MethodContext extends CodegenContext {
+
     public MethodContext(
             @NotNull FunctionDescriptor contextType,
             @NotNull OwnerKind contextKind,
             @NotNull CodegenContext parentContext
     ) {
+        this(contextType, contextKind, parentContext, null);
+    }
+
+    protected MethodContext(
+            @NotNull FunctionDescriptor contextType,
+            @NotNull OwnerKind contextKind,
+            @NotNull CodegenContext parentContext,
+            @Nullable MutableClosure closure
+    ) {
         super(contextType instanceof PropertyAccessorDescriptor
               ? ((PropertyAccessorDescriptor) contextType).getCorrespondingProperty()
-              : contextType, contextKind, parentContext, null,
+              : contextType, contextKind, parentContext, closure,
               parentContext.hasThisDescriptor() ? parentContext.getThisDescriptor() : null, null);
     }
 

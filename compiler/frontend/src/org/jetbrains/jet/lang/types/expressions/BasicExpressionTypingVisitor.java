@@ -604,7 +604,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return visitUnaryExpression(expression, context, false);
     }
 
-    public JetTypeInfo visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context, boolean isStatement) {
+    public JetTypeInfo visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+        ExpressionTypingContext context = isUnaryExpressionDependentOnExpectedType(expression)
+                ? contextWithExpectedType
+                : contextWithExpectedType.replaceContextDependency(INDEPENDENT).replaceExpectedType(NO_EXPECTED_TYPE);
+
         JetExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
 
@@ -622,8 +626,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // Type check the base expression
-        JetTypeInfo typeInfo = facade.getTypeInfo(
-                baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
+        JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context);
         JetType type = typeInfo.getType();
         if (type == null) {
             return typeInfo;
@@ -642,7 +645,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetExpression stubExpression = ExpressionTypingUtils.createFakeExpressionOfType(baseExpression.getProject(), context.trace, "$e", type);
             resolveArrayAccessSetMethod((JetArrayAccessExpression) baseExpression,
                                         stubExpression,
-                                        context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(
+                                        context.replaceBindingTrace(
                                                 TemporaryBindingTrace.create(context.trace, "trace to resolve array access set method for unary expression", expression)),
                                         context.trace);
         }
@@ -685,7 +688,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else {
             result = returnType;
         }
-        return DataFlowUtils.checkType(result, expression, context, dataFlowInfo);
+        return DataFlowUtils.checkType(result, expression, contextWithExpectedType, dataFlowInfo);
     }
 
     private JetTypeInfo visitExclExclExpression(@NotNull JetUnaryExpression expression, @NotNull ExpressionTypingContext context) {

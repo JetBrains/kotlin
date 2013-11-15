@@ -18,10 +18,8 @@ package org.jetbrains.jet.plugin.findUsages.handlers;
 
 import com.intellij.find.findUsages.AbstractFindUsagesDialog;
 import com.intellij.find.findUsages.FindUsagesOptions;
-import com.intellij.find.findUsages.JavaClassFindUsagesOptions;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadActionProcessor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
@@ -30,22 +28,20 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.PsiElementProcessorAdapter;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.plugin.findUsages.FindUsagesUtils;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.plugin.findUsages.FindUsagesPackage;
+import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindClassUsagesDialog;
-import org.jetbrains.jet.plugin.findUsages.options.KotlinClassFindUsagesOptions;
-
-import java.util.Collection;
+import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearch;
+import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchRequest;
+import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchTarget;
 
 public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetClass> {
     public KotlinFindClassUsagesHandler(@NotNull JetClass jetClass, @NotNull KotlinFindUsagesHandlerFactory factory) {
@@ -72,53 +68,32 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                 new Computable<Boolean>() {
                     @Override
                     public Boolean compute() {
-                        KotlinClassFindUsagesOptions kotlinOptions = (KotlinClassFindUsagesOptions)options;
-                        JetClass jetClass = (JetClass) element;
+                        KotlinClassFindUsagesOptions kotlinOptions = (KotlinClassFindUsagesOptions) options;
+                        JetClassOrObject classOrObject = (JetClassOrObject) element;
 
-                        if (kotlinOptions.isUsages || kotlinOptions.searchConstructorUsages) {
-                            Collection<PsiReference> references = ReferencesSearch.search(
-                                    new ReferencesSearch.SearchParameters(jetClass, kotlinOptions.searchScope, false)
-                            ).findAll();
-                            for (PsiReference ref : references) {
-                                boolean constructorUsage = FindUsagesUtils.isConstructorUsage(ref.getElement(), jetClass);
-                                if ((constructorUsage && !kotlinOptions.searchConstructorUsages)
-                                    || (!constructorUsage && !kotlinOptions.isUsages)) continue;
+                        UsagesSearchTarget<JetClassOrObject> target =
+                                FindUsagesPackage.toSearchTarget(kotlinOptions, classOrObject, true);
+                        UsagesSearchRequest classRequest =
+                                FindUsagesPackage.toClassHelper(kotlinOptions).newRequest(target);
+                        UsagesSearchRequest declarationsRequest =
+                                FindUsagesPackage.toClassDeclarationsHelper(kotlinOptions).newRequest(target);
 
-                                processUsage(processor, ref, kotlinOptions);
-                            }
+                        for (PsiReference ref : UsagesSearch.instance$.search(classRequest)) {
+                            processUsage(processor, ref);
+                        }
+                        for (PsiReference ref : UsagesSearch.instance$.search(declarationsRequest)) {
+                            processUsage(processor, ref);
                         }
 
-                        PsiClass lightClass = LightClassUtil.getPsiClass(getElement());
+                        PsiClass lightClass = LightClassUtil.getPsiClass(classOrObject);
                         if (lightClass == null) return true;
 
                         if (!processInheritors(lightClass, processor, kotlinOptions)) return false;
-                        if (!processDeclarationsUsages(jetClass, processor, kotlinOptions)) return false;
 
                         return true;
                     }
                 }
         );
-    }
-
-    private static boolean processDeclarationsUsages(
-            @NotNull JetClass klass,
-            @NotNull final Processor<UsageInfo> processor,
-            @NotNull final JavaClassFindUsagesOptions options
-    ) {
-        for (JetDeclaration declaration : klass.getDeclarations()) {
-            if (declaration instanceof JetNamedFunction && options.isMethodsUsages
-                    || declaration instanceof JetProperty && options.isFieldsUsages) {
-                if (!ReferencesSearch.search(new ReferencesSearch.SearchParameters(declaration, options.searchScope, false)).forEach(
-                        new ReadActionProcessor<PsiReference>() {
-                            @Override
-                            public boolean processInReadAction(PsiReference ref) {
-                                return processUsage(processor, ref, options);
-                            }
-                        }
-                )) return false;
-            }
-        }
-        return true;
     }
 
     private static final ClassInheritorsSearch.InheritanceChecker INHERITANCE_CHECKER = new ClassInheritorsSearch.InheritanceChecker() {
@@ -144,7 +119,7 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                             public boolean execute(@NotNull PsiClass element) {
                                 if ((element.isInterface() && options.isDerivedInterfaces)
                                     || (!element.isInterface() && options.isDerivedClasses)) {
-                                    return processUsage(processor, element, options);
+                                    return processUsage(processor, element);
                                 }
                                 return true;
                             }

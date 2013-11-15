@@ -85,7 +85,7 @@ public class DescriptorFactory {
     ) {
         SimpleFunctionDescriptorImpl values =
                 new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUES_METHOD_NAME,
-                                                 CallableMemberDescriptor.Kind.DECLARATION);
+                                                 CallableMemberDescriptor.Kind.SYNTHESIZED);
         return values.initialize(null, classObject.getThisAsReceiverParameter(), Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  returnType, Modality.FINAL,
@@ -99,7 +99,7 @@ public class DescriptorFactory {
     ) {
         SimpleFunctionDescriptorImpl values =
                 new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUE_OF_METHOD_NAME,
-                                                 CallableMemberDescriptor.Kind.DECLARATION);
+                                                 CallableMemberDescriptor.Kind.SYNTHESIZED);
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
                 values,
                 0,

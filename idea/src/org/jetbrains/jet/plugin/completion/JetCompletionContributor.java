@@ -31,17 +31,18 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 public class JetCompletionContributor extends CompletionContributor {
     public JetCompletionContributor() {
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(),
-               new CompletionProvider<CompletionParameters>() {
-                   @Override
-                   protected void addCompletions(
-                           @NotNull CompletionParameters parameters,
-                           ProcessingContext context,
-                           @NotNull CompletionResultSet result
-                   ) {
-                       doSimpleReferenceCompletion(parameters, result);
-                   }
-               });
+        final CompletionProvider<CompletionParameters> provider = new CompletionProvider<CompletionParameters>() {
+            @Override
+            protected void addCompletions(
+                    @NotNull CompletionParameters parameters,
+                    ProcessingContext context,
+                    @NotNull CompletionResultSet result
+            ) {
+                doSimpleReferenceCompletion(parameters, result);
+            }
+        };
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(), provider);
+        extend(CompletionType.SMART, PlatformPatterns.psiElement(), provider);
     }
 
     public static void doSimpleReferenceCompletion(CompletionParameters parameters, CompletionResultSet result) {
@@ -57,12 +58,18 @@ public class JetCompletionContributor extends CompletionContributor {
                 result.restartCompletionWhenNothingMatches();
 
                 CompletionSession session = new CompletionSession(parameters, result, jetReference, position);
-                session.completeForReference();
-
-                if (!session.getJetResult().isSomethingAdded() && session.getParameters().getInvocationCount() < 2) {
-                    // Rerun completion if nothing was found
-                    session = new CompletionSession(parameters.withInvocationCount(2), result, jetReference, position);
+                if (parameters.getCompletionType() == CompletionType.BASIC) {
                     session.completeForReference();
+
+                    if (!session.getJetResult().isSomethingAdded()
+                        && session.getParameters().getInvocationCount() < 2) {
+                        // Rerun completion if nothing was found
+                        session = new CompletionSession(parameters.withInvocationCount(2), result, jetReference, position);
+                        session.completeForReference();
+                    }
+                }
+                else {
+                    session.completeSmart();
                 }
 
                 // Prevent from adding reference variants from standard reference contributor
@@ -105,6 +112,9 @@ public class JetCompletionContributor extends CompletionContributor {
             }
             else if (JetExtensionReceiverTypeContributor.ACTIVATION_PATTERN.accepts(position)) {
                 context.setDummyIdentifier(JetExtensionReceiverTypeContributor.DUMMY_IDENTIFIER);
+            }
+            else{
+                context.setDummyIdentifier(CompletionUtil.DUMMY_IDENTIFIER_TRIMMED);
             }
 
             if (!context.getEditor().getSelectionModel().hasSelection()) {

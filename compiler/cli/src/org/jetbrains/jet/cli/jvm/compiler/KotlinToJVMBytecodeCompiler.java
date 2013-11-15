@@ -32,6 +32,8 @@ import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.output.OutputDirector;
+import org.jetbrains.jet.cli.common.output.SingleDirectoryDirector;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -111,14 +113,14 @@ public class KotlinToJVMBytecodeCompiler {
 
     private static void writeOutput(
             CompilerConfiguration configuration,
-            ClassFileFactory moduleFactory,
-            CompileEnvironmentUtil.OutputDirector outputDir,
+            ClassFileFactory outputFiles,
+            OutputDirector outputDir,
             File jarPath,
             boolean jarRuntime,
             FqName mainClass
     ) {
         MessageCollector messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE);
-        CompileEnvironmentUtil.writeOutputToDirOrJar(jarPath, outputDir, jarRuntime, mainClass, moduleFactory, messageCollector);
+        CompileEnvironmentUtil.writeOutputToDirOrJar(jarPath, outputDir, jarRuntime, mainClass, outputFiles, messageCollector);
     }
 
     public static boolean compileModules(
@@ -133,14 +135,14 @@ public class KotlinToJVMBytecodeCompiler {
             modules = Collections.<Module>singletonList(new ChunkAsOneModule(chunk));
         }
         for (Module module : modules) {
-            ClassFileFactory moduleFactory = compileModule(configuration, module, directory);
-            if (moduleFactory == null) {
+            ClassFileFactory outputFiles = compileModule(configuration, module, directory);
+            if (outputFiles == null) {
                 return false;
             }
-            CompileEnvironmentUtil.OutputDirector outputDir = new CompileEnvironmentUtil.OutputDirector() {
+            OutputDirector outputDir = new OutputDirector() {
                 @NotNull
                 @Override
-                public File getOutputDirectory(@NotNull Collection<File> sourceFiles) {
+                public File getOutputDirectory(@NotNull Collection<? extends File> sourceFiles) {
                     for (File sourceFile : sourceFiles) {
                         // Note that here we track original modules:
                         Module module = chunk.findModuleBySourceFile(sourceFile);
@@ -152,7 +154,7 @@ public class KotlinToJVMBytecodeCompiler {
                 }
             };
 
-            writeOutput(configuration, moduleFactory, outputDir, jarPath, jarRuntime, null);
+            writeOutput(configuration, outputFiles, outputDir, jarPath, jarRuntime, null);
         }
         return true;
     }
@@ -188,7 +190,7 @@ public class KotlinToJVMBytecodeCompiler {
         }
 
         try {
-            CompileEnvironmentUtil.OutputDirector outputDirector = CompileEnvironmentUtil.singleDirectory(outputDir);
+            OutputDirector outputDirector = outputDir != null ? new SingleDirectoryDirector(outputDir) : null;
             writeOutput(environment.getConfiguration(), generationState.getFactory(), outputDirector, jar, includeRuntime, mainClass);
             return true;
         }

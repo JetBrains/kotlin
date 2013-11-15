@@ -45,9 +45,9 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
+import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
 public class TypeHierarchyResolver {
     @NotNull
@@ -395,37 +395,32 @@ public class TypeHierarchyResolver {
     }
 
     private void checkTypesInClassHeaders() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            JetClass jetClass = entry.getKey();
-
+        for (JetClass jetClass : context.getClasses().keySet()) {
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
-                JetTypeReference typeReference = delegationSpecifier.getTypeReference();
-                if (typeReference != null) {
-                    JetType type = trace.getBindingContext().get(TYPE, typeReference);
-                    if (type != null) {
-                        descriptorResolver.checkBounds(typeReference, type, trace);
-                    }
-                }
+                checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
             }
 
             for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
-                JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
-                if (extendsBound != null) {
-                    JetType type = trace.getBindingContext().get(TYPE, extendsBound);
-                    if (type != null) {
-                        descriptorResolver.checkBounds(extendsBound, type, trace);
-                    }
-                }
+                checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
             }
 
             for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
-                JetTypeReference extendsBound = constraint.getBoundTypeReference();
-                if (extendsBound != null) {
-                    JetType type = trace.getBindingContext().get(TYPE, extendsBound);
-                    if (type != null) {
-                        descriptorResolver.checkBounds(extendsBound, type, trace);
-                    }
-                }
+                checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
+            }
+        }
+
+        for (JetObjectDeclaration object : context.getObjects().keySet()) {
+            for (JetDelegationSpecifier delegationSpecifier : object.getDelegationSpecifiers()) {
+                checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
+            }
+        }
+    }
+
+    private void checkBoundsForTypeInClassHeader(@Nullable JetTypeReference typeReference) {
+        if (typeReference != null) {
+            JetType type = trace.getBindingContext().get(TYPE, typeReference);
+            if (type != null) {
+                DescriptorResolver.checkBounds(typeReference, type, trace);
             }
         }
     }

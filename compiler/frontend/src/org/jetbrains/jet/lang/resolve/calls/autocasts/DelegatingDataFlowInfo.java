@@ -51,8 +51,9 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
         this.typeInfo = typeInfo;
     }
 
+    @Override
     @NotNull
-    private Map<DataFlowValue, Nullability> getCompleteNullabilityInfo() {
+    public Map<DataFlowValue, Nullability> getCompleteNullabilityInfo() {
         Map<DataFlowValue, Nullability> result = Maps.newHashMap();
         DelegatingDataFlowInfo info = this;
         while (info != null) {
@@ -68,8 +69,9 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
         return result;
     }
 
+    @Override
     @NotNull
-    private SetMultimap<DataFlowValue, JetType> getCompleteTypeInfo() {
+    public SetMultimap<DataFlowValue, JetType> getCompleteTypeInfo() {
         SetMultimap<DataFlowValue, JetType> result = newTypeInfo();
         DelegatingDataFlowInfo info = this;
         while (info != null) {

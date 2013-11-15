@@ -50,8 +50,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
+import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
 public final class JavaClassResolver {
     @NotNull
@@ -208,7 +208,7 @@ public final class JavaClassResolver {
             return alreadyResolved;
         }
 
-        ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, javaClass.getOuterClass() != null);
+        ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, javaClass.getOuterClass());
         // class may be resolved during resolution of parent
         ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
         if (cachedDescriptor != null) {
@@ -374,16 +374,17 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull FqName childClassFQName, boolean isInnerClass) {
-        FqName parentFqName = childClassFQName.parent();
-        if (isInnerClass) {
-            ClassDescriptor parentClass = resolveClass(parentFqName, INCLUDE_KOTLIN_SOURCES);
-            if (parentClass == null) {
+    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull FqName childClassFQName, JavaClass parentClass) {
+        if (parentClass != null) {
+            FqName parentFqName = parentClass.getFqName();
+            ClassDescriptor parentClassDescriptor = resolveClass(parentFqName, INCLUDE_KOTLIN_SOURCES);
+            if (parentClassDescriptor == null) {
                 throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
             }
-            return parentClass;
+            return parentClassDescriptor;
         }
         else {
+            FqName parentFqName = childClassFQName.parent();
             NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(parentFqName, INCLUDE_KOTLIN_SOURCES);
             if (parentNamespace == null) {
                 throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
@@ -400,7 +401,7 @@ public final class JavaClassResolver {
             if (JvmAbi.CLASS_OBJECT_CLASS_NAME.equals(segment.asString())) {
                 assert !correctedSegments.isEmpty();
                 Name previous = correctedSegments.get(correctedSegments.size() - 1);
-                correctedSegments.add(DescriptorUtils.getClassObjectName(previous));
+                correctedSegments.add(getClassObjectName(previous));
             }
             else {
                 correctedSegments.add(segment);

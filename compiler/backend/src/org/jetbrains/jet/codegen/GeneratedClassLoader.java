@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.OutputFile;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -32,11 +33,14 @@ public class GeneratedClassLoader extends URLClassLoader {
     @NotNull
     @Override
     protected Class<?> findClass(@NotNull String name) throws ClassNotFoundException {
-        String file = name.replace('.', '/') + ".class";
-        if (state.files().contains(file)) {
-            byte[] bytes = state.asBytes(file);
+        String classFilePath = name.replace('.', '/') + ".class";
+
+        OutputFile outputFile = state.get(classFilePath);
+        if (outputFile != null) {
+            byte[] bytes = outputFile.asByteArray();
             return defineClass(name, bytes, 0, bytes.length);
         }
+
         return super.findClass(name);
     }
 

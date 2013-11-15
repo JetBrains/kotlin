@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import com.android.dx.command.dexer.Main;
 import com.android.dx.dex.cf.CfTranslator;
 import junit.framework.Assert;
+import org.jetbrains.jet.OutputFile;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -34,15 +35,15 @@ public class DxChecker {
     private DxChecker() {
     }
 
-    public static void check(ClassFileFactory factory) {
+    public static void check(ClassFileFactory outputFiles) {
         Main.Arguments arguments = new Main.Arguments();
         String[] array = new String[1];
         array[0] = "testArgs";
         arguments.parse(array);
 
-        for (String file : factory.files()) {
+        for (OutputFile file : outputFiles.asList()) {
             try {
-                CfTranslator.translate(file, factory.asBytes(file), arguments.cfOptions, arguments.dexOptions);
+                CfTranslator.translate(file.getRelativePath(), file.asByteArray(), arguments.cfOptions, arguments.dexOptions);
             }
             catch (Throwable e) {
                 Assert.fail(generateExceptionMessage(e));

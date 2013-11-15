@@ -32,7 +32,10 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.JavaVisibilities;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
@@ -309,9 +312,9 @@ public class AsmUtil {
                        null);
         }
 
-        ClassifierDescriptor captureReceiver = closure.getCaptureReceiver();
-        if (captureReceiver != null) {
-            v.newField(null, access, CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiver).getDescriptor(),
+        JetType captureReceiverType = closure.getCaptureReceiverType();
+        if (captureReceiverType != null) {
+            v.newField(null, access, CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiverType).getDescriptor(),
                        null, null);
         }
 
@@ -319,22 +322,6 @@ public class AsmUtil {
         for (Pair<String, Type> field : fields) {
             v.newField(null, access, field.first, field.second.getDescriptor(), null, null);
         }
-    }
-
-    public static void genInitSingletonField(Type classAsmType, InstructionAdapter iv) {
-        genInitSingletonField(classAsmType, JvmAbi.INSTANCE_FIELD, classAsmType, iv);
-    }
-
-    public static void genInitSingletonField(FieldInfo info, InstructionAdapter iv) {
-        assert info.isStatic();
-        genInitSingletonField(info.getOwnerType(), info.getFieldName(), info.getFieldType(), iv);
-    }
-
-    public static void genInitSingletonField(Type fieldOwnerType, String fieldName, Type fieldAsmType, InstructionAdapter iv) {
-        iv.anew(fieldAsmType);
-        iv.dup();
-        iv.invokespecial(fieldAsmType.getInternalName(), "<init>", "()V");
-        iv.putstatic(fieldOwnerType.getInternalName(), fieldName, fieldAsmType.getDescriptor());
     }
 
     public static int genAssignInstanceFieldFromParam(FieldInfo info, int index, InstructionAdapter iv) {

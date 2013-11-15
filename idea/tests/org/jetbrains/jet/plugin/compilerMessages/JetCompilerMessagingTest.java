@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.compilerMessages;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.compiler.JetCompiler;
+import org.jetbrains.jet.plugin.compiler.K2JvmTranslatingCompiler;
 
 import static org.jetbrains.jet.plugin.compilerMessages.Message.error;
 import static org.jetbrains.jet.plugin.compilerMessages.Message.warning;
@@ -75,7 +75,7 @@ public final class JetCompilerMessagingTest extends IDECompilerMessagingTest {
     }
 
     private void doTest(@NotNull Function1<MessageChecker, Void> whatToExpect) {
-        performTest(whatToExpect, getCompiler(JetCompiler.class), TEST_DATA_PATH);
+        performTest(whatToExpect, getCompiler(K2JvmTranslatingCompiler.class), TEST_DATA_PATH);
     }
 
     @Override
