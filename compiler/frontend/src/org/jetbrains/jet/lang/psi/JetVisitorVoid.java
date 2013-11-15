@@ -373,7 +373,7 @@ public class JetVisitorVoid extends PsiElementVisitor {
     }
 
     public void visitObjectDeclarationName(@NotNull JetObjectDeclarationName declaration) {
-        visitNamedDeclaration(declaration);
+        visitExpression(declaration);
     }
 
     public void visitStringTemplateEntry(@NotNull JetStringTemplateEntry entry) {

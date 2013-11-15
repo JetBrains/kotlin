@@ -247,7 +247,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             }
             else if (declaration instanceof JetObjectDeclaration) {
                 JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) declaration;
-                Name name = safeNameForLazyResolve(objectDeclaration.getNameAsDeclaration());
+                Name name = safeNameForLazyResolve(objectDeclaration);
                 result.all.addAll(getProperties(name));
                 result.objects.add(getObjectDescriptor(name));
             }

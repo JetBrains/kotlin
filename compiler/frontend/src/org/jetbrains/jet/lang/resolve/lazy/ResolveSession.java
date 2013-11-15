@@ -333,13 +333,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
 
             @Override
-            public DeclarationDescriptor visitObjectDeclarationName(@NotNull JetObjectDeclarationName declarationName, Void data) {
-                JetScope scopeForDeclaration = getInjector().getScopeProvider().getResolutionScopeForDeclaration(declarationName.getParent());
-                scopeForDeclaration.getProperties(safeNameForLazyResolve(declarationName));
-                return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, declarationName);
-            }
-
-            @Override
             public DeclarationDescriptor visitJetElement(@NotNull JetElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " +
                                                    JetPsiUtil.getElementTextWithContext(element));
