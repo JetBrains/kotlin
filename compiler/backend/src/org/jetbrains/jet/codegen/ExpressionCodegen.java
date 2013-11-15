@@ -2245,7 +2245,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
-        boolean isSingleton = CodegenBinding.isSingleton(bindingContext, calleeContainingClass);
+        boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
             if (context.hasThisDescriptor() && context.getThisDescriptor().equals(calleeContainingClass)) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
