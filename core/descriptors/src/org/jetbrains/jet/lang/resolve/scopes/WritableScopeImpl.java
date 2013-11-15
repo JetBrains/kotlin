@@ -313,17 +313,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @Override
-    public void addObjectDescriptor(@NotNull ClassDescriptor objectDescriptor) {
-        checkMayWrite();
-
-        if (!objectDescriptor.getKind().isSingleton()) {
-            throw new IllegalStateException("must be object: " + objectDescriptor);
-        }
-        
-        getObjectDescriptorsMap().put(objectDescriptor.getName(), objectDescriptor);
-    }
-
-    @Override
     public void addClassifierAlias(@NotNull Name name, @NotNull ClassifierDescriptor classifierDescriptor) {
         checkMayWrite();
 

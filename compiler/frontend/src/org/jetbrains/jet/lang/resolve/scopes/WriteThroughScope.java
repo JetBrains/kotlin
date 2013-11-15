@@ -194,13 +194,6 @@ public class WriteThroughScope extends WritableScopeWithImports {
     }
 
     @Override
-    public void addObjectDescriptor(@NotNull ClassDescriptor objectDescriptor) {
-        checkMayWrite();
-
-        writableWorker.addObjectDescriptor(objectDescriptor);
-    }
-
-    @Override
     public void addClassifierAlias(@NotNull Name name, @NotNull ClassifierDescriptor classifierDescriptor) {
         checkMayWrite();
 
