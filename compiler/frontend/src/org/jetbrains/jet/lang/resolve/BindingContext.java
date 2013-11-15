@@ -224,19 +224,14 @@ public interface BindingContext {
     WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER =
             Slices.<PsiElement, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
                     .build();
-    WritableSlice<JetObjectDeclarationName, PropertyDescriptor> OBJECT_DECLARATION =
-            Slices.<JetObjectDeclarationName, PropertyDescriptor>sliceBuilder()
-                    .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
             NAMESPACE, CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
-            PRIMARY_CONSTRUCTOR_PARAMETER, OBJECT_DECLARATION
+            PRIMARY_CONSTRUCTOR_PARAMETER
     };
 
     ReadOnlySlice<PsiElement, DeclarationDescriptor> DECLARATION_TO_DESCRIPTOR = Slices.<PsiElement, DeclarationDescriptor>sliceBuilder()
             .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS).build();
-
-    WritableSlice<PsiElement, FunctionDescriptor> CALLABLE_REFERENCE = Slices.createSimpleSlice();
 
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
     WritableSlice<JetReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET =

@@ -47,10 +47,7 @@ public class SafeDeleteImportDirectiveUsageInfo extends SafeDeleteReferenceSimpl
                 AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
 
         DeclarationDescriptor referenceDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, importReference);
-
-        DeclarationDescriptor declarationDescriptor = declaration instanceof JetObjectDeclaration
-                ? bindingContext.get(BindingContext.OBJECT_DECLARATION, ((JetObjectDeclaration) declaration).getNameAsDeclaration())
-                : bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
         return referenceDescriptor == declarationDescriptor;
     }

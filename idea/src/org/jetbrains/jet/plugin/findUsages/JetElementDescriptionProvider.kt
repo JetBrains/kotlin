@@ -28,7 +28,7 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
     public override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
         fun elementKind() = when (element) {
             is JetClass -> if (element.isTrait()) "Trait" else "Class"
-            is JetObjectDeclaration, is JetObjectDeclarationName -> "Object"
+            is JetObjectDeclaration -> "Object"
             is JetNamedFunction -> "Function"
             is JetProperty -> "Property"
             is JetTypeParameter -> "Type parameter"

@@ -55,7 +55,7 @@ public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightFixtureT
     }
 
     public void doObjectTest(@NotNull String path) throws Exception {
-        doTest(path, JetObjectDeclarationName.class, false);
+        doTest(path, JetObjectDeclaration.class, false);
     }
 
     public void doFunctionTest(@NotNull String path) throws Exception {
