@@ -446,7 +446,7 @@ public class TypeHierarchyResolver {
             context.getNamespaceDescriptors().put(file, namespaceDescriptor);
 
             WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(),
-                                                                     new TraceBasedRedeclarationHandler(trace), "namespace");
+                                                                     new TraceBasedRedeclarationHandler(trace), "namespace in file " + file.getName());
             namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
             context.getNamespaceScopes().put(file, namespaceScope);
 
