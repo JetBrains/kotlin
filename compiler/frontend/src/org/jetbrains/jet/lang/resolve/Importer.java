@@ -148,6 +148,7 @@ public interface Importer {
 
         @Override
         public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
+            assert !DescriptorUtils.isObject(descriptor) : "Never import objects: " + descriptor;
             imports.add(new AliasImportEntry(descriptor, aliasName));
         }
 

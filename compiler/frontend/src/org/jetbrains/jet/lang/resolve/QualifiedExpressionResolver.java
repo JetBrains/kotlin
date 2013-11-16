@@ -104,7 +104,9 @@ public class QualifiedExpressionResolver {
         }
 
         for (DeclarationDescriptor descriptor : descriptors) {
-            importer.addAliasImport(descriptor, aliasName);
+            if (!DescriptorUtils.isObject(descriptor)) {
+                importer.addAliasImport(descriptor, aliasName);
+            }
         }
 
         return descriptors;
