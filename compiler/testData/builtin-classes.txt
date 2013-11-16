@@ -54,7 +54,7 @@ public abstract class BooleanIterator : jet.Iterator<jet.Boolean> {
 }
 
 public final class Byte : jet.Number, jet.Comparable<jet.Byte> {
-    /*primary*/ public constructor Byte()
+    /*primary*/ private constructor Byte()
     public open override /*1*/ fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public final fun compareTo(/*0*/ other: jet.Char): jet.Int
     public final fun compareTo(/*0*/ other: jet.Double): jet.Int
@@ -167,7 +167,7 @@ public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
 }
 
 public final class Char : jet.Number, jet.Comparable<jet.Char> {
-    /*primary*/ public constructor Char()
+    /*primary*/ private constructor Char()
     public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public open override /*1*/ fun compareTo(/*0*/ other: jet.Char): jet.Int
     public final fun compareTo(/*0*/ other: jet.Double): jet.Int
@@ -291,7 +291,7 @@ public trait Comparable</*0*/ in T> {
 }
 
 public final class Double : jet.Number, jet.Comparable<jet.Double> {
-    /*primary*/ public constructor Double()
+    /*primary*/ private constructor Double()
     public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public final fun compareTo(/*0*/ other: jet.Char): jet.Int
     public open override /*1*/ fun compareTo(/*0*/ other: jet.Double): jet.Int
@@ -501,7 +501,7 @@ public trait ExtensionFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P
 }
 
 public final class Float : jet.Number, jet.Comparable<jet.Float> {
-    /*primary*/ public constructor Float()
+    /*primary*/ private constructor Float()
     public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public final fun compareTo(/*0*/ other: jet.Char): jet.Int
     public final fun compareTo(/*0*/ other: jet.Double): jet.Int
@@ -711,7 +711,7 @@ public trait Hashable {
 }
 
 public final class Int : jet.Number, jet.Comparable<jet.Int> {
-    /*primary*/ public constructor Int()
+    /*primary*/ private constructor Int()
     public final fun and(/*0*/ other: jet.Int): jet.Int
     public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public final fun compareTo(/*0*/ other: jet.Char): jet.Int
@@ -1141,7 +1141,7 @@ public trait ListIterator</*0*/ out T> : jet.Iterator<T> {
 }
 
 public final class Long : jet.Number, jet.Comparable<jet.Long> {
-    /*primary*/ public constructor Long()
+    /*primary*/ private constructor Long()
     public final fun and(/*0*/ other: jet.Long): jet.Long
     public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public final fun compareTo(/*0*/ other: jet.Char): jet.Int
@@ -1438,7 +1438,7 @@ public trait Set</*0*/ out E> : jet.Collection<E> {
 }
 
 public final class Short : jet.Number, jet.Comparable<jet.Short> {
-    /*primary*/ public constructor Short()
+    /*primary*/ private constructor Short()
     public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public final fun compareTo(/*0*/ other: jet.Char): jet.Int
     public final fun compareTo(/*0*/ other: jet.Double): jet.Int
