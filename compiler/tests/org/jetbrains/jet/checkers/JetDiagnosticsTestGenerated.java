@@ -134,6 +134,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/Constructors.kt");
         }
         
+        @TestMetadata("ConstructorsOfPrimitives.kt")
+        public void testConstructorsOfPrimitives() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/ConstructorsOfPrimitives.kt");
+        }
+        
         @TestMetadata("CovariantOverrideType.kt")
         public void testCovariantOverrideType() throws Exception {
             doTest("compiler/testData/diagnostics/tests/CovariantOverrideType.kt");
