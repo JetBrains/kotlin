@@ -238,6 +238,14 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ENUM_ENTRY);
     }
 
+    public static boolean isObject(@NotNull DeclarationDescriptor classifier) {
+        if (classifier instanceof ClassDescriptor) {
+            ClassDescriptor clazz = (ClassDescriptor) classifier;
+            return clazz.getKind().isObject();
+        }
+        return false;
+    }
+
     public static boolean isEnumClass(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.ENUM_CLASS);
     }
