@@ -1,0 +1,1 @@
+val a = array<String>("abc")

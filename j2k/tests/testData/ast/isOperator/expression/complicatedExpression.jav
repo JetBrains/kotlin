@@ -1,1 +1,0 @@
-c.getType().getName() instanceof String

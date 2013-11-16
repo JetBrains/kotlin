@@ -1,1 +1,0 @@
-for (init(); condition(); ) body();

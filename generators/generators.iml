@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="jps-plugin" scope="TEST" />
     <orderEntry type="module" module-name="util" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kotlin-runtime" level="project" />
+    <orderEntry type="module" module-name="j2k-tests" scope="TEST" />
   </component>
 </module>
 

@@ -78,6 +78,8 @@ import org.jetbrains.jet.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest
 import org.jetbrains.jet.generators.tests.generator.SingleClassTestModel
 import org.jetbrains.jet.generators.tests.generator.TestClassModel
+import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterPluginTest
+import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterBasicTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -411,6 +413,16 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDataFlowValueRenderingTest>()) {
             model("dataFlowValueRendering")
+        }
+    }
+
+    testGroup("j2k/tests/test", "j2k/tests/testData") {
+        testClass(javaClass<AbstractJavaToKotlinConverterPluginTest>()) {
+            model("ast", extension = "jav")
+        }
+
+        testClass(javaClass<AbstractJavaToKotlinConverterBasicTest>()) {
+            model("ast", extension = "jav")
         }
     }
 }

@@ -1,0 +1,2 @@
+public fun test() : Unit {
+}

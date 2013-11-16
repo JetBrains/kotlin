@@ -1,1 +1,0 @@
-final String getString() { return ""; }

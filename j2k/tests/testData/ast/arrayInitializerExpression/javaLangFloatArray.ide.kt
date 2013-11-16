@@ -1,0 +1,1 @@
+val a = array<java.lang.Float>(1.0, 2.0, 3.0)

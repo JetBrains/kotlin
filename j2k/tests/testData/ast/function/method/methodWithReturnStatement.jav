@@ -1,1 +1,0 @@
-boolean isTrue() { return true; }

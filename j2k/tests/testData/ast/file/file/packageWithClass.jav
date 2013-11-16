@@ -1,1 +1,0 @@
-package test; final class C {}
