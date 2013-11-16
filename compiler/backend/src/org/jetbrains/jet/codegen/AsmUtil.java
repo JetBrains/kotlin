@@ -194,7 +194,7 @@ public class AsmUtil {
         }
         Integer defaultMapping = visibilityToAccessFlag.get(descriptor.getVisibility());
         if (defaultMapping == null) {
-            throw new IllegalStateException(descriptor.getVisibility() + " is not a valid visibility in backend.");
+            throw new IllegalStateException(descriptor.getVisibility() + " is not a valid visibility in backend. Descriptor: " + descriptor);
         }
         return defaultMapping;
     }
