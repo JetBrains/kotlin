@@ -75,9 +75,7 @@ public final class JavaPropertyResolver {
         List<JavaField> fields = members.getFields();
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
-        assert fields.size() <= 1;
-        if (fields.size() == 1) {
-            JavaField field = fields.iterator().next();
+        for (JavaField field : fields) {
             if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(owner, field)) {
                 propertiesFromCurrent.add(resolveProperty(owner, propertyName, field));
             }
