@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiCompiledElement;
-import com.intellij.psi.PsiTypeParameter;
+import com.intellij.psi.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -114,6 +111,16 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     @NotNull
     public Collection<JavaField> getFields() {
         return fields(getPsi().getFields());
+    }
+
+    @Nullable
+    @Override
+    public JavaField findDeclaredFieldByName(@NotNull Name name) {
+        PsiField field = getPsi().findFieldByName(name.asString(), false);
+        if (field == null) {
+            return null;
+        }
+        return new JavaFieldImpl(field);
     }
 
     @Override

@@ -72,11 +72,11 @@ public final class JavaPropertyResolver {
     public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
         Name propertyName = members.getName();
 
-        List<JavaField> fields = members.getFields();
+        List<NamedMembers.JavaFieldData> fields = members.getFields();
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
-        for (JavaField field : fields) {
-            if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(owner, field)) {
+        for (NamedMembers.JavaFieldData field : fields) {
+            if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(owner, field.getField())) {
                 propertiesFromCurrent.add(resolveProperty(owner, propertyName, field));
             }
         }
@@ -97,7 +97,12 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    private PropertyDescriptor resolveProperty(@NotNull ClassOrNamespaceDescriptor owner, @NotNull Name name, @NotNull JavaField field) {
+    private PropertyDescriptor resolveProperty(
+            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull Name name,
+            @NotNull NamedMembers.JavaFieldData fieldData
+    ) {
+        JavaField field = fieldData.getField();
         boolean isVar = !field.isFinal();
 
         PropertyDescriptorImpl propertyDescriptor = createPropertyDescriptor(owner, name, field, isVar);
@@ -122,7 +127,12 @@ public final class JavaPropertyResolver {
                 (JetType) null
         );
 
-        cache.recordField(field, propertyDescriptor);
+        if (fieldData.isStaticFieldCopiedFromSuperClass()) {
+            cache.recordInheritedStaticField(field, propertyDescriptor);
+        }
+        else {
+            cache.recordField(field, propertyDescriptor);
+        }
 
         return propertyDescriptor;
     }

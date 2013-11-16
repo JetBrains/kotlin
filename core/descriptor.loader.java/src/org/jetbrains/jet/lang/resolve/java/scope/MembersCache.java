@@ -25,10 +25,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /* package */ final class MembersCache {
     private final Map<Name, Collection<Runnable>> memberProcessingTasks = new HashMap<Name, Collection<Runnable>>();
@@ -202,7 +199,13 @@ import java.util.Map;
             }
 
             if (!isInCurrentClass(member)) {
-                return false;
+                if (!isAccessibleStaticField(member)) {
+                    // Field in superclass is not static, inaccessible or hidden by a field in this class
+                    return false;
+                }
+                else {
+                    // We copy Java static fields to subclasses to emulate Java's behavior of inheriting them
+                }
             }
 
             if (member.getVisibility() == Visibilities.PRIVATE) {
@@ -221,12 +224,37 @@ import java.util.Map;
             return fqName != null && fqName.equals(javaClass.getFqName());
         }
 
+        private boolean isAccessibleStaticField(@NotNull JavaMember member) {
+            if (!(member instanceof JavaField)) return false;
+            if (!member.isStatic()) return false;
+
+            Set<JavaField> visibleFields = new HashSet<JavaField>();
+            collectVisibleFields(member.getName(), javaClass, visibleFields);
+
+            return visibleFields.contains(member) && member.isAccessibleFrom(javaClass);
+        }
+
+        private void collectVisibleFields(@NotNull Name name, @NotNull JavaClass jClass, @NotNull Collection<JavaField> result) {
+            JavaField field = jClass.findDeclaredFieldByName(name);
+            if (field != null) {
+                result.add(field);
+                return;
+            }
+            for (JavaClassifierType supertype : jClass.getSupertypes()) {
+                JavaClassifier classifier = supertype.getClassifier();
+                if (classifier instanceof JavaClass) {
+                    collectVisibleFields(name, (JavaClass) classifier, result);
+                }
+            }
+        }
+
         private void processField(@NotNull JavaField field) {
             // group must be created even for excluded field
             NamedMembers namedMembers = getOrCreateEmpty(field);
 
             if (includeMember(field)) {
-                namedMembers.addField(field);
+                // We copy Java static fields to subclasses to emulate Java's behavior of inheriting them
+                namedMembers.addField(field, !isInCurrentClass(field));
             }
         }
 

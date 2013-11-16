@@ -555,6 +555,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/annotations/Deprecated.kt");
             }
             
+            @TestMetadata("InheritedConstantsInAnnotation.kt")
+            public void testInheritedConstantsInAnnotation() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/InheritedConstantsInAnnotation.kt");
+            }
+            
             @TestMetadata("invalidTypesInAnnotationConstructor.kt")
             public void testInvalidTypesInAnnotationConstructor() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/invalidTypesInAnnotationConstructor.kt");
@@ -3865,6 +3870,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/j+k")
+        @InnerTestClasses({J_k.InheritedStatics.class})
         public static class J_k extends AbstractDiagnosticsTestWithEagerResolve {
             @TestMetadata("accessClassObjectFromJava.kt")
             public void testAccessClassObjectFromJava() throws Exception {
@@ -4005,6 +4011,55 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/j+k/UnboxingNulls.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/inheritedStatics")
+            public static class InheritedStatics extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInInheritedStatics() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/j+k/inheritedStatics"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("ambiguity.kt")
+                public void testAmbiguity() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/ambiguity.kt");
+                }
+                
+                @TestMetadata("ambiguityHiddenByExplicitDeclaration.kt")
+                public void testAmbiguityHiddenByExplicitDeclaration() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/ambiguityHiddenByExplicitDeclaration.kt");
+                }
+                
+                @TestMetadata("ambiguityHiddenByPrivateInSuperClass.kt")
+                public void testAmbiguityHiddenByPrivateInSuperClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/ambiguityHiddenByPrivateInSuperClass.kt");
+                }
+                
+                @TestMetadata("hidden.kt")
+                public void testHidden() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/hidden.kt");
+                }
+                
+                @TestMetadata("hiddenByInstanceField.kt")
+                public void testHiddenByInstanceField() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/hiddenByInstanceField.kt");
+                }
+                
+                @TestMetadata("hiddenByPrivateInSuperClass.kt")
+                public void testHiddenByPrivateInSuperClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/hiddenByPrivateInSuperClass.kt");
+                }
+                
+                @TestMetadata("visibilities.kt")
+                public void testVisibilities() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/visibilities.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("J_k");
+                suite.addTestSuite(J_k.class);
+                suite.addTestSuite(InheritedStatics.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/jdk-annotations")
@@ -6147,7 +6202,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTest(Inference.innerSuite());
             suite.addTestSuite(Infos.class);
             suite.addTest(Inner.innerSuite());
-            suite.addTestSuite(J_k.class);
+            suite.addTest(J_k.innerSuite());
             suite.addTest(Jdk_annotations.innerSuite());
             suite.addTestSuite(Library.class);
             suite.addTestSuite(NullabilityAndAutoCasts.class);

@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
@@ -67,6 +68,11 @@ public class BindingContextUtils {
 
     /*package*/ static final ReadOnlySlice<DeclarationDescriptor, PsiElement> DESCRIPTOR_TO_DECLARATION =
             Slices.<DeclarationDescriptor, PsiElement>sliceBuilder().setKeyNormalizer(DECLARATION_DESCRIPTOR_NORMALIZER).setDebugName("DESCRIPTOR_TO_DECLARATION").build();
+
+    // NOTE: use with extreme care, always prefer slices like BindingContext.VARIABLE if possible
+    public static void recordDescriptorToDeclaration(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor, @NotNull PsiElement declaration) {
+        trace.record((WritableSlice) DESCRIPTOR_TO_DECLARATION, descriptor, declaration);
+    }
 
     @Nullable
     public static PsiElement resolveToDeclarationPsiElement(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {

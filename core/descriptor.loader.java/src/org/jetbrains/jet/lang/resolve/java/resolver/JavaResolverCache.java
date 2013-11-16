@@ -46,6 +46,7 @@ public interface JavaResolverCache {
     void recordConstructor(@NotNull JavaElement element, @NotNull ConstructorDescriptor descriptor);
 
     void recordField(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor);
+    void recordInheritedStaticField(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor);
 
     void recordClass(@NotNull JavaClass javaClass, @NotNull ClassDescriptor descriptor);
 

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMember;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Visibility;
@@ -82,5 +83,10 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
     @Override
     public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
         return JavaElementUtil.findAnnotation(this, fqName);
+    }
+
+    @Override
+    public boolean isAccessibleFrom(@NotNull JavaClass fromClass) {
+        return PsiUtil.isAccessible(getPsi(), ((JavaElementImpl) fromClass).getPsi(), null);
     }
 }

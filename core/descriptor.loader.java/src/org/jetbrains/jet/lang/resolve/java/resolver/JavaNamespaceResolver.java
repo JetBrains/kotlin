@@ -227,7 +227,7 @@ public final class JavaNamespaceResolver {
             }
         }
 
-        for (JavaField field : javaClass.getFields()) {
+        for (JavaField field : javaClass.getAllFields()) {
             if (field.isStatic() && !DescriptorResolverUtils.shouldBeInEnumClassObject(field)) {
                 return true;
             }
