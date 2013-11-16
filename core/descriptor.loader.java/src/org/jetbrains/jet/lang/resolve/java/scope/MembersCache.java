@@ -198,6 +198,10 @@ import java.util.*;
                 return false;
             }
 
+            if (member.getVisibility() == Visibilities.PRIVATE) {
+                return false;
+            }
+
             if (!isInCurrentClass(member)) {
                 if (!isAccessibleStaticField(member)) {
                     // Field in superclass is not static, inaccessible or hidden by a field in this class
@@ -206,10 +210,6 @@ import java.util.*;
                 else {
                     // We copy Java static fields to subclasses to emulate Java's behavior of inheriting them
                 }
-            }
-
-            if (member.getVisibility() == Visibilities.PRIVATE) {
-                return false;
             }
 
             if (DescriptorResolverUtils.isObjectMethodInInterface(member)) {
