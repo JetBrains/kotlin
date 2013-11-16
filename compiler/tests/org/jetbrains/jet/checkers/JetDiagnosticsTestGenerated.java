@@ -2860,7 +2860,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/generics")
-        @InnerTestClasses({Generics.TpAsReified.class})
+        @InnerTestClasses({Generics.TpAsReified.class, Generics.VarProjection.class})
         public static class Generics extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInGenerics() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/generics"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2949,10 +2949,39 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/generics/varProjection")
+            public static class VarProjection extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInVarProjection() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/generics/varProjection"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("setterNotProjectedOutAssign.kt")
+                public void testSetterNotProjectedOutAssign() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/generics/varProjection/setterNotProjectedOutAssign.kt");
+                }
+                
+                @TestMetadata("setterProjectedOutAssign.kt")
+                public void testSetterProjectedOutAssign() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/generics/varProjection/setterProjectedOutAssign.kt");
+                }
+                
+                @TestMetadata("setterProjectedOutNoPlusAssign.kt")
+                public void testSetterProjectedOutNoPlusAssign() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/generics/varProjection/setterProjectedOutNoPlusAssign.kt");
+                }
+                
+                @TestMetadata("setterProjectedOutPlusAssignDefined.kt")
+                public void testSetterProjectedOutPlusAssignDefined() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/generics/varProjection/setterProjectedOutPlusAssignDefined.kt");
+                }
+                
+            }
+            
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Generics");
                 suite.addTestSuite(Generics.class);
                 suite.addTestSuite(TpAsReified.class);
+                suite.addTestSuite(VarProjection.class);
                 return suite;
             }
         }

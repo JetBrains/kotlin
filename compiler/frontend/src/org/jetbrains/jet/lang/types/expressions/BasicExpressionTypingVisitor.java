@@ -758,8 +758,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         if (canBeThis && expression instanceof JetThisExpression) return;
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
+
+        JetExpression reportOn = expression != null ? expression : expressionWithParenthesis;
+        if (variable instanceof PropertyDescriptor) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variable;
+            if (propertyDescriptor.isSetterProjectedOut()) {
+                trace.report(SETTER_PROJECTED_OUT.on(reportOn, propertyDescriptor));
+            }
+        }
+
         if (variable == null) {
-            trace.report(VARIABLE_EXPECTED.on(expression != null ? expression : expressionWithParenthesis));
+            trace.report(VARIABLE_EXPECTED.on(reportOn));
         }
     }
 
