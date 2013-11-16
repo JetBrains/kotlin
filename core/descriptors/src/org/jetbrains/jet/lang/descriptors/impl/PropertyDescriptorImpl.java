@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +50,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     private List<TypeParameterDescriptor> typeParameters;
     private PropertyGetterDescriptorImpl getter;
     private PropertySetterDescriptor setter;
+    private boolean setterProjectedOut;
 
     private PropertyDescriptorImpl(
             @Nullable PropertyDescriptor original,
@@ -125,6 +127,10 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         this.setter = setter;
     }
 
+    public void setSetterProjectedOut(boolean setterProjectedOut) {
+        this.setterProjectedOut = setterProjectedOut;
+    }
+
     public void setVisibility(@NotNull Visibility visibility) {
         this.visibility = visibility;
     }
@@ -180,6 +186,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     @Nullable
     public PropertySetterDescriptor getSetter() {
         return setter;
+    }
+
+    @Override
+    public boolean isSetterProjectedOut() {
+        return setterProjectedOut;
     }
 
     @Override
@@ -253,7 +264,15 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(newSetter, setter, substitutor);
             if (substitutedValueParameters == null) {
-                return null;
+                // The setter is projected out, e.g. in this case:
+                //     trait Tr<T> { var v: T }
+                //     fun test(tr: Tr<out Any?>) { ... }
+                // we want to tell the user that although the property is declared as a var,
+                // it can not be assigned to because of the projection
+                substitutedDescriptor.setSetterProjectedOut(true);
+                substitutedValueParameters = Collections.<ValueParameterDescriptor>singletonList(
+                        PropertySetterDescriptorImpl.createSetterParameter(newSetter, KotlinBuiltIns.getInstance().getNothingType())
+                );
             }
             if (substitutedValueParameters.size() != 1) {
                 throw new IllegalStateException();

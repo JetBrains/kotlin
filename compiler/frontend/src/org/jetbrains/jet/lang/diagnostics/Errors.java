@@ -443,6 +443,7 @@ public interface Errors {
     DiagnosticFactory0<JetFunctionLiteralExpression> UNUSED_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> VAL_REASSIGNMENT = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetExpression, DeclarationDescriptor> SETTER_PROJECTED_OUT = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> INITIALIZATION_BEFORE_DECLARATION = DiagnosticFactory1.create(ERROR);
 
