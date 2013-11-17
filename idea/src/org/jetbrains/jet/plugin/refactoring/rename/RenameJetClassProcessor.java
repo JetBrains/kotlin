@@ -16,10 +16,15 @@
 
 package org.jetbrains.jet.plugin.refactoring.rename;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.KotlinLightClass;
+import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 
@@ -28,7 +33,26 @@ import java.util.Map;
 public class RenameJetClassProcessor extends RenamePsiElementProcessor {
     @Override
     public boolean canProcessElement(@NotNull PsiElement element) {
-        return element instanceof JetClassOrObject;
+        return element instanceof JetClassOrObject || element instanceof KotlinLightClass;
+    }
+
+    @Nullable
+    @Override
+    public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
+        if (element instanceof KotlinLightClass) {
+            if (element instanceof KotlinLightClassForExplicitDeclaration) {
+                return element.getNavigationElement();
+            }
+            else if (element instanceof KotlinLightClassForPackage) {
+                // Cancel rename
+                return null;
+            }
+            else {
+                assert false : "Should not be suggested to rename element of type " + element.getClass() + " " + element;
+            }
+        }
+
+        return element;
     }
 
     @Override
@@ -43,6 +67,7 @@ public class RenameJetClassProcessor extends RenamePsiElementProcessor {
                 allRenames.put(file, newName + "." + virtualFile.getExtension());
             }
         }
+
         super.prepareRenaming(element, newName, allRenames);
     }
 }

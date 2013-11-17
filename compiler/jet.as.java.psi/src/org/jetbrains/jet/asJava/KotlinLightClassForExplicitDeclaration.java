@@ -129,7 +129,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     @NotNull
     @Override
     public PsiElement copy() {
-        return new KotlinLightClassForExplicitDeclaration(getManager(), classFqName, classOrObject);
+        return new KotlinLightClassForExplicitDeclaration(getManager(), classFqName, (JetClassOrObject) classOrObject.copy());
     }
 
     @NotNull
@@ -394,7 +394,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return super.setName(name); // TODO
+        throw new IncorrectOperationException("Cannot modify compiled kotlin element");
     }
 
     @Override

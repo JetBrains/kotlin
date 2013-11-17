@@ -33,14 +33,17 @@ import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest;
 @TestMetadata("idea/testData/refactoring/rename")
 public class RenameTestGenerated extends AbstractRenameTest {
     public void testAllFilesPresentInRename() throws Exception {
-        JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests",
-                                                                 new File("idea/testData/refactoring/rename"),
-                                                                 Pattern.compile("^(.+)\\.test$"));
+        JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"));
     }
     
     @TestMetadata("renameJavaClass/renameJavaClass.test")
     public void testRenameJavaClass_RenameJavaClass() throws Exception {
         doTest("idea/testData/refactoring/rename/renameJavaClass/renameJavaClass.test");
+    }
+    
+    @TestMetadata("renameKotlinClass/javaWrapperForKotlinClass.test")
+    public void testRenameKotlinClass_JavaWrapperForKotlinClass() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameKotlinClass/javaWrapperForKotlinClass.test");
     }
     
     @TestMetadata("renameKotlinClass/kotlinClass.test")
