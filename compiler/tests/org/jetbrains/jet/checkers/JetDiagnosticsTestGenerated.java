@@ -4022,31 +4022,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/ambiguity.kt");
                 }
                 
-                @TestMetadata("ambiguityHiddenByExplicitDeclaration.kt")
-                public void testAmbiguityHiddenByExplicitDeclaration() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/ambiguityHiddenByExplicitDeclaration.kt");
-                }
-                
-                @TestMetadata("ambiguityHiddenByPrivateInSuperClass.kt")
-                public void testAmbiguityHiddenByPrivateInSuperClass() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/ambiguityHiddenByPrivateInSuperClass.kt");
-                }
-                
-                @TestMetadata("hidden.kt")
-                public void testHidden() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/hidden.kt");
-                }
-                
-                @TestMetadata("hiddenByInstanceField.kt")
-                public void testHiddenByInstanceField() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/hiddenByInstanceField.kt");
-                }
-                
-                @TestMetadata("hiddenByPrivateInSuperClass.kt")
-                public void testHiddenByPrivateInSuperClass() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/hiddenByPrivateInSuperClass.kt");
-                }
-                
                 @TestMetadata("visibilities.kt")
                 public void testVisibilities() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/j+k/inheritedStatics/visibilities.kt");
