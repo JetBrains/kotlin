@@ -1,0 +1,23 @@
+package test
+
+public trait HiddenByInstanceField : java.lang.Object {
+    
+    public open class Base : java.lang.Object {
+        public constructor Base()
+    }
+    
+    public open class Derived : test.HiddenByInstanceField.Base {
+        public constructor Derived()
+        public final var PUBLIC: jet.String?
+    }
+}
+
+package HiddenByInstanceField {
+    
+    package Base {
+        public val PUBLIC: jet.Int
+    }
+    
+    package Derived {
+    }
+}

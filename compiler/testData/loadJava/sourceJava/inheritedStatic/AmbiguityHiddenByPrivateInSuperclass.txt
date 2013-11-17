@@ -1,0 +1,37 @@
+package test
+
+public trait AmbiguityHiddenByPrivateInSuperclass : java.lang.Object {
+    
+    public open class Base : java.lang.Object {
+        public constructor Base()
+    }
+    
+    public open class Derived : test.AmbiguityHiddenByPrivateInSuperclass.Base {
+        public constructor Derived()
+    }
+    
+    public open class Derived1 : test.AmbiguityHiddenByPrivateInSuperclass.Derived, test.AmbiguityHiddenByPrivateInSuperclass.Interface {
+        public constructor Derived1()
+    }
+    
+    public trait Interface : java.lang.Object {
+    }
+}
+
+package AmbiguityHiddenByPrivateInSuperclass {
+    
+    package Base {
+        public val HIDDEN: jet.Int
+    }
+    
+    package Derived {
+    }
+    
+    package Derived1 {
+        public val HIDDEN: jet.Long
+    }
+    
+    package Interface {
+        public val HIDDEN: jet.Long
+    }
+}

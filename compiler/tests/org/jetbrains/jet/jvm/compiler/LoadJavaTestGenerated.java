@@ -1481,6 +1481,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
     }
     
     @TestMetadata("compiler/testData/loadJava/sourceJava")
+    @InnerTestClasses({SourceJava.InheritedStatic.class})
     public static class SourceJava extends AbstractLoadJavaTest {
         public void testAllFilesPresentInSourceJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/sourceJava"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1511,6 +1512,55 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestSourceJava("compiler/testData/loadJava/sourceJava/WrongNumberOfGenericParameters.java");
         }
         
+        @TestMetadata("compiler/testData/loadJava/sourceJava/inheritedStatic")
+        public static class InheritedStatic extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInInheritedStatic() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/sourceJava/inheritedStatic"), Pattern.compile("^(.+)\\.java$"), true);
+            }
+            
+            @TestMetadata("Ambiguity.java")
+            public void testAmbiguity() throws Exception {
+                doTestSourceJava("compiler/testData/loadJava/sourceJava/inheritedStatic/Ambiguity.java");
+            }
+            
+            @TestMetadata("AmbiguityHiddenByExplicitDeclaration.java")
+            public void testAmbiguityHiddenByExplicitDeclaration() throws Exception {
+                doTestSourceJava("compiler/testData/loadJava/sourceJava/inheritedStatic/AmbiguityHiddenByExplicitDeclaration.java");
+            }
+            
+            @TestMetadata("AmbiguityHiddenByPrivateInSuperclass.java")
+            public void testAmbiguityHiddenByPrivateInSuperclass() throws Exception {
+                doTestSourceJava("compiler/testData/loadJava/sourceJava/inheritedStatic/AmbiguityHiddenByPrivateInSuperclass.java");
+            }
+            
+            @TestMetadata("Hidden.java")
+            public void testHidden() throws Exception {
+                doTestSourceJava("compiler/testData/loadJava/sourceJava/inheritedStatic/Hidden.java");
+            }
+            
+            @TestMetadata("HiddenByInstanceField.java")
+            public void testHiddenByInstanceField() throws Exception {
+                doTestSourceJava("compiler/testData/loadJava/sourceJava/inheritedStatic/HiddenByInstanceField.java");
+            }
+            
+            @TestMetadata("HiddenByPrivateInSuperClass.java")
+            public void testHiddenByPrivateInSuperClass() throws Exception {
+                doTestSourceJava("compiler/testData/loadJava/sourceJava/inheritedStatic/HiddenByPrivateInSuperClass.java");
+            }
+            
+            @TestMetadata("Visibility.java")
+            public void testVisibility() throws Exception {
+                doTestSourceJava("compiler/testData/loadJava/sourceJava/inheritedStatic/Visibility.java");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("SourceJava");
+            suite.addTestSuite(SourceJava.class);
+            suite.addTestSuite(InheritedStatic.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/loadJava/javaAgainstKotlin")
@@ -1637,7 +1687,7 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         suite.addTest(CompiledJavaCompareWithKotlin.innerSuite());
         suite.addTestSuite(CompiledJavaIncludeObjectMethods.class);
         suite.addTest(CompiledJava.innerSuite());
-        suite.addTestSuite(SourceJava.class);
+        suite.addTest(SourceJava.innerSuite());
         suite.addTest(JavaAgainstKotlin.innerSuite());
         return suite;
     }
