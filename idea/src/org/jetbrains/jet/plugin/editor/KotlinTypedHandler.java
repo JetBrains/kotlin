@@ -76,8 +76,8 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             if (previousElement instanceof LeafPsiElement
                     && ((LeafPsiElement) previousElement).getElementType() == JetTokens.LONG_TEMPLATE_ENTRY_START) {
                 editor.getDocument().insertString(offset, "}");
+                return Result.STOP;
             }
-            return Result.STOP;
         }
 
         return Result.CONTINUE;

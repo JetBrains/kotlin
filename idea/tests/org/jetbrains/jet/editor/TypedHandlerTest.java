@@ -26,6 +26,30 @@ public class TypedHandlerTest extends LightCodeInsightTestCase {
         checkResultByText("val x = \"${}\"");
     }
 
+    public void testAutoIndentRightOpenBrace() throws Exception {
+        configureFromFileText("a.kt",
+                              "fun test() {\n" +
+                              "<caret>\n" +
+                              "}");
+        EditorTestUtil.performTypingAction(getEditor(), '{');
+        checkResultByText(
+                "fun test() {\n" +
+                "    {<caret>}\n" +
+                "}");
+    }
+
+    public void testAutoIndentLeftOpenBrace() throws Exception {
+        configureFromFileText("a.kt",
+                              "fun test() {\n" +
+                              "      <caret>\n" +
+                              "}");
+        EditorTestUtil.performTypingAction(getEditor(), '{');
+        checkResultByText(
+                "fun test() {\n" +
+                "    {<caret>}\n" +
+                "}");
+    }
+
     public void testTypeStringTemplateStartWithCloseBraceAfter() throws Exception {
         configureFromFileText("a.kt", "fun foo() { \"$<caret>\" }");
         EditorTestUtil.performTypingAction(getEditor(), '{');
