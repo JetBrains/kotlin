@@ -35,34 +35,42 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
     @Override
     public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
-        jetLTTyped = '<' == c &&
-                     file instanceof JetFile && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET &&
-                     JetLtGtTypingUtils.shouldAutoCloseAngleBracket(editor.getCaretModel().getOffset(), editor);
-
-        if ('>' == c) {
-            if (file instanceof JetFile && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
-                if (JetLtGtTypingUtils.handleJetGTInsert(editor)) {
-                    return Result.STOP;
-                }
-            }
+        if (!(file instanceof JetFile)) {
+            return Result.CONTINUE;
         }
 
-        return super.beforeCharTyped(c, project, editor, file, fileType);
+        switch (c) {
+            case '<':
+                jetLTTyped = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET &&
+                             JetLtGtTypingUtils.shouldAutoCloseAngleBracket(editor.getCaretModel().getOffset(), editor);
+                return Result.CONTINUE;
+            case '>':
+                if (CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
+                    if (JetLtGtTypingUtils.handleJetGTInsert(editor)) {
+                        return Result.STOP;
+                    }
+                }
+                return Result.CONTINUE;
+        }
+
+        return Result.CONTINUE;
     }
 
     @Override
-    public Result charTyped(char c, Project project, Editor editor, @NotNull PsiFile file) {
+    public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+        if (!(file instanceof JetFile)) {
+            return Result.CONTINUE;
+        }
+
         if (jetLTTyped) {
             jetLTTyped = false;
             JetLtGtTypingUtils.handleJetAutoCloseLT(editor);
             return Result.STOP;
         }
 
-        if (!(file instanceof JetFile) || !CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
-            return Result.CONTINUE;
-        }
-        if (c == '{') {
+        if (c == '{' && CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
             PsiDocumentManager.getInstance(project).commitAllDocuments();
+
             int offset = editor.getCaretModel().getOffset();
             PsiElement previousElement = file.findElementAt(offset - 1);
             if (previousElement instanceof LeafPsiElement
@@ -71,6 +79,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             }
             return Result.STOP;
         }
+
         return Result.CONTINUE;
     }
 }
