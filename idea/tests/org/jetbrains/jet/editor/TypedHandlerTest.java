@@ -91,6 +91,184 @@ public class TypedHandlerTest extends LightCodeInsightTestCase {
         );
     }
 
+    public void testAutoCloseBraceInFunctionDeclaration() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() <caret>",
+
+                "fun foo() {<caret>}"
+        );
+    }
+
+    public void testAutoCloseBraceInLocalFunctionDeclaration() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    fun bar() <caret>\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    fun bar() {<caret>}\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceInAssignment() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    val a = <caret>\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    val a = {<caret>}\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedIfSurroundOnSameLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    if() <caret>foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    if() {foo()\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnSameLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    while() <caret>foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    while() {foo()\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnNewLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    while()\n" +
+                "<caret>\n" +
+                "    foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    while()\n" +
+                "    {\n" +
+                "    foo()\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedIfSurroundOnOtherLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    if(true) <caret>\n" +
+                "    foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    if(true) {<caret>\n" +
+                "    foo()\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedIfSurroundOnNewLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    if(true)\n" +
+                "        <caret>\n" +
+                "    foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    if(true)\n" +
+                "    {<caret>\n" +
+                "    foo()\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceInsideFor() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    for (elem in some.filter <caret>) {\n" +
+                "    }\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    for (elem in some.filter {<caret>}) {\n" +
+                "    }\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceInsideForAfterCloseParen() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    for (elem in some.foo(true) <caret>) {\n" +
+                "    }\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    for (elem in some.foo(true) {<caret>}) {\n" +
+                "    }\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceBeforeIf() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    <caret>if (true) {}\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    {<caret>if (true) {}\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceInIfCondition() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    if (some.hello (12) <caret>)\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    if (some.hello (12) {<caret>})\n" +
+                "}"
+        );
+    }
+
     public void testTypeLtInFunDeclaration() throws Exception {
         doLtGtTest("fun <caret>");
     }
