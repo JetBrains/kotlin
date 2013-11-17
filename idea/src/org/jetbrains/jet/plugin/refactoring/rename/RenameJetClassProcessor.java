@@ -25,10 +25,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.util.Map;
 
-/**
- * User: Alefas
- * Date: 21.02.12
- */
 public class RenameJetClassProcessor extends RenamePsiElementProcessor {
     @Override
     public boolean canProcessElement(@NotNull PsiElement element) {
