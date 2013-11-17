@@ -400,7 +400,7 @@ public class CodegenBinding {
         for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
             if (specifier instanceof JetDelegatorToSuperCall) {
                 JetType superType = bindingContext.get(TYPE, specifier.getTypeReference());
-                assert superType != null;
+                assert superType != null : "Not resolved: " + specifier.getText();
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 assert superClassDescriptor != null;
                 if (!isInterface(superClassDescriptor)) {
