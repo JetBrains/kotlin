@@ -18,54 +18,77 @@ package org.jetbrains.jet.editor;
 
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import org.jetbrains.jet.utils.ExceptionUtils;
+
+import java.io.IOException;
 
 public class TypedHandlerTest extends LightCodeInsightTestCase {
-    public void testTypeStringTemplateStart() throws Exception {
-        configureFromFileText("a.kt", "val x = \"$<caret>\"");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText("val x = \"${}\"");
+    public void testTypeStringTemplateStart() {
+        doCharTypeTest(
+                '{',
+
+                "val x = \"$<caret>\"",
+
+                "val x = \"${}\""
+        );
     }
 
-    public void testAutoIndentRightOpenBrace() throws Exception {
-        configureFromFileText("a.kt",
-                              "fun test() {\n" +
-                              "<caret>\n" +
-                              "}");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText(
+    public void testAutoIndentRightOpenBrace() {
+        doCharTypeTest(
+                '{',
+
+                "fun test() {\n" +
+                "<caret>\n" +
+                "}",
+
                 "fun test() {\n" +
                 "    {<caret>}\n" +
-                "}");
+                "}"
+        );
     }
 
-    public void testAutoIndentLeftOpenBrace() throws Exception {
-        configureFromFileText("a.kt",
-                              "fun test() {\n" +
-                              "      <caret>\n" +
-                              "}");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText(
+    public void testAutoIndentLeftOpenBrace() {
+        doCharTypeTest(
+                '{',
+
+                "fun test() {\n" +
+                "      <caret>\n" +
+                "}",
+
                 "fun test() {\n" +
                 "    {<caret>}\n" +
-                "}");
+                "}"
+        );
     }
 
-    public void testTypeStringTemplateStartWithCloseBraceAfter() throws Exception {
-        configureFromFileText("a.kt", "fun foo() { \"$<caret>\" }");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText("fun foo() { \"${}\" }");
+    public void testTypeStringTemplateStartWithCloseBraceAfter() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() { \"$<caret>\" }",
+
+                "fun foo() { \"${}\" }"
+        );
     }
 
-    public void testTypeStringTemplateStartBeforeString() throws Exception {
-        configureFromFileText("a.kt", "fun foo() { \"$<caret>something\" }");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText("fun foo() { \"${}something\" }");
+    public void testTypeStringTemplateStartBeforeString() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() { \"$<caret>something\" }",
+
+                "fun foo() { \"${}something\" }"
+        );
     }
 
-    public void testKT3575() throws Exception {
-        configureFromFileText("a.kt", "val x = \"$<caret>]\"");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText("val x = \"${}]\"");
+    public void testKT3575() {
+        doCharTypeTest(
+                '{',
+
+                "val x = \"$<caret>]\"",
+
+                "val x = \"${}]\""
+        );
     }
 
     public void testTypeLtInFunDeclaration() throws Exception {
@@ -105,6 +128,17 @@ public class TypedHandlerTest extends LightCodeInsightTestCase {
         EditorTestUtil.performTypingAction(getEditor(), '>');
         EditorTestUtil.performTypingAction(getEditor(), '>');
         checkResultByText("val a: List<Set<Int>><caret>");
+    }
+
+    private void doCharTypeTest(char ch, String beforeText, String afterText) {
+        try {
+            configureFromFileText("a.kt", beforeText);
+            EditorTestUtil.performTypingAction(getEditor(), ch);
+            checkResultByText(afterText);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 
     private void doLtGtTestNoAutoClose(String initText) throws Exception {
