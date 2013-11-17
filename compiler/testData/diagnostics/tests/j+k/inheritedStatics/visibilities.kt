@@ -1,4 +1,7 @@
 // FILE: base/Base.java
+
+// The point of this test is to make sure that invisible package-private fields are not inherited
+
 package base;
 
 public class Base {
@@ -13,6 +16,7 @@ public class Base {
 package derived;
 
 public class Derived extends base.Base {
+    // the PACKAGE field is not visible here
 }
 
 // FILE: test.kt
