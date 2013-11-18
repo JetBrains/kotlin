@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.psi.JetIfExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.*
 
-public class WhenToIfIntention : JetSelfTargetingIntention<JetWhenExpression>("if.to.when", javaClass()) {
+public class WhenToIfIntention : JetSelfTargetingIntention<JetWhenExpression>("when.to.if", javaClass()) {
     override fun isApplicableTo(element: JetWhenExpression): Boolean = element.canTransformToIf()
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
