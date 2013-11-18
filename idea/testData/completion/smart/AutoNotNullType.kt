@@ -1,5 +1,5 @@
-fun f(p: Object) {
-    if (p is String){
+fun f(p: String?) {
+    if (p != null){
         var a : String = <caret>
     }
 }

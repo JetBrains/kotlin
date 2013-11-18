@@ -36,6 +36,26 @@ public class JetSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/completion/smart"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("AutoCastedType.kt")
+    public void testAutoCastedType() throws Exception {
+        doTest("idea/testData/completion/smart/AutoCastedType.kt");
+    }
+    
+    @TestMetadata("AutoCastedTypeWithQualifier.kt")
+    public void testAutoCastedTypeWithQualifier() throws Exception {
+        doTest("idea/testData/completion/smart/AutoCastedTypeWithQualifier.kt");
+    }
+    
+    @TestMetadata("AutoNotNullType.kt")
+    public void testAutoNotNullType() throws Exception {
+        doTest("idea/testData/completion/smart/AutoNotNullType.kt");
+    }
+    
+    @TestMetadata("AutoNotNullTypeWithQualifier.kt")
+    public void testAutoNotNullTypeWithQualifier() throws Exception {
+        doTest("idea/testData/completion/smart/AutoNotNullTypeWithQualifier.kt");
+    }
+    
     @TestMetadata("ChainedCall.kt")
     public void testChainedCall() throws Exception {
         doTest("idea/testData/completion/smart/ChainedCall.kt");

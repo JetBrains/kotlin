@@ -8,12 +8,12 @@ import org.jetbrains.jet.plugin.project.CancelableResolveSession
 import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import com.intellij.codeInsight.lookup.*
-import java.util.ArrayList
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.codeInsight.completion.InsertHandler
+import com.intellij.codeInsight.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.*
-import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement
+import com.google.common.collect.SetMultimap
+import java.util.*
+import org.jetbrains.jet.lang.resolve.calls.autocasts.*
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -22,7 +22,17 @@ trait SmartCompletionData{
 
 fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession: CancelableResolveSession): SmartCompletionData? {
     val parent = expression.getParent()
-    val expressionWithType = if (parent is JetQualifiedExpression) parent else expression
+    val expressionWithType: JetExpression;
+    val receiver: JetExpression?
+    if (parent is JetQualifiedExpression) {
+        expressionWithType = parent
+        receiver = parent.getReceiverExpression()
+    }
+    else {
+        expressionWithType = expression
+        receiver = null
+    }
+
     val bindingContext = resolveSession.resolveToElement(expressionWithType)
     val expectedType: JetType? = bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType)
     if (expectedType == null) return null
@@ -31,61 +41,40 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
 
     val additionalElements = ArrayList<LookupElement>()
 
-    if (expression == expressionWithType) { // no qualifier
-        val typeConstructor: TypeConstructor = expectedType.getConstructor()
-        val classifier: ClassifierDescriptor? = typeConstructor.getDeclarationDescriptor()
-        if (classifier is ClassDescriptor) {
-            if (classifier.getModality() != Modality.ABSTRACT){
-                val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, classifier)
+    if (receiver == null) {
+        typeInstantiationItems(expectedType, resolveSession, bindingContext).toCollection(additionalElements)
+    }
 
-                val typeArgs = expectedType.getArguments()
-                //TODO: shouldn't be method in DescriptorRenderer to render type arguments?
-                val typeArgsText =
-                        if (typeArgs.isEmpty())
-                            ""
-                        else
-                            typeArgs.map { DescriptorRenderer.TEXT.renderType(it.getType()) }.makeString(", ", "<", ">")
-                val presentableText = lookupElement.getLookupString() + typeArgsText + "()"
+    val dataFlowInfo = bindingContext.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expressionWithType)
+    val (variableToTypes: Map<VariableDescriptor, Collection<JetType>>, notNullVariables: Set<VariableDescriptor>) = processDataFlowInfo(dataFlowInfo, receiver, bindingContext)
 
-                val constructors: Collection<ConstructorDescriptor> = classifier.getConstructors()
-                val caretPosition =
-                        if (constructors.size == 0)
-                            CaretPosition.AFTER_BRACKETS
-                        else if (constructors.size == 1)
-                            if (constructors.first().getValueParameters().isEmpty()) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
-                        else
-                            CaretPosition.IN_BRACKETS
-                val insertHandler = JetFunctionInsertHandler(caretPosition, BracketType.PARENTHESIS)
-
-                //TODO: very bad code
-                if (lookupElement is LookupElementBuilder) {
-                    additionalElements.add(lookupElement.withPresentableText(presentableText).withInsertHandler(insertHandler))
+    fun typesOf(descriptor: DeclarationDescriptor): Iterable<JetType> {
+        if (descriptor is CallableDescriptor) {
+            var returnType = descriptor.getReturnType()
+            if (descriptor is VariableDescriptor) {
+                if (notNullVariables.contains(descriptor) && returnType != null) {
+                    returnType = TypeUtils.makeNotNullable(returnType!!)
                 }
-                else if (lookupElement is JavaPsiClassReferenceElement) {
-                    additionalElements.add(lookupElement.setPresentableText(presentableText).setInsertHandler(insertHandler))
+
+                val autoCastTypes = variableToTypes[descriptor]
+                if (autoCastTypes != null && !autoCastTypes.isEmpty()) {
+                    return autoCastTypes + returnType.toList()
                 }
             }
+            return returnType.toList()
+        }
+        else {
+            return listOf()
         }
     }
 
-    return object: SmartCompletionData{
-        override fun accepts(descriptor: DeclarationDescriptor): Boolean {
-            if (itemsToSkip.contains(descriptor)) return false
+    return object: SmartCompletionData {
+        override fun accepts(descriptor: DeclarationDescriptor)
+                = !itemsToSkip.contains(descriptor) && typesOf(descriptor).any { JetTypeChecker.INSTANCE.isSubtypeOf(it, expectedType) }
 
-            if (descriptor is CallableDescriptor) {
-                val returnType = descriptor.getReturnType()
-                return returnType != null && JetTypeChecker.INSTANCE.isSubtypeOf(returnType, expectedType)
-            }
-            else {
-                return false
-            }
-        }
-
-        override val additionalElements: Iterable<LookupElement> = additionalElements
+        override val additionalElements = additionalElements
     }
 }
-
-private fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()
 
 private fun calcItemsToSkip(expression: JetExpression, resolveSession: CancelableResolveSession): Collection<DeclarationDescriptor> {
     val parent = expression.getParent()
@@ -107,4 +96,98 @@ private fun calcItemsToSkip(expression: JetExpression, resolveSession: Cancelabl
         }
     }
     return listOf()
+}
+
+private fun typeInstantiationItems(expectedType: JetType, resolveSession: CancelableResolveSession, bindingContext: BindingContext): Iterable<LookupElement> {
+    val typeConstructor: TypeConstructor = expectedType.getConstructor()
+    val classifier: ClassifierDescriptor? = typeConstructor.getDeclarationDescriptor()
+    if (!(classifier is ClassDescriptor)) return listOf()
+    if (classifier.getModality() == Modality.ABSTRACT) return listOf()
+
+    //TODO: check for constructor's visibility
+
+    val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, classifier)
+
+    val typeArgs = expectedType.getArguments()
+    //TODO: shouldn't be method in DescriptorRenderer to render type arguments?
+    val typeArgsText =
+            if (typeArgs.isEmpty())
+                ""
+            else
+                typeArgs.map { DescriptorRenderer.TEXT.renderType(it.getType()) }.makeString(", ", "<", ">")
+    val presentableText = lookupElement.getLookupString() + typeArgsText + "()"
+
+    val constructors: Collection<ConstructorDescriptor> = classifier.getConstructors()
+    val caretPosition =
+            if (constructors.size == 0)
+                CaretPosition.AFTER_BRACKETS
+            else if (constructors.size == 1)
+                if (constructors.first().getValueParameters().isEmpty()) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
+            else
+                CaretPosition.IN_BRACKETS
+    val insertHandler = JetFunctionInsertHandler(caretPosition, BracketType.PARENTHESIS)
+
+    //TODO: very bad code
+    if (lookupElement is LookupElementBuilder) {
+        return listOf(lookupElement.withPresentableText(presentableText).withInsertHandler(insertHandler))
+    }
+    else if (lookupElement is JavaPsiClassReferenceElement) {
+        return listOf(lookupElement.setPresentableText(presentableText).setInsertHandler(insertHandler))
+    }
+
+    return listOf()
+}
+
+private data class ProcessDataFlowInfoResult(
+        val variableToTypes: Map<VariableDescriptor, Collection<JetType>> = Collections.emptyMap(),
+        val notNullVariables: Set<VariableDescriptor> = Collections.emptySet()
+)
+
+private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpression?, bindingContext: BindingContext): ProcessDataFlowInfoResult {
+    if (dataFlowInfo != null) {
+        val dataFlowValueToVariable: (DataFlowValue) -> VariableDescriptor?
+        if (receiver != null) {
+            val receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, receiver)
+            if (receiverType != null) {
+                val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext).getId()
+                dataFlowValueToVariable = {(value) ->
+                    val id = value.getId()
+                    if (id is com.intellij.openapi.util.Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
+                }
+            }
+            else {
+                return ProcessDataFlowInfoResult()
+            }
+        }
+        else {
+            dataFlowValueToVariable = {(value) -> value.getId() as? VariableDescriptor }
+        }
+
+        val variableToType = HashMap<VariableDescriptor, Collection<JetType>>()
+        val typeInfo: SetMultimap<DataFlowValue, JetType> = dataFlowInfo.getCompleteTypeInfo()
+        for ((dataFlowValue, types) in typeInfo.asMap().entrySet()) {
+            val variable = dataFlowValueToVariable.invoke(dataFlowValue)
+            if (variable != null) {
+                variableToType[variable] = types
+            }
+        }
+
+        val nullabilityInfo: Map<DataFlowValue, Nullability> = dataFlowInfo.getCompleteNullabilityInfo()
+        val notNullVariables = nullabilityInfo.iterator()
+                .filter { it.getValue() == Nullability.NOT_NULL }
+                .map { dataFlowValueToVariable(it.getKey()) }
+                .filterNotNullTo(HashSet<VariableDescriptor>())
+
+        return ProcessDataFlowInfoResult(variableToType, notNullVariables)
+    }
+
+    return ProcessDataFlowInfoResult()
+}
+
+private fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()
+
+private fun <T> MutableCollection<T>.addAll(iterator: Iterator<T>) {
+    for (item in iterator) {
+        add(item)
+    }
 }
