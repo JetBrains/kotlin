@@ -33,6 +33,7 @@ import org.jetbrains.jet.completion.*;
 import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest;
 import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest;
 import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
+import org.jetbrains.jet.evaluate.AbstractEvaluateExpressionTest;
 import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
 import org.jetbrains.jet.formatter.AbstractJetFormatterTest;
 import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel;
@@ -564,6 +565,13 @@ public class GenerateTests {
                 "AnnotationParameterTestGenerated",
                 AbstractAnnotationParameterTest.class,
                 testModel("compiler/testData/resolveAnnotations/parameters")
+        );
+
+        generateTest(
+                "compiler/tests",
+                "EvaluateExpressionTestGenerated",
+                AbstractEvaluateExpressionTest.class,
+                testModel("compiler/testData/evaluate")
         );
     }
 
