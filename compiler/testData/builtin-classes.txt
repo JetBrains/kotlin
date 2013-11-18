@@ -27,7 +27,7 @@ public final class Array</*0*/ reified T> {
 }
 
 public final class Boolean {
-    /*primary*/ public constructor Boolean()
+    /*primary*/ private constructor Boolean()
     public final fun and(/*0*/ other: jet.Boolean): jet.Boolean
     public final fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public final fun not(): jet.Boolean
