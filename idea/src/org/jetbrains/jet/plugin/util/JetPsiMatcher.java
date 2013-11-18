@@ -235,6 +235,25 @@ public class JetPsiMatcher {
         public Boolean visitNullableType(@NotNull JetNullableType nullableType, JetElement data) {
             return checkElementMatch(nullableType.getInnerType(), ((JetNullableType) data).getInnerType());
         }
+
+        @Override
+        public Boolean visitWhenConditionExpression(@NotNull JetWhenConditionWithExpression condition, JetElement data) {
+            return checkElementMatch(condition.getExpression(), ((JetWhenConditionWithExpression) data).getExpression());
+        }
+
+        @Override
+        public Boolean visitWhenConditionInRange(@NotNull JetWhenConditionInRange condition, JetElement data) {
+            JetWhenConditionInRange other = (JetWhenConditionInRange) data;
+            return condition.isNegated() == other.isNegated() &&
+                   checkElementMatch(condition.getRangeExpression(), other.getRangeExpression());
+        }
+
+        @Override
+        public Boolean visitWhenConditionIsPattern(@NotNull JetWhenConditionIsPattern condition, JetElement data) {
+            JetWhenConditionIsPattern other = (JetWhenConditionIsPattern) data;
+            return condition.isNegated() == other.isNegated() &&
+                   checkElementMatch(condition.getTypeRef(), other.getTypeRef());
+        }
     };
 
     private static JetElement unwrap(JetElement e) {

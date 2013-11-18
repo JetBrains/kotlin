@@ -86,6 +86,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new FlattenWhenIntention());
     }
 
+    public void doTestMergeWhen(@NotNull String path) throws Exception {
+        doTestIntention(path, new MergeWhenIntention());
+    }
+
     public void doTestIntroduceWhenSubject(@NotNull String path) throws Exception {
         doTestIntention(path, new IntroduceWhenSubjectIntention());
     }

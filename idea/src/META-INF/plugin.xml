@@ -445,6 +445,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.MergeWhenIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.RemoveUnnecessaryParenthesesIntention</className>
       <category>Kotlin</category>
     </intentionAction>

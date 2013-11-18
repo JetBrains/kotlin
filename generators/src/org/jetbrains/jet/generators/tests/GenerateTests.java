@@ -387,6 +387,7 @@ public class GenerateTests {
                 testModel("idea/testData/intentions/branched/ifWhen/ifToWhen", "doTestIfToWhen"),
                 testModel("idea/testData/intentions/branched/ifWhen/whenToIf", "doTestWhenToIf"),
                 testModel("idea/testData/intentions/branched/when/flatten", "doTestFlattenWhen"),
+                testModel("idea/testData/intentions/branched/when/merge", "doTestMergeWhen"),
                 testModel("idea/testData/intentions/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
                 testModel("idea/testData/intentions/branched/when/eliminateSubject", "doTestEliminateWhenSubject"),
                 testModel("idea/testData/intentions/declarations/split", "doTestSplitProperty"),

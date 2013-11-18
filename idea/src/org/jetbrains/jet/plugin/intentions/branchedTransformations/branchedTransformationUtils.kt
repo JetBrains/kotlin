@@ -23,6 +23,10 @@ import org.jetbrains.jet.plugin.util.JetPsiMatcher
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils.*
 import org.jetbrains.jet.lang.psi.psiUtil.*
 import java.util.ArrayList
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.PsiWhiteSpace
+import java.util.Collections
+import com.intellij.util.containers.ContainerUtil
 
 public val TRANSFORM_WITHOUT_CHECK: String = "Expression must be checked before applying transformation"
 
@@ -129,11 +133,11 @@ public fun JetWhenExpression.canEliminateSubject(): Boolean {
 public fun JetWhenExpression.flatten(): JetWhenExpression {
     val subjectExpression = getSubjectExpression()
     val elseBranch = getElseExpression()
-    
+
     assert(elseBranch is JetWhenExpression, TRANSFORM_WITHOUT_CHECK)
-    
+
     val nestedWhenExpression = (elseBranch as JetWhenExpression)
-    
+
     val outerEntries = getEntries()
     val innerEntries = nestedWhenExpression.getEntries()
     val builder = JetPsiFactory.WhenBuilder(subjectExpression)
@@ -152,7 +156,7 @@ public fun JetWhenExpression.flatten(): JetWhenExpression {
 
 public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
     val subject = getSubjectCandidate()!!
-    
+
     val builder = JetPsiFactory.WhenBuilder(subject)
     for (entry in getEntries()) {
         val branchExpression = entry.getExpression()
@@ -163,7 +167,7 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
 
         for (condition in entry.getConditions()) {
             assert(condition is JetWhenConditionWithExpression, TRANSFORM_WITHOUT_CHECK)
-            
+
             val conditionExpression = ((condition as JetWhenConditionWithExpression)).getExpression()
             when (conditionExpression)  {
                 is JetIsExpression -> {
@@ -315,4 +319,63 @@ public fun JetWhenExpression.transformToIf() {
     }
 
     replace(builder.toExpression(getProject()))
+}
+
+public fun JetWhenExpression.canMergeWithNext(): Boolean {
+    fun checkConditions(e1: JetWhenEntry, e2: JetWhenEntry): Boolean {
+        if (e1.isElse() != e2.isElse()) return false
+
+        val conditions1 = e1.getConditions()
+        val conditions2 = e2.getConditions()
+        return conditions1.size == conditions2.size &&
+            (conditions1.iterator() zip conditions2.iterator()).all { pair -> JetPsiMatcher.checkElementMatch(pair.first, pair.second)}
+    }
+
+    fun JetWhenEntry.declarationNames(): Set<String> =
+            getExpression()?.blockExpressionsOrSingle()
+                    ?.filterIsInstance(javaClass<JetNamedDeclaration>())
+                    ?.map { decl -> decl.getName() }
+                    ?.filterNotNull()?.toHashSet() ?: Collections.emptySet<String>()
+
+    fun checkBodies(e1: JetWhenEntry, e2: JetWhenEntry): Boolean {
+        if (ContainerUtil.intersects(e1.declarationNames(), e2.declarationNames())) return false
+
+        return when (e1.getExpression()?.outermostLastBlockElement()) {
+            is JetReturnExpression, is JetThrowExpression, is JetBreakExpression, is JetContinueExpression -> false
+            else -> true
+        }
+    }
+
+    val sibling = PsiTreeUtil.skipSiblingsForward(this, javaClass<PsiWhiteSpace>())
+
+    if (sibling !is JetWhenExpression) return false
+    if (!JetPsiMatcher.checkElementMatch(getSubjectExpression(), sibling.getSubjectExpression())) return false
+
+    val entries1 = getEntries()
+    val entries2 = sibling.getEntries()
+    return entries1.size == entries2.size && (entries1.iterator() zip entries2.iterator()).all { pair ->
+        checkConditions(pair.first, pair.second) && checkBodies(pair.first, pair.second)
+    }
+}
+
+public fun JetWhenExpression.mergeWithNext() {
+    fun JetExpression?.mergeWith(that: JetExpression?): JetExpression? = when {
+        this == null -> that
+        that == null -> this
+        else -> {
+            val block = if (this is JetBlockExpression) this else replaced(wrapInBlock())
+            for (element in that.blockExpressionsOrSingle()) {
+                val expression = block.appendElement(element)
+                block.addBefore(JetPsiFactory.createNewLine(getProject()), expression)
+            }
+            block
+        }
+    }
+
+    val sibling = PsiTreeUtil.skipSiblingsForward(this, javaClass<PsiWhiteSpace>()) as JetWhenExpression
+    for ((entry1, entry2) in getEntries().iterator() zip sibling.getEntries().iterator()) {
+        entry1.getExpression() mergeWith entry2.getExpression()
+    }
+
+    getParent()?.deleteChildRange(getNextSibling(), sibling)
 }
