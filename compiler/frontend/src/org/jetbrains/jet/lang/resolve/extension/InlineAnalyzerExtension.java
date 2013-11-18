@@ -18,10 +18,14 @@ package org.jetbrains.jet.lang.resolve.extension;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
+
+import java.util.List;
 
 public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.AnalyzerExtension {
 
@@ -35,6 +39,10 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
     public void process(
             @NotNull final FunctionDescriptor descriptor, @NotNull JetNamedFunction function, @NotNull final BindingTrace trace
     ) {
+        assert descriptor instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) descriptor).isInline() :
+                "This method should be invoced on inline function: " + descriptor;
+
+        checkDefaults(descriptor, function, trace);
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
 
@@ -61,5 +69,21 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         };
 
         function.acceptChildren(visitor);
+    }
+
+    private static void checkDefaults(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull JetFunction function,
+            @NotNull BindingTrace trace
+    ) {
+        int index = 0;
+        List<JetParameter> jetParameters = function.getValueParameters();
+        for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
+            if (parameter.hasDefaultValue()) {
+                JetParameter jetParameter = jetParameters.get(index);
+                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(jetParameter, jetParameter, functionDescriptor));
+            }
+            index++;
+        }
     }
 }

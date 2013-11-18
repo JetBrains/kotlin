@@ -24,3 +24,17 @@ inline fun unsupported() {
         fun localInner() {}
     }<!>
 }
+
+inline fun unsupportedDefault(<!NOT_YET_SUPPORTED_IN_INLINE!>s : Int = 10<!>) {
+
+}
+
+open class Base {
+    open fun foo(a: Int = 1) {}
+}
+
+class Derived: Base() {
+    inline final override fun foo(<!NOT_YET_SUPPORTED_IN_INLINE!>a: Int<!>) {
+
+    }
+}
