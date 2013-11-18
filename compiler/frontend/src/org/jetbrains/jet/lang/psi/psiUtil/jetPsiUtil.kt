@@ -21,7 +21,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetClass
-import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lexer.JetTokens
 
@@ -71,5 +70,4 @@ fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
 
 fun JetClass.isAbstract() = isTrait() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
 
-[suppress("UNCHECKED_CAST")]
 fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newElement)!! as T
