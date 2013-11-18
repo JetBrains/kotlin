@@ -350,6 +350,10 @@
 
     <joinLinesHandler implementation="org.jetbrains.jet.plugin.intentions.declarations.JetDeclarationJoinLinesHandler"/>
 
+    <targetElementEvaluator
+        language="jet"
+        implementationClass="org.jetbrains.jet.plugin.search.JetTargetElementEvaluator" />
+
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction</className>
       <category>Kotlin</category>

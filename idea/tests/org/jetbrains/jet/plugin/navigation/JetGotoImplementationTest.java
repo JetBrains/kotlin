@@ -29,7 +29,15 @@ public class JetGotoImplementationTest extends LightCodeInsightTestCase {
         doTest();
     }
 
-    public void testClassImplementatorsWithDeclaration() {
+    public void testClassImplementorsWithDeclaration() {
+        doTest();
+    }
+
+    public void testAbstractClassImplementorsWithDeclaration() {
+        doTest();
+    }
+
+    public void testTraitImplementorsWithDeclaration() {
         doTest();
     }
 

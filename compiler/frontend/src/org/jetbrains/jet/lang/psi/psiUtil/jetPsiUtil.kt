@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetClass
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lexer.JetTokens
 
 fun PsiElement.getParentByTypeAndPredicate<T: PsiElement>(
         parentClass : Class<T>, strict : Boolean = false, predicate: (T) -> Boolean
@@ -67,3 +68,5 @@ fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
             else ->
                 getDeclarations()
         }
+
+fun JetClass.isAbstract() = isTrait() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
