@@ -685,17 +685,6 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitCallExpression(@NotNull JetCallExpression expression) {
-            //inline functions after M1
-//            ResolvedCall<? extends CallableDescriptor> resolvedCall = trace.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
-//            assert resolvedCall != null;
-//            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-//            PsiElement element = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, resultingDescriptor);
-//            if (element instanceof JetNamedFunction) {
-//                JetNamedFunction namedFunction = (JetNamedFunction) element;
-//                if (namedFunction.hasModifier(JetTokens.INLINE_KEYWORD)) {
-//                }
-//            }
-
             for (JetTypeProjection typeArgument : expression.getTypeArguments()) {
                 generateInstructions(typeArgument, false);
             }
@@ -711,14 +700,6 @@ public class JetControlFlowProcessor {
                 }
             }
         }
-
-//        @Override
-//        public void visitNewExpression(JetNewExpression expression) {
-//            // TODO : Instantiated class is loaded
-//            // TODO : type arguments?
-//            visitCall(expression);
-//            builder.read(expression);
-//        }
 
         @Override
         public void visitProperty(@NotNull JetProperty property) {
