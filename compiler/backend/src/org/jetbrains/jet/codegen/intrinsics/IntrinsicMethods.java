@@ -116,6 +116,7 @@ public class IntrinsicMethods {
         declareBinaryOp(Name.identifier("xor"), IXOR);
 
         declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("not"), 0, new Not());
+        declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("equals"), 1, EQUALS);
 
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("plus"), 1, new Concat());
         declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar());
