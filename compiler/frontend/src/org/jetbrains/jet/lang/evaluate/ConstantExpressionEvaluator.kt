@@ -282,8 +282,8 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 private fun createCompileTimeConstantForEquals(result: Any?, operationToken: IElementType): CompileTimeConstant<*>? {
     if (result is Boolean) {
         return when (operationToken) {
-            JetTokens.EQEQ -> if (result)  BooleanValue.TRUE else BooleanValue.FALSE
-            JetTokens.EXCLEQ -> if (result)  BooleanValue.FALSE else BooleanValue.TRUE
+            JetTokens.EQEQ -> BooleanValue.valueOf(result)
+            JetTokens.EXCLEQ -> BooleanValue.valueOf(!result)
             else -> throw IllegalStateException("Unknown equals operation token: $operationToken")
         }
     }
@@ -292,23 +292,12 @@ private fun createCompileTimeConstantForEquals(result: Any?, operationToken: IEl
 
 private fun createCompileTimeConstantForCompareTo(result: Any?, operationToken: IElementType): CompileTimeConstant<*>? {
     if (result is Int) {
-        return when (result) {
-            -1 -> when (operationToken) {
-                JetTokens.LT -> BooleanValue.TRUE
-                JetTokens.LTEQ -> BooleanValue.TRUE
-                else -> BooleanValue.FALSE
-            }
-            0 -> when (operationToken) {
-                JetTokens.LTEQ -> BooleanValue.TRUE
-                JetTokens.GTEQ -> BooleanValue.TRUE
-                else -> BooleanValue.FALSE
-            }
-            1 -> when (operationToken) {
-                JetTokens.GT -> BooleanValue.TRUE
-                JetTokens.GTEQ -> BooleanValue.TRUE
-                else -> BooleanValue.FALSE
-            }
-            else -> null
+        return when (operationToken) {
+            JetTokens.LT -> BooleanValue.valueOf(result < 0)
+            JetTokens.LTEQ -> BooleanValue.valueOf(result <= 0)
+            JetTokens.GT -> BooleanValue.valueOf(result > 0)
+            JetTokens.GTEQ -> BooleanValue.valueOf(result >= 0)
+            else -> throw IllegalStateException("Unknown compareTo operation token: $operationToken")
         }
     }
     return null
