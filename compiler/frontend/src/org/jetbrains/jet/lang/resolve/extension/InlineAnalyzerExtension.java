@@ -17,9 +17,7 @@
 package org.jetbrains.jet.lang.resolve.extension;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -43,6 +41,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
                 "This method should be invoced on inline function: " + descriptor;
 
         checkDefaults(descriptor, function, trace);
+        checkModality(descriptor, function, trace);
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
 
@@ -85,5 +84,22 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             }
             index++;
         }
+    }
+
+    private static void checkModality(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull JetFunction function,
+            @NotNull BindingTrace trace
+    ) {
+        if (functionDescriptor.getVisibility() == Visibilities.PRIVATE || functionDescriptor.getModality() == Modality.FINAL) {
+            return;
+        }
+
+        DeclarationDescriptor declaration = functionDescriptor.getContainingDeclaration();
+        if (declaration instanceof NamespaceDescriptor) {
+            return;
+        }
+
+        trace.report(Errors.DECLARATION_CANT_BE_INLINED.on(function));
     }
 }
