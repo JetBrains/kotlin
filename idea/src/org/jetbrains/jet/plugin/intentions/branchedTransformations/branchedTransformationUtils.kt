@@ -22,6 +22,7 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.util.JetPsiMatcher
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils.*
 import org.jetbrains.jet.lang.psi.psiUtil.*
+import java.util.ArrayList
 
 public val TRANSFORM_WITHOUT_CHECK: String = "Expression must be checked before applying transformation"
 
@@ -215,4 +216,103 @@ public fun JetWhenExpression.eliminateSubject(): JetWhenExpression {
     }
 
     return replaced(builder.toExpression(getProject()))
+}
+
+public fun JetIfExpression.canTransformToWhen(): Boolean = getThen() != null
+
+public fun JetWhenExpression.canTransformToIf(): Boolean = !getEntries().isEmpty()
+
+public fun JetIfExpression.transformToWhen() {
+    fun JetExpression.splitToOrBranches(): List<JetExpression> {
+        val branches = ArrayList<JetExpression>()
+        accept(
+                object : JetVisitorVoid() {
+                    public override fun visitBinaryExpression(expression: JetBinaryExpression) {
+                        if (expression.getOperationToken() == JetTokens.OROR) {
+                            expression.getLeft()?.accept(this)
+                            expression.getRight()?.accept(this)
+                        }
+                        else {
+                            visitExpression(expression)
+                        }
+                    }
+
+                    public override fun visitParenthesizedExpression(expression: JetParenthesizedExpression) {
+                        expression.getExpression()?.accept(this)
+                    }
+
+                    public override fun visitExpression(expression: JetExpression) {
+                        branches.add(expression)
+                    }
+                }
+        )
+        return branches
+    }
+
+    fun branchIterator(ifExpression: JetIfExpression): Iterator<JetIfExpression> = object: Iterator<JetIfExpression> {
+        private var expression: JetIfExpression? = ifExpression
+
+        override fun next(): JetIfExpression {
+            val current = expression!!
+            expression = current.getElse()?.let { next -> if (next is JetIfExpression) next else null }
+            return current
+        }
+
+        override fun hasNext(): Boolean = expression != null
+    }
+
+    val builder = JetPsiFactory.WhenBuilder()
+    branchIterator(this).forEach { ifExpression ->
+        ifExpression.getCondition()?.let { condition ->
+            val orBranches = condition.splitToOrBranches()
+            if (orBranches.isEmpty()) {
+                builder.condition("")
+            }
+            else {
+                orBranches.forEach { branch -> builder.condition(branch) }
+            }
+        }
+
+        builder.branchExpression(ifExpression.getThen())
+
+        ifExpression.getElse()?.let { elseBranch ->
+            if (elseBranch !is JetIfExpression) {
+                builder.elseEntry(elseBranch)
+            }
+        }
+    }
+
+    val whenExpression = builder.toExpression(getProject()).let { whenExpression ->
+        if (whenExpression.canIntroduceSubject()) whenExpression.introduceSubject() else whenExpression
+    }
+    replace(whenExpression)
+}
+
+public fun JetWhenExpression.transformToIf() {
+    fun combineWhenConditions(conditions: Array<JetWhenCondition>, subject: JetExpression?): String {
+        return when (conditions.size) {
+            0 -> ""
+            1 -> conditions[0].toExpressionText(subject)
+            else -> {
+                conditions
+                        .map { condition -> parenthesizeTextIfNeeded(condition.toExpressionText(subject)) }
+                        .makeString(separator = " || ")
+            }
+        }
+    }
+
+    val builder = JetPsiFactory.IfChainBuilder()
+
+    for (entry in getEntries()) {
+        val branch = entry.getExpression()
+        if (entry.isElse()) {
+            builder.elseBranch(branch)
+        }
+        else {
+            val branchConditionText = combineWhenConditions(entry.getConditions(), getSubjectExpression())
+            builder.ifBranch(branchConditionText, JetPsiUtil.getText(branch))
+        }
+    }
+
+    replace(builder.toExpression(getProject()))
 }
