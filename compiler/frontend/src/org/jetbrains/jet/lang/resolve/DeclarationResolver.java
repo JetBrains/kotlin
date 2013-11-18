@@ -217,7 +217,7 @@ public class DeclarationResolver {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override
-                public void visitNamedFunction(JetNamedFunction function) {
+                public void visitNamedFunction(@NotNull JetNamedFunction function) {
                     SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(
                             namespaceLike.getOwnerForChildren(),
                             scopeForFunctions,
@@ -231,7 +231,7 @@ public class DeclarationResolver {
                 }
 
                 @Override
-                public void visitProperty(JetProperty property) {
+                public void visitProperty(@NotNull JetProperty property) {
                     PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
                             namespaceLike.getOwnerForChildren(),
                             scopeForPropertyInitializers,
@@ -252,7 +252,7 @@ public class DeclarationResolver {
                 }
 
                 @Override
-                public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+                public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
                     PropertyDescriptor propertyDescriptor = descriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(
                             scopeForFunctions, namespaceLike.getOwnerForChildren(), declaration, context.getObjects().get(declaration), trace);
 
@@ -260,7 +260,7 @@ public class DeclarationResolver {
                 }
 
                 @Override
-                public void visitEnumEntry(JetEnumEntry enumEntry) {
+                public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
                     // FIX: Bad cast
                     MutableClassDescriptorLite classObjectDescriptor =
                             ((MutableClassDescriptorLite)namespaceLike.getOwnerForChildren()).getClassObjectDescriptor();

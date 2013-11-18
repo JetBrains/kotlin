@@ -440,7 +440,7 @@ public class TypeHierarchyResolver {
         }
 
         @Override
-        public void visitJetFile(JetFile file) {
+        public void visitJetFile(@NotNull JetFile file) {
             NamespaceDescriptorImpl namespaceDescriptor = namespaceFactory.createNamespaceDescriptorPathIfNeeded(
                     file, outerScope, RedeclarationHandler.DO_NOTHING);
             context.getNamespaceDescriptors().put(file, namespaceDescriptor);
@@ -458,14 +458,14 @@ public class TypeHierarchyResolver {
         }
 
         @Override
-        public void visitClass(JetClass klass) {
+        public void visitClass(@NotNull JetClass klass) {
             MutableClassDescriptor mutableClassDescriptor = createClassDescriptorForClass(klass, owner.getOwnerForChildren());
 
             owner.addClassifierDescriptor(mutableClassDescriptor);
         }
 
         @Override
-        public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+        public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
             MutableClassDescriptor objectDescriptor =
                     createClassDescriptorForObject(declaration, owner, outerScope, JetPsiUtil.safeName(declaration.getName()),
                                                    ClassKind.OBJECT);
@@ -474,7 +474,7 @@ public class TypeHierarchyResolver {
         }
 
         @Override
-        public void visitEnumEntry(JetEnumEntry enumEntry) {
+        public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
             // TODO: Bad casting
             MutableClassDescriptorLite ownerClassDescriptor = (MutableClassDescriptorLite) owner.getOwnerForChildren();
             MutableClassDescriptorLite classObjectDescriptor = ownerClassDescriptor.getClassObjectDescriptor();
@@ -484,12 +484,12 @@ public class TypeHierarchyResolver {
         }
 
         @Override
-        public void visitTypedef(JetTypedef typedef) {
+        public void visitTypedef(@NotNull JetTypedef typedef) {
             trace.report(UNSUPPORTED.on(typedef, "TypeHierarchyResolver"));
         }
 
         @Override
-        public void visitClassObject(JetClassObject classObject) {
+        public void visitClassObject(@NotNull JetClassObject classObject) {
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
             if (objectDeclaration != null) {
                 Name classObjectName = getClassObjectName(owner.getOwnerForChildren().getName());

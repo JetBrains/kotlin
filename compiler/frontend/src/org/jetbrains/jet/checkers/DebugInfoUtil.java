@@ -83,7 +83,7 @@ public class DebugInfoUtil {
         root.acceptChildren(new JetTreeVisitorVoid() {
 
             @Override
-            public void visitReferenceExpression(JetReferenceExpression expression) {
+            public void visitReferenceExpression(@NotNull JetReferenceExpression expression) {
                 super.visitReferenceExpression(expression);
                 if (!BindingContextUtils.isExpressionWithValidReference(expression, bindingContext)){
                     return;

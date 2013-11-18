@@ -57,7 +57,7 @@ public class RemoveValVarFromParametersFix implements IntentionAction {
         for (JetFile jetFile : files) {
             jetFile.acceptChildren(new JetVisitorVoid() {
                 @Override
-                public void visitParameter(JetParameter parameter) {
+                public void visitParameter(@NotNull JetParameter parameter) {
                     visitJetElement(parameter); // run recursively for children
 
                     PsiElement parent = parameter.getParent();
@@ -75,7 +75,7 @@ public class RemoveValVarFromParametersFix implements IntentionAction {
                 }
 
                 @Override
-                public void visitJetElement(JetElement element) {
+                public void visitJetElement(@NotNull JetElement element) {
                     element.acceptChildren(this);
                 }
             });

@@ -193,7 +193,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+            public void visitDelegationByExpressionSpecifier(@NotNull JetDelegatorByExpressionSpecifier specifier) {
                 if (descriptor.getKind() == ClassKind.TRAIT) {
                     trace.report(DELEGATION_IN_TRAIT.on(specifier));
                 }
@@ -224,7 +224,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+            public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                 PsiElement elementToMark = valueArgumentList == null ? call : valueArgumentList;
                 if (descriptor.getKind() == ClassKind.TRAIT) {
@@ -256,7 +256,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+            public void visitDelegationToSuperClassSpecifier(@NotNull JetDelegatorToSuperClass specifier) {
                 JetTypeReference typeReference = specifier.getTypeReference();
                 JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                 recordSupertype(typeReference, supertype);
@@ -270,12 +270,12 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToThisCall(JetDelegatorToThisCall thisCall) {
+            public void visitDelegationToThisCall(@NotNull JetDelegatorToThisCall thisCall) {
                 throw new IllegalStateException("This-calls should be prohibited by the parser");
             }
 
             @Override
-            public void visitJetElement(JetElement element) {
+            public void visitJetElement(@NotNull JetElement element) {
                 throw new UnsupportedOperationException(element.getText() + " : " + element);
             }
         };

@@ -34,7 +34,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         declaration.accept(
                 new JetVisitorVoid() {
                     @Override
-                    public void visitAnonymousInitializer(JetClassInitializer initializer) {
+                    public void visitAnonymousInitializer(@NotNull JetClassInitializer initializer) {
                         PsiElement brace = initializer.getOpenBraceNode();
                         if (brace != null) {
                             memberSuspects.add(brace);
@@ -42,13 +42,13 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                     }
 
                     @Override
-                    public void visitClassObject(JetClassObject classObject) {
+                    public void visitClassObject(@NotNull JetClassObject classObject) {
                         PsiElement classKeyword = classObject.getClassKeywordNode();
                         if (classKeyword != null) memberSuspects.add(classKeyword);
                     }
 
                     @Override
-                    public void visitNamedFunction(JetNamedFunction function) {
+                    public void visitNamedFunction(@NotNull JetNamedFunction function) {
                         PsiElement equalsToken = function.getEqualsToken();
                         if (equalsToken != null) memberSuspects.add(equalsToken);
 
@@ -63,7 +63,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                     }
 
                     @Override
-                    public void visitProperty(JetProperty property) {
+                    public void visitProperty(@NotNull JetProperty property) {
                         PsiElement valOrVarNode = property.getValOrVarNode().getPsi();
                         if (valOrVarNode != null) memberSuspects.add(valOrVarNode);
 

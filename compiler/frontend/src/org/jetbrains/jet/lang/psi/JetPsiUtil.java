@@ -138,7 +138,7 @@ public class JetPsiUtil {
         final Set<JetElement> shadowedElements = new HashSet<JetElement>();
         JetVisitorVoid shadowAllChildren = new JetVisitorVoid() {
             @Override
-            public void visitJetElement(JetElement element) {
+            public void visitJetElement(@NotNull JetElement element) {
                 if (shadowedElements.add(element)) {
                     element.acceptChildren(this);
                 }
@@ -841,7 +841,7 @@ public class JetPsiUtil {
         ((JetElement) root).accept(
                 new JetVisitorVoid() {
                     @Override
-                    public void visitJetElement(JetElement element) {
+                    public void visitJetElement(@NotNull JetElement element) {
                         if (predicate.apply(element)) {
                             //noinspection unchecked
                             results.add(element);

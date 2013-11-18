@@ -77,7 +77,7 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
 
         myFile.acceptChildren(new JetVisitorVoid() {
             @Override
-            public void visitJetElement(JetElement element) {
+            public void visitJetElement(@NotNull JetElement element) {
                 element.acceptChildren(this);
                 try {
                     checkPsiGetters(element);

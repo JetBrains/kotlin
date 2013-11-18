@@ -59,7 +59,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitParameter(JetParameter parameter) {
+    public void visitParameter(@NotNull JetParameter parameter) {
         visitVariableDeclaration(parameter);
         super.visitParameter(parameter);
     }

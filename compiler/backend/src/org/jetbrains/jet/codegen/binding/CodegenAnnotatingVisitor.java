@@ -139,13 +139,13 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitJetElement(JetElement element) {
+    public void visitJetElement(@NotNull JetElement element) {
         super.visitJetElement(element);
         element.acceptChildren(this);
     }
 
     @Override
-    public void visitJetFile(JetFile file) {
+    public void visitJetFile(@NotNull JetFile file) {
         if (file.isScript()) {
             //noinspection ConstantConditions
             ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, bindingContext.get(SCRIPT, file.getScript()));
@@ -164,7 +164,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitEnumEntry(JetEnumEntry enumEntry) {
+    public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
         ClassDescriptor descriptor = bindingContext.get(CLASS, enumEntry);
         assert descriptor != null;
 
@@ -181,7 +181,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitClassObject(JetClassObject classObject) {
+    public void visitClassObject(@NotNull JetClassObject classObject) {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, classObject.getObjectDeclaration());
         assert classDescriptor != null;
 
@@ -196,7 +196,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+    public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
         if (declaration.getParent() instanceof JetObjectLiteralExpression || declaration.getParent() instanceof JetClassObject) {
             super.visitObjectDeclaration(declaration);
         }
@@ -217,7 +217,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitClass(JetClass klass) {
+    public void visitClass(@NotNull JetClass klass) {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, klass);
         // working around a problem with shallow analysis
         if (classDescriptor == null) return;
@@ -239,7 +239,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
+    public void visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression) {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, expression.getObjectDeclaration());
         if (classDescriptor == null) {
             // working around a problem with shallow analysis
@@ -259,7 +259,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+    public void visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         FunctionDescriptor functionDescriptor =
                 (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, functionLiteral);
@@ -298,7 +298,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+    public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
         ClassDescriptorWithState state = peekFromStack(classStack);
         assert state != null : "Class descriptor should be recorded before " + call + " processing";
         state.setDelegationToSuperCall(true);
@@ -307,7 +307,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitCallableReferenceExpression(JetCallableReferenceExpression expression) {
+    public void visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression) {
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
@@ -339,7 +339,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitProperty(JetProperty property) {
+    public void visitProperty(@NotNull JetProperty property) {
         DeclarationDescriptor propertyDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, property);
         // working around a problem with shallow analysis
         if (propertyDescriptor == null) return;
@@ -356,7 +356,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitNamedFunction(JetNamedFunction function) {
+    public void visitNamedFunction(@NotNull JetNamedFunction function) {
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, function);
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
@@ -402,7 +402,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitCallExpression(JetCallExpression expression) {
+    public void visitCallExpression(@NotNull JetCallExpression expression) {
         super.visitCallExpression(expression);
         ResolvedCall<? extends CallableDescriptor> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
         if (call == null) {
@@ -437,7 +437,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitBinaryExpression(JetBinaryExpression expression) {
+    public void visitBinaryExpression(@NotNull JetBinaryExpression expression) {
         super.visitBinaryExpression(expression);
 
         FunctionDescriptor operationDescriptor =
@@ -460,7 +460,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
+    public void visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression) {
         super.visitArrayAccessExpression(expression);
 
         FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression);

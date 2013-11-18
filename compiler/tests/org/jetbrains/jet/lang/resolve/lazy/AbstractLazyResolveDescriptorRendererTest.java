@@ -63,7 +63,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
         psiFile.accept(new JetVisitorVoid() {
             @Override
-            public void visitJetFile(JetFile file) {
+            public void visitJetFile(@NotNull JetFile file) {
                 String qualifiedName = file.getNamespaceHeader().getQualifiedName();
                 if (!qualifiedName.isEmpty()) {
                     NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(new FqName(qualifiedName));
@@ -73,12 +73,12 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
             }
 
             @Override
-            public void visitClassObject(JetClassObject classObject) {
+            public void visitClassObject(@NotNull JetClassObject classObject) {
                 classObject.acceptChildren(this);
             }
 
             @Override
-            public void visitParameter(JetParameter parameter) {
+            public void visitParameter(@NotNull JetParameter parameter) {
                 PsiElement declaringElement = parameter.getParent().getParent();
                 if (declaringElement instanceof JetFunctionType) {
                     return;
@@ -108,7 +108,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
             }
 
             @Override
-            public void visitPropertyAccessor(JetPropertyAccessor accessor) {
+            public void visitPropertyAccessor(@NotNull JetPropertyAccessor accessor) {
                 JetProperty parent = (JetProperty) accessor.getParent();
                 PropertyDescriptor propertyDescriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(parent);
                 if (accessor.isGetter()) {
@@ -120,7 +120,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
             }
 
             @Override
-            public void visitDeclaration(JetDeclaration element) {
+            public void visitDeclaration(@NotNull JetDeclaration element) {
                 DeclarationDescriptor descriptor = resolveSession.resolveToDescriptor(element);
                 descriptors.add(descriptor);
                 if (descriptor instanceof ClassDescriptor) {
@@ -130,7 +130,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
             }
 
             @Override
-            public void visitJetElement(JetElement element) {
+            public void visitJetElement(@NotNull JetElement element) {
                 element.acceptChildren(this);
             }
         });

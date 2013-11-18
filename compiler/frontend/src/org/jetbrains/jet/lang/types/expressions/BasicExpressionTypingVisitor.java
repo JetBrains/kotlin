@@ -1143,7 +1143,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             entry.accept(new JetVisitorVoid() {
 
                 @Override
-                public void visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry) {
+                public void visitStringTemplateEntryWithExpression(@NotNull JetStringTemplateEntryWithExpression entry) {
                     JetExpression entryExpression = entry.getExpression();
                     if (entryExpression != null) {
                         JetTypeInfo typeInfo = facade.getTypeInfo(entryExpression, context.replaceDataFlowInfo(dataFlowInfo[0]));
@@ -1153,12 +1153,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
 
                 @Override
-                public void visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry) {
+                public void visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry) {
                     builder.append(entry.getText());
                 }
 
                 @Override
-                public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
+                public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
                     CompileTimeConstant<?> character = CompileTimeConstantResolver.escapedStringToCharValue(entry.getText(), entry);
                     if (character instanceof ErrorValue) {
                         assert character instanceof ErrorValueWithDiagnostic;

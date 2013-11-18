@@ -51,12 +51,12 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
     }
 
     @Override
-    public void visitSuperExpression(JetSuperExpression expression) {
+    public void visitSuperExpression(@NotNull JetSuperExpression expression) {
         // Deprecated for super expression. Unnecessary to mark it as Deprecated
     }
 
     @Override
-    public void visitReferenceExpression(JetReferenceExpression expression) {
+    public void visitReferenceExpression(@NotNull JetReferenceExpression expression) {
         super.visitReferenceExpression(expression);
         ResolvedCall resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
         if (resolvedCall != null && resolvedCall instanceof VariableAsFunctionResolvedCall) {
