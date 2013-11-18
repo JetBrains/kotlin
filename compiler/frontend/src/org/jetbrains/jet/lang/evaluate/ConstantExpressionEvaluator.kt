@@ -109,27 +109,19 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 
     override fun visitBinaryExpression(expression: JetBinaryExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val leftExpression = expression.getLeft()
-        if (leftExpression == null) {
-            return null
-        }
+        if (leftExpression == null) return null
 
         val operationToken = expression.getOperationToken()
         if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
             val booleanType = KotlinBuiltIns.getInstance().getBooleanType()
             val leftConstant = evaluate(leftExpression, booleanType)
-            if (leftConstant == null) {
-                return null
-            }
+            if (leftConstant == null) return null
 
             val rightExpression = expression.getRight()
-            if (rightExpression == null) {
-                return null
-            }
+            if (rightExpression == null) return null
 
             val rightConstant = evaluate(rightExpression, booleanType)
-            if (rightConstant == null) {
-                return null
-            }
+            if (rightConstant == null) return null
 
             val operationName = when(operationToken) {
                 JetTokens.ANDAND -> Name.identifier("&&")
@@ -151,36 +143,30 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 
     private fun evaluateCall(callExpression: JetExpression, receiverExpression: JetExpression): Any? {
         val resolvedCall = trace.getBindingContext().get(BindingContext.RESOLVED_CALL, callExpression)
-        if (resolvedCall != null) {
-            val resultingDescriptor = resolvedCall.getResultingDescriptor()
-            // TODO getResultingDescriptor has NotNull annotation
-            if (resultingDescriptor == null) {
-                return null
-            }
-            val receiverExpressionType = getReceiverExpressionType(resolvedCall)
-            if (receiverExpressionType == null) {
-                return null
-            }
+        if (resolvedCall == null) return null
 
-            val receiverValue = evaluate(receiverExpression, receiverExpressionType)
-            if (receiverValue == null) {
-                return null
-            }
+        val resultingDescriptor = resolvedCall.getResultingDescriptor()
+        if (resultingDescriptor == null) return null
 
-            val arguments = resolvedCall.getValueArguments().entrySet().flatMap {
-                entry -> val (parameter, argument) = entry
-                resolveArguments(argument.getArguments(), parameter.getType())
-            }
+        val receiverExpressionType = getReceiverExpressionType(resolvedCall)
+        if (receiverExpressionType == null) return null
 
-            val resultingDescriptorName = resultingDescriptor.getName()
-            if (arguments.isEmpty()) {
-                return evaluateUnaryExpression(receiverValue, resultingDescriptorName)
-            }
-            else if (arguments.size() == 1) {
-                return evaluateBinaryExpression(receiverValue, arguments.first!!, resultingDescriptorName)
-            }
+        val receiverValue = evaluate(receiverExpression, receiverExpressionType)
+        if (receiverValue == null) return null
+
+        val arguments = resolvedCall.getValueArguments().entrySet().flatMap {
+            entry ->
+            val (parameter, argument) = entry
+            resolveArguments(argument.getArguments(), parameter.getType())
         }
 
+        val resultingDescriptorName = resultingDescriptor.getName()
+        if (arguments.isEmpty()) {
+            return evaluateUnaryExpression(receiverValue, resultingDescriptorName)
+        }
+        else if (arguments.size() == 1) {
+            return evaluateBinaryExpression(receiverValue, arguments.first(), resultingDescriptorName)
+        }
         return null
     }
 
@@ -210,9 +196,9 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         return null
     }
 
-    /* 1.toInt(); 1.plus(1); MyEnum.A */
     override fun visitQualifiedExpression(expression: JetQualifiedExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val selectorExpression = expression.getSelectorExpression()
+        // 1.toInt(); 1.plus(1);
         if (selectorExpression is JetCallExpression) {
             val calleeExpression = selectorExpression.getCalleeExpression()
             if (calleeExpression !is JetSimpleNameExpression) {
@@ -224,7 +210,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             return createCompileTimeConstant(result, expectedType)
         }
 
-        // TODO
+        // Mynum.A
         if (selectorExpression != null) {
             return evaluate(selectorExpression, expectedType)
         }
@@ -234,35 +220,33 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 
     override fun visitCallExpression(expression: JetCallExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val call = trace.getBindingContext().get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression())
-        if (call != null) {
-            val resultingDescriptor = call.getResultingDescriptor()
-            if (resultingDescriptor != null) {
-                if (AnnotationUtils.isArrayMethodCall(call)) {
-                    val varargType = resultingDescriptor.getValueParameters().first?.getVarargElementType()!!
+        if (call == null) return null
 
-                    //todo flatmap
-                    val arguments = arrayListOf<CompileTimeConstant<*>>()
-                    for (descriptorToArgument in call.getValueArguments().values()) {
-                        arguments.addAll(resolveArguments(descriptorToArgument.getArguments(), varargType))
-                    }
-                    return ArrayValue(arguments, resultingDescriptor.getReturnType()!!)
-                }
+        val resultingDescriptor = call.getResultingDescriptor()
+        if (resultingDescriptor == null) return null
 
-                // Ann()
-                if (resultingDescriptor is ConstructorDescriptor) {
-                    val constructorReturnType = resultingDescriptor.getReturnType()
-                    if (DescriptorUtils.isAnnotationClass(resultingDescriptor.getContainingDeclaration())) {
-                        val descriptor = AnnotationDescriptorImpl()
-                        descriptor.setAnnotationType(constructorReturnType)
-                        AnnotationResolver.resolveAnnotationArgument(descriptor, call, trace)
-                        return AnnotationValue(descriptor)
-                    }
-                }
+        // array()
+        if (AnnotationUtils.isArrayMethodCall(call)) {
+            val varargType = resultingDescriptor.getValueParameters().first?.getVarargElementType()!!
 
-                if (AnnotationUtils.isJavaClassMethodCall(call)) {
-                    return JavaClassValue(resultingDescriptor.getReturnType())
-                }
+            val arguments = call.getValueArguments().values().flatMap { resolveArguments(it.getArguments(), varargType) }
+            return ArrayValue(arguments, resultingDescriptor.getReturnType()!!)
+        }
+
+        // Ann()
+        if (resultingDescriptor is ConstructorDescriptor) {
+            val classDescriptor: ClassDescriptor = resultingDescriptor.getContainingDeclaration()
+            if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
+                val descriptor = AnnotationDescriptorImpl()
+                descriptor.setAnnotationType(classDescriptor.getDefaultType())
+                AnnotationResolver.resolveAnnotationArgument(descriptor, call, trace)
+                return AnnotationValue(descriptor)
             }
+        }
+
+        // javaClass()
+        if (AnnotationUtils.isJavaClassMethodCall(call)) {
+            return JavaClassValue(resultingDescriptor.getReturnType())
         }
 
         return null
