@@ -77,4 +77,14 @@ class IteratorsTest {
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().filter {  it > 10 }.makeString(limit = 10))
         assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.makeString())
     }
+
+    test fun pairIterator() {
+        val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).makeString(limit = 10)
+        assertEquals("(0, 0), (1, 2), (1, 2), (2, 4), (3, 6), (5, 10), (8, 16), (13, 26), (21, 42), (34, 68), ...", pairStr)
+    }
+
+    test fun skippingIterator() {
+        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().skip(7).makeString(limit = 10))
+        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().skip(3).skip(4).makeString(limit = 10))
+    }
 }
