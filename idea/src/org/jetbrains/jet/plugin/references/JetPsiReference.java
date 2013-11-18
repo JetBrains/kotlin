@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.references;
 
+import com.beust.jcommander.internal.Sets;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
@@ -25,19 +26,16 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_LABEL_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil.findDeclarationsForDescriptorWithoutTrace;
 
 public abstract class JetPsiReference implements PsiPolyVariantReference {
@@ -60,12 +58,16 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     @NotNull
     @Override
     public ResolveResult[] multiResolve(boolean incompleteCode) {
-        return doMultiResolve();
+        return PsiElementResolveResult.createResults(resolveToPsiElements());
     }
 
     @Override
     public PsiElement resolve() {
-        return doResolve();
+        Collection<? extends PsiElement> psiElements = resolveToPsiElements();
+        if (psiElements.size() == 1) {
+            return psiElements.iterator().next();
+        }
+        return null;
     }
 
     @NotNull
@@ -103,59 +105,50 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         return false;
     }
 
-    @Nullable
-    protected PsiElement doResolve() {
+    @NotNull
+    private Collection<? extends PsiElement> resolveToPsiElements() {
         BindingContext context = AnalyzerFacadeWithCache.getContextForElement(myExpression);
-        List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(context, myExpression);
-        if (psiElements.size() == 1) {
-            return psiElements.iterator().next();
-        }
-        if (psiElements.size() > 1) {
-            return null;
-        }
-        DeclarationDescriptor referencedDescriptor = context.get(BindingContext.REFERENCE_TARGET, myExpression);
-        if (referencedDescriptor == null) {
-            return null;
-        }
-        Collection<PsiElement> elements = findDeclarationsForDescriptorWithoutTrace(myExpression.getProject(), referencedDescriptor);
-        if (elements.size() == 1) {
-            return elements.iterator().next();
-        }
-        return null;
+
+        return resolveToPsiElements(context);
     }
 
-    protected ResolveResult[] doMultiResolve() {
-        JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
-        Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
-        if (declarationDescriptors == null) {
-            List<PsiElement> psiElements = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
-            if (psiElements.size() > 1) {
-                return PsiElementResolveResult.createResults(psiElements);
+    @NotNull
+    private Collection<? extends PsiElement> resolveToPsiElements(@NotNull BindingContext context) {
+        Collection<? extends DeclarationDescriptor> targetDescriptors = getTargetDescriptors(context);
+
+        if (targetDescriptors != null) {
+            assert !(targetDescriptors.isEmpty()) : "targetDescriptors is not null, but empty, for " + myExpression.getText();
+            Set<PsiElement> result = Sets.newHashSet();
+            for (DeclarationDescriptor target : targetDescriptors) {
+                result.addAll(BindingContextUtils.descriptorToDeclarations(context, target));
+                result.addAll(findDeclarationsForDescriptorWithoutTrace(myExpression.getProject(), target));
             }
-            Collection<? extends PsiElement> labelTargets = bindingContext.get(AMBIGUOUS_LABEL_TARGET, myExpression);
-            if (labelTargets != null && !labelTargets.isEmpty()) {
-                return PsiElementResolveResult.createResults(labelTargets);
-            }
-            Collection<PsiElement> standardLibraryElements = resolveStandardLibrarySymbol(bindingContext);
-            if (standardLibraryElements.size() > 1) {
-                return PsiElementResolveResult.createResults(standardLibraryElements);
-            }
-            return ResolveResult.EMPTY_ARRAY;
+            return result;
         }
 
-        List<ResolveResult> results = new ArrayList<ResolveResult>(declarationDescriptors.size());
-        for (DeclarationDescriptor descriptor : declarationDescriptors) {
-            List<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
-            for (PsiElement element : elements) {
-                results.add(new PsiElementResolveResult(element, true));
-            }
+        Collection<? extends PsiElement> labelTargets = getLabelTargets(context);
+        if (labelTargets != null) {
+            return labelTargets;
         }
-        return results.toArray(new ResolveResult[results.size()]);
+
+        return Collections.emptySet();
     }
 
-    private Collection<PsiElement> resolveStandardLibrarySymbol(@NotNull BindingContext bindingContext) {
-        return myExpression.getProject().getComponent(BuiltInsReferenceResolver.class)
-                .resolveBuiltInSymbol(bindingContext, myExpression);
+    @Nullable
+    protected Collection<? extends DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
+        DeclarationDescriptor targetDescriptor = context.get(BindingContext.REFERENCE_TARGET, myExpression);
+        if (targetDescriptor != null) {
+            return Collections.singleton(targetDescriptor);
+        }
+        return context.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, myExpression);
+    }
+
+    @Nullable
+    private Collection<? extends PsiElement> getLabelTargets(@NotNull BindingContext context) {
+        PsiElement labelTarget = context.get(BindingContext.LABEL_TARGET, myExpression);
+        if (labelTarget != null) {
+            return Collections.singleton(labelTarget);
+        }
+        return context.get(BindingContext.AMBIGUOUS_LABEL_TARGET, myExpression);
     }
 }

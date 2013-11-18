@@ -83,17 +83,6 @@ public class BindingContextUtils {
         return null;
     }
 
-    @NotNull
-    public static List<PsiElement> resolveToDeclarationPsiElements(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-        if (declarationDescriptor == null) {
-            return Lists.newArrayList(bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression));
-        }
-
-        return descriptorToDeclarations(bindingContext, declarationDescriptor);
-    }
-
-
     @Nullable
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable JetElement element, boolean onlyReference) {
         DeclarationDescriptor descriptor = null;
