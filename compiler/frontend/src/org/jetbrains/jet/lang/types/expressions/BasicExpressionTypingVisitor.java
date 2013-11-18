@@ -761,6 +761,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (variable == null) {
             trace.report(VARIABLE_EXPECTED.on(expression != null ? expression : expressionWithParenthesis));
         }
+        else {
+            if (variable instanceof PropertyDescriptor) {
+                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variable;
+                if (propertyDescriptor.isSetterProjectedOut()) {
+                    trace.report(SETTER_PROJECTED_OUT.on(expression != null ? expression : expressionWithParenthesis, propertyDescriptor));
+                }
+            }
+        }
     }
 
     @Override
