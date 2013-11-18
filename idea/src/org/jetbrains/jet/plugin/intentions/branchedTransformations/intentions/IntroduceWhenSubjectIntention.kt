@@ -17,14 +17,14 @@
 package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
-import org.jetbrains.jet.plugin.intentions.branchedTransformations.WhenUtils
+import org.jetbrains.jet.plugin.intentions.branchedTransformations.*
 import org.jetbrains.jet.lang.psi.JetWhenExpression
 import com.intellij.openapi.editor.Editor
 
 public class IntroduceWhenSubjectIntention : JetSelfTargetingIntention<JetWhenExpression>("introduce.when.subject", javaClass()) {
-    override fun isApplicableTo(element: JetWhenExpression): Boolean = WhenUtils.checkIntroduceWhenSubject(element)
+    override fun isApplicableTo(element: JetWhenExpression): Boolean = element.canIntroduceSubject()
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
-        WhenUtils.introduceWhenSubject(element)
+        element.introduceSubject()
     }
 }

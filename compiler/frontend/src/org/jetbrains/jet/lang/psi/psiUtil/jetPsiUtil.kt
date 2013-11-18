@@ -70,3 +70,6 @@ fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
         }
 
 fun JetClass.isAbstract() = isTrait() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
+
+[suppress("UNCHECKED_CAST")]
+fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newElement)!! as T

@@ -110,8 +110,8 @@ public class IfWhenUtils {
         } while (currIfExpression != null);
 
         JetWhenExpression whenExpression = builder.toExpression(ifExpression.getProject());
-        if (WhenUtils.checkIntroduceWhenSubject(whenExpression)) {
-            whenExpression = WhenUtils.introduceWhenSubject(whenExpression);
+        if (BranchedTransformationsPackage.canIntroduceSubject(whenExpression)) {
+            whenExpression = BranchedTransformationsPackage.introduceSubject(whenExpression);
         }
 
         ifExpression.replace(whenExpression);
@@ -126,7 +126,7 @@ public class IfWhenUtils {
 
         StringBuilder sb = new StringBuilder();
 
-        String text = WhenUtils.whenConditionToExpressionText(condition, subject);
+        String text = BranchedTransformationsPackage.toExpressionText(condition, subject);
         if (n > 1) {
             text = parenthesizeTextIfNeeded(text);
         }
@@ -136,7 +136,7 @@ public class IfWhenUtils {
             JetWhenCondition currCondition = conditions[i];
             assert currCondition != null : TRANSFORM_WITHOUT_CHECK;
 
-            sb.append(" || ").append(parenthesizeTextIfNeeded(WhenUtils.whenConditionToExpressionText(currCondition, subject)));
+            sb.append(" || ").append(parenthesizeTextIfNeeded(BranchedTransformationsPackage.toExpressionText(currCondition, subject)));
         }
 
         return sb.toString();

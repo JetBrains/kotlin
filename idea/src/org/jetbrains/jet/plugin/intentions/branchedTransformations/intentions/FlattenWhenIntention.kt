@@ -17,14 +17,14 @@
 package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
-import org.jetbrains.jet.plugin.intentions.branchedTransformations.WhenUtils
+import org.jetbrains.jet.plugin.intentions.branchedTransformations.*
 import org.jetbrains.jet.lang.psi.JetWhenExpression
 import com.intellij.openapi.editor.Editor
 
 public class FlattenWhenIntention : JetSelfTargetingIntention<JetWhenExpression>("flatten.when", javaClass()) {
-    override fun isApplicableTo(element: JetWhenExpression): Boolean = WhenUtils.checkFlattenWhen(element)
+    override fun isApplicableTo(element: JetWhenExpression): Boolean = element.canFlatten()
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
-        WhenUtils.flattenWhen(element)
+        element.flatten()
     }
 }
