@@ -2597,6 +2597,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/enum/kt2834.kt");
             }
             
+            @TestMetadata("starImportNestedClassAndEntries.kt")
+            public void testStarImportNestedClassAndEntries() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/starImportNestedClassAndEntries.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/enum/inner")
             public static class Inner extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInInner() throws Exception {
