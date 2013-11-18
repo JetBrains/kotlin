@@ -1,6 +1,6 @@
 class Foo<T>
 
-fun foo(p : Object){
+fun foo(p : Any){
     var a : Foo<String> = <caret>
 }
 
