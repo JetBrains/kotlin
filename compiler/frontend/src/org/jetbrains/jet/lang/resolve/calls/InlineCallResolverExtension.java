@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -42,10 +43,13 @@ public class InlineCallResolverExtension implements CallResolverExtension {
 
     private Set<DeclarationDescriptor> inlinableParameters = new HashSet<DeclarationDescriptor>();
 
+    private final boolean isEffectivelyPublicApiFunction;
+
     public InlineCallResolverExtension(@NotNull SimpleFunctionDescriptor descriptor) {
         assert descriptor.isInline() : "This extension should be created only for inline functions but not " + descriptor;
-
         this.descriptor = descriptor;
+        this.isEffectivelyPublicApiFunction = isEffectivelyPublicApi(descriptor);
+
         Iterator<ValueParameterDescriptor> iterator = descriptor.getValueParameters().iterator();
         while (iterator.hasNext()) {
             ValueParameterDescriptor next = iterator.next();
@@ -102,9 +106,10 @@ public class InlineCallResolverExtension implements CallResolverExtension {
                     checkFunctionCall(context, targetDescriptor, jetExpression);
                 }
             }
-
             //TODO default and vararg
         }
+
+        checkVisibility(targetDescriptor, expression, context);
     }
 
     private void checkCallWithReceiver(
@@ -179,11 +184,20 @@ public class InlineCallResolverExtension implements CallResolverExtension {
                ((SimpleFunctionDescriptor) descriptor).isInline();
     }
 
-    private void checkVisibility(){
-
+    private void checkVisibility(@NotNull CallableDescriptor declarationDescriptor, @NotNull JetElement expression, @NotNull BasicCallResolutionContext context){
+        if (isEffectivelyPublicApiFunction && !isEffectivelyPublicApi(declarationDescriptor) && declarationDescriptor.getVisibility() != Visibilities.LOCAL) {
+            context.trace.report(Errors.INVISIBLE_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor));
+        }
     }
 
-    interface FunctionParameter {
-
+    private static boolean isEffectivelyPublicApi(DeclarationDescriptorWithVisibility descriptor) {
+        DeclarationDescriptorWithVisibility parent = descriptor;
+        while (parent != null) {
+            if (!parent.getVisibility().isPublicAPI()) {
+                return false;
+            }
+            parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility.class);
+        }
+        return true;
     }
 }
