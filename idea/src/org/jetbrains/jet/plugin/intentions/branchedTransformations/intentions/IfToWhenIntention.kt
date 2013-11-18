@@ -17,15 +17,15 @@
 package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
-import org.jetbrains.jet.plugin.intentions.branchedTransformations.IfWhenUtils
 import org.jetbrains.jet.lang.psi.JetWhenExpression
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.jet.plugin.intentions.branchedTransformations.*
 
 public class IfToWhenIntention : JetSelfTargetingIntention<JetIfExpression>("if.to.when", javaClass()) {
-    override fun isApplicableTo(element: JetIfExpression): Boolean = IfWhenUtils.checkIfToWhen(element)
+    override fun isApplicableTo(element: JetIfExpression): Boolean = element.canTransformToWhen()
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
-        IfWhenUtils.transformIfToWhen(element)
+        element.transformToWhen()
     }
 }
