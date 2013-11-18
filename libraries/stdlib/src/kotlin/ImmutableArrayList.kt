@@ -58,9 +58,8 @@ private class ImmutableArrayList<T>(
     // TODO: efficiently implement iterator and other stuff
 }
 
-// TODO: make private val, see http://youtrack.jetbrains.com/issue/KT-2028
-internal val emptyArray = arrayOfNulls<Any?>(0)
-internal val emptyImmutableArrayList = ImmutableArrayList<Any?>(emptyArray, 0, 0)
+private val emptyArray = arrayOfNulls<Any?>(0)
+private val emptyImmutableArrayList = ImmutableArrayList<Any?>(emptyArray, 0, 0)
 
 public class ImmutableArrayListBuilder<T>() {
 
