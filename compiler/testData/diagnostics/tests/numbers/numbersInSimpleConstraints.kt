@@ -1,5 +1,7 @@
 package a
 
+class TypeOf<T>(t: T)
+
 fun <T> id(t: T): T = t
 
 fun <T> either(t1: T, <!UNUSED_PARAMETER!>t2<!>: T): T = t1
@@ -9,62 +11,68 @@ fun other(<!UNUSED_PARAMETER!>s<!>: String) {}
 fun <T> otherGeneric(<!UNUSED_PARAMETER!>l<!>: List<T>) {}
 
 fun test() {
-    val <!UNUSED_VARIABLE!>a<!>: Byte = id(1)
+    val a: Byte = id(1)
 
-    val <!UNUSED_VARIABLE!>b<!>: Byte = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>id<!>(300)
+    val b: Byte = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>id<!>(300)
 
-    val <!UNUSED_VARIABLE!>c<!>: Int = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>id<!>(9223372036854775807)
+    val c: Int = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>id<!>(9223372036854775807)
 
     val d = id(22)
     d: Int
 
     val e = id(9223372036854775807)
-    <!TYPE_MISMATCH!>e<!>: Int
-    e: Long
+    TypeOf(e): TypeOf<Long>
 
-    val <!UNUSED_VARIABLE!>f<!>: Byte = either(1, 2)
+    val f: Byte = either(1, 2)
 
-    val <!UNUSED_VARIABLE!>g<!>: Byte = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>either<!>(1, 300)
+    val g: Byte = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>either<!>(1, 300)
 
     other(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>11<!>)
 
     <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>otherGeneric<!>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 
     val r = either(1, "")
-    <!TYPE_MISMATCH!>r<!>: Int
-    <!TYPE_MISMATCH!>r<!>: String
-    r: Any
+    TypeOf(r): TypeOf<Any>
+
+    use(a, b, c, d, e, f, g, r)
 }
+
+fun use(vararg a: Any?) = a
 
 trait Inv<T>
 
-fun <T> exactBound(<!UNUSED_PARAMETER!>t<!>: T, <!UNUSED_PARAMETER!>l<!>: Inv<T>) {}
+fun <T> exactBound(t: T, l: Inv<T>): T = throw Exception("$t $l")
 
-fun testExactBound(invS: Inv<String>, invI: Inv<Int>) {
+fun testExactBound(invS: Inv<String>, invI: Inv<Int>, invB: Inv<Byte>) {
     <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>exactBound<!>(1, invS)
     exactBound(1, invI)
+
+    val b = exactBound(1, invB)
+    TypeOf(b): TypeOf<Byte>
 }
 
 trait Cov<out T>
 
-fun <T> lowerBound(t: T, <!UNUSED_PARAMETER!>l<!>: Cov<T>) = t
+fun <T> lowerBound(t: T, l : Cov<T>): T = throw Exception("$t $l")
 
-fun testLowerBound(cov: Cov<String>) {
+fun testLowerBound(cov: Cov<String>, covN: Cov<Number>) {
     val r = lowerBound(1, cov)
-    r: Any
+    TypeOf(r): TypeOf<Any>
+
+    val n = lowerBound(1, covN)
+    TypeOf(n): TypeOf<Number>
 }
 
 trait Contr<in T>
 
-fun <T> upperBound(t: T, <!UNUSED_PARAMETER!>l<!>: Contr<T>) = t
+fun <T> upperBound(t: T, l: Contr<T>): T = throw Exception("$t $l")
 
 fun testUpperBound(contrS: Contr<String>, contrB: Contr<Byte>, contrN: Contr<Number>) {
     <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>upperBound<!>(1, contrS)
 
     val n = upperBound(1, contrN)
-    n: Number
-    <!TYPE_MISMATCH!>n<!>: Int
+    TypeOf(n): TypeOf<Int>
+
     val b = upperBound(1, contrB)
-    b: Byte
-    <!TYPE_MISMATCH!>b<!>: Int
+    TypeOf(b): TypeOf<Byte>
 }
