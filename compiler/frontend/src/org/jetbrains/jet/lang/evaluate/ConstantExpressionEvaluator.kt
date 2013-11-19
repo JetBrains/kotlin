@@ -157,7 +157,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 
         val argumentsEntrySet = resolvedCall.getValueArguments().entrySet()
         if (argumentsEntrySet.isEmpty()) {
-            val function = unaryOperations[UnaryOperation(argumentForReceiver.ctcType, resultingDescriptorName)]
+            val function = unaryOperations[UnaryOperationKey(argumentForReceiver.ctcType, resultingDescriptorName)]
             if (function == null) return null
             return function(argumentForReceiver.value)
         }
@@ -167,7 +167,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             val argumentForParameter = createOperationArgumentForFristParameter(argument, parameter)
             if (argumentForParameter == null) return null
 
-            val function = binaryOperations[BinaryOperation(argumentForReceiver.ctcType, argumentForParameter.ctcType, resultingDescriptorName)]
+            val function = binaryOperations[BinaryOperationKey(argumentForReceiver.ctcType, argumentForParameter.ctcType, resultingDescriptorName)]
             if (function == null) return null
             return function(argumentForReceiver.value, argumentForParameter.value)
         }
@@ -399,3 +399,50 @@ private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): JetType? {
     }
 }
 
+private fun getCompileTimeType(c: JetType): CompileTimeType<out Any>? {
+    val builtIns = KotlinBuiltIns.getInstance()
+    return when (TypeUtils.makeNotNullable(c)) {
+        builtIns.getIntType() -> INT
+        builtIns.getByteType() -> BYTE
+        builtIns.getShortType() -> SHORT
+        builtIns.getLongType() -> LONG
+        builtIns.getDoubleType() -> DOUBLE
+        builtIns.getFloatType() -> FLOAT
+        builtIns.getCharType() -> CHAR
+        builtIns.getBooleanType() -> BOOLEAN
+        builtIns.getStringType() -> STRING
+        builtIns.getAnyType() -> ANY
+        else -> null
+    }
+}
+
+private class CompileTimeType<T>
+
+private val BYTE = CompileTimeType<Byte>()
+private val SHORT = CompileTimeType<Short>()
+private val INT = CompileTimeType<Int>()
+private val LONG = CompileTimeType<Long>()
+private val DOUBLE = CompileTimeType<Double>()
+private val FLOAT = CompileTimeType<Float>()
+private val CHAR = CompileTimeType<Char>()
+private val BOOLEAN = CompileTimeType<Boolean>()
+private val STRING = CompileTimeType<String>()
+private val ANY = CompileTimeType<Any>()
+
+[suppress("UNCHECKED_CAST")]
+private fun <A, B> binaryOperationKey(
+        a: CompileTimeType<A>,
+        b: CompileTimeType<B>,
+        functionName: String,
+        f: (A, B) -> Any
+) = BinaryOperationKey(a, b, functionName) to f as Function2<Any?, Any?, Any>
+
+[suppress("UNCHECKED_CAST")]
+private fun <A> unaryOperationKey(
+        a: CompileTimeType<A>,
+        functionName: String,
+        f: (A) -> Any
+) = UnaryOperationKey(a, functionName) to f  as Function1<Any?, Any>
+
+private data class BinaryOperationKey<A, B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: String)
+private data class UnaryOperationKey<A>(val f: CompileTimeType<out A>, val functionName: String)

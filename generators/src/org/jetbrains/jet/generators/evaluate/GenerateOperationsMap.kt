@@ -67,7 +67,7 @@ fun generate(): String {
         }
     }
 
-    p.println("private val unaryOperations = hashMapOf<UnaryOperation<*>, (Any?) -> Any>(")
+    p.println("private val unaryOperations = hashMapOf<UnaryOperationKey<*>, (Any?) -> Any>(")
     p.pushIndent()
 
     val unaryOperationsMapIterator = unaryOperationsMap.iterator()
@@ -91,7 +91,7 @@ fun generate(): String {
     p.println()
 
 
-    p.println("private val binaryOperations = hashMapOf<BinaryOperation<*, *>, (Any?, Any?) -> Any>(")
+    p.println("private val binaryOperations = hashMapOf<BinaryOperationKey<*, *>, (Any?, Any?) -> Any>(")
     p.pushIndent()
 
     val binaryOperationsMapIterator = binaryOperationsMap.iterator()
