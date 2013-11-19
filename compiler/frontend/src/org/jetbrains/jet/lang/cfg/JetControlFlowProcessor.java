@@ -776,7 +776,7 @@ public class JetControlFlowProcessor {
             if (subjectExpression != null) {
                 generateInstructions(subjectExpression, inCondition);
             }
-            boolean hasElseOrIrrefutableBranch = false;
+            boolean hasElse = false;
 
             Label doneLabel = builder.createUnboundLabel();
 
@@ -786,17 +786,13 @@ public class JetControlFlowProcessor {
 
                 builder.read(whenEntry);
 
-                if (whenEntry.isElse()) {
-                    hasElseOrIrrefutableBranch = true;
+                boolean isElse = whenEntry.isElse();
+                if (isElse) {
+                    hasElse = true;
                     if (iterator.hasNext()) {
                         trace.report(ELSE_MISPLACED_IN_WHEN.on(whenEntry));
                     }
                 }
-                boolean isIrrefutable = whenEntry.isElse();
-                if (isIrrefutable) {
-                    hasElseOrIrrefutableBranch = true;
-                }
-
                 Label bodyLabel = builder.createUnboundLabel();
 
                 JetWhenCondition[] conditions = whenEntry.getConditions();
@@ -808,7 +804,7 @@ public class JetControlFlowProcessor {
                     }
                 }
 
-                if (!isIrrefutable) {
+                if (!isElse) {
                     nextLabel = builder.createUnboundLabel();
                     builder.nondeterministicJump(nextLabel);
                 }
@@ -817,12 +813,12 @@ public class JetControlFlowProcessor {
                 generateInstructions(whenEntry.getExpression(), inCondition);
                 builder.jump(doneLabel);
 
-                if (!isIrrefutable) {
+                if (!isElse) {
                     builder.bindLabel(nextLabel);
                 }
             }
             builder.bindLabel(doneLabel);
-            if (!hasElseOrIrrefutableBranch && WhenChecker.mustHaveElse(expression, trace)) {
+            if (!hasElse && WhenChecker.mustHaveElse(expression, trace)) {
                 trace.report(NO_ELSE_IN_WHEN.on(expression));
             }
         }
