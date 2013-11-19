@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.constants.BooleanValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
@@ -569,7 +568,7 @@ public class JetControlFlowProcessor {
             if (labelName != null) {
                 JetSimpleNameExpression targetLabel = expression.getTargetLabel();
                 assert targetLabel != null;
-                PsiElement labeledElement = BindingContextUtils.resolveToDeclarationPsiElement(trace.getBindingContext(), targetLabel);
+                PsiElement labeledElement = trace.get(BindingContext.LABEL_TARGET, targetLabel);
                 if (labeledElement instanceof JetLoopExpression) {
                     loop = (JetLoopExpression) labeledElement;
                 }
@@ -598,7 +597,7 @@ public class JetControlFlowProcessor {
             String labelName = expression.getLabelName();
             if (labelElement != null) {
                 assert labelName != null;
-                PsiElement labeledElement = BindingContextUtils.resolveToDeclarationPsiElement(trace.getBindingContext(), labelElement);
+                PsiElement labeledElement = trace.get(BindingContext.LABEL_TARGET, labelElement);
                 if (labeledElement != null) {
                     assert labeledElement instanceof JetElement;
                     subroutine = (JetElement) labeledElement;
