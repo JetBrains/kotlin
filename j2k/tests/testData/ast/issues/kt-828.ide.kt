@@ -1,5 +1,5 @@
 class Test() {
-open fun test() {
+fun test() {
 val res = true
 res = res and false
 res = res or false

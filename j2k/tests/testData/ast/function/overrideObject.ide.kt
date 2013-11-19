@@ -1,18 +1,18 @@
 package test
 class Test() {
-public open fun hashCode() : Int {
+public fun hashCode() : Int {
 return System.identityHashCode(this)
 }
-public open fun equals(o : Any) : Boolean {
+public fun equals(o : Any) : Boolean {
 return this.identityEquals(o)
 }
-protected open fun clone() : Any {
+protected fun clone() : Any {
 return super.clone()
 }
-public open fun toString() : String {
+public fun toString() : String {
 return getJavaClass<Test>.getName() + '@' + Integer.toHexString(hashCode())
 }
-protected open fun finalize() {
+protected fun finalize() {
 super.finalize()
 }
 }

@@ -1,6 +1,6 @@
 package demo
 class Test() {
-open fun test() {
+fun test() {
 val i = Integer.valueOf(100)
 val s = 3
 val ss = java.lang.Short.valueOf(s)

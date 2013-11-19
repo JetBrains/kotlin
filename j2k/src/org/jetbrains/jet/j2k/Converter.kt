@@ -207,7 +207,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     }
                 }
             }
-            members.add(Constructor(Identifier.EMPTY_IDENTIFIER, arrayListOf(), Collections.emptySet<Modifier>(),
+            members.add(Constructor(this, Identifier.EMPTY_IDENTIFIER, arrayListOf(), Collections.emptySet<Modifier>(),
                                     ClassType(name, Collections.emptyList<Element>(), false, this),
                                     Collections.emptyList<Element>(),
                                     ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
@@ -295,12 +295,11 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
 
         if (method.isConstructor()) {
-            val isPrimary: Boolean = isConstructorPrimary(method)
-            return Constructor(identifier, docComments, modifiers, returnType, typeParameters, params,
-                               Block(removeEmpty(body.statements), false), isPrimary)
+            return Constructor(this, identifier, docComments, modifiers, returnType, typeParameters, params,
+                               Block(removeEmpty(body.statements), false), isConstructorPrimary(method))
         }
 
-        return Function(identifier, docComments, modifiers, returnType, typeParameters, params, body)
+        return Function(this, identifier, docComments, modifiers, returnType, typeParameters, params, body)
     }
 
     private fun createFunctionParameters(method: PsiMethod): ParameterList {
@@ -342,6 +341,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
         return false
     }
+
     public fun blockToBlock(block: PsiCodeBlock?, notEmpty: Boolean): Block {
         if (block == null)
             return Block.EMPTY_BLOCK
@@ -611,7 +611,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         private fun isNotOpenMethod(method: PsiMethod): Boolean {
             val parent = method.getParent()
             if (parent is PsiClass) {
-                val parentModifierList: PsiModifierList? = parent.getModifierList()
+                val parentModifierList = parent.getModifierList()
                 if ((parentModifierList != null && parentModifierList.hasExplicitModifier(PsiModifier.FINAL)) || parent.isEnum()) {
                     return true
                 }

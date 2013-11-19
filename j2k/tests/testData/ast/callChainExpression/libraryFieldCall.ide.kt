@@ -4,7 +4,7 @@ val ourOut : java.io.PrintStream = 0
 }
 }
 class User() {
-open fun main() {
+fun main() {
 Library.ourOut.print()
 }
 }

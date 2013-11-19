@@ -1,12 +1,12 @@
 class Library() {
-open fun call() {
+fun call() {
 }
-open fun getString() : String {
+fun getString() : String {
 return ""
 }
 }
 class User() {
-open fun main() {
+fun main() {
 val lib = Library()
 lib.call()
 lib.getString().isEmpty()

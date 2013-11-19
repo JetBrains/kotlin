@@ -1,5 +1,5 @@
 class Test() {
-open fun test() {
+fun test() {
 val i1 = 37
 val i2 = 26
 }

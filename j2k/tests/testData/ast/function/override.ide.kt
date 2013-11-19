@@ -1,5 +1,5 @@
 class A() {
-open fun a() {
+fun a() {
 }
 }
 class B() : A() {

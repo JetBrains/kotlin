@@ -8,7 +8,7 @@ var myContainer : Container = Container()
 }
 }
 class Test() {
-open fun test() {
+fun test() {
 val b = One.myContainer.myInt.toByte()
 }
 }

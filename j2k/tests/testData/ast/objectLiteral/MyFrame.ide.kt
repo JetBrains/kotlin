@@ -1,6 +1,6 @@
 package demo
 class WindowAdapter() {
-public open fun windowClosing() {
+public fun windowClosing() {
 }
 }
 public class Client() : Frame() {

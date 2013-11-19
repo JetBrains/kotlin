@@ -4,7 +4,7 @@ class InnerClass() {
 }
 }
 class User() {
-open fun main() {
+fun main() {
 val outerObject = OuterClass()
 val innerObject = outerObject.InnerClass()
 }

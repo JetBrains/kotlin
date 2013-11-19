@@ -1,5 +1,5 @@
 class B(i : Int) {
-open fun call() : Int {
+fun call() : Int {
 return 1
 }
 }

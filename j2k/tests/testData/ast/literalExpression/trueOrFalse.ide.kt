@@ -1,5 +1,5 @@
 class Test() {
-open fun test() {
+fun test() {
 val t1 = true
 val t2 = true
 val f1 = false

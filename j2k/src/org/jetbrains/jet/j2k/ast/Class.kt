@@ -80,7 +80,7 @@ public open class Class(val converter: Converter,
         val constructorTypeParameters = ArrayList<Element>()
         constructorTypeParameters.addAll(typeParameters)
         constructorTypeParameters.addAll(f.typeParameters)
-        return Function(Identifier("init"), arrayList(), modifiers,
+        return Function(converter, Identifier("init"), arrayList(), modifiers,
                         ClassType(name, constructorTypeParameters, false, converter),
                         constructorTypeParameters, f.params, block)
     }

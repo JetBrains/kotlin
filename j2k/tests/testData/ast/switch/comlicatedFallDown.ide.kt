@@ -1,10 +1,10 @@
 package demo
 public class SwitchDemo() {
 class object {
-public open fun print(o : Any) {
+public fun print(o : Any) {
 System.out.println(o)
 }
-public open fun test(i : Int) {
+public fun test(i : Int) {
 val monthString = "<empty>"
 when (i) {
 1 -> {
@@ -80,7 +80,7 @@ monthString = "Invalid month"
 }
 System.out.println(monthString)
 }
-public open fun main(args : Array<String>) {
+public fun main(args : Array<String>) {
 for (i in 1..12) test(i)
 }
 }

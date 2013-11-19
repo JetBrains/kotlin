@@ -8,7 +8,7 @@ var myContainer : Container = Container()
 }
 }
 class Test() {
-open fun test() {
+fun test() {
 if (One.myContainer.myBoolean)
 System.out.println("Ok")
 val s = (if (One.myContainer.myBoolean)

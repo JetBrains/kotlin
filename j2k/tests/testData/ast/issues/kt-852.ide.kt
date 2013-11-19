@@ -1,6 +1,6 @@
 package demo
 class Test() {
-open fun test() : String {
+fun test() : String {
 val s1 = ""
 val s2 = ""
 val s3 = ""

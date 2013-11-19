@@ -1,9 +1,9 @@
 class Base() {
-open fun foo()
+fun foo()
 }
 class A() : Base() {
 class C() {
-open fun test() {
+fun test() {
 super@A.foo()
 }
 }

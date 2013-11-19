@@ -1,9 +1,9 @@
 package demo
 class Test() {
-open fun getInteger(i : Int) : Int {
+fun getInteger(i : Int) : Int {
 return i
 }
-open fun test() {
+fun test() {
 val i = getInteger(10)!!
 }
 }

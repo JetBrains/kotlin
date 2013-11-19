@@ -17,21 +17,24 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
+import org.jetbrains.jet.j2k.Converter
 
-public open class Constructor(identifier: Identifier,
+public class Constructor(converter: Converter,
+                              identifier: Identifier,
                               docComments: List<Node>,
                               modifiers: Set<Modifier>,
                               `type`: Type,
                               typeParameters: List<Element>,
                               params: Element,
                               block: Block,
-                              val isPrimary: Boolean) : Function(identifier, docComments, modifiers, `type`, typeParameters, params, block) {
+                              val isPrimary: Boolean) : Function(converter, identifier, docComments, modifiers,
+                                                                 `type`, typeParameters, params, block) {
 
-    public open fun primarySignatureToKotlin(): String {
+    public fun primarySignatureToKotlin(): String {
         return "(" + params.toKotlin() + ")"
     }
 
-    public open fun primaryBodyToKotlin(): String {
+    public fun primaryBodyToKotlin(): String {
         return block!!.toKotlin()
     }
 }

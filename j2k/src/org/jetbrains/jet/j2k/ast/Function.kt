@@ -19,8 +19,10 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.types.isUnit
+import org.jetbrains.jet.j2k.Converter
 
-public open class Function(val name: Identifier,
+public open class Function(val converter: Converter,
+                           val name: Identifier,
                            val docComments: List<Node>,
                            modifiers: Set<Modifier>,
                            val `type`: Type,
@@ -61,10 +63,11 @@ public open class Function(val name: Identifier,
             modifierList.add(Modifier.OVERRIDE)
         }
 
-        if (!modifiers.contains(Modifier.ABSTRACT) &&
-        !modifiers.contains(Modifier.OVERRIDE) &&
-        !modifiers.contains(Modifier.FINAL) &&
-        !modifiers.contains(Modifier.PRIVATE)) {
+        if (converter.settings.openByDefault &&
+            !modifiers.contains(Modifier.ABSTRACT) &&
+            !modifiers.contains(Modifier.OVERRIDE) &&
+            !modifiers.contains(Modifier.FINAL) &&
+            !modifiers.contains(Modifier.PRIVATE)) {
             modifierList.add(Modifier.OPEN)
         }
 

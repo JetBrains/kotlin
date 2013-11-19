@@ -1,14 +1,14 @@
 class Library() {
 class object {
-open fun call() {
+fun call() {
 }
-open fun getString() : String {
+fun getString() : String {
 return ""
 }
 }
 }
 class User() {
-open fun main() {
+fun main() {
 Library.call()
 Library.getString().isEmpty()
 }

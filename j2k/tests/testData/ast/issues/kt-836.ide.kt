@@ -10,9 +10,9 @@ this.code = code
 }
 }
 class Base() {
-open fun test() {
+fun test() {
 }
-open fun toString() : String {
+fun toString() : String {
 return "BASE"
 }
 }
