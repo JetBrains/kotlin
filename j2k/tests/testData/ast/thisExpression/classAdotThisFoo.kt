@@ -1,10 +1,10 @@
 open class Base() {
-open fun foo() : Unit {
+open fun foo() {
 }
 }
 open class A() : Base() {
 open class C() {
-open fun test() : Unit {
+open fun test() {
 this@A.foo()
 }
 }

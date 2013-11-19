@@ -1,6 +1,6 @@
 package test
 open class User() {
-open fun main() : Unit {
+open fun main() {
 val list = java.util.LinkedList()
 }
 }

@@ -1,2 +1,2 @@
-fun main() : Unit {
+fun main() {
 }

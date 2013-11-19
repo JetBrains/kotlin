@@ -28,7 +28,7 @@ return __
 }
 public open class User() {
 class object {
-public open fun main(args : Array<String?>?) : Unit {
+public open fun main(args : Array<String?>?) {
 var i1 : Identifier<*>? = Identifier.init<String?>("name", false, true)
 var i2 : Identifier<*>? = Identifier.init<String?>("name", false)
 var i3 : Identifier<*>? = Identifier.init<String?>("name")

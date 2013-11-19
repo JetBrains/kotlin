@@ -3,7 +3,7 @@ import java.util.LinkedList
 open class Member() {
 }
 open class User() {
-open fun main() : Unit {
+open fun main() {
 val members = LinkedList<Member>()
 members.add(Member())
 }

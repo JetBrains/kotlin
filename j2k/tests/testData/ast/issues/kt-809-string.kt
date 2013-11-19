@@ -10,9 +10,9 @@ var myContainer : Container? = Container()
 open class StringContainer(s : String?) {
 }
 open class Test() {
-open fun putString(s : String?) : Unit {
+open fun putString(s : String?) {
 }
-open fun test() : Unit {
+open fun test() {
 putString(One.myContainer?.myString)
 StringContainer(One.myContainer?.myString)
 }

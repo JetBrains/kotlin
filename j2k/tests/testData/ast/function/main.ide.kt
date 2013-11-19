@@ -1,4 +1,4 @@
 class object {
-public fun main(args : Array<String>) : Unit {
+public fun main(args : Array<String>) {
 }
 }

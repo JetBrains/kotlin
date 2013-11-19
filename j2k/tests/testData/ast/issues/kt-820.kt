@@ -8,7 +8,7 @@ var myContainer : Container? = Container()
 }
 }
 open class Test() {
-open fun test() : Unit {
+open fun test() {
 var b : Byte = One.myContainer?.myInt!!.toByte()
 }
 }

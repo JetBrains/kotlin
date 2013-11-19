@@ -20,6 +20,7 @@ import org.jetbrains.jet.j2k.ast.Element
 import org.jetbrains.jet.j2k.Converter
 
 public fun Type.isPrimitive(): Boolean = this is PrimitiveType
+public fun Type.isUnit(): Boolean = this == UnitType
 
 public abstract class MayBeNullableType(nullable: Boolean, val converter: Converter): Type {
     override public val nullable: Boolean = !converter.settings.forceNotNullTypes && nullable
@@ -28,6 +29,10 @@ public abstract class MayBeNullableType(nullable: Boolean, val converter: Conver
 public trait NotNullType : Type {
     override public val nullable: Boolean
         get() = false
+}
+
+public object UnitType: NotNullType {
+    override fun toKotlin() = "Unit"
 }
 
 public trait Type : Element {

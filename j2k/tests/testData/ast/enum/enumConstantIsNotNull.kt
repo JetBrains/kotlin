@@ -1,6 +1,6 @@
 enum class E {
 FOO
-fun foo() : Unit {
+fun foo() {
 FOO.toString()
 }
 }

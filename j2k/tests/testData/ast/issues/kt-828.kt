@@ -1,5 +1,5 @@
 open class Test() {
-open fun test() : Unit {
+open fun test() {
 var res : Boolean = true
 res = res and false
 res = res or false

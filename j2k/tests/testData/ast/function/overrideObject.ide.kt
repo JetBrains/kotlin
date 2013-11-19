@@ -12,7 +12,7 @@ return super.clone()
 public open fun toString() : String {
 return getJavaClass<Test>.getName() + '@' + Integer.toHexString(hashCode())
 }
-protected open fun finalize() : Unit {
+protected open fun finalize() {
 super.finalize()
 }
 }

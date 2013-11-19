@@ -1,5 +1,5 @@
 package demo
 class Final() {
-fun test() : Unit {
+fun test() {
 }
 }

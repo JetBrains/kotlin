@@ -13,7 +13,7 @@ return __
 }
 }
 open class User() {
-open fun main() : Unit {
+open fun main() {
 val m = HashMap(1)
 val m2 = HashMap(10)
 val t1 = Test.init()

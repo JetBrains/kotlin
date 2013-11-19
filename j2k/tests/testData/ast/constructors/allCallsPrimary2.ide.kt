@@ -24,7 +24,7 @@ return __
 }
 public open class User() {
 class object {
-public open fun main() : Unit {
+public open fun main() {
 val c1 = C.init(100, 100, 100)
 val c2 = C.init(100, 100)
 val c3 = C(100)

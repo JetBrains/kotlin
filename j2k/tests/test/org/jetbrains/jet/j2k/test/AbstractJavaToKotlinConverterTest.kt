@@ -91,7 +91,7 @@ public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension:
     private fun statementToKotlin(converter: Converter, text: String?): String {
         var result = methodToKotlin(converter, "void main() {" + text + "}")
         val pos = result.lastIndexOf("}")
-        result = result.substring(0, pos).replaceFirst("fun main\\(\\) : Unit \\{", "")
+        result = result.substring(0, pos).replaceFirst("fun main\\(\\) \\{", "")
         return prettify(result)
     }
 

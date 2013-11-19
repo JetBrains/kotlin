@@ -1,6 +1,6 @@
 public open class NonDefault() {
 class object {
-public open fun main(args : Array<String?>?) : Unit {
+public open fun main(args : Array<String?>?) {
 var value : Int = 3
 var valueString : String? = ""
 when (value) {

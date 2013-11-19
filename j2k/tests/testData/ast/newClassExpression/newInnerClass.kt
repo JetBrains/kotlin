@@ -4,7 +4,7 @@ open class InnerClass() {
 }
 }
 open class User() {
-open fun main() : Unit {
+open fun main() {
 var outerObject : OuterClass? = OuterClass()
 var innerObject : OuterClass.InnerClass? = outerObject?.InnerClass()
 }

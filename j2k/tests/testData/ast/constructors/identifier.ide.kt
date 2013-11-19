@@ -28,7 +28,7 @@ return __
 }
 public open class User() {
 class object {
-public open fun main() : Unit {
+public open fun main() {
 val i1 = Identifier.init("name", false, true)
 val i2 = Identifier.init("name", false)
 val i3 = Identifier.init("name")

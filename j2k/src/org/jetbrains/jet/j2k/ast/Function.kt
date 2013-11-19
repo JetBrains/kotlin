@@ -18,6 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.ast.types.isUnit
 
 public open class Function(val name: Identifier,
                            val docComments: List<Node>,
@@ -45,7 +46,7 @@ public open class Function(val name: Identifier,
         return ""
     }
 
-    open fun modifiersToKotlin(): String {
+    private fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()
         val accessModifier = accessModifier()
         if (accessModifier != null) {
@@ -74,13 +75,15 @@ public open class Function(val name: Identifier,
         return modifierList.toKotlin()
     }
 
+    private fun returnTypeToKotlin() = if (!`type`.isUnit()) " : " + `type`.toKotlin() + " " else " "
+
     public override fun toKotlin(): String {
         return docComments.toKotlin("\n", "", "\n") +
-        modifiersToKotlin() +
-        "fun " + name.toKotlin() +
-        typeParametersToKotlin() +
-        "(" + params.toKotlin() + ") : " +
-        `type`.toKotlin() + " " + typeParameterWhereToKotlin() +
-        block?.toKotlin()
+            modifiersToKotlin() +
+            "fun ${name.toKotlin()}${typeParametersToKotlin()}" +
+            "(${params.toKotlin()})" +
+            returnTypeToKotlin() +
+            typeParameterWhereToKotlin() +
+            block?.toKotlin()
     }
 }

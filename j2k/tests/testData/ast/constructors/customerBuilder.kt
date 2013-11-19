@@ -8,9 +8,9 @@ return _firstName
 public open fun getLastName() : String? {
 return _lastName
 }
-private fun doSmthBefore() : Unit {
+private fun doSmthBefore() {
 }
-private fun doSmthAfter() : Unit {
+private fun doSmthAfter() {
 }
 {
 doSmthBefore()
@@ -36,7 +36,7 @@ return Customer(_firstName, _lastName)
 }
 public open class User() {
 class object {
-public open fun main() : Unit {
+public open fun main() {
 var customer : Customer? = CustomerBuilder().WithFirstName("Homer")?.WithLastName("Simpson")?.Build()
 System.out?.println(customer?.getFirstName())
 System.out?.println(customer?.getLastName())

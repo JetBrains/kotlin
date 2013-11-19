@@ -10,9 +10,9 @@ var myContainer : Container = Container()
 open class IntContainer(i : Int) {
 }
 open class Test() {
-open fun putInt(i : Int) : Unit {
+open fun putInt(i : Int) {
 }
-open fun test() : Unit {
+open fun test() {
 putInt(One.myContainer.myInt)
 IntContainer(One.myContainer.myInt)
 }

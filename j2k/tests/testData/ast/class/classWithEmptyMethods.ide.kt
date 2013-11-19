@@ -1,5 +1,5 @@
 class T() {
-fun main() : Unit {
+fun main() {
 }
 fun i() : Int {
 }

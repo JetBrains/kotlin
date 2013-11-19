@@ -1,2 +1,2 @@
-fun fromArrayToCollection(a : Array<Foo>) : Unit {
+fun fromArrayToCollection(a : Array<Foo>) {
 }

@@ -1,10 +1,10 @@
 package demo
 public open class SwitchDemo() {
 class object {
-public open fun print(o : Any?) : Unit {
+public open fun print(o : Any?) {
 System.out?.println(o)
 }
-public open fun test(i : Int) : Unit {
+public open fun test(i : Int) {
 var monthString : String? = "<empty>"
 when (i) {
 1 -> {
@@ -80,7 +80,7 @@ monthString = "Invalid month"
 }
 System.out?.println(monthString)
 }
-public open fun main(args : Array<String?>?) : Unit {
+public open fun main(args : Array<String?>?) {
 for (i in 1..12) test(i)
 }
 }

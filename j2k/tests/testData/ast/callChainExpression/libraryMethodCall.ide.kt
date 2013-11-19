@@ -1,6 +1,6 @@
 open class Library() {
 class object {
-open fun call() : Unit {
+open fun call() {
 }
 open fun getString() : String {
 return ""
@@ -8,7 +8,7 @@ return ""
 }
 }
 open class User() {
-open fun main() : Unit {
+open fun main() {
 Library.call()
 Library.getString().isEmpty()
 }

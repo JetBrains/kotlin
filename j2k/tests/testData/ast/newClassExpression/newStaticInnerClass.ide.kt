@@ -6,7 +6,7 @@ open class Bar() {
 }
 }
 open class User() {
-open fun main() : Unit {
+open fun main() {
 val boo = Foo.Bar()
 }
 }

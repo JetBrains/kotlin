@@ -38,7 +38,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
     public override fun visitPrimitiveType(primitiveType: PsiPrimitiveType?): Type {
         val name: String = primitiveType?.getCanonicalText()!!
         if (name == "void") {
-            myResult = PrimitiveType(Identifier("Unit"))
+            myResult = UnitType
         }
         else if (PRIMITIVE_TYPES_NAMES.contains(name)) {
             myResult = PrimitiveType(Identifier(StringUtil.capitalize(name)))

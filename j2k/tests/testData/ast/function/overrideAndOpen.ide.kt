@@ -1,12 +1,12 @@
 open class A() {
-open fun foo() : Unit {
+open fun foo() {
 }
 }
 open class B() : A() {
-override fun foo() : Unit {
+override fun foo() {
 }
 }
 open class C() : B() {
-override fun foo() : Unit {
+override fun foo() {
 }
 }

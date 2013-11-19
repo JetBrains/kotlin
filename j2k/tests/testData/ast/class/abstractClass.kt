@@ -1,6 +1,6 @@
 abstract class A() {
-abstract fun callme() : Unit
-open fun callmetoo() : Unit {
+abstract fun callme()
+open fun callmetoo() {
 print("This is a concrete method.")
 }
 }

@@ -1,6 +1,6 @@
 public open class NonDefault() {
 class object {
-public open fun main(args : Array<String>) : Unit {
+public open fun main(args : Array<String>) {
 val value = 3
 val valueString = ""
 when (value) {

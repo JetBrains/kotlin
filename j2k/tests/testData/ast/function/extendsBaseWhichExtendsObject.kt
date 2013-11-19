@@ -12,7 +12,7 @@ return super.clone()
 public override fun toString() : String? {
 return super.toString()
 }
-protected override fun finalize() : Unit {
+protected override fun finalize() {
 super.finalize()
 }
 }
@@ -29,7 +29,7 @@ return super.clone()
 public open fun toString() : String? {
 return getJavaClass<Base>.getName() + '@' + Integer.toHexString(hashCode())
 }
-protected open fun finalize() : Unit {
+protected open fun finalize() {
 super.finalize()
 }
 }

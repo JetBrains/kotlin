@@ -1,7 +1,7 @@
 package switch_demo
 public open class SwitchDemo() {
 class object {
-public open fun main(args : Array<String>) : Unit {
+public open fun main(args : Array<String>) {
 val month = 8
 val monthString : String
 when (month) {

@@ -10,14 +10,14 @@ this.code = code
 }
 }
 open class Base() {
-open fun test() : Unit {
+open fun test() {
 }
 open fun toString() : String? {
 return "BASE"
 }
 }
 open class Child() : Base() {
-override fun test() : Unit {
+override fun test() {
 }
 override fun toString() : String? {
 return "Child"

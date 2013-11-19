@@ -11,7 +11,7 @@ private var i : Int = 0
 /**
  * This is a function doc comment.
  */
-public open fun foo() : Unit {
+public open fun foo() {
 /* This is a function comment */
 }
 }

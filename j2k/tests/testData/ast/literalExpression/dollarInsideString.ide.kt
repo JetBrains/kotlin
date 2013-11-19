@@ -1,6 +1,6 @@
 package demo
 open class Test() {
-open fun test() : Unit {
+open fun test() {
 val name = "$$$$"
 name = name.replaceAll("\\$[0-9]+", "\\$")
 val c = '$'

@@ -33,7 +33,7 @@ return ""
 }
 public open class User() {
 class object {
-public open fun main() : Unit {
+public open fun main() {
 val t = Test.init("name")
 }
 }
