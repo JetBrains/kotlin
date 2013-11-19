@@ -1402,6 +1402,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkInnerLocalDeclarations.kt");
             }
             
+            @TestMetadata("DeadCode.kt")
+            public void testDeadCode() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/DeadCode.kt");
+            }
+            
             @TestMetadata("kt1001.kt")
             public void testKt1001() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt1001.kt");
