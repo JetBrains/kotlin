@@ -1,10 +1,10 @@
 package demo
-open class Collection<E>(e : E) {
+class Collection<E>(e : E) {
 {
 System.out.println(e)
 }
 }
-open class Test() {
+class Test() {
 open fun main() {
 val raw1 = Collection(1)
 val raw2 = Collection<Int>(1)

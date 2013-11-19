@@ -1,4 +1,4 @@
-open class Base(name : String) {
+class Base(name : String) {
 }
-open class One(name : String, second : String) : Base(name) {
+class One(name : String, second : String) : Base(name) {
 }

@@ -1,9 +1,9 @@
 package org.test
-open class OuterClass() {
-open class InnerClass() {
+class OuterClass() {
+class InnerClass() {
 }
 }
-open class User() {
+class User() {
 open fun main() {
 val outerObject = OuterClass()
 val innerObject = outerObject.InnerClass()

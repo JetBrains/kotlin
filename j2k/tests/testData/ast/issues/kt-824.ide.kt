@@ -1,13 +1,13 @@
 package demo
-open class Container() {
+class Container() {
 var myBoolean : Boolean = true
 }
-open class One() {
+class One() {
 class object {
 var myContainer : Container = Container()
 }
 }
-open class Test() {
+class Test() {
 open fun test() {
 if (One.myContainer.myBoolean)
 System.out.println("Ok")

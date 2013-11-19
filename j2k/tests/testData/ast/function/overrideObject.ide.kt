@@ -1,5 +1,5 @@
 package test
-open class Test() {
+class Test() {
 public open fun hashCode() : Int {
 return System.identityHashCode(this)
 }

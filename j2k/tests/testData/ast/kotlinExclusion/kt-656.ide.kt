@@ -1,5 +1,5 @@
 package demo
-open class Test() : java.lang.Iterable<String> {
+class Test() : java.lang.Iterable<String> {
 public override fun iterator() : java.util.Iterator<String> {
 return null
 }
@@ -8,7 +8,7 @@ val j = i
 return j
 }
 }
-open class FullTest() : java.lang.Iterable<String> {
+class FullTest() : java.lang.Iterable<String> {
 public override fun iterator() : java.util.Iterator<String> {
 return null
 }

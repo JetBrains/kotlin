@@ -1,5 +1,5 @@
 package demo
-open class Test() {
+class Test() {
 class object {
 open fun subListRangeCheck(fromIndex : Int, toIndex : Int, size : Int) {
 if (fromIndex < 0)

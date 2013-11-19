@@ -1,4 +1,4 @@
-open class C(arg1 : Int, arg2 : Int, arg3 : Int) {
+class C(arg1 : Int, arg2 : Int, arg3 : Int) {
 class object {
 open fun init(arg1 : Int, arg2 : Int) : C {
 val __ = C(arg1, arg2, 0)
@@ -10,7 +10,7 @@ return __
 }
 }
 }
-public open class User() {
+public class User() {
 class object {
 public open fun main() {
 val c1 = C(100, 100, 100)

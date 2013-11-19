@@ -1,5 +1,5 @@
 package demo
-public open class SwitchDemo() {
+public class SwitchDemo() {
 class object {
 public open fun print(o : Any) {
 System.out.println(o)

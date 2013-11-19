@@ -1,15 +1,15 @@
 package demo
-open class Container() {
+class Container() {
 var myString : String = "1"
 }
-open class One() {
+class One() {
 class object {
 var myContainer : Container = Container()
 }
 }
-open class StringContainer(s : String) {
+class StringContainer(s : String) {
 }
-open class Test() {
+class Test() {
 open fun putString(s : String) {
 }
 open fun test() {

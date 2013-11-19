@@ -1,5 +1,5 @@
 package demo
-open class Test() {
+class Test() {
 open fun test() {
 val name = "$$$$"
 name = name.replaceAll("\\$[0-9]+", "\\$")

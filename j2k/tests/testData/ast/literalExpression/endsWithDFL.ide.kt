@@ -1,4 +1,4 @@
-open class Test() {
+class Test() {
 open fun test() {
 val l1 = 10
 val d1 = 10.0

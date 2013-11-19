@@ -1,4 +1,4 @@
-open class Test() {
+class Test() {
 class object {
 public open fun toFileSystemSafeName(name : String) : String {
 val size = name.length()

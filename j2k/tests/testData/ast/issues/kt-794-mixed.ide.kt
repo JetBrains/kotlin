@@ -1,5 +1,5 @@
 package demo
-open class Test() {
+class Test() {
 open fun getInteger(i : Int) : Int {
 return i
 }

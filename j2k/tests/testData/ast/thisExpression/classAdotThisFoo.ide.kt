@@ -1,9 +1,9 @@
-open class Base() {
+class Base() {
 open fun foo() {
 }
 }
-open class A() : Base() {
-open class C() {
+class A() : Base() {
+class C() {
 open fun test() {
 this@A.foo()
 }

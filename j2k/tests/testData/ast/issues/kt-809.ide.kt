@@ -1,15 +1,15 @@
 package demo
-open class Container() {
+class Container() {
 var myInt : Int = 1
 }
-open class One() {
+class One() {
 class object {
 var myContainer : Container = Container()
 }
 }
-open class IntContainer(i : Int) {
+class IntContainer(i : Int) {
 }
-open class Test() {
+class Test() {
 open fun putInt(i : Int) {
 }
 open fun test() {

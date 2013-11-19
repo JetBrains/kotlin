@@ -2,7 +2,7 @@
 /*
 This is a block comment
 */
-open class C() {
+class C() {
 // This is a class comment
 /**
  * This is a field doc comment.

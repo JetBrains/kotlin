@@ -1,4 +1,4 @@
-open class Library() {
+class Library() {
 class object {
 open fun call() {
 }
@@ -7,7 +7,7 @@ return ""
 }
 }
 }
-open class User() {
+class User() {
 open fun main() {
 Library.call()
 Library.getString().isEmpty()

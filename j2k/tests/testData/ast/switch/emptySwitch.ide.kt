@@ -1,4 +1,4 @@
-public open class NonDefault() {
+public class NonDefault() {
 class object {
 public open fun main(args : Array<String>) {
 val value = 3

@@ -19,7 +19,7 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.types.Type
 
-public open class Trait(converter: Converter,
+public class Trait(converter: Converter,
                         name: Identifier,
                         docComments: List<Node>,
                         modifiers: Set<Modifier>,
@@ -34,5 +34,5 @@ public open class Trait(converter: Converter,
         get() = "trait"
 
     override fun primaryConstructorSignatureToKotlin() = ""
-    override fun needOpenModifier() = false
+    override fun needsOpenModifier() = false
 }

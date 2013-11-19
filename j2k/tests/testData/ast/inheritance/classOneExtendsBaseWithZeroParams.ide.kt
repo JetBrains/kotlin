@@ -1,4 +1,4 @@
-open class Base() {
+class Base() {
 }
-open class One() : Base() {
+class One() : Base() {
 }

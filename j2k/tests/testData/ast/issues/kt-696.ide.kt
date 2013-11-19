@@ -1,5 +1,5 @@
 package test
-open class Base() {
+class Base() {
 public open fun hashCode() : Int {
 return System.identityHashCode(this)
 }
@@ -10,7 +10,7 @@ public open fun toString() : String {
 return getJavaClass<Base>.getName() + '@' + Integer.toHexString(hashCode())
 }
 }
-open class Child() : Base() {
+class Child() : Base() {
 public override fun hashCode() : Int {
 return super.hashCode()
 }

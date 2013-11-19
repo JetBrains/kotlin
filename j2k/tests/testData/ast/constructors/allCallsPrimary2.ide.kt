@@ -1,4 +1,4 @@
-open class C(arg1 : Int) {
+class C(arg1 : Int) {
 val myArg1 : Int
 var myArg2 : Int = 0
 var myArg3 : Int = 0
@@ -22,7 +22,7 @@ return __
 }
 }
 }
-public open class User() {
+public class User() {
 class object {
 public open fun main() {
 val c1 = C.init(100, 100, 100)

@@ -1,6 +1,6 @@
 package demo
 import java.util.HashMap
-open class Test() {
+class Test() {
 class object {
 open fun init() : Test {
 val __ = Test()
@@ -12,7 +12,7 @@ return __
 }
 }
 }
-open class User() {
+class User() {
 open fun main() {
 val m = HashMap(1)
 val m2 = HashMap(10)

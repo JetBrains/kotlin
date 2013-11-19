@@ -1,13 +1,13 @@
 package test
-open class Foo() {
+class Foo() {
 open fun execute() {
 }
 }
-open class Bar() {
+class Bar() {
 var fooNotNull : Foo = Foo()
 var fooNullable : Foo = null
 }
-open class Test() {
+class Test() {
 public open fun test(barNotNull : Bar, barNullable : Bar) {
 barNotNull.fooNotNull.execute()
 barNotNull.fooNullable.execute()

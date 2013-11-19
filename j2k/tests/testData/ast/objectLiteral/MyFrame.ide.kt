@@ -1,5 +1,5 @@
 package demo
-open class WindowAdapter() {
+class WindowAdapter() {
 public open fun windowClosing() {
 }
 }

@@ -19,17 +19,20 @@ package org.jetbrains.jet.j2k
 public class ConverterSettings(
         val forceNotNullTypes: Boolean,
         val forceLocalVariableImmutability: Boolean,
-        val specifyLocalVariableTypeByDefault: Boolean
+        val specifyLocalVariableTypeByDefault: Boolean,
+        val openByDefault: Boolean
 ) {}
 
 public val PluginSettings: ConverterSettings = ConverterSettings(
         forceNotNullTypes = true,
         forceLocalVariableImmutability = true,
-        specifyLocalVariableTypeByDefault = false
+        specifyLocalVariableTypeByDefault = false,
+        openByDefault = false
 )
 
 public val TestSettings: ConverterSettings = ConverterSettings(
         forceNotNullTypes = false,
         forceLocalVariableImmutability = false,
-        specifyLocalVariableTypeByDefault = true
+        specifyLocalVariableTypeByDefault = true,
+        openByDefault = true
 )

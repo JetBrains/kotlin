@@ -1,5 +1,5 @@
 package test
-public open class Test(str : String) {
+public class Test(str : String) {
 var myStr : String = "String2"
 public open fun sout(str : String) {
 System.out.println(str)

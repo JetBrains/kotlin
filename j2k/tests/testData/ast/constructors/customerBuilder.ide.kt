@@ -1,5 +1,5 @@
 package org.test.customer
-open class Customer(first : String, last : String) {
+class Customer(first : String, last : String) {
 public val _firstName : String
 public val _lastName : String
 public open fun getFirstName() : String {
@@ -19,7 +19,7 @@ _lastName = last
 doSmthAfter()
 }
 }
-open class CustomerBuilder() {
+class CustomerBuilder() {
 public var _firstName : String = "Homer"
 public var _lastName : String = "Simpson"
 public open fun WithFirstName(firstName : String) : CustomerBuilder {
@@ -34,7 +34,7 @@ public open fun Build() : Customer {
 return Customer(_firstName, _lastName)
 }
 }
-public open class User() {
+public class User() {
 class object {
 public open fun main() {
 val customer = CustomerBuilder().WithFirstName("Homer").WithLastName("Simpson").Build()

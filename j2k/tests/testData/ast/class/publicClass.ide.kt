@@ -1,2 +1,2 @@
-public open class Test() {
+public class Test() {
 }

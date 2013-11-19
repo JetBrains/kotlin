@@ -19,7 +19,7 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.types.Type
 
-public open class Enum(converter: Converter,
+public class Enum(converter: Converter,
                        name: Identifier,
                        docComments: List<Node>,
                        modifiers: Set<Modifier>,
@@ -35,7 +35,7 @@ public open class Enum(converter: Converter,
         return if (s.equals("()")) "" else s
     }
 
-    override fun needOpenModifier() = false
+    override fun isDefinitelyFinal() = true
 
     public override fun toKotlin(): String {
         val primaryConstructorBody = primaryConstructorBodyToKotlin() ?: ""

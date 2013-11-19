@@ -1,8 +1,8 @@
-open class `$$$$$`() {
+class `$$$$$`() {
 }
-open class `$`() {
+class `$`() {
 }
-open class `$$`(`$$$$` : `$$$$$`) : `$`() {
+class `$$`(`$$$$` : `$$$$$`) : `$`() {
 val `$$$` : `$$$$$`
 public open fun `$$$$$$`() : `$$$$$` {
 return `$$$`

@@ -1,4 +1,4 @@
-public open class Test(_myName : String, _a : Boolean, _b : Double, _c : Float, _d : Long, _e : Int, _f : Short, _g : Char) {
+public class Test(_myName : String, _a : Boolean, _b : Double, _c : Float, _d : Long, _e : Int, _f : Short, _g : Char) {
 private val myName : String
 private var a : Boolean = false
 private var b : Double = 0.toDouble()
@@ -31,7 +31,7 @@ return ""
 }
 }
 }
-public open class User() {
+public class User() {
 class object {
 public open fun main() {
 val t = Test.init("name")

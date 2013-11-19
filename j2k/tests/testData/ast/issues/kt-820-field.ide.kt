@@ -1,12 +1,12 @@
 package demo
-open class Container() {
+class Container() {
 var myInt : Int = 1
 }
-open class One() {
+class One() {
 class object {
 var myContainer : Container = Container()
 }
 }
-open class Test() {
+class Test() {
 var b : Byte = One.myContainer.myInt.toByte()
 }

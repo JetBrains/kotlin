@@ -1,7 +1,7 @@
 import java.util.HashMap
-open class G<T : String>(t : T) {
+class G<T : String>(t : T) {
 }
-public open class Java() {
+public class Java() {
 open fun test() {
 val m = HashMap()
 m.put(1, 1)

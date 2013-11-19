@@ -3,7 +3,7 @@ import java.io.File
 /**
 * User: ignatov
 */
-public open class Test() {
+public class Test() {
 class object {
 public open fun isDir(parent : File) : Boolean {
 if (parent == null || !parent.exists())

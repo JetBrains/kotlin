@@ -1,4 +1,4 @@
-open class A() {
+class A() {
 open fun a() {
 }
 }

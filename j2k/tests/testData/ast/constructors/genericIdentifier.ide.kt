@@ -1,4 +1,4 @@
-public open class Identifier<T>(_myName : T, _myHasDollar : Boolean) {
+public class Identifier<T>(_myName : T, _myHasDollar : Boolean) {
 private val myName : T
 private var myHasDollar : Boolean = false
 private var myNullable : Boolean = true
@@ -26,7 +26,7 @@ return __
 }
 }
 }
-public open class User() {
+public class User() {
 class object {
 public open fun main() {
 val i1 = Identifier.init<String>("name", false, true)

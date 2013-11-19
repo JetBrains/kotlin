@@ -1,5 +1,5 @@
 import java.util.BitSet
-open class Foo() {
+class Foo() {
 open fun foo(o : BitSet) {
 val o2 = o
 val foo = 0

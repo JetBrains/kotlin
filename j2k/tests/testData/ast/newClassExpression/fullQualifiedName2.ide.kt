@@ -1,5 +1,5 @@
 package test
-open class User() {
+class User() {
 open fun main() {
 val list = java.util.LinkedList()
 }

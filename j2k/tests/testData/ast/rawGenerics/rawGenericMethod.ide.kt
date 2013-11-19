@@ -1,9 +1,9 @@
 package demo
-open class TestT() {
+class TestT() {
 open fun getT<T>() {
 }
 }
-open class U() {
+class U() {
 open fun main() {
 val t = TestT()
 t.getT<String>()

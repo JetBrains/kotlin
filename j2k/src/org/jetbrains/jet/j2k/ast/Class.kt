@@ -111,21 +111,20 @@ public open class Class(val converter: Converter,
         if (modifier != null) {
             modifierList.add(modifier)
         }
-        if (needAbstractModifier()) {
+        if (isAbstract()) {
             modifierList.add(Modifier.ABSTRACT)
         }
-
-        if (needOpenModifier()) {
+        else if (needsOpenModifier()) {
             modifierList.add(Modifier.OPEN)
         }
         return modifierList.toKotlin()
     }
 
-    open fun needOpenModifier() = !modifiers.contains(Modifier.FINAL) && !modifiers.contains(Modifier.ABSTRACT)
+    open fun isDefinitelyFinal() = modifiers.contains(Modifier.FINAL)
 
-    open fun needAbstractModifier() = isAbstract()
+    open fun needsOpenModifier() = !isDefinitelyFinal() && converter.settings.openByDefault
 
-    open fun bodyToKotlin(): String {
+    fun bodyToKotlin(): String {
         return " {\n" + getNonStatic(membersExceptConstructors()).toKotlin("\n") + "\n" + primaryConstructorBodyToKotlin() + "\n" + classObjectToKotlin() + "\n}"
     }
 

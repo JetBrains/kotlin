@@ -1,6 +1,6 @@
 package demo
 import java.util.LinkedList
-open class Test() {
+class Test() {
 open fun main() {
 val common = LinkedList<String>()
 val raw = LinkedList<String>()

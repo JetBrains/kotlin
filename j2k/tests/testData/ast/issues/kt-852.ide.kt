@@ -1,5 +1,5 @@
 package demo
-open class Test() {
+class Test() {
 open fun test() : String {
 val s1 = ""
 val s2 = ""

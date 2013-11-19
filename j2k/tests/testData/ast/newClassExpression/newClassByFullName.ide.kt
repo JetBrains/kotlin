@@ -1,7 +1,7 @@
 package org.test
-open class Library() {
+class Library() {
 }
-open class User() {
+class User() {
 open fun main() {
 val lib = Library()
 }

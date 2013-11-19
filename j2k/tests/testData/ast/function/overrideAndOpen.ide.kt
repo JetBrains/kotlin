@@ -1,12 +1,12 @@
-open class A() {
+class A() {
 open fun foo() {
 }
 }
-open class B() : A() {
+class B() : A() {
 override fun foo() {
 }
 }
-open class C() : B() {
+class C() : B() {
 override fun foo() {
 }
 }

@@ -1,8 +1,8 @@
 package org.test
 import java.util.LinkedList
-open class Member() {
+class Member() {
 }
-open class User() {
+class User() {
 open fun main() {
 val members = LinkedList<Member>()
 members.add(Member())

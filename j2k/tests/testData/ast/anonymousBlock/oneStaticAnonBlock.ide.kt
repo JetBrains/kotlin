@@ -1,4 +1,4 @@
-open class Test() {
+class Test() {
 var str : String = 0
 class object {
 {

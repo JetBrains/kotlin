@@ -1,3 +1,3 @@
-open class C() {
+class C() {
 private var f : Foo = 0
 }

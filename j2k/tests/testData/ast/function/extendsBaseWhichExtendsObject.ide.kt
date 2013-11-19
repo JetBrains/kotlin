@@ -1,5 +1,5 @@
 package test
-open class Test() : Base() {
+class Test() : Base() {
 public override fun hashCode() : Int {
 return super.hashCode()
 }
@@ -16,7 +16,7 @@ protected override fun finalize() {
 super.finalize()
 }
 }
-open class Base() {
+class Base() {
 public open fun hashCode() : Int {
 return System.identityHashCode(this)
 }

@@ -1,3 +1,3 @@
 package test
-open class C() {
+class C() {
 }

@@ -1,5 +1,5 @@
 import java.util.*
-public open class ForEach() {
+public class ForEach() {
 public open fun test() {
 val xs = ArrayList<Any>()
 val ys = LinkedList<Any>()

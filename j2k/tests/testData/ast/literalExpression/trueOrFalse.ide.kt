@@ -1,4 +1,4 @@
-open class Test() {
+class Test() {
 open fun test() {
 val t1 = true
 val t2 = true

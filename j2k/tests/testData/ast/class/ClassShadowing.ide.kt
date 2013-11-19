@@ -1,12 +1,12 @@
 package test
-public open class Short() {
+public class Short() {
 class object {
 public open fun valueOf(value : String) : Short {
 return Short()
 }
 }
 }
-open class Test() {
+class Test() {
 class object {
 public open fun test() {
 test.Short.valueOf("1")
