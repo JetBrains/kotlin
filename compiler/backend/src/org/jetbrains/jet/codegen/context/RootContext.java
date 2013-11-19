@@ -68,6 +68,7 @@ class RootContext extends CodegenContext {
             throw new IllegalStateException();
         }
 
+        @NotNull
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             throw new IllegalStateException();

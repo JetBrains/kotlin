@@ -33,6 +33,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         return this;
     }
 
+    @NotNull
     protected abstract JetScope getScopeForMemberLookup();
 
     @NotNull

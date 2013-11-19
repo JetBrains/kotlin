@@ -210,6 +210,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         }
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations;

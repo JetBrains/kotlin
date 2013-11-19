@@ -166,6 +166,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         });
     }
 
+    @NotNull
     @Override
     protected JetScope getScopeForMemberLookup() {
         return unsubstitutedMemberScope;
@@ -330,6 +331,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         return thisAsReceiverParameter.invoke();
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations.invoke();
@@ -479,6 +481,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
             return LazyClassDescriptor.this;
         }
 
+        @NotNull
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             return Collections.emptyList(); // TODO

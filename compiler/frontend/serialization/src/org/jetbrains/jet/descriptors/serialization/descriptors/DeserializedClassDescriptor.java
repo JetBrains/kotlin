@@ -199,11 +199,13 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         return annotationDeserializer.loadClassAnnotations(this, classProto);
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations.invoke();
     }
 
+    @NotNull
     @Override
     protected JetScope getScopeForMemberLookup() {
         return memberScope;
@@ -359,6 +361,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             return DeserializedClassDescriptor.this;
         }
 
+        @NotNull
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             return Collections.emptyList(); // TODO

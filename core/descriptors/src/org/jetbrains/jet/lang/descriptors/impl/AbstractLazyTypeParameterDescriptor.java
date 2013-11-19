@@ -179,6 +179,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
                 return AbstractLazyTypeParameterDescriptor.this;
             }
 
+            @NotNull
             @Override
             public List<AnnotationDescriptor> getAnnotations() {
                 return AbstractLazyTypeParameterDescriptor.this.getAnnotations();
@@ -248,6 +249,7 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
         return index;
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return Collections.emptyList(); // TODO

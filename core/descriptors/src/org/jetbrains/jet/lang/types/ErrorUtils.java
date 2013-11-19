@@ -406,6 +406,7 @@ public class ErrorUtils {
             return true;
         }
 
+        @NotNull
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             return Collections.emptyList();

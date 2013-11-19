@@ -117,6 +117,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         return r;
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return original.getAnnotations();

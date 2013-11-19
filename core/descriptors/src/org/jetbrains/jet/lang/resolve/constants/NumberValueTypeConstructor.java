@@ -49,6 +49,7 @@ public abstract class NumberValueTypeConstructor implements TypeConstructor {
         return null;
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return Collections.emptyList();
