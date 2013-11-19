@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.util
+package org.jetbrains.jet.utils
 
-fun Boolean.iif<T>(then: T, _else: T): T = if (this) then else _else
+import java.util.LinkedHashMap
 
-// These two functions are needed in conjunction with iif:
-// foo.eq(bar).iif(a, b)
-fun <T> T.eq(eq: T): Boolean = this == eq
-fun <T> T.neq(eq: T): Boolean = this != eq
-
-fun <T: Any> T?.sure(message: String): T {
-    if (this == null)
-        throw AssertionError(message)
-    return this
+public fun <K, V> Iterable<V>.toMap(key: (V) -> K): Map<K, V> {
+    val map = LinkedHashMap<K, V>()
+    for (v in this) {
+        map[key(v)] = v
+    }
+    return map
 }
