@@ -51,7 +51,6 @@ import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.transla
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.getObjectDeclarationName;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
@@ -473,10 +472,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitObjectDeclaration(@NotNull JetObjectDeclaration expression,
             @NotNull TranslationContext context) {
-        JetObjectDeclarationName objectDeclarationName = getObjectDeclarationName(expression);
-        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(), objectDeclarationName);
-        JsName propertyName = context.getNameForDescriptor(descriptor);
+        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(), expression);
+        JsName name = context.getNameForDescriptor(descriptor);
         JsExpression value = ClassTranslator.generateClassCreation(expression, context);
-        return newVar(propertyName, value).source(expression);
+        return newVar(name, value).source(expression);
     }
 }

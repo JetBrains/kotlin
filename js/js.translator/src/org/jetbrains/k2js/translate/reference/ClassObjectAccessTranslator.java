@@ -31,6 +31,8 @@ import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 
@@ -54,7 +56,13 @@ public class ClassObjectAccessTranslator extends AbstractTranslator implements C
 
     private ClassObjectAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
-        this.referenceToClassObject = Namer.getClassObjectAccessor(translateAsFQReference(descriptor, context()));
+        JsExpression fqReference = translateAsFQReference(descriptor, context());
+        if (isObject(descriptor) || isEnumEntry(descriptor)) {
+            this.referenceToClassObject = fqReference;
+        }
+        else {
+            this.referenceToClassObject = Namer.getClassObjectAccessor(fqReference);
+        }
     }
 
     @Override
