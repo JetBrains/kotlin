@@ -265,7 +265,7 @@ public class LockBasedStorageManager implements StorageManager {
 
         @Override
         @Nullable
-        public V invoke(@NotNull K input) {
+        public V invoke(K input) {
             Object value = cache.get(input);
             if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
@@ -306,7 +306,7 @@ public class LockBasedStorageManager implements StorageManager {
 
         @NotNull
         @Override
-        public V invoke(@NotNull K input) {
+        public V invoke(K input) {
             V result = super.invoke(input);
             assert result != null : "compute() returned null";
             return result;

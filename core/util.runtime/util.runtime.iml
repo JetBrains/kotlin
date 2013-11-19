@@ -9,6 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="library" exported="" name="kotlin-runtime" level="project" />
+    <orderEntry type="library" name="annotations" level="project" />
   </component>
 </module>
 

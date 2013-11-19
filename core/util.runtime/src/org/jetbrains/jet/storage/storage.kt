@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.storage;
+package org.jetbrains.jet.storage
 
-import jet.Function1;
-import org.jetbrains.annotations.Nullable;
+public trait MemoizedFunctionToNotNull<P, R: Any> : Function1<P, R>
+public trait MemoizedFunctionToNullable<P, R: Any> : Function1<P, R?>
 
-public interface MemoizedFunctionToNullable<P, R> extends Function1<P, R> {
-    @Override
-    @Nullable
-    R invoke(P p);
+public trait NotNullLazyValue<T: Any> : Function0<T> {
+    fun isComputed(): Boolean
 }
+
+public trait NullableLazyValue<T: Any> : Function0<T?> {
+    fun isComputed(): Boolean
+}
+
+fun <T> NotNullLazyValue<T>.get(_this: Any?, p: PropertyMetadata): T = invoke()
