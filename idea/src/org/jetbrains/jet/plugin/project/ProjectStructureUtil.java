@@ -53,6 +53,7 @@ import java.util.Set;
 
 public class ProjectStructureUtil {
     private static final Key<CachedValue<Boolean>> IS_KOTLIN_JS_MODULE = Key.create("IS_KOTLIN_JS_MODULE");
+    private static final Key<CachedValue<Boolean>> HAS_KOTLIN_JVM_MODULES = Key.create("HAS_KOTLIN_JVM_MODULES");
     private static final Key<CachedValue<Boolean>> IS_DEPEND_ON_JVM_KOTLIN = Key.create("KOTLIN_IS_DEPEND_ON_JVM_KOTLIN");
 
     private ProjectStructureUtil() {
@@ -81,6 +82,31 @@ public class ProjectStructureUtil {
             }, false);
 
             module.putUserData(IS_KOTLIN_JS_MODULE, result);
+        }
+
+        return result.getValue();
+    }
+
+    public static boolean hasJvmKotlinModules(@NotNull final Project project) {
+        CachedValue<Boolean> result = project.getUserData(HAS_KOTLIN_JVM_MODULES);
+        if (result == null) {
+            result = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<Boolean>() {
+                @Override
+                public Result<Boolean> compute() {
+                    boolean hasJvmKotlinModules = false;
+
+                    for (Module module : ModuleManager.getInstance(project).getModules()) {
+                        if (isJavaKotlinModule(module)) {
+                            hasJvmKotlinModules = true;
+                            break;
+                        }
+                    }
+
+                    return Result.create(hasJvmKotlinModules, ProjectRootModificationTracker.getInstance(project));
+                }
+            }, false);
+
+            project.putUserData(HAS_KOTLIN_JVM_MODULES, result);
         }
 
         return result.getValue();
