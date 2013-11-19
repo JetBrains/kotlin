@@ -3787,6 +3787,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inline/nonVirtualMembersWithInline.kt");
             }
             
+            @TestMetadata("nothingToInline.kt")
+            public void testNothingToInline() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inline/nothingToInline.kt");
+            }
+            
             @TestMetadata("propagation.kt")
             public void testPropagation() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inline/propagation.kt");

@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE
+
 inline private fun a() {}
 
 inline fun b() {}
