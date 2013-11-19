@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -328,5 +329,16 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
         return getAllDescriptors();
+    }
+
+    @Override
+    public void printScopeStructure(@NotNull Printer p) {
+        p.println(getClass().getSimpleName(), " {");
+        p.pushIndent();
+
+        p.println("thisDescriptor = ", thisDescriptor);
+
+        p.popIndent();
+        p.println("}");
     }
 }

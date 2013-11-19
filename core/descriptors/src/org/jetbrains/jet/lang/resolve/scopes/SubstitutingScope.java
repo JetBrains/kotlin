@@ -20,10 +20,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.List;
@@ -149,5 +151,23 @@ public class SubstitutingScope implements JetScope {
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
         return substitute(workerScope.getOwnDeclaredDescriptors());
+    }
+
+    @TestOnly
+    @Override
+    public void printScopeStructure(@NotNull Printer p) {
+        p.println(getClass().getSimpleName(), " {");
+        p.pushIndent();
+
+        p.println("substitutor = ");
+        p.pushIndent();
+        p.println(substitutor);
+        p.popIndent();
+
+        p.print("workerScope = ");
+        workerScope.printScopeStructure(p.withholdIndentOnce());
+
+        p.popIndent();
+        p.println("}");
     }
 }

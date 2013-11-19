@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.utils.Printer;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -113,7 +114,12 @@ public class CallExpressionResolver {
                             public String toString() {
                                 return "Scope for the type parameter on the left hand side of dot";
                             }
-                        };
+
+                            @Override
+                            public void printScopeStructure(@NotNull Printer p) {
+                                p.println(toString(), " for ", classifier);
+                            }
+                    };
             return new NamespaceType(referencedName, scopeForStaticMembersResolution, NO_RECEIVER);
         }
         temporaryTrace.commit();

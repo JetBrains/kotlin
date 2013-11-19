@@ -19,9 +19,11 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +39,11 @@ public interface JetScope {
         @Override
         public String toString() {
             return "EMPTY";
+        }
+
+        @Override
+        public void printScopeStructure(@NotNull Printer p) {
+            p.println("EMPTY");
         }
     };
 
@@ -93,4 +100,7 @@ public interface JetScope {
     @NotNull
     @ReadOnly
     Collection<DeclarationDescriptor> getOwnDeclaredDescriptors();
+
+    @TestOnly
+    void printScopeStructure(@NotNull Printer p);
 }

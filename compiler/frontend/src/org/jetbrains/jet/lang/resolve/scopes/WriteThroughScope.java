@@ -21,9 +21,11 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.Set;
@@ -283,5 +285,12 @@ public class WriteThroughScope extends WritableScopeWithImports {
         checkMayRead();
 
         return getWorkerScope();
+    }
+
+    @TestOnly
+    @Override
+    protected void printAdditionalScopeStructure(@NotNull Printer p) {
+        p.print("writableWorker = ");
+        writableWorker.printScopeStructure(p.withholdIndentOnce());
     }
 }

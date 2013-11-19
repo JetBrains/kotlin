@@ -19,11 +19,13 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.utils.CommonSuppliers;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.*;
 
@@ -506,5 +508,11 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         else {
             throw new IllegalStateException("unknown classifier: " + classifier);
         }
+    }
+
+    @TestOnly
+    @Override
+    protected void printAdditionalScopeStructure(@NotNull Printer p) {
+        p.println("allDescriptorsDone = ", allDescriptorsDone);
     }
 }

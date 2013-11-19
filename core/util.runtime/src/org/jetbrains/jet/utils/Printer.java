@@ -31,6 +31,7 @@ public class Printer {
 
     private String indent = "";
     private int blankLineCountIncludingCurrent = 0;
+    private boolean withholdIndentOnce = false;
 
     public Printer(@NotNull Appendable out) {
         this(out, Integer.MAX_VALUE);
@@ -67,7 +68,12 @@ public class Printer {
 
     @NotNull
     public Printer print(Object... objects) {
-        append(indent);
+        if (withholdIndentOnce) {
+            withholdIndentOnce = false;
+        }
+        else {
+            append(indent);
+        }
         printWithNoIndent(objects);
 
         return this;
@@ -80,6 +86,12 @@ public class Printer {
             append(object);
         }
 
+        return this;
+    }
+
+    @NotNull
+    public Printer withholdIndentOnce() {
+        withholdIndentOnce = true;
         return this;
     }
 
