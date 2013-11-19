@@ -3312,6 +3312,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/constraints"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("constraintOnFunctionLiteral.kt")
+                public void testConstraintOnFunctionLiteral() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/constraints/constraintOnFunctionLiteral.kt");
+                }
+                
                 @TestMetadata("equalityConstraintOnNullableType.kt")
                 public void testEqualityConstraintOnNullableType() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/constraints/equalityConstraintOnNullableType.kt");

@@ -145,29 +145,6 @@ public class ArgumentTypeResolver {
         updateResultArgumentTypeIfNotDenotable(context, argumentExpression);
     }
 
-    public <D extends CallableDescriptor> void checkTypesForFunctionArguments(CallResolutionContext<?> context, ResolvedCallImpl<D> resolvedCall) {
-        Map<ValueParameterDescriptor, ResolvedValueArgument> arguments = resolvedCall.getValueArguments();
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : arguments.entrySet()) {
-            ValueParameterDescriptor valueParameterDescriptor = entry.getKey();
-            JetType varargElementType = valueParameterDescriptor.getVarargElementType();
-            JetType functionType;
-            if (varargElementType != null) {
-                functionType = varargElementType;
-            }
-            else {
-                functionType = valueParameterDescriptor.getType();
-            }
-            ResolvedValueArgument valueArgument = entry.getValue();
-            List<ValueArgument> valueArguments = valueArgument.getArguments();
-            for (ValueArgument argument : valueArguments) {
-                JetExpression expression = argument.getArgumentExpression();
-                if (expression instanceof JetFunctionLiteralExpression) {
-                    expressionTypingServices.getType(context.scope, expression, functionType, context.dataFlowInfo, context.trace);
-                }
-            }
-        }
-    }
-
     public static boolean isFunctionLiteralArgument(@NotNull JetExpression expression) {
         return getFunctionLiteralArgumentIfAny(expression) != null;
     }
