@@ -140,11 +140,10 @@ public class JetControlFlowProcessor {
         private void checkNothingType(JetElement element) {
             if (!(element instanceof JetExpression)) return;
             JetExpression expression = JetPsiUtil.deparenthesize((JetExpression) element);
-            if (expression instanceof JetStatementExpression || expression instanceof  JetTryExpression
-                || expression instanceof JetThrowExpression || expression instanceof JetFinallySection
-                    || expression instanceof JetIfExpression || expression instanceof JetWhenExpression) return;
-            //noinspection ConstantConditions
-            if (!trace.get(BindingContext.PROCESSED, expression)) return;
+            if (expression instanceof JetStatementExpression || expression instanceof JetTryExpression
+                    || expression instanceof JetIfExpression || expression instanceof JetWhenExpression) {
+                return;
+            }
 
             JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
             if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
