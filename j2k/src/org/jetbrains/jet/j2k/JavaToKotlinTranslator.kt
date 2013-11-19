@@ -102,17 +102,6 @@ object JavaToKotlinTranslator {
         }
         return ""
     }
-
-    fun generateKotlinCodeWithCompatibilityImport(javaCode: String): String {
-        val file = createFile(javaCode)
-        if (file is PsiJavaFile) {
-            val converter = Converter(file.getProject(), TestSettings)
-            setClassIdentifiers(converter, file)
-            return prettify(converter.fileToFileWithCompatibilityImport(file).toKotlin())
-        }
-
-        return ""
-    }
 }
 
 public fun main(args: Array<String>) {

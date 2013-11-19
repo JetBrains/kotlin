@@ -87,14 +87,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 
     public fun fileToFile(javaFile: PsiJavaFile): File {
-        return fileToFile(javaFile, Collections.emptyList<String>())
-    }
-
-    public fun fileToFileWithCompatibilityImport(javaFile: PsiJavaFile): File {
-        return fileToFile(javaFile, Collections.singletonList("kotlin.compatibility.*"))
-    }
-
-    private fun fileToFile(javaFile: PsiJavaFile, additionalImports: List<String>): File {
         val importList: PsiImportList? = javaFile.getImportList()
         val imports: MutableList<Import> = (if (importList == null)
             arrayListOf()
@@ -109,8 +101,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     kotlinAnalogsForClass.isEmpty()
                 }
             }))
-        for (i : String in additionalImports)
-            imports.add(Import(i))
 
         val body: ArrayList<Node> = arrayListOf()
         for (element in javaFile.getChildren()) {

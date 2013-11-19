@@ -1587,11 +1587,6 @@ public class JavaToKotlinConverterBasicTestGenerated extends AbstractJavaToKotli
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/misc"), Pattern.compile("^(.+)\\.jav$"), true);
         }
         
-        @TestMetadata("intNullability.jav")
-        public void testIntNullability() throws Exception {
-            doTest("j2k/tests/testData/ast/misc/intNullability.jav");
-        }
-        
         @TestMetadata("packageWithClass.jav")
         public void testPackageWithClass() throws Exception {
             doTest("j2k/tests/testData/ast/misc/packageWithClass.jav");

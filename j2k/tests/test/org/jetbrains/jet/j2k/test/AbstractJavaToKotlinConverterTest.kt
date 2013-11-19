@@ -61,7 +61,6 @@ public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension:
             "method" -> methodToKotlin(converter, javaCode)
             "class" -> fileToKotlin(converter, javaCode)
             "file" -> fileToKotlin(converter, javaCode)
-            "comp" -> fileToFileWithCompatibilityImport(javaCode)
             else -> throw IllegalStateException("Specify what is it: file, class, method, statement or expression "+
                                                 "using the first line of test data file")
         }
@@ -99,10 +98,6 @@ public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension:
         var result = statementToKotlin(converter, "final Object o =" + code + "}")
         result = result.replaceFirst("val o : Any\\? =", "").replaceFirst("val o : Any = ", "").replaceFirst("val o = ", "")
         return prettify(result)
-    }
-
-    private fun fileToFileWithCompatibilityImport(text: String): String {
-        return JavaToKotlinTranslator.generateKotlinCodeWithCompatibilityImport(text)
     }
 
     private fun generateKotlinCode(converter: Converter, file: PsiFile?): String {
