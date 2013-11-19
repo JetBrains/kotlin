@@ -1,1 +1,1 @@
-assert {boolMethod()}
+assert(boolMethod())
