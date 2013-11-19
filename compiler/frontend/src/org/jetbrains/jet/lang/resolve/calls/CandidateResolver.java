@@ -321,10 +321,10 @@ public class CandidateResolver {
         return resolvedCall.getResultingDescriptor().getReturnType();
     }
 
-    @Nullable
-    public <D extends CallableDescriptor> JetType completeNestedCallsInference(
+    public <D extends CallableDescriptor> void completeNestedCallsInference(
             @NotNull CallCandidateResolutionContext<D> context
     ) {
+        if (context.call.getCallType() == Call.CallType.INVOKE) return;
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
@@ -335,7 +335,6 @@ public class CandidateResolver {
             }
         }
         recordReferenceForInvokeFunction(context);
-        return resolvedCall.getResultingDescriptor().getReturnType();
     }
 
     private <D extends CallableDescriptor> void completeInferenceForArgument(
@@ -371,7 +370,8 @@ public class CandidateResolver {
             type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
         }
         else {
-            type = completeNestedCallsInference(contextForArgument);
+            completeNestedCallsInference(contextForArgument);
+            type = contextForArgument.candidateCall.getResultingDescriptor().getReturnType();
             checkValueArgumentTypes(contextForArgument);
         }
         JetType result = BindingContextUtils.updateRecordedType(
@@ -387,6 +387,7 @@ public class CandidateResolver {
     }
 
     public void completeNestedCallsForNotResolvedInvocation(@NotNull CallResolutionContext<?> context, @NotNull Collection<? extends ValueArgument> arguments) {
+        if (context.call.getCallType() == Call.CallType.INVOKE) return;
         if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return;
 
         for (ValueArgument argument : arguments) {
