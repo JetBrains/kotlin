@@ -213,7 +213,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (type.isError()) {
             return type.toString();
         }
-        if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type) && prettyFunctionTypes) {
+        if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) && prettyFunctionTypes) {
             return renderFunctionType(type);
         }
         return renderDefaultType(type);
