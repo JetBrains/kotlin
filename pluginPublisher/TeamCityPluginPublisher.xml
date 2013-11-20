@@ -131,4 +131,16 @@
     <echo message="##teamcity[buildStatus text='kotlin-${kotlin.plugin.version} has been verified against ${idea.version}']"/>
     <echo message="##teamcity[publishArtifacts '${kotlin.plugin.path}']"/>
   </target>
+
+  <target name="generateUpdateXml">
+    <echoxml file="updatePlugins.xml">
+      <plugins>
+        <plugin id="org.jetbrains.kotlin"
+                url="%teamcity.serverUrl%/guestAuth/repository/download/bt345/%dep.bt345.teamcity.build.id%:id/kotlin-plugin-%dep.bt345.build.number%.zip"
+                version="%dep.bt345.build.number%" />
+      </plugins>
+    </echoxml>
+
+    <echo message="##teamcity[publishArtifacts 'updatePlugins.xml']" />
+  </target>
 </project>
