@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.jvm;
+package org.jetbrains.jet.cli.js;
 
 import junit.framework.Assert;
+import org.jetbrains.jet.cli.CliBaseTest;
 import org.junit.Test;
 
 import java.io.File;

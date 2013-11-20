@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.jvm;
+package org.jetbrains.jet.cli;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
@@ -25,6 +25,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.test.Tmpdir;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.junit.Rule;

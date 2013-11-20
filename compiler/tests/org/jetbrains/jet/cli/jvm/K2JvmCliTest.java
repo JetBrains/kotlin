@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.jvm;
 
 import junit.framework.Assert;
+import org.jetbrains.jet.cli.CliBaseTest;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.junit.Test;
