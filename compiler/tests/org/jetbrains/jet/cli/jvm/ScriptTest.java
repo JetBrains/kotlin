@@ -37,10 +37,9 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ref.JetTypeName;
 import org.jetbrains.jet.utils.KotlinPaths;
-import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
+import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,7 +77,7 @@ public class ScriptTest extends CliBaseTest {
             @Nullable List<AnalyzerScriptParameter> scriptParameters,
             @NotNull List<JetScriptDefinition> scriptDefinitions
     ) {
-        KotlinPaths paths = new KotlinPathsFromHomeDir(new File("dist/kotlinc"));
+        KotlinPaths paths = PathUtil.getKotlinPathsForDistDirectory();
         GroupingMessageCollector messageCollector =
                 new GroupingMessageCollector(new PrintingMessageCollector(System.err, MessageRenderer.PLAIN, false));
         Disposable rootDisposable = Disposer.newDisposable();
