@@ -24,7 +24,10 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.context.*;
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -51,11 +54,12 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.psi.JetPsiUtil.isLHSOfDot;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.psi.JetPsiUtil.isLHSOfDot;
 
 public class CallExpressionResolver {
     @NotNull
@@ -307,7 +311,7 @@ public class CallExpressionResolver {
     ) {
         JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
                 callExpression, receiver, callOperationNode, context);
-        if (context.contextDependency == ContextDependency.INDEPENDENT) {
+        if (context.contextDependency == INDEPENDENT) {
             DataFlowUtils.checkType(typeInfo, callExpression, context);
         }
         return typeInfo;
@@ -399,9 +403,7 @@ public class CallExpressionResolver {
         // TODO : functions as values
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
-        ResolutionContext contextForReceiver = context
-                .replaceExpectedType(NO_EXPECTED_TYPE).replaceExpressionPosition(ExpressionPosition.LHS_OF_DOT)
-                .replaceContextDependency(ContextDependency.INDEPENDENT);
+        ResolutionContext contextForReceiver = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
         JetType receiverType = receiverTypeInfo.getType();
         if (selectorExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
@@ -432,7 +434,7 @@ public class CallExpressionResolver {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
         JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
-        if (context.contextDependency == ContextDependency.INDEPENDENT) {
+        if (context.contextDependency == INDEPENDENT) {
             DataFlowUtils.checkType(typeInfo, expression, context);
         }
         return typeInfo;

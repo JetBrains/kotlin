@@ -31,7 +31,6 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public final JetScope scope;
     public final JetType expectedType;
     public final DataFlowInfo dataFlowInfo;
-    public final ExpressionPosition expressionPosition;
     public final ContextDependency contextDependency;
     public final ResolutionResultsCache resolutionResultsCache;
     public final LabelResolver labelResolver;
@@ -43,7 +42,6 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull JetScope scope,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
@@ -54,7 +52,6 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.scope = scope;
         this.expectedType = expectedType;
         this.dataFlowInfo = dataFlowInfo;
-        this.expressionPosition = expressionPosition;
         this.contextDependency = contextDependency;
         this.resolutionResultsCache = resolutionResultsCache;
         this.labelResolver = labelResolver;
@@ -67,63 +64,51 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull ExpressionPosition expressionPosition,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver
     );
     
     protected abstract Context self();
-    
-    public Context replaceBindingTrace(@NotNull BindingTrace trace) {
-        if (this.trace == trace) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, expressionPosition, contextDependency, resolutionResultsCache,
-                      labelResolver);
-    }
 
     @NotNull
-    public Context replaceExpressionPosition(@NotNull ExpressionPosition expressionPosition) {
-        if (expressionPosition == this.expressionPosition) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, expressionPosition, contextDependency, resolutionResultsCache,
-                      labelResolver);
+    public Context replaceBindingTrace(@NotNull BindingTrace trace) {
+        if (this.trace == trace) return self();
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver);
     }
 
     @NotNull
     public Context replaceDataFlowInfo(@NotNull DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return self();
-        return create(trace, scope, newDataFlowInfo, expectedType, expressionPosition, contextDependency, resolutionResultsCache,
-                      labelResolver);
+        return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver);
     }
 
     @NotNull
     public Context replaceExpectedType(@Nullable JetType newExpectedType) {
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
-        return create(trace, scope, dataFlowInfo, newExpectedType, expressionPosition, contextDependency, resolutionResultsCache,
-                      labelResolver);
+        return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, labelResolver);
     }
 
     @NotNull
     public Context replaceScope(@NotNull JetScope newScope) {
         if (newScope == scope) return self();
-        return create(trace, newScope, dataFlowInfo, expectedType, expressionPosition, contextDependency, resolutionResultsCache,
-                      labelResolver);
+        return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver);
     }
 
     @NotNull
     public Context replaceContextDependency(@NotNull ContextDependency newContextDependency) {
         if (newContextDependency == contextDependency) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, expressionPosition, newContextDependency, resolutionResultsCache,
-                      labelResolver);
+        return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, labelResolver);
     }
 
     @NotNull
     public Context replaceResolutionResultsCache(@NotNull ResolutionResultsCache newResolutionResultsCache) {
         if (newResolutionResultsCache == resolutionResultsCache) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, expressionPosition, contextDependency, newResolutionResultsCache,
-                      labelResolver);
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, labelResolver);
     }
 
+    @NotNull
     public Context replaceTraceAndCache(@NotNull TemporaryTraceAndCache traceAndCache) {
         return replaceBindingTrace(traceAndCache.trace).replaceResolutionResultsCache(traceAndCache.cache);
     }

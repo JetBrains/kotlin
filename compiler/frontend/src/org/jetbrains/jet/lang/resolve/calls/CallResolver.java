@@ -58,7 +58,8 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW;
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults.Code.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
@@ -137,7 +138,7 @@ public class CallResolver {
     ) {
         return resolveFunctionCall(BasicCallResolutionContext.create(
                 trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                ExpressionPosition.FREE, ResolutionResultsCacheImpl.create(), LabelResolver.create(), null,
+                ResolutionResultsCacheImpl.create(), LabelResolver.create(), null,
                 expressionTypingServices.createExtension(scope, isAnnotationContext), isAnnotationContext));
     }
 

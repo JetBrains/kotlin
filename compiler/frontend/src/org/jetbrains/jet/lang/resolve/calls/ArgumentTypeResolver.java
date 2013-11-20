@@ -25,7 +25,9 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.context.*;
+import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
@@ -51,6 +53,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getRecordedType
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class ArgumentTypeResolver {
@@ -211,8 +214,7 @@ public class ArgumentTypeResolver {
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
         }
-        ResolutionContext newContext = context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE)
-                .replaceContextDependency(ContextDependency.DEPENDENT).replaceExpressionPosition(ExpressionPosition.FREE);
+        ResolutionContext newContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(DEPENDENT);
 
         return expressionTypingServices.getTypeInfo(expression, newContext);
     }

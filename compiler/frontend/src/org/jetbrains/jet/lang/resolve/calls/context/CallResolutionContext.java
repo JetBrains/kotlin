@@ -42,7 +42,6 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
-            @NotNull ExpressionPosition expressionPosition,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
             @SuppressWarnings("NullableProblems")
@@ -50,8 +49,8 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull CallResolverExtension callResolverExtension,
             boolean isAnnotationContext
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, expressionPosition, contextDependency, resolutionResultsCache, labelResolver,
-              callResolverExtension, isAnnotationContext);
+        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, labelResolver, callResolverExtension,
+              isAnnotationContext);
         this.call = call;
         this.checkArguments = checkArguments;
         if (dataFlowInfoForArguments != null) {
@@ -65,6 +64,7 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
         }
     }
 
+    @NotNull
     public BasicCallResolutionContext toBasic() {
         return BasicCallResolutionContext.create(this, call, checkArguments);
     }

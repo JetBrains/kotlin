@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemCompleter;
@@ -164,7 +163,7 @@ public class DelegatedPropertyResolver {
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, trace, scope,
-                DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, ExpressionPosition.FREE);
+                DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
         Project project = context.expressionTypingServices.getProject();
 
         boolean hasThis = propertyDescriptor.getReceiverParameter() != null || propertyDescriptor.getExpectedThisObject() != null;

@@ -26,7 +26,6 @@ import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
@@ -135,7 +134,7 @@ public class JetExpectedResolveDataUtil {
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),
-                DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, ExpressionPosition.FREE);
+                DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         OverloadResolutionResults<FunctionDescriptor> functions = resolveFakeCall(
                 context, ReceiverValue.NO_RECEIVER, Name.identifier(name), parameterTypes);

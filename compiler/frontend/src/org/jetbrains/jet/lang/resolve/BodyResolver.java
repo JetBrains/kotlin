@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCacheImpl;
 import org.jetbrains.jet.lang.resolve.calls.context.SimpleResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -41,8 +40,8 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -216,7 +215,7 @@ public class BodyResolver {
                     JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE, context.getOuterDataFlowInfo(), trace);
                     if (type != null && supertype != null) {
                         SimpleResolutionContext simpleResolutionContext = new SimpleResolutionContext(
-                                trace, scope, supertype, context.getOuterDataFlowInfo(), ExpressionPosition.FREE, ContextDependency.INDEPENDENT,
+                                trace, scope, supertype, context.getOuterDataFlowInfo(), ContextDependency.INDEPENDENT,
                                 ResolutionResultsCacheImpl.create(), LabelResolver.create(),
                                 expressionTypingServices.createExtension(scope, false), false);
                         DataFlowUtils.checkType(type, delegateExpression, simpleResolutionContext);
