@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.SamCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -93,21 +92,10 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @NotNull
     private ClassDescriptor recordClassForFunction(@NotNull FunctionDescriptor funDescriptor, @NotNull JetType superType) {
-        ClassDescriptor classDescriptor;
-
-        classDescriptor = new ClassDescriptorImpl(
-                funDescriptor.getContainingDeclaration(),
-                Collections.<AnnotationDescriptor>emptyList(),
-                Modality.FINAL,
-                Name.special("<closure>"));
-        ((ClassDescriptorImpl)classDescriptor).initialize(
-                false,
-                Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singleton(superType),
-                JetScope.EMPTY,
-                Collections.<ConstructorDescriptor>emptySet(),
-                null,
-                false);
+        ClassDescriptorImpl classDescriptor =
+                new ClassDescriptorImpl(funDescriptor.getContainingDeclaration(), Name.special("<closure>"), Modality.FINAL,
+                                        Collections.singleton(superType));
+        classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
 
         bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);
         return classDescriptor;

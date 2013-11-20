@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -141,19 +140,10 @@ public class CodegenBinding {
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull Type asmType
     ) {
-        ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
-                scriptDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(),
-                Modality.FINAL,
-                Name.special("<script-" + asmType.getInternalName() + ">"));
-        classDescriptor.initialize(
-                false,
-                Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType()),
-                JetScope.EMPTY,
-                Collections.<ConstructorDescriptor>emptySet(),
-                null,
-                false);
+        ClassDescriptorImpl classDescriptor =
+                new ClassDescriptorImpl(scriptDescriptor, Name.special("<script-" + asmType.getInternalName() + ">"), Modality.FINAL,
+                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
+        classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
 
         recordClosure(bindingTrace, null, classDescriptor, null, asmType);
 
