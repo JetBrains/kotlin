@@ -45,4 +45,9 @@ public class K2JvmCliTest extends CliBaseTest {
     public void nonExistingSourcePath() throws Exception {
         executeCompilerCompareOutputJVM();
     }
+
+    @Test
+    public void script() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
 }

@@ -43,12 +43,7 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.List;
 
-public class ScriptTest extends CliBaseTest {
-    @Test
-    public void script() throws Exception {
-        executeCompilerCompareOutputJVM();
-    }
-
+public class ScriptTest {
     @Test
     public void testScript() throws Exception {
         Class<?> aClass = compileScript("fib.ktscript", numIntParam(), Collections.<JetScriptDefinition>emptyList());
@@ -85,7 +80,7 @@ public class ScriptTest extends CliBaseTest {
             CompilerConfiguration configuration =
                     JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
-            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "compiler/testData/cli/" + scriptPath);
+            configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, "compiler/testData/script/" + scriptPath);
             configuration.addAll(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, scriptDefinitions);
             configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, scriptParameters);
 
