@@ -31,6 +31,7 @@ fun iterables(): ArrayList<GenericFunction> {
     }
 
     templates add f("filterNotNull()") {
+        isInline = false
         absentFor(PrimitiveArrays) // Those are inherently non-nulls
         doc = "Returns a list containing all the non-*null* elements"
         typeParam("T:Any")
@@ -63,6 +64,7 @@ fun iterables(): ArrayList<GenericFunction> {
     }
 
     templates add f("take(n: Int)") {
+        isInline = false
         doc = "Returns a list containing the first *n* elements"
         returns("List<T>")
         body {
@@ -80,6 +82,7 @@ fun iterables(): ArrayList<GenericFunction> {
     }
 
     templates add f("requireNoNulls()") {
+        isInline = false
         absentFor(PrimitiveArrays) // Those are inherently non-nulls
         doc = "Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements"
         typeParam("T:Any")
@@ -101,6 +104,7 @@ fun iterables(): ArrayList<GenericFunction> {
     }
 
     templates add f("plus(element: T)") {
+        isInline = false
         doc = "Creates an [[Iterator]] which iterates over this iterator then the given element at the end"
         returns("List<T>")
 
@@ -116,6 +120,7 @@ fun iterables(): ArrayList<GenericFunction> {
     }
 
     templates add f("plus(iterator: Iterator<T>)") {
+        isInline = false
         doc = "Creates an [[Iterator]] which iterates over this iterator then the following iterator"
         returns("List<T>")
 
@@ -132,6 +137,7 @@ fun iterables(): ArrayList<GenericFunction> {
     }
 
     templates add f("plus(collection: Iterable<T>)") {
+        isInline = false
         doc = "Creates an [[Iterator]] which iterates over this iterator then the following collection"
         returns("List<T>")
 
