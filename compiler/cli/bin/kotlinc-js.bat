@@ -35,11 +35,11 @@ set _JAVA_OPTS=-Xmx256M -Xms32M -noverify
 rem re: %1 %2 &c., see http://www.riedquat.de/blog/2011-11-27-01#w9aab1c60
 if "%_PROFILE_PRELOADER%"=="time" (
   "%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
-    org.jetbrains.jet.preloading.Preloader "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
+    org.jetbrains.jet.preloading.Preloader "%_KOTLIN_HOME%\lib\kotlin-compiler.jar;%_KOTLIN_HOME%\lib\kotlin-runtime.jar" ^
     org.jetbrains.jet.cli.js.K2JSCompiler 4096 %_PROFILE_PRELOADER% %1 %2 %3 %4 %5 %6 %7 %8 %9
 ) else (
   "%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
-    org.jetbrains.jet.preloading.Preloader "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
+    org.jetbrains.jet.preloading.Preloader "%_KOTLIN_HOME%\lib\kotlin-compiler.jar;%_KOTLIN_HOME%\lib\kotlin-runtime.jar" ^
     org.jetbrains.jet.cli.js.K2JSCompiler 4096 %_PROFILE_PRELOADER% %*
 )
 goto end
