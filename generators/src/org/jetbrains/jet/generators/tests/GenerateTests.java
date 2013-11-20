@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
+import org.jetbrains.jet.cli.AbstractKotlincExecutableTest;
 import org.jetbrains.jet.codegen.AbstractBytecodeTextTest;
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
 import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest;
@@ -254,6 +255,14 @@ public class GenerateTests {
                 "WriteSignatureTestGenerated",
                 AbstractWriteSignatureTest.class,
                 testModel("compiler/testData/writeSignature", true, "kt", "doTest")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "KotlincExecutableTestGenerated",
+                AbstractKotlincExecutableTest.class,
+                testModel("compiler/testData/cli/jvm", true, "args", "doJvmTest"),
+                testModel("compiler/testData/cli/js", true, "args", "doJsTest")
         );
 
         generateTest(

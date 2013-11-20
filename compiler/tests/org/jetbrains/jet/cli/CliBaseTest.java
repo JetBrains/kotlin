@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.cli;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -38,8 +39,8 @@ import java.io.PrintStream;
 import java.util.List;
 
 public class CliBaseTest {
-    private static final String JS_TEST_DATA = "compiler/testData/cli/js";
-    private static final String JVM_TEST_DATA = "compiler/testData/cli/jvm";
+    static final String JS_TEST_DATA = "compiler/testData/cli/js";
+    static final String JVM_TEST_DATA = "compiler/testData/cli/jvm";
 
     @Rule
     public final Tmpdir tmpdir = new Tmpdir();
@@ -47,13 +48,13 @@ public class CliBaseTest {
     public final TestName testName = new TestName();
 
     @NotNull
-    private static String executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull String[] args) {
+    private static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull String[] args) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         PrintStream origOut = System.out;
         try {
             System.setOut(new PrintStream(bytes));
             ExitCode exitCode = CLICompiler.doMainNoExit(compiler, args);
-            return bytes.toString("utf-8") + exitCode + "\n";
+            return Pair.create(bytes.toString("utf-8"), exitCode);
         }
         catch (Exception e) {
             throw ExceptionUtils.rethrow(e);
@@ -63,16 +64,30 @@ public class CliBaseTest {
         }
     }
 
-    private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {
-        String actual = executeCompilerGrabOutput(compiler, readArgs(testDataDir))
+    @NotNull
+    static String getNormalizedCompilerOutput(@NotNull String pureOutput, @NotNull ExitCode exitCode, @NotNull String testDataDir) {
+        String normalizedOutputWithoutExitCode = pureOutput
                 .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
                 .replace("\\", "/");
+        return normalizedOutputWithoutExitCode + exitCode;
+    }
+
+    private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {
+        Pair<String, ExitCode> outputAndExitCode =
+                executeCompilerGrabOutput(compiler, readArgs(testDataDir + "/" + testName.getMethodName() + ".args", testDataDir,
+                                                             tmpdir.getTmpDir().getPath()));
+        String actual = getNormalizedCompilerOutput(outputAndExitCode.first, outputAndExitCode.second, testDataDir);
 
         JetTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testName.getMethodName() + ".out"), actual);
     }
 
-    private String[] readArgs(@NotNull final String testDataDir) throws IOException {
-        List<String> lines = FileUtil.loadLines(testDataDir + "/" + testName.getMethodName() + ".args");
+    @NotNull
+    static String[] readArgs(
+            @NotNull String argsFilePath,
+            @NotNull final String testDataDir,
+            @NotNull final String tempDir
+    ) throws IOException {
+        List<String> lines = FileUtil.loadLines(argsFilePath);
 
         return ArrayUtil.toStringArray(ContainerUtil.mapNotNull(lines, new Function<String, String>() {
             @Override
@@ -82,7 +97,7 @@ public class CliBaseTest {
                 }
                 return arg
                         .replace(":", File.pathSeparator)
-                        .replace("$TEMP_DIR$", tmpdir.getTmpDir().getPath())
+                        .replace("$TEMP_DIR$", tempDir)
                         .replace("$TESTDATA_DIR$", testDataDir);
             }
         }));
