@@ -46,7 +46,7 @@ import java.util.List;
 public class ScriptTest extends CliBaseTest {
     @Test
     public void script() throws Exception {
-        executeCompilerCompareOutputJVM(new String[] {"-script", "compiler/testData/cli/script.ktscript", "hi", "there"});
+        executeCompilerCompareOutputJVM();
     }
 
     @Test

@@ -1,0 +1,4 @@
+-script
+$TESTDATA_DIR$/script.ktscript
+hi
+there

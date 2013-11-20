@@ -26,79 +26,53 @@ import java.io.File;
 public class CliCommonTest extends CliBaseTest {
     @Test
     public void help() throws Exception {
-        executeCompilerCompareOutputJVM(new String[] {"-help"});
+        executeCompilerCompareOutputJVM();
     }
 
     @Test
-    public void wrongArgument() {
-        executeCompilerCompareOutputJVM(new String[] {"-wrongArgument"});
+    public void wrongArgument() throws Exception {
+        executeCompilerCompareOutputJVM();
     }
 
     @Test
-    public void printArguments() {
-        executeCompilerCompareOutputJVM(new String[] {"-printArgs", "-script", "compiler/testData/cli/hello.ktscript"});
+    public void printArguments() throws Exception {
+        executeCompilerCompareOutputJVM();
     }
 
     @Test
-    public void printArgumentsWithManyValue() {
-        executeCompilerCompareOutputJS(new String[] {
-                "-printArgs",
-                "-sourceFiles", "compiler/testData/cli/simple2js.kt,compiler/testData/cli/warnings.kt",
-                "-suppress", "warnings"});
+    public void printArgumentsWithManyValue() throws Exception {
+        executeCompilerCompareOutputJS();
     }
 
     @Test
     public void simple() throws Exception {
-        String[] args = {
-                "-src", "compiler/testData/cli/simple.kt",
-                "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutputJVM(args);
+        executeCompilerCompareOutputJVM();
 
         Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
     }
 
     @Test
     public void diagnosticsOrder() throws Exception {
-        String[] args = {
-                "-src", "compiler/testData/cli/diagnosticsOrder1.kt"
-                        + File.pathSeparator
-                        + "compiler/testData/cli/diagnosticsOrder2.kt",
-                "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutputJVM(args);
+        executeCompilerCompareOutputJVM();
     }
 
     @Test
     public void multipleTextRangesInDiagnosticsOrder() throws Exception {
-        String[] args = {
-                "-src", "compiler/testData/cli/multipleTextRangesInDiagnosticsOrder.kt",
-                "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutputJVM(args);
+        executeCompilerCompareOutputJVM();
     }
 
     @Test
-    public void suppressAllWarningsLowercase() {
-        String[] args = {
-                "-src", "compiler/testData/cli/warnings.kt",
-                "-suppress", "warnings",
-                "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutputJVM(args);
+    public void suppressAllWarningsLowercase() throws Exception {
+        executeCompilerCompareOutputJVM();
     }
 
     @Test
-    public void suppressAllWarningsMixedCase() {
-        String[] args = {
-                "-src", "compiler/testData/cli/warnings.kt",
-                "-suppress", "WaRnInGs",
-                "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutputJVM(args);
+    public void suppressAllWarningsMixedCase() throws Exception {
+        executeCompilerCompareOutputJVM();
     }
 
     @Test
-    public void suppressAllWarningsJS() {
-        String[] args = {
-                "-sourceFiles", "compiler/testData/cli/warnings.kt",
-                "-suppress", "WaRnInGs",
-                "-output", new File(tmpdir.getTmpDir(), "out.js").getPath()};
-        executeCompilerCompareOutputJS(args);
+    public void suppressAllWarningsJS() throws Exception {
+        executeCompilerCompareOutputJS();
     }
 }

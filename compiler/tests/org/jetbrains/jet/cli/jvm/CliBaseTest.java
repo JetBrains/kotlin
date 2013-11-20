@@ -16,6 +16,10 @@
 
 package org.jetbrains.jet.cli.jvm;
 
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.CLICompiler;
@@ -28,10 +32,12 @@ import org.junit.rules.TestName;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
 
 public class CliBaseTest {
-    protected static final String NOT_EXISTING_PATH = "not/existing/path";
+    private static final String TEST_DATA_HOME = "compiler/testData/cli";
 
     @Rule
     public final Tmpdir tmpdir = new Tmpdir();
@@ -55,19 +61,36 @@ public class CliBaseTest {
         }
     }
 
-    private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String[] args) {
-        String actual = executeCompilerGrabOutput(compiler, args)
-                .replace(new File("compiler/testData/cli/").getAbsolutePath(), "$TESTDATA_DIR$")
+    private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler) throws Exception {
+        String actual = executeCompilerGrabOutput(compiler, readArgs())
+                .replace(new File(TEST_DATA_HOME).getAbsolutePath(), "$TESTDATA_DIR$")
                 .replace("\\", "/");
 
-        JetTestUtils.assertEqualsToFile(new File("compiler/testData/cli/" + testName.getMethodName() + ".out"), actual);
+        JetTestUtils.assertEqualsToFile(new File(TEST_DATA_HOME + "/" + testName.getMethodName() + ".out"), actual);
     }
 
-    protected void executeCompilerCompareOutputJVM(@NotNull String[] args) {
-        executeCompilerCompareOutput(new K2JVMCompiler(), args);
+    private String[] readArgs() throws IOException {
+        List<String> lines = FileUtil.loadLines(TEST_DATA_HOME + "/" + testName.getMethodName() + ".args");
+
+        return ArrayUtil.toStringArray(ContainerUtil.mapNotNull(lines, new Function<String, String>() {
+            @Override
+            public String fun(String arg) {
+                if (arg.isEmpty()) {
+                    return null;
+                }
+                return arg
+                        .replace(":", File.pathSeparator)
+                        .replace("$TEMP_DIR$", tmpdir.getTmpDir().getPath())
+                        .replace("$TESTDATA_DIR$", TEST_DATA_HOME);
+            }
+        }));
     }
 
-    protected void executeCompilerCompareOutputJS(@NotNull String[] args) {
-        executeCompilerCompareOutput(new K2JSCompiler(), args);
+    protected void executeCompilerCompareOutputJVM() throws Exception {
+        executeCompilerCompareOutput(new K2JVMCompiler());
+    }
+
+    protected void executeCompilerCompareOutputJS() throws Exception {
+        executeCompilerCompareOutput(new K2JSCompiler());
     }
 }
