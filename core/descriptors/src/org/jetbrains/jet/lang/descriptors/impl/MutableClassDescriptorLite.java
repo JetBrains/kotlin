@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeConstructorImpl;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +66,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
                                       @NotNull ClassKind kind,
                                       boolean isInner
     ) {
-        super(containingDeclaration, name);
+        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name);
         this.kind = kind;
         this.isInner = isInner;
     }

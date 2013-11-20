@@ -81,7 +81,8 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             @NotNull DescriptorFinder descriptorFinder,
             @NotNull ClassData classData
     ) {
-        super(classData.getNameResolver().getClassId(classData.getClassProto().getFqName()).getRelativeClassName().shortName());
+        super(storageManager,
+              classData.getNameResolver().getClassId(classData.getClassProto().getFqName()).getRelativeClassName().shortName());
         NameResolver nameResolver = classData.getNameResolver();
         this.classProto = classData.getClassProto();
 
@@ -89,7 +90,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         this.descriptorFinder = descriptorFinder;
 
         TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, null, nameResolver,
-                                                                        descriptorFinder, "Deserializer for class " + name, NONE);
+                                                                        descriptorFinder, "Deserializer for class " + getName(), NONE);
         DescriptorDeserializer outerDeserializer = DescriptorDeserializer.create(storageManager, notNullTypeDeserializer,
                                                                                  this, nameResolver, annotationResolver);
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(classProto.getTypeParameterCount());

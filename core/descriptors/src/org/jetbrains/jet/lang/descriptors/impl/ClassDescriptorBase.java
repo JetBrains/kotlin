@@ -19,13 +19,18 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.storage.StorageManager;
 
 public abstract class ClassDescriptorBase extends AbstractClassDescriptor {
 
     private final DeclarationDescriptor containingDeclaration;
 
-    protected ClassDescriptorBase(@NotNull DeclarationDescriptor containingDeclaration, @NotNull Name name) {
-        super(name);
+    protected ClassDescriptorBase(
+            @NotNull StorageManager storageManager,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Name name
+    ) {
+        super(storageManager, name);
         this.containingDeclaration = containingDeclaration;
     }
 

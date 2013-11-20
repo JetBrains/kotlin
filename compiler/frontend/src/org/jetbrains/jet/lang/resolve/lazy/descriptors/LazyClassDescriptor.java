@@ -94,7 +94,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
             @NotNull Name name,
             @NotNull JetClassLikeInfo classLikeInfo
     ) {
-        super(containingDeclaration, name);
+        super(resolveSession.getStorageManager(), containingDeclaration, name);
         this.resolveSession = resolveSession;
 
         if (classLikeInfo.getCorrespondingClassOrObject() != null) {
