@@ -32,7 +32,7 @@ private fun generateDownTos(outputFile: File, header: String) {
         }
 
         writer.println("""
-public inline fun $fromType.downTo(to: $toType): $progressionType {
+public fun $fromType.downTo(to: $toType): $progressionType {
     return $progressionType($fromExpr, $toExpr, $incrementExpr)
 }""")
     }
