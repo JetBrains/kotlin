@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.references;
 
-import com.beust.jcommander.internal.Sets;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
