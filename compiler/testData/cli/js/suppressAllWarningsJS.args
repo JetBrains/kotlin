@@ -1,5 +1,5 @@
 -sourceFiles
-$TESTDATA_DIR$/warnings.kt
+$TESTDATA_DIR$/../warnings.kt
 -suppress
 WaRnInGs
 -output

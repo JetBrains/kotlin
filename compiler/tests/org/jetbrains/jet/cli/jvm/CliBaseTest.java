@@ -37,7 +37,8 @@ import java.io.PrintStream;
 import java.util.List;
 
 public class CliBaseTest {
-    private static final String TEST_DATA_HOME = "compiler/testData/cli";
+    private static final String JS_TEST_DATA = "compiler/testData/cli/js";
+    private static final String JVM_TEST_DATA = "compiler/testData/cli/jvm";
 
     @Rule
     public final Tmpdir tmpdir = new Tmpdir();
@@ -61,16 +62,16 @@ public class CliBaseTest {
         }
     }
 
-    private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler) throws Exception {
-        String actual = executeCompilerGrabOutput(compiler, readArgs())
-                .replace(new File(TEST_DATA_HOME).getAbsolutePath(), "$TESTDATA_DIR$")
+    private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {
+        String actual = executeCompilerGrabOutput(compiler, readArgs(testDataDir))
+                .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
                 .replace("\\", "/");
 
-        JetTestUtils.assertEqualsToFile(new File(TEST_DATA_HOME + "/" + testName.getMethodName() + ".out"), actual);
+        JetTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testName.getMethodName() + ".out"), actual);
     }
 
-    private String[] readArgs() throws IOException {
-        List<String> lines = FileUtil.loadLines(TEST_DATA_HOME + "/" + testName.getMethodName() + ".args");
+    private String[] readArgs(@NotNull final String testDataDir) throws IOException {
+        List<String> lines = FileUtil.loadLines(testDataDir + "/" + testName.getMethodName() + ".args");
 
         return ArrayUtil.toStringArray(ContainerUtil.mapNotNull(lines, new Function<String, String>() {
             @Override
@@ -81,16 +82,16 @@ public class CliBaseTest {
                 return arg
                         .replace(":", File.pathSeparator)
                         .replace("$TEMP_DIR$", tmpdir.getTmpDir().getPath())
-                        .replace("$TESTDATA_DIR$", TEST_DATA_HOME);
+                        .replace("$TESTDATA_DIR$", testDataDir);
             }
         }));
     }
 
     protected void executeCompilerCompareOutputJVM() throws Exception {
-        executeCompilerCompareOutput(new K2JVMCompiler());
+        executeCompilerCompareOutput(new K2JVMCompiler(), JVM_TEST_DATA);
     }
 
     protected void executeCompilerCompareOutputJS() throws Exception {
-        executeCompilerCompareOutput(new K2JSCompiler());
+        executeCompilerCompareOutput(new K2JSCompiler(), JS_TEST_DATA);
     }
 }
