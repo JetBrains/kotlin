@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="kotlin-annotations-ext">
-    <CLASSES>
-      <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-annotations-ext.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
