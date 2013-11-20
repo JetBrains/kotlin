@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -56,7 +55,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     private final ClassKind kind;
 
     private JetScope scopeForMemberLookup;
-    private JetScope innerClassesScope;
 
     private ReceiverParameterDescriptor implicitReceiver;
 
@@ -76,9 +74,8 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         return typeConstructor;
     }
 
-    public void setScopeForMemberLookup(JetScope scopeForMemberLookup) {
+    public void setScopeForMemberLookup(@NotNull JetScope scopeForMemberLookup) {
         this.scopeForMemberLookup = scopeForMemberLookup;
-        this.innerClassesScope = new InnerClassesScopeWrapper(scopeForMemberLookup);
     }
 
     public void createTypeConstructor() {
@@ -148,15 +145,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     public MutableClassDescriptorLite getClassObjectDescriptor() {
         return classObjectDescriptor;
     }
-
-
-
-    @NotNull
-    @Override
-    public JetScope getUnsubstitutedInnerClassesScope() {
-        return innerClassesScope;
-    }
-
 
     public void addSupertype(@NotNull JetType supertype) {
         assert !supertype.isError() : "Error types must be filtered out in DescriptorResolver";

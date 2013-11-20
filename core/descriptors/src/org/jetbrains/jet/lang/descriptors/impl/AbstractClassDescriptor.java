@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.types.*;
@@ -36,6 +37,7 @@ import java.util.Map;
 public abstract class AbstractClassDescriptor implements ClassDescriptor {
     private final Name name;
     protected final NotNullLazyValue<JetType> defaultType;
+    private final NotNullLazyValue<JetScope> unsubstitutedInnerClassesScope;
 
     public AbstractClassDescriptor(@NotNull StorageManager storageManager, @NotNull Name name) {
         this.name = name;
@@ -43,6 +45,12 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
             @Override
             public JetType invoke() {
                 return TypeUtils.makeUnsubstitutedType(AbstractClassDescriptor.this, getScopeForMemberLookup());
+            }
+        });
+        this.unsubstitutedInnerClassesScope = storageManager.createLazyValue(new Function0<JetScope>() {
+            @Override
+            public JetScope invoke() {
+                return new InnerClassesScopeWrapper(getScopeForMemberLookup());
             }
         });
     }
@@ -67,6 +75,12 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
     public JetType getClassObjectType() {
         ClassDescriptor classObject = getClassObjectDescriptor();
         return classObject == null ? null : classObject.getDefaultType();
+    }
+
+    @NotNull
+    @Override
+    public JetScope getUnsubstitutedInnerClassesScope() {
+        return unsubstitutedInnerClassesScope.invoke();
     }
 
     @NotNull

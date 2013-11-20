@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -72,7 +71,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private final Visibility visibility;
     private final ClassKind kind;
     private final boolean isInner;
-    private final InnerClassesScopeWrapper innerClassesScope;
     private final DescriptorFinder descriptorFinder;
 
     public DeserializedClassDescriptor(
@@ -106,7 +104,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
         this.typeConstructor = new DeserializedClassTypeConstructor(typeParameters);
         this.memberScope = new DeserializedClassMemberScope(storageManager, this);
-        this.innerClassesScope = new InnerClassesScopeWrapper(memberScope);
         this.thisAsReceiverParameter = new LazyClassReceiverParameterDescriptor();
 
         int flags = classProto.getFlags();
@@ -210,12 +207,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @Override
     protected JetScope getScopeForMemberLookup() {
         return memberScope;
-    }
-
-    @NotNull
-    @Override
-    public JetScope getUnsubstitutedInnerClassesScope() {
-        return innerClassesScope;
     }
 
     @Nullable

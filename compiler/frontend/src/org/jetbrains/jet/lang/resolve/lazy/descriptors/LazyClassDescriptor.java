@@ -82,7 +82,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
-    private final JetScope unsubstitutedInnerClassesScope;
 
     private final NotNullLazyValue<JetScope> scopeForClassHeaderResolution;
     private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
@@ -108,7 +107,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                 resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
 
         this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this);
-        this.unsubstitutedInnerClassesScope = new InnerClassesScopeWrapper(unsubstitutedMemberScope);
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
@@ -170,12 +168,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     @Override
     protected JetScope getScopeForMemberLookup() {
         return unsubstitutedMemberScope;
-    }
-
-    @NotNull
-    @Override
-    public JetScope getUnsubstitutedInnerClassesScope() {
-        return unsubstitutedInnerClassesScope;
     }
 
     @NotNull
