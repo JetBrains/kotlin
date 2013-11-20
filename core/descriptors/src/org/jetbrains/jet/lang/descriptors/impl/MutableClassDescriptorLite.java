@@ -53,7 +53,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     private final boolean isInner;
 
     private MutableClassDescriptorLite classObjectDescriptor;
-    private JetType classObjectType;
     private final ClassKind kind;
 
     private JetScope scopeForMemberLookup;
@@ -98,19 +97,10 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         return (WritableScope) scopeForMemberLookup;
     }
 
-
     @Override
     @NotNull
     public JetScope getScopeForMemberLookup() {
         return scopeForMemberLookup;
-    }
-
-    @Override
-    public JetType getClassObjectType() {
-        if (classObjectType == null && classObjectDescriptor != null) {
-            classObjectType = classObjectDescriptor.getDefaultType();
-        }
-        return classObjectType;
     }
 
     @NotNull

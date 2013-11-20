@@ -244,13 +244,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     }
 
     @Nullable
-    @Override
-    public JetType getClassObjectType() {
-        ClassDescriptor classObjectDescriptor = getClassObjectDescriptor();
-        return classObjectDescriptor == null ? null : classObjectDescriptor.getDefaultType();
-    }
-
-    @Nullable
     private ClassDescriptor computeClassObjectDescriptor() {
         if (!classProto.getClassObjectPresent()) {
             return null;

@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
@@ -60,6 +61,13 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     protected abstract JetScope getScopeForMemberLookup();
+
+    @Nullable
+    @Override
+    public JetType getClassObjectType() {
+        ClassDescriptor classObject = getClassObjectDescriptor();
+        return classObject == null ? null : classObject.getDefaultType();
+    }
 
     @NotNull
     @Override
