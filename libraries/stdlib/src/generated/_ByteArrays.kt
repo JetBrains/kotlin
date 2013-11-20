@@ -28,7 +28,7 @@ public inline fun ByteArray.any(predicate: (Byte) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun ByteArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+public fun ByteArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -54,7 +54,7 @@ public inline fun ByteArray.count(predicate: (Byte) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-public inline fun ByteArray.drop(n: Int) : List<Byte> {
+public fun ByteArray.drop(n: Int) : List<Byte> {
     return dropWhile(countTo(n))
 }
 
@@ -202,7 +202,7 @@ public fun ByteArray.isNotEmpty() : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun ByteArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+public fun ByteArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -308,14 +308,14 @@ public inline fun ByteArray.partition(predicate: (Byte) -> Boolean) : Pair<List<
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-public inline fun ByteArray.plus(collection: Iterable<Byte>) : List<Byte> {
+public fun ByteArray.plus(collection: Iterable<Byte>) : List<Byte> {
     return plus(collection.iterator())
 }
 
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-public inline fun ByteArray.plus(element: Byte) : List<Byte> {
+public fun ByteArray.plus(element: Byte) : List<Byte> {
     val answer = ArrayList<Byte>()
     toCollection(answer)
     answer.add(element)
@@ -325,7 +325,7 @@ public inline fun ByteArray.plus(element: Byte) : List<Byte> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-public inline fun ByteArray.plus(iterator: Iterator<Byte>) : List<Byte> {
+public fun ByteArray.plus(iterator: Iterator<Byte>) : List<Byte> {
     val answer = ArrayList<Byte>()
     toCollection(answer)
     for (element in iterator) {
@@ -373,7 +373,7 @@ public inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte) : Byte 
 /**
  * Reverses the order the elements into a list
  */
-public inline fun ByteArray.reverse() : List<Byte> {
+public fun ByteArray.reverse() : List<Byte> {
     val list = toCollection(ArrayList<Byte>())
     Collections.reverse(list)
     return list
@@ -397,7 +397,7 @@ public inline fun <R: Comparable<R>> ByteArray.sortBy(f: (Byte) -> R) : List<Byt
 /**
  * Returns a list containing the first *n* elements
  */
-public inline fun ByteArray.take(n: Int) : List<Byte> {
+public fun ByteArray.take(n: Int) : List<Byte> {
     return takeWhile(countTo(n))
 }
 
@@ -419,7 +419,7 @@ public inline fun <C: MutableCollection<in Byte>> ByteArray.takeWhileTo(result: 
 /**
  * Copies all elements into the given collection
  */
-public inline fun <C: MutableCollection<in Byte>> ByteArray.toCollection(result: C) : C {
+public fun <C: MutableCollection<in Byte>> ByteArray.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -427,35 +427,35 @@ public inline fun <C: MutableCollection<in Byte>> ByteArray.toCollection(result:
 /**
  * Copies all elements into a [[LinkedList]]
  */
-public inline fun ByteArray.toLinkedList() : LinkedList<Byte> {
+public fun ByteArray.toLinkedList() : LinkedList<Byte> {
     return toCollection(LinkedList<Byte>())
 }
 
 /**
  * Copies all elements into a [[List]]
  */
-public inline fun ByteArray.toList() : List<Byte> {
+public fun ByteArray.toList() : List<Byte> {
     return toCollection(ArrayList<Byte>())
 }
 
 /**
  * Copies all elements into a [[Set]]
  */
-public inline fun ByteArray.toSet() : Set<Byte> {
+public fun ByteArray.toSet() : Set<Byte> {
     return toCollection(LinkedHashSet<Byte>())
 }
 
 /**
  * Copies all elements into a [[SortedSet]]
  */
-public inline fun ByteArray.toSortedSet() : SortedSet<Byte> {
+public fun ByteArray.toSortedSet() : SortedSet<Byte> {
     return toCollection(TreeSet<Byte>())
 }
 
 /**
  * Returns an iterator of Pairs(index, data)
  */
-public inline fun ByteArray.withIndices() : Iterator<Pair<Int, Byte>> {
+public fun ByteArray.withIndices() : Iterator<Pair<Int, Byte>> {
     return IndexIterator(iterator())
 }
 

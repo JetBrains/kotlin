@@ -28,7 +28,7 @@ public inline fun FloatArray.any(predicate: (Float) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun FloatArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+public fun FloatArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -54,7 +54,7 @@ public inline fun FloatArray.count(predicate: (Float) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-public inline fun FloatArray.drop(n: Int) : List<Float> {
+public fun FloatArray.drop(n: Int) : List<Float> {
     return dropWhile(countTo(n))
 }
 
@@ -202,7 +202,7 @@ public fun FloatArray.isNotEmpty() : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun FloatArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+public fun FloatArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -308,14 +308,14 @@ public inline fun FloatArray.partition(predicate: (Float) -> Boolean) : Pair<Lis
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-public inline fun FloatArray.plus(collection: Iterable<Float>) : List<Float> {
+public fun FloatArray.plus(collection: Iterable<Float>) : List<Float> {
     return plus(collection.iterator())
 }
 
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-public inline fun FloatArray.plus(element: Float) : List<Float> {
+public fun FloatArray.plus(element: Float) : List<Float> {
     val answer = ArrayList<Float>()
     toCollection(answer)
     answer.add(element)
@@ -325,7 +325,7 @@ public inline fun FloatArray.plus(element: Float) : List<Float> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-public inline fun FloatArray.plus(iterator: Iterator<Float>) : List<Float> {
+public fun FloatArray.plus(iterator: Iterator<Float>) : List<Float> {
     val answer = ArrayList<Float>()
     toCollection(answer)
     for (element in iterator) {
@@ -373,7 +373,7 @@ public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float) : F
 /**
  * Reverses the order the elements into a list
  */
-public inline fun FloatArray.reverse() : List<Float> {
+public fun FloatArray.reverse() : List<Float> {
     val list = toCollection(ArrayList<Float>())
     Collections.reverse(list)
     return list
@@ -397,7 +397,7 @@ public inline fun <R: Comparable<R>> FloatArray.sortBy(f: (Float) -> R) : List<F
 /**
  * Returns a list containing the first *n* elements
  */
-public inline fun FloatArray.take(n: Int) : List<Float> {
+public fun FloatArray.take(n: Int) : List<Float> {
     return takeWhile(countTo(n))
 }
 
@@ -419,7 +419,7 @@ public inline fun <C: MutableCollection<in Float>> FloatArray.takeWhileTo(result
 /**
  * Copies all elements into the given collection
  */
-public inline fun <C: MutableCollection<in Float>> FloatArray.toCollection(result: C) : C {
+public fun <C: MutableCollection<in Float>> FloatArray.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -427,35 +427,35 @@ public inline fun <C: MutableCollection<in Float>> FloatArray.toCollection(resul
 /**
  * Copies all elements into a [[LinkedList]]
  */
-public inline fun FloatArray.toLinkedList() : LinkedList<Float> {
+public fun FloatArray.toLinkedList() : LinkedList<Float> {
     return toCollection(LinkedList<Float>())
 }
 
 /**
  * Copies all elements into a [[List]]
  */
-public inline fun FloatArray.toList() : List<Float> {
+public fun FloatArray.toList() : List<Float> {
     return toCollection(ArrayList<Float>())
 }
 
 /**
  * Copies all elements into a [[Set]]
  */
-public inline fun FloatArray.toSet() : Set<Float> {
+public fun FloatArray.toSet() : Set<Float> {
     return toCollection(LinkedHashSet<Float>())
 }
 
 /**
  * Copies all elements into a [[SortedSet]]
  */
-public inline fun FloatArray.toSortedSet() : SortedSet<Float> {
+public fun FloatArray.toSortedSet() : SortedSet<Float> {
     return toCollection(TreeSet<Float>())
 }
 
 /**
  * Returns an iterator of Pairs(index, data)
  */
-public inline fun FloatArray.withIndices() : Iterator<Pair<Int, Float>> {
+public fun FloatArray.withIndices() : Iterator<Pair<Int, Float>> {
     return IndexIterator(iterator())
 }
 
