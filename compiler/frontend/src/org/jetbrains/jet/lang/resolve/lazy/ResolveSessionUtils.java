@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.JetNamed;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -46,10 +45,7 @@ public class ResolveSessionUtils {
     }
 
     @NotNull
-    public static Collection<ClassDescriptor> getClassDescriptorsByFqName(
-                @NotNull KotlinCodeAnalyzer analyzer,
-                @NotNull FqName fqName
-    ) {
+    public static Collection<ClassDescriptor> getClassDescriptorsByFqName(@NotNull KotlinCodeAnalyzer analyzer, @NotNull FqName fqName) {
         return getClassOrObjectDescriptorsByFqName(analyzer, fqName, false);
     }
 
@@ -86,9 +82,10 @@ public class ResolveSessionUtils {
         return classDescriptors;
     }
 
+    @NotNull
     private static Collection<ClassDescriptor> getClassOrObjectDescriptorsByFqName(
-            NamespaceDescriptor packageDescriptor,
-            FqName path,
+            @NotNull NamespaceDescriptor packageDescriptor,
+            @NotNull FqName path,
             boolean includeObjectDeclarations
     ) {
         if (path.isRoot()) {
@@ -103,9 +100,8 @@ public class ResolveSessionUtils {
                 Collection<JetScope> tempScopes = Lists.newArrayList();
                 for (JetScope scope : scopes) {
                     ClassifierDescriptor classifier = scope.getClassifier(subName);
-                    if (classifier instanceof ClassDescriptorBase) {
-                        ClassDescriptorBase classDescriptor = (ClassDescriptorBase) classifier;
-                        tempScopes.add(classDescriptor.getUnsubstitutedInnerClassesScope());
+                    if (classifier instanceof ClassDescriptor) {
+                        tempScopes.add(((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope());
                     }
                 }
                 scopes = tempScopes;
@@ -116,14 +112,9 @@ public class ResolveSessionUtils {
         Collection<ClassDescriptor> resultClassifierDescriptors = Lists.newArrayList();
         for (JetScope scope : scopes) {
             ClassifierDescriptor classifier = scope.getClassifier(shortName);
-            if (classifier instanceof ClassDescriptor) {
+            if (classifier instanceof ClassDescriptor &&
+                includeObjectDeclarations == ((ClassDescriptor) classifier).getKind().isSingleton()) {
                 resultClassifierDescriptors.add((ClassDescriptor) classifier);
-            }
-            if (includeObjectDeclarations) {
-                ClassDescriptor objectDescriptor = scope.getObjectDescriptor(shortName);
-                if (objectDescriptor != null) {
-                    resultClassifierDescriptors.add(objectDescriptor);
-                }
             }
         }
 
@@ -132,8 +123,7 @@ public class ResolveSessionUtils {
 
     @NotNull
     public static Name safeNameForLazyResolve(@NotNull JetNamed named) {
-        Name name = named.getNameAsName();
-        return safeNameForLazyResolve(name);
+        return safeNameForLazyResolve(named.getNameAsName());
     }
 
     @NotNull
