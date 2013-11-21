@@ -14,18 +14,45 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.j2k.visitors
+package org.jetbrains.jet.j2k
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiReferenceExpression
+import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiElement
+import com.intellij.psi.JavaRecursiveElementVisitor
 import java.util.LinkedHashSet
 
-public open class ThisVisitor() : JavaRecursiveElementVisitor() {
+public fun isConstructorPrimary(constructor: PsiMethod): Boolean {
+    val parent = constructor.getParent()
+    if (parent is PsiClass) {
+        if (parent.getConstructors().size == 1) {
+            return true
+        }
+        else {
+            val c = getPrimaryConstructorForThisCase(parent)
+            if (c != null && c.hashCode() == constructor.hashCode()) {
+                return true
+            }
+        }
+    }
+    return false
+}
+
+private fun getPrimaryConstructorForThisCase(psiClass: PsiClass): PsiMethod? {
+    val tv = FindPrimaryConstructorVisitor()
+    psiClass.accept(tv)
+    return tv.getPrimaryConstructor()
+}
+
+private class FindPrimaryConstructorVisitor() : JavaRecursiveElementVisitor() {
     private val myResolvedConstructors = LinkedHashSet<PsiMethod>()
 
     public override fun visitReferenceExpression(expression: PsiReferenceExpression?) {
-        for (r : PsiReference? in expression?.getReferences()!!) {
-            if (r?.getCanonicalText() == "this") {
-                val res: PsiElement? = r?.resolve()
+        for (r in expression?.getReferences()!!) {
+            if (r.getCanonicalText() == "this") {
+                val res: PsiElement? = r.resolve()
                 if (res is PsiMethod && res.isConstructor()) {
                     myResolvedConstructors.add(res)
                 }
@@ -33,7 +60,7 @@ public open class ThisVisitor() : JavaRecursiveElementVisitor() {
         }
     }
 
-    public open fun getPrimaryConstructor(): PsiMethod? {
+    public fun getPrimaryConstructor(): PsiMethod? {
         if (myResolvedConstructors.size() > 0) {
             val first: PsiMethod = myResolvedConstructors.iterator().next()
             for (m in myResolvedConstructors)
@@ -46,3 +73,4 @@ public open class ThisVisitor() : JavaRecursiveElementVisitor() {
         return null
     }
 }
+

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
-import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.*
 import java.util.ArrayList
 
 public open class Field(val identifier: Identifier,
@@ -51,7 +51,7 @@ public open class Field(val identifier: Identifier,
             return declaration + ((if (isVal() && !isStatic() && writingAccesses != 0)
                 ""
             else
-                " = " + Converter.getDefaultInitializer(this)))
+                " = " + getDefaultInitializer(this)))
         }
 
         return declaration + " = " + initializer.toKotlin()

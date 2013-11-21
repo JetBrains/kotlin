@@ -29,8 +29,6 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import java.util.*
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
-import com.intellij.openapi.util.Pair
-import java.text.MessageFormat
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.util.QualifiedNamesUtil
@@ -176,7 +174,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                 if (m is Constructor) {
                     if (!m.isPrimary) {
                         for (fo in finalOrWithEmptyInitializer){
-                            val init: String = getDefaultInitializer(fo)
+                            val init = getDefaultInitializer(fo)
                             initializers.put(fo.identifier.toKotlin(), init)
                         }
                         val newStatements = ArrayList<Element>()
@@ -505,323 +503,209 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return expression
     }
 
-    class object {
-        public val NOT_NULL_ANNOTATIONS: Set<String> = ImmutableSet.of<String>("org.jetbrains.annotations.NotNull", "com.sun.istack.internal.NotNull", "javax.annotation.Nonnull")!!
-        public val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = ImmutableMap.builder<String, String>()
-        ?.put("byte", BYTE.asString())
-        ?.put("short", SHORT.asString())
-        ?.put("int", INT.asString())
-        ?.put("long", LONG.asString())
-        ?.put("float", FLOAT.asString())
-        ?.put("double", DOUBLE.asString())
-        ?.put("char", CHAR.asString())
-        ?.put(JAVA_LANG_BYTE, BYTE.asString())
-        ?.put(JAVA_LANG_SHORT, SHORT.asString())
-        ?.put(JAVA_LANG_INTEGER, INT.asString())
-        ?.put(JAVA_LANG_LONG, LONG.asString())
-        ?.put(JAVA_LANG_FLOAT, FLOAT.asString())
-        ?.put(JAVA_LANG_DOUBLE, DOUBLE.asString())
-        ?.put(JAVA_LANG_CHARACTER, CHAR.asString())
-        ?.build()!!
+    private fun quoteKeywords(packageName: String): String {
+        return packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
+    }
 
-        private fun quoteKeywords(packageName: String): String {
-            return packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
-        }
-
-        private fun getFinalOrWithEmptyInitializer(fields: List<Field>): List<Field> {
-            val result = ArrayList<Field>()
-            for (f : Field in fields)
-                if (f.isVal() || f.initializer.toKotlin().isEmpty()) {
-                    result.add(f)
-                }
-
-            return result
-        }
-
-        private fun createParametersFromFields(fields: List<Field>): List<Parameter> {
-            return fields.map { Parameter(Identifier("_" + it.identifier.name), it.`type`, true) }
-        }
-
-        private fun createInitStatementsFromFields(fields: List<Field>): List<Element> {
-            val result = ArrayList<Element>()
-            for (f : Field in fields) {
-                val identifierToKotlin: String? = f.identifier.toKotlin()
-                result.add(DummyStringExpression(identifierToKotlin + " = " + "_" + identifierToKotlin))
-            }
-            return result
-        }
-
-        private fun createPrimaryConstructorInvocation(s: String, fields: List<Field>, initializers: Map<String, String>): String {
-            return s + "(" + fields.map { initializers[it.identifier.toKotlin()] }.makeString(", ") + ")"
-        }
-
-        public open fun getDefaultInitializer(f: Field): String {
-            if (f.`type`.nullable) {
-                return "null"
-            }
-            else {
-                val typeToKotlin: String = f.`type`.toKotlin()
-                if (typeToKotlin.equals("Boolean"))
-                    return "false"
-
-                if (typeToKotlin.equals("Char"))
-                    return "' '"
-
-                if (typeToKotlin.equals("Double"))
-                    return "0." + OperatorConventions.DOUBLE + "()"
-
-                if (typeToKotlin.equals("Float"))
-                    return "0." + OperatorConventions.FLOAT + "()"
-
-                return "0"
-            }
-        }
-
-        private fun getPrimaryConstructorForThisCase(psiClass: PsiClass): PsiMethod? {
-            val tv = ThisVisitor()
-            psiClass.accept(tv)
-            return tv.getPrimaryConstructor()
-        }
-
-        public open fun isConstructorPrimary(constructor: PsiMethod): Boolean {
-            val parent = constructor.getParent()
-            if (parent is PsiClass) {
-                if (parent.getConstructors().size == 1) {
-                    return true
-                }
-                else {
-                    val c: PsiMethod? = getPrimaryConstructorForThisCase(parent)
-                    if (c != null && c.hashCode() == constructor.hashCode()) {
-                        return true
-                    }
-
-                }
+    private fun getFinalOrWithEmptyInitializer(fields: List<Field>): List<Field> {
+        val result = ArrayList<Field>()
+        for (f : Field in fields)
+            if (f.isVal() || f.initializer.toKotlin().isEmpty()) {
+                result.add(f)
             }
 
-            return false
+        return result
+    }
+
+    private fun createParametersFromFields(fields: List<Field>): List<Parameter> {
+        return fields.map { Parameter(Identifier("_" + it.identifier.name), it.`type`, true) }
+    }
+
+    private fun createInitStatementsFromFields(fields: List<Field>): List<Element> {
+        val result = ArrayList<Element>()
+        for (f : Field in fields) {
+            val identifierToKotlin: String? = f.identifier.toKotlin()
+            result.add(DummyStringExpression(identifierToKotlin + " = " + "_" + identifierToKotlin))
         }
-        private fun removeEmpty(statements: List<Element>): List<Element> {
-            return statements.filterNot {
-                it == Statement.EMPTY_STATEMENT ||
-                it == Expression.EMPTY_EXPRESSION ||
-                it == Element.EMPTY_ELEMENT
+        return result
+    }
+
+    private fun createPrimaryConstructorInvocation(s: String, fields: List<Field>, initializers: Map<String, String>): String {
+        return s + "(" + fields.map { initializers[it.identifier.toKotlin()] }.makeString(", ") + ")"
+    }
+
+    private fun removeEmpty(statements: List<Element>): List<Element> {
+        return statements.filterNot {
+            it == Statement.EMPTY_STATEMENT ||
+            it == Expression.EMPTY_EXPRESSION ||
+            it == Element.EMPTY_ELEMENT
+        }
+    }
+
+    private fun isNotOpenMethod(method: PsiMethod): Boolean {
+        val parent = method.getParent()
+        if (parent is PsiClass) {
+            val parentModifierList = parent.getModifierList()
+            if ((parentModifierList != null && parentModifierList.hasExplicitModifier(PsiModifier.FINAL)) || parent.isEnum()) {
+                return true
             }
+
         }
 
-        private fun isNotOpenMethod(method: PsiMethod): Boolean {
-            val parent = method.getParent()
-            if (parent is PsiClass) {
-                val parentModifierList = parent.getModifierList()
-                if ((parentModifierList != null && parentModifierList.hasExplicitModifier(PsiModifier.FINAL)) || parent.isEnum()) {
-                    return true
-                }
+        return false
+    }
 
-            }
-
-            return false
-        }
-
-        private fun normalCase(method: PsiMethod): Boolean {
-            var counter: Int = 0
-            for (s : HierarchicalMethodSignature? in method.getHierarchicalMethodSignature().getSuperSignatures())
+    private fun normalCase(method: PsiMethod): Boolean {
+        var counter: Int = 0
+        for (s : HierarchicalMethodSignature? in method.getHierarchicalMethodSignature().getSuperSignatures())
+        {
+            var containingClass: PsiClass? = s?.getMethod()?.getContainingClass()
+            var qualifiedName: String? = (if (containingClass != null)
+                containingClass?.getQualifiedName()
+            else
+                "")
+            if (qualifiedName != null && !qualifiedName.equals(JAVA_LANG_OBJECT))
             {
-                var containingClass: PsiClass? = s?.getMethod()?.getContainingClass()
-                var qualifiedName: String? = (if (containingClass != null)
-                    containingClass?.getQualifiedName()
-                else
-                    "")
-                if (qualifiedName != null && !qualifiedName.equals(JAVA_LANG_OBJECT))
-                {
-                    counter++
-                }
-
+                counter++
             }
-            return counter > 0
+
+        }
+        return counter > 0
+    }
+
+    private fun isInheritFromObject(method: PsiMethod): Boolean {
+        var superSignatures: List<HierarchicalMethodSignature?> = method.getHierarchicalMethodSignature().getSuperSignatures()
+        for (s : HierarchicalMethodSignature? in superSignatures) {
+            var containingClass: PsiClass? = s?.getMethod()?.getContainingClass()
+            var qualifiedName: String? = (if (containingClass != null)
+                containingClass?.getQualifiedName()
+            else
+                "")
+            if (qualifiedName == JAVA_LANG_OBJECT) {
+                return true
+            }
+
+        }
+        return false
+    }
+
+    private fun isOverrideObjectDirect(method: PsiMethod): Boolean {
+        var superSignatures: List<HierarchicalMethodSignature?>? = method.getHierarchicalMethodSignature().getSuperSignatures()
+        if (superSignatures?.size()!! == 1)
+        {
+            val containingClass: PsiClass? = superSignatures?.get(0)?.getMethod()?.getContainingClass()
+            val qualifiedName: String? = (if (containingClass != null)
+                containingClass.getQualifiedName()
+            else
+                "")
+            if (qualifiedName == JAVA_LANG_OBJECT) {
+                return true
+            }
+
         }
 
-        private fun isInheritFromObject(method: PsiMethod): Boolean {
-            var superSignatures: List<HierarchicalMethodSignature?> = method.getHierarchicalMethodSignature().getSuperSignatures()
-            for (s : HierarchicalMethodSignature? in superSignatures) {
-                var containingClass: PsiClass? = s?.getMethod()?.getContainingClass()
-                var qualifiedName: String? = (if (containingClass != null)
-                    containingClass?.getQualifiedName()
-                else
-                    "")
-                if (qualifiedName == JAVA_LANG_OBJECT) {
-                    return true
-                }
-
+        return false
+    }
+    private fun importsToImportList(imports: Array<PsiImportStatementBase>): List<Import> {
+        val result = ArrayList<Import>()
+        for (i : PsiImportStatementBase? in imports) {
+            if (i == null) continue
+            val anImport: Import = importToImport(i)
+            val name: String = anImport.name
+            if (!name.isEmpty() && !NOT_NULL_ANNOTATIONS.contains(name)) {
+                result.add(anImport)
             }
+
+        }
+        return result
+    }
+
+    private fun importToImport(i: PsiImportStatementBase): Import {
+        val reference: PsiJavaCodeReferenceElement? = i.getImportReference()
+        if (reference != null) {
+            return Import(quoteKeywords(reference.getQualifiedName()!!) + ((if (i.isOnDemand())
+                ".*"
+            else
+                "")))
+        }
+
+        return Import("")
+    }
+
+    public fun identifierToIdentifier(identifier: PsiIdentifier?): Identifier {
+        if (identifier == null)
+            return Identifier.EMPTY_IDENTIFIER
+
+        return Identifier(identifier.getText()!!)
+    }
+
+    public fun modifiersListToModifiersSet(modifierList: PsiModifierList?): MutableSet<Modifier> {
+        val modifiersSet: HashSet<Modifier> = hashSetOf()
+        if (modifierList != null) {
+            if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT))
+                modifiersSet.add(Modifier.ABSTRACT)
+
+            if (modifierList.hasModifierProperty(PsiModifier.FINAL))
+                modifiersSet.add(Modifier.FINAL)
+
+            if (modifierList.hasModifierProperty(PsiModifier.STATIC))
+                modifiersSet.add(Modifier.STATIC)
+
+            if (modifierList.hasExplicitModifier(PsiModifier.PUBLIC))
+                modifiersSet.add(Modifier.PUBLIC)
+
+            if (modifierList.hasExplicitModifier(PsiModifier.PROTECTED))
+                modifiersSet.add(Modifier.PROTECTED)
+
+            if (modifierList.hasExplicitModifier(PsiModifier.PACKAGE_LOCAL))
+                modifiersSet.add(Modifier.INTERNAL)
+
+            if (modifierList.hasExplicitModifier(PsiModifier.PRIVATE))
+                modifiersSet.add(Modifier.PRIVATE)
+        }
+
+        return modifiersSet
+    }
+
+    private fun isConversionNeeded(actual: PsiType?, expected: PsiType?): Boolean {
+        if (actual == null || expected == null) {
             return false
         }
 
-        private fun isOverrideObjectDirect(method: PsiMethod): Boolean {
-            var superSignatures: List<HierarchicalMethodSignature?>? = method.getHierarchicalMethodSignature().getSuperSignatures()
-            if (superSignatures?.size()!! == 1)
-            {
-                val containingClass: PsiClass? = superSignatures?.get(0)?.getMethod()?.getContainingClass()
-                val qualifiedName: String? = (if (containingClass != null)
-                    containingClass.getQualifiedName()
-                else
-                    "")
-                if (qualifiedName == JAVA_LANG_OBJECT) {
-                    return true
-                }
-
-            }
-
-            return false
-        }
-        private fun importsToImportList(imports: Array<PsiImportStatementBase>): List<Import> {
-            val result = ArrayList<Import>()
-            for (i : PsiImportStatementBase? in imports) {
-                if (i == null) continue
-                val anImport: Import = importToImport(i)
-                val name: String = anImport.name
-                if (!name.isEmpty() && !NOT_NULL_ANNOTATIONS.contains(name)) {
-                    result.add(anImport)
-                }
-
-            }
-            return result
-        }
-
-        private fun importToImport(i: PsiImportStatementBase): Import {
-            val reference: PsiJavaCodeReferenceElement? = i.getImportReference()
-            if (reference != null) {
-                return Import(quoteKeywords(reference.getQualifiedName()!!) + ((if (i.isOnDemand())
-                    ".*"
-                else
-                    "")))
-            }
-
-            return Import("")
-        }
-
-        public open fun identifierToIdentifier(identifier: PsiIdentifier?): Identifier {
-            if (identifier == null)
-                return Identifier.EMPTY_IDENTIFIER
-
-            return Identifier(identifier.getText()!!)
-        }
-
-        public open fun modifiersListToModifiersSet(modifierList: PsiModifierList?): MutableSet<Modifier> {
-            val modifiersSet: HashSet<Modifier> = hashSetOf()
-            if (modifierList != null) {
-                if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT))
-                    modifiersSet.add(Modifier.ABSTRACT)
-
-                if (modifierList.hasModifierProperty(PsiModifier.FINAL))
-                    modifiersSet.add(Modifier.FINAL)
-
-                if (modifierList.hasModifierProperty(PsiModifier.STATIC))
-                    modifiersSet.add(Modifier.STATIC)
-
-                if (modifierList.hasExplicitModifier(PsiModifier.PUBLIC))
-                    modifiersSet.add(Modifier.PUBLIC)
-
-                if (modifierList.hasExplicitModifier(PsiModifier.PROTECTED))
-                    modifiersSet.add(Modifier.PROTECTED)
-
-                if (modifierList.hasExplicitModifier(PsiModifier.PACKAGE_LOCAL))
-                    modifiersSet.add(Modifier.INTERNAL)
-
-                if (modifierList.hasExplicitModifier(PsiModifier.PRIVATE))
-                    modifiersSet.add(Modifier.PRIVATE)
-            }
-
-            return modifiersSet
-        }
-
-        private fun isConversionNeeded(actual: PsiType?, expected: PsiType?): Boolean {
-            if (actual == null || expected == null) {
-                return false
-            }
-
-            val typeMap = HashMap<String, String>()
-            typeMap.put(JAVA_LANG_BYTE, "byte")
-            typeMap.put(JAVA_LANG_SHORT, "short")
-            typeMap.put(JAVA_LANG_INTEGER, "int")
-            typeMap.put(JAVA_LANG_LONG, "long")
-            typeMap.put(JAVA_LANG_FLOAT, "float")
-            typeMap.put(JAVA_LANG_DOUBLE, "double")
-            typeMap.put(JAVA_LANG_CHARACTER, "char")
-            val expectedStr: String? = expected.getCanonicalText()
-            val actualStr: String? = actual.getCanonicalText()
-            val o1: Boolean = expectedStr == typeMap[actualStr]
-            val o2: Boolean = actualStr == typeMap[expectedStr]
-            return actualStr != expectedStr && (!(o1 xor o2))
-        }
+        val typeMap = HashMap<String, String>()
+        typeMap.put(JAVA_LANG_BYTE, "byte")
+        typeMap.put(JAVA_LANG_SHORT, "short")
+        typeMap.put(JAVA_LANG_INTEGER, "int")
+        typeMap.put(JAVA_LANG_LONG, "long")
+        typeMap.put(JAVA_LANG_FLOAT, "float")
+        typeMap.put(JAVA_LANG_DOUBLE, "double")
+        typeMap.put(JAVA_LANG_CHARACTER, "char")
+        val expectedStr: String? = expected.getCanonicalText()
+        val actualStr: String? = actual.getCanonicalText()
+        val o1: Boolean = expectedStr == typeMap[actualStr]
+        val o2: Boolean = actualStr == typeMap[expectedStr]
+        return actualStr != expectedStr && (!(o1 xor o2))
     }
 }
 
-public fun createMainFunction(file: PsiFile): String {
-    val classNamesWithMains = ArrayList<Pair<String?, PsiMethod?>?>()
-    for (c : PsiClass? in (file as PsiJavaFile).getClasses()) {
-        var main: PsiMethod? = findMainMethod(c)
-        if (main != null) {
-            classNamesWithMains.add(Pair<String?, PsiMethod?>(c?.getName(), main))
-        }
-    }
+private val NOT_NULL_ANNOTATIONS: Set<String> = ImmutableSet.of<String>("org.jetbrains.annotations.NotNull", "com.sun.istack.internal.NotNull", "javax.annotation.Nonnull")!!
+private val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = ImmutableMap.builder<String, String>()
+?.put("byte", BYTE.asString())
+?.put("short", SHORT.asString())
+?.put("int", INT.asString())
+?.put("long", LONG.asString())
+?.put("float", FLOAT.asString())
+?.put("double", DOUBLE.asString())
+?.put("char", CHAR.asString())
+?.put(JAVA_LANG_BYTE, BYTE.asString())
+?.put(JAVA_LANG_SHORT, SHORT.asString())
+?.put(JAVA_LANG_INTEGER, INT.asString())
+?.put(JAVA_LANG_LONG, LONG.asString())
+?.put(JAVA_LANG_FLOAT, FLOAT.asString())
+?.put(JAVA_LANG_DOUBLE, DOUBLE.asString())
+?.put(JAVA_LANG_CHARACTER, CHAR.asString())
+?.build()!!
 
-    if (classNamesWithMains.size() > 0) {
-        var className: String? = classNamesWithMains.get(0)?.getFirst()
-        return MessageFormat.format("fun main(args : Array<String>) = {0}.main(args as Array<String?>?)", className)
-    }
-
-    return ""
-
-}
-
-private fun findMainMethod(aClass: PsiClass?): PsiMethod? {
-    if (isMainClass(aClass)) {
-        val mainMethods: Array<PsiMethod>? = aClass?.findMethodsByName("main", false)
-        if (mainMethods != null) {
-            return findMainMethod(mainMethods)
-        }
-    }
-    return null
-}
-
-private fun isMainClass(psiClass: PsiClass?): Boolean {
-    if (psiClass == null || psiClass is PsiAnonymousClass)
-        return false
-
-    if (psiClass.isInterface())
-        return false
-
-    return psiClass.getContainingClass() == null || psiClass.hasModifierProperty(PsiModifier.STATIC)
-
-}
-
-private fun findMainMethod(mainMethods: Array<PsiMethod>): PsiMethod? {
-    return mainMethods.find { isMainMethod(it) }
-}
-
-public fun isMainMethod(method: PsiMethod?): Boolean {
-    if (method == null || method.getContainingClass() == null)
-        return false
-
-    if (PsiType.VOID != method.getReturnType())
-        return false
-
-    if (!method.hasModifierProperty(PsiModifier.STATIC))
-        return false
-
-    if (!method.hasModifierProperty(PsiModifier.PUBLIC))
-        return false
-
-    val parameters: Array<PsiParameter>? = method.getParameterList().getParameters()
-    if (parameters?.size!! != 1)
-        return false
-
-    val `type`: PsiType? = parameters!![0].getType()
-    if (`type` !is PsiArrayType)
-        return false
-
-    val componentType: PsiType? = `type`.getComponentType()
-    return componentType?.equalsToText("java.lang.String")!!
-}
 
 public fun countWritingAccesses(element: PsiElement?, container: PsiElement?): Int {
     var counter: Int = 0
@@ -861,7 +745,7 @@ public fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
         val annotations: Array<PsiAnnotation> = modifierList.getAnnotations()
         for (a : PsiAnnotation in annotations) {
             val qualifiedName: String? = a.getQualifiedName()
-            if (qualifiedName != null && Converter.NOT_NULL_ANNOTATIONS.contains(qualifiedName)) {
+            if (qualifiedName != null && NOT_NULL_ANNOTATIONS.contains(qualifiedName)) {
                 return true
             }
         }
@@ -873,4 +757,26 @@ public fun isDefinitelyNotNull(element: PsiElement?): Boolean = when(element) {
     is PsiLiteralExpression -> element.getValue() != null
     is PsiNewExpression -> true
     else -> false
+}
+
+public fun getDefaultInitializer(f: Field): String {
+    if (f.`type`.nullable) {
+        return "null"
+    }
+    else {
+        val typeToKotlin = f.`type`.toKotlin()
+        if (typeToKotlin.equals("Boolean"))
+            return "false"
+
+        if (typeToKotlin.equals("Char"))
+            return "' '"
+
+        if (typeToKotlin.equals("Double"))
+            return "0." + OperatorConventions.DOUBLE + "()"
+
+        if (typeToKotlin.equals("Float"))
+            return "0." + OperatorConventions.FLOAT + "()"
+
+        return "0"
+    }
 }

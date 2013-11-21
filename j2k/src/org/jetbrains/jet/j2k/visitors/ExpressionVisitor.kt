@@ -18,7 +18,6 @@ package org.jetbrains.jet.j2k.visitors
 
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
@@ -27,7 +26,7 @@ import java.util.Collections
 import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.types.lang.PrimitiveType
-import org.jetbrains.jet.j2k.isAnnotatedAsNotNull
+import org.jetbrains.jet.j2k.*
 import org.jetbrains.jet.j2k.ast.types.ArrayType
 
 public open class ExpressionVisitor(converter: Converter) : StatementVisitor(converter) {
@@ -182,7 +181,7 @@ public open class ExpressionVisitor(converter: Converter) : StatementVisitor(con
             argumentList?.getExpressions()!!
         else
             array<PsiExpression>())
-        if (constructor == null || Converter.isConstructorPrimary(constructor) || isNotConvertedClass)
+        if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass)
         {
             return NewClassExpression(getConverter().elementToElement(classReference),
                                       getConverter().argumentsToExpressionList(expression!!),
@@ -314,7 +313,7 @@ public open class ExpressionVisitor(converter: Converter) : StatementVisitor(con
             val operand = expression?.getOperand()
             val operandType = operand?.getType()
             val typeText = castType.getType().getCanonicalText()
-            val typeConversion = Converter.PRIMITIVE_TYPE_CONVERSIONS[typeText]
+            val typeConversion = PRIMITIVE_TYPE_CONVERSIONS[typeText]
             if (operandType is PsiPrimitiveType && typeConversion != null) {
                 myResult = MethodCallExpression.build(getConverter().expressionToExpression(operand), typeConversion)
             }
@@ -459,7 +458,7 @@ public open class ExpressionVisitor(converter: Converter) : StatementVisitor(con
             var context: PsiElement? = expression.getContext()
             while (context != null) {
                 if (context is PsiMethod && (context as PsiMethod).isConstructor()) {
-                    return !Converter.isConstructorPrimary((context as PsiMethod))
+                    return !isConstructorPrimary((context as PsiMethod))
                 }
 
                 context = context?.getContext()
@@ -471,7 +470,7 @@ public open class ExpressionVisitor(converter: Converter) : StatementVisitor(con
             var context: PsiElement? = expression.getContext()
             while (context != null) {
                 if (context is PsiMethod && (context as PsiMethod).isConstructor()) {
-                    return Converter.isConstructorPrimary(context as PsiMethod)
+                    return isConstructorPrimary(context as PsiMethod)
                 }
 
                 context = context?.getContext()

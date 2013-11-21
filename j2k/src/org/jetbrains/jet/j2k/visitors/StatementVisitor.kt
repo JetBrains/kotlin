@@ -30,7 +30,7 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
     }
 
     public override fun visitBlockStatement(statement: PsiBlockStatement?) {
-        myResult = myConverter.blockToBlock(statement?.getCodeBlock(), true)
+        myResult = getConverter().blockToBlock(statement?.getCodeBlock(), true)
     }
 
     public override fun visitBreakStatement(statement: PsiBreakStatement?) {
@@ -39,7 +39,7 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
         }
         else
         {
-            myResult = BreakStatement(Converter.identifierToIdentifier(statement?.getLabelIdentifier()))
+            myResult = BreakStatement(getConverter().identifierToIdentifier(statement?.getLabelIdentifier()))
         }
     }
 
@@ -50,7 +50,7 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
         }
         else
         {
-            myResult = ContinueStatement(Converter.identifierToIdentifier(statement?.getLabelIdentifier()))
+            myResult = ContinueStatement(getConverter().identifierToIdentifier(statement?.getLabelIdentifier()))
         }
     }
 
@@ -144,7 +144,7 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
     }
 
     public override fun visitLabeledStatement(statement: PsiLabeledStatement?) {
-        myResult = LabelStatement(Converter.identifierToIdentifier(statement?.getLabelIdentifier()),
+        myResult = LabelStatement(getConverter().identifierToIdentifier(statement?.getLabelIdentifier()),
                                   getConverter().statementToStatement(statement?.getStatement()))
     }
 

@@ -17,11 +17,9 @@
 package org.jetbrains.jet.j2k.visitors
 
 import com.intellij.psi.*
-import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.*
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.Type
-import org.jetbrains.jet.j2k.isAnnotatedAsNotNull
-import org.jetbrains.jet.j2k.isDefinitelyNotNull
 
 public open class ElementVisitor(val myConverter: Converter) : JavaElementVisitor() {
     protected var myResult: Element = Element.EMPTY_ELEMENT
@@ -41,7 +39,7 @@ public open class ElementVisitor(val myConverter: Converter) : JavaElementVisito
             kType = kType.convertedToNotNull();
         }
         myResult = LocalVariable(Identifier(theVariable.getName()!!),
-                                 Converter.modifiersListToModifiersSet(theVariable.getModifierList()),
+                                 myConverter.modifiersListToModifiersSet(theVariable.getModifierList()),
                                  kType,
                                  myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()),
                                  myConverter)
