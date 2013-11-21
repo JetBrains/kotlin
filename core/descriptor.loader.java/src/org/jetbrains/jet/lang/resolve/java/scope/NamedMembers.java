@@ -39,7 +39,7 @@ public final class NamedMembers {
     private final List<JavaMethod> methods = new ArrayList<JavaMethod>();
 
     @NotNull
-    private final List<JavaField> fields = new ArrayList<JavaField>();
+    private final List<JavaFieldData> fields = new ArrayList<JavaFieldData>();
 
     @Nullable
     private JavaClass samInterface;
@@ -48,8 +48,8 @@ public final class NamedMembers {
         methods.add(method);
     }
 
-    void addField(@NotNull JavaField field) {
-        fields.add(field);
+    void addField(@NotNull JavaField field, boolean staticFieldCopiedFromSuperClass) {
+        fields.add(new JavaFieldData(field, staticFieldCopiedFromSuperClass));
     }
 
     void setSamInterface(@NotNull JavaClass samInterface) {
@@ -67,12 +67,31 @@ public final class NamedMembers {
     }
 
     @NotNull
-    public List<JavaField> getFields() {
+    public List<JavaFieldData> getFields() {
         return fields;
     }
 
     @Nullable
     public JavaClass getSamInterface() {
         return samInterface;
+    }
+
+    public static class JavaFieldData {
+        private final JavaField field;
+        private final boolean staticFieldCopiedFromSuperClass;
+
+        public JavaFieldData(@NotNull JavaField field, boolean staticFieldCopiedFromSuperClass) {
+            this.field = field;
+            this.staticFieldCopiedFromSuperClass = staticFieldCopiedFromSuperClass;
+        }
+
+        @NotNull
+        public JavaField getField() {
+            return field;
+        }
+
+        public boolean isStaticFieldCopiedFromSuperClass() {
+            return staticFieldCopiedFromSuperClass;
+        }
     }
 }

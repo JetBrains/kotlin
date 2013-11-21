@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
@@ -52,6 +53,12 @@ public interface JavaClass extends JavaClassifier, JavaTypeParameterListOwner, J
 
     @NotNull
     Collection<JavaField> getAllFields();
+
+    /**
+     * Searches this class only, no base classes are searched
+     */
+    @Nullable
+    JavaField findDeclaredFieldByName(@NotNull Name name);
 
     @NotNull
     Collection<JavaMethod> getConstructors();

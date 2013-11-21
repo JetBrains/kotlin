@@ -1,0 +1,23 @@
+package test
+
+public trait Hidden : java.lang.Object {
+
+    public open class A : java.lang.Object {
+        public constructor A()
+    }
+
+    public open class B : test.Hidden.A {
+        public constructor B()
+    }
+}
+
+package Hidden {
+
+    package A {
+        public val PUBLIC: jet.Int
+    }
+
+    package B {
+        public val PUBLIC: jet.String
+    }
+}

@@ -114,6 +114,20 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
         PsiField psiField = ((JavaFieldImpl) field).getPsi();
         trace.record(VARIABLE, psiField, descriptor);
 
+        processPossibleCompileTimeConstant(psiField, descriptor);
+    }
+
+    @Override
+    public void recordInheritedStaticField(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor) {
+        // "Inherited" static fields do not have a declaration that corresponds to them one-to-one,
+        // so we only register them in the descriptor-to-declaration direction
+        PsiField psiField = ((JavaFieldImpl) field).getPsi();
+        BindingContextUtils.recordDescriptorToDeclaration(trace, descriptor, psiField);
+
+        processPossibleCompileTimeConstant(psiField, descriptor);
+    }
+
+    private void processPossibleCompileTimeConstant(@NotNull PsiField psiField, @NotNull PropertyDescriptor descriptor) {
         if (AnnotationUtils.isPropertyAcceptableAsAnnotationParameter(descriptor)) {
             PsiExpression initializer = psiField.getInitializer();
             if (initializer instanceof PsiLiteralExpression) {

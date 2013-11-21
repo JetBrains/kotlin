@@ -1,0 +1,30 @@
+package test
+
+public trait AmbiguityHiddenByExplicitDeclaration : java.lang.Object {
+    
+    public open class Base : java.lang.Object {
+        public constructor Base()
+    }
+    
+    public open class Derived : test.AmbiguityHiddenByExplicitDeclaration.Base, test.AmbiguityHiddenByExplicitDeclaration.Interface {
+        public constructor Derived()
+    }
+    
+    public trait Interface : java.lang.Object {
+    }
+}
+
+package AmbiguityHiddenByExplicitDeclaration {
+    
+    package Base {
+        public val HIDDEN: jet.Int
+    }
+    
+    package Derived {
+        public val HIDDEN: jet.String
+    }
+    
+    package Interface {
+        public val HIDDEN: jet.Long
+    }
+}

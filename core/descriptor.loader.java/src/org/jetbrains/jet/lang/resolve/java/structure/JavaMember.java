@@ -21,4 +21,6 @@ import org.jetbrains.annotations.NotNull;
 public interface JavaMember extends JavaModifierListOwner, JavaAnnotationOwner, JavaNamedElement {
     @NotNull
     JavaClass getContainingClass();
+
+    boolean isAccessibleFrom(@NotNull JavaClass fromClass);
 }

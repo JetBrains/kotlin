@@ -1,0 +1,31 @@
+package test
+
+public trait Ambiguity : java.lang.Object {
+    
+    public open class Base : java.lang.Object {
+        public constructor Base()
+    }
+    
+    public open class Derived : test.Ambiguity.Base, test.Ambiguity.Interface {
+        public constructor Derived()
+    }
+    
+    public trait Interface : java.lang.Object {
+    }
+}
+
+package Ambiguity {
+    
+    package Base {
+        public val HIDDEN: jet.Int
+    }
+    
+    package Derived {
+        public val HIDDEN: jet.Int
+        public val HIDDEN: jet.Long
+    }
+    
+    package Interface {
+        public val HIDDEN: jet.Long
+    }
+}

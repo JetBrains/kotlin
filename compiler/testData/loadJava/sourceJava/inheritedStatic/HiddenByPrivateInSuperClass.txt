@@ -1,0 +1,29 @@
+package test
+
+public trait HiddenByPrivateInSuperClass : java.lang.Object {
+    
+    public open class Base : java.lang.Object {
+        public constructor Base()
+    }
+    
+    public open class Derived : java.lang.Object {
+        public constructor Derived()
+    }
+    
+    public open class Derived1 : test.HiddenByPrivateInSuperClass.Derived {
+        public constructor Derived1()
+    }
+}
+
+package HiddenByPrivateInSuperClass {
+    
+    package Base {
+        public val HIDDEN: jet.Int
+    }
+    
+    package Derived {
+    }
+    
+    package Derived1 {
+    }
+}

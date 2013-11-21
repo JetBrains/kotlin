@@ -24,3 +24,6 @@ public abstract class ClassDoesNotOverrideMethod : java.util.Date {
     jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun toGMTString(): jet.String
     jet.deprecated(value = "Deprecated in Java": jet.String) public open override /*1*/ /*fake_override*/ fun toLocaleString(): jet.String
 }
+
+package ClassDoesNotOverrideMethod {
+}
