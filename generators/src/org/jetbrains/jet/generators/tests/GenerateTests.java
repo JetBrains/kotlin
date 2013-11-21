@@ -35,6 +35,7 @@ import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
 import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
 import org.jetbrains.jet.formatter.AbstractJetFormatterTest;
 import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel;
+import org.jetbrains.jet.generators.tests.generator.SingleClassTestModel;
 import org.jetbrains.jet.generators.tests.generator.TestClassModel;
 import org.jetbrains.jet.generators.tests.generator.TestGenerator;
 import org.jetbrains.jet.jvm.compiler.*;
@@ -57,6 +58,7 @@ import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
 import org.jetbrains.jet.plugin.refactoring.inline.AbstractInlineTest;
+import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest;
 import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
 import org.jetbrains.jet.resolve.AbstractResolveBaseTest;
 import org.jetbrains.jet.resolve.AbstractResolveTest;
@@ -539,6 +541,13 @@ public class GenerateTests {
                 "DataFlowValueRenderingTestGenerated",
                 AbstractDataFlowValueRenderingTest.class,
                 testModel("idea/testData/dataFlowValueRendering")
+        );
+
+        generateTest(
+                "idea/tests/",
+                "RenameTestGenerated",
+                AbstractRenameTest.class,
+                new SingleClassTestModel(new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"), "doTest")
         );
     }
 
