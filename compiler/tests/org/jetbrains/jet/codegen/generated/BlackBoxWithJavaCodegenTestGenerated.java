@@ -43,6 +43,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithJava/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("javaNegativePropertyAsAnnotationParameter.kt")
+        public void testJavaNegativePropertyAsAnnotationParameter() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/annotations/javaNegativePropertyAsAnnotationParameter.kt");
+        }
+        
         @TestMetadata("javaPropertyAsAnnotationParameter.kt")
         public void testJavaPropertyAsAnnotationParameter() throws Exception {
             doTestWithJava("compiler/testData/codegen/boxWithJava/annotations/javaPropertyAsAnnotationParameter.kt");

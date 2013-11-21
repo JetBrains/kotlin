@@ -20,7 +20,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.impl.JavaConstantExpressionEvaluator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -116,9 +116,9 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
 
         if (AnnotationUtils.isPropertyCompileTimeConstant(descriptor)) {
             PsiExpression initializer = psiField.getInitializer();
-            if (initializer instanceof PsiLiteralExpression) {
-                CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver
-                        .resolveCompileTimeConstantValue(((PsiLiteralExpression) initializer).getValue(), descriptor.getType());
+            Object evaluatedExpression = JavaConstantExpressionEvaluator.computeConstantExpression(initializer, false);
+            if (evaluatedExpression != null) {
+                CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(evaluatedExpression, descriptor.getType());
                 if (constant != null) {
                     trace.record(COMPILE_TIME_INITIALIZER, descriptor, constant);
                 }
