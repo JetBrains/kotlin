@@ -29,8 +29,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -53,7 +51,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private final TypeDeserializer typeDeserializer;
     private final DescriptorDeserializer deserializer;
     private final DeserializedMemberScope memberScope;
-    private final ReceiverParameterDescriptor thisAsReceiverParameter;
 
     private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
 
@@ -104,7 +101,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
         this.typeConstructor = new DeserializedClassTypeConstructor(typeParameters);
         this.memberScope = new DeserializedClassMemberScope(storageManager, this);
-        this.thisAsReceiverParameter = new LazyClassReceiverParameterDescriptor();
 
         int flags = classProto.getFlags();
         this.modality = DescriptorDeserializer.modality(Flags.MODALITY.get(flags));
@@ -289,12 +285,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
         return classObjectDescriptor.invoke();
-    }
-
-    @NotNull
-    @Override
-    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        return thisAsReceiverParameter;
     }
 
     private Collection<JetType> computeSuperTypes() {
@@ -493,28 +483,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                 }
             }
             return result;
-        }
-    }
-
-    private class LazyClassReceiverParameterDescriptor extends AbstractReceiverParameterDescriptor {
-        private final ClassReceiver classReceiver = new ClassReceiver(DeserializedClassDescriptor.this);
-
-        @NotNull
-        @Override
-        public JetType getType() {
-            return getDefaultType();
-        }
-
-        @NotNull
-        @Override
-        public ReceiverValue getValue() {
-            return classReceiver;
-        }
-
-        @NotNull
-        @Override
-        public DeclarationDescriptor getContainingDeclaration() {
-            return DeserializedClassDescriptor.this;
         }
     }
 }

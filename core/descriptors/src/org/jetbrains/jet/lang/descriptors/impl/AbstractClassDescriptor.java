@@ -19,10 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -38,6 +35,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
     private final Name name;
     protected final NotNullLazyValue<JetType> defaultType;
     private final NotNullLazyValue<JetScope> unsubstitutedInnerClassesScope;
+    private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
 
     public AbstractClassDescriptor(@NotNull StorageManager storageManager, @NotNull Name name) {
         this.name = name;
@@ -51,6 +49,12 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
             @Override
             public JetScope invoke() {
                 return new InnerClassesScopeWrapper(getScopeForMemberLookup());
+            }
+        });
+        this.thisAsReceiverParameter = storageManager.createLazyValue(new Function0<ReceiverParameterDescriptor>() {
+            @Override
+            public ReceiverParameterDescriptor invoke() {
+                return new LazyClassReceiverParameterDescriptor(AbstractClassDescriptor.this);
             }
         });
     }
@@ -81,6 +85,12 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
     @Override
     public JetScope getUnsubstitutedInnerClassesScope() {
         return unsubstitutedInnerClassesScope.invoke();
+    }
+
+    @NotNull
+    @Override
+    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
+        return thisAsReceiverParameter.invoke();
     }
 
     @NotNull

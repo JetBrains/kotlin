@@ -16,19 +16,16 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeConstructorImpl;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.storage.NotNullLazyValue;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,7 +35,6 @@ import java.util.Set;
 public class ClassDescriptorImpl extends ClassDescriptorBase {
     private final Modality modality;
     private final TypeConstructor typeConstructor;
-    private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
 
     private JetScope scopeForMemberLookup;
     private Set<ConstructorDescriptor> constructors;
@@ -55,13 +51,6 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
         this.typeConstructor = new TypeConstructorImpl(this, Collections.<AnnotationDescriptor>emptyList(), false, getName().asString(),
                                                        Collections.<TypeParameterDescriptor>emptyList(), supertypes);
-
-        this.thisAsReceiverParameter = LockBasedStorageManager.NO_LOCKS.createLazyValue(new Function0<ReceiverParameterDescriptor>() {
-            @Override
-            public ReceiverParameterDescriptor invoke() {
-                return DescriptorFactory.createLazyReceiverParameterDescriptor(ClassDescriptorImpl.this);
-            }
-        });
     }
 
     public final void initialize(
@@ -134,12 +123,6 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     @Override
     public boolean isInner() {
         return false;
-    }
-
-    @NotNull
-    @Override
-    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        return thisAsReceiverParameter.invoke();
     }
 
     @Override

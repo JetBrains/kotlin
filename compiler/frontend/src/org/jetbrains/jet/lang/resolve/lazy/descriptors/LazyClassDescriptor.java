@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
@@ -77,7 +76,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final ClassKind kind;
     private final boolean isInner;
 
-    private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
     private final NotNullLazyValue<List<AnnotationDescriptor>> annotations;
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
@@ -126,12 +124,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         this.isInner = isInnerClass(modifierList);
 
         StorageManager storageManager = resolveSession.getStorageManager();
-        this.thisAsReceiverParameter = storageManager.createLazyValue(new Function0<ReceiverParameterDescriptor>() {
-            @Override
-            public ReceiverParameterDescriptor invoke() {
-                return DescriptorFactory.createLazyReceiverParameterDescriptor(LazyClassDescriptor.this);
-            }
-        });
         this.annotations = storageManager.createLazyValue(new Function0<List<AnnotationDescriptor>>() {
             @Override
             public List<AnnotationDescriptor> invoke() {
@@ -309,12 +301,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     @Override
     public boolean isInner() {
         return isInner;
-    }
-
-    @NotNull
-    @Override
-    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        return thisAsReceiverParameter.invoke();
     }
 
     @NotNull
