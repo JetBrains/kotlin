@@ -87,7 +87,7 @@ public class DescriptorFactory {
         return values.initialize(null, classObject.getThisAsReceiverParameter(), Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  returnType, Modality.FINAL,
-                                 Visibilities.PUBLIC, false);
+                                 Visibilities.PUBLIC);
     }
 
     @NotNull
@@ -110,7 +110,7 @@ public class DescriptorFactory {
                                  Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.singletonList(parameterDescriptor),
                                  returnType, Modality.FINAL,
-                                 Visibilities.PUBLIC, false);
+                                 Visibilities.PUBLIC);
     }
 
     @Nullable

@@ -23,12 +23,14 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.lang.InlineStrategy;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 
 import java.util.List;
 
 public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl implements SimpleFunctionDescriptor {
 
-    private boolean isInline = false;
+    private InlineStrategy inlineStrategy;
 
     public SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -48,6 +50,9 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         super(containingDeclaration, original, annotations, name, kind);
     }
 
+
+    @NotNull
+    @Override
     public SimpleFunctionDescriptorImpl initialize(
             @Nullable JetType receiverParameterType,
             @Nullable ReceiverParameterDescriptor expectedThisObject,
@@ -55,10 +60,11 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility,
-            boolean isInline) {
-        super.initialize(receiverParameterType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
-        this.isInline = isInline;
+            @NotNull Visibility visibility
+    ) {
+        super.initialize(receiverParameterType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType,
+                         modality, visibility);
+        this.inlineStrategy = InlineUtil.getInlineType(getAnnotations());
         return this;
     }
 
@@ -93,12 +99,16 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     @Override
     public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
         SimpleFunctionDescriptorImpl copy = (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, visibility, false, copyOverrides, kind);
-        copy.isInline = isInline;
         return copy;
     }
 
     @Override
     public boolean isInline() {
-        return isInline;
+        return getInlineStrategy() != InlineStrategy.NOT_INLINE;
+    }
+
+    @NotNull
+    public InlineStrategy getInlineStrategy() {
+        return inlineStrategy;
     }
 }

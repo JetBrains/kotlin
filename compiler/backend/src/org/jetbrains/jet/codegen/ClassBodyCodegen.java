@@ -184,7 +184,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
                                                      Name.special("<clinit>"),
                                                      CallableMemberDescriptor.Kind.SYNTHESIZED);
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
-                              Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
+                              Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE);
 
             clInitCodegen = new ExpressionCodegen(method, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state, this);
         }

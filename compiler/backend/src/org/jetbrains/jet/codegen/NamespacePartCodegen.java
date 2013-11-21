@@ -112,7 +112,7 @@ public class NamespacePartCodegen extends MemberCodegen {
                                                      Name.special("<clinit>"),
                                                      CallableMemberDescriptor.Kind.SYNTHESIZED);
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
-                              Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE, false);
+                              Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE);
 
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, this.context.intoFunction(clInit), state, this);
 

@@ -241,9 +241,7 @@ public class DescriptorDeserializer {
                 local.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 local.typeDeserializer.type(proto.getReturnType()),
                 modality(Flags.MODALITY.get(flags)),
-                visibility(Flags.VISIBILITY.get(flags)),
-                Flags.INLINE.get(flags)
-
+                visibility(Flags.VISIBILITY.get(flags))
         );
         return function;
     }

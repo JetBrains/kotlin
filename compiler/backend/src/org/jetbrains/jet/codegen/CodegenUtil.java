@@ -82,8 +82,7 @@ public class CodegenUtil {
                                     fd.getValueParameters(),
                                     fd.getReturnType(),
                                     Modality.FINAL,
-                                    Visibilities.PUBLIC,
-                                    /*isInline = */false
+                                    Visibilities.PUBLIC
         );
         return invokeDescriptor;
     }

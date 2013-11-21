@@ -1,0 +1,6 @@
+package test
+
+jet.inline() internal fun a(): jet.Unit
+jet.inline(strategy = InlineStrategy.AS_FUNCTION: jet.InlineStrategy) internal fun b(): jet.Unit
+jet.inline(strategy = InlineStrategy.IN_PLACE: jet.InlineStrategy) internal fun c(): jet.Unit
+jet.inline(strategy = InlineStrategy.IN_PLACE: jet.InlineStrategy) internal fun d(): jet.Unit

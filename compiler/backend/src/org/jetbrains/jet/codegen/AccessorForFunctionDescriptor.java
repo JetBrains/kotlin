@@ -45,8 +45,7 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
                    copyValueParameters(descriptor),
                    descriptor.getReturnType(),
                    Modality.FINAL,
-                   Visibilities.INTERNAL,
-                   /*isInline = */ false);
+                   Visibilities.INTERNAL);
     }
 
     @NotNull
