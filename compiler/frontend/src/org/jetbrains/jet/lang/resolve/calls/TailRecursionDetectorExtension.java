@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
 public class TailRecursionDetectorExtension extends RecursiveCallResolverExtension {
@@ -33,7 +34,7 @@ public class TailRecursionDetectorExtension extends RecursiveCallResolverExtensi
     @Override
     protected <F extends CallableDescriptor> void runImpl(
             @NotNull JetCallExpression callExpression,
-            @NotNull OverloadResolutionResultsImpl<F> results,
+            @NotNull ResolvedCall<F> resolvedCall,
             @NotNull BasicCallResolutionContext context
     ) {
         BindingTrace trace = context.trace;

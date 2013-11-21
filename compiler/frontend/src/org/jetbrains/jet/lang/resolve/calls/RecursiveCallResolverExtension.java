@@ -20,25 +20,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
 public abstract class RecursiveCallResolverExtension implements CallResolverExtension {
     @Override
-    public final <F extends CallableDescriptor> void run(
-            @NotNull OverloadResolutionResultsImpl<F> results, @NotNull BasicCallResolutionContext context
+    public <F extends CallableDescriptor> void run(
+            @NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context
     ) {
-        if (isRecursion(results, context) && context.call.getCallElement() instanceof JetCallExpression) {
-            runImpl((JetCallExpression) context.call.getCallElement(), results, context);
+        if (isRecursion(resolvedCall, context) && context.call.getCallElement() instanceof JetCallExpression) {
+            runImpl((JetCallExpression) context.call.getCallElement(), resolvedCall, context);
         }
     }
 
     protected abstract <F extends CallableDescriptor> void runImpl(@NotNull JetCallExpression callExpression,
-            @NotNull OverloadResolutionResultsImpl<F> results, @NotNull BasicCallResolutionContext context);
+            @NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context);
 
     private static <F extends CallableDescriptor> boolean isRecursion(
-            OverloadResolutionResultsImpl<F> results,
-            BasicCallResolutionContext context
+            @NotNull ResolvedCall<F> resolvedCall,
+            @NotNull BasicCallResolutionContext context
     ) {
-        return results.getResultingCall().getResultingDescriptor().getOriginal().equals(context.scope.getContainingDeclaration());
+        return resolvedCall.getResultingDescriptor().getOriginal().equals(context.scope.getContainingDeclaration());
     }
 }
