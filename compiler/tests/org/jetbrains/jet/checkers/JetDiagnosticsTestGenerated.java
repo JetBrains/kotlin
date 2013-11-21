@@ -5388,6 +5388,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/resolve/nestedCalls/analyzeArgsInFreeExpressionPosition.kt");
                 }
                 
+                @TestMetadata("analyzeUnmappedArguments.kt")
+                public void testAnalyzeUnmappedArguments() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/nestedCalls/analyzeUnmappedArguments.kt");
+                }
+                
                 @TestMetadata("completeUnmappedArguments.kt")
                 public void testCompleteUnmappedArguments() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/resolve/nestedCalls/completeUnmappedArguments.kt");
