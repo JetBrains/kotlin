@@ -33,7 +33,6 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.plugin.findUsages.FindUsagesPackage;
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
@@ -43,8 +42,8 @@ import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearch;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchRequest;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchTarget;
 
-public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetClass> {
-    public KotlinFindClassUsagesHandler(@NotNull JetClass jetClass, @NotNull KotlinFindUsagesHandlerFactory factory) {
+public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetClassOrObject> {
+    public KotlinFindClassUsagesHandler(@NotNull JetClassOrObject jetClass, @NotNull KotlinFindUsagesHandlerFactory factory) {
         super(jetClass, factory);
     }
 
@@ -131,7 +130,7 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
     @Override
     protected boolean isSearchForTextOccurencesAvailable(@NotNull PsiElement psiElement, boolean isSingleFile) {
         if (isSingleFile) return false;
-        return psiElement instanceof JetClass;
+        return psiElement instanceof JetClassOrObject;
     }
 
     @NotNull

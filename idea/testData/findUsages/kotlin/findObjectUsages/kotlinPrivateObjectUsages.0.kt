@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetObjectDeclarationName
+// PSI_ELEMENT: org.jetbrains.jet.lang.psi.JetObjectDeclaration
 // OPTIONS: usages
 package server;
 
@@ -11,6 +11,6 @@ public open class Server() {
 }
 
 public class ServerEx(): Server() {
-    override fun processRequest() = Foo
+    override fun processRequest() = Server.Foo
 }
 
