@@ -37,9 +37,9 @@ import java.util.*;
 
 public class InlineCallResolverExtension implements CallResolverExtension {
 
-    private SimpleFunctionDescriptor descriptor;
+    private final SimpleFunctionDescriptor descriptor;
 
-    private Set<DeclarationDescriptor> inlinableParameters = new HashSet<DeclarationDescriptor>();
+    private final Set<CallableDescriptor> inlinableParameters = new HashSet<CallableDescriptor>();
 
     private final boolean isEffectivelyPublicApiFunction;
 
@@ -48,21 +48,16 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         this.descriptor = descriptor;
         this.isEffectivelyPublicApiFunction = isEffectivelyPublicApi(descriptor);
 
-        Iterator<ValueParameterDescriptor> iterator = descriptor.getValueParameters().iterator();
-        while (iterator.hasNext()) {
-            ValueParameterDescriptor next = iterator.next();
-            JetType type = next.getType();
-            if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type)) {
-                if (!InlineUtil.hasNoinlineAnnotation(next)) {
-                    inlinableParameters.add(next);
-                }
+        for (ValueParameterDescriptor param : descriptor.getValueParameters()) {
+            if (isInlinableParameter(param)) {
+                inlinableParameters.add(param);
             }
         }
 
         //add extension receiver as inlineable
         ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
         if (receiverParameter != null) {
-            if (isExactFunctionOrExtensionFunctionType(receiverParameter.getType())) {
+            if (isInlinableParameter(receiverParameter)) {
                 inlinableParameters.add(receiverParameter);
             }
         }
@@ -178,9 +173,12 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         }
     }
 
-
-    private boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
-        return KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type);
+    private boolean isInlinableParameter(@NotNull CallableDescriptor descriptor) {
+        JetType type = descriptor.getReturnType();
+        return type != null &&
+               KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) &&
+               !type.isNullable() &&
+               !InlineUtil.hasNoinlineAnnotation(descriptor);
     }
 
     private static boolean isInvokeOrInlineExtension(@NotNull CallableDescriptor descriptor) {

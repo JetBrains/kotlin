@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -44,7 +45,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
         checkDefaults(descriptor, function, trace);
         checkModality(descriptor, function, trace);
-        checkHashInlinable(descriptor, function, trace);
+        checkHashInlinableAndNullability(descriptor, function, trace);
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
 
@@ -106,28 +107,45 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         trace.report(Errors.DECLARATION_CANT_BE_INLINED.on(function));
     }
 
-    private void checkHashInlinable(
+    private void checkHashInlinableAndNullability(
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetFunction function,
             @NotNull BindingTrace trace
     ) {
+        boolean hasInlinable = false;
         List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+        int index = 0;
         for (ValueParameterDescriptor parameter : parameters) {
-            KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-            if (builtIns.isExactFunctionOrExtensionFunctionType(parameter.getType())) {
-                if (!InlineUtil.hasNoinlineAnnotation(parameter)) {
-                    return;
-                }
-            }
+            hasInlinable |= checkParameter(parameter, function.getValueParameters().get(index++), functionDescriptor, trace);
         }
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         if (receiverParameter != null) {
-            if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(receiverParameter.getType())) {
-                //or extension on inlinable function
-                return;
-            }
+            JetTypeReference receiver = function.getReceiverTypeRef();
+            hasInlinable |= checkParameter(receiverParameter, receiver, functionDescriptor, trace);
         }
 
-        trace.report(Errors.NOTHING_TO_INLINE.on(function, functionDescriptor));
+        if (!hasInlinable) {
+            trace.report(Errors.NOTHING_TO_INLINE.on(function, functionDescriptor));
+        }
+    }
+
+    private static boolean checkParameter(
+            @NotNull CallableDescriptor parameter,
+            @NotNull JetElement expression,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull BindingTrace trace
+    ) {
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        JetType type = parameter.getReturnType();
+        if (type != null && builtIns.isExactFunctionOrExtensionFunctionType(type)) {
+            if (!InlineUtil.hasNoinlineAnnotation(parameter)) {
+                if (type.isNullable()) {
+                    trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
+                } else {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

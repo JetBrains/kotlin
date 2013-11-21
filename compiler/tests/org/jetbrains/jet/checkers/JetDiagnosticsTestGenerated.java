@@ -3792,6 +3792,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inline/nothingToInline.kt");
             }
             
+            @TestMetadata("nullableFunction.kt")
+            public void testNullableFunction() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inline/nullableFunction.kt");
+            }
+            
             @TestMetadata("propagation.kt")
             public void testPropagation() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inline/propagation.kt");
