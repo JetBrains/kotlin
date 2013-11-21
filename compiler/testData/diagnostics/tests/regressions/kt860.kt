@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -NOTHING_TO_INLINE
 // KT-860 ConcurrentModificationException in frontend
 
 package kotlin.util
@@ -10,4 +11,4 @@ fun <T, U: MutableCollection<in T>> Iterator<T>.to(container: U) : U {
     return container
 }
 
-inline fun <T> Iterator<T>.toArrayList() = to(ArrayList<T>())
+fun <T> Iterator<T>.toArrayList() = to(ArrayList<T>())

@@ -1,4 +1,4 @@
-public inline fun <T: Any> iterate(initialValue: T, nextFunction: (T) -> T?): Iterator<T> =
+public fun <T: Any> iterate(initialValue: T, nextFunction: (T) -> T?): Iterator<T> =
         throw Exception("$initialValue $nextFunction")
 
 fun foo() {

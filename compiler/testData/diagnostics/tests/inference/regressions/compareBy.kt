@@ -5,5 +5,5 @@ class Item(val name: String, val rating: Int): Comparable<Item> {
 }
 
 // from standard library
-inline fun <T : Any> compareBy(<!UNUSED_PARAMETER!>a<!>: T?, <!UNUSED_PARAMETER!>b<!>: T?,
+fun <T : Any> compareBy(<!UNUSED_PARAMETER!>a<!>: T?, <!UNUSED_PARAMETER!>b<!>: T?,
                                vararg <!UNUSED_PARAMETER!>functions<!>: T.() -> Comparable<*>?): Int = throw Exception()
