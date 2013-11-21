@@ -1,0 +1,87 @@
+ClosureExpressionsTypingVisitor$1@0 {
+    <name not found> = JetTypeImpl@1['<no name provided>']
+}
+
+DescriptorResolver@2 {
+    <name not found> = JetTypeImpl@3['Runnable']
+}
+
+LazyJavaClassDescriptor@4['Runnable'] {
+    _allDescriptors = ArrayList@5[4] { DeserializedSimpleFunctionDescriptor@6['hashCode'], DeserializedSimpleFunctionDescriptor@7['toString'], JavaMethodDescriptor@8['run'], ... } // through LazyJavaClassMemberScope@9
+    _annotations = LazyJavaAnnotations@10
+    _constructors = stdlib_emptyListClass@11[empty] // through LazyJavaClassMemberScope@9
+    _functionTypeForSamInterface = JetTypeImpl@12['Function0<1>']
+    _functions('clone': Name@13) = EmptyList@14[empty] // through LazyJavaClassMemberScope@9
+    _functions('equals': Name@15) = ArrayList@16[1] { DeserializedSimpleFunctionDescriptor@17['equals'] } // through LazyJavaClassMemberScope@9
+    _functions('finalize': Name@18) = EmptyList@14[empty] // through LazyJavaClassMemberScope@9
+    _functions('getClass': Name@19) = EmptyList@14[empty] // through LazyJavaClassMemberScope@9
+    _functions('hashCode': Name@20) = ArrayList@21[1] { DeserializedSimpleFunctionDescriptor@6['hashCode'] } // through LazyJavaClassMemberScope@9
+    _functions('notify': Name@22) = EmptyList@14[empty] // through LazyJavaClassMemberScope@9
+    _functions('notifyAll': Name@23) = EmptyList@14[empty] // through LazyJavaClassMemberScope@9
+    _functions('run': Name@24) = ArrayList@25[1] { JavaMethodDescriptor@8['run'] } // through LazyJavaClassMemberScope@9
+    _functions('toString': Name@26) = ArrayList@27[1] { DeserializedSimpleFunctionDescriptor@7['toString'] } // through LazyJavaClassMemberScope@9
+    _functions('wait': Name@28) = EmptyList@14[empty] // through LazyJavaClassMemberScope@9
+    _typeConstructor = LazyJavaClassTypeConstructor@29['Runnable']
+    defaultType = JetTypeImpl@30['Runnable']
+    enumEntryIndex = LinkedHashMap@31 // through LazyJavaClassMemberScope@9
+    memberIndex = computeMemberIndex$1@32 // through LazyJavaClassMemberScope@9
+    nestedClassIndex = LinkedHashMap@33 // through LazyJavaClassMemberScope@9
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@34['<this>']
+}
+
+LazyJavaClassTypeConstructor@29['Runnable'] {
+    _parameters = ArrayList@35[empty]
+    _supertypes = ArrayList@36[1] { JetTypeImpl@37['Any'] }
+}
+
+LazyJavaClassifierType@38['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@39
+    classifier = JavaClassImpl@40['Object']
+}
+
+LazyJavaPackageFragmentProvider@41 {
+    _packageFragments('<root>': FqName@42) = LazyJavaPackageFragment@43['<root>']
+    _packageFragments('Runnable': FqName@44) = null
+    _packageFragments('Unit': FqName@45) = null
+    _packageFragments('java': FqName@46) = LazyJavaPackageFragment@47['java']
+    _packageFragments('java.lang': FqName@48) = LazyJavaPackageFragment@49['lang']
+    _packageFragments('java.lang.Runnable': FqName@50) = null
+    _packageFragments('java.lang.Unit': FqName@51) = null
+    _packageFragments('kotlin': FqName@52) = null
+    _packageFragments('kotlin.Runnable': FqName@53) = null
+    _packageFragments('kotlin.Unit': FqName@54) = null
+    _packageFragments('kotlin.io': FqName@55) = null
+    _packageFragments('kotlin.jvm': FqName@56) = null
+    _packageFragments('x': FqName@57) = null
+    topLevelClasses(JavaClassImpl@58['Runnable']) = LazyJavaClassDescriptor@4['Runnable']
+}
+
+LazyJavaPackageFragment@43['<root>'] {
+    _functions('Runnable': Name@59) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@60
+    _functions('f': Name@61) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@60
+    _functions('invoke': Name@62) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@60
+    classes('Runnable': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@60
+    classes('Unit': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@60
+    classes('f': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@60
+    classes('invoke': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@60
+    deserializedPackageScope = Empty@65 // through LazyPackageFragmentScopeForJavaPackage@60
+    memberIndex = computeMemberIndex$1@66 // through LazyPackageFragmentScopeForJavaPackage@60
+}
+
+LazyJavaPackageFragment@47['java'] {
+    _functions('lang': Name@67) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('lang': Name@69) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    deserializedPackageScope = Empty@65 // through LazyPackageFragmentScopeForJavaPackage@68
+    memberIndex = computeMemberIndex$1@70 // through LazyPackageFragmentScopeForJavaPackage@68
+}
+
+LazyJavaPackageFragment@49['lang'] {
+    _functions('Runnable': Name@59) = ArrayList@71[1] { SamConstructorDescriptor@72['Runnable'] } // through LazyPackageFragmentScopeForJavaPackage@73
+    _functions('f': Name@61) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@73
+    _functions('invoke': Name@62) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@73
+    classes('Runnable': Name@63) = LazyJavaClassDescriptor@4['Runnable'] // through LazyPackageFragmentScopeForJavaPackage@73
+    classes('f': Name@61) = null // through LazyPackageFragmentScopeForJavaPackage@73
+    classes('invoke': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@73
+    deserializedPackageScope = Empty@65 // through LazyPackageFragmentScopeForJavaPackage@73
+    memberIndex = computeMemberIndex$1@74 // through LazyPackageFragmentScopeForJavaPackage@73
+}

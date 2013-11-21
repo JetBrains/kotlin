@@ -1,0 +1,46 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['Int']
+    <name not found> = JetTypeImpl@1['Int']
+    <name not found> = JetTypeImpl@1['Int']
+    <name not found> = JetTypeImpl@2['Int']
+}
+
+LazyJavaPackageFragmentProvider@3 {
+    _packageFragments('<root>': FqName@4) = LazyJavaPackageFragment@5['<root>']
+    _packageFragments('A': FqName@6) = null
+    _packageFragments('B': FqName@7) = null
+    _packageFragments('Int': FqName@8) = null
+    _packageFragments('Pair': FqName@9) = null
+    _packageFragments('java': FqName@10) = LazyJavaPackageFragment@11['java']
+    _packageFragments('java.lang': FqName@12) = LazyJavaPackageFragment@13['lang']
+    _packageFragments('java.lang.A': FqName@14) = null
+    _packageFragments('java.lang.B': FqName@15) = null
+    _packageFragments('java.lang.Int': FqName@16) = null
+    _packageFragments('java.lang.Pair': FqName@17) = null
+    _packageFragments('kotlin': FqName@18) = null
+    _packageFragments('kotlin.A': FqName@19) = null
+    _packageFragments('kotlin.B': FqName@20) = null
+    _packageFragments('kotlin.Int': FqName@21) = null
+    _packageFragments('kotlin.Pair': FqName@22) = null
+    _packageFragments('kotlin.io': FqName@23) = null
+    _packageFragments('kotlin.jvm': FqName@24) = null
+    _packageFragments('kt234_kt973': FqName@25) = null
+    _packageFragments('kt234_kt973.A': FqName@26) = null
+    _packageFragments('kt234_kt973.B': FqName@27) = null
+    _packageFragments('kt234_kt973.Int': FqName@28) = null
+    _packageFragments('kt234_kt973.Pair': FqName@29) = null
+}
+
+LazyJavaPackageFragment@11['java'] {
+    _functions('lang': Name@30) = EmptyList@31[empty] // through LazyPackageFragmentScopeForJavaPackage@32
+    classes('lang': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@32
+    deserializedPackageScope = Empty@34 // through LazyPackageFragmentScopeForJavaPackage@32
+    memberIndex = computeMemberIndex$1@35 // through LazyPackageFragmentScopeForJavaPackage@32
+}
+
+LazyJavaPackageFragment@13['lang'] {
+    _functions('Pair': Name@36) = EmptyList@31[empty] // through LazyPackageFragmentScopeForJavaPackage@37
+    classes('Pair': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@37
+    deserializedPackageScope = Empty@34 // through LazyPackageFragmentScopeForJavaPackage@37
+    memberIndex = computeMemberIndex$1@38 // through LazyPackageFragmentScopeForJavaPackage@37
+}

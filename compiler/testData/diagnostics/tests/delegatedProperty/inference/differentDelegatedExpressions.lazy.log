@@ -1,0 +1,103 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['MyProperty<2>']
+    <name not found> = JetTypeImpl@2['MyProperty<2>']
+    <name not found> = JetTypeImpl@3['MyProperty<2>']
+    <name not found> = JetTypeImpl@4['MyProperty<2>']
+    <name not found> = JetTypeImpl@5['MyProperty<2>']
+    <name not found> = JetTypeImpl@6['MyProperty<2>']
+    <name not found> = NullableType@7
+}
+
+LazyJavaPackageFragmentProvider@8 {
+    _packageFragments('<root>': FqName@9) = LazyJavaPackageFragment@10['<root>']
+    _packageFragments('A': FqName@11) = null
+    _packageFragments('Any': FqName@12) = null
+    _packageFragments('B': FqName@13) = null
+    _packageFragments('Int': FqName@14) = null
+    _packageFragments('MyProperty': FqName@15) = null
+    _packageFragments('MyPropertyContainer': FqName@16) = null
+    _packageFragments('O': FqName@17) = null
+    _packageFragments('Outer': FqName@18) = null
+    _packageFragments('PropertyMetadata': FqName@19) = null
+    _packageFragments('R': FqName@20) = null
+    _packageFragments('String': FqName@21) = null
+    _packageFragments('T': FqName@22) = null
+    _packageFragments('baz': FqName@23) = null
+    _packageFragments('baz.A': FqName@24) = null
+    _packageFragments('baz.Any': FqName@25) = null
+    _packageFragments('baz.B': FqName@26) = null
+    _packageFragments('baz.Int': FqName@27) = null
+    _packageFragments('baz.MyProperty': FqName@28) = null
+    _packageFragments('baz.MyPropertyContainer': FqName@29) = null
+    _packageFragments('baz.O': FqName@30) = null
+    _packageFragments('baz.Outer': FqName@31) = null
+    _packageFragments('baz.PropertyMetadata': FqName@32) = null
+    _packageFragments('baz.R': FqName@33) = null
+    _packageFragments('baz.String': FqName@34) = null
+    _packageFragments('baz.T': FqName@35) = null
+    _packageFragments('java': FqName@36) = LazyJavaPackageFragment@37['java']
+    _packageFragments('java.lang': FqName@38) = LazyJavaPackageFragment@39['lang']
+    _packageFragments('java.lang.A': FqName@40) = null
+    _packageFragments('java.lang.Any': FqName@41) = null
+    _packageFragments('java.lang.B': FqName@42) = null
+    _packageFragments('java.lang.Int': FqName@43) = null
+    _packageFragments('java.lang.MyProperty': FqName@44) = null
+    _packageFragments('java.lang.MyPropertyContainer': FqName@45) = null
+    _packageFragments('java.lang.O': FqName@46) = null
+    _packageFragments('java.lang.Outer': FqName@47) = null
+    _packageFragments('java.lang.PropertyMetadata': FqName@48) = null
+    _packageFragments('java.lang.R': FqName@49) = null
+    _packageFragments('java.lang.String': FqName@50) = null
+    _packageFragments('java.lang.T': FqName@51) = null
+    _packageFragments('kotlin': FqName@52) = null
+    _packageFragments('kotlin.A': FqName@53) = null
+    _packageFragments('kotlin.Any': FqName@54) = null
+    _packageFragments('kotlin.B': FqName@55) = null
+    _packageFragments('kotlin.Int': FqName@56) = null
+    _packageFragments('kotlin.MyProperty': FqName@57) = null
+    _packageFragments('kotlin.MyPropertyContainer': FqName@58) = null
+    _packageFragments('kotlin.O': FqName@59) = null
+    _packageFragments('kotlin.Outer': FqName@60) = null
+    _packageFragments('kotlin.PropertyMetadata': FqName@61) = null
+    _packageFragments('kotlin.R': FqName@62) = null
+    _packageFragments('kotlin.String': FqName@63) = null
+    _packageFragments('kotlin.T': FqName@64) = null
+    _packageFragments('kotlin.io': FqName@65) = null
+    _packageFragments('kotlin.jvm': FqName@66) = null
+}
+
+LazyJavaPackageFragment@37['java'] {
+    _functions('lang': Name@67) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@69
+    classes('lang': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@69
+    deserializedPackageScope = Empty@71 // through LazyPackageFragmentScopeForJavaPackage@69
+    memberIndex = computeMemberIndex$1@72 // through LazyPackageFragmentScopeForJavaPackage@69
+}
+
+LazyJavaPackageFragment@39['lang'] {
+    _functions('MyProperty': Name@73) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('PropertyMetadataImpl': Name@75) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('foo': Name@76) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('get': Name@77) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('getContainer': Name@78) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('getMyConcreteProperty': Name@79) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('getMyProperty': Name@80) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('minus': Name@81) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('plus': Name@82) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('println': Name@83) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('propertyDelegated': Name@84) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    _functions('set': Name@85) = EmptyList@68[empty] // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('MyProperty': Name@73) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('PropertyMetadataImpl': Name@75) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('foo': Name@76) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('get': Name@77) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('getContainer': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('getMyConcreteProperty': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('getMyProperty': Name@80) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('minus': Name@81) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('plus': Name@82) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('println': Name@83) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('propertyDelegated': Name@84) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    classes('set': Name@85) = null // through LazyPackageFragmentScopeForJavaPackage@74
+    deserializedPackageScope = Empty@71 // through LazyPackageFragmentScopeForJavaPackage@74
+    memberIndex = computeMemberIndex$1@86 // through LazyPackageFragmentScopeForJavaPackage@74
+}

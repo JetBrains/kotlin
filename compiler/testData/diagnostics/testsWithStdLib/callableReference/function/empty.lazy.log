@@ -1,0 +1,34 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('A': FqName@3) = null
+    _packageFragments('java': FqName@4) = LazyJavaPackageFragment@5['java']
+    _packageFragments('java.lang': FqName@6) = LazyJavaPackageFragment@7['lang']
+    _packageFragments('java.lang.A': FqName@8) = null
+    _packageFragments('kotlin': FqName@9) = LazyJavaPackageFragment@10['kotlin']
+    _packageFragments('kotlin.A': FqName@11) = null
+    _packageFragments('kotlin.io': FqName@12) = LazyJavaPackageFragment@13['io']
+    _packageFragments('kotlin.io.A': FqName@14) = null
+    _packageFragments('kotlin.jvm': FqName@15) = LazyJavaPackageFragment@16['jvm']
+    _packageFragments('kotlin.jvm.A': FqName@17) = null
+}
+
+LazyJavaPackageFragment@5['java'] {
+    _functions('lang': Name@18) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@20
+    classes('lang': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@20
+    deserializedPackageScope = Empty@22 // through LazyPackageFragmentScopeForJavaPackage@20
+    memberIndex = computeMemberIndex$1@23 // through LazyPackageFragmentScopeForJavaPackage@20
+}
+
+LazyJavaPackageFragment@10['kotlin'] {
+    _functions('io': Name@24) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@25
+    _functions('jvm': Name@26) = EmptyList@19[empty] // through LazyPackageFragmentScopeForJavaPackage@25
+    classes('io': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@25
+    classes('jvm': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@25
+    deserializedPackageScope = DeserializedPackageMemberScope@29 // through LazyPackageFragmentScopeForJavaPackage@25
+    functions('io': Name@24) = EmptyList@19[empty] // through DeserializedPackageMemberScope@29
+    functions('jvm': Name@26) = EmptyList@19[empty] // through DeserializedPackageMemberScope@29
+    memberIndex = computeMemberIndex$1@30 // through LazyPackageFragmentScopeForJavaPackage@25
+    membersProtos = HashMap@31 // through DeserializedPackageMemberScope@29
+    properties('io': Name@24) = EmptyList@19[empty] // through DeserializedPackageMemberScope@29
+    properties('jvm': Name@26) = EmptyList@19[empty] // through DeserializedPackageMemberScope@29
+}

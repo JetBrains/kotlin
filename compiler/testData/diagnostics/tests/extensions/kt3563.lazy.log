@@ -1,0 +1,134 @@
+LazyJavaClassDescriptor@0['File'] {
+    _functionTypeForSamInterface = null
+    _functions('getName': Name@1) = ArrayList@2[1] { JavaMethodDescriptor@3['getName'] } // through LazyJavaClassMemberScope@4
+    _properties('getName': Name@1) = EmptyList@5[empty] // through LazyJavaClassMemberScope@4
+    _properties('name': Name@6) = EmptyList@5[empty] // through LazyJavaClassMemberScope@4
+    _typeConstructor = LazyJavaClassTypeConstructor@7['File']
+    defaultType = JetTypeImpl@8['File']
+    enumEntryIndex = LinkedHashMap@9 // through LazyJavaClassMemberScope@4
+    memberIndex = computeMemberIndex$1@10 // through LazyJavaClassMemberScope@4
+    nestedClassIndex = LinkedHashMap@11 // through LazyJavaClassMemberScope@4
+    nestedClasses('getName': Name@1) = null // through LazyJavaClassMemberScope@4
+    nestedClasses('name': Name@6) = null // through LazyJavaClassMemberScope@4
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@12['<this>']
+}
+
+LazyJavaClassDescriptor@13['Serializable'] {
+    _functions('getName': Name@14) = EmptyList@5[empty] // through LazyJavaClassMemberScope@15
+    _properties('getName': Name@1) = EmptyList@5[empty] // through LazyJavaClassMemberScope@15
+    _properties('name': Name@6) = EmptyList@5[empty] // through LazyJavaClassMemberScope@15
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Serializable']
+    memberIndex = computeMemberIndex$1@17 // through LazyJavaClassMemberScope@15
+}
+
+LazyJavaClassTypeConstructor@7['File'] {
+    _parameters = ArrayList@18[empty]
+    _supertypes = ArrayList@19[2] { LazyJavaClassifierType@20['Serializable'], LazyJavaClassifierType@21['Comparable<File>'] }
+}
+
+LazyJavaClassTypeConstructor@16['Serializable'] {
+    _parameters = ArrayList@22[empty]
+    _supertypes = ArrayList@23[1] { JetTypeImpl@24['Any'] }
+}
+
+LazyJavaClassifierType@21['Comparable<File>'] {
+    _arguments = ArrayList@25[1] { TypeProjectionImpl@26 }
+    _memberScope = SubstitutingScope@27
+    _typeConstructor = DeserializedClassTypeConstructor@28
+    classifier = JavaClassImpl@29['Comparable']
+}
+
+LazyJavaClassifierType@30['File'] {
+    _arguments = ArrayList@31[empty]
+    _nullable = 'false': Boolean@32
+    _typeConstructor = LazyJavaClassTypeConstructor@7['File']
+    classifier = JavaClassImpl@33['File']
+}
+
+LazyJavaClassifierType@34['File'] {
+    _arguments = ArrayList@35[empty]
+    _nullable = 'true': Boolean@36
+    _typeConstructor = LazyJavaClassTypeConstructor@7['File']
+    classifier = JavaClassImpl@33['File']
+}
+
+LazyJavaClassifierType@37['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@38
+    classifier = JavaClassImpl@39['Object']
+}
+
+LazyJavaClassifierType@40['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@38
+    classifier = JavaClassImpl@41['Object']
+}
+
+LazyJavaClassifierType@20['Serializable'] {
+    _arguments = ArrayList@42[empty]
+    _memberScope = LazyJavaClassMemberScope@15
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Serializable']
+    classifier = JavaClassImpl@43['Serializable']
+}
+
+LazyJavaClassifierType@44['String'] {
+    _arguments = ArrayList@45[empty]
+    _nullable = 'false': Boolean@32
+    _typeConstructor = DeserializedClassTypeConstructor@46
+    classifier = JavaClassImpl@47['String']
+}
+
+LazyJavaClassifierType@48['String'] {
+    _arguments = ArrayList@49[empty]
+    _nullable = 'true': Boolean@36
+    _typeConstructor = DeserializedClassTypeConstructor@46
+    classifier = JavaClassImpl@47['String']
+}
+
+LazyJavaPackageFragmentProvider@50 {
+    _packageFragments('<root>': FqName@51) = LazyJavaPackageFragment@52['<root>']
+    _packageFragments('Customer': FqName@53) = null
+    _packageFragments('File': FqName@54) = null
+    _packageFragments('String': FqName@55) = null
+    _packageFragments('bar': FqName@56) = null
+    _packageFragments('bar.Customer': FqName@57) = null
+    _packageFragments('bar.File': FqName@58) = null
+    _packageFragments('bar.String': FqName@59) = null
+    _packageFragments('bar.name': FqName@60) = null
+    _packageFragments('java': FqName@61) = LazyJavaPackageFragment@62['java']
+    _packageFragments('java.io': FqName@63) = LazyJavaPackageFragment@64['io']
+    _packageFragments('java.io.File': FqName@65) = null
+    _packageFragments('java.lang': FqName@66) = LazyJavaPackageFragment@67['lang']
+    _packageFragments('java.lang.Customer': FqName@68) = null
+    _packageFragments('java.lang.File': FqName@69) = null
+    _packageFragments('java.lang.String': FqName@70) = null
+    _packageFragments('kotlin': FqName@71) = null
+    _packageFragments('kotlin.Customer': FqName@72) = null
+    _packageFragments('kotlin.File': FqName@73) = null
+    _packageFragments('kotlin.String': FqName@74) = null
+    _packageFragments('kotlin.io': FqName@75) = null
+    _packageFragments('kotlin.jvm': FqName@76) = null
+    topLevelClasses(JavaClassImpl@77['File']) = LazyJavaClassDescriptor@0['File']
+    topLevelClasses(JavaClassImpl@43['Serializable']) = LazyJavaClassDescriptor@13['Serializable']
+}
+
+LazyJavaPackageFragment@64['io'] {
+    _functions('File': Name@78) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@79
+    classes('File': Name@80) = LazyJavaClassDescriptor@0['File'] // through LazyPackageFragmentScopeForJavaPackage@79
+    deserializedPackageScope = Empty@81 // through LazyPackageFragmentScopeForJavaPackage@79
+    memberIndex = computeMemberIndex$1@82 // through LazyPackageFragmentScopeForJavaPackage@79
+}
+
+LazyJavaPackageFragment@62['java'] {
+    _functions('io': Name@83) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@84
+    _functions('lang': Name@85) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@84
+    classes('io': Name@86) = null // through LazyPackageFragmentScopeForJavaPackage@84
+    classes('lang': Name@87) = null // through LazyPackageFragmentScopeForJavaPackage@84
+    deserializedPackageScope = Empty@81 // through LazyPackageFragmentScopeForJavaPackage@84
+    memberIndex = computeMemberIndex$1@88 // through LazyPackageFragmentScopeForJavaPackage@84
+}
+
+LazyJavaPackageFragment@67['lang'] {
+    _functions('getName': Name@1) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@89
+    classes('getName': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@89
+    deserializedPackageScope = Empty@81 // through LazyPackageFragmentScopeForJavaPackage@89
+    memberIndex = computeMemberIndex$1@90 // through LazyPackageFragmentScopeForJavaPackage@89
+}

@@ -1,0 +1,32 @@
+LazyAnnotationDescriptor@0 {
+    _resolutionResults = OverloadResolutionResultsImpl@1
+    _type = ErrorTypeImpl@2
+}
+
+LazyJavaPackageFragmentProvider@3 {
+    _packageFragments('<root>': FqName@4) = LazyJavaPackageFragment@5['<root>']
+    _packageFragments('Test': FqName@6) = null
+    _packageFragments('java': FqName@7) = LazyJavaPackageFragment@8['java']
+    _packageFragments('java.lang': FqName@9) = LazyJavaPackageFragment@10['lang']
+    _packageFragments('java.lang.someErrorAnnotation': FqName@11) = null
+    _packageFragments('kotlin': FqName@12) = null
+    _packageFragments('kotlin.io': FqName@13) = null
+    _packageFragments('kotlin.jvm': FqName@14) = null
+    _packageFragments('kotlin.someErrorAnnotation': FqName@15) = null
+    _packageFragments('someErrorAnnotation': FqName@16) = null
+}
+
+LazyJavaPackageFragment@5['<root>'] {
+    classes('someErrorAnnotation': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@18
+}
+
+LazyJavaPackageFragment@8['java'] {
+    _functions('lang': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('lang': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    deserializedPackageScope = Empty@23 // through LazyPackageFragmentScopeForJavaPackage@21
+    memberIndex = computeMemberIndex$1@24 // through LazyPackageFragmentScopeForJavaPackage@21
+}
+
+LazyJavaPackageFragment@10['lang'] {
+    classes('someErrorAnnotation': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@25
+}

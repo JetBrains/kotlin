@@ -1,0 +1,96 @@
+LazyJavaClassDescriptor@0['Iterable'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@1['Iterable']
+}
+
+LazyJavaClassTypeConstructor@1['Iterable'] {
+    _parameters = ArrayList@2[1] { LazyJavaTypeParameterDescriptor@3['T'] }
+}
+
+LazyJavaPackageFragmentProvider@4 {
+    _packageFragments('<root>': FqName@5) = LazyJavaPackageFragment@6['<root>']
+    _packageFragments('Collection': FqName@7) = null
+    _packageFragments('Int': FqName@8) = null
+    _packageFragments('List': FqName@9) = null
+    _packageFragments('R': FqName@10) = null
+    _packageFragments('String': FqName@11) = null
+    _packageFragments('T': FqName@12) = null
+    _packageFragments('i': FqName@13) = null
+    _packageFragments('i.Collection': FqName@14) = null
+    _packageFragments('i.Int': FqName@15) = null
+    _packageFragments('i.List': FqName@16) = null
+    _packageFragments('i.R': FqName@17) = null
+    _packageFragments('i.String': FqName@18) = null
+    _packageFragments('i.T': FqName@19) = null
+    _packageFragments('i.java': FqName@20) = null
+    _packageFragments('java': FqName@21) = LazyJavaPackageFragment@22['java']
+    _packageFragments('java.lang': FqName@23) = LazyJavaPackageFragment@24['lang']
+    _packageFragments('java.lang.Collection': FqName@25) = null
+    _packageFragments('java.lang.Int': FqName@26) = null
+    _packageFragments('java.lang.Iterable': FqName@27) = null
+    _packageFragments('java.lang.List': FqName@28) = null
+    _packageFragments('java.lang.R': FqName@29) = null
+    _packageFragments('java.lang.String': FqName@30) = null
+    _packageFragments('java.lang.T': FqName@31) = null
+    _packageFragments('java.util': FqName@32) = LazyJavaPackageFragment@33['util']
+    _packageFragments('java.util.Collection': FqName@34) = null
+    _packageFragments('java.util.Int': FqName@35) = null
+    _packageFragments('java.util.List': FqName@36) = null
+    _packageFragments('java.util.R': FqName@37) = null
+    _packageFragments('java.util.String': FqName@38) = null
+    _packageFragments('java.util.T': FqName@39) = null
+    _packageFragments('kotlin': FqName@40) = null
+    _packageFragments('kotlin.Collection': FqName@41) = null
+    _packageFragments('kotlin.Int': FqName@42) = null
+    _packageFragments('kotlin.List': FqName@43) = null
+    _packageFragments('kotlin.R': FqName@44) = null
+    _packageFragments('kotlin.String': FqName@45) = null
+    _packageFragments('kotlin.T': FqName@46) = null
+    _packageFragments('kotlin.io': FqName@47) = null
+    _packageFragments('kotlin.jvm': FqName@48) = null
+    topLevelClasses(JavaClassImpl@49['Collection']) = LazyJavaClassDescriptor@50['Collection']
+    topLevelClasses(JavaClassImpl@51['Iterable']) = LazyJavaClassDescriptor@0['Iterable']
+    topLevelClasses(JavaClassImpl@52['List']) = LazyJavaClassDescriptor@53['List']
+}
+
+LazyJavaPackageFragment@22['java'] {
+    _functions('lang': Name@54) = EmptyList@55[empty] // through LazyPackageFragmentScopeForJavaPackage@56
+    _functions('util': Name@57) = EmptyList@55[empty] // through LazyPackageFragmentScopeForJavaPackage@56
+    classes('lang': Name@58) = null // through LazyPackageFragmentScopeForJavaPackage@56
+    classes('util': Name@59) = null // through LazyPackageFragmentScopeForJavaPackage@56
+    deserializedPackageScope = Empty@60 // through LazyPackageFragmentScopeForJavaPackage@56
+    memberIndex = computeMemberIndex$1@61 // through LazyPackageFragmentScopeForJavaPackage@56
+}
+
+LazyJavaPackageFragment@24['lang'] {
+    _functions('foo': Name@62) = EmptyList@55[empty] // through LazyPackageFragmentScopeForJavaPackage@63
+    _functions('map1': Name@64) = EmptyList@55[empty] // through LazyPackageFragmentScopeForJavaPackage@63
+    classes('Iterable': Name@65) = LazyJavaClassDescriptor@0['Iterable'] // through LazyPackageFragmentScopeForJavaPackage@63
+    classes('foo': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@63
+    classes('java': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@63
+    classes('map1': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@63
+    deserializedPackageScope = Empty@60 // through LazyPackageFragmentScopeForJavaPackage@63
+    memberIndex = computeMemberIndex$1@67 // through LazyPackageFragmentScopeForJavaPackage@63
+}
+
+LazyJavaPackageFragment@33['util'] {
+    _functions('foo': Name@62) = EmptyList@55[empty] // through LazyPackageFragmentScopeForJavaPackage@68
+    _functions('map1': Name@64) = EmptyList@55[empty] // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('Collection': Name@69) = LazyJavaClassDescriptor@50['Collection'] // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('Int': Name@70) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('List': Name@71) = LazyJavaClassDescriptor@53['List'] // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('String': Name@72) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('foo': Name@62) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('java': Name@66) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    classes('map1': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@68
+    deserializedPackageScope = Empty@60 // through LazyPackageFragmentScopeForJavaPackage@68
+    memberIndex = computeMemberIndex$1@73 // through LazyPackageFragmentScopeForJavaPackage@68
+}
+
+LazyJavaTypeParameterDescriptor@3['T'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@74
+    upperBounds = LinkedHashSet@75[1] { NullableType@76 }
+}
+
+LazyJavaTypeParameterResolver@77 {
+    resolve(JavaTypeParameterImpl@78['T']) = LazyJavaTypeParameterDescriptor@3['T']
+}

@@ -1,0 +1,36 @@
+ClosureExpressionsTypingVisitor$1@0 {
+    <name not found> = JetTypeImpl@1['<no name provided>']
+}
+
+DescriptorResolver@2 {
+    <name not found> = IntValue@3
+    <name not found> = JetTypeImpl@4['Any']
+    <name not found> = JetTypeImpl@5['Int']
+    <name not found> = null
+}
+
+LazyJavaPackageFragmentProvider@6 {
+    _packageFragments('<root>': FqName@7) = LazyJavaPackageFragment@8['<root>']
+    _packageFragments('A': FqName@9) = null
+    _packageFragments('B': FqName@10) = null
+    _packageFragments('C': FqName@11) = null
+    _packageFragments('D': FqName@12) = null
+    _packageFragments('H': FqName@13) = null
+    _packageFragments('K': FqName@14) = null
+    _packageFragments('N': FqName@15) = null
+    _packageFragments('P': FqName@16) = null
+    _packageFragments('R': FqName@17) = null
+    _packageFragments('java': FqName@18) = LazyJavaPackageFragment@19['java']
+    _packageFragments('java.lang': FqName@20) = LazyJavaPackageFragment@21['lang']
+    _packageFragments('kotlin': FqName@22) = null
+    _packageFragments('kotlin.io': FqName@23) = null
+    _packageFragments('kotlin.jvm': FqName@24) = null
+    _packageFragments('prop': FqName@25) = null
+}
+
+LazyJavaPackageFragment@19['java'] {
+    _functions('lang': Name@26) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@28
+    classes('lang': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@28
+    deserializedPackageScope = Empty@30 // through LazyPackageFragmentScopeForJavaPackage@28
+    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@28
+}

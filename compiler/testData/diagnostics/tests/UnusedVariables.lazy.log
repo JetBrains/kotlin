@@ -1,0 +1,76 @@
+ClosureExpressionsTypingVisitor$1@0 {
+    <name not found> = JetTypeImpl@1['<no name provided>']
+}
+
+ClosureExpressionsTypingVisitor$1@2 {
+    <name not found> = JetTypeImpl@3['<no name provided>']
+}
+
+LazyJavaPackageFragmentProvider@4 {
+    _packageFragments('<root>': FqName@5) = LazyJavaPackageFragment@6['<root>']
+    _packageFragments('Any': FqName@7) = null
+    _packageFragments('IncDec': FqName@8) = null
+    _packageFragments('Int': FqName@9) = null
+    _packageFragments('String': FqName@10) = null
+    _packageFragments('Trait': FqName@11) = null
+    _packageFragments('Unit': FqName@12) = null
+    _packageFragments('java': FqName@13) = LazyJavaPackageFragment@14['java']
+    _packageFragments('java.lang': FqName@15) = LazyJavaPackageFragment@16['lang']
+    _packageFragments('java.lang.Any': FqName@17) = null
+    _packageFragments('java.lang.IncDec': FqName@18) = null
+    _packageFragments('java.lang.Int': FqName@19) = null
+    _packageFragments('java.lang.String': FqName@20) = null
+    _packageFragments('java.lang.Trait': FqName@21) = null
+    _packageFragments('java.lang.Unit': FqName@22) = null
+    _packageFragments('kotlin': FqName@23) = null
+    _packageFragments('kotlin.Any': FqName@24) = null
+    _packageFragments('kotlin.IncDec': FqName@25) = null
+    _packageFragments('kotlin.Int': FqName@26) = null
+    _packageFragments('kotlin.String': FqName@27) = null
+    _packageFragments('kotlin.Trait': FqName@28) = null
+    _packageFragments('kotlin.Unit': FqName@29) = null
+    _packageFragments('kotlin.io': FqName@30) = null
+    _packageFragments('kotlin.jvm': FqName@31) = null
+    _packageFragments('unused_variables': FqName@32) = null
+    _packageFragments('unused_variables.Any': FqName@33) = null
+    _packageFragments('unused_variables.IncDec': FqName@34) = null
+    _packageFragments('unused_variables.Int': FqName@35) = null
+    _packageFragments('unused_variables.MyTest': FqName@36) = null
+    _packageFragments('unused_variables.String': FqName@37) = null
+    _packageFragments('unused_variables.Trait': FqName@38) = null
+    _packageFragments('unused_variables.Unit': FqName@39) = null
+}
+
+LazyJavaPackageFragment@14['java'] {
+    _functions('lang': Name@40) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@42
+    classes('lang': Name@43) = null // through LazyPackageFragmentScopeForJavaPackage@42
+    deserializedPackageScope = Empty@44 // through LazyPackageFragmentScopeForJavaPackage@42
+    memberIndex = computeMemberIndex$1@45 // through LazyPackageFragmentScopeForJavaPackage@42
+}
+
+LazyJavaPackageFragment@16['lang'] {
+    _functions('IncDec': Name@46) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    _functions('compareTo': Name@48) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    _functions('dec': Name@49) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    _functions('doSmth': Name@50) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    _functions('equals': Name@51) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    _functions('hasNext': Name@52) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    _functions('inc': Name@53) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    _functions('iterator': Name@54) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    _functions('next': Name@55) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    _functions('rangeTo': Name@56) = EmptyList@41[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('IncDec': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('a': Name@57) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('compareTo': Name@48) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('dec': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('doSmth': Name@50) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('equals': Name@51) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('hasNext': Name@52) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('inc': Name@53) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('iterator': Name@54) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('next': Name@55) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('rangeTo': Name@56) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('x': Name@58) = null // through LazyPackageFragmentScopeForJavaPackage@47
+    deserializedPackageScope = Empty@44 // through LazyPackageFragmentScopeForJavaPackage@47
+    memberIndex = computeMemberIndex$1@59 // through LazyPackageFragmentScopeForJavaPackage@47
+}

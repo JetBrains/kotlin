@@ -1,0 +1,65 @@
+LazyAnnotationDescriptor@0 {
+    _resolutionResults = OverloadResolutionResultsImpl@1
+    _type = JetTypeImpl@2['my']
+}
+
+LazyAnnotationDescriptor@3 {
+    _resolutionResults = OverloadResolutionResultsImpl@4
+    _type = JetTypeImpl@5['my1']
+    _valueArguments(ValueParameterDescriptorImpl@6['i']) = IntegerValueTypeConstant@7
+}
+
+LazyAnnotationDescriptor@8 {
+    _resolutionResults = OverloadResolutionResultsImpl@9
+    _type = JetTypeImpl@10['my1']
+}
+
+LazyAnnotationDescriptor@11 {
+    _resolutionResults = OverloadResolutionResultsImpl@12
+    _type = JetTypeImpl@13['my2']
+    _valueArguments(ValueParameterDescriptorImpl@14['i']) = IntegerValueTypeConstant@15
+}
+
+LazyAnnotationDescriptor@16 {
+    _resolutionResults = OverloadResolutionResultsImpl@17
+    _type = JetTypeImpl@18['my2']
+    _valueArguments(ValueParameterDescriptorImpl@14['i']) = null
+}
+
+LazyAnnotationDescriptor@19 {
+    _resolutionResults = OverloadResolutionResultsImpl@20
+    _type = JetTypeImpl@21['my2']
+    _valueArguments(ValueParameterDescriptorImpl@14['i']) = null
+}
+
+LazyJavaPackageFragmentProvider@22 {
+    _packageFragments('<root>': FqName@23) = LazyJavaPackageFragment@24['<root>']
+    _packageFragments('Int': FqName@25) = null
+    _packageFragments('java': FqName@26) = LazyJavaPackageFragment@27['java']
+    _packageFragments('java.lang': FqName@28) = LazyJavaPackageFragment@29['lang']
+    _packageFragments('java.lang.Int': FqName@30) = null
+    _packageFragments('java.lang.my': FqName@31) = null
+    _packageFragments('java.lang.my1': FqName@32) = null
+    _packageFragments('java.lang.my2': FqName@33) = null
+    _packageFragments('kotlin': FqName@34) = null
+    _packageFragments('kotlin.Int': FqName@35) = null
+    _packageFragments('kotlin.io': FqName@36) = null
+    _packageFragments('kotlin.jvm': FqName@37) = null
+    _packageFragments('kotlin.my': FqName@38) = null
+    _packageFragments('kotlin.my1': FqName@39) = null
+    _packageFragments('kotlin.my2': FqName@40) = null
+    _packageFragments('my': FqName@41) = null
+    _packageFragments('my1': FqName@42) = null
+    _packageFragments('my2': FqName@43) = null
+}
+
+LazyJavaPackageFragment@24['<root>'] {
+    classes('Int': Name@44) = null // through LazyPackageFragmentScopeForJavaPackage@45
+}
+
+LazyJavaPackageFragment@27['java'] {
+    _functions('lang': Name@46) = EmptyList@47[empty] // through LazyPackageFragmentScopeForJavaPackage@48
+    classes('lang': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@48
+    deserializedPackageScope = Empty@50 // through LazyPackageFragmentScopeForJavaPackage@48
+    memberIndex = computeMemberIndex$1@51 // through LazyPackageFragmentScopeForJavaPackage@48
+}

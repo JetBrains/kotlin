@@ -1,0 +1,78 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['Inner']
+}
+
+LazyJavaClassDescriptor@2['Inner'] {
+    _constructors = ArrayList@3[1] { JavaConstructorDescriptor@4['<init>'] } // through LazyJavaClassMemberScope@5
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@6['Inner']
+    defaultType = JetTypeImpl@7['Inner']
+}
+
+LazyJavaClassDescriptor@8['M'] {
+    _functionTypeForSamInterface = null
+    _functions('Inner': Name@9) = EmptyList@10[empty] // through LazyJavaClassMemberScope@11
+    _functions('Inner': Name@12) = EmptyList@10[empty] // through LazyJavaStaticClassScope@13
+    _properties('Inner': Name@9) = EmptyList@10[empty] // through LazyJavaClassMemberScope@11
+    _properties('Inner': Name@12) = EmptyList@10[empty] // through LazyJavaStaticClassScope@13
+    _typeConstructor = LazyJavaClassTypeConstructor@14['M']
+    defaultType = JetTypeImpl@15['M']
+    memberIndex = computeMemberIndex$1@16 // through LazyJavaClassMemberScope@11
+    memberIndex = computeMemberIndex$1@17 // through LazyJavaStaticClassScope@13
+    nestedClassIndex = LinkedHashMap@18 // through LazyJavaClassMemberScope@11
+    nestedClasses('Inner': Name@19) = LazyJavaClassDescriptor@2['Inner'] // through LazyJavaClassMemberScope@11
+}
+
+LazyJavaClassTypeConstructor@6['Inner'] {
+    _parameters = ArrayList@20[empty]
+}
+
+LazyJavaClassTypeConstructor@14['M'] {
+    _parameters = ArrayList@21[empty]
+    _supertypes = ArrayList@22[1] { JetTypeImpl@23['Any'] }
+}
+
+LazyJavaClassifierType@24['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@25
+    classifier = JavaClassImpl@26['Object']
+}
+
+LazyJavaPackageFragmentProvider@27 {
+    _packageFragments('<root>': FqName@28) = LazyJavaPackageFragment@29['<root>']
+    _packageFragments('Inner': FqName@30) = null
+    _packageFragments('a': FqName@31) = LazyJavaPackageFragment@32['a']
+    _packageFragments('a.M': FqName@33) = null
+    _packageFragments('b': FqName@34) = null
+    _packageFragments('b.Inner': FqName@35) = null
+    _packageFragments('java': FqName@36) = LazyJavaPackageFragment@37['java']
+    _packageFragments('java.lang': FqName@38) = LazyJavaPackageFragment@39['lang']
+    _packageFragments('java.lang.Inner': FqName@40) = null
+    _packageFragments('kotlin': FqName@41) = null
+    _packageFragments('kotlin.Inner': FqName@42) = null
+    _packageFragments('kotlin.io': FqName@43) = null
+    _packageFragments('kotlin.jvm': FqName@44) = null
+    topLevelClasses(JavaClassImpl@45['M']) = LazyJavaClassDescriptor@8['M']
+}
+
+LazyJavaPackageFragment@32['a'] {
+    _functions('M': Name@46) = EmptyList@10[empty] // through LazyPackageFragmentScopeForJavaPackage@47
+    classes('M': Name@48) = LazyJavaClassDescriptor@8['M'] // through LazyPackageFragmentScopeForJavaPackage@47
+    deserializedPackageScope = Empty@49 // through LazyPackageFragmentScopeForJavaPackage@47
+    memberIndex = computeMemberIndex$1@50 // through LazyPackageFragmentScopeForJavaPackage@47
+}
+
+LazyJavaPackageFragment@37['java'] {
+    _functions('lang': Name@51) = EmptyList@10[empty] // through LazyPackageFragmentScopeForJavaPackage@52
+    classes('lang': Name@53) = null // through LazyPackageFragmentScopeForJavaPackage@52
+    deserializedPackageScope = Empty@49 // through LazyPackageFragmentScopeForJavaPackage@52
+    memberIndex = computeMemberIndex$1@54 // through LazyPackageFragmentScopeForJavaPackage@52
+}
+
+LazyJavaPackageFragment@39['lang'] {
+    _functions('Inner': Name@55) = EmptyList@10[empty] // through LazyPackageFragmentScopeForJavaPackage@56
+    _functions('doSmth': Name@57) = EmptyList@10[empty] // through LazyPackageFragmentScopeForJavaPackage@56
+    classes('Inner': Name@55) = null // through LazyPackageFragmentScopeForJavaPackage@56
+    classes('doSmth': Name@57) = null // through LazyPackageFragmentScopeForJavaPackage@56
+    deserializedPackageScope = Empty@49 // through LazyPackageFragmentScopeForJavaPackage@56
+    memberIndex = computeMemberIndex$1@58 // through LazyPackageFragmentScopeForJavaPackage@56
+}

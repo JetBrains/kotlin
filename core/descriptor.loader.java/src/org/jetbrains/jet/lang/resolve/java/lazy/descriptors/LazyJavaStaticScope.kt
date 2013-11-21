@@ -93,13 +93,13 @@ public class LazyPackageFragmentScopeForJavaPackage(
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
         name ->
         val classId = ClassId(packageFragment.fqName, SpecialNames.safeIdentifier(name))
-        val (jClass, kClass) = c.findClassInJava(classId)
+        val (jClass, kClass) = this.c.findClassInJava(classId)
         if (kClass != null)
             kClass
         else if (jClass == null)
             null
         else {
-            val classDescriptor = c.javaClassResolver.resolveClass(jClass)
+            val classDescriptor = this.c.javaClassResolver.resolveClass(jClass)
             assert(classDescriptor == null || classDescriptor.getContainingDeclaration() == packageFragment,
                    "Wrong package fragment for $classDescriptor, expected $packageFragment")
             classDescriptor

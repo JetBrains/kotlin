@@ -1,0 +1,30 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('Int': FqName@3) = null
+    _packageFragments('X': FqName@4) = null
+    _packageFragments('Y': FqName@5) = null
+    _packageFragments('Z1': FqName@6) = null
+    _packageFragments('Z1O': FqName@7) = null
+    _packageFragments('java': FqName@8) = LazyJavaPackageFragment@9['java']
+    _packageFragments('java.lang': FqName@10) = LazyJavaPackageFragment@11['lang']
+    _packageFragments('java.lang.Int': FqName@12) = null
+    _packageFragments('java.lang.X': FqName@13) = null
+    _packageFragments('java.lang.Y': FqName@14) = null
+    _packageFragments('kotlin': FqName@15) = null
+    _packageFragments('kotlin.Int': FqName@16) = null
+    _packageFragments('kotlin.X': FqName@17) = null
+    _packageFragments('kotlin.Y': FqName@18) = null
+    _packageFragments('kotlin.io': FqName@19) = null
+    _packageFragments('kotlin.jvm': FqName@20) = null
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    classes('Int': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@22
+}
+
+LazyJavaPackageFragment@9['java'] {
+    _functions('lang': Name@23) = EmptyList@24[empty] // through LazyPackageFragmentScopeForJavaPackage@25
+    classes('lang': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@25
+    deserializedPackageScope = Empty@27 // through LazyPackageFragmentScopeForJavaPackage@25
+    memberIndex = computeMemberIndex$1@28 // through LazyPackageFragmentScopeForJavaPackage@25
+}

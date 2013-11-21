@@ -1,0 +1,42 @@
+LazyAnnotationDescriptor@0 {
+    _resolutionResults = OverloadResolutionResultsImpl@1
+    _type = JetTypeImpl@2['tailRecursive']
+}
+
+LazyJavaPackageFragmentProvider@3 {
+    _packageFragments('<root>': FqName@4) = LazyJavaPackageFragment@5['<root>']
+    _packageFragments('String': FqName@6) = null
+    _packageFragments('java': FqName@7) = LazyJavaPackageFragment@8['java']
+    _packageFragments('java.lang': FqName@9) = LazyJavaPackageFragment@10['lang']
+    _packageFragments('java.lang.String': FqName@11) = null
+    _packageFragments('java.lang.tailRecursive': FqName@12) = null
+    _packageFragments('kotlin': FqName@13) = null
+    _packageFragments('kotlin.String': FqName@14) = null
+    _packageFragments('kotlin.io': FqName@15) = null
+    _packageFragments('kotlin.jvm': FqName@16) = null
+    _packageFragments('kotlin.tailRecursive': FqName@17) = null
+    _packageFragments('tailRecursive': FqName@18) = null
+}
+
+LazyJavaPackageFragment@5['<root>'] {
+    _functions('noTails': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('String': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('noTails': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('tailRecursive': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    deserializedPackageScope = Empty@24 // through LazyPackageFragmentScopeForJavaPackage@21
+    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@21
+}
+
+LazyJavaPackageFragment@8['java'] {
+    _functions('lang': Name@26) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@27
+    classes('lang': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    deserializedPackageScope = Empty@24 // through LazyPackageFragmentScopeForJavaPackage@27
+    memberIndex = computeMemberIndex$1@29 // through LazyPackageFragmentScopeForJavaPackage@27
+}
+
+LazyJavaPackageFragment@10['lang'] {
+    _functions('noTails': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@30
+    classes('noTails': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@30
+    deserializedPackageScope = Empty@24 // through LazyPackageFragmentScopeForJavaPackage@30
+    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@30
+}

@@ -1,0 +1,46 @@
+LazyJavaClassDescriptor@0['Exception'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@1['Exception']
+}
+
+LazyJavaClassTypeConstructor@1['Exception'] {
+    _parameters = ArrayList@2[empty]
+    _supertypes = ArrayList@3[1] { LazyJavaClassifierType@4['Throwable'] }
+}
+
+LazyJavaClassifierType@4['Throwable'] {
+    _arguments = ArrayList@5[empty]
+    _typeConstructor = DeserializedClassTypeConstructor@6
+    classifier = JavaClassImpl@7['Throwable']
+}
+
+LazyJavaPackageFragmentProvider@8 {
+    _packageFragments('<root>': FqName@9) = LazyJavaPackageFragment@10['<root>']
+    _packageFragments('Exception': FqName@11) = null
+    _packageFragments('Int': FqName@12) = null
+    _packageFragments('java': FqName@13) = LazyJavaPackageFragment@14['java']
+    _packageFragments('java.lang': FqName@15) = LazyJavaPackageFragment@16['lang']
+    _packageFragments('java.lang.Exception': FqName@17) = null
+    _packageFragments('java.lang.Int': FqName@18) = null
+    _packageFragments('kotlin': FqName@19) = null
+    _packageFragments('kotlin.Exception': FqName@20) = null
+    _packageFragments('kotlin.Int': FqName@21) = null
+    _packageFragments('kotlin.io': FqName@22) = null
+    _packageFragments('kotlin.jvm': FqName@23) = null
+    topLevelClasses(JavaClassImpl@24['Exception']) = LazyJavaClassDescriptor@0['Exception']
+}
+
+LazyJavaPackageFragment@10['<root>'] {
+    classes('Exception': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@26
+    classes('Int': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@26
+}
+
+LazyJavaPackageFragment@14['java'] {
+    _functions('lang': Name@28) = EmptyList@29[empty] // through LazyPackageFragmentScopeForJavaPackage@30
+    classes('lang': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@30
+    deserializedPackageScope = Empty@32 // through LazyPackageFragmentScopeForJavaPackage@30
+    memberIndex = computeMemberIndex$1@33 // through LazyPackageFragmentScopeForJavaPackage@30
+}
+
+LazyJavaPackageFragment@16['lang'] {
+    classes('Exception': Name@25) = LazyJavaClassDescriptor@0['Exception'] // through LazyPackageFragmentScopeForJavaPackage@34
+}

@@ -1,0 +1,35 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('$a': FqName@1) = null
+    _packageFragments('<root>': FqName@2) = LazyJavaPackageFragment@3['<root>']
+    _packageFragments('Cl': FqName@4) = null
+    _packageFragments('java': FqName@5) = LazyJavaPackageFragment@6['java']
+    _packageFragments('java.lang': FqName@7) = LazyJavaPackageFragment@8['lang']
+    _packageFragments('java.lang.$a': FqName@9) = null
+    _packageFragments('kotlin': FqName@10) = null
+    _packageFragments('kotlin.$a': FqName@11) = null
+    _packageFragments('kotlin.io': FqName@12) = null
+    _packageFragments('kotlin.jvm': FqName@13) = null
+}
+
+LazyJavaPackageFragment@3['<root>'] {
+    _functions('$a': Name@14) = EmptyList@15[empty] // through LazyPackageFragmentScopeForJavaPackage@16
+    classes('$a': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@16
+    classes('a': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@16
+    deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@16
+    memberIndex = computeMemberIndex$1@20 // through LazyPackageFragmentScopeForJavaPackage@16
+}
+
+LazyJavaPackageFragment@6['java'] {
+    _functions('lang': Name@21) = EmptyList@15[empty] // through LazyPackageFragmentScopeForJavaPackage@22
+    classes('lang': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@22
+    deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@22
+    memberIndex = computeMemberIndex$1@24 // through LazyPackageFragmentScopeForJavaPackage@22
+}
+
+LazyJavaPackageFragment@8['lang'] {
+    _functions('$a': Name@14) = EmptyList@15[empty] // through LazyPackageFragmentScopeForJavaPackage@25
+    classes('$a': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@25
+    classes('a': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@25
+    deserializedPackageScope = Empty@19 // through LazyPackageFragmentScopeForJavaPackage@25
+    memberIndex = computeMemberIndex$1@26 // through LazyPackageFragmentScopeForJavaPackage@25
+}

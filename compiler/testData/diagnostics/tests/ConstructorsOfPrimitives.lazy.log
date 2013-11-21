@@ -1,0 +1,87 @@
+LazyJavaClassDescriptor@0['Boolean'] {
+    _functionTypeForSamInterface = null
+}
+
+LazyJavaClassDescriptor@1['Byte'] {
+    _functionTypeForSamInterface = null
+}
+
+LazyJavaClassDescriptor@2['Double'] {
+    _functionTypeForSamInterface = null
+}
+
+LazyJavaClassDescriptor@3['Float'] {
+    _functionTypeForSamInterface = null
+}
+
+LazyJavaClassDescriptor@4['Long'] {
+    _functionTypeForSamInterface = null
+}
+
+LazyJavaClassDescriptor@5['Short'] {
+    _functionTypeForSamInterface = null
+}
+
+LazyJavaPackageFragmentProvider@6 {
+    _packageFragments('<root>': FqName@7) = LazyJavaPackageFragment@8['<root>']
+    _packageFragments('java': FqName@9) = LazyJavaPackageFragment@10['java']
+    _packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
+    _packageFragments('kotlin': FqName@13) = null
+    _packageFragments('kotlin.io': FqName@14) = null
+    _packageFragments('kotlin.jvm': FqName@15) = null
+    topLevelClasses(JavaClassImpl@16['Boolean']) = LazyJavaClassDescriptor@0['Boolean']
+    topLevelClasses(JavaClassImpl@17['Byte']) = LazyJavaClassDescriptor@1['Byte']
+    topLevelClasses(JavaClassImpl@18['Double']) = LazyJavaClassDescriptor@2['Double']
+    topLevelClasses(JavaClassImpl@19['Float']) = LazyJavaClassDescriptor@3['Float']
+    topLevelClasses(JavaClassImpl@20['Long']) = LazyJavaClassDescriptor@4['Long']
+    topLevelClasses(JavaClassImpl@21['Short']) = LazyJavaClassDescriptor@5['Short']
+}
+
+LazyJavaPackageFragment@8['<root>'] {
+    _functions('Boolean': Name@22) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    _functions('Byte': Name@25) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    _functions('Char': Name@26) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    _functions('Double': Name@27) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    _functions('Float': Name@28) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    _functions('Int': Name@29) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    _functions('Long': Name@30) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    _functions('Short': Name@31) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('Boolean': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('Byte': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('Char': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('Double': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('Float': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('Int': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('Long': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('Short': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    deserializedPackageScope = Empty@32 // through LazyPackageFragmentScopeForJavaPackage@24
+    memberIndex = computeMemberIndex$1@33 // through LazyPackageFragmentScopeForJavaPackage@24
+}
+
+LazyJavaPackageFragment@10['java'] {
+    _functions('lang': Name@34) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('lang': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@35
+    deserializedPackageScope = Empty@32 // through LazyPackageFragmentScopeForJavaPackage@35
+    memberIndex = computeMemberIndex$1@37 // through LazyPackageFragmentScopeForJavaPackage@35
+}
+
+LazyJavaPackageFragment@12['lang'] {
+    _functions('Boolean': Name@22) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('Byte': Name@25) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('Char': Name@26) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('Double': Name@27) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('Float': Name@28) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('Int': Name@29) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('Long': Name@30) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('Short': Name@31) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('Boolean': Name@22) = LazyJavaClassDescriptor@0['Boolean'] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('Byte': Name@25) = LazyJavaClassDescriptor@1['Byte'] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('Char': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('Double': Name@27) = LazyJavaClassDescriptor@2['Double'] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('Float': Name@28) = LazyJavaClassDescriptor@3['Float'] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('Int': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('Long': Name@30) = LazyJavaClassDescriptor@4['Long'] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('Short': Name@31) = LazyJavaClassDescriptor@5['Short'] // through LazyPackageFragmentScopeForJavaPackage@38
+    deserializedPackageScope = Empty@32 // through LazyPackageFragmentScopeForJavaPackage@38
+    memberIndex = computeMemberIndex$1@39 // through LazyPackageFragmentScopeForJavaPackage@38
+}

@@ -1,0 +1,51 @@
+LazyAnnotationDescriptor@0 {
+    _resolutionResults = OverloadResolutionResultsImpl@1
+    _type = JetTypeImpl@2['Deprecated']
+}
+
+LazyAnnotationDescriptor@3 {
+    _resolutionResults = OverloadResolutionResultsImpl@4
+    _type = JetTypeImpl@5['Deprecated']
+}
+
+LazyJavaClassDescriptor@6['Deprecated'] {
+    _constructors = ArrayList@7[1] { JavaConstructorDescriptor@8['<init>'] } // through LazyJavaClassMemberScope@9
+    _typeConstructor = LazyJavaClassTypeConstructor@10['Deprecated']
+    defaultType = JetTypeImpl@11['Deprecated']
+}
+
+LazyJavaClassTypeConstructor@10['Deprecated'] {
+    _parameters = ArrayList@12[empty]
+}
+
+LazyJavaPackageFragmentProvider@13 {
+    _packageFragments('<root>': FqName@14) = LazyJavaPackageFragment@15['<root>']
+    _packageFragments('Deprecated': FqName@16) = null
+    _packageFragments('java': FqName@17) = LazyJavaPackageFragment@18['java']
+    _packageFragments('java.lang': FqName@19) = LazyJavaPackageFragment@20['lang']
+    _packageFragments('java.lang.Deprecated': FqName@21) = null
+    _packageFragments('kotlin': FqName@22) = null
+    _packageFragments('kotlin.Deprecated': FqName@23) = null
+    _packageFragments('kotlin.io': FqName@24) = null
+    _packageFragments('kotlin.jvm': FqName@25) = null
+    _packageFragments('my': FqName@26) = null
+    _packageFragments('my1': FqName@27) = null
+    topLevelClasses(JavaClassImpl@28['Deprecated']) = LazyJavaClassDescriptor@6['Deprecated']
+}
+
+LazyJavaPackageFragment@15['<root>'] {
+    classes('Deprecated': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@30
+    classes('java': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@30
+}
+
+LazyJavaPackageFragment@18['java'] {
+    _functions('lang': Name@32) = EmptyList@33[empty] // through LazyPackageFragmentScopeForJavaPackage@34
+    classes('lang': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@34
+    deserializedPackageScope = Empty@36 // through LazyPackageFragmentScopeForJavaPackage@34
+    memberIndex = computeMemberIndex$1@37 // through LazyPackageFragmentScopeForJavaPackage@34
+}
+
+LazyJavaPackageFragment@20['lang'] {
+    classes('Deprecated': Name@38) = LazyJavaClassDescriptor@6['Deprecated'] // through LazyPackageFragmentScopeForJavaPackage@39
+    classes('java': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@39
+}

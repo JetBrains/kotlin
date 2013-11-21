@@ -1,0 +1,36 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('Any': FqName@3) = null
+    _packageFragments('Boolean': FqName@4) = null
+    _packageFragments('String': FqName@5) = null
+    _packageFragments('T': FqName@6) = null
+    _packageFragments('java': FqName@7) = LazyJavaPackageFragment@8['java']
+    _packageFragments('java.lang': FqName@9) = LazyJavaPackageFragment@10['lang']
+    _packageFragments('java.lang.Any': FqName@11) = null
+    _packageFragments('java.lang.Boolean': FqName@12) = null
+    _packageFragments('java.lang.String': FqName@13) = null
+    _packageFragments('java.lang.T': FqName@14) = null
+    _packageFragments('kotlin': FqName@15) = null
+    _packageFragments('kotlin.Any': FqName@16) = null
+    _packageFragments('kotlin.Boolean': FqName@17) = null
+    _packageFragments('kotlin.String': FqName@18) = null
+    _packageFragments('kotlin.T': FqName@19) = null
+    _packageFragments('kotlin.io': FqName@20) = null
+    _packageFragments('kotlin.jvm': FqName@21) = null
+    _packageFragments('kt402': FqName@22) = null
+    _packageFragments('kt402.Any': FqName@23) = null
+    _packageFragments('kt402.Boolean': FqName@24) = null
+    _packageFragments('kt402.String': FqName@25) = null
+    _packageFragments('kt402.T': FqName@26) = null
+}
+
+LazyJavaPackageFragment@8['java'] {
+    _functions('lang': Name@27) = EmptyList@28[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('lang': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    deserializedPackageScope = Empty@31 // through LazyPackageFragmentScopeForJavaPackage@29
+    memberIndex = computeMemberIndex$1@32 // through LazyPackageFragmentScopeForJavaPackage@29
+}
+
+LazyJavaPackageFragment@10['lang'] {
+    classes('T': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@34
+}

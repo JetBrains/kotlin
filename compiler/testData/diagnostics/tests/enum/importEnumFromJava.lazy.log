@@ -1,0 +1,92 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1['TimeUnit']
+}
+
+EnumEntrySyntheticClassDescriptor@2['<class-object-for-SECONDS>'] {
+    defaultType = JetTypeImpl@3['enum entry']
+}
+
+EnumEntrySyntheticClassDescriptor@4['SECONDS'] {
+    defaultType = JetTypeImpl@5['enum entry']
+}
+
+LazyJavaClassDescriptor@6['TimeUnit'] {
+    _functionTypeForSamInterface = null
+    _properties('SECONDS': Name@7) = EmptyList@8[empty] // through LazyJavaClassMemberScope@9
+    _properties('SECONDS': Name@7) = EmptyList@8[empty] // through LazyJavaStaticClassScope@10
+    _typeConstructor = LazyJavaClassTypeConstructor@11['TimeUnit']
+    defaultType = JetTypeImpl@1['TimeUnit']
+    enumEntryIndex = LinkedHashMap@12 // through LazyJavaClassMemberScope@9
+    memberIndex = computeMemberIndex$1@13 // through LazyJavaClassMemberScope@9
+    memberIndex = computeMemberIndex$1@14 // through LazyJavaStaticClassScope@10
+    nestedClassIndex = LinkedHashMap@15 // through LazyJavaClassMemberScope@9
+    nestedClasses('SECONDS': Name@7) = EnumEntrySyntheticClassDescriptor@4['SECONDS'] // through LazyJavaClassMemberScope@9
+}
+
+LazyJavaClassTypeConstructor@11['TimeUnit'] {
+    _parameters = ArrayList@16[empty]
+    _supertypes = ArrayList@17[1] { LazyJavaClassifierType@18['Enum<TimeUnit>'] }
+}
+
+LazyJavaClassifierType@18['Enum<TimeUnit>'] {
+    _arguments = ArrayList@19[1] { TypeProjectionImpl@20 }
+    _memberScope = SubstitutingScope@21
+    _typeConstructor = DeserializedClassTypeConstructor@22
+    classifier = JavaClassImpl@23['Enum']
+}
+
+LazyJavaClassifierType@24['TimeUnit'] {
+    _arguments = ArrayList@25[empty]
+    _nullable = 'false': Boolean@26
+    _typeConstructor = LazyJavaClassTypeConstructor@11['TimeUnit']
+    classifier = JavaClassImpl@27['TimeUnit']
+}
+
+LazyJavaClassifierType@28['TimeUnit'] {
+    _arguments = ArrayList@29[empty]
+    _nullable = 'true': Boolean@30
+    _typeConstructor = LazyJavaClassTypeConstructor@11['TimeUnit']
+    classifier = JavaClassImpl@27['TimeUnit']
+}
+
+LazyJavaPackageFragmentProvider@31 {
+    _packageFragments('<root>': FqName@32) = LazyJavaPackageFragment@33['<root>']
+    _packageFragments('java': FqName@34) = LazyJavaPackageFragment@35['java']
+    _packageFragments('java.lang': FqName@36) = LazyJavaPackageFragment@37['lang']
+    _packageFragments('java.util': FqName@38) = LazyJavaPackageFragment@39['util']
+    _packageFragments('java.util.concurrent': FqName@40) = LazyJavaPackageFragment@41['concurrent']
+    _packageFragments('java.util.concurrent.TimeUnit': FqName@42) = null
+    _packageFragments('kotlin': FqName@43) = null
+    _packageFragments('kotlin.io': FqName@44) = null
+    _packageFragments('kotlin.jvm': FqName@45) = null
+    _packageFragments('test': FqName@46) = null
+    _packageFragments('test.c': FqName@47) = null
+    topLevelClasses(JavaClassImpl@48['TimeUnit']) = LazyJavaClassDescriptor@6['TimeUnit']
+}
+
+LazyJavaPackageFragment@41['concurrent'] {
+    _functions('TimeUnit': Name@49) = EmptyList@8[empty] // through LazyPackageFragmentScopeForJavaPackage@50
+    classes('TimeUnit': Name@51) = LazyJavaClassDescriptor@6['TimeUnit'] // through LazyPackageFragmentScopeForJavaPackage@50
+    deserializedPackageScope = Empty@52 // through LazyPackageFragmentScopeForJavaPackage@50
+    memberIndex = computeMemberIndex$1@53 // through LazyPackageFragmentScopeForJavaPackage@50
+}
+
+LazyJavaPackageFragment@35['java'] {
+    _functions('lang': Name@54) = EmptyList@8[empty] // through LazyPackageFragmentScopeForJavaPackage@55
+    _functions('util': Name@56) = EmptyList@8[empty] // through LazyPackageFragmentScopeForJavaPackage@55
+    classes('lang': Name@57) = null // through LazyPackageFragmentScopeForJavaPackage@55
+    classes('util': Name@58) = null // through LazyPackageFragmentScopeForJavaPackage@55
+    deserializedPackageScope = Empty@52 // through LazyPackageFragmentScopeForJavaPackage@55
+    memberIndex = computeMemberIndex$1@59 // through LazyPackageFragmentScopeForJavaPackage@55
+}
+
+LazyJavaPackageFragment@37['lang'] {
+    deserializedPackageScope = Empty@52 // through LazyPackageFragmentScopeForJavaPackage@60
+}
+
+LazyJavaPackageFragment@39['util'] {
+    _functions('concurrent': Name@61) = EmptyList@8[empty] // through LazyPackageFragmentScopeForJavaPackage@62
+    classes('concurrent': Name@63) = null // through LazyPackageFragmentScopeForJavaPackage@62
+    deserializedPackageScope = Empty@52 // through LazyPackageFragmentScopeForJavaPackage@62
+    memberIndex = computeMemberIndex$1@64 // through LazyPackageFragmentScopeForJavaPackage@62
+}
