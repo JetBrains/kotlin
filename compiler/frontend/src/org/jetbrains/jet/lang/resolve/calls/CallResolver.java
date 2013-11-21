@@ -361,7 +361,7 @@ public class CallResolver {
         if (results.isSingleResult()) {
             Set<ValueArgument> unmappedArguments = results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments();
             argumentTypeResolver.checkUnmappedArgumentTypes(context, unmappedArguments);
-            candidateResolver.completeNestedCallsForNotResolvedInvocation(context, unmappedArguments);
+            candidateResolver.completeUnmappedArguments(context, unmappedArguments);
         }
 
         if (!results.isSingleResult()) return results;

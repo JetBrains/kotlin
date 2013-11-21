@@ -334,6 +334,7 @@ public class CandidateResolver {
                 completeInferenceForArgument(argument, parameterDescriptor, context);
             }
         }
+        completeUnmappedArguments(context, context.candidateCall.getUnmappedArguments());
         recordReferenceForInvokeFunction(context);
     }
 
@@ -386,7 +387,11 @@ public class CandidateResolver {
         completeNestedCallsForNotResolvedInvocation(context, context.call.getValueArguments());
     }
 
-    public void completeNestedCallsForNotResolvedInvocation(@NotNull CallResolutionContext<?> context, @NotNull Collection<? extends ValueArgument> arguments) {
+    public void completeUnmappedArguments(@NotNull CallResolutionContext<?> context, @NotNull Collection<? extends ValueArgument> unmappedArguments) {
+        completeNestedCallsForNotResolvedInvocation(context, unmappedArguments);
+    }
+
+    private void completeNestedCallsForNotResolvedInvocation(@NotNull CallResolutionContext<?> context, @NotNull Collection<? extends ValueArgument> arguments) {
         if (context.call.getCallType() == Call.CallType.INVOKE) return;
         if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return;
 
@@ -400,7 +405,10 @@ public class CandidateResolver {
                     context.resolutionResultsCache.getDeferredComputation(keyExpression);
             if (storedContextForArgument != null) {
                 completeNestedCallsForNotResolvedInvocation(storedContextForArgument);
-                argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(storedContextForArgument.replaceBindingTrace(context.trace));
+                CallCandidateResolutionContext<? extends CallableDescriptor> newContext =
+                        storedContextForArgument.replaceBindingTrace(context.trace);
+                completeUnmappedArguments(newContext, storedContextForArgument.candidateCall.getUnmappedArguments());
+                argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(newContext.replaceContextDependency(INDEPENDENT));
             }
         }
     }
