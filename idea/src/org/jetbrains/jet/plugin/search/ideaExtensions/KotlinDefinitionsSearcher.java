@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.search;
+package org.jetbrains.jet.plugin.search.ideaExtensions;
 
 import com.intellij.codeInsight.navigation.MethodImplementationsSearch;
 import com.intellij.openapi.application.ApplicationManager;

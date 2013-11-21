@@ -331,11 +331,11 @@
 
     <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.JetCodeBlockModificationListener"/>
 
-    <referencesSearch implementation="org.jetbrains.jet.plugin.search.KotlinReferencesSearcher"/>
-    <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.KotlinDirectInheritorsSearcher"/>
-    <definitionsScopedSearch implementation="org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher"/>
-    <annotatedElementsSearch implementation="org.jetbrains.jet.plugin.search.KotlinAnnotatedElementsSearcher"/>
-    <methodReferencesSearch implementation="org.jetbrains.jet.plugin.search.KotlinLightMethodUsagesSearcher"/>
+    <referencesSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinReferencesSearcher"/>
+    <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
+    <definitionsScopedSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher"/>
+    <annotatedElementsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
+    <methodReferencesSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinLightMethodUsagesSearcher"/>
 
     <exceptionFilter implementation="org.jetbrains.jet.plugin.filters.JetExceptionFilterFactory" order="first"/>
 
@@ -361,7 +361,7 @@
 
     <targetElementEvaluator
         language="jet"
-        implementationClass="org.jetbrains.jet.plugin.search.JetTargetElementEvaluator" />
+        implementationClass="org.jetbrains.jet.plugin.search.ideaExtensions.JetTargetElementEvaluator" />
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction</className>

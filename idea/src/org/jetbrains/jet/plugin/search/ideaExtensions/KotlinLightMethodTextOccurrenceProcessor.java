@@ -1,4 +1,4 @@
-package org.jetbrains.jet.plugin.search;
+package org.jetbrains.jet.plugin.search.ideaExtensions;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;

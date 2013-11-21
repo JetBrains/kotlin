@@ -63,7 +63,7 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.search.KotlinDefinitionsSearcher;
+import org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
