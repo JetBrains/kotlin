@@ -2542,6 +2542,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/enum/entryShouldBeOfEnumType.kt");
             }
             
+            @TestMetadata("enumEntryCannotHaveClassObject.kt")
+            public void testEnumEntryCannotHaveClassObject() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/enumEntryCannotHaveClassObject.kt");
+            }
+            
             @TestMetadata("enumInheritance.kt")
             public void testEnumInheritance() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/enum/enumInheritance.kt");

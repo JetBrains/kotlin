@@ -45,6 +45,8 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
@@ -508,11 +510,16 @@ public class TypeHierarchyResolver {
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
             if (objectDeclaration == null) return;
 
-            MutableClassDescriptor classObjectDescriptor =
-                    createClassDescriptorForSingleton(objectDeclaration, getClassObjectName(owner.getOwnerForChildren().getName()),
-                                                      ClassKind.CLASS_OBJECT);
+            DeclarationDescriptor container = owner.getOwnerForChildren();
 
-            NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
+            MutableClassDescriptor classObjectDescriptor =
+                    createClassDescriptorForSingleton(objectDeclaration, getClassObjectName(container.getName()), ClassKind.CLASS_OBJECT);
+
+            NamespaceLikeBuilder.ClassObjectStatus status =
+                    isEnumEntry(container) || isObject(container) ?
+                    NamespaceLikeBuilder.ClassObjectStatus.NOT_ALLOWED :
+                    owner.setClassObjectDescriptor(classObjectDescriptor);
+
             switch (status) {
                 case DUPLICATE:
                     trace.report(MANY_CLASS_OBJECTS.on(classObject));
