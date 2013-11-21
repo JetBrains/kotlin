@@ -125,7 +125,6 @@ message Class {
   // we store only names, because the actual information must reside in the corresponding .class files,
   // to be obtainable through reflection at runtime
   repeated int32 nested_class_name = 7;
-  repeated int32 nested_object_name = 8;
 
   repeated Callable member = 11;
 
