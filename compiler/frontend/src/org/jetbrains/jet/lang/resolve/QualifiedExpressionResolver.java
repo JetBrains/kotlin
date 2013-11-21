@@ -111,9 +111,7 @@ public class QualifiedExpressionResolver {
         }
 
         for (DeclarationDescriptor descriptor : descriptors) {
-            if (!DescriptorUtils.isSingleton(descriptor)) {
-                importer.addAliasImport(descriptor, aliasName);
-            }
+            importer.addAliasImport(descriptor, aliasName);
         }
 
         return descriptors;

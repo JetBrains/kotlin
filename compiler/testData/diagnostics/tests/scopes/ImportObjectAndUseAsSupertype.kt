@@ -12,7 +12,7 @@ package baz
 
 import foo.Bar
 
-class C: <!UNRESOLVED_REFERENCE!>Bar<!>
+class C: <!SUPERTYPE_NOT_INITIALIZED, FINAL_SUPERTYPE!>Bar<!>
 
 fun test() {
     Bar.bar()
