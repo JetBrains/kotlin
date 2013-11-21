@@ -166,7 +166,7 @@ public abstract class JavaBaseScope extends JetScopeImpl {
     private static Collection<ClassDescriptor> filterObjects(@NotNull Collection<ClassDescriptor> classes, boolean objects) {
         List<ClassDescriptor> result = new ArrayList<ClassDescriptor>();
         for (ClassDescriptor descriptor : classes) {
-            if (descriptor.getKind().isObject() == objects) {
+            if (descriptor.getKind().isSingleton() == objects) {
                 result.add(descriptor);
             }
         }

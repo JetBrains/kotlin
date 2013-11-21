@@ -356,7 +356,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         ConstructorDescriptor primaryConstructor = null;
         if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
             JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-            if (!thisDescriptor.getKind().isObject()) {
+            if (!thisDescriptor.getKind().isSingleton()) {
                 JetClass jetClass = (JetClass) classOrObject;
                 ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
                         .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),

@@ -612,7 +612,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderAnnotations(klass, builder);
             renderVisibility(klass.getVisibility(), builder);
             if (!(klass.getKind() == ClassKind.TRAIT && klass.getModality() == Modality.ABSTRACT
-                || klass.getKind().isObject() && klass.getModality() == Modality.FINAL)) {
+                || klass.getKind().isSingleton() && klass.getModality() == Modality.FINAL)) {
                 renderModality(klass.getModality(), builder);
             }
             renderInner(klass.isInner(), builder);
@@ -627,7 +627,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         List<TypeParameterDescriptor> typeParameters = klass.getTypeConstructor().getParameters();
         renderTypeParameters(typeParameters, builder, false);
 
-        if (!klass.getKind().isObject() && classWithPrimaryConstructor) {
+        if (!klass.getKind().isSingleton() && classWithPrimaryConstructor) {
             ConstructorDescriptor primaryConstructor = klass.getUnsubstitutedPrimaryConstructor();
             if (primaryConstructor != null) {
                 renderValueParameters(primaryConstructor, builder);

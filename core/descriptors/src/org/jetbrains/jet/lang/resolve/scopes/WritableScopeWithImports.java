@@ -216,7 +216,7 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     public void importClassifierAlias(@NotNull Name importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         checkMayWrite();
 
-        if (DescriptorUtils.isObject(classifierDescriptor)) {
+        if (DescriptorUtils.isSingleton(classifierDescriptor)) {
             throw new IllegalStateException("must not be object: " + classifierDescriptor);
         }
 

@@ -183,7 +183,7 @@ public class CandidateResolver {
         if (context.call.getExplicitReceiver().exists() || context.call.getThisObject().exists()) return true;
 
         ClassDescriptor candidateThis = getDeclaringClass(context.candidateCall.getCandidateDescriptor());
-        if (candidateThis == null || candidateThis.getKind().isObject()) return true;
+        if (candidateThis == null || candidateThis.getKind().isSingleton()) return true;
 
         return DescriptorResolver.checkHasOuterClassInstance(context.scope, context.trace, context.call.getCallElement(), candidateThis);
     }

@@ -238,10 +238,10 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ENUM_ENTRY);
     }
 
-    public static boolean isObject(@NotNull DeclarationDescriptor classifier) {
+    public static boolean isSingleton(@NotNull DeclarationDescriptor classifier) {
         if (classifier instanceof ClassDescriptor) {
             ClassDescriptor clazz = (ClassDescriptor) classifier;
-            return clazz.getKind().isObject();
+            return clazz.getKind().isSingleton();
         }
         return false;
     }
@@ -304,7 +304,7 @@ public class DescriptorUtils {
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
-            if (classDescriptor.getKind().isObject()) {
+            if (classDescriptor.getKind().isSingleton()) {
                 return inStaticContext(classDescriptor.getContainingDeclaration());
             }
 
@@ -328,7 +328,7 @@ public class DescriptorUtils {
         if (classKind == ClassKind.ENUM_CLASS) {
             return Visibilities.PRIVATE;
         }
-        if (classKind.isObject()) {
+        if (classKind.isSingleton()) {
             return Visibilities.PRIVATE;
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.TRAIT || classKind == ClassKind.ANNOTATION_CLASS;
@@ -421,7 +421,7 @@ public class DescriptorUtils {
         return descriptor instanceof ClassDescriptor &&
                containing instanceof ClassDescriptor &&
                !((ClassDescriptor) descriptor).isInner() &&
-               !((ClassDescriptor) containing).getKind().isObject();
+               !((ClassDescriptor) containing).getKind().isSingleton();
     }
 
     @Nullable

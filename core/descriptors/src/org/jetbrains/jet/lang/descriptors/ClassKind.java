@@ -25,7 +25,7 @@ public enum ClassKind {
     OBJECT,
     CLASS_OBJECT;
 
-    public boolean isObject() {
+    public boolean isSingleton() {
         return this == OBJECT || this == CLASS_OBJECT || this == ENUM_ENTRY;
     }
 }

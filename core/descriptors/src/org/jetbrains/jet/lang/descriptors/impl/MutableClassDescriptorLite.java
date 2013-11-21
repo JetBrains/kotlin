@@ -252,7 +252,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
                 @Override
                 public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-                    if (getKind().isObject() || isInner()) {
+                    if (getKind().isSingleton() || isInner()) {
                         return ClassObjectStatus.NOT_ALLOWED;
                     }
 

@@ -136,7 +136,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     @Nullable
     private DeclarationDescriptor findCurrentDescriptorForClass(@NotNull ClassDescriptor originalDescriptor) {
-        if (originalDescriptor.getKind().isObject()) {
+        if (originalDescriptor.getKind().isSingleton()) {
             DeclarationDescriptor currentParent = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
             if (currentParent == null) return null;
             return ((ClassDescriptor) currentParent).getClassObjectDescriptor();

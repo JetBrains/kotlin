@@ -115,7 +115,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         this.kind = classLikeInfo.getClassKind();
 
         JetModifierList modifierList = classLikeInfo.getModifierList();
-        if (kind.isObject()) {
+        if (kind.isSingleton()) {
             this.modality = Modality.FINAL;
         }
         else {

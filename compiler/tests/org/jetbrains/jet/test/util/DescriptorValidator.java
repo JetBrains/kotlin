@@ -396,7 +396,7 @@ public class DescriptorValidator {
         public Void visitClassDescriptor(
                 ClassDescriptor descriptor, JetScope scope
         ) {
-            if (descriptor.getKind().isObject()) {
+            if (descriptor.getKind().isSingleton()) {
                 assertFound(scope, descriptor, scope.getObjectDescriptor(descriptor.getName()));
             }
             else {

@@ -37,7 +37,8 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForTypeConstructor;
 import static org.jetbrains.jet.lang.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createClassObjectInitializer;
@@ -137,7 +138,7 @@ public final class ClassTranslator extends AbstractTranslator {
         if (!isTopLevelDeclaration) {
             qualifiedReference = null;
         }
-        else if (descriptor.getKind().isObject()) {
+        else if (descriptor.getKind().isSingleton()) {
             qualifiedReference = null;
             declarationContext.literalFunctionTranslator().setDefinitionPlace(
                     new NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>() {
