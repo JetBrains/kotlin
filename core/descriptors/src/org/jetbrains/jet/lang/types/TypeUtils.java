@@ -84,6 +84,7 @@ public class TypeUtils {
             return false;
         }
 
+        @NotNull
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             throw new IllegalStateException(name);

@@ -26,6 +26,7 @@ import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
+import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
 import java.util.List;
@@ -62,9 +63,9 @@ public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
             @NotNull EcmaVersion version,
             @NotNull TestConfigFactory configFactory
     ) throws Exception {
-        K2JSTranslator.translateWithMainCallParametersAndSaveToFile(mainCallParameters, createJetFileList(project, files, null),
-                                                                    outputFile, outputPrefixFile, outputPostfixFile,
-                                                                    getConfig(project, version, configFactory));
+        TranslationUtils.translateFiles(mainCallParameters, createJetFileList(project, files, null),
+                                        outputFile, outputPrefixFile, outputPostfixFile,
+                                        getConfig(project, version, configFactory));
     }
 
     @Override

@@ -10,8 +10,8 @@ public final enum class Enum : jet.Enum<test.Enum> {
         public final val A: test.Enum
         public final val B: test.Enum
         public final val C: test.Enum
-        public final fun valueOf(/*0*/ value: jet.String): test.Enum
-        public final fun values(): jet.Array<test.Enum>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.Enum
+        public final /*synthesized*/ fun values(): jet.Array<test.Enum>
     }
     
     public open inner class Inner : java.lang.Object {

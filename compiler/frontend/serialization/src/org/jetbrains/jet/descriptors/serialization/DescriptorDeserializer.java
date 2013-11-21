@@ -27,8 +27,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.error.ErrorClassDescriptor;
 import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.ArrayList;
@@ -207,7 +207,7 @@ public class DescriptorDeserializer {
             if (objectClass == null) {
                 // if we are not able to find the class for object property
                 // then something bad has happened since they should be in the same jar
-                objectClass = ErrorUtils.createErrorClass(objectId.asSingleFqName().asString());
+                objectClass = new ErrorClassDescriptor(objectId.asSingleFqName().asString());
             }
             return new PropertyDescriptorForObjectImpl(containingDeclaration, annotations, visibility, name, objectClass);
         }

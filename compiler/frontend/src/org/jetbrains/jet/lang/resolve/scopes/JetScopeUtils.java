@@ -22,11 +22,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.List;
@@ -129,5 +130,19 @@ public final class JetScopeUtils {
         }
         result.changeLockLevel(WritableScope.LockLevel.READING);
         return result;
+    }
+
+    @TestOnly
+    @NotNull
+    public static String printStructure(@Nullable JetScope scope) {
+        StringBuilder out = new StringBuilder();
+        Printer p = new Printer(out);
+        if (scope == null) {
+            p.println("null");
+        }
+        else {
+            scope.printScopeStructure(p);
+        }
+        return out.toString();
     }
 }

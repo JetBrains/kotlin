@@ -16,8 +16,7 @@
 
 package org.jetbrains.k2js.test.config;
 
-import closurecompiler.internal.com.google.common.collect.Lists;
-import closurecompiler.internal.com.google.common.collect.Maps;
+import com.intellij.util.containers.ContainerUtil;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -32,11 +31,11 @@ import java.util.Map;
 public class JsUnitTestReporter {
 
     @NotNull
-    private final Map<String, Boolean> finishedTests = Maps.newHashMap();
+    private final Map<String, Boolean> finishedTests = ContainerUtil.newHashMap();
     @NotNull
-    private final Map<String, List<String>> errors = Maps.newHashMap();
+    private final Map<String, List<String>> errors = ContainerUtil.newHashMap();
     @NotNull
-    private final List<String> processedTests = Lists.newArrayList();
+    private final List<String> processedTests = ContainerUtil.newArrayList();
 
     @Nullable
     private String currentTestName;
@@ -69,7 +68,7 @@ public class JsUnitTestReporter {
     public void reportError(@NotNull String message) {
         List<String> errorList = errors.get(currentTestName);
         if (errorList == null) {
-            errors.put(currentTestName, Lists.newArrayList(message));
+            errors.put(currentTestName, ContainerUtil.newArrayList(message));
         }
         else {
             errorList.add(message);
@@ -78,7 +77,7 @@ public class JsUnitTestReporter {
 
     @NotNull
     private Collection<String> getNewFinishedTests() {
-        ArrayList<String> finishedTests = Lists.newArrayList(this.finishedTests.keySet());
+        ArrayList<String> finishedTests = ContainerUtil.newArrayList(this.finishedTests.keySet());
         finishedTests.removeAll(processedTests);
         return finishedTests;
     }

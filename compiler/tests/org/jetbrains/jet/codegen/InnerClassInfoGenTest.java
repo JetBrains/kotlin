@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 
 import java.util.ArrayList;
@@ -90,7 +91,9 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
 
     @NotNull
     private List<InnerClassAttribute> extractInnerClasses(@NotNull String className) {
-        byte[] bytes = factory.asBytes(className + ".class");
+        OutputFile outputFile = factory.get(className + ".class");
+        assertNotNull(outputFile);
+        byte[] bytes = outputFile.asByteArray();
         ClassReader reader = new ClassReader(bytes);
         final List<InnerClassAttribute> result = new ArrayList<InnerClassAttribute>();
 

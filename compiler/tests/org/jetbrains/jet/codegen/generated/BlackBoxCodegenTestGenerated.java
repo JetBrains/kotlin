@@ -743,6 +743,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/classes/classObjectNotOfEnum.kt");
         }
         
+        @TestMetadata("classObjectToString.kt")
+        public void testClassObjectToString() throws Exception {
+            doTest("compiler/testData/codegen/box/classes/classObjectToString.kt");
+        }
+        
         @TestMetadata("classObjectWithPrivateGenericMember.kt")
         public void testClassObjectWithPrivateGenericMember() throws Exception {
             doTest("compiler/testData/codegen/box/classes/classObjectWithPrivateGenericMember.kt");
@@ -2107,6 +2112,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt1953_class.kt")
         public void testKt1953_class() throws Exception {
             doTest("compiler/testData/codegen/box/extensionFunctions/kt1953_class.kt");
+        }
+        
+        @TestMetadata("kt4118.kt")
+        public void testKt4118() throws Exception {
+            doTest("compiler/testData/codegen/box/extensionFunctions/kt4118.kt");
         }
         
         @TestMetadata("kt475.kt")
@@ -3841,6 +3851,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/primitiveTypes/kt3078.kt");
         }
         
+        @TestMetadata("kt3517.kt")
+        public void testKt3517() throws Exception {
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt3517.kt");
+        }
+        
         @TestMetadata("kt3576.kt")
         public void testKt3576() throws Exception {
             doTest("compiler/testData/codegen/box/primitiveTypes/kt3576.kt");
@@ -4317,6 +4332,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt3538.kt")
         public void testKt3538() throws Exception {
             doTest("compiler/testData/codegen/box/super/kt3538.kt");
+        }
+        
+        @TestMetadata("kt4173.kt")
+        public void testKt4173() throws Exception {
+            doTest("compiler/testData/codegen/box/super/kt4173.kt");
+        }
+        
+        @TestMetadata("kt4173_2.kt")
+        public void testKt4173_2() throws Exception {
+            doTest("compiler/testData/codegen/box/super/kt4173_2.kt");
+        }
+        
+        @TestMetadata("kt4173_3.kt")
+        public void testKt4173_3() throws Exception {
+            doTest("compiler/testData/codegen/box/super/kt4173_3.kt");
         }
         
         @TestMetadata("multipleSuperTraits.kt")

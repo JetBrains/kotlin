@@ -45,9 +45,9 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
+import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
 public class TypeHierarchyResolver {
     @NotNull
@@ -395,37 +395,32 @@ public class TypeHierarchyResolver {
     }
 
     private void checkTypesInClassHeaders() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            JetClass jetClass = entry.getKey();
-
+        for (JetClass jetClass : context.getClasses().keySet()) {
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
-                JetTypeReference typeReference = delegationSpecifier.getTypeReference();
-                if (typeReference != null) {
-                    JetType type = trace.getBindingContext().get(TYPE, typeReference);
-                    if (type != null) {
-                        descriptorResolver.checkBounds(typeReference, type, trace);
-                    }
-                }
+                checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
             }
 
             for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
-                JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
-                if (extendsBound != null) {
-                    JetType type = trace.getBindingContext().get(TYPE, extendsBound);
-                    if (type != null) {
-                        descriptorResolver.checkBounds(extendsBound, type, trace);
-                    }
-                }
+                checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
             }
 
             for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
-                JetTypeReference extendsBound = constraint.getBoundTypeReference();
-                if (extendsBound != null) {
-                    JetType type = trace.getBindingContext().get(TYPE, extendsBound);
-                    if (type != null) {
-                        descriptorResolver.checkBounds(extendsBound, type, trace);
-                    }
-                }
+                checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
+            }
+        }
+
+        for (JetObjectDeclaration object : context.getObjects().keySet()) {
+            for (JetDelegationSpecifier delegationSpecifier : object.getDelegationSpecifiers()) {
+                checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
+            }
+        }
+    }
+
+    private void checkBoundsForTypeInClassHeader(@Nullable JetTypeReference typeReference) {
+        if (typeReference != null) {
+            JetType type = trace.getBindingContext().get(TYPE, typeReference);
+            if (type != null) {
+                DescriptorResolver.checkBounds(typeReference, type, trace);
             }
         }
     }
@@ -445,13 +440,13 @@ public class TypeHierarchyResolver {
         }
 
         @Override
-        public void visitJetFile(JetFile file) {
+        public void visitJetFile(@NotNull JetFile file) {
             NamespaceDescriptorImpl namespaceDescriptor = namespaceFactory.createNamespaceDescriptorPathIfNeeded(
                     file, outerScope, RedeclarationHandler.DO_NOTHING);
             context.getNamespaceDescriptors().put(file, namespaceDescriptor);
 
             WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(),
-                                                                     new TraceBasedRedeclarationHandler(trace), "namespace");
+                                                                     new TraceBasedRedeclarationHandler(trace), "namespace in file " + file.getName());
             namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
             context.getNamespaceScopes().put(file, namespaceScope);
 
@@ -463,14 +458,14 @@ public class TypeHierarchyResolver {
         }
 
         @Override
-        public void visitClass(JetClass klass) {
+        public void visitClass(@NotNull JetClass klass) {
             MutableClassDescriptor mutableClassDescriptor = createClassDescriptorForClass(klass, owner.getOwnerForChildren());
 
             owner.addClassifierDescriptor(mutableClassDescriptor);
         }
 
         @Override
-        public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+        public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
             MutableClassDescriptor objectDescriptor =
                     createClassDescriptorForObject(declaration, owner, outerScope, JetPsiUtil.safeName(declaration.getName()),
                                                    ClassKind.OBJECT);
@@ -479,7 +474,7 @@ public class TypeHierarchyResolver {
         }
 
         @Override
-        public void visitEnumEntry(JetEnumEntry enumEntry) {
+        public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
             // TODO: Bad casting
             MutableClassDescriptorLite ownerClassDescriptor = (MutableClassDescriptorLite) owner.getOwnerForChildren();
             MutableClassDescriptorLite classObjectDescriptor = ownerClassDescriptor.getClassObjectDescriptor();
@@ -489,12 +484,12 @@ public class TypeHierarchyResolver {
         }
 
         @Override
-        public void visitTypedef(JetTypedef typedef) {
+        public void visitTypedef(@NotNull JetTypedef typedef) {
             trace.report(UNSUPPORTED.on(typedef, "TypeHierarchyResolver"));
         }
 
         @Override
-        public void visitClassObject(JetClassObject classObject) {
+        public void visitClassObject(@NotNull JetClassObject classObject) {
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
             if (objectDeclaration != null) {
                 Name classObjectName = getClassObjectName(owner.getOwnerForChildren().getName());
@@ -518,32 +513,25 @@ public class TypeHierarchyResolver {
             }
         }
 
-        private void createClassObjectForEnumClass(JetClass klass, MutableClassDescriptor mutableClassDescriptor) {
+        private void createClassObjectForEnumClass(@NotNull MutableClassDescriptor mutableClassDescriptor) {
             if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-                MutableClassDescriptor classObjectDescriptor =
-                        createClassObjectDescriptor(mutableClassDescriptor, resolveVisibilityFromModifiers(klass));
-                mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObjectDescriptor);
-                classObjectDescriptor.getBuilder().addFunctionDescriptor(
-                        DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
-                classObjectDescriptor.getBuilder().addFunctionDescriptor(
-                        DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
+                MutableClassDescriptor classObject = createSyntheticClassObject(mutableClassDescriptor);
+                mutableClassDescriptor.getBuilder().setClassObjectDescriptor(classObject);
+                classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValuesMethod(classObject, trace));
+                classObject.getBuilder().addFunctionDescriptor(DescriptorResolver.createEnumClassObjectValueOfMethod(classObject, trace));
             }
         }
 
         @NotNull
-        private MutableClassDescriptor createClassObjectDescriptor(
-                @NotNull ClassDescriptor classDescriptor,
-                @NotNull Visibility visibility
-        ) {
-            MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(
-                    classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false, getClassObjectName(classDescriptor.getName()));
-            classObjectDescriptor.setModality(Modality.FINAL);
-            classObjectDescriptor.setVisibility(visibility);
-            classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
-            classObjectDescriptor.createTypeConstructor();
-            ConstructorDescriptorImpl primaryConstructorForObject = createPrimaryConstructorForObject(null, classObjectDescriptor);
-            primaryConstructorForObject.setReturnType(classObjectDescriptor.getDefaultType());
-            return classObjectDescriptor;
+        private MutableClassDescriptor createSyntheticClassObject(@NotNull ClassDescriptor classDescriptor) {
+            MutableClassDescriptor classObject = new MutableClassDescriptor(classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false,
+                                                                            getClassObjectName(classDescriptor.getName()));
+            classObject.setModality(Modality.FINAL);
+            classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
+            classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+            createPrimaryConstructorForObject(null, classObject);
+            classObject.createTypeConstructor();
+            return classObject;
         }
 
         @NotNull
@@ -560,7 +548,7 @@ public class TypeHierarchyResolver {
             context.getClasses().put(klass, mutableClassDescriptor);
             trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
 
-            createClassObjectForEnumClass(klass, mutableClassDescriptor);
+            createClassObjectForEnumClass(mutableClassDescriptor);
 
             JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
 

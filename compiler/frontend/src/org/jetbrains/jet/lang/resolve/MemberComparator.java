@@ -70,7 +70,7 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
         }
 
         if (!(o1 instanceof CallableDescriptor) || !(o2 instanceof CallableDescriptor)) {
-            assert false;
+            assert false : "Descriptors must be callable:\n" + o1 + "\n" + o2;
         }
 
         CallableDescriptor c1 = (CallableDescriptor)o1;

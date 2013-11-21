@@ -20,97 +20,63 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeConstructorImpl;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implements ClassDescriptor {
-    private TypeConstructor typeConstructor;
+public class ClassDescriptorImpl extends ClassDescriptorBase {
+    private final Modality modality;
+    private final TypeConstructor typeConstructor;
 
-    private JetScope memberDeclarations;
+    private JetScope scopeForMemberLookup;
     private Set<ConstructorDescriptor> constructors;
     private ConstructorDescriptor primaryConstructor;
-    private ReceiverParameterDescriptor thisAsReceiverParameter;
-    private final Modality modality;
-    private ClassDescriptor classObjectDescriptor;
-    private final ClassKind kind;
-    private boolean isInner;
-
-    public ClassDescriptorImpl(
-        @NotNull DeclarationDescriptor containingDeclaration,
-        @NotNull List<AnnotationDescriptor> annotations,
-        @NotNull Modality modality,
-        @NotNull Name name
-    ) {
-        this(containingDeclaration, ClassKind.CLASS, annotations, modality, name);
-    }
 
     public ClassDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull ClassKind kind,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Name name,
             @NotNull Modality modality,
-            @NotNull Name name) {
-        super(containingDeclaration, annotations, name);
-        this.kind = kind;
+            @NotNull Collection<JetType> supertypes
+    ) {
+        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name);
         this.modality = modality;
+
+        this.typeConstructor = new TypeConstructorImpl(this, Collections.<AnnotationDescriptor>emptyList(), false, getName().asString(),
+                                                       Collections.<TypeParameterDescriptor>emptyList(), supertypes);
     }
 
-
-    public final ClassDescriptorImpl initialize(
-            boolean isFinal,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @NotNull Collection<JetType> supertypes,
-            @NotNull JetScope memberDeclarations,
+    public final void initialize(
+            @NotNull JetScope scopeForMemberLookup,
             @NotNull Set<ConstructorDescriptor> constructors,
-            @Nullable ConstructorDescriptor primaryConstructor,
-            boolean isInner
+            @Nullable ConstructorDescriptor primaryConstructor
     ) {
-        this.typeConstructor = new TypeConstructorImpl(this, getAnnotations(), isFinal, getName().asString(), typeParameters, supertypes);
-        this.memberDeclarations = memberDeclarations;
+        this.scopeForMemberLookup = scopeForMemberLookup;
         this.constructors = constructors;
         this.primaryConstructor = primaryConstructor;
-        this.isInner = isInner;
-        return this;
     }
 
     public void setPrimaryConstructor(@NotNull ConstructorDescriptor primaryConstructor) {
         this.primaryConstructor = primaryConstructor;
     }
 
-    public void setClassObjectDescriptor(@NotNull ClassDescriptor classObjectDescriptor) {
-        this.classObjectDescriptor = classObjectDescriptor;
+    @NotNull
+    @Override
+    public List<AnnotationDescriptor> getAnnotations() {
+        return Collections.emptyList();
     }
 
     @Override
     @NotNull
     public TypeConstructor getTypeConstructor() {
         return typeConstructor;
-    }
-
-    @Override
-    @NotNull
-    public JetScope getMemberScope(List<? extends TypeProjection> typeArguments) {
-        assert typeArguments.size() == typeConstructor.getParameters().size() : typeArguments;
-        if (typeConstructor.getParameters().isEmpty()) {
-            return  memberDeclarations;
-        }
-        Map<TypeConstructor, TypeProjection> substitutionContext = SubstitutionUtils
-                .buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
-        return new SubstitutingScope(memberDeclarations, TypeSubstitutor.create(substitutionContext));
-    }
-
-    @NotNull
-    @Override
-    public JetType getDefaultType() {
-        return TypeUtils.makeUnsubstitutedType(this, memberDeclarations);
     }
 
     @NotNull
@@ -121,29 +87,20 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
 
     @NotNull
     @Override
-    public ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        throw new UnsupportedOperationException(); // TODO
+    protected JetScope getScopeForMemberLookup() {
+        return scopeForMemberLookup;
     }
 
-    @Override
-    public JetType getClassObjectType() {
-        return getClassObjectDescriptor().getDefaultType();
-    }
-
+    @Nullable
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
-        return classObjectDescriptor;
+        return null;
     }
 
     @NotNull
     @Override
     public ClassKind getKind() {
-        return kind;
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitClassDescriptor(this, data);
+        return ClassKind.CLASS;
     }
 
     @Override
@@ -165,21 +122,11 @@ public class ClassDescriptorImpl extends DeclarationDescriptorNonRootImpl implem
 
     @Override
     public boolean isInner() {
-        return isInner;
+        return false;
     }
 
-    @NotNull
     @Override
-    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        if (thisAsReceiverParameter == null) {
-            thisAsReceiverParameter = DescriptorFactory.createLazyReceiverParameterDescriptor(this);
-        }
-        return thisAsReceiverParameter;
-    }
-
-    @NotNull
-    @Override
-    public JetScope getUnsubstitutedInnerClassesScope() {
-        return JetScope.EMPTY;
+    public String toString() {
+        return "class " + getName();
     }
 }

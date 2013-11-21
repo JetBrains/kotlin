@@ -1,0 +1,12 @@
+open class Foo{
+    fun f() {
+        if (this is Bar){
+            var a : Bar = <caret>
+        }
+    }
+}
+
+class Bar : Foo
+
+
+// EXIST: this

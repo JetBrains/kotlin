@@ -1,9 +1,13 @@
 package test
 
-public trait LoadIterable<T> : java.lang.Object {
-    public fun getIterable(): MutableIterable<T>?
-    public fun setIterable(p0: MutableIterable<T>?)
+import org.jetbrains.annotations.*
 
+public trait LoadIterable<T> : java.lang.Object {
+    Mutable
+    public fun getIterable(): MutableIterable<T>?
+    public fun setIterable([Mutable] p0: MutableIterable<T>?)
+
+    ReadOnly
     public fun getReadOnlyIterable(): Iterable<T>?
-    public fun setReadOnlyIterable(p0: Iterable<T>?)
+    public fun setReadOnlyIterable([ReadOnly] p0: Iterable<T>?)
 }

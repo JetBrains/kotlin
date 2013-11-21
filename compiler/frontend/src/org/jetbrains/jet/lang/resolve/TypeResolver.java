@@ -99,7 +99,7 @@ public class TypeResolver {
         if (typeElement != null) {
             typeElement.accept(new JetVisitorVoid() {
                 @Override
-                public void visitUserType(JetUserType type) {
+                public void visitUserType(@NotNull JetUserType type) {
                     JetSimpleNameExpression referenceExpression = type.getReferenceExpression();
                     String referencedName = type.getReferencedName();
                     if (referenceExpression == null || referencedName == null) {
@@ -191,7 +191,7 @@ public class TypeResolver {
                 }
 
                 @Override
-                public void visitNullableType(JetNullableType nullableType) {
+                public void visitNullableType(@NotNull JetNullableType nullableType) {
                     PossiblyBareType baseType = resolveTypeElement(c, annotations, nullableType.getInnerType());
                     if (baseType.isNullable()) {
                         c.trace.report(REDUNDANT_NULLABLE.on(nullableType));
@@ -203,7 +203,7 @@ public class TypeResolver {
                 }
 
                 @Override
-                public void visitFunctionType(JetFunctionType type) {
+                public void visitFunctionType(@NotNull JetFunctionType type) {
                     JetTypeReference receiverTypeRef = type.getReceiverTypeRef();
                     JetType receiverType = receiverTypeRef == null ? null : resolveType(c.noBareTypes(), receiverTypeRef);
 
@@ -224,7 +224,7 @@ public class TypeResolver {
                 }
 
                 @Override
-                public void visitJetElement(JetElement element) {
+                public void visitJetElement(@NotNull JetElement element) {
                     c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"));
                 }
             });

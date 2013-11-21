@@ -119,13 +119,26 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         }
 
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor);
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         generateParameterAnnotations(functionDescriptor, mv, jvmSignature);
 
         generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
 
-        if (isAbstractMethod(functionDescriptor, methodContext.getContextKind())) return;
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES ||
+            isAbstractMethod(functionDescriptor, methodContext.getContextKind())) {
+            generateLocalVariableTable(
+                    mv,
+                    jvmSignature,
+                    functionDescriptor,
+                    getThisTypeForFunction(functionDescriptor, methodContext),
+                    new Label(),
+                    new Label(),
+                    new HashSet<String>(getParameterNamesAsStrings(functionDescriptor)),
+                    Collections.<Name, Label>emptyMap(),
+                    methodContext.getContextKind()
+            );
+            return;
+        }
 
         generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy);
 
@@ -202,20 +215,27 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
             AnnotationVisitor av =
                     mv.visitParameterAnnotation(i, asmDescByFqNameWithoutInnerClasses(fqNameByClass(JetValueParameter.class)), true);
-            av.visit("name", name);
-            if (nullableType) {
-                av.visit("type", "?");
+            if (av != null) {
+                av.visit("name", name);
+                if (nullableType) {
+                    av.visit("type", "?");
+                }
+                av.visitEnd();
             }
-            av.visitEnd();
         }
     }
 
-    private static void markEnumConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
+    private void markEnumConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
+        // IDEA's ClsPsi builder fails to annotate synthetic parameters
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
+
         // This is needed to avoid RuntimeInvisibleParameterAnnotations error in javac:
         // see MethodWriter.visitParameterAnnotation()
 
         AnnotationVisitor av = mv.visitParameterAnnotation(i, "Ljava/lang/Synthetic;", true);
-        av.visitEnd();
+        if (av != null) {
+            av.visitEnd();
+        }
     }
 
     @Nullable

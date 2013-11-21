@@ -23,6 +23,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -49,7 +50,7 @@ class SoftKeywordsHighlightingVisitor extends HighlightingVisitor {
     }
 
     @Override
-    public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+    public void visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression) {
         if (ApplicationManager.getApplication().isUnitTestMode()) return;
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         holder.createInfoAnnotation(functionLiteral.getOpenBraceNode(), null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);

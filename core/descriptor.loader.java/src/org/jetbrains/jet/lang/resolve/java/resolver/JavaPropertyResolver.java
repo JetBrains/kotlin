@@ -145,14 +145,10 @@ public final class JavaPropertyResolver {
             //TODO: this is a hack to indicate that this enum entry is an object
             // class descriptor for enum entries is not used by backends so for now this should be safe to use
             ClassDescriptorImpl dummyClassDescriptorForEnumEntryObject =
-                    new ClassDescriptorImpl(owner, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, propertyName);
-            dummyClassDescriptorForEnumEntryObject.initialize(
-                    true,
-                    Collections.<TypeParameterDescriptor>emptyList(),
-                    Collections.<JetType>emptyList(), JetScope.EMPTY,
-                    Collections.<ConstructorDescriptor>emptySet(), null,
-                    false);
-            return new JavaPropertyDescriptorForObject(owner, annotations, visibility, propertyName, dummyClassDescriptorForEnumEntryObject);
+                    new ClassDescriptorImpl(owner, propertyName, Modality.FINAL, Collections.<JetType>emptyList());
+            dummyClassDescriptorForEnumEntryObject.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
+            return new JavaPropertyDescriptorForObject(owner, annotations, visibility, propertyName,
+                                                       dummyClassDescriptorForEnumEntryObject);
         }
 
         return new JavaPropertyDescriptor(owner, annotations, visibility, isVar, propertyName);

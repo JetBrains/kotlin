@@ -6,4 +6,24 @@
   <item name='com.intellij.codeInsight.lookup.Lookup com.intellij.openapi.editor.Editor getEditor()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withInsertHandler(com.intellij.codeInsight.completion.InsertHandler&lt;com.intellij.codeInsight.lookup.LookupElement&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withPresentableText(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withTailText(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.MutableLookupElement com.intellij.codeInsight.lookup.MutableLookupElement&lt;T&gt; setInsertHandler(com.intellij.codeInsight.completion.InsertHandler&lt;? extends com.intellij.codeInsight.lookup.LookupElement&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.MutableLookupElement com.intellij.codeInsight.lookup.MutableLookupElement&lt;T&gt; setInsertHandler(com.intellij.codeInsight.completion.InsertHandler&lt;? extends com.intellij.codeInsight.lookup.LookupElement&gt;) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>

@@ -9,7 +9,7 @@ public final enum class JavaEnum : jet.Enum<test.JavaEnum> {
         private constructor <class-object-for-JavaEnum>()
         public final val ANOTHER: test.JavaEnum
         public final val ENTRY: test.JavaEnum
-        public final fun valueOf(/*0*/ value: jet.String): test.JavaEnum
-        public final fun values(): jet.Array<test.JavaEnum>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.JavaEnum
+        public final /*synthesized*/ fun values(): jet.Array<test.JavaEnum>
     }
 }

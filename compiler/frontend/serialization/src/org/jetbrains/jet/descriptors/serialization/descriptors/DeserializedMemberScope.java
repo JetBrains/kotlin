@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.*;
 
@@ -255,4 +256,14 @@ public abstract class DeserializedMemberScope implements JetScope {
         boolean accept(T value);
     }
 
+    @Override
+    public void printScopeStructure(@NotNull Printer p) {
+        p.println(getClass().getSimpleName(), " {");
+        p.pushIndent();
+
+        p.println("containingDeclaration = " + containingDeclaration);
+
+        p.popIndent();
+        p.println("}");
+    }
 }

@@ -24,6 +24,7 @@
             <element id="directory" name="jet">
               <element id="dir-copy" path="$PROJECT_DIR$/idea/builtinsSrc/jet" />
             </element>
+            <element id="module-output" name="backend-common" />
           </element>
           <element id="library" level="project" name="js-libs" />
           <element id="library" level="project" name="javax.inject" />
@@ -39,6 +40,7 @@
               <element id="module-output" name="preloader" />
               <element id="file-copy" path="$PROJECT_DIR$/resources/manifest.properties" />
               <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/cli-parser-1.1.1.jar" path-in-jar="/" />
+              <element id="module-output" name="util.runtime" />
             </element>
           </element>
           <element id="library" level="project" name="kotlin-runtime" />

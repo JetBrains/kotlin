@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCacheImpl;
 import org.jetbrains.jet.lang.resolve.calls.context.SimpleResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -41,8 +40,8 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -193,7 +192,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+            public void visitDelegationByExpressionSpecifier(@NotNull JetDelegatorByExpressionSpecifier specifier) {
                 if (descriptor.getKind() == ClassKind.TRAIT) {
                     trace.report(DELEGATION_IN_TRAIT.on(specifier));
                 }
@@ -216,15 +215,16 @@ public class BodyResolver {
                     JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE, context.getOuterDataFlowInfo(), trace);
                     if (type != null && supertype != null) {
                         SimpleResolutionContext simpleResolutionContext = new SimpleResolutionContext(
-                                trace, scope, supertype, context.getOuterDataFlowInfo(), ExpressionPosition.FREE, ContextDependency.INDEPENDENT,
-                                ResolutionResultsCacheImpl.create(), LabelResolver.create(), expressionTypingServices.createExtension(scope));
+                                trace, scope, supertype, context.getOuterDataFlowInfo(), ContextDependency.INDEPENDENT,
+                                ResolutionResultsCacheImpl.create(), LabelResolver.create(),
+                                expressionTypingServices.createExtension(scope, false), false);
                         DataFlowUtils.checkType(type, delegateExpression, simpleResolutionContext);
                     }
                 }
             }
 
             @Override
-            public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+            public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                 PsiElement elementToMark = valueArgumentList == null ? call : valueArgumentList;
                 if (descriptor.getKind() == ClassKind.TRAIT) {
@@ -239,7 +239,7 @@ public class BodyResolver {
                 }
                 OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
                         trace, scopeForConstructor,
-                        CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, context.getOuterDataFlowInfo());
+                        CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, context.getOuterDataFlowInfo(), false);
                 if (results.isSuccess()) {
                     JetType supertype = results.getResultingDescriptor().getReturnType();
                     recordSupertype(typeReference, supertype);
@@ -256,7 +256,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+            public void visitDelegationToSuperClassSpecifier(@NotNull JetDelegatorToSuperClass specifier) {
                 JetTypeReference typeReference = specifier.getTypeReference();
                 JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                 recordSupertype(typeReference, supertype);
@@ -270,12 +270,12 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToThisCall(JetDelegatorToThisCall thisCall) {
+            public void visitDelegationToThisCall(@NotNull JetDelegatorToThisCall thisCall) {
                 throw new IllegalStateException("This-calls should be prohibited by the parser");
             }
 
             @Override
-            public void visitJetElement(JetElement element) {
+            public void visitJetElement(@NotNull JetElement element) {
                 throw new UnsupportedOperationException(element.getText() + " : " + element);
             }
         };

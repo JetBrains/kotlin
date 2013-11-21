@@ -24,7 +24,7 @@ public final class JetModifiableBlockHelper {
     }
 
     /**
-     * Tested in OutOfBlockModificationTest
+     * Tested in OutOfBlockModificationTestGenerated
      */
     public static boolean shouldChangeModificationCount(PsiElement place) {
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(place, JetDeclaration.class, true);

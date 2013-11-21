@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.k2jsrun;
 
 import com.intellij.ide.browsers.BrowsersConfiguration;
-import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -26,6 +25,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.ListCellRendererWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -140,7 +140,7 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
         for (BrowsersConfiguration.BrowserFamily family : BrowsersConfiguration.getInstance().getActiveBrowsers()) {
             browserComboBox.addItem(family);
         }
-        browserComboBox.setRenderer(new ListCellRendererWrapper<BrowsersConfiguration.BrowserFamily>(browserComboBox) {
+        browserComboBox.setRenderer(new ListCellRendererWrapper<BrowsersConfiguration.BrowserFamily>() {
             @Override
             public void customize(JList list, BrowsersConfiguration.BrowserFamily family, int index, boolean selected, boolean hasFocus) {
                 if (family != null) {

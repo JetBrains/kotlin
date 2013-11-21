@@ -56,7 +56,7 @@ public final class JavaPackageScope extends JavaBaseScope {
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassDescriptor classDescriptor = memberResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
-        if (classDescriptor == null || classDescriptor.getKind().isObject()) {
+        if (classDescriptor == null || classDescriptor.getKind().isSingleton()) {
             return null;
         }
         return classDescriptor;
@@ -65,7 +65,7 @@ public final class JavaPackageScope extends JavaBaseScope {
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         ClassDescriptor classDescriptor = memberResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
-        if (classDescriptor != null && classDescriptor.getKind().isObject()) {
+        if (classDescriptor != null && classDescriptor.getKind().isSingleton()) {
             return classDescriptor;
         }
         return null;
@@ -100,7 +100,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
             if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) continue;
 
-            if (javaClass.getVisibility() != Visibilities.PUBLIC) continue;
+            if (javaClass.getVisibility() == Visibilities.PRIVATE) continue;
 
             ProgressChecker.getInstance().checkCanceled();
 

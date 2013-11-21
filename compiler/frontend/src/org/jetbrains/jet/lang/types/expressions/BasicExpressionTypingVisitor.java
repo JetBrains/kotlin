@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
@@ -281,10 +280,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitSuperExpression(@NotNull JetSuperExpression expression, ExpressionTypingContext context) {
         LabelResolver.LabeledReceiverResolutionResult resolutionResult = resolveToReceiver(expression, context, true);
 
-        if (context.expressionPosition == ExpressionPosition.FREE) {
+        if (!JetPsiUtil.isLHSOfDot(expression)) {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(expression, expression.getText()));
             return errorInSuper(expression, context);
         }
+
         switch (resolutionResult.getCode()) {
             case LABEL_RESOLUTION_ERROR:
                 // The error is already reported
@@ -758,8 +758,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         if (canBeThis && expression instanceof JetThisExpression) return;
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), expression, true);
+
+        JetExpression reportOn = expression != null ? expression : expressionWithParenthesis;
+        if (variable instanceof PropertyDescriptor) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variable;
+            if (propertyDescriptor.isSetterProjectedOut()) {
+                trace.report(SETTER_PROJECTED_OUT.on(reportOn, propertyDescriptor));
+            }
+        }
+
         if (variable == null) {
-            trace.report(VARIABLE_EXPECTED.on(expression != null ? expression : expressionWithParenthesis));
+            trace.report(VARIABLE_EXPECTED.on(reportOn));
         }
     }
 
@@ -1115,7 +1124,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression, ExpressionTypingContext context) {
-        if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT) {
+        if (JetPsiUtil.isLHSOfDot(expression)) {
             return DataFlowUtils.checkType(JetModuleUtil.getRootNamespaceType(expression), expression, context, context.dataFlowInfo);
         }
         context.trace.report(NAMESPACE_IS_NOT_AN_EXPRESSION.on(expression));
@@ -1134,7 +1143,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             entry.accept(new JetVisitorVoid() {
 
                 @Override
-                public void visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry) {
+                public void visitStringTemplateEntryWithExpression(@NotNull JetStringTemplateEntryWithExpression entry) {
                     JetExpression entryExpression = entry.getExpression();
                     if (entryExpression != null) {
                         JetTypeInfo typeInfo = facade.getTypeInfo(entryExpression, context.replaceDataFlowInfo(dataFlowInfo[0]));
@@ -1144,12 +1153,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
 
                 @Override
-                public void visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry) {
+                public void visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry) {
                     builder.append(entry.getText());
                 }
 
                 @Override
-                public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
+                public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
                     CompileTimeConstant<?> character = CompileTimeConstantResolver.escapedStringToCharValue(entry.getText(), entry);
                     if (character instanceof ErrorValue) {
                         assert character instanceof ErrorValueWithDiagnostic;

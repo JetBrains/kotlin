@@ -33,7 +33,7 @@ import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
 @InnerTestClasses({JetFindUsagesTestGenerated.Kotlin.class, JetFindUsagesTestGenerated.Java.class})
 public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
     @TestMetadata("idea/testData/findUsages/kotlin")
-    @InnerTestClasses({Kotlin.FindClassUsages.class, Kotlin.FindFunctionUsages.class, Kotlin.FindObjectUsages.class, Kotlin.FindPropertyUsages.class, Kotlin.FindWithFilteringImports.class, Kotlin.UnresolvedAnnotation.class})
+    @InnerTestClasses({Kotlin.FindClassUsages.class, Kotlin.FindFunctionUsages.class, Kotlin.FindObjectUsages.class, Kotlin.FindParameterUsages.class, Kotlin.FindPropertyUsages.class, Kotlin.FindTypeParameterUsages.class, Kotlin.FindWithFilteringImports.class, Kotlin.UnresolvedAnnotation.class})
     public static class Kotlin extends AbstractJetFindUsagesTest {
         public void testAllFilesPresentInKotlin() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/kotlin"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
@@ -293,6 +293,24 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             
         }
         
+        @TestMetadata("idea/testData/findUsages/kotlin/findParameterUsages")
+        public static class FindParameterUsages extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInFindParameterUsages() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/kotlin/findParameterUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+            
+            @TestMetadata("kotlinConstructorParameterUsages.0.kt")
+            public void testKotlinConstructorParameterUsages() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findParameterUsages/kotlinConstructorParameterUsages.0.kt");
+            }
+            
+            @TestMetadata("kotlinFunctionParameterUsages.0.kt")
+            public void testKotlinFunctionParameterUsages() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findParameterUsages/kotlinFunctionParameterUsages.0.kt");
+            }
+            
+        }
+        
         @TestMetadata("idea/testData/findUsages/kotlin/findPropertyUsages")
         public static class FindPropertyUsages extends AbstractJetFindUsagesTest {
             public void testAllFilesPresentInFindPropertyUsages() throws Exception {
@@ -304,9 +322,19 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaAndKotlinOverrides.0.kt");
             }
             
+            @TestMetadata("javaAndKotlinOverrides2.0.kt")
+            public void testJavaAndKotlinOverrides2() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaAndKotlinOverrides2.0.kt");
+            }
+            
             @TestMetadata("javaPropertyReadUsages.0.kt")
             public void testJavaPropertyReadUsages() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyReadUsages.0.kt");
+            }
+            
+            @TestMetadata("javaPropertyReadUsages2.0.kt")
+            public void testJavaPropertyReadUsages2() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyReadUsages2.0.kt");
             }
             
             @TestMetadata("javaPropertyUsages.0.kt")
@@ -314,9 +342,19 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyUsages.0.kt");
             }
             
+            @TestMetadata("javaPropertyUsages2.0.kt")
+            public void testJavaPropertyUsages2() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyUsages2.0.kt");
+            }
+            
             @TestMetadata("javaPropertyWriteUsages.0.kt")
             public void testJavaPropertyWriteUsages() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyWriteUsages.0.kt");
+            }
+            
+            @TestMetadata("javaPropertyWriteUsages2.0.kt")
+            public void testJavaPropertyWriteUsages2() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyWriteUsages2.0.kt");
             }
             
             @TestMetadata("kotlinLocalPropertyUsages1.0.kt")
@@ -334,9 +372,19 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPrivatePropertyUsages.0.kt");
             }
             
+            @TestMetadata("kotlinPrivatePropertyUsages2.0.kt")
+            public void testKotlinPrivatePropertyUsages2() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPrivatePropertyUsages2.0.kt");
+            }
+            
             @TestMetadata("kotlinPropertyReadUsages.0.kt")
             public void testKotlinPropertyReadUsages() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPropertyReadUsages.0.kt");
+            }
+            
+            @TestMetadata("kotlinPropertyReadUsages2.0.kt")
+            public void testKotlinPropertyReadUsages2() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPropertyReadUsages2.0.kt");
             }
             
             @TestMetadata("kotlinPropertyUsages.0.kt")
@@ -344,14 +392,42 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPropertyUsages.0.kt");
             }
             
+            @TestMetadata("kotlinPropertyUsages2.0.kt")
+            public void testKotlinPropertyUsages2() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPropertyUsages2.0.kt");
+            }
+            
             @TestMetadata("kotlinPropertyWriteUsages.0.kt")
             public void testKotlinPropertyWriteUsages() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPropertyWriteUsages.0.kt");
             }
             
+            @TestMetadata("kotlinPropertyWriteUsages2.0.kt")
+            public void testKotlinPropertyWriteUsages2() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinPropertyWriteUsages2.0.kt");
+            }
+            
             @TestMetadata("kotlinTopLevelPropertyUsages.0.kt")
             public void testKotlinTopLevelPropertyUsages() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/kotlinTopLevelPropertyUsages.0.kt");
+            }
+            
+        }
+        
+        @TestMetadata("idea/testData/findUsages/kotlin/findTypeParameterUsages")
+        public static class FindTypeParameterUsages extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInFindTypeParameterUsages() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/findUsages/kotlin/findTypeParameterUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+            
+            @TestMetadata("kotlinClassTypeParameterUsages.0.kt")
+            public void testKotlinClassTypeParameterUsages() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findTypeParameterUsages/kotlinClassTypeParameterUsages.0.kt");
+            }
+            
+            @TestMetadata("kotlinFunctionTypeParameterUsages.0.kt")
+            public void testKotlinFunctionTypeParameterUsages() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findTypeParameterUsages/kotlinFunctionTypeParameterUsages.0.kt");
             }
             
         }
@@ -388,7 +464,9 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             suite.addTestSuite(FindClassUsages.class);
             suite.addTestSuite(FindFunctionUsages.class);
             suite.addTestSuite(FindObjectUsages.class);
+            suite.addTestSuite(FindParameterUsages.class);
             suite.addTestSuite(FindPropertyUsages.class);
+            suite.addTestSuite(FindTypeParameterUsages.class);
             suite.addTestSuite(FindWithFilteringImports.class);
             suite.addTestSuite(UnresolvedAnnotation.class);
             return suite;

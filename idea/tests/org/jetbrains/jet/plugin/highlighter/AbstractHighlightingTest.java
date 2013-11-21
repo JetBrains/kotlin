@@ -51,7 +51,6 @@ public abstract class AbstractHighlightingTest extends LightCodeInsightFixtureTe
             myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings);
         }
         catch (FileComparisonFailure e) {
-            //noinspection UseOfSystemOutOrSystemErr
             System.out.println(getFileWithTextAttributesKeys());
 
             throw e;

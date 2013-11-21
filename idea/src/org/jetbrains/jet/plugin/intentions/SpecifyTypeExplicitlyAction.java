@@ -220,7 +220,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         assert !exprType.isError() : "Unexpected error type: " + namedDeclaration.getText();
 
         ClassifierDescriptor descriptor = exprType.getConstructor().getDeclarationDescriptor();
-        boolean isAnonymous = descriptor != null && DescriptorUtils.isAnonymous(descriptor);
+        boolean isAnonymous = descriptor != null && DescriptorUtils.isAnonymousObject(descriptor);
 
         Set<JetType> allSupertypes = TypeUtils.getAllSupertypes(exprType);
         List<JetType> types = isAnonymous ? new ArrayList<JetType>() : Lists.newArrayList(exprType);

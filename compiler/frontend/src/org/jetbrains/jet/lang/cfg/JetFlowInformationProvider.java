@@ -144,14 +144,14 @@ public class JetFlowInformationProvider {
         for (JetElement returnedExpression : returnedExpressions) {
             returnedExpression.accept(new JetVisitorVoid() {
                 @Override
-                public void visitReturnExpression(JetReturnExpression expression) {
+                public void visitReturnExpression(@NotNull JetReturnExpression expression) {
                     if (!blockBody) {
                         trace.report(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.on(expression));
                     }
                 }
 
                 @Override
-                public void visitExpression(JetExpression expression) {
+                public void visitExpression(@NotNull JetExpression expression) {
                     if (blockBody && !noExpectedType(expectedReturnType) && !KotlinBuiltIns.getInstance().isUnit(expectedReturnType) && !rootUnreachableElements.contains(expression)) {
                         noReturnError[0] = true;
                     }

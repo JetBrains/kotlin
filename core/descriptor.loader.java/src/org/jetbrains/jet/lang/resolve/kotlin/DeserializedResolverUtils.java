@@ -29,21 +29,18 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.name.SpecialNames.isClassObjectName;
+
 public class DeserializedResolverUtils {
     private DeserializedResolverUtils() {
     }
 
     @NotNull
     public static FqName kotlinFqNameToJavaFqName(@NotNull FqNameUnsafe kotlinFqName) {
-        List<String> correctedSegments = new ArrayList<String>();
-        for (Name segment : kotlinFqName.pathSegments()) {
-            if (segment.asString().startsWith("<class-object-for")) {
-                correctedSegments.add(JvmAbi.CLASS_OBJECT_CLASS_NAME);
-            }
-            else {
-                assert !segment.isSpecial();
-                correctedSegments.add(segment.asString());
-            }
+        List<Name> segments = kotlinFqName.pathSegments();
+        List<String> correctedSegments = new ArrayList<String>(segments.size());
+        for (Name segment : segments) {
+            correctedSegments.add(isClassObjectName(segment) ? JvmAbi.CLASS_OBJECT_CLASS_NAME : segment.getIdentifier());
         }
         return FqName.fromSegments(correctedSegments);
     }

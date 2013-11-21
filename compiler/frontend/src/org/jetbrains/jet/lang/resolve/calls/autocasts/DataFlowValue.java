@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -36,6 +37,11 @@ public class DataFlowValue {
         this.type = type;
         this.id = id;
         this.immanentNullability = immanentNullability;
+    }
+
+    @Nullable
+    public Object getId() {
+        return id;
     }
 
     @NotNull

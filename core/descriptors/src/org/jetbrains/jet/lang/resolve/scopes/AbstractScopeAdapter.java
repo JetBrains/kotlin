@@ -17,9 +17,11 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.List;
@@ -97,5 +99,18 @@ public abstract class AbstractScopeAdapter implements JetScope {
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
         return getWorkerScope().getOwnDeclaredDescriptors();
+    }
+
+    @TestOnly
+    @Override
+    public void printScopeStructure(@NotNull Printer p) {
+        p.println(getClass().getSimpleName(), " {");
+        p.pushIndent();
+
+        p.print("worker =");
+        getWorkerScope().printScopeStructure(p.withholdIndentOnce());
+
+        p.popIndent();
+        p.println("}");
     }
 }

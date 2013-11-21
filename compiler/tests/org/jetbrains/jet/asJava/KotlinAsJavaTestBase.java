@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.asJava;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
@@ -36,7 +37,12 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
             configuration.add(CommonConfigurationKeys.SOURCE_ROOTS_KEY, root.getPath());
         }
 
+        extraConfiguration(configuration);
+
         return JetCoreEnvironment.createForTests(getTestRootDisposable(), configuration);
+    }
+
+    protected void extraConfiguration(@NotNull CompilerConfiguration configuration) {
     }
 
     protected abstract List<File> getKotlinSourceRoots();

@@ -20,11 +20,11 @@ import com.intellij.openapi.project.Project;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
-import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.config.TestConfig;
 import org.jetbrains.k2js.test.config.TestConfigFactory;
 import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
+import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.util.List;
 
@@ -52,9 +52,9 @@ public final class SourcemapTest extends SingleFileTranslationTest {
             @NotNull EcmaVersion version,
             @NotNull TestConfigFactory configFactory
     ) throws Exception {
-        K2JSTranslator.translateWithMainCallParametersAndSaveToFile(mainCallParameters, createJetFileList(project, files, null),
-                                                                    outputFile, null, null,
-                                                                    getConfig(project, version, configFactory));
+        TranslationUtils.translateFiles(mainCallParameters, createJetFileList(project, files, null),
+                                        outputFile, null, null,
+                                        getConfig(project, version, configFactory));
     }
 
     @NotNull

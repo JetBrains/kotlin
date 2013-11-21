@@ -1,5 +1,8 @@
 <component name="libraryTable">
   <library name="ant-1.7">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/dependencies/ant-1.7/lib/ant.jar!/" />
     </CLASSES>

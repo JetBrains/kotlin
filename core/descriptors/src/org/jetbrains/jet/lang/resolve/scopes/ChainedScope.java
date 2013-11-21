@@ -19,9 +19,11 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -169,5 +171,19 @@ public class ChainedScope implements JetScope {
     @Override
     public String toString() {
         return debugName;
+    }
+
+    @TestOnly
+    @Override
+    public void printScopeStructure(@NotNull Printer p) {
+        p.println(getClass().getSimpleName(), ": ", debugName, " {");
+        p.pushIndent();
+
+        for (JetScope scope : scopeChain) {
+            scope.printScopeStructure(p);
+        }
+
+        p.popIndent();
+        p.println("}");
     }
 }

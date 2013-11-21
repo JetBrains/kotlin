@@ -24,6 +24,25 @@ public inline fun LongArray.any(predicate: (Long) -> Boolean) : Boolean {
 }
 
 /**
+ * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun LongArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            val text = if (element == null) "null" else element.toString()
+            buffer.append(text)
+        } else break
+    }
+    if (limit >= 0 && count > limit) buffer.append(truncated)
+    buffer.append(postfix)
+}
+
+/**
  * Returns the number of elements which match the given *predicate*
  */
 public inline fun LongArray.count(predicate: (Long) -> Boolean) : Int {
@@ -33,11 +52,33 @@ public inline fun LongArray.count(predicate: (Long) -> Boolean) : Int {
 }
 
 /**
- * Returns the first element which matches the given *predicate* or *null* if none matched
+ * Returns a list containing everything but the first *n* elements
  */
-public inline fun LongArray.find(predicate: (Long) -> Boolean) : Long? {
-    for (element in this) if (predicate(element)) return element
-    return null
+public inline fun LongArray.drop(n: Int) : List<Long> {
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun LongArray.dropWhile(predicate: (Long) -> Boolean) : List<Long> {
+    return dropWhileTo(ArrayList<Long>(), predicate)
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun <L: MutableList<in Long>> LongArray.dropWhileTo(result: L, predicate: (Long) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
 }
 
 /**
@@ -45,14 +86,6 @@ public inline fun LongArray.find(predicate: (Long) -> Boolean) : Long? {
  */
 public inline fun LongArray.filter(predicate: (Long) -> Boolean) : List<Long> {
     return filterTo(ArrayList<Long>(), predicate)
-}
-
-/**
- * Filters all elements which match the given predicate into the given list
- */
-public inline fun <C: MutableCollection<in Long>> LongArray.filterTo(result: C, predicate: (Long) -> Boolean) : C {
-    for (element in this) if (predicate(element)) result.add(element)
-    return result
 }
 
 /**
@@ -71,36 +104,19 @@ public inline fun <C: MutableCollection<in Long>> LongArray.filterNotTo(result: 
 }
 
 /**
- * Partitions this collection into a pair of collections
+ * Filters all elements which match the given predicate into the given list
  */
-public inline fun LongArray.partition(predicate: (Long) -> Boolean) : Pair<List<Long>, List<Long>> {
-    val first = ArrayList<Long>()
-    val second = ArrayList<Long>()
-    for (element in this) {
-        if (predicate(element)) {
-            first.add(element)
-        } else {
-            second.add(element)
-        }
-    }
-    return Pair(first, second)
-}
-
-/**
- * Returns a new List containing the results of applying the given *transform* function to each element in this collection
- */
-public inline fun <R> LongArray.map(transform : (Long) -> R) : List<R> {
-    return mapTo(ArrayList<R>(), transform)
-}
-
-/**
- * Transforms each element of this collection with the given *transform* function and
- * adds each return value to the given *results* collection
- */
-public inline fun <R, C: MutableCollection<in R>> LongArray.mapTo(result: C, transform : (Long) -> R) : C {
-    for (item in this)
-        result.add(transform(item))
+public inline fun <C: MutableCollection<in Long>> LongArray.filterTo(result: C, predicate: (Long) -> Boolean) : C {
+    for (element in this) if (predicate(element)) result.add(element)
     return result
+}
+
+/**
+ * Returns the first element which matches the given *predicate* or *null* if none matched
+ */
+public inline fun LongArray.find(predicate: (Long) -> Boolean) : Long? {
+    for (element in this) if (predicate(element)) return element
+    return null
 }
 
 /**
@@ -119,13 +135,6 @@ public inline fun <R, C: MutableCollection<in R>> LongArray.flatMapTo(result: C,
         for (r in list) result.add(r)
     }
     return result
-}
-
-/**
- * Performs the given *operation* on each element
- */
-public inline fun LongArray.forEach(operation: (Long) -> Unit) : Unit {
-    for (element in this) operation(element)
 }
 
 /**
@@ -149,6 +158,102 @@ public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R)
     }
     
     return r
+}
+
+/**
+ * Performs the given *operation* on each element
+ */
+public inline fun LongArray.forEach(operation: (Long) -> Unit) : Unit {
+    for (element in this) operation(element)
+}
+
+/**
+ * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ */
+public inline fun <K> LongArray.groupBy(toKey: (Long) -> K) : Map<K, List<Long>> {
+    return groupByTo(HashMap<K, MutableList<Long>>(), toKey)
+}
+
+public inline fun <K> LongArray.groupByTo(result: MutableMap<K, MutableList<Long>>, toKey: (Long) -> K) : Map<K, MutableList<Long>> {
+    for (element in this) {
+        val key = toKey(element)
+        val list = result.getOrPut(key) { ArrayList<Long>() }
+        list.add(element)
+    }
+    return result
+}
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun LongArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+    val buffer = StringBuilder()
+    appendString(buffer, separator, prefix, postfix, limit, truncated)
+    return buffer.toString()
+}
+
+/**
+ * Returns a new List containing the results of applying the given *transform* function to each element in this collection
+ */
+public inline fun <R> LongArray.map(transform : (Long) -> R) : List<R> {
+    return mapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Transforms each element of this collection with the given *transform* function and
+ * adds each return value to the given *results* collection
+ */
+public inline fun <R, C: MutableCollection<in R>> LongArray.mapTo(result: C, transform : (Long) -> R) : C {
+    for (item in this)
+        result.add(transform(item))
+    return result
+}
+
+/**
+ * Partitions this collection into a pair of collections
+ */
+public inline fun LongArray.partition(predicate: (Long) -> Boolean) : Pair<List<Long>, List<Long>> {
+    val first = ArrayList<Long>()
+    val second = ArrayList<Long>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following collection
+ */
+public inline fun LongArray.plus(collection: Iterable<Long>) : List<Long> {
+    return plus(collection.iterator())
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
+ */
+public inline fun LongArray.plus(element: Long) : List<Long> {
+    val answer = ArrayList<Long>()
+    toCollection(answer)
+    answer.add(element)
+    return answer
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following iterator
+ */
+public inline fun LongArray.plus(iterator: Iterator<Long>) : List<Long> {
+    val answer = ArrayList<Long>()
+    toCollection(answer)
+    for (element in iterator) {
+        answer.add(element)
+    }
+    return answer
 }
 
 /**
@@ -188,49 +293,27 @@ public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long) : Long 
 }
 
 /**
- * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ * Reverses the order the elements into a list
  */
-public inline fun <K> LongArray.groupBy(toKey: (Long) -> K) : Map<K, List<Long>> {
-    return groupByTo(HashMap<K, MutableList<Long>>(), toKey)
+public inline fun LongArray.reverse() : List<Long> {
+    val list = toCollection(ArrayList<Long>())
+    Collections.reverse(list)
+    return list
 }
 
-public inline fun <K> LongArray.groupByTo(result: MutableMap<K, MutableList<Long>>, toKey: (Long) -> K) : Map<K, MutableList<Long>> {
-    for (element in this) {
-        val key = toKey(element)
-        val list = result.getOrPut(key) { ArrayList<Long>() }
-        list.add(element)
+/**
+ * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
+ * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
+ */
+public inline fun <R: Comparable<R>> LongArray.sortBy(f: (Long) -> R) : List<Long> {
+    val sortedList = toCollection(ArrayList<Long>())
+    val sortBy: Comparator<Long> = comparator<Long> {(x: Long, y: Long) ->
+        val xr = f(x)
+        val yr = f(y)
+        xr.compareTo(yr)
     }
-    return result
-}
-
-/**
- * Returns a list containing everything but the first *n* elements
- */
-public inline fun LongArray.drop(n: Int) : List<Long> {
-    return dropWhile(countTo(n))
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun LongArray.dropWhile(predicate: (Long) -> Boolean) : List<Long> {
-    return dropWhileTo(ArrayList<Long>(), predicate)
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun <L: MutableList<in Long>> LongArray.dropWhileTo(result: L, predicate: (Long) -> Boolean) : L {
-    var start = true
-    for (element in this) {
-        if (start && predicate(element)) {
-            // ignore
-        } else {
-            start = false
-            result.add(element)
-        }
-    }
-    return result
+    java.util.Collections.sort(sortedList, sortBy)
+    return sortedList
 }
 
 /**
@@ -264,15 +347,6 @@ public inline fun <C: MutableCollection<in Long>> LongArray.toCollection(result:
 }
 
 /**
- * Reverses the order the elements into a list
- */
-public inline fun LongArray.reverse() : List<Long> {
-    val list = toCollection(ArrayList<Long>())
-    Collections.reverse(list)
-    return list
-}
-
-/**
  * Copies all elements into a [[LinkedList]]
  */
 public inline fun LongArray.toLinkedList() : LinkedList<Long> {
@@ -301,83 +375,9 @@ public inline fun LongArray.toSortedSet() : SortedSet<Long> {
 }
 
 /**
- * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
- */
-public inline fun LongArray.plus(element: Long) : List<Long> {
-    val answer = ArrayList<Long>()
-    toCollection(answer)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following iterator
- */
-public inline fun LongArray.plus(iterator: Iterator<Long>) : List<Long> {
-    val answer = ArrayList<Long>()
-    toCollection(answer)
-    for (element in iterator) {
-        answer.add(element)
-    }
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following collection
- */
-public inline fun LongArray.plus(collection: Iterable<Long>) : List<Long> {
-    return plus(collection.iterator())
-}
-
-/**
  * Returns an iterator of Pairs(index, data)
  */
 public inline fun LongArray.withIndices() : Iterator<Pair<Int, Long>> {
     return IndexIterator(iterator())
-}
-
-/**
- * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
- * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
- */
-public inline fun <R: Comparable<R>> LongArray.sortBy(f: (Long) -> R) : List<Long> {
-    val sortedList = toCollection(ArrayList<Long>())
-    val sortBy: Comparator<Long> = comparator<Long> {(x: Long, y: Long) ->
-        val xr = f(x)
-        val yr = f(y)
-        xr.compareTo(yr)
-    }
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun LongArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
-    buffer.append(prefix)
-    var count = 0
-    for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
-            buffer.append(text)
-        } else break
-    }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-}
-
-/**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun LongArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
-    val buffer = StringBuilder()
-    appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString()
 }
 

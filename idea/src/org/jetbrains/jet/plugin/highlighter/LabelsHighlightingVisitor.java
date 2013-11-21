@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetLabelQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetPrefixExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
@@ -28,7 +29,7 @@ class LabelsHighlightingVisitor extends HighlightingVisitor {
     }
 
     @Override
-    public void visitPrefixExpression(JetPrefixExpression expression) {
+    public void visitPrefixExpression(@NotNull JetPrefixExpression expression) {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
             JetPsiChecker.highlightName(holder, operationSign, JetHighlightingColors.LABEL);
@@ -36,7 +37,7 @@ class LabelsHighlightingVisitor extends HighlightingVisitor {
     }
 
     @Override
-    public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
+    public void visitLabelQualifiedExpression(@NotNull JetLabelQualifiedExpression expression) {
         JetSimpleNameExpression targetLabel = expression.getTargetLabel();
         if (targetLabel != null) {
             JetPsiChecker.highlightName(holder, targetLabel, JetHighlightingColors.LABEL);

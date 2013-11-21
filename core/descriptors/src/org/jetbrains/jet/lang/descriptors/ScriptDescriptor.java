@@ -64,21 +64,11 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), NAME);
         this.priority = priority;
 
-        classDescriptor = new ClassDescriptorImpl(
-                containingDeclaration,
-                Collections.<AnnotationDescriptor>emptyList(),
-                Modality.FINAL,
-                className);
+        classDescriptor = new ClassDescriptorImpl(containingDeclaration, className, Modality.FINAL,
+                                                  Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
         classScope = new WritableScopeImpl(scriptScope, containingDeclaration, RedeclarationHandler.DO_NOTHING, "script members");
         classScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        classDescriptor.initialize(
-                false,
-                Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singletonList(KotlinBuiltIns.getInstance().getAnyType()),
-                classScope,
-                new HashSet<ConstructorDescriptor>(),
-                null,
-                false);
+        classDescriptor.initialize(classScope, new HashSet<ConstructorDescriptor>(), null);
     }
 
     public void initialize(

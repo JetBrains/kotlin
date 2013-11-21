@@ -21,9 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -31,6 +29,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeConstructorImpl;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,11 +51,9 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     private final boolean isInner;
 
     private MutableClassDescriptorLite classObjectDescriptor;
-    private JetType classObjectType;
     private final ClassKind kind;
 
     private JetScope scopeForMemberLookup;
-    private JetScope innerClassesScope;
 
     private ReceiverParameterDescriptor implicitReceiver;
 
@@ -65,7 +62,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
                                       @NotNull ClassKind kind,
                                       boolean isInner
     ) {
-        super(containingDeclaration, name);
+        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name);
         this.kind = kind;
         this.isInner = isInner;
     }
@@ -76,9 +73,8 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         return typeConstructor;
     }
 
-    public void setScopeForMemberLookup(JetScope scopeForMemberLookup) {
+    public void setScopeForMemberLookup(@NotNull JetScope scopeForMemberLookup) {
         this.scopeForMemberLookup = scopeForMemberLookup;
-        this.innerClassesScope = new InnerClassesScopeWrapper(scopeForMemberLookup);
     }
 
     public void createTypeConstructor() {
@@ -97,18 +93,10 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         return (WritableScope) scopeForMemberLookup;
     }
 
-
+    @Override
     @NotNull
     public JetScope getScopeForMemberLookup() {
         return scopeForMemberLookup;
-    }
-
-    @Override
-    public JetType getClassObjectType() {
-        if (classObjectType == null && classObjectDescriptor != null) {
-            classObjectType = classObjectDescriptor.getDefaultType();
-        }
-        return classObjectType;
     }
 
     @NotNull
@@ -157,15 +145,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         return classObjectDescriptor;
     }
 
-
-
-    @NotNull
-    @Override
-    public JetScope getUnsubstitutedInnerClassesScope() {
-        return innerClassesScope;
-    }
-
-
     public void addSupertype(@NotNull JetType supertype) {
         assert !supertype.isError() : "Error types must be filtered out in DescriptorResolver";
         if (TypeUtils.getClassDescriptor(supertype) != null) {
@@ -176,7 +155,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
     public void setTypeParameterDescriptors(List<TypeParameterDescriptor> typeParameters) {
         if (this.typeParameters != null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Type parameters are already set for " + getName());
         }
         this.typeParameters = new ArrayList<TypeParameterDescriptor>();
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
@@ -191,15 +170,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         }
     }
 
-    @NotNull
-    @Override
-    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        if (implicitReceiver == null) {
-            implicitReceiver = DescriptorFactory.createLazyReceiverParameterDescriptor(this);
-        }
-        return implicitReceiver;
-    }
-
     @Override
     public String toString() {
         try {
@@ -209,6 +179,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         }
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations;
@@ -250,7 +221,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
                 @Override
                 public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-                    if (getKind().isObject() || isInner()) {
+                    if (getKind().isSingleton() || isInner()) {
                         return ClassObjectStatus.NOT_ALLOWED;
                     }
 

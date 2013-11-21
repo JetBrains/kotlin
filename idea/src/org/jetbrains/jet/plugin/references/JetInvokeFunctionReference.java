@@ -18,19 +18,21 @@ package org.jetbrains.jet.plugin.references;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.MultiRangeReference;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
@@ -50,29 +52,16 @@ class JetInvokeFunctionReference extends JetPsiReference implements MultiRangeRe
         return getElement().getTextRange().shiftRight(-getElement().getTextOffset());
     }
 
+    @Nullable
     @Override
-    protected PsiElement doResolve() {
+    protected Collection<? extends DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
         JetExpression calleeExpression = ((JetCallExpression) myExpression).getCalleeExpression();
-        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(myExpression);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(RESOLVED_CALL, calleeExpression);
 
-        ResolvedCall<? extends CallableDescriptor> invokeFunction = bindingContext.get(RESOLVED_CALL, calleeExpression);
-
-        if (invokeFunction != null && invokeFunction instanceof VariableAsFunctionResolvedCall) {
-            FunctionDescriptor resultingDescriptor = ((VariableAsFunctionResolvedCall) invokeFunction).getResultingDescriptor();
-            return BindingContextUtils.callableDescriptorToDeclaration(bindingContext, resultingDescriptor);
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            return Collections.singleton(((VariableAsFunctionResolvedCall) resolvedCall).getResultingDescriptor());
         }
-
         return null;
-    }
-
-    @Override
-    protected ResolveResult[] doMultiResolve() {
-        // TODO If there are more than one invoke(), add all function ("ambiguity"). See JetPsiReference
-        PsiElement element = doResolve();
-        if (element == null) {
-            return ResolveResult.EMPTY_ARRAY;
-        }
-        return new ResolveResult[] {new PsiElementResolveResult(element, true)};
     }
 
     @Override

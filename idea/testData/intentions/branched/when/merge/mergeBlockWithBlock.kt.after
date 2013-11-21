@@ -1,0 +1,24 @@
+fun test(n: Int) {
+    val res: String
+
+    when (n) {
+        1 -> {
+            res = "one"
+            println("A")
+            println("A")
+            println("AA")
+        }
+        2 -> {
+            res = "two"
+            println("B")
+            println("B")
+            println("BB")
+        }
+        else -> {
+            res = "unknown"
+            println("C")
+            println("C")
+            println("CC")
+        }
+    }
+}

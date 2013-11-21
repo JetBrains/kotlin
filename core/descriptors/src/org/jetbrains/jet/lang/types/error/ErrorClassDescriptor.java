@@ -17,38 +17,33 @@
 package org.jetbrains.jet.lang.types.error;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collection;
 import java.util.Collections;
 
 import static org.jetbrains.jet.lang.types.ErrorUtils.*;
 
 public final class ErrorClassDescriptor extends ClassDescriptorImpl {
     public ErrorClassDescriptor(@NotNull String debugMessage) {
-        super(ErrorUtils.getErrorModule(), Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN,
-              Name.special("<ERROR CLASS: " + debugMessage + ">"));
-    }
+        super(getErrorModule(), Name.special("<ERROR CLASS: " + debugMessage + ">"), Modality.OPEN, Collections.<JetType>emptyList());
 
-    @NotNull
-    @Override
-    public Collection<ConstructorDescriptor> getConstructors() {
-        return getErrorConstructorGroup();
-    }
+        ConstructorDescriptorImpl errorConstructor =
+                new ConstructorDescriptorImpl(this, Collections.<AnnotationDescriptor>emptyList(), true);
 
-    @NotNull
-    @Override
-    public Modality getModality() {
-        return Modality.OPEN;
+        errorConstructor.initialize(
+                Collections.<TypeParameterDescriptor>emptyList(), // TODO
+                Collections.<ValueParameterDescriptor>emptyList(), // TODO
+                Visibilities.INTERNAL
+        );
+        errorConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"));
+
+        initialize(createErrorScope("ERROR_CLASS"), Collections.<ConstructorDescriptor>singleton(errorConstructor), errorConstructor);
     }
 
     @NotNull
@@ -60,10 +55,5 @@ public final class ErrorClassDescriptor extends ClassDescriptorImpl {
     @Override
     public String toString() {
         return getName().asString();
-    }
-
-    public void initializeErrorClass() {
-        initialize(true, Collections.<TypeParameterDescriptor>emptyList(), Collections.<JetType>emptyList(),
-                   createErrorScope("ERROR_CLASS"), getErrorConstructorGroup(), getErrorConstructor(), false);
     }
 }

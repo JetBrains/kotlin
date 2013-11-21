@@ -2,6 +2,7 @@ package kotlin
 
 import kotlin.support.*
 import java.util.Collections
+import kotlin.test.assertTrue
 
 /**
  * Returns an iterator which invokes the function to calculate the next value on each iteration until the function returns *null*
@@ -9,6 +10,23 @@ import java.util.Collections
 public inline fun <T:Any> iterate(nextFunction: () -> T?) : Iterator<T> {
     return FunctionIterator(nextFunction)
 }
+
+/**
+ * Returns an iterator which invokes the function to calculate the next value based on the previous one on each iteration
+ * until the function returns *null*
+ */
+public inline fun <T: Any> iterate(initialValue: T, nextFunction: (T) -> T?): Iterator<T> =
+        iterate(nextFunction.toGenerator(initialValue))
+
+/**
+ * Returns an iterator whose values are pairs composed of values produced by given pair of iterators
+ */
+public inline fun <T, S> Iterator<T>.zip(iterator: Iterator<S>): Iterator<Pair<T, S>> = PairIterator(this, iterator)
+
+/**
+ * Returns an iterator shifted to right by the given number of elements
+ */
+public inline fun <T> Iterator<T>.skip(n: Int): Iterator<T> = SkippingIterator(this, n)
 
 class FilterIterator<T>(val iterator : Iterator<T>, val predicate: (T)-> Boolean) : AbstractIterator<T>() {
     override protected fun computeNext(): Unit {
@@ -145,5 +163,52 @@ class IndexIterator<T>(val iterator : Iterator<T>): Iterator<Pair<Int, T>> {
 
     override fun hasNext(): Boolean {
         return iterator.hasNext()
+    }
+}
+
+public class PairIterator<T, S>(
+        val iterator1 : Iterator<T>, val iterator2 : Iterator<S>
+): AbstractIterator<Pair<T, S>>() {
+    protected override fun computeNext() {
+        if (iterator1.hasNext() && iterator2.hasNext()) {
+            setNext(Pair(iterator1.next(), iterator2.next()))
+        }
+        else {
+            done()
+        }
+    }
+}
+
+class SkippingIterator<T>(val iterator: Iterator<T>, val n: Int): Iterator<T> {
+    private var firstTime: Boolean = true
+
+    private fun skip() {
+        for (i in 1..n) {
+            if (!iterator.hasNext()) break
+            iterator.next()
+        }
+        firstTime = false
+    }
+
+    override fun next(): T {
+        assertTrue(!firstTime, "hasNext() must be invoked before advancing an iterator")
+        return iterator.next()
+    }
+
+    override fun hasNext(): Boolean {
+        if (firstTime) {
+            skip()
+        }
+        return iterator.hasNext()
+    }
+}
+
+fun <T: Any> Function1<T, T?>.toGenerator(initialValue: T): Function0<T?> {
+    var nextValue: T? = initialValue
+    return {
+        nextValue?.let { result ->
+            nextValue = this@toGenerator(result)
+            result
+        }
     }
 }

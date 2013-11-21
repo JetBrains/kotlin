@@ -31,7 +31,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 
 public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
     @Override
@@ -116,7 +116,8 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         for (PsiMethod method : accessors) {
             PsiMethod[] implementations = MethodImplementationsSearch.getMethodImplementations(method, scope);
             for (PsiMethod implementation : implementations) {
-                PsiElement mirrorElement = implementation instanceof JetClsMethod ? ((JetClsMethod) implementation).getOrigin() : null;
+                PsiElement mirrorElement = implementation instanceof KotlinLightMethod
+                                           ? ((KotlinLightMethod) implementation).getOrigin() : null;
                 if (mirrorElement instanceof JetProperty || mirrorElement instanceof JetParameter) {
                     if (!consumer.process(mirrorElement)) {
                         return false;

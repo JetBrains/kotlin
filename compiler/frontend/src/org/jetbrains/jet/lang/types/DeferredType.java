@@ -85,6 +85,7 @@ public class DeferredType implements JetType {
         return getActualType().isNullable();
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return getActualType().getAnnotations();

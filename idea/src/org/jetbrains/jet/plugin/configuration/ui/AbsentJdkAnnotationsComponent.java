@@ -121,7 +121,6 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
             return false;
         }
 
-        @SuppressWarnings("StaticMethodReferencedViaSubclass")
         boolean isAndroidSdk = NotificationsPackage.isAndroidSdk(sdk);
         return !(isAndroidSdk && !KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk));
     }

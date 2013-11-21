@@ -268,6 +268,7 @@ public class TypeDeserializer {
             return descriptor != null && ErrorUtils.isError(descriptor);
         }
 
+        @NotNull
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             return Collections.emptyList();

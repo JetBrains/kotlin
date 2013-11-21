@@ -34,7 +34,8 @@ import com.intellij.testFramework.PsiTestUtil;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.OutputFile;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -126,9 +127,10 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
         return breakpoints;
     }
 
-    private static Map<String, ReferenceType> getReferenceMap(ClassFileFactory classFileFactory) {
+    private static Map<String, ReferenceType> getReferenceMap(OutputFileCollection outputFiles) {
         Map<String, ReferenceType> referencesByName = Maps.newHashMap();
-        for (String classFileName : classFileFactory.files()) {
+        for (OutputFile outputFile : outputFiles.asList()) {
+            String classFileName = outputFile.getRelativePath();
             String name = classFileName.substring(0, classFileName.lastIndexOf('.'));
             referencesByName.put(name, new MockReferenceType(name));
         }

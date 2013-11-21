@@ -22,6 +22,7 @@ import jet.Function0;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
@@ -32,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -311,5 +313,20 @@ public class LazyImportScope implements JetScope {
     @Override
     public String toString() {
         return "LazyImportScope: " + debugName;
+    }
+
+    @TestOnly
+    @Override
+    public void printScopeStructure(@NotNull Printer p) {
+        p.println(getClass().getSimpleName(), ": ", debugName, " {");
+        p.pushIndent();
+
+        p.println("packageDescriptor = ", packageDescriptor);
+
+        p.print("rootScope = ");
+        rootScope.printScopeStructure(p.withholdIndentOnce());
+
+        p.popIndent();
+        p.println("}");
     }
 }

@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
@@ -115,6 +116,7 @@ public class IntrinsicMethods {
         declareBinaryOp(Name.identifier("xor"), IXOR);
 
         declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("not"), 0, new Not());
+        declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("equals"), 1, EQUALS);
 
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("plus"), 1, new Concat());
         declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar());
@@ -170,7 +172,7 @@ public class IntrinsicMethods {
     }
 
     private void registerStaticField(@NotNull FqName classFqName, @NotNull Name propertyName) {
-        FqNameUnsafe classObjectFqName = classFqName.toUnsafe().child(getClassObjectName(classFqName.shortName()));
+        FqNameUnsafe classObjectFqName = classFqName.toUnsafe().child(SpecialNames.getClassObjectName(classFqName.shortName()));
         intrinsicsMap.registerIntrinsic(classObjectFqName, propertyName, -1, new StaticField(classFqName, propertyName));
     }
 

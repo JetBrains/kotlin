@@ -77,7 +77,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
             public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
                 NamespaceCodegen codegen = state.getFactory().forNamespace(packageFqName, files);
                 codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
-                state.getFactory().files();
+                state.getFactory().asList();
             }
         });
     }
@@ -107,7 +107,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
             public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
                 NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(getPackageFqName(), files);
                 namespaceCodegen.generateClassOrObject(classOrObject);
-                state.getFactory().files();
+                state.getFactory().asList();
             }
         });
     }

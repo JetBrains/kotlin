@@ -22,11 +22,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.*;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.*;
+import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -69,8 +66,8 @@ public class LineNumberTest extends TestCaseWithTmpdir {
                                                "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n",
                                                environment.getProject());
 
-        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir);
+        OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
+        OutputUtilsPackage.writeAllTo(outputFiles, tmpdir);
     }
 
     @NotNull
@@ -112,12 +109,12 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     private static List<Integer> extractActualLineNumbersFromBytecode(@NotNull GenerationState state, boolean testFunInvoke) {
         ClassFileFactory factory = state.getFactory();
         List<Integer> actualLineNumbers = Lists.newArrayList();
-        for (String filename : factory.files()) {
-            if (PackageClassUtils.isPackageClassFqName(new FqName(FileUtil.getNameWithoutExtension(filename)))) {
+        for (OutputFile outputFile : factory.asList()) {
+            if (PackageClassUtils.isPackageClassFqName(new FqName(FileUtil.getNameWithoutExtension(outputFile.getRelativePath())))) {
                 // Don't test line numbers in *Package facade classes
                 continue;
             }
-            ClassReader cr = new ClassReader(factory.asBytes(filename));
+            ClassReader cr = new ClassReader(outputFile.asByteArray());
             try {
                 List<Integer> lineNumbers = testFunInvoke ? readTestFunLineNumbers(cr) : readAllLineNumbers(cr);
                 actualLineNumbers.addAll(lineNumbers);
@@ -332,7 +329,9 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         JetFile foo = createPsiFile("staticDelegate/foo.kt");
         JetFile bar = createPsiFile("staticDelegate/bar.kt");
         GenerationState state = GenerationUtils.compileManyFilesGetGenerationStateForTest(foo.getProject(), Arrays.asList(foo, bar));
-        ClassReader reader = new ClassReader(state.getFactory().asBytes(PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class"));
+        OutputFile file = state.getFactory().get(PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class");
+        assertNotNull(file);
+        ClassReader reader = new ClassReader(file.asByteArray());
 
         // There must be exactly one line number attribute for each static delegate in namespace.class, and it should point to the first
         // line. There are two static delegates in this test, hence the [1, 1]

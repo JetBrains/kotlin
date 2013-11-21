@@ -30,7 +30,7 @@ public trait Hashable {
   public fun equals(other : Any?) : Boolean
 }
 
-public class Boolean {
+public class Boolean private () {
   public fun not() : Boolean
 
   public fun and(other : Boolean) : Boolean

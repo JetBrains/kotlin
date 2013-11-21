@@ -171,6 +171,9 @@ public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
             @NotNull List<String> signatureErrors,
             @NotNull List<FunctionDescriptor> superFunctions
     ) {
+        // This optimization speed things up because hasRawTypesInHierarchicalSignature() is very expensive
+        if (superFunctions.isEmpty() && (signatureErrors.isEmpty() || !reportSignatureErrors)) return;
+
         JavaMethodImpl methodWithPsi = (JavaMethodImpl) method;
         if (!RawTypesCheck.hasRawTypesInHierarchicalSignature(methodWithPsi) &&
             isMethodReturnTypeCompatible(methodWithPsi) &&

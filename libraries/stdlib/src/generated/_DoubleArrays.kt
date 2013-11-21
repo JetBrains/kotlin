@@ -24,6 +24,25 @@ public inline fun DoubleArray.any(predicate: (Double) -> Boolean) : Boolean {
 }
 
 /**
+ * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun DoubleArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            val text = if (element == null) "null" else element.toString()
+            buffer.append(text)
+        } else break
+    }
+    if (limit >= 0 && count > limit) buffer.append(truncated)
+    buffer.append(postfix)
+}
+
+/**
  * Returns the number of elements which match the given *predicate*
  */
 public inline fun DoubleArray.count(predicate: (Double) -> Boolean) : Int {
@@ -33,11 +52,33 @@ public inline fun DoubleArray.count(predicate: (Double) -> Boolean) : Int {
 }
 
 /**
- * Returns the first element which matches the given *predicate* or *null* if none matched
+ * Returns a list containing everything but the first *n* elements
  */
-public inline fun DoubleArray.find(predicate: (Double) -> Boolean) : Double? {
-    for (element in this) if (predicate(element)) return element
-    return null
+public inline fun DoubleArray.drop(n: Int) : List<Double> {
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean) : List<Double> {
+    return dropWhileTo(ArrayList<Double>(), predicate)
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun <L: MutableList<in Double>> DoubleArray.dropWhileTo(result: L, predicate: (Double) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
 }
 
 /**
@@ -45,14 +86,6 @@ public inline fun DoubleArray.find(predicate: (Double) -> Boolean) : Double? {
  */
 public inline fun DoubleArray.filter(predicate: (Double) -> Boolean) : List<Double> {
     return filterTo(ArrayList<Double>(), predicate)
-}
-
-/**
- * Filters all elements which match the given predicate into the given list
- */
-public inline fun <C: MutableCollection<in Double>> DoubleArray.filterTo(result: C, predicate: (Double) -> Boolean) : C {
-    for (element in this) if (predicate(element)) result.add(element)
-    return result
 }
 
 /**
@@ -71,36 +104,19 @@ public inline fun <C: MutableCollection<in Double>> DoubleArray.filterNotTo(resu
 }
 
 /**
- * Partitions this collection into a pair of collections
+ * Filters all elements which match the given predicate into the given list
  */
-public inline fun DoubleArray.partition(predicate: (Double) -> Boolean) : Pair<List<Double>, List<Double>> {
-    val first = ArrayList<Double>()
-    val second = ArrayList<Double>()
-    for (element in this) {
-        if (predicate(element)) {
-            first.add(element)
-        } else {
-            second.add(element)
-        }
-    }
-    return Pair(first, second)
-}
-
-/**
- * Returns a new List containing the results of applying the given *transform* function to each element in this collection
- */
-public inline fun <R> DoubleArray.map(transform : (Double) -> R) : List<R> {
-    return mapTo(ArrayList<R>(), transform)
-}
-
-/**
- * Transforms each element of this collection with the given *transform* function and
- * adds each return value to the given *results* collection
- */
-public inline fun <R, C: MutableCollection<in R>> DoubleArray.mapTo(result: C, transform : (Double) -> R) : C {
-    for (item in this)
-        result.add(transform(item))
+public inline fun <C: MutableCollection<in Double>> DoubleArray.filterTo(result: C, predicate: (Double) -> Boolean) : C {
+    for (element in this) if (predicate(element)) result.add(element)
     return result
+}
+
+/**
+ * Returns the first element which matches the given *predicate* or *null* if none matched
+ */
+public inline fun DoubleArray.find(predicate: (Double) -> Boolean) : Double? {
+    for (element in this) if (predicate(element)) return element
+    return null
 }
 
 /**
@@ -119,13 +135,6 @@ public inline fun <R, C: MutableCollection<in R>> DoubleArray.flatMapTo(result: 
         for (r in list) result.add(r)
     }
     return result
-}
-
-/**
- * Performs the given *operation* on each element
- */
-public inline fun DoubleArray.forEach(operation: (Double) -> Unit) : Unit {
-    for (element in this) operation(element)
 }
 
 /**
@@ -149,6 +158,102 @@ public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, R) -
     }
     
     return r
+}
+
+/**
+ * Performs the given *operation* on each element
+ */
+public inline fun DoubleArray.forEach(operation: (Double) -> Unit) : Unit {
+    for (element in this) operation(element)
+}
+
+/**
+ * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ */
+public inline fun <K> DoubleArray.groupBy(toKey: (Double) -> K) : Map<K, List<Double>> {
+    return groupByTo(HashMap<K, MutableList<Double>>(), toKey)
+}
+
+public inline fun <K> DoubleArray.groupByTo(result: MutableMap<K, MutableList<Double>>, toKey: (Double) -> K) : Map<K, MutableList<Double>> {
+    for (element in this) {
+        val key = toKey(element)
+        val list = result.getOrPut(key) { ArrayList<Double>() }
+        list.add(element)
+    }
+    return result
+}
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun DoubleArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+    val buffer = StringBuilder()
+    appendString(buffer, separator, prefix, postfix, limit, truncated)
+    return buffer.toString()
+}
+
+/**
+ * Returns a new List containing the results of applying the given *transform* function to each element in this collection
+ */
+public inline fun <R> DoubleArray.map(transform : (Double) -> R) : List<R> {
+    return mapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Transforms each element of this collection with the given *transform* function and
+ * adds each return value to the given *results* collection
+ */
+public inline fun <R, C: MutableCollection<in R>> DoubleArray.mapTo(result: C, transform : (Double) -> R) : C {
+    for (item in this)
+        result.add(transform(item))
+    return result
+}
+
+/**
+ * Partitions this collection into a pair of collections
+ */
+public inline fun DoubleArray.partition(predicate: (Double) -> Boolean) : Pair<List<Double>, List<Double>> {
+    val first = ArrayList<Double>()
+    val second = ArrayList<Double>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following collection
+ */
+public inline fun DoubleArray.plus(collection: Iterable<Double>) : List<Double> {
+    return plus(collection.iterator())
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
+ */
+public inline fun DoubleArray.plus(element: Double) : List<Double> {
+    val answer = ArrayList<Double>()
+    toCollection(answer)
+    answer.add(element)
+    return answer
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following iterator
+ */
+public inline fun DoubleArray.plus(iterator: Iterator<Double>) : List<Double> {
+    val answer = ArrayList<Double>()
+    toCollection(answer)
+    for (element in iterator) {
+        answer.add(element)
+    }
+    return answer
 }
 
 /**
@@ -188,49 +293,27 @@ public inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double)
 }
 
 /**
- * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ * Reverses the order the elements into a list
  */
-public inline fun <K> DoubleArray.groupBy(toKey: (Double) -> K) : Map<K, List<Double>> {
-    return groupByTo(HashMap<K, MutableList<Double>>(), toKey)
+public inline fun DoubleArray.reverse() : List<Double> {
+    val list = toCollection(ArrayList<Double>())
+    Collections.reverse(list)
+    return list
 }
 
-public inline fun <K> DoubleArray.groupByTo(result: MutableMap<K, MutableList<Double>>, toKey: (Double) -> K) : Map<K, MutableList<Double>> {
-    for (element in this) {
-        val key = toKey(element)
-        val list = result.getOrPut(key) { ArrayList<Double>() }
-        list.add(element)
+/**
+ * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
+ * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
+ */
+public inline fun <R: Comparable<R>> DoubleArray.sortBy(f: (Double) -> R) : List<Double> {
+    val sortedList = toCollection(ArrayList<Double>())
+    val sortBy: Comparator<Double> = comparator<Double> {(x: Double, y: Double) ->
+        val xr = f(x)
+        val yr = f(y)
+        xr.compareTo(yr)
     }
-    return result
-}
-
-/**
- * Returns a list containing everything but the first *n* elements
- */
-public inline fun DoubleArray.drop(n: Int) : List<Double> {
-    return dropWhile(countTo(n))
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean) : List<Double> {
-    return dropWhileTo(ArrayList<Double>(), predicate)
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun <L: MutableList<in Double>> DoubleArray.dropWhileTo(result: L, predicate: (Double) -> Boolean) : L {
-    var start = true
-    for (element in this) {
-        if (start && predicate(element)) {
-            // ignore
-        } else {
-            start = false
-            result.add(element)
-        }
-    }
-    return result
+    java.util.Collections.sort(sortedList, sortBy)
+    return sortedList
 }
 
 /**
@@ -264,15 +347,6 @@ public inline fun <C: MutableCollection<in Double>> DoubleArray.toCollection(res
 }
 
 /**
- * Reverses the order the elements into a list
- */
-public inline fun DoubleArray.reverse() : List<Double> {
-    val list = toCollection(ArrayList<Double>())
-    Collections.reverse(list)
-    return list
-}
-
-/**
  * Copies all elements into a [[LinkedList]]
  */
 public inline fun DoubleArray.toLinkedList() : LinkedList<Double> {
@@ -301,83 +375,9 @@ public inline fun DoubleArray.toSortedSet() : SortedSet<Double> {
 }
 
 /**
- * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
- */
-public inline fun DoubleArray.plus(element: Double) : List<Double> {
-    val answer = ArrayList<Double>()
-    toCollection(answer)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following iterator
- */
-public inline fun DoubleArray.plus(iterator: Iterator<Double>) : List<Double> {
-    val answer = ArrayList<Double>()
-    toCollection(answer)
-    for (element in iterator) {
-        answer.add(element)
-    }
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following collection
- */
-public inline fun DoubleArray.plus(collection: Iterable<Double>) : List<Double> {
-    return plus(collection.iterator())
-}
-
-/**
  * Returns an iterator of Pairs(index, data)
  */
 public inline fun DoubleArray.withIndices() : Iterator<Pair<Int, Double>> {
     return IndexIterator(iterator())
-}
-
-/**
- * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
- * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
- */
-public inline fun <R: Comparable<R>> DoubleArray.sortBy(f: (Double) -> R) : List<Double> {
-    val sortedList = toCollection(ArrayList<Double>())
-    val sortBy: Comparator<Double> = comparator<Double> {(x: Double, y: Double) ->
-        val xr = f(x)
-        val yr = f(y)
-        xr.compareTo(yr)
-    }
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun DoubleArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
-    buffer.append(prefix)
-    var count = 0
-    for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
-            buffer.append(text)
-        } else break
-    }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-}
-
-/**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun DoubleArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
-    val buffer = StringBuilder()
-    appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString()
 }
 

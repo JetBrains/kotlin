@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
 public class JavaEnumClassObjectDescriptor extends MutableClassDescriptorLite {
     private ConstructorDescriptor constructor;

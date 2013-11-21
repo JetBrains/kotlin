@@ -34,7 +34,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+    public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
         if (expression.getParent() instanceof JetThisExpression) {
             return;
         }

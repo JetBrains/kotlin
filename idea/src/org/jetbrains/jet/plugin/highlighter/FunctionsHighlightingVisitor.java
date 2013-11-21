@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -34,7 +35,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     }
 
     @Override
-    public void visitNamedFunction(JetNamedFunction function) {
+    public void visitNamedFunction(@NotNull JetNamedFunction function) {
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (nameIdentifier != null) {
             JetPsiChecker.highlightName(holder, nameIdentifier, JetHighlightingColors.FUNCTION_DECLARATION);
@@ -44,7 +45,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     }
 
     @Override
-    public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+    public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
         JetConstructorCalleeExpression calleeExpression = call.getCalleeExpression();
         JetTypeReference typeRef = calleeExpression.getTypeReference();
         if (typeRef != null) {
@@ -60,7 +61,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     }
 
     @Override
-    public void visitCallExpression(JetCallExpression expression) {
+    public void visitCallExpression(@NotNull JetCallExpression expression) {
         JetExpression callee = expression.getCalleeExpression();
         if (callee instanceof JetReferenceExpression) {
             ResolvedCall<? extends CallableDescriptor> resolvedCall =

@@ -22,9 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -85,7 +83,7 @@ public class DescriptorFactory {
     ) {
         SimpleFunctionDescriptorImpl values =
                 new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUES_METHOD_NAME,
-                                                 CallableMemberDescriptor.Kind.DECLARATION);
+                                                 CallableMemberDescriptor.Kind.SYNTHESIZED);
         return values.initialize(null, classObject.getThisAsReceiverParameter(), Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  returnType, Modality.FINAL,
@@ -99,7 +97,7 @@ public class DescriptorFactory {
     ) {
         SimpleFunctionDescriptorImpl values =
                 new SimpleFunctionDescriptorImpl(classObject, Collections.<AnnotationDescriptor>emptyList(), VALUE_OF_METHOD_NAME,
-                                                 CallableMemberDescriptor.Kind.DECLARATION);
+                                                 CallableMemberDescriptor.Kind.SYNTHESIZED);
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
                 values,
                 0,
@@ -123,39 +121,5 @@ public class DescriptorFactory {
         return receiverParameterType == null
                ? NO_RECEIVER_PARAMETER
                : new ReceiverParameterDescriptorImpl(owner, receiverParameterType, new ExtensionReceiver(owner, receiverParameterType));
-    }
-
-    @NotNull
-    public static ReceiverParameterDescriptor createLazyReceiverParameterDescriptor(@NotNull final ClassDescriptor classDescriptor) {
-        return new AbstractReceiverParameterDescriptor() {
-            private ClassReceiver value;
-
-            @NotNull
-            @Override
-            public JetType getType() {
-                // This must be lazy, thus the inner class
-                return classDescriptor.getDefaultType();
-            }
-
-            @NotNull
-            @Override
-            public ReceiverValue getValue() {
-                if (value == null) {
-                    value = new ClassReceiver(classDescriptor);
-                }
-                return value;
-            }
-
-            @NotNull
-            @Override
-            public DeclarationDescriptor getContainingDeclaration() {
-                return classDescriptor;
-            }
-
-            @Override
-            public String toString() {
-                return "class " + classDescriptor.getName() + "::this";
-            }
-        };
     }
 }

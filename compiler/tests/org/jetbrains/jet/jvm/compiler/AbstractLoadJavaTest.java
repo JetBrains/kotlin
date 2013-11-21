@@ -66,7 +66,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File javaFile = new File(javaFileName);
         File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
         File txtFile = getTxtFile(javaFile.getPath());
-        NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS);
+        NamespaceDescriptor kotlinNamespace = analyzeKotlinAndLoadTestNamespace(ktFile, myTestRootDisposable, ConfigurationKind.ALL);
         Pair<NamespaceDescriptor, BindingContext> javaNamespaceAndContext = compileJavaAndLoadTestNamespaceAndBindingContextFromBinary(
                 Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.ALL);
         checkLoadedNamespaces(txtFile, kotlinNamespace, javaNamespaceAndContext.first, javaNamespaceAndContext.second);

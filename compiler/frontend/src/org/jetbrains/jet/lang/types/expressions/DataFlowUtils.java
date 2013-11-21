@@ -51,14 +51,14 @@ public class DataFlowUtils {
         final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(null);
         condition.accept(new JetVisitorVoid() {
             @Override
-            public void visitIsExpression(JetIsExpression expression) {
+            public void visitIsExpression(@NotNull JetIsExpression expression) {
                 if (conditionValue && !expression.isNegated() || !conditionValue && expression.isNegated()) {
                     result.set(context.trace.get(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression));
                 }
             }
 
             @Override
-            public void visitBinaryExpression(JetBinaryExpression expression) {
+            public void visitBinaryExpression(@NotNull JetBinaryExpression expression) {
                 IElementType operationToken = expression.getOperationToken();
                 if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
                     DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, context);
@@ -110,7 +110,7 @@ public class DataFlowUtils {
             }
 
             @Override
-            public void visitUnaryExpression(JetUnaryExpression expression) {
+            public void visitUnaryExpression(@NotNull JetUnaryExpression expression) {
                 IElementType operationTokenType = expression.getOperationReference().getReferencedNameElementType();
                 if (operationTokenType == JetTokens.EXCL) {
                     JetExpression baseExpression = expression.getBaseExpression();
@@ -121,7 +121,7 @@ public class DataFlowUtils {
             }
 
             @Override
-            public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
+            public void visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression) {
                 JetExpression body = expression.getExpression();
                 if (body != null) {
                     body.accept(this);

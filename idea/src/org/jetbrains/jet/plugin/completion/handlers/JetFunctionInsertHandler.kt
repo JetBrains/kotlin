@@ -45,18 +45,16 @@ public enum class BracketType {
     BRACES
 }
 
-public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bracketType : BracketType) : InsertHandler<LookupElement?> {
+public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bracketType : BracketType) : InsertHandler<LookupElement> {
     {
         if (caretPosition == CaretPosition.AFTER_BRACKETS && bracketType == BracketType.BRACES) {
             throw IllegalArgumentException("CaretPosition.AFTER_BRACKETS with bracketType == BracketType.BRACES combination is not supported")
         }
     }
 
-    public override fun handleInsert(context: InsertionContext?, item: LookupElement?) {
-        if (context == null || item == null) return
-
-        PsiDocumentManager.getInstance(context.getProject())?.commitAllDocuments()
-        if ((context.getCompletionChar()) == '(') {
+    public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
+        if (context.getCompletionChar() == '(') {
             context.setAddCompletionChar(false)
         }
 
@@ -105,7 +103,7 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bra
             else {
                 document.insertString(offset, "()")
             }
-            PsiDocumentManager.getInstance(context.getProject())?.commitDocument(document)
+            PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
             documentText = document.getText()
         }
 
@@ -125,7 +123,7 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bra
             editor.getCaretModel().moveToOffset(closeBracketIndex + 1)
         }
 
-        PsiDocumentManager.getInstance(context.getProject())?.commitDocument(context.getDocument())
+        PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument())
     }
 
     class object {

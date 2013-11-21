@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
@@ -44,9 +45,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.*;
 
 public class JetPsiUtil {
-
-    public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
-
     private JetPsiUtil() {
     }
 
@@ -128,7 +126,7 @@ public class JetPsiUtil {
 
     @NotNull
     public static Name safeName(@Nullable String name) {
-        return name == null ? NO_NAME_PROVIDED : Name.identifier(name);
+        return name == null ? SpecialNames.NO_NAME_PROVIDED : Name.identifier(name);
     }
 
     @NotNull
@@ -137,7 +135,7 @@ public class JetPsiUtil {
         final Set<JetElement> shadowedElements = new HashSet<JetElement>();
         JetVisitorVoid shadowAllChildren = new JetVisitorVoid() {
             @Override
-            public void visitJetElement(JetElement element) {
+            public void visitJetElement(@NotNull JetElement element) {
                 if (shadowedElements.add(element)) {
                     element.acceptChildren(this);
                 }
@@ -428,6 +426,13 @@ public class JetPsiUtil {
 
         PsiElement selectorParent = selector.getParent();
         return selectorParent instanceof JetQualifiedExpression && (((JetQualifiedExpression) selectorParent).getSelectorExpression() == selector);
+    }
+
+    public static boolean isLHSOfDot(@NotNull JetExpression expression) {
+        PsiElement parent = expression.getParent();
+        if (!(parent instanceof JetQualifiedExpression)) return false;
+        JetQualifiedExpression qualifiedParent = (JetQualifiedExpression) parent;
+        return qualifiedParent.getReceiverExpression() == expression || isLHSOfDot(qualifiedParent);
     }
 
     public static boolean isVoidType(@Nullable JetTypeReference typeReference) {
@@ -840,7 +845,7 @@ public class JetPsiUtil {
         ((JetElement) root).accept(
                 new JetVisitorVoid() {
                     @Override
-                    public void visitJetElement(JetElement element) {
+                    public void visitJetElement(@NotNull JetElement element) {
                         if (predicate.apply(element)) {
                             //noinspection unchecked
                             results.add(element);

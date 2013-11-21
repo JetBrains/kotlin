@@ -20,9 +20,11 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.Collection;
 import java.util.List;
@@ -107,5 +109,18 @@ public class FilteringScope implements JetScope {
     @Override
     public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
         return Collections2.filter(workerScope.getOwnDeclaredDescriptors(), predicate);
+    }
+
+    @TestOnly
+    @Override
+    public void printScopeStructure(@NotNull Printer p) {
+        p.println(getClass().getSimpleName(), " {");
+        p.pushIndent();
+
+        p.print("workerScope = ");
+        workerScope.printScopeStructure(p.withholdIndentOnce());
+
+        p.popIndent();
+        p.println("}");
     }
 }

@@ -1,0 +1,2 @@
+Value read (5: 17) println(foo)
+Value read (8: 16) val t: T = foo

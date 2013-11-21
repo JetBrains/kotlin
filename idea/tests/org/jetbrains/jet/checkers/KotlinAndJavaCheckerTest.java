@@ -17,11 +17,18 @@
 package org.jetbrains.jet.checkers;
 
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
+import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.siyeh.ig.bugs.StaticCallOnSubclassInspection;
+import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 public class KotlinAndJavaCheckerTest extends DaemonAnalyzerTestCase {
+    @Override
+    protected LocalInspectionTool[] configureLocalInspectionTools() {
+        return new LocalInspectionTool[] { new StaticCallOnSubclassInspection(), new StaticFieldReferenceOnSubclassInspection()};
+    }
 
     @Override
     protected Sdk getTestProjectJdk() {
@@ -35,5 +42,9 @@ public class KotlinAndJavaCheckerTest extends DaemonAnalyzerTestCase {
 
     public void testName() throws Exception {
         doTest(false, false, "ClassObjects.java", "ClassObjects.kt");
+    }
+
+    public void testUsingKotlinPackageDeclarations() throws Exception {
+        doTest(true, true, "UsingKotlinPackageDeclarations.java", "UsingKotlinPackageDeclarations.kt");
     }
 }

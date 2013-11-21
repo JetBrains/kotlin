@@ -16,6 +16,8 @@
 
 package org.jetbrains.k2js.translate.utils;
 
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,13 +31,19 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getSuperclassDescriptors;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
 
 public final class JsDescriptorUtils {
+    // TODO: maybe we should use external annotations or something else.
+    private static final Set<String> FAKE_CLASSES = ContainerUtil.immutableSet(
+            getFQName(KotlinBuiltIns.getInstance().getAny()).toSafe().asString(),
+            "jet.Iterable"
+    );
 
     private JsDescriptorUtils() {
     }
@@ -65,6 +73,18 @@ public final class JsDescriptorUtils {
     @Nullable
     public static ClassDescriptor getSuperclass(@NotNull ClassDescriptor classDescriptor) {
         return findAncestorClass(getSuperclassDescriptors(classDescriptor));
+    }
+
+    @NotNull
+    public static List<JetType> getSupertypesWithoutFakes(ClassDescriptor descriptor) {
+        Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+        return ContainerUtil.filter(supertypes, new Condition<JetType>() {
+            @Override
+            public boolean value(JetType type) {
+                ClassDescriptor classDescriptor = getClassDescriptorForType(type);
+                return !FAKE_CLASSES.contains(getFQName(classDescriptor).toSafe().asString());
+            }
+        });
     }
 
     @NotNull

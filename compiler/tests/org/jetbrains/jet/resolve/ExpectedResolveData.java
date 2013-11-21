@@ -20,8 +20,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -261,7 +261,27 @@ public abstract class ExpectedResolveData {
             }
             assert expected != null : "No declaration for " + name;
 
-            PsiElement actual = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, reference);
+            if (referenceTarget instanceof NamespaceDescriptor) {
+                JetNamespaceHeader expectedHeader = PsiTreeUtil.getParentOfType(expected, JetNamespaceHeader.class);
+                FqName expectedFqName;
+                if (expectedHeader != null) {
+                    expectedFqName = expectedHeader.getFqName();
+                }
+                else if (expected instanceof PsiQualifiedNamedElement) {
+                    String qualifiedName = ((PsiQualifiedNamedElement) expected).getQualifiedName();
+                    assert qualifiedName != null : "No qualified name for " + name;
+                    expectedFqName = new FqName(qualifiedName);
+                }
+                else {
+                    throw new IllegalStateException(expected.getClass().getName() + " name=" + name);
+                }
+                assertEquals(expectedFqName, ((NamespaceDescriptor) referenceTarget).getFqName());
+                continue;
+            }
+
+            PsiElement actual = referenceTarget == null
+                                ? bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression)
+                                : BindingContextUtils.descriptorToDeclaration(bindingContext, referenceTarget);
             if (actual instanceof JetSimpleNameExpression) {
                 actual = ((JetSimpleNameExpression)actual).getIdentifier();
             }

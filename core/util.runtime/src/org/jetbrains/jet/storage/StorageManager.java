@@ -19,6 +19,7 @@ package org.jetbrains.jet.storage;
 import jet.Function0;
 import jet.Function1;
 import jet.Unit;
+import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +34,8 @@ public interface StorageManager {
      */
     @NotNull
     <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<K, V> compute);
+    @KotlinSignature(
+            "fun <K, V> createMemoizedFunctionWithNullableValues(compute: (K) -> V?): MemoizedFunctionToNullable<K, V>")
     @NotNull
     <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function1<K, V> compute);
 

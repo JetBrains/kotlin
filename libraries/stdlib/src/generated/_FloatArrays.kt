@@ -24,6 +24,25 @@ public inline fun FloatArray.any(predicate: (Float) -> Boolean) : Boolean {
 }
 
 /**
+ * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun FloatArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            val text = if (element == null) "null" else element.toString()
+            buffer.append(text)
+        } else break
+    }
+    if (limit >= 0 && count > limit) buffer.append(truncated)
+    buffer.append(postfix)
+}
+
+/**
  * Returns the number of elements which match the given *predicate*
  */
 public inline fun FloatArray.count(predicate: (Float) -> Boolean) : Int {
@@ -33,11 +52,33 @@ public inline fun FloatArray.count(predicate: (Float) -> Boolean) : Int {
 }
 
 /**
- * Returns the first element which matches the given *predicate* or *null* if none matched
+ * Returns a list containing everything but the first *n* elements
  */
-public inline fun FloatArray.find(predicate: (Float) -> Boolean) : Float? {
-    for (element in this) if (predicate(element)) return element
-    return null
+public inline fun FloatArray.drop(n: Int) : List<Float> {
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean) : List<Float> {
+    return dropWhileTo(ArrayList<Float>(), predicate)
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun <L: MutableList<in Float>> FloatArray.dropWhileTo(result: L, predicate: (Float) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
 }
 
 /**
@@ -45,14 +86,6 @@ public inline fun FloatArray.find(predicate: (Float) -> Boolean) : Float? {
  */
 public inline fun FloatArray.filter(predicate: (Float) -> Boolean) : List<Float> {
     return filterTo(ArrayList<Float>(), predicate)
-}
-
-/**
- * Filters all elements which match the given predicate into the given list
- */
-public inline fun <C: MutableCollection<in Float>> FloatArray.filterTo(result: C, predicate: (Float) -> Boolean) : C {
-    for (element in this) if (predicate(element)) result.add(element)
-    return result
 }
 
 /**
@@ -71,36 +104,19 @@ public inline fun <C: MutableCollection<in Float>> FloatArray.filterNotTo(result
 }
 
 /**
- * Partitions this collection into a pair of collections
+ * Filters all elements which match the given predicate into the given list
  */
-public inline fun FloatArray.partition(predicate: (Float) -> Boolean) : Pair<List<Float>, List<Float>> {
-    val first = ArrayList<Float>()
-    val second = ArrayList<Float>()
-    for (element in this) {
-        if (predicate(element)) {
-            first.add(element)
-        } else {
-            second.add(element)
-        }
-    }
-    return Pair(first, second)
-}
-
-/**
- * Returns a new List containing the results of applying the given *transform* function to each element in this collection
- */
-public inline fun <R> FloatArray.map(transform : (Float) -> R) : List<R> {
-    return mapTo(ArrayList<R>(), transform)
-}
-
-/**
- * Transforms each element of this collection with the given *transform* function and
- * adds each return value to the given *results* collection
- */
-public inline fun <R, C: MutableCollection<in R>> FloatArray.mapTo(result: C, transform : (Float) -> R) : C {
-    for (item in this)
-        result.add(transform(item))
+public inline fun <C: MutableCollection<in Float>> FloatArray.filterTo(result: C, predicate: (Float) -> Boolean) : C {
+    for (element in this) if (predicate(element)) result.add(element)
     return result
+}
+
+/**
+ * Returns the first element which matches the given *predicate* or *null* if none matched
+ */
+public inline fun FloatArray.find(predicate: (Float) -> Boolean) : Float? {
+    for (element in this) if (predicate(element)) return element
+    return null
 }
 
 /**
@@ -119,13 +135,6 @@ public inline fun <R, C: MutableCollection<in R>> FloatArray.flatMapTo(result: C
         for (r in list) result.add(r)
     }
     return result
-}
-
-/**
- * Performs the given *operation* on each element
- */
-public inline fun FloatArray.forEach(operation: (Float) -> Unit) : Unit {
-    for (element in this) operation(element)
 }
 
 /**
@@ -149,6 +158,102 @@ public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, R) -> 
     }
     
     return r
+}
+
+/**
+ * Performs the given *operation* on each element
+ */
+public inline fun FloatArray.forEach(operation: (Float) -> Unit) : Unit {
+    for (element in this) operation(element)
+}
+
+/**
+ * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ */
+public inline fun <K> FloatArray.groupBy(toKey: (Float) -> K) : Map<K, List<Float>> {
+    return groupByTo(HashMap<K, MutableList<Float>>(), toKey)
+}
+
+public inline fun <K> FloatArray.groupByTo(result: MutableMap<K, MutableList<Float>>, toKey: (Float) -> K) : Map<K, MutableList<Float>> {
+    for (element in this) {
+        val key = toKey(element)
+        val list = result.getOrPut(key) { ArrayList<Float>() }
+        list.add(element)
+    }
+    return result
+}
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun FloatArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+    val buffer = StringBuilder()
+    appendString(buffer, separator, prefix, postfix, limit, truncated)
+    return buffer.toString()
+}
+
+/**
+ * Returns a new List containing the results of applying the given *transform* function to each element in this collection
+ */
+public inline fun <R> FloatArray.map(transform : (Float) -> R) : List<R> {
+    return mapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Transforms each element of this collection with the given *transform* function and
+ * adds each return value to the given *results* collection
+ */
+public inline fun <R, C: MutableCollection<in R>> FloatArray.mapTo(result: C, transform : (Float) -> R) : C {
+    for (item in this)
+        result.add(transform(item))
+    return result
+}
+
+/**
+ * Partitions this collection into a pair of collections
+ */
+public inline fun FloatArray.partition(predicate: (Float) -> Boolean) : Pair<List<Float>, List<Float>> {
+    val first = ArrayList<Float>()
+    val second = ArrayList<Float>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following collection
+ */
+public inline fun FloatArray.plus(collection: Iterable<Float>) : List<Float> {
+    return plus(collection.iterator())
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
+ */
+public inline fun FloatArray.plus(element: Float) : List<Float> {
+    val answer = ArrayList<Float>()
+    toCollection(answer)
+    answer.add(element)
+    return answer
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following iterator
+ */
+public inline fun FloatArray.plus(iterator: Iterator<Float>) : List<Float> {
+    val answer = ArrayList<Float>()
+    toCollection(answer)
+    for (element in iterator) {
+        answer.add(element)
+    }
+    return answer
 }
 
 /**
@@ -188,49 +293,27 @@ public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float) : F
 }
 
 /**
- * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ * Reverses the order the elements into a list
  */
-public inline fun <K> FloatArray.groupBy(toKey: (Float) -> K) : Map<K, List<Float>> {
-    return groupByTo(HashMap<K, MutableList<Float>>(), toKey)
+public inline fun FloatArray.reverse() : List<Float> {
+    val list = toCollection(ArrayList<Float>())
+    Collections.reverse(list)
+    return list
 }
 
-public inline fun <K> FloatArray.groupByTo(result: MutableMap<K, MutableList<Float>>, toKey: (Float) -> K) : Map<K, MutableList<Float>> {
-    for (element in this) {
-        val key = toKey(element)
-        val list = result.getOrPut(key) { ArrayList<Float>() }
-        list.add(element)
+/**
+ * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
+ * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
+ */
+public inline fun <R: Comparable<R>> FloatArray.sortBy(f: (Float) -> R) : List<Float> {
+    val sortedList = toCollection(ArrayList<Float>())
+    val sortBy: Comparator<Float> = comparator<Float> {(x: Float, y: Float) ->
+        val xr = f(x)
+        val yr = f(y)
+        xr.compareTo(yr)
     }
-    return result
-}
-
-/**
- * Returns a list containing everything but the first *n* elements
- */
-public inline fun FloatArray.drop(n: Int) : List<Float> {
-    return dropWhile(countTo(n))
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean) : List<Float> {
-    return dropWhileTo(ArrayList<Float>(), predicate)
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun <L: MutableList<in Float>> FloatArray.dropWhileTo(result: L, predicate: (Float) -> Boolean) : L {
-    var start = true
-    for (element in this) {
-        if (start && predicate(element)) {
-            // ignore
-        } else {
-            start = false
-            result.add(element)
-        }
-    }
-    return result
+    java.util.Collections.sort(sortedList, sortBy)
+    return sortedList
 }
 
 /**
@@ -264,15 +347,6 @@ public inline fun <C: MutableCollection<in Float>> FloatArray.toCollection(resul
 }
 
 /**
- * Reverses the order the elements into a list
- */
-public inline fun FloatArray.reverse() : List<Float> {
-    val list = toCollection(ArrayList<Float>())
-    Collections.reverse(list)
-    return list
-}
-
-/**
  * Copies all elements into a [[LinkedList]]
  */
 public inline fun FloatArray.toLinkedList() : LinkedList<Float> {
@@ -301,83 +375,9 @@ public inline fun FloatArray.toSortedSet() : SortedSet<Float> {
 }
 
 /**
- * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
- */
-public inline fun FloatArray.plus(element: Float) : List<Float> {
-    val answer = ArrayList<Float>()
-    toCollection(answer)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following iterator
- */
-public inline fun FloatArray.plus(iterator: Iterator<Float>) : List<Float> {
-    val answer = ArrayList<Float>()
-    toCollection(answer)
-    for (element in iterator) {
-        answer.add(element)
-    }
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following collection
- */
-public inline fun FloatArray.plus(collection: Iterable<Float>) : List<Float> {
-    return plus(collection.iterator())
-}
-
-/**
  * Returns an iterator of Pairs(index, data)
  */
 public inline fun FloatArray.withIndices() : Iterator<Pair<Int, Float>> {
     return IndexIterator(iterator())
-}
-
-/**
- * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
- * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
- */
-public inline fun <R: Comparable<R>> FloatArray.sortBy(f: (Float) -> R) : List<Float> {
-    val sortedList = toCollection(ArrayList<Float>())
-    val sortBy: Comparator<Float> = comparator<Float> {(x: Float, y: Float) ->
-        val xr = f(x)
-        val yr = f(y)
-        xr.compareTo(yr)
-    }
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun FloatArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
-    buffer.append(prefix)
-    var count = 0
-    for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
-            buffer.append(text)
-        } else break
-    }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-}
-
-/**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun FloatArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
-    val buffer = StringBuilder()
-    appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString()
 }
 

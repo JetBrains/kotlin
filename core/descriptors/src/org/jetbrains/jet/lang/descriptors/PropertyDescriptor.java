@@ -30,6 +30,16 @@ public interface PropertyDescriptor extends VariableDescriptor, CallableMemberDe
     @Nullable
     PropertySetterDescriptor getSetter();
 
+    /**
+     * In the following case, the setter is projected out:
+     *
+     *     trait Tr<T> { var v: T }
+     *     fun test(tr: Tr<out String>) {
+     *         tr.v = null!! // the assignment is illegal, although a read would be fine
+     *     }
+     */
+    boolean isSetterProjectedOut();
+
     @NotNull
     List<PropertyAccessorDescriptor> getAccessors();
 

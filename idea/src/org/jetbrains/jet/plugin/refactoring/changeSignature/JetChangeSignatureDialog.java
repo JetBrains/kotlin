@@ -31,10 +31,7 @@ import com.intellij.psi.PsiCodeFragment;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.changeSignature.CallerChooserBase;
-import com.intellij.refactoring.changeSignature.ChangeSignatureDialogBase;
-import com.intellij.refactoring.changeSignature.MethodDescriptor;
-import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
+import com.intellij.refactoring.changeSignature.*;
 import com.intellij.refactoring.ui.ComboBoxVisibilityPanel;
 import com.intellij.refactoring.ui.VisibilityPanelBase;
 import com.intellij.ui.DottedBorder;
@@ -71,7 +68,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
         JetParameterInfo,
         PsiElement,
         Visibility,
-        JetFunctionPlatformDescriptor,
+        JetMethodDescriptor,
         ParameterTableModelItemBase<JetParameterInfo>,
         JetFunctionParameterTableModel
         >
@@ -79,12 +76,8 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
     private final JetGeneratedInfo generatedInfo = new JetGeneratedInfo();
     private final String commandName;
 
-    public JetChangeSignatureDialog(Project project, JetFunctionPlatformDescriptor descriptor, PsiElement context) {
-        this(project, descriptor, context, null);
-    }
-
-    public JetChangeSignatureDialog(Project project, JetFunctionPlatformDescriptor descriptor, PsiElement context, String commandName) {
-        super(project, descriptor, false, context);
+    public JetChangeSignatureDialog(Project project, @NotNull JetMethodDescriptor methodDescriptor, PsiElement context, String commandName) {
+        super(project, methodDescriptor, false, context);
         this.commandName = commandName;
     }
 
@@ -94,7 +87,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
     }
 
     @Override
-    protected JetFunctionParameterTableModel createParametersInfoModel(JetFunctionPlatformDescriptor descriptor) {
+    protected JetFunctionParameterTableModel createParametersInfoModel(JetMethodDescriptor descriptor) {
         if (descriptor.isConstructor())
             return new JetConstructorParameterTableModel(myDefaultValueContext);
         else
@@ -399,8 +392,14 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
     }
 
     @Override
+    @NotNull
     protected BaseRefactoringProcessor createRefactoringProcessor() {
         return new JetChangeSignatureProcessor(myProject, evaluateChangeInfo(), commandName != null ? commandName : getTitle());
+    }
+
+    @NotNull
+    public JetMethodDescriptor getMethodDescriptor() {
+        return myMethod;
     }
 
     public JetChangeInfo evaluateChangeInfo() {
@@ -414,6 +413,19 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
 
         String returnTypeText = myReturnTypeCodeFragment != null ? myReturnTypeCodeFragment.getText().trim() : "";
         return new JetChangeInfo(myMethod, getMethodName(), getReturnType(), returnTypeText,
-                                 getVisibility(), parameters, myDefaultValueContext, generatedInfo);
+                                 getVisibility(), parameters, myDefaultValueContext, generatedInfo
+        );
+    }
+
+    @Override
+    protected int getSelectedIdx() {
+        List<JetParameterInfo> parameters = myMethod.getParameters();
+        for (int i = 0; i < parameters.size(); i++) {
+            JetParameterInfo info = parameters.get(i);
+            if (info.isNewParameter()) {
+                return i;
+            }
+        }
+        return super.getSelectedIdx();
     }
 }

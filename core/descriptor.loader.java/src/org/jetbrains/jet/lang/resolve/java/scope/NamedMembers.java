@@ -75,4 +75,9 @@ public final class NamedMembers {
     public JavaClass getSamInterface() {
         return samInterface;
     }
+
+    @Override
+    public String toString() {
+        return name + ": " + methods.size() + " methods, " + fields.size() + " fields";
+    }
 }

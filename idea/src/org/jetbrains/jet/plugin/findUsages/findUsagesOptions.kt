@@ -26,7 +26,6 @@ import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchLocation
 import com.intellij.find.findUsages.FindUsagesOptions
 import org.jetbrains.jet.plugin.search.usagesSearch.PropertyUsagesSearchHelper
 import com.intellij.find.findUsages.JavaFindUsagesOptions
-import org.jetbrains.jet.plugin.search.usagesSearch.DeclarationUsagesSearchHelper
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.search.usagesSearch.ClassDeclarationsUsagesSearchHelper
 import org.jetbrains.jet.plugin.search.usagesSearch.FunctionUsagesSearchHelper

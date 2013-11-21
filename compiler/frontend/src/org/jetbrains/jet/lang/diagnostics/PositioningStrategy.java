@@ -53,9 +53,6 @@ public class PositioningStrategy<E extends PsiElement> {
     protected static boolean hasSyntaxErrors(@NotNull PsiElement psiElement) {
         if (psiElement instanceof PsiErrorElement) return true;
 
-        PsiElement lastChild = psiElement.getLastChild();
-        if (lastChild != null && hasSyntaxErrors(lastChild)) return true;
-
         PsiElement[] children = psiElement.getChildren();
         if (children.length > 0 && hasSyntaxErrors(children[children.length - 1])) return true;
 

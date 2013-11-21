@@ -5,10 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +62,7 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
         if (classDescriptor == null) {
             return null;
         }
-        return classDescriptor.getKind().isObject() == object ? classDescriptor : null;
+        return classDescriptor.getKind().isSingleton() == object ? classDescriptor : null;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
             ClassDescriptor classDescriptor = findClassDescriptor(className, object);
 
             if (classDescriptor != null) {
-                assert classDescriptor.getKind().isObject() == object;
+                assert classDescriptor.getKind().isSingleton() == object;
                 result.add(classDescriptor);
             }
         }

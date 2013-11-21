@@ -23,21 +23,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.refactoring.changeSignature.JetFunctionPlatformDescriptorImpl;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
+import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureData;
 
+import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.runChangeSignature;
 
 public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
     private final ValueParameterDescriptor parameterToRemove;
 
     public RemoveFunctionParametersFix(
-            @NotNull PsiElement element,
             @NotNull PsiElement context,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull ValueParameterDescriptor parameterToRemove
     ) {
-        super(element, context, functionDescriptor);
+        super(context, functionDescriptor);
         this.parameterToRemove = parameterToRemove;
     }
 
@@ -49,9 +54,20 @@ public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
 
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
-        JetFunctionPlatformDescriptorImpl platformDescriptor = new JetFunctionPlatformDescriptorImpl(functionDescriptor, element);
-        List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-        platformDescriptor.removeParameter(parameters.indexOf(parameterToRemove));
-        showDialog(project, platformDescriptor);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
+        runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
+            @Override
+            public void configure(
+                    @NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext
+            ) {
+                List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+                changeSignatureData.removeParameter(parameters.indexOf(parameterToRemove));
+            }
+
+            @Override
+            public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
+                return false;
+            }
+        }, bindingContext, context, getText());
     }
 }

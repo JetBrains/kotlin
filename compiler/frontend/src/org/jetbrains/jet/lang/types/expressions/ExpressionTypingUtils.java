@@ -28,13 +28,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.context.ExpressionPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
@@ -218,8 +217,7 @@ public class ExpressionTypingUtils {
                 new BindingTraceContext(),
                 scope,
                 DataFlowInfo.EMPTY,
-                TypeUtils.NO_EXPECTED_TYPE,
-                ExpressionPosition.FREE
+                TypeUtils.NO_EXPECTED_TYPE
         );
         return ControlStructureTypingVisitor.checkIterableConvention(expressionReceiver, context) != null;
     }

@@ -1,3 +1,4 @@
+//If this test hangs, it means something is broken.
 package a
 
 class A {

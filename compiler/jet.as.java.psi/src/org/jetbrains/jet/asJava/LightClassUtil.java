@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -151,6 +151,7 @@ public class LightClassUtil {
         return extractPropertyAccessors(property, getterWrapper, setterWrapper);
     }
 
+    @NotNull
     public static PropertyAccessorsPsiMethods getLightClassPropertyMethods(@NotNull JetParameter parameter) {
         return extractPropertyAccessors(parameter, null, null);
     }
@@ -176,7 +177,7 @@ public class LightClassUtil {
         List<PsiMethod> methods = new SmartList<PsiMethod>();
         for (PsiMethod method : psiClass.getMethods()) {
             try {
-                if (method instanceof JetClsMethod && ((JetClsMethod) method).getOrigin() == declaration) {
+                if (method instanceof KotlinLightMethod && ((KotlinLightMethod) method).getOrigin() == declaration) {
                     methods.add(method);
                     if (!collectAll) {
                         return methods;
@@ -255,6 +256,7 @@ public class LightClassUtil {
         return packageName == null ? null : PackageClassUtils.getPackageClassFqName(new FqName(packageName));
     }
 
+    @NotNull
     private static PropertyAccessorsPsiMethods extractPropertyAccessors(
             @NotNull JetDeclaration jetDeclaration,
             @Nullable PsiMethod specialGetter, @Nullable PsiMethod specialSetter

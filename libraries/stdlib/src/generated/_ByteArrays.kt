@@ -24,6 +24,25 @@ public inline fun ByteArray.any(predicate: (Byte) -> Boolean) : Boolean {
 }
 
 /**
+ * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun ByteArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            val text = if (element == null) "null" else element.toString()
+            buffer.append(text)
+        } else break
+    }
+    if (limit >= 0 && count > limit) buffer.append(truncated)
+    buffer.append(postfix)
+}
+
+/**
  * Returns the number of elements which match the given *predicate*
  */
 public inline fun ByteArray.count(predicate: (Byte) -> Boolean) : Int {
@@ -33,11 +52,33 @@ public inline fun ByteArray.count(predicate: (Byte) -> Boolean) : Int {
 }
 
 /**
- * Returns the first element which matches the given *predicate* or *null* if none matched
+ * Returns a list containing everything but the first *n* elements
  */
-public inline fun ByteArray.find(predicate: (Byte) -> Boolean) : Byte? {
-    for (element in this) if (predicate(element)) return element
-    return null
+public inline fun ByteArray.drop(n: Int) : List<Byte> {
+    return dropWhile(countTo(n))
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean) : List<Byte> {
+    return dropWhileTo(ArrayList<Byte>(), predicate)
+}
+
+/**
+ * Returns a list containing the everything but the first elements that satisfy the given *predicate*
+ */
+public inline fun <L: MutableList<in Byte>> ByteArray.dropWhileTo(result: L, predicate: (Byte) -> Boolean) : L {
+    var start = true
+    for (element in this) {
+        if (start && predicate(element)) {
+            // ignore
+        } else {
+            start = false
+            result.add(element)
+        }
+    }
+    return result
 }
 
 /**
@@ -45,14 +86,6 @@ public inline fun ByteArray.find(predicate: (Byte) -> Boolean) : Byte? {
  */
 public inline fun ByteArray.filter(predicate: (Byte) -> Boolean) : List<Byte> {
     return filterTo(ArrayList<Byte>(), predicate)
-}
-
-/**
- * Filters all elements which match the given predicate into the given list
- */
-public inline fun <C: MutableCollection<in Byte>> ByteArray.filterTo(result: C, predicate: (Byte) -> Boolean) : C {
-    for (element in this) if (predicate(element)) result.add(element)
-    return result
 }
 
 /**
@@ -71,36 +104,19 @@ public inline fun <C: MutableCollection<in Byte>> ByteArray.filterNotTo(result: 
 }
 
 /**
- * Partitions this collection into a pair of collections
+ * Filters all elements which match the given predicate into the given list
  */
-public inline fun ByteArray.partition(predicate: (Byte) -> Boolean) : Pair<List<Byte>, List<Byte>> {
-    val first = ArrayList<Byte>()
-    val second = ArrayList<Byte>()
-    for (element in this) {
-        if (predicate(element)) {
-            first.add(element)
-        } else {
-            second.add(element)
-        }
-    }
-    return Pair(first, second)
-}
-
-/**
- * Returns a new List containing the results of applying the given *transform* function to each element in this collection
- */
-public inline fun <R> ByteArray.map(transform : (Byte) -> R) : List<R> {
-    return mapTo(ArrayList<R>(), transform)
-}
-
-/**
- * Transforms each element of this collection with the given *transform* function and
- * adds each return value to the given *results* collection
- */
-public inline fun <R, C: MutableCollection<in R>> ByteArray.mapTo(result: C, transform : (Byte) -> R) : C {
-    for (item in this)
-        result.add(transform(item))
+public inline fun <C: MutableCollection<in Byte>> ByteArray.filterTo(result: C, predicate: (Byte) -> Boolean) : C {
+    for (element in this) if (predicate(element)) result.add(element)
     return result
+}
+
+/**
+ * Returns the first element which matches the given *predicate* or *null* if none matched
+ */
+public inline fun ByteArray.find(predicate: (Byte) -> Boolean) : Byte? {
+    for (element in this) if (predicate(element)) return element
+    return null
 }
 
 /**
@@ -119,13 +135,6 @@ public inline fun <R, C: MutableCollection<in R>> ByteArray.flatMapTo(result: C,
         for (r in list) result.add(r)
     }
     return result
-}
-
-/**
- * Performs the given *operation* on each element
- */
-public inline fun ByteArray.forEach(operation: (Byte) -> Unit) : Unit {
-    for (element in this) operation(element)
 }
 
 /**
@@ -149,6 +158,102 @@ public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, R) -> R)
     }
     
     return r
+}
+
+/**
+ * Performs the given *operation* on each element
+ */
+public inline fun ByteArray.forEach(operation: (Byte) -> Unit) : Unit {
+    for (element in this) operation(element)
+}
+
+/**
+ * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ */
+public inline fun <K> ByteArray.groupBy(toKey: (Byte) -> K) : Map<K, List<Byte>> {
+    return groupByTo(HashMap<K, MutableList<Byte>>(), toKey)
+}
+
+public inline fun <K> ByteArray.groupByTo(result: MutableMap<K, MutableList<Byte>>, toKey: (Byte) -> K) : Map<K, MutableList<Byte>> {
+    for (element in this) {
+        val key = toKey(element)
+        val list = result.getOrPut(key) { ArrayList<Byte>() }
+        list.add(element)
+    }
+    return result
+}
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ */
+public inline fun ByteArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+    val buffer = StringBuilder()
+    appendString(buffer, separator, prefix, postfix, limit, truncated)
+    return buffer.toString()
+}
+
+/**
+ * Returns a new List containing the results of applying the given *transform* function to each element in this collection
+ */
+public inline fun <R> ByteArray.map(transform : (Byte) -> R) : List<R> {
+    return mapTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Transforms each element of this collection with the given *transform* function and
+ * adds each return value to the given *results* collection
+ */
+public inline fun <R, C: MutableCollection<in R>> ByteArray.mapTo(result: C, transform : (Byte) -> R) : C {
+    for (item in this)
+        result.add(transform(item))
+    return result
+}
+
+/**
+ * Partitions this collection into a pair of collections
+ */
+public inline fun ByteArray.partition(predicate: (Byte) -> Boolean) : Pair<List<Byte>, List<Byte>> {
+    val first = ArrayList<Byte>()
+    val second = ArrayList<Byte>()
+    for (element in this) {
+        if (predicate(element)) {
+            first.add(element)
+        } else {
+            second.add(element)
+        }
+    }
+    return Pair(first, second)
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following collection
+ */
+public inline fun ByteArray.plus(collection: Iterable<Byte>) : List<Byte> {
+    return plus(collection.iterator())
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
+ */
+public inline fun ByteArray.plus(element: Byte) : List<Byte> {
+    val answer = ArrayList<Byte>()
+    toCollection(answer)
+    answer.add(element)
+    return answer
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following iterator
+ */
+public inline fun ByteArray.plus(iterator: Iterator<Byte>) : List<Byte> {
+    val answer = ArrayList<Byte>()
+    toCollection(answer)
+    for (element in iterator) {
+        answer.add(element)
+    }
+    return answer
 }
 
 /**
@@ -188,49 +293,27 @@ public inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte) : Byte 
 }
 
 /**
- * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ * Reverses the order the elements into a list
  */
-public inline fun <K> ByteArray.groupBy(toKey: (Byte) -> K) : Map<K, List<Byte>> {
-    return groupByTo(HashMap<K, MutableList<Byte>>(), toKey)
+public inline fun ByteArray.reverse() : List<Byte> {
+    val list = toCollection(ArrayList<Byte>())
+    Collections.reverse(list)
+    return list
 }
 
-public inline fun <K> ByteArray.groupByTo(result: MutableMap<K, MutableList<Byte>>, toKey: (Byte) -> K) : Map<K, MutableList<Byte>> {
-    for (element in this) {
-        val key = toKey(element)
-        val list = result.getOrPut(key) { ArrayList<Byte>() }
-        list.add(element)
+/**
+ * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
+ * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
+ */
+public inline fun <R: Comparable<R>> ByteArray.sortBy(f: (Byte) -> R) : List<Byte> {
+    val sortedList = toCollection(ArrayList<Byte>())
+    val sortBy: Comparator<Byte> = comparator<Byte> {(x: Byte, y: Byte) ->
+        val xr = f(x)
+        val yr = f(y)
+        xr.compareTo(yr)
     }
-    return result
-}
-
-/**
- * Returns a list containing everything but the first *n* elements
- */
-public inline fun ByteArray.drop(n: Int) : List<Byte> {
-    return dropWhile(countTo(n))
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean) : List<Byte> {
-    return dropWhileTo(ArrayList<Byte>(), predicate)
-}
-
-/**
- * Returns a list containing the everything but the first elements that satisfy the given *predicate*
- */
-public inline fun <L: MutableList<in Byte>> ByteArray.dropWhileTo(result: L, predicate: (Byte) -> Boolean) : L {
-    var start = true
-    for (element in this) {
-        if (start && predicate(element)) {
-            // ignore
-        } else {
-            start = false
-            result.add(element)
-        }
-    }
-    return result
+    java.util.Collections.sort(sortedList, sortBy)
+    return sortedList
 }
 
 /**
@@ -264,15 +347,6 @@ public inline fun <C: MutableCollection<in Byte>> ByteArray.toCollection(result:
 }
 
 /**
- * Reverses the order the elements into a list
- */
-public inline fun ByteArray.reverse() : List<Byte> {
-    val list = toCollection(ArrayList<Byte>())
-    Collections.reverse(list)
-    return list
-}
-
-/**
  * Copies all elements into a [[LinkedList]]
  */
 public inline fun ByteArray.toLinkedList() : LinkedList<Byte> {
@@ -301,83 +375,9 @@ public inline fun ByteArray.toSortedSet() : SortedSet<Byte> {
 }
 
 /**
- * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
- */
-public inline fun ByteArray.plus(element: Byte) : List<Byte> {
-    val answer = ArrayList<Byte>()
-    toCollection(answer)
-    answer.add(element)
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following iterator
- */
-public inline fun ByteArray.plus(iterator: Iterator<Byte>) : List<Byte> {
-    val answer = ArrayList<Byte>()
-    toCollection(answer)
-    for (element in iterator) {
-        answer.add(element)
-    }
-    return answer
-}
-
-/**
- * Creates an [[Iterator]] which iterates over this iterator then the following collection
- */
-public inline fun ByteArray.plus(collection: Iterable<Byte>) : List<Byte> {
-    return plus(collection.iterator())
-}
-
-/**
  * Returns an iterator of Pairs(index, data)
  */
 public inline fun ByteArray.withIndices() : Iterator<Pair<Int, Byte>> {
     return IndexIterator(iterator())
-}
-
-/**
- * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
- * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
- */
-public inline fun <R: Comparable<R>> ByteArray.sortBy(f: (Byte) -> R) : List<Byte> {
-    val sortedList = toCollection(ArrayList<Byte>())
-    val sortBy: Comparator<Byte> = comparator<Byte> {(x: Byte, y: Byte) ->
-        val xr = f(x)
-        val yr = f(y)
-        xr.compareTo(yr)
-    }
-    java.util.Collections.sort(sortedList, sortBy)
-    return sortedList
-}
-
-/**
- * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun ByteArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
-    buffer.append(prefix)
-    var count = 0
-    for (element in this) {
-        if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            val text = if (element == null) "null" else element.toString()
-            buffer.append(text)
-        } else break
-    }
-    if (limit >= 0 && count > limit) buffer.append(truncated)
-    buffer.append(postfix)
-}
-
-/**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
- * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
- * a special *truncated* separator (which defaults to "..."
- */
-public inline fun ByteArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
-    val buffer = StringBuilder()
-    appendString(buffer, separator, prefix, postfix, limit, truncated)
-    return buffer.toString()
 }
 

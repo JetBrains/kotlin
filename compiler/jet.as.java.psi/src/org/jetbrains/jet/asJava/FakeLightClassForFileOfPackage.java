@@ -20,6 +20,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
@@ -33,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
  * <p/>
  * See {@link LineBreakpoint#findClassCandidatesInSourceContent} for the primary usage this was introduced
  */
-/* package */ class FakeLightClassForFileOfPackage extends KotlinLightClassForPackageBase implements KotlinLightClass, JetJavaMirrorMarker {
+/* package */ class FakeLightClassForFileOfPackage extends AbstractLightClass implements KotlinLightClass, JetJavaMirrorMarker {
     private final KotlinLightClassForPackage delegate;
     private final JetFile file;
 

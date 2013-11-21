@@ -24,7 +24,10 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.context.*;
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -43,6 +46,7 @@ import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.utils.Printer;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -50,8 +54,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.psi.JetPsiUtil.isLHSOfDot;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
+import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
+import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class CallExpressionResolver {
@@ -71,7 +78,8 @@ public class CallExpressionResolver {
             JetType classObjectType = classifier.getClassObjectType();
             if (classObjectType != null) {
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
-                JetType result = getExtendedClassObjectType(classObjectType, referencedName, classifier, context);
+                JetType result = getExtendedClassObjectType(expression, classObjectType, classifier, context);
+                checkClassObjectVisibility(classifier, expression, context);
                 return DataFlowUtils.checkType(result, expression, context);
             }
         }
@@ -85,14 +93,14 @@ public class CallExpressionResolver {
         // To report NO_CLASS_OBJECT when no namespace found
         if (classifier != null) {
             if (classifier instanceof TypeParameterDescriptor) {
-                if (context.expressionPosition == ExpressionPosition.FREE) {
-                    context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(expression, (TypeParameterDescriptor) classifier));
-                }
-                else {
+                if (isLHSOfDot(expression)) {
                     context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(expression, (TypeParameterDescriptor) classifier));
                 }
+                else {
+                    context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(expression, (TypeParameterDescriptor) classifier));
+                }
             }
-            else if (context.expressionPosition == ExpressionPosition.FREE) {
+            else if (!isLHSOfDot(expression)) {
                 context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
             }
             context.trace.record(REFERENCE_TARGET, expression, classifier);
@@ -110,26 +118,46 @@ public class CallExpressionResolver {
                             public String toString() {
                                 return "Scope for the type parameter on the left hand side of dot";
                             }
-                        };
-            return new NamespaceType(referencedName, scopeForStaticMembersResolution);
+
+                            @Override
+                            public void printScopeStructure(@NotNull Printer p) {
+                                p.println(toString(), " for ", classifier);
+                            }
+                    };
+            return new NamespaceType(referencedName, scopeForStaticMembersResolution, NO_RECEIVER);
         }
         temporaryTrace.commit();
         return result[0];
     }
 
+    private static void checkClassObjectVisibility(
+            @NotNull ClassifierDescriptor classifier,
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull ResolutionContext context
+    ) {
+        if (!(classifier instanceof ClassDescriptor)) return;
+        ClassDescriptor classObject = ((ClassDescriptor) classifier).getClassObjectDescriptor();
+        assert classObject != null : "This check should be done only for classes with class objects: " + classifier;
+        DeclarationDescriptor from = context.scope.getContainingDeclaration();
+        if (!Visibilities.isVisible(classObject, from)) {
+            context.trace.report(INVISIBLE_MEMBER.on(expression, classObject, classObject.getVisibility(), from));
+        }
+    }
+
     @NotNull
-    private JetType getExtendedClassObjectType(
+    private static JetType getExtendedClassObjectType(
+            @NotNull JetSimpleNameExpression expression,
             @NotNull JetType classObjectType,
-            @NotNull Name referencedName,
             @NotNull ClassifierDescriptor classifier,
             @NotNull ResolutionContext context
     ) {
-        if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT && classifier instanceof ClassDescriptor) {
+        if (isLHSOfDot(expression) && classifier instanceof ClassDescriptor) {
             List<JetScope> scopes = new ArrayList<JetScope>(3);
 
             scopes.add(classObjectType.getMemberScope());
             scopes.add(getStaticNestedClassesScope((ClassDescriptor) classifier));
 
+            Name referencedName = expression.getReferencedNameAsName();
             NamespaceDescriptor namespace = context.scope.getNamespace(referencedName);
             if (namespace != null) {
                 //for enums loaded from java binaries
@@ -137,7 +165,7 @@ public class CallExpressionResolver {
             }
 
             JetScope scope = new ChainedScope(classifier, scopes.toArray(new JetScope[scopes.size()]));
-            return new NamespaceType(referencedName, scope);
+            return new NamespaceType(referencedName, scope, new ExpressionReceiver(expression, classObjectType));
         }
         return classObjectType;
     }
@@ -151,7 +179,7 @@ public class CallExpressionResolver {
         if (namespaceType == null) {
             return false;
         }
-        if (context.expressionPosition == ExpressionPosition.LHS_OF_DOT) {
+        if (isLHSOfDot(expression)) {
             result[0] = namespaceType;
             return true;
         }
@@ -178,7 +206,7 @@ public class CallExpressionResolver {
         else {
             scope = namespace.getMemberScope();
         }
-        return new NamespaceType(name, scope);
+        return new NamespaceType(name, scope, NO_RECEIVER);
     }
 
     @Nullable
@@ -251,7 +279,7 @@ public class CallExpressionResolver {
         JetType type = getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
         if (result[0]) {
             temporaryForVariable.commit();
-            if (type instanceof NamespaceType && context.expressionPosition == ExpressionPosition.FREE) {
+            if (type instanceof NamespaceType && !isLHSOfDot(nameExpression)) {
                 type = null;
             }
             return JetTypeInfo.create(type, context.dataFlowInfo);
@@ -283,7 +311,7 @@ public class CallExpressionResolver {
     ) {
         JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
                 callExpression, receiver, callOperationNode, context);
-        if (context.contextDependency == ContextDependency.INDEPENDENT) {
+        if (context.contextDependency == INDEPENDENT) {
             DataFlowUtils.checkType(typeInfo, callExpression, context);
         }
         return typeInfo;
@@ -375,9 +403,7 @@ public class CallExpressionResolver {
         // TODO : functions as values
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
-        ResolutionContext contextForReceiver = context
-                .replaceExpectedType(NO_EXPECTED_TYPE).replaceExpressionPosition(ExpressionPosition.LHS_OF_DOT)
-                .replaceContextDependency(ContextDependency.INDEPENDENT);
+        ResolutionContext contextForReceiver = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
         JetType receiverType = receiverTypeInfo.getType();
         if (selectorExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
@@ -408,7 +434,7 @@ public class CallExpressionResolver {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, selectorReturnType);
         }
         JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
-        if (context.contextDependency == ContextDependency.INDEPENDENT) {
+        if (context.contextDependency == INDEPENDENT) {
             DataFlowUtils.checkType(typeInfo, expression, context);
         }
         return typeInfo;

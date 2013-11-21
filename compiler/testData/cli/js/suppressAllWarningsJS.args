@@ -1,0 +1,6 @@
+-sourceFiles
+$TESTDATA_DIR$/../warnings.kt
+-suppress
+WaRnInGs
+-output
+$TEMP_DIR$/out.js

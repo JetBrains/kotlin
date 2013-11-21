@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.refactoring;
 
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -79,7 +80,7 @@ public class JetNameValidatorImpl extends JetNameValidator {
             }
 
             @Override
-            public void visitExpression(JetExpression expression) {
+            public void visitExpression(@NotNull JetExpression expression) {
                 Collection<DeclarationDescriptor> variants =
                         TipsManager.getVariantsNoReceiver(expression, myBindingContext);
                 for (DeclarationDescriptor variant : variants) {

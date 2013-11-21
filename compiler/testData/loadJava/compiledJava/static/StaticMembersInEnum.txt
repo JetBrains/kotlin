@@ -8,8 +8,8 @@ public final enum class StaticMembersInEnum : jet.Enum<test.StaticMembersInEnum>
     public class object <class-object-for-StaticMembersInEnum> {
         private constructor <class-object-for-StaticMembersInEnum>()
         public final val ENTRY: test.StaticMembersInEnum
-        public final fun valueOf(/*0*/ value: jet.String): test.StaticMembersInEnum
-        public final fun values(): jet.Array<test.StaticMembersInEnum>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.StaticMembersInEnum
+        public final /*synthesized*/ fun values(): jet.Array<test.StaticMembersInEnum>
     }
 }
 

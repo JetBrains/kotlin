@@ -48,7 +48,7 @@ public class DataFlowValueFactory {
         }
         if (TypeUtils.equalTypes(type, KotlinBuiltIns.getInstance().getNullableNothingType())) return DataFlowValue.NULL; // 'null' is the only inhabitant of 'Nothing?'
         IdentifierInfo result = getIdForStableIdentifier(expression, bindingContext);
-        return new DataFlowValue(result.id == null ? expression : result.id, type, result.isStable, getImmanentNullability(type));
+        return new DataFlowValue(result == NO_IDENTIFIER_INFO ? expression : result.id, type, result.isStable, getImmanentNullability(type));
     }
 
     @NotNull

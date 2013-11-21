@@ -124,6 +124,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
             MODIFIER_KEYWORDS
     );
 
+    private static final TokenSet STATEMENT_NEW_LINE_QUICK_RECOVERY_SET =
+            TokenSet.orSet(
+                    TokenSet.andSet(STATEMENT_FIRST, TokenSet.andNot(KEYWORDS, TokenSet.create(IN_KEYWORD))),
+                    TokenSet.create(EOL_OR_SEMICOLON));
+
     /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
             SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
     );
@@ -1223,7 +1228,14 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 break;
             }
             else if (!myBuilder.newlineBeforeCurrentToken()) {
-                errorUntil("Unexpected tokens (use ';' to separate expressions on the same line)", TokenSet.create(EOL_OR_SEMICOLON));
+                String severalStatementsError = "Unexpected tokens (use ';' to separate expressions on the same line)";
+
+                if (atSet(STATEMENT_NEW_LINE_QUICK_RECOVERY_SET)) {
+                    error(severalStatementsError);
+                }
+                else {
+                    errorUntil(severalStatementsError, TokenSet.create(EOL_OR_SEMICOLON));
+                }
             }
         }
     }

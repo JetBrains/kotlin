@@ -25,12 +25,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -44,7 +42,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
+import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
 public class DeserializedClassDescriptor extends AbstractClassDescriptor implements ClassDescriptor {
 
@@ -53,7 +51,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private final TypeDeserializer typeDeserializer;
     private final DescriptorDeserializer deserializer;
     private final DeserializedMemberScope memberScope;
-    private final ReceiverParameterDescriptor thisAsReceiverParameter;
 
     private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
 
@@ -71,7 +68,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private final Visibility visibility;
     private final ClassKind kind;
     private final boolean isInner;
-    private final InnerClassesScopeWrapper innerClassesScope;
     private final DescriptorFinder descriptorFinder;
 
     public DeserializedClassDescriptor(
@@ -80,7 +76,8 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             @NotNull DescriptorFinder descriptorFinder,
             @NotNull ClassData classData
     ) {
-        super(classData.getNameResolver().getClassId(classData.getClassProto().getFqName()).getRelativeClassName().shortName());
+        super(storageManager,
+              classData.getNameResolver().getClassId(classData.getClassProto().getFqName()).getRelativeClassName().shortName());
         NameResolver nameResolver = classData.getNameResolver();
         this.classProto = classData.getClassProto();
 
@@ -88,7 +85,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         this.descriptorFinder = descriptorFinder;
 
         TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, null, nameResolver,
-                                                                        descriptorFinder, "Deserializer for class " + name, NONE);
+                                                                        descriptorFinder, "Deserializer for class " + getName(), NONE);
         DescriptorDeserializer outerDeserializer = DescriptorDeserializer.create(storageManager, notNullTypeDeserializer,
                                                                                  this, nameResolver, annotationResolver);
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(classProto.getTypeParameterCount());
@@ -104,8 +101,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
         this.typeConstructor = new DeserializedClassTypeConstructor(typeParameters);
         this.memberScope = new DeserializedClassMemberScope(storageManager, this);
-        this.innerClassesScope = new InnerClassesScopeWrapper(memberScope);
-        this.thisAsReceiverParameter = new LazyClassReceiverParameterDescriptor();
 
         int flags = classProto.getFlags();
         this.modality = DescriptorDeserializer.modality(Flags.MODALITY.get(flags));
@@ -198,20 +193,16 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         return annotationDeserializer.loadClassAnnotations(this, classProto);
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations.invoke();
     }
 
+    @NotNull
     @Override
     protected JetScope getScopeForMemberLookup() {
         return memberScope;
-    }
-
-    @NotNull
-    @Override
-    public JetScope getUnsubstitutedInnerClassesScope() {
-        return innerClassesScope;
     }
 
     @Nullable
@@ -240,13 +231,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     }
 
     @Nullable
-    @Override
-    public JetType getClassObjectType() {
-        ClassDescriptor classObjectDescriptor = getClassObjectDescriptor();
-        return classObjectDescriptor == null ? null : classObjectDescriptor.getDefaultType();
-    }
-
-    @Nullable
     private ClassDescriptor computeClassObjectDescriptor() {
         if (!classProto.getClassObjectPresent()) {
             return null;
@@ -270,20 +254,15 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         MutableClassDescriptor classObject = new MutableClassDescriptor(this, getScopeForMemberLookup(), ClassKind.CLASS_OBJECT,
                                                                         false, getClassObjectName(getName()));
         classObject.setModality(Modality.FINAL);
-        classObject.setVisibility(getVisibility());
+        classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
         classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+        classObject.setPrimaryConstructor(DescriptorFactory.createPrimaryConstructorForObject(classObject));
         classObject.createTypeConstructor();
 
-        ConstructorDescriptorImpl primaryConstructor = DescriptorFactory.createPrimaryConstructorForObject(classObject);
-        primaryConstructor.setReturnType(classObject.getDefaultType());
-        classObject.setPrimaryConstructor(primaryConstructor);
-
-        JetType defaultType = getDefaultType();
-        JetType defaultTypeArray = KotlinBuiltIns.getInstance().getArrayType(defaultType);
-        classObject.getBuilder().addFunctionDescriptor(
-                DescriptorFactory.createEnumClassObjectValuesMethod(classObject, defaultTypeArray));
-        classObject.getBuilder().addFunctionDescriptor(
-                DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, defaultType));
+        JetType enumType = getDefaultType();
+        JetType enumArrayType = KotlinBuiltIns.getInstance().getArrayType(enumType);
+        classObject.getBuilder().addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValuesMethod(classObject, enumArrayType));
+        classObject.getBuilder().addFunctionDescriptor(DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, enumType));
 
         return classObject;
     }
@@ -306,12 +285,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     @Override
     public ClassDescriptor getClassObjectDescriptor() {
         return classObjectDescriptor.invoke();
-    }
-
-    @NotNull
-    @Override
-    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        return thisAsReceiverParameter;
     }
 
     private Collection<JetType> computeSuperTypes() {
@@ -363,6 +336,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             return DeserializedClassDescriptor.this;
         }
 
+        @NotNull
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             return Collections.emptyList(); // TODO
@@ -509,28 +483,6 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                 }
             }
             return result;
-        }
-    }
-
-    private class LazyClassReceiverParameterDescriptor extends AbstractReceiverParameterDescriptor {
-        private final ClassReceiver classReceiver = new ClassReceiver(DeserializedClassDescriptor.this);
-
-        @NotNull
-        @Override
-        public JetType getType() {
-            return getDefaultType();
-        }
-
-        @NotNull
-        @Override
-        public ReceiverValue getValue() {
-            return classReceiver;
-        }
-
-        @NotNull
-        @Override
-        public DeclarationDescriptor getContainingDeclaration() {
-            return DeserializedClassDescriptor.this;
         }
     }
 }

@@ -249,10 +249,10 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         // Members from supertypes
         Collection<PropertyDescriptor> fromSupertypes = Lists.newArrayList();
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
-            fromSupertypes.addAll((Set) supertype.getMemberScope().getProperties(name));
+            fromSupertypes.addAll((Collection) supertype.getMemberScope().getProperties(name));
         }
         result.addAll(generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_PROPERTIES, result));
-        generateFakeOverrides(name, fromSupertypes, (Set) result, PropertyDescriptor.class);
+        generateFakeOverrides(name, fromSupertypes, (Collection) result, PropertyDescriptor.class);
     }
 
     @NotNull
@@ -261,10 +261,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             @NotNull final MemberExtractor<T> extractor,
             @NotNull Collection<? extends CallableDescriptor> existingDescriptors
     ) {
-        //class objects do not have delegated members
-        if (thisDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
+        JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
+        if (classOrObject == null) {
+            // Enum class objects do not have delegated members
             return Collections.emptySet();
         }
+
         DelegationResolver.TypeResolver lazyTypeResolver = new DelegationResolver.TypeResolver() {
             @Nullable
             @Override
@@ -283,8 +285,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 return extractor.extract(type, name);
             }
         };
-        JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-        assert classOrObject != null : "Should not be null for non class object class.";
         return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, resolveSession.getTrace(), lazyMemberExtractor,
                                         lazyTypeResolver);
     }
@@ -356,7 +356,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         ConstructorDescriptor primaryConstructor = null;
         if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
             JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-            if (!thisDescriptor.getKind().isObject()) {
+            if (!thisDescriptor.getKind().isSingleton()) {
                 JetClass jetClass = (JetClass) classOrObject;
                 ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
                         .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),

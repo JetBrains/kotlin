@@ -1,0 +1,7 @@
+import java.util.BitSet
+
+fun foo(p: java.util.BitSet){}
+
+fun f(){
+    foo(BitSet(<caret>))
+}

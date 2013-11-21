@@ -568,6 +568,11 @@ public class LoadCompiledKotlinTestGenerated extends AbstractLoadCompiledKotlinT
             doTestWithAccessors("compiler/testData/loadKotlin/classObject/ClassObjectPropertyInClass.kt");
         }
         
+        @TestMetadata("Delegation.kt")
+        public void testDelegation() throws Exception {
+            doTestWithAccessors("compiler/testData/loadKotlin/classObject/Delegation.kt");
+        }
+        
         @TestMetadata("InnerClassInClassObject.kt")
         public void testInnerClassInClassObject() throws Exception {
             doTestWithAccessors("compiler/testData/loadKotlin/classObject/InnerClassInClassObject.kt");

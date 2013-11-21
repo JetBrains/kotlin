@@ -33,10 +33,7 @@ import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -145,9 +142,10 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     private static boolean ignoreAnnotation(@NotNull JvmClassName className) {
-        // TODO: JETBRAINS_NOT_NULL_ANNOTATION ?
         return className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS))
                || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE))
+               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JavaAnnotationResolver.JETBRAINS_NOT_NULL_ANNOTATION))
+               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JavaAnnotationResolver.JETBRAINS_NULLABLE_ANNOTATION))
                || className.getInternalName().startsWith("jet/runtime/typeinfo/");
     }
 

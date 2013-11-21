@@ -31,7 +31,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+    public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
         PsiReference ref = expression.getReference();
         if (ref == null) return;
         if (JetPsiChecker.isNamesHighlightingEnabled()) {
@@ -50,7 +50,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitTypeParameter(JetTypeParameter parameter) {
+    public void visitTypeParameter(@NotNull JetTypeParameter parameter) {
         PsiElement identifier = parameter.getNameIdentifier();
         if (identifier != null) {
             JetPsiChecker.highlightName(holder, identifier, JetHighlightingColors.TYPE_PARAMETER);
@@ -59,7 +59,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitClass(JetClass klass) {
+    public void visitClass(@NotNull JetClass klass) {
         PsiElement identifier = klass.getNameIdentifier();
         ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, klass);
         if (identifier != null && classDescriptor != null) {

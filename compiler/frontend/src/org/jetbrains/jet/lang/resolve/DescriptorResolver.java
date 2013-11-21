@@ -1076,7 +1076,7 @@ public class DescriptorResolver {
             @NotNull BindingTrace trace
     ) {
         ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if (classifierDescriptor == null || !DescriptorUtils.isAnonymous(classifierDescriptor)) {
+        if (classifierDescriptor == null || !DescriptorUtils.isAnonymousObject(classifierDescriptor)) {
             return type;
         }
 
@@ -1285,7 +1285,7 @@ public class DescriptorResolver {
                 classDescriptor,
                 valueParameter.getAnnotations(),
                 resolveModalityFromModifiers(parameter, Modality.FINAL),
-                resolveVisibilityFromModifiers(parameter),
+                resolveVisibilityFromModifiers(parameter, Visibilities.INTERNAL),
                 isMutable,
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION

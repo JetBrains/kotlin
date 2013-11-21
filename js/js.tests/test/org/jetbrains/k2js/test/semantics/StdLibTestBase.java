@@ -21,8 +21,8 @@ import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.jet.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.utils.LibraryFilePathsUtil;
@@ -30,7 +30,6 @@ import org.jetbrains.k2js.test.utils.LibraryFilePathsUtil;
 import java.io.File;
 import java.util.List;
 
-@SuppressWarnings("UseOfSystemOutOrSystemErr")
 abstract class StdLibTestBase extends SingleFileTranslationTest {
 
     protected StdLibTestBase() {

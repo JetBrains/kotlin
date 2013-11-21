@@ -20,8 +20,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.*;
 
@@ -213,6 +216,10 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     public void importClassifierAlias(@NotNull Name importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         checkMayWrite();
 
+        if (DescriptorUtils.isSingleton(classifierDescriptor)) {
+            throw new IllegalStateException("must not be object: " + classifierDescriptor);
+        }
+
         getCurrentIndividualImportScope().addClassifierAlias(importedClassifierName, classifierDescriptor);
     }
     
@@ -249,4 +256,36 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
         return getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + " " + debugName + " for " + getContainingDeclaration();
     }
 
+    @TestOnly
+    @Override
+    public void printScopeStructure(@NotNull Printer p) {
+        p.println(getClass().getSimpleName(), ": ", debugName, " for ", getContainingDeclaration(), " {");
+        p.pushIndent();
+
+        p.println("lockLevel = ", lockLevel);
+
+        printAdditionalScopeStructure(p);
+
+        p.print("worker = ");
+        getWorkerScope().printScopeStructure(p.withholdIndentOnce());
+
+        if (getImports().isEmpty()) {
+            p.println("imports = {}");
+        }
+        else {
+            p.println("imports = {");
+            p.pushIndent();
+            for (JetScope anImport : getImports()) {
+                anImport.printScopeStructure(p);
+            }
+            p.popIndent();
+            p.println("}");
+        }
+
+        p.popIndent();
+        p.println("}");
+    }
+
+    @TestOnly
+    protected abstract void printAdditionalScopeStructure(@NotNull Printer p);
 }

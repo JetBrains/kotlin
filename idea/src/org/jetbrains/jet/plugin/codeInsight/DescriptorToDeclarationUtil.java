@@ -36,12 +36,20 @@ public final class DescriptorToDeclarationUtil {
     }
 
     @Nullable
-    public static PsiElement getDeclaration(JetFile file, DeclarationDescriptor descriptor, BindingContext bindingContext) {
+    public static PsiElement getDeclaration(
+            @NotNull JetFile file,
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull BindingContext bindingContext
+    ) {
         return getDeclaration(file.getProject(), descriptor, bindingContext);
     }
 
     @Nullable
-    public static PsiElement getDeclaration(Project project, DeclarationDescriptor descriptor, BindingContext bindingContext) {
+    public static PsiElement getDeclaration(
+            @NotNull Project project,
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull BindingContext bindingContext
+    ) {
         Collection<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
         if (elements.isEmpty()) {
             elements = findDeclarationsForDescriptorWithoutTrace(project, descriptor);

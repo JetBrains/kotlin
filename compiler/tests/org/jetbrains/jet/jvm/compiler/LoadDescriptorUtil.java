@@ -22,11 +22,11 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -79,8 +79,8 @@ public final class LoadDescriptorUtil {
         JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(kotlinFile, disposable, configurationKind);
         GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getJetFile().getProject(), fileAndExhaust.getExhaust(), Collections.singletonList(
                 fileAndExhaust.getJetFile()));
-        ClassFileFactory classFileFactory = state.getFactory();
-        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, outDir);
+        OutputFileCollection outputFiles = state.getFactory();
+        OutputUtilsPackage.writeAllTo(outputFiles, outDir);
         return fileAndExhaust.getExhaust();
     }
 
@@ -91,7 +91,8 @@ public final class LoadDescriptorUtil {
             @NotNull ConfigurationKind configurationKind
     ) {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                configurationKind, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(),
+                configurationKind, TestJdkKind.MOCK_JDK,
+                JetTestUtils.getAnnotationsJar(),
                 javaRoot,
                 new File("compiler/tests") // for @ExpectLoadError annotation
         );
@@ -119,8 +120,7 @@ public final class LoadDescriptorUtil {
 
     private static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
         String classPath = "out/production/runtime" +
-                           File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath() +
-                           File.pathSeparator + JetTestUtils.getAnnotationsExtJar().getPath();
+                           File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
         JetTestUtils.compileJavaFiles(javaFiles, Arrays.asList(
                 "-classpath", classPath,
                 "-sourcepath", "compiler/tests", // for @ExpectLoadError annotation

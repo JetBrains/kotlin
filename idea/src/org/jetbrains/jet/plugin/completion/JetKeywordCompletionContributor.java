@@ -222,7 +222,6 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                                       @NotNull CompletionResultSet result) {
-            //noinspection StaticMethodReferencedViaSubclass
             WeigherPackage.addJetSorting(result, parameters)
                     .withPrefixMatcher(new SimplePrefixMatcher(result.getPrefixMatcher().getPrefix()))
                     .addAllElements(elements);

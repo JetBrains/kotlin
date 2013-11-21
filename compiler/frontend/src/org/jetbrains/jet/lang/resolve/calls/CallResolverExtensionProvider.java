@@ -40,8 +40,8 @@ public class CallResolverExtensionProvider {
     private WeakReference<Map<DeclarationDescriptor, List<CallResolverExtension>>> extensionsCache;
 
     @NotNull
-    public CallResolverExtension createExtension(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor == null) {
+    public CallResolverExtension createExtension(@Nullable DeclarationDescriptor descriptor, boolean isAnnotationContext) {
+        if (descriptor == null || isAnnotationContext) {
             return DEFAULT;
         }
         return new CompositeExtension(createExtensions(descriptor));

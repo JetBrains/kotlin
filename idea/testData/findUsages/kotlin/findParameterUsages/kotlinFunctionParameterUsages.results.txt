@@ -1,0 +1,2 @@
+Value read (4: 13) println(t)
+Value read (5: 12) return t

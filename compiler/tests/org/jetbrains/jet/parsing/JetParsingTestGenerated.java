@@ -888,6 +888,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest("compiler/testData/psi/recovery/PackageRecovery.kt");
         }
         
+        @TestMetadata("SameLineStatementRecovery.kt")
+        public void testSameLineStatementRecovery() throws Exception {
+            doParsingTest("compiler/testData/psi/recovery/SameLineStatementRecovery.kt");
+        }
+        
         @TestMetadata("ValueParameterNoTypeRecovery.kt")
         public void testValueParameterNoTypeRecovery() throws Exception {
             doParsingTest("compiler/testData/psi/recovery/ValueParameterNoTypeRecovery.kt");

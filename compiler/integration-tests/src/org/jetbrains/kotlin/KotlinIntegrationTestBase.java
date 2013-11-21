@@ -27,8 +27,12 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import jet.Function1;
+import kotlin.KotlinPackage;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.test.Tmpdir;
 import org.junit.ComparisonFailure;
@@ -42,6 +46,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -95,19 +101,24 @@ public abstract class KotlinIntegrationTestBase {
         return exitCode;
     }
 
-    private static String replacePath(String content, File path, String pathId) {
-        String absolutePath = path.getAbsolutePath();
+    private static String normalizePath(String content, File baseDir, String pathId) {
+        String contentWithRelativePaths = content.replace(baseDir.getAbsolutePath(), pathId);
 
-        return content
-                .replace(absolutePath + "/", pathId + "/")
-                .replace(absolutePath + "\\", pathId + "/")
-                .replace(absolutePath, pathId);
+        @Language("RegExp")
+        String RELATIVE_PATH_WITH_MIXED_SEPARATOR = Pattern.quote(pathId) + "[-.\\w/\\\\]*";
+
+        return KotlinPackage.replaceAll(contentWithRelativePaths, RELATIVE_PATH_WITH_MIXED_SEPARATOR, new Function1<MatchResult, String>() {
+            @Override
+            public String invoke(MatchResult mr) {
+                return FileUtil.toSystemIndependentName(mr.group());
+            }
+        });
     }
 
     protected String normalizeOutput(String content) {
-        content = replacePath(content, testDataDir, "[TestData]");
-        content = replacePath(content, tmpdir.getTmpDir(), "[Temp]");
-        content = replacePath(content, getCompilerLib(), "[CompilerLib]");
+        content = normalizePath(content, testDataDir, "[TestData]");
+        content = normalizePath(content, tmpdir.getTmpDir(), "[Temp]");
+        content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
         return content;
     }
 

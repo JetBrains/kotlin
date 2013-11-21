@@ -48,6 +48,11 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/class2.kt");
         }
         
+        @TestMetadata("classInString.kt")
+        public void testClassInString() throws Exception {
+            doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/classInString.kt");
+        }
+        
         @TestMetadata("nestedClass1.kt")
         public void testNestedClass1() throws Exception {
             doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/nestedClass1.kt");

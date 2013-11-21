@@ -1,0 +1,4 @@
+-src
+$TESTDATA_DIR$/simple.kt
+-output
+$TEMP_DIR$

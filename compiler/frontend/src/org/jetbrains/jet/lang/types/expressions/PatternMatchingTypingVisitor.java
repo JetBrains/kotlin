@@ -178,7 +178,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         final Ref<DataFlowInfos> newDataFlowInfo = new Ref<DataFlowInfos>(noChange(context));
         condition.accept(new JetVisitorVoid() {
             @Override
-            public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
+            public void visitWhenConditionInRange(@NotNull JetWhenConditionInRange condition) {
                 JetExpression rangeExpression = condition.getRangeExpression();
                 if (rangeExpression == null) return;
                 if (expectedCondition) {
@@ -197,7 +197,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
 
             @Override
-            public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
+            public void visitWhenConditionIsPattern(@NotNull JetWhenConditionIsPattern condition) {
                 if (expectedCondition) {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
                 }
@@ -213,7 +213,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
 
             @Override
-            public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
+            public void visitWhenConditionWithExpression(@NotNull JetWhenConditionWithExpression condition) {
                 JetExpression expression = condition.getExpression();
                 if (expression != null) {
                     newDataFlowInfo.set(checkTypeForExpressionCondition(context, expression, subjectType, subjectExpression == null,
@@ -222,7 +222,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
 
             @Override
-            public void visitJetElement(JetElement element) {
+            public void visitJetElement(@NotNull JetElement element) {
                 context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
             }
         });

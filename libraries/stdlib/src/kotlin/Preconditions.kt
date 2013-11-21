@@ -33,7 +33,7 @@ public inline fun require(value: Boolean, lazyMessage: () -> String): Unit {
  *
  *  @includeFunctionBody ../../test/PreconditionsTest.kt requireNotNull
  */
-public inline fun <T> requireNotNull(value: T?, message: Any = "Required value was null"): T {
+public inline fun <T:Any> requireNotNull(value: T?, message: Any = "Required value was null"): T {
     if (value == null) {
         throw IllegalArgumentException(message.toString())
     } else {
@@ -70,7 +70,7 @@ public inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
  *
  *  @includeFunctionBody ../../test/PreconditionsTest.kt checkNotNull
  */
-public inline fun <T> checkNotNull(value: T?, message: String = "Required value was null"): T {
+public inline fun <T:Any> checkNotNull(value: T?, message: String = "Required value was null"): T {
     if (value == null) {
         throw IllegalStateException(message)
     } else {
@@ -78,5 +78,4 @@ public inline fun <T> checkNotNull(value: T?, message: String = "Required value 
     }
 }
 
-
-
+public inline fun error(message: String): Nothing = throw RuntimeException(message)

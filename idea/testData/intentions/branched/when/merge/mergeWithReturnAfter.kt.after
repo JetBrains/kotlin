@@ -1,0 +1,19 @@
+fun test(n: Int) {
+    var res: String = ""
+
+    <caret>when (n) {
+        1 -> {
+            println("A")
+            res = "one"
+        }
+        2 -> {
+            println("B")
+            res = "two"
+        }
+        else -> {
+            println("C")
+            res = "unknown"
+            return
+        }
+    }
+}

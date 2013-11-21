@@ -21,7 +21,7 @@ import java.io.File;
 public interface SourceMapBuilder {
     void newLine();
 
-    void skipLinesInBegin(int count);
+    void skipLinesAtBeginning(int count);
 
     void addMapping(String source, int sourceLine, int sourceColumn);
 

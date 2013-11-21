@@ -67,7 +67,7 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
 
         for (DeclarationDescriptor descriptor : namespaceFromClass.getMemberScope().getAllDescriptors()) {
             if (descriptor instanceof ClassDescriptor) {
-                assert descriptor instanceof DeserializedClassDescriptor : DescriptorUtils.getFQName(descriptor);
+                assert descriptor instanceof DeserializedClassDescriptor : DescriptorUtils.getFQName(descriptor) + " is loaded as " + descriptor.getClass();
             }
         }
 

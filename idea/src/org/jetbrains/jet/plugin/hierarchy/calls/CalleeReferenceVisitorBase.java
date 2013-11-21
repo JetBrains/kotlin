@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.hierarchy.calls;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -38,14 +39,14 @@ public abstract class CalleeReferenceVisitorBase extends JetTreeVisitorVoid {
     protected abstract void processDeclaration(JetReferenceExpression reference, PsiElement declaration);
 
     @Override
-    public void visitJetElement(JetElement element) {
+    public void visitJetElement(@NotNull JetElement element) {
         if (deepTraversal || !(element instanceof JetClassOrObject || element instanceof JetNamedFunction)) {
             super.visitJetElement(element);
         }
     }
 
     @Override
-    public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+    public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (descriptor == null) return;
 

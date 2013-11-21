@@ -67,7 +67,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @Override
     public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         ClassDescriptor innerClass = getInnerClassesMap().get(name);
-        if (innerClass != null && innerClass.getKind().isObject()) {
+        if (innerClass != null && innerClass.getKind().isSingleton()) {
             return innerClass;
         }
         return null;
@@ -76,7 +76,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassDescriptor innerClass = getInnerClassesMap().get(name);
-        if (innerClass == null || innerClass.getKind().isObject()) {
+        if (innerClass == null || innerClass.getKind().isSingleton()) {
             return null;
         }
         return innerClass;
