@@ -37,7 +37,7 @@ public abstract class AbstractJavaToKotlinConverterBasicTest() : AbstractJavaToK
 public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension: String,
                                                         val settings: ConverterSettings) : UsefulTestCase() {
 
-    val testHeaderPattern = Pattern.compile("//(expression|statement|method|class|file|comp)\n")
+    val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
 
     protected fun doTest(javaPath: String) {
         val jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(), ConfigurationKind.JDK_ONLY)
@@ -56,6 +56,7 @@ public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension:
         val prefix = matcher.group().trim().substring(2)
         val javaCode = matcher.replaceFirst("")
         val actual = when (prefix) {
+            "element" -> elementToKotlin(converter, javaCode)
             "expression" -> expressionToKotlin(converter, javaCode)
             "statement" -> statementToKotlin(converter, javaCode)
             "method" -> methodToKotlin(converter, javaCode)
@@ -75,6 +76,12 @@ public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension:
         }
 
         Assert.assertEquals(expected, actual)
+    }
+
+    private fun elementToKotlin(converter: Converter, text: String): String {
+        val fileWithText = JavaToKotlinTranslator.createFile(converter.project, text)!!
+        val element = fileWithText.getFirstChild()!!
+        return prettify(converter.elementToKotlin(element))
     }
 
     private fun fileToKotlin(converter: Converter, text: String): String {

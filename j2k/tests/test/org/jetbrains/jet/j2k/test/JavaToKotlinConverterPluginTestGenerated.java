@@ -1233,6 +1233,16 @@ public class JavaToKotlinConverterPluginTestGenerated extends AbstractJavaToKotl
             doTest("j2k/tests/testData/ast/importStatement/importWithStar.jav");
         }
         
+        @TestMetadata("oneImport.jav")
+        public void testOneImport() throws Exception {
+            doTest("j2k/tests/testData/ast/importStatement/oneImport.jav");
+        }
+        
+        @TestMetadata("onlyImports.jav")
+        public void testOnlyImports() throws Exception {
+            doTest("j2k/tests/testData/ast/importStatement/onlyImports.jav");
+        }
+        
         @TestMetadata("simpleImport.jav")
         public void testSimpleImport() throws Exception {
             doTest("j2k/tests/testData/ast/importStatement/simpleImport.jav");

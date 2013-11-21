@@ -69,13 +69,11 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         is PsiStatement -> statementToStatement(element)
         is PsiExpression -> expressionToExpression(element)
         is PsiComment -> Comment(element.getText()!!)
+        is PsiImportList -> importsToImportList(element)
         else -> null
     }
 
     public fun fileToFile(javaFile: PsiJavaFile): File {
-        val psiImportList = javaFile.getImportList()
-        val importList = if (psiImportList != null) importsToImportList(psiImportList) else null
-
         val body = ArrayList<Node>()
         for (element in javaFile.getChildren()) {
             if (element !is PsiImportStatementBase) {
@@ -85,7 +83,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                 }
             }
         }
-        return File(quoteKeywords(javaFile.getPackageName()), importList, body, createMainFunction(javaFile))
+        return File(quoteKeywords(javaFile.getPackageName()), body, createMainFunction(javaFile))
     }
 
     public fun anonymousClassToAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {

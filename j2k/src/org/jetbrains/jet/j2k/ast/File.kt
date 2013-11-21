@@ -17,12 +17,11 @@
 package org.jetbrains.jet.j2k.ast
 
 public open class File(val packageName: String,
-                       val imports: ImportList?,
                        val body: MutableList<Node>,
                        val mainFunction: String) : Node {
 
     public override fun toKotlin(): String {
-        val common = (imports?.toKotlin() ?: "") + "\n\n" + body.toKotlin("\n") + "\n" + mainFunction
+        val common = body.toKotlin("\n") + "\n" + mainFunction
         if (packageName.isEmpty()) {
             return common
         }
