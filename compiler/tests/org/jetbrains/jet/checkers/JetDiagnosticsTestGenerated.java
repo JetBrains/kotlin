@@ -3104,6 +3104,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/checkBackingFieldException.kt");
                 }
                 
+                @TestMetadata("completeFunctionArgumentsOfNestedCalls.kt")
+                public void testCompleteFunctionArgumentsOfNestedCalls() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/completeFunctionArgumentsOfNestedCalls.kt");
+                }
+                
                 @TestMetadata("funEquals.kt")
                 public void testFunEquals() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/funEquals.kt");

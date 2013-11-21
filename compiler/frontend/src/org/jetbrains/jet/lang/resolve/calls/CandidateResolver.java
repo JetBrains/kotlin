@@ -400,6 +400,7 @@ public class CandidateResolver {
                     context.resolutionResultsCache.getDeferredComputation(keyExpression);
             if (storedContextForArgument != null) {
                 completeNestedCallsForNotResolvedInvocation(storedContextForArgument);
+                argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(storedContextForArgument.replaceBindingTrace(context.trace));
             }
         }
     }
