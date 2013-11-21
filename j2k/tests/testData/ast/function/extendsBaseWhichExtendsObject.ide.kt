@@ -1,18 +1,18 @@
 package test
 class Test() : Base() {
-public override fun hashCode() : Int {
+override fun hashCode() : Int {
 return super.hashCode()
 }
-public override fun equals(o : Any) : Boolean {
+override fun equals(o : Any) : Boolean {
 return super.equals(o)
 }
-protected override fun clone() : Any {
+override fun clone() : Any {
 return super.clone()
 }
-public override fun toString() : String {
+override fun toString() : String {
 return super.toString()
 }
-protected override fun finalize() {
+override fun finalize() {
 super.finalize()
 }
 }

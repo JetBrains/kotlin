@@ -1,6 +1,6 @@
 package demo
 class Test() : java.lang.Iterable<String> {
-public override fun iterator() : java.util.Iterator<String> {
+override fun iterator() : java.util.Iterator<String> {
 return null
 }
 public fun push(i : java.util.Iterator<String>) : java.util.Iterator<String> {
@@ -9,7 +9,7 @@ return j
 }
 }
 class FullTest() : java.lang.Iterable<String> {
-public override fun iterator() : java.util.Iterator<String> {
+override fun iterator() : java.util.Iterator<String> {
 return null
 }
 public fun push(i : java.util.Iterator<String>) : java.util.Iterator<String> {

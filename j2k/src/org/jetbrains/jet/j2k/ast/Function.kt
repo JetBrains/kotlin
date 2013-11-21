@@ -49,33 +49,34 @@ public open class Function(val converter: Converter,
     }
 
     private fun modifiersToKotlin(): String {
-        val modifierList = ArrayList<Modifier>()
+        val resultingModifiers = ArrayList<Modifier>()
+        val isOverride = modifiers.contains(Modifier.OVERRIDE)
+        if (isOverride) {
+            resultingModifiers.add(Modifier.OVERRIDE)
+        }
+
         val accessModifier = accessModifier()
-        if (accessModifier != null) {
-            modifierList.add(accessModifier)
+        if (accessModifier != null && !isOverride) {
+            resultingModifiers.add(accessModifier)
         }
 
         if (isAbstract()) {
-            modifierList.add(Modifier.ABSTRACT)
-        }
-
-        if (modifiers.contains(Modifier.OVERRIDE)) {
-            modifierList.add(Modifier.OVERRIDE)
+            resultingModifiers.add(Modifier.ABSTRACT)
         }
 
         if (converter.settings.openByDefault &&
             !modifiers.contains(Modifier.ABSTRACT) &&
-            !modifiers.contains(Modifier.OVERRIDE) &&
+            !isOverride &&
             !modifiers.contains(Modifier.FINAL) &&
             !modifiers.contains(Modifier.PRIVATE)) {
-            modifierList.add(Modifier.OPEN)
+            resultingModifiers.add(Modifier.OPEN)
         }
 
         if (modifiers.contains(Modifier.NOT_OPEN)) {
-            modifierList.remove(Modifier.OPEN)
+            resultingModifiers.remove(Modifier.OPEN)
         }
 
-        return modifierList.toKotlin()
+        return resultingModifiers.toKotlin()
     }
 
     private fun returnTypeToKotlin() = if (!`type`.isUnit()) " : " + `type`.toKotlin() + " " else " "

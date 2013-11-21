@@ -6,12 +6,12 @@ public fun windowClosing() {
 public class Client() : Frame() {
 {
 val a = object : WindowAdapter() {
-public override fun windowClosing() {
+override fun windowClosing() {
 }
 }
 addWindowListener(a)
 addWindowListener(object : WindowAdapter() {
-public override fun windowClosing() {
+override fun windowClosing() {
 }
 })
 }
