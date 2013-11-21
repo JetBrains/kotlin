@@ -78,27 +78,13 @@ public class CliBaseTest {
         JetTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testName.getMethodName() + ".out"), actual);
     }
 
-    // TODO: remove after update to newer IDEA where there is a FileUtil.loadLines(String)
-    @NotNull
-    public static List<String> loadLines(@NotNull String path) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(path));
-        try {
-            return FileUtil.loadLines(reader);
-        }
-        finally {
-            reader.close();
-        }
-    }
-
     @NotNull
     static String[] readArgs(
             @NotNull String argsFilePath,
             @NotNull final String testDataDir,
             @NotNull final String tempDir
     ) throws IOException {
-
-
-        List<String> lines = loadLines(argsFilePath);
+        List<String> lines = FileUtil.loadLines(new FileInputStream(argsFilePath));
 
         return ArrayUtil.toStringArray(ContainerUtil.mapNotNull(lines, new Function<String, String>() {
             @Override
