@@ -19,7 +19,6 @@ package org.jetbrains.jet.j2k.visitors
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.J2KConverterFlags
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.*
 import java.util.LinkedList
@@ -87,10 +86,6 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         if (psiClass != null) {
             val qualifiedName: String? = psiClass.getQualifiedName()
             if (qualifiedName != null) {
-                if (!qualifiedName.equals("java.lang.Object") && myConverter.hasFlag(J2KConverterFlags.FULLY_QUALIFIED_TYPE_NAMES)) {
-                    return Identifier(qualifiedName)
-                }
-
                 if (qualifiedName.equals(CommonClassNames.JAVA_LANG_ITERABLE)) {
                     return Identifier(CommonClassNames.JAVA_LANG_ITERABLE)
                 }

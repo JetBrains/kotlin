@@ -41,20 +41,10 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     private val dispatcher: Dispatcher = Dispatcher(this)
 
-    private val flags: MutableSet<J2KConverterFlags?>? = Sets.newHashSet()
-
     private val javaToKotlinClassMap: JavaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
 
     public var methodReturnType: PsiType? = null
         private set
-
-    public fun addFlag(flag: J2KConverterFlags): Boolean {
-        return flags?.add(flag)!!
-    }
-
-    public fun hasFlag(flag: J2KConverterFlags): Boolean {
-        return flags?.contains(flag)!!
-    }
 
     public fun setClassIdentifiers(identifiers: MutableSet<String>) {
         classIdentifiersSet = identifiers
@@ -270,10 +260,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         methodReturnType = method.getReturnType()
         val identifier: Identifier = Identifier(method.getName())
         val returnType: Type = typeToType(method.getReturnType(), isAnnotatedAsNotNull(method.getModifierList()))
-        val body: Block = (if (hasFlag(J2KConverterFlags.SKIP_BODIES))
-            Block.EMPTY_BLOCK
-        else
-            blockToBlock(method.getBody(), notEmpty))
+        val body = blockToBlock(method.getBody(), notEmpty)
 
         val params: Element = createFunctionParameters(method)
         val typeParameters = elementsToElementList(method.getTypeParameters())
