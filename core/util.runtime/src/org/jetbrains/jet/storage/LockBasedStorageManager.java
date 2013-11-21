@@ -56,13 +56,13 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<K, V> compute) {
+    public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<? super K, ? extends V> compute) {
         return createMemoizedFunction(compute, new ConcurrentHashMap<K, Object>());
     }
 
     @NotNull
     protected  <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
-            @NotNull Function1<K, V> compute,
+            @NotNull Function1<? super K, ? extends V> compute,
             @NotNull ConcurrentMap<K, Object> map
     ) {
         return new MapBasedMemoizedFunctionToNotNull<K, V>(map, compute);
@@ -70,13 +70,13 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function1<K, V> compute) {
+    public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function1<? super K, ? extends V> compute) {
         return createMemoizedFunctionWithNullableValues(compute, new ConcurrentHashMap<K, Object>());
     }
 
     @NotNull
     protected <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(
-            @NotNull Function1<K, V> compute,
+            @NotNull Function1<? super K, ? extends V> compute,
             @NotNull ConcurrentMap<K, Object> map
     ) {
         return new MapBasedMemoizedFunction<K, V>(map, compute);
@@ -84,14 +84,14 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <T> NotNullLazyValue<T> createLazyValue(@NotNull Function0<T> computable) {
+    public <T> NotNullLazyValue<T> createLazyValue(@NotNull Function0<? extends T> computable) {
         return new LockBasedNotNullLazyValue<T>(computable);
     }
 
     @NotNull
     @Override
     public <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(
-            @NotNull Function0<T> computable, @NotNull final T onRecursiveCall
+            @NotNull Function0<? extends T> computable, @NotNull final T onRecursiveCall
     ) {
         return new LockBasedNotNullLazyValue<T>(computable) {
             @NotNull
@@ -105,9 +105,9 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
-            @NotNull Function0<T> computable,
-            final Function1<Boolean, T> onRecursiveCall,
-            @NotNull final Function1<T, Unit> postCompute
+            @NotNull Function0<? extends T> computable,
+            final Function1<? super Boolean, ? extends T> onRecursiveCall,
+            @NotNull final Function1<? super T, ? extends Unit> postCompute
     ) {
         return new LockBasedNotNullLazyValue<T>(computable) {
             @NotNull
@@ -128,13 +128,13 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
-    public <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Function0<T> computable) {
+    public <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Function0<? extends T> computable) {
         return new LockBasedLazyValue<T>(computable);
     }
 
     @NotNull
     @Override
-    public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Function0<T> computable, final T onRecursiveCall) {
+    public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Function0<? extends T> computable, final T onRecursiveCall) {
         return new LockBasedLazyValue<T>(computable) {
             @NotNull
             @Override
@@ -147,7 +147,7 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
-            @NotNull Function0<T> computable, @NotNull final Function1<T, Unit> postCompute
+            @NotNull Function0<? extends T> computable, @NotNull final Function1<? super T, ? extends Unit> postCompute
     ) {
         return new LockBasedLazyValue<T>(computable) {
             @Override
@@ -158,7 +158,7 @@ public class LockBasedStorageManager implements StorageManager {
     }
 
     @Override
-    public <T> T compute(@NotNull Function0<T> computable) {
+    public <T> T compute(@NotNull Function0<? extends T> computable) {
         lock.lock();
         try {
             return computable.invoke();
@@ -216,12 +216,12 @@ public class LockBasedStorageManager implements StorageManager {
 
     private class LockBasedLazyValue<T> implements NullableLazyValue<T> {
 
-        private final Function0<T> computable;
+        private final Function0<? extends T> computable;
 
         @Nullable
         private volatile Object value = NotValue.NOT_COMPUTED;
 
-        public LockBasedLazyValue(@NotNull Function0<T> computable) {
+        public LockBasedLazyValue(@NotNull Function0<? extends T> computable) {
             this.computable = computable;
         }
 
@@ -291,7 +291,7 @@ public class LockBasedStorageManager implements StorageManager {
 
     private class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
 
-        public LockBasedNotNullLazyValue(@NotNull Function0<T> computable) {
+        public LockBasedNotNullLazyValue(@NotNull Function0<? extends T> computable) {
             super(computable);
         }
 
@@ -306,9 +306,9 @@ public class LockBasedStorageManager implements StorageManager {
 
     private class MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNullable<K, V> {
         private final ConcurrentMap<K, Object> cache;
-        private final Function1<K, V> compute;
+        private final Function1<? super K, ? extends V> compute;
 
-        public MapBasedMemoizedFunction(@NotNull ConcurrentMap<K, Object> map, @NotNull Function1<K, V> compute) {
+        public MapBasedMemoizedFunction(@NotNull ConcurrentMap<K, Object> map, @NotNull Function1<? super K, ? extends V> compute) {
             this.cache = map;
             this.compute = compute;
         }
@@ -361,7 +361,7 @@ public class LockBasedStorageManager implements StorageManager {
 
         public MapBasedMemoizedFunctionToNotNull(
                 @NotNull ConcurrentMap<K, Object> map,
-                @NotNull Function1<K, V> compute
+                @NotNull Function1<? super K, ? extends V> compute
         ) {
             super(map, compute);
         }

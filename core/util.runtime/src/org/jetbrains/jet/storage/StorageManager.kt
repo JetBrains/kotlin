@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.storage;
+package org.jetbrains.jet.storage
 
-import jet.Function0;
-import jet.Function1;
-import jet.Unit;
-import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public interface StorageManager {
+public trait StorageManager {
     /**
      * Given a function compute: K -> V create a memoized version of it that computes a value only once for each key
      * @param compute the function to be memoized
@@ -32,18 +26,13 @@ public interface StorageManager {
      * NOTE: if compute() has side-effects the WEAK reference kind is dangerous: the side-effects will be repeated if
      *       the value gets collected and then re-computed
      */
-    @NotNull
-    <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<K, V> compute);
-    @KotlinSignature(
-            "fun <K, V> createMemoizedFunctionWithNullableValues(compute: (K) -> V?): MemoizedFunctionToNullable<K, V>")
-    @NotNull
-    <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function1<K, V> compute);
+    fun createMemoizedFunction<K, V: Any>(compute: (K) -> V): MemoizedFunctionToNotNull<K, V>
 
-    @NotNull
-    <T> NotNullLazyValue<T> createLazyValue(@NotNull Function0<T> computable);
+    fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V?): MemoizedFunctionToNullable<K, V>
 
-    @NotNull
-    <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(@NotNull Function0<T> computable, @NotNull T onRecursiveCall);
+    fun createLazyValue<T: Any>(computable: () -> T): NotNullLazyValue<T>
+
+    fun createRecursionTolerantLazyValue<T: Any>(computable: () -> T, onRecursiveCall: T): NotNullLazyValue<T>
 
     /**
      * @param onRecursiveCall is called if the computation calls itself recursively.
@@ -52,25 +41,17 @@ public interface StorageManager {
      *                        otherwise it's executed and its result is returned
      * @param postCompute is called after the value is computed, but before any other thread sees it
      */
-    @NotNull
-    <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
-            @NotNull Function0<T> computable,
-            @Nullable Function1<Boolean, T> onRecursiveCall,
-            @NotNull Function1<T, Unit> postCompute
-    );
+    fun createLazyValueWithPostCompute<T: Any>(computable: () -> T, onRecursiveCall: ((Boolean) -> T)?, postCompute: (T) -> Unit): NotNullLazyValue<T>
 
-    @NotNull
-    <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Function0<T> computable);
+    fun createNullableLazyValue<T: Any>(computable: () -> T?): NullableLazyValue<T>
 
-    @NotNull
-    <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Function0<T> computable, @Nullable T onRecursiveCall);
+    fun createRecursionTolerantNullableLazyValue<T: Any>(computable: () -> T?, onRecursiveCall: T?): NullableLazyValue<T>
 
     /**
      * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
      * see it in between)
      */
-    @NotNull
-    <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(@NotNull Function0<T> computable, @NotNull Function1<T, Unit> postCompute);
+    fun createNullableLazyValueWithPostCompute<T: Any>(computable: () -> T?, postCompute: (T?) -> Unit): NullableLazyValue<T>
 
-    <T> T compute(@NotNull Function0<T> computable);
+    fun compute<T>(computable: () -> T): T
 }
