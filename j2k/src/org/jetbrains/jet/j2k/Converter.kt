@@ -251,7 +251,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 
     private fun methodToFunction(method: PsiMethod, notEmpty: Boolean): Function {
-        if (isOverrideObjectDirect(method)) {
+        if (directlyOverridesMethodFromObject(method)) {
             dispatcher.expressionVisitor = ExpressionVisitorForDirectObjectInheritors(this)
         }
         else {
@@ -266,7 +266,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         val typeParameters = elementsToElementList(method.getTypeParameters())
         val modifiers = modifiersListToModifiersSet(method.getModifierList())
         val docComments = getDocComments(method)
-        if (isOverrideAnyMethodExceptMethodsFromObject(method)) {
+        if (isOverride(method)) {
             modifiers.add(Modifier.OVERRIDE)
         }
 
@@ -296,35 +296,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                                  isReadOnly(parameter, method.getBody())))
         }
         return ParameterList(result)
-    }
-
-    private fun isOverrideAnyMethodExceptMethodsFromObject(method: PsiMethod): Boolean {
-        var counter: Boolean = normalCase(method)
-        if (counter)
-        {
-            return true
-        }
-
-        if (isInheritFromObject(method))
-        {
-            return caseForObject(method)
-        }
-
-        return false
-    }
-
-    private fun caseForObject(method: PsiMethod): Boolean {
-        val containing: PsiClass? = method.getContainingClass()
-        if (containing != null) {
-            for (s : PsiClassType? in containing.getSuperTypes()) {
-                val canonicalText: String? = s?.getCanonicalText()
-                if (canonicalText != JAVA_LANG_OBJECT && !getClassIdentifiers().contains(canonicalText)) {
-                    return true
-                }
-            }
-        }
-
-        return false
     }
 
     public fun blockToBlock(block: PsiCodeBlock?, notEmpty: Boolean): Block {
@@ -529,70 +500,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
     }
 
-    private fun isNotOpenMethod(method: PsiMethod): Boolean {
-        val parent = method.getParent()
-        if (parent is PsiClass) {
-            val parentModifierList = parent.getModifierList()
-            if ((parentModifierList != null && parentModifierList.hasExplicitModifier(PsiModifier.FINAL)) || parent.isEnum()) {
-                return true
-            }
-
-        }
-
-        return false
-    }
-
-    private fun normalCase(method: PsiMethod): Boolean {
-        var counter: Int = 0
-        for (s : HierarchicalMethodSignature? in method.getHierarchicalMethodSignature().getSuperSignatures())
-        {
-            var containingClass: PsiClass? = s?.getMethod()?.getContainingClass()
-            var qualifiedName: String? = (if (containingClass != null)
-                containingClass?.getQualifiedName()
-            else
-                "")
-            if (qualifiedName != null && !qualifiedName.equals(JAVA_LANG_OBJECT))
-            {
-                counter++
-            }
-
-        }
-        return counter > 0
-    }
-
-    private fun isInheritFromObject(method: PsiMethod): Boolean {
-        var superSignatures: List<HierarchicalMethodSignature?> = method.getHierarchicalMethodSignature().getSuperSignatures()
-        for (s : HierarchicalMethodSignature? in superSignatures) {
-            var containingClass: PsiClass? = s?.getMethod()?.getContainingClass()
-            var qualifiedName: String? = (if (containingClass != null)
-                containingClass?.getQualifiedName()
-            else
-                "")
-            if (qualifiedName == JAVA_LANG_OBJECT) {
-                return true
-            }
-
-        }
-        return false
-    }
-
-    private fun isOverrideObjectDirect(method: PsiMethod): Boolean {
-        var superSignatures: List<HierarchicalMethodSignature?>? = method.getHierarchicalMethodSignature().getSuperSignatures()
-        if (superSignatures?.size()!! == 1)
-        {
-            val containingClass: PsiClass? = superSignatures?.get(0)?.getMethod()?.getContainingClass()
-            val qualifiedName: String? = (if (containingClass != null)
-                containingClass.getQualifiedName()
-            else
-                "")
-            if (qualifiedName == JAVA_LANG_OBJECT) {
-                return true
-            }
-
-        }
-
-        return false
-    }
     private fun importsToImportList(imports: Array<PsiImportStatementBase>): List<Import> {
         val result = ArrayList<Import>()
         for (i : PsiImportStatementBase? in imports) {
