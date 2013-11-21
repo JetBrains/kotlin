@@ -1,0 +1,91 @@
+LazyAnnotationDescriptor@10 {
+    _resolutionResults = OverloadResolutionResultsImpl@12
+    _type = JetTypeImpl@11
+    _valueArguments(ValueParameterDescriptorImpl@13['strategy']) = null
+}
+
+LazyAnnotationDescriptor@18 {
+    _resolutionResults = OverloadResolutionResultsImpl@20
+    _type = JetTypeImpl@19
+    _valueArguments(ValueParameterDescriptorImpl@13['strategy']) = null
+}
+
+LazyAnnotationDescriptor@21 {
+    _resolutionResults = OverloadResolutionResultsImpl@23
+    _type = JetTypeImpl@22
+    _valueArguments(ValueParameterDescriptorImpl@13['strategy']) = null
+}
+
+LazyAnnotationDescriptor@27 {
+    _resolutionResults = OverloadResolutionResultsImpl@29
+    _type = JetTypeImpl@28
+    _valueArguments(ValueParameterDescriptorImpl@13['strategy']) = null
+}
+
+LazyAnnotationDescriptor@37 {
+    _resolutionResults = OverloadResolutionResultsImpl@39
+    _type = JetTypeImpl@38
+    _valueArguments(ValueParameterDescriptorImpl@13['strategy']) = null
+}
+
+LazyAnnotationDescriptor@40 {
+    _resolutionResults = OverloadResolutionResultsImpl@42
+    _type = JetTypeImpl@41
+    _valueArguments(ValueParameterDescriptorImpl@13['strategy']) = null
+}
+
+LazyAnnotationDescriptor@0 {
+    _resolutionResults = OverloadResolutionResultsImpl@2
+    _type = JetTypeImpl@1
+}
+
+LazyAnnotationDescriptor@24 {
+    _resolutionResults = OverloadResolutionResultsImpl@26
+    _type = JetTypeImpl@25
+}
+
+LazyJavaPackageFragmentProvider@43 {
+    _packageFragments('<root>': FqName@44) = LazyJavaPackageFragment@30['<root>']
+    _packageFragments('Int': FqName@50) = null
+    _packageFragments('Unit': FqName@53) = null
+    _packageFragments('inline': FqName@56) = null
+    _packageFragments('java': FqName@45) = LazyJavaPackageFragment@3['java']
+    _packageFragments('java.lang': FqName@46) = LazyJavaPackageFragment@14['lang']
+    _packageFragments('java.lang.Int': FqName@52) = null
+    _packageFragments('java.lang.Unit': FqName@55) = null
+    _packageFragments('java.lang.inline': FqName@58) = null
+    _packageFragments('java.lang.noinline': FqName@61) = null
+    _packageFragments('kotlin': FqName@47) = null
+    _packageFragments('kotlin.Int': FqName@51) = null
+    _packageFragments('kotlin.Unit': FqName@54) = null
+    _packageFragments('kotlin.inline': FqName@57) = null
+    _packageFragments('kotlin.io': FqName@49) = null
+    _packageFragments('kotlin.jvm': FqName@48) = null
+    _packageFragments('kotlin.noinline': FqName@60) = null
+    _packageFragments('noinline': FqName@59) = null
+}
+
+LazyJavaPackageFragment@30['<root>'] {
+    _functions('invoke': Name@17) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@32
+    classes('Int': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@32
+    classes('Unit': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@32
+    classes('inline': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@32
+    classes('invoke': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@32
+    classes('noinline': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@32
+    deserializedPackageScope = JetScope$1@6 // through LazyPackageFragmentScopeForJavaPackage@32
+    memberIndex = computeMemberIndex$1@35 // through LazyPackageFragmentScopeForJavaPackage@32
+}
+
+LazyJavaPackageFragment@3['java'] {
+    _functions('lang': Name@8) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@5
+    classes('lang': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@5
+    deserializedPackageScope = JetScope$1@6 // through LazyPackageFragmentScopeForJavaPackage@5
+    memberIndex = computeMemberIndex$1@7 // through LazyPackageFragmentScopeForJavaPackage@5
+}
+
+LazyJavaPackageFragment@14['lang'] {
+    _functions('invoke': Name@17) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('invoke': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    deserializedPackageScope = JetScope$1@6 // through LazyPackageFragmentScopeForJavaPackage@15
+    memberIndex = computeMemberIndex$1@16 // through LazyPackageFragmentScopeForJavaPackage@15
+}

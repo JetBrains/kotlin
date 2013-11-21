@@ -1,0 +1,60 @@
+LazyJavaPackageFragmentProvider@7 {
+    _packageFragments('<root>': FqName@8) = LazyJavaPackageFragment@9['<root>']
+    _packageFragments('A': FqName@16) = null
+    _packageFragments('Any': FqName@22) = null
+    _packageFragments('Boolean': FqName@25) = null
+    _packageFragments('Int': FqName@19) = null
+    _packageFragments('java': FqName@10) = LazyJavaPackageFragment@0['java']
+    _packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
+    _packageFragments('java.lang.A': FqName@18) = null
+    _packageFragments('java.lang.Any': FqName@24) = null
+    _packageFragments('java.lang.Boolean': FqName@27) = null
+    _packageFragments('java.lang.Int': FqName@21) = null
+    _packageFragments('kotlin': FqName@13) = null
+    _packageFragments('kotlin.A': FqName@17) = null
+    _packageFragments('kotlin.Any': FqName@23) = null
+    _packageFragments('kotlin.Boolean': FqName@26) = null
+    _packageFragments('kotlin.Int': FqName@20) = null
+    _packageFragments('kotlin.io': FqName@15) = null
+    _packageFragments('kotlin.jvm': FqName@14) = null
+}
+
+LazyJavaPackageFragment@9['<root>'] {
+    _functions('contains': Name@37) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('div': Name@35) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('minus': Name@34) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('plus': Name@33) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('times': Name@36) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('Any': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('Boolean': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('Int': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('contains': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('div': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('minus': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('plus': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('times': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@29
+    memberIndex = computeMemberIndex$1@32 // through LazyPackageFragmentScopeForJavaPackage@29
+}
+
+LazyJavaPackageFragment@0['java'] {
+    _functions('lang': Name@5) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('lang': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+    memberIndex = computeMemberIndex$1@4 // through LazyPackageFragmentScopeForJavaPackage@2
+}
+
+LazyJavaPackageFragment@12['lang'] {
+    _functions('contains': Name@37) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('div': Name@35) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('minus': Name@34) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('plus': Name@33) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    _functions('times': Name@36) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('contains': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('div': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('minus': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('plus': Name@33) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('times': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@38
+    memberIndex = computeMemberIndex$1@39 // through LazyPackageFragmentScopeForJavaPackage@38
+}

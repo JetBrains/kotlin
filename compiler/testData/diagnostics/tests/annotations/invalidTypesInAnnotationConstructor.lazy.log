@@ -1,0 +1,230 @@
+LazyJavaClassDescriptor@126['AnnotatedElement'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@163['AnnotatedElement']
+}
+
+LazyJavaClassDescriptor@107['Class'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@173['Class']
+}
+
+LazyJavaClassDescriptor@122['GenericDeclaration'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@161['GenericDeclaration']
+}
+
+LazyJavaClassDescriptor@25['RetentionPolicy'] {
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@177['RetentionPolicy']
+}
+
+LazyJavaClassDescriptor@3['Serializable'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@4['Serializable']
+}
+
+LazyJavaClassDescriptor@124['Type'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@162['Type']
+}
+
+LazyJavaClassTypeConstructor@173['Class'] {
+    _parameters = ArrayList@174[1] { LazyJavaTypeParameterDescriptor@2['T'] }
+    _supertypes = ArrayList@175[4] { LazyJavaClassifierType@154['Serializable'], LazyJavaClassifierType@160['GenericDeclaration'], LazyJavaClassifierType@176['Type'], ... }
+}
+
+LazyJavaClassTypeConstructor@177['RetentionPolicy'] {
+    _parameters = ArrayList@181[empty]
+}
+
+LazyJavaClassTypeConstructor@4['Serializable'] {
+    _parameters = ArrayList@180[empty]
+    _supertypes = ArrayList@178[1] { JetTypeImpl@179 }
+}
+
+LazyJavaClassifierType@172['AnnotatedElement'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@163['AnnotatedElement']
+    classifier = JavaClassImpl@125['AnnotatedElement']
+}
+
+LazyJavaClassifierType@160['GenericDeclaration'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@161['GenericDeclaration']
+    classifier = JavaClassImpl@121['GenericDeclaration']
+}
+
+LazyJavaClassifierType@5['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@7
+    classifier = JavaClassImpl@6['Object']
+}
+
+LazyJavaClassifierType@8['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@7
+    classifier = JavaClassImpl@9['Object']
+}
+
+LazyJavaClassifierType@154['Serializable'] {
+    _arguments = ArrayList@155[empty]
+    _typeConstructor = LazyJavaClassTypeConstructor@4['Serializable']
+    classifier = JavaClassImpl@118['Serializable']
+}
+
+LazyJavaClassifierType@176['Type'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@162['Type']
+    classifier = JavaClassImpl@123['Type']
+}
+
+LazyJavaPackageFragmentProvider@10 {
+    _packageFragments('<root>': FqName@11) = LazyJavaPackageFragment@12['<root>']
+    _packageFragments('Ann1': FqName@63) = null
+    _packageFragments('Array': FqName@113) = null
+    _packageFragments('Boolean': FqName@55) = null
+    _packageFragments('BooleanArray': FqName@95) = null
+    _packageFragments('Byte': FqName@31) = null
+    _packageFragments('ByteArray': FqName@71) = null
+    _packageFragments('Char': FqName@51) = null
+    _packageFragments('CharArray': FqName@91) = null
+    _packageFragments('Class': FqName@103) = null
+    _packageFragments('Double': FqName@43) = null
+    _packageFragments('DoubleArray': FqName@83) = null
+    _packageFragments('Float': FqName@47) = null
+    _packageFragments('FloatArray': FqName@87) = null
+    _packageFragments('Int': FqName@27) = null
+    _packageFragments('IntArray': FqName@67) = null
+    _packageFragments('Long': FqName@39) = null
+    _packageFragments('LongArray': FqName@79) = null
+    _packageFragments('MyClass': FqName@128) = null
+    _packageFragments('MyEnum': FqName@99) = null
+    _packageFragments('RetentionPolicy': FqName@109) = null
+    _packageFragments('Short': FqName@35) = null
+    _packageFragments('ShortArray': FqName@75) = null
+    _packageFragments('String': FqName@59) = null
+    _packageFragments('java': FqName@14) = LazyJavaPackageFragment@15['java']
+    _packageFragments('java.io': FqName@116) = LazyJavaPackageFragment@117['io']
+    _packageFragments('java.lang': FqName@16) = LazyJavaPackageFragment@17['lang']
+    _packageFragments('java.lang.Ann1': FqName@65) = null
+    _packageFragments('java.lang.Array': FqName@115) = null
+    _packageFragments('java.lang.Boolean': FqName@57) = null
+    _packageFragments('java.lang.BooleanArray': FqName@97) = null
+    _packageFragments('java.lang.Byte': FqName@33) = null
+    _packageFragments('java.lang.ByteArray': FqName@73) = null
+    _packageFragments('java.lang.Char': FqName@53) = null
+    _packageFragments('java.lang.CharArray': FqName@93) = null
+    _packageFragments('java.lang.Class': FqName@105) = null
+    _packageFragments('java.lang.Double': FqName@45) = null
+    _packageFragments('java.lang.DoubleArray': FqName@85) = null
+    _packageFragments('java.lang.Float': FqName@49) = null
+    _packageFragments('java.lang.FloatArray': FqName@89) = null
+    _packageFragments('java.lang.Int': FqName@29) = null
+    _packageFragments('java.lang.IntArray': FqName@69) = null
+    _packageFragments('java.lang.Long': FqName@41) = null
+    _packageFragments('java.lang.LongArray': FqName@81) = null
+    _packageFragments('java.lang.MyClass': FqName@130) = null
+    _packageFragments('java.lang.MyEnum': FqName@101) = null
+    _packageFragments('java.lang.RetentionPolicy': FqName@111) = null
+    _packageFragments('java.lang.Short': FqName@37) = null
+    _packageFragments('java.lang.ShortArray': FqName@77) = null
+    _packageFragments('java.lang.String': FqName@61) = null
+    _packageFragments('java.lang.annotation': FqName@21) = LazyJavaPackageFragment@22['annotation']
+    _packageFragments('java.lang.annotation.RetentionPolicy': FqName@23) = null
+    _packageFragments('java.lang.reflect': FqName@119) = LazyJavaPackageFragment@120['reflect']
+    _packageFragments('kotlin': FqName@18) = null
+    _packageFragments('kotlin.Ann1': FqName@64) = null
+    _packageFragments('kotlin.Array': FqName@114) = null
+    _packageFragments('kotlin.Boolean': FqName@56) = null
+    _packageFragments('kotlin.BooleanArray': FqName@96) = null
+    _packageFragments('kotlin.Byte': FqName@32) = null
+    _packageFragments('kotlin.ByteArray': FqName@72) = null
+    _packageFragments('kotlin.Char': FqName@52) = null
+    _packageFragments('kotlin.CharArray': FqName@92) = null
+    _packageFragments('kotlin.Class': FqName@104) = null
+    _packageFragments('kotlin.Double': FqName@44) = null
+    _packageFragments('kotlin.DoubleArray': FqName@84) = null
+    _packageFragments('kotlin.Float': FqName@48) = null
+    _packageFragments('kotlin.FloatArray': FqName@88) = null
+    _packageFragments('kotlin.Int': FqName@28) = null
+    _packageFragments('kotlin.IntArray': FqName@68) = null
+    _packageFragments('kotlin.Long': FqName@40) = null
+    _packageFragments('kotlin.LongArray': FqName@80) = null
+    _packageFragments('kotlin.MyClass': FqName@129) = null
+    _packageFragments('kotlin.MyEnum': FqName@100) = null
+    _packageFragments('kotlin.RetentionPolicy': FqName@110) = null
+    _packageFragments('kotlin.Short': FqName@36) = null
+    _packageFragments('kotlin.ShortArray': FqName@76) = null
+    _packageFragments('kotlin.String': FqName@60) = null
+    _packageFragments('kotlin.io': FqName@20) = null
+    _packageFragments('kotlin.jvm': FqName@19) = null
+    _packageFragments('test': FqName@13) = null
+    _packageFragments('test.Ann1': FqName@62) = null
+    _packageFragments('test.Ann2': FqName@142) = null
+    _packageFragments('test.Ann3': FqName@143) = null
+    _packageFragments('test.Ann4': FqName@147) = null
+    _packageFragments('test.Ann5': FqName@145) = null
+    _packageFragments('test.Ann6': FqName@136) = null
+    _packageFragments('test.Ann7': FqName@135) = null
+    _packageFragments('test.Ann8': FqName@138) = null
+    _packageFragments('test.Ann9': FqName@139) = null
+    _packageFragments('test.Array': FqName@112) = null
+    _packageFragments('test.Boolean': FqName@54) = null
+    _packageFragments('test.BooleanArray': FqName@94) = null
+    _packageFragments('test.Byte': FqName@30) = null
+    _packageFragments('test.ByteArray': FqName@70) = null
+    _packageFragments('test.Char': FqName@50) = null
+    _packageFragments('test.CharArray': FqName@90) = null
+    _packageFragments('test.Class': FqName@102) = null
+    _packageFragments('test.Double': FqName@42) = null
+    _packageFragments('test.DoubleArray': FqName@82) = null
+    _packageFragments('test.Float': FqName@46) = null
+    _packageFragments('test.FloatArray': FqName@86) = null
+    _packageFragments('test.InAnn1': FqName@141) = null
+    _packageFragments('test.InAnn10': FqName@146) = null
+    _packageFragments('test.InAnn11': FqName@132) = null
+    _packageFragments('test.InAnn12': FqName@131) = null
+    _packageFragments('test.InAnn4': FqName@144) = null
+    _packageFragments('test.InAnn6': FqName@140) = null
+    _packageFragments('test.InAnn7': FqName@137) = null
+    _packageFragments('test.InAnn8': FqName@134) = null
+    _packageFragments('test.InAnn9': FqName@133) = null
+    _packageFragments('test.Int': FqName@26) = null
+    _packageFragments('test.IntArray': FqName@66) = null
+    _packageFragments('test.Long': FqName@38) = null
+    _packageFragments('test.LongArray': FqName@78) = null
+    _packageFragments('test.MyClass': FqName@127) = null
+    _packageFragments('test.MyEnum': FqName@98) = null
+    _packageFragments('test.RetentionPolicy': FqName@108) = null
+    _packageFragments('test.Short': FqName@34) = null
+    _packageFragments('test.ShortArray': FqName@74) = null
+    _packageFragments('test.String': FqName@58) = null
+    topLevelClasses(JavaClassImpl@125['AnnotatedElement']) = LazyJavaClassDescriptor@126['AnnotatedElement']
+    topLevelClasses(JavaClassImpl@106['Class']) = LazyJavaClassDescriptor@107['Class']
+    topLevelClasses(JavaClassImpl@121['GenericDeclaration']) = LazyJavaClassDescriptor@122['GenericDeclaration']
+    topLevelClasses(JavaClassImpl@24['RetentionPolicy']) = LazyJavaClassDescriptor@25['RetentionPolicy']
+    topLevelClasses(JavaClassImpl@118['Serializable']) = LazyJavaClassDescriptor@3['Serializable']
+    topLevelClasses(JavaClassImpl@123['Type']) = LazyJavaClassDescriptor@124['Type']
+}
+
+LazyJavaPackageFragment@22['annotation'] {
+    _functions('RetentionPolicy': Name@159) = EmptyList@153[empty] // through LazyPackageFragmentScopeForJavaPackage@157
+    classes('RetentionPolicy': Name@156) = LazyJavaClassDescriptor@25['RetentionPolicy'] // through LazyPackageFragmentScopeForJavaPackage@157
+    deserializedPackageScope = JetScope$1@150 // through LazyPackageFragmentScopeForJavaPackage@157
+    memberIndex = computeMemberIndex$1@158 // through LazyPackageFragmentScopeForJavaPackage@157
+}
+
+LazyJavaPackageFragment@15['java'] {
+    _functions('lang': Name@152) = EmptyList@153[empty] // through LazyPackageFragmentScopeForJavaPackage@149
+    classes('lang': Name@148) = null // through LazyPackageFragmentScopeForJavaPackage@149
+    deserializedPackageScope = JetScope$1@150 // through LazyPackageFragmentScopeForJavaPackage@149
+    memberIndex = computeMemberIndex$1@151 // through LazyPackageFragmentScopeForJavaPackage@149
+}
+
+LazyJavaPackageFragment@17['lang'] {
+    _functions('annotation': Name@171) = EmptyList@153[empty] // through LazyPackageFragmentScopeForJavaPackage@168
+    classes('Class': Name@169) = LazyJavaClassDescriptor@107['Class'] // through LazyPackageFragmentScopeForJavaPackage@168
+    classes('annotation': Name@167) = null // through LazyPackageFragmentScopeForJavaPackage@168
+    deserializedPackageScope = JetScope$1@150 // through LazyPackageFragmentScopeForJavaPackage@168
+    memberIndex = computeMemberIndex$1@170 // through LazyPackageFragmentScopeForJavaPackage@168
+}
+
+LazyJavaTypeParameterDescriptor@2['T'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@166
+    upperBounds = LinkedHashSet@164[1] { NullableType@165 }
+    upperBoundsAsType = NullableType@165
+}
+
+LazyJavaTypeParameterResolver@0 {
+    resolve(JavaTypeParameterImpl@1['T']) = LazyJavaTypeParameterDescriptor@2['T']
+}

@@ -1,0 +1,29 @@
+DescriptorResolver@11 {
+    <name not found> = ErrorTypeImpl@12
+}
+
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('java': FqName@4) = LazyJavaPackageFragment@5['java']
+    _packageFragments('java.lang': FqName@6) = LazyJavaPackageFragment@7['lang']
+    _packageFragments('kotlin': FqName@8) = null
+    _packageFragments('kotlin.io': FqName@10) = null
+    _packageFragments('kotlin.jvm': FqName@9) = null
+    _packageFragments('kt41': FqName@3) = null
+}
+
+LazyJavaPackageFragment@5['java'] {
+    _functions('lang': Name@17) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@14
+    classes('lang': Name@13) = null // through LazyPackageFragmentScopeForJavaPackage@14
+    deserializedPackageScope = JetScope$1@15 // through LazyPackageFragmentScopeForJavaPackage@14
+    memberIndex = computeMemberIndex$1@16 // through LazyPackageFragmentScopeForJavaPackage@14
+}
+
+LazyJavaPackageFragment@7['lang'] {
+    _functions('aaa': Name@22) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@19
+    _functions('foo': Name@21) = EmptyList@18[empty] // through LazyPackageFragmentScopeForJavaPackage@19
+    classes('aaa': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@19
+    classes('foo': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@19
+    deserializedPackageScope = JetScope$1@15 // through LazyPackageFragmentScopeForJavaPackage@19
+    memberIndex = computeMemberIndex$1@20 // through LazyPackageFragmentScopeForJavaPackage@19
+}

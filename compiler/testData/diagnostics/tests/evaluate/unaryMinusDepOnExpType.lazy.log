@@ -1,0 +1,84 @@
+DescriptorResolver@45 {
+    <name not found> = JetTypeImpl@46
+    <name not found> = JetTypeImpl@47
+    <name not found> = JetTypeImpl@48
+    <name not found> = JetTypeImpl@49
+}
+
+LazyJavaPackageFragmentProvider@19 {
+    _packageFragments('<root>': FqName@20) = LazyJavaPackageFragment@21['<root>']
+    _packageFragments('Byte': FqName@33) = null
+    _packageFragments('Int': FqName@27) = null
+    _packageFragments('Long': FqName@30) = null
+    _packageFragments('Short': FqName@36) = null
+    _packageFragments('java': FqName@22) = LazyJavaPackageFragment@0['java']
+    _packageFragments('java.lang': FqName@23) = LazyJavaPackageFragment@7['lang']
+    _packageFragments('java.lang.Byte': FqName@35) = null
+    _packageFragments('java.lang.Int': FqName@29) = null
+    _packageFragments('java.lang.Long': FqName@32) = null
+    _packageFragments('java.lang.Short': FqName@38) = null
+    _packageFragments('kotlin': FqName@24) = null
+    _packageFragments('kotlin.Byte': FqName@34) = null
+    _packageFragments('kotlin.Int': FqName@28) = null
+    _packageFragments('kotlin.Long': FqName@31) = null
+    _packageFragments('kotlin.Short': FqName@37) = null
+    _packageFragments('kotlin.io': FqName@26) = null
+    _packageFragments('kotlin.jvm': FqName@25) = null
+}
+
+LazyJavaPackageFragment@21['<root>'] {
+    _functions('fooByte': Name@16) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    _functions('fooInt': Name@10) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    _functions('fooLong': Name@17) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    _functions('fooShort': Name@18) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    _functions('minus': Name@11) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    _functions('toByte': Name@13) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    _functions('toInt': Name@12) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    _functions('toLong': Name@14) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    _functions('toShort': Name@15) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('Byte': Name@42) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('Int': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('Long': Name@41) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('Short': Name@43) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('fooByte': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('fooInt': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('fooLong': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('fooShort': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('minus': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('toByte': Name@13) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('toInt': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('toLong': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('toShort': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@40
+    memberIndex = computeMemberIndex$1@44 // through LazyPackageFragmentScopeForJavaPackage@40
+}
+
+LazyJavaPackageFragment@0['java'] {
+    _functions('lang': Name@5) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('lang': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+    memberIndex = computeMemberIndex$1@4 // through LazyPackageFragmentScopeForJavaPackage@2
+}
+
+LazyJavaPackageFragment@7['lang'] {
+    _functions('fooByte': Name@16) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
+    _functions('fooInt': Name@10) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
+    _functions('fooLong': Name@17) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
+    _functions('fooShort': Name@18) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
+    _functions('minus': Name@11) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
+    _functions('toByte': Name@13) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
+    _functions('toInt': Name@12) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
+    _functions('toLong': Name@14) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
+    _functions('toShort': Name@15) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@8
+    classes('fooByte': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@8
+    classes('fooInt': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@8
+    classes('fooLong': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@8
+    classes('fooShort': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@8
+    classes('minus': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@8
+    classes('toByte': Name@13) = null // through LazyPackageFragmentScopeForJavaPackage@8
+    classes('toInt': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@8
+    classes('toLong': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@8
+    classes('toShort': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@8
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@8
+    memberIndex = computeMemberIndex$1@9 // through LazyPackageFragmentScopeForJavaPackage@8
+}

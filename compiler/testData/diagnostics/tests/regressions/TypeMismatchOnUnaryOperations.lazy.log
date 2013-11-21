@@ -1,0 +1,57 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('Array': FqName@10) = null
+    _packageFragments('Int': FqName@16) = null
+    _packageFragments('String': FqName@13) = null
+    _packageFragments('java': FqName@3) = LazyJavaPackageFragment@4['java']
+    _packageFragments('java.lang': FqName@5) = LazyJavaPackageFragment@6['lang']
+    _packageFragments('java.lang.Array': FqName@12) = null
+    _packageFragments('java.lang.Int': FqName@18) = null
+    _packageFragments('java.lang.String': FqName@15) = null
+    _packageFragments('kotlin': FqName@7) = null
+    _packageFragments('kotlin.Array': FqName@11) = null
+    _packageFragments('kotlin.Int': FqName@17) = null
+    _packageFragments('kotlin.String': FqName@14) = null
+    _packageFragments('kotlin.io': FqName@9) = null
+    _packageFragments('kotlin.jvm': FqName@8) = null
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    _functions('dec': Name@24) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    _functions('inc': Name@22) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    _functions('minus': Name@26) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    _functions('not': Name@25) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    _functions('plus': Name@27) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('Array': Name@32) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('Int': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('String': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('dec': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('inc': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('minus': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('not': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('plus': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    deserializedPackageScope = JetScope$1@19 // through LazyPackageFragmentScopeForJavaPackage@33
+    memberIndex = computeMemberIndex$1@36 // through LazyPackageFragmentScopeForJavaPackage@33
+}
+
+LazyJavaPackageFragment@4['java'] {
+    _functions('lang': Name@31) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('lang': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    deserializedPackageScope = JetScope$1@19 // through LazyPackageFragmentScopeForJavaPackage@29
+    memberIndex = computeMemberIndex$1@30 // through LazyPackageFragmentScopeForJavaPackage@29
+}
+
+LazyJavaPackageFragment@6['lang'] {
+    _functions('dec': Name@24) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@20
+    _functions('inc': Name@22) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@20
+    _functions('minus': Name@26) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@20
+    _functions('not': Name@25) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@20
+    _functions('plus': Name@27) = EmptyList@23[empty] // through LazyPackageFragmentScopeForJavaPackage@20
+    classes('dec': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@20
+    classes('inc': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@20
+    classes('minus': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@20
+    classes('not': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@20
+    classes('plus': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@20
+    deserializedPackageScope = JetScope$1@19 // through LazyPackageFragmentScopeForJavaPackage@20
+    memberIndex = computeMemberIndex$1@21 // through LazyPackageFragmentScopeForJavaPackage@20
+}

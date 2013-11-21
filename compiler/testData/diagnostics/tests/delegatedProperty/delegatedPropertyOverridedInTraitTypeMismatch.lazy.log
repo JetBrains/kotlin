@@ -1,0 +1,74 @@
+DescriptorResolver@33 {
+    <name not found> = JetTypeImpl@34
+}
+
+LazyJavaPackageFragmentProvider@7 {
+    _packageFragments('<root>': FqName@8) = LazyJavaPackageFragment@9['<root>']
+    _packageFragments('A': FqName@16) = null
+    _packageFragments('AImpl': FqName@32) = null
+    _packageFragments('Any': FqName@22) = null
+    _packageFragments('Delegate': FqName@31) = null
+    _packageFragments('Int': FqName@19) = null
+    _packageFragments('PropertyMetadata': FqName@25) = null
+    _packageFragments('String': FqName@28) = null
+    _packageFragments('java': FqName@10) = LazyJavaPackageFragment@0['java']
+    _packageFragments('java.lang': FqName@11) = LazyJavaPackageFragment@12['lang']
+    _packageFragments('java.lang.A': FqName@18) = null
+    _packageFragments('java.lang.Any': FqName@24) = null
+    _packageFragments('java.lang.Int': FqName@21) = null
+    _packageFragments('java.lang.PropertyMetadata': FqName@27) = null
+    _packageFragments('java.lang.String': FqName@30) = null
+    _packageFragments('kotlin': FqName@13) = null
+    _packageFragments('kotlin.A': FqName@17) = null
+    _packageFragments('kotlin.Any': FqName@23) = null
+    _packageFragments('kotlin.Int': FqName@20) = null
+    _packageFragments('kotlin.PropertyMetadata': FqName@26) = null
+    _packageFragments('kotlin.String': FqName@29) = null
+    _packageFragments('kotlin.io': FqName@15) = null
+    _packageFragments('kotlin.jvm': FqName@14) = null
+}
+
+LazyJavaPackageFragment@9['<root>'] {
+    _functions('AImpl': Name@41) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@44
+    _functions('Delegate': Name@37) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@44
+    _functions('PropertyMetadataImpl': Name@39) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@44
+    _functions('equals': Name@42) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@44
+    _functions('get': Name@38) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@44
+    _functions('propertyDelegated': Name@40) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('AImpl': Name@41) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('Any': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('Delegate': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('Int': Name@43) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('PropertyMetadata': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('PropertyMetadataImpl': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('String': Name@47) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('equals': Name@42) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('get': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    classes('propertyDelegated': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@44
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@44
+    memberIndex = computeMemberIndex$1@48 // through LazyPackageFragmentScopeForJavaPackage@44
+}
+
+LazyJavaPackageFragment@0['java'] {
+    _functions('lang': Name@5) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('lang': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+    memberIndex = computeMemberIndex$1@4 // through LazyPackageFragmentScopeForJavaPackage@2
+}
+
+LazyJavaPackageFragment@12['lang'] {
+    _functions('AImpl': Name@41) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@35
+    _functions('Delegate': Name@37) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@35
+    _functions('PropertyMetadataImpl': Name@39) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@35
+    _functions('equals': Name@42) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@35
+    _functions('get': Name@38) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@35
+    _functions('propertyDelegated': Name@40) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('AImpl': Name@41) = null // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('Delegate': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('PropertyMetadataImpl': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('equals': Name@42) = null // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('get': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('propertyDelegated': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@35
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@35
+    memberIndex = computeMemberIndex$1@36 // through LazyPackageFragmentScopeForJavaPackage@35
+}

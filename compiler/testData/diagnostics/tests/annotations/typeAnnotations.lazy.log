@@ -1,0 +1,48 @@
+LazyAnnotationDescriptor@3 {
+    _resolutionResults = OverloadResolutionResultsImpl@5
+    _type = ErrorTypeImpl@4
+}
+
+LazyAnnotationDescriptor@9 {
+    _resolutionResults = OverloadResolutionResultsImpl@11
+    _type = ErrorTypeImpl@10
+}
+
+LazyAnnotationDescriptor@12 {
+    _resolutionResults = OverloadResolutionResultsImpl@14
+    _type = ErrorTypeImpl@13
+}
+
+LazyJavaPackageFragmentProvider@15 {
+    _packageFragments('<root>': FqName@16) = LazyJavaPackageFragment@6['<root>']
+    _packageFragments('A': FqName@26) = null
+    _packageFragments('Int': FqName@29) = null
+    _packageFragments('java': FqName@17) = LazyJavaPackageFragment@18['java']
+    _packageFragments('java.lang': FqName@19) = LazyJavaPackageFragment@0['lang']
+    _packageFragments('java.lang.A': FqName@28) = null
+    _packageFragments('java.lang.Int': FqName@31) = null
+    _packageFragments('java.lang.x': FqName@25) = null
+    _packageFragments('kotlin': FqName@20) = null
+    _packageFragments('kotlin.A': FqName@27) = null
+    _packageFragments('kotlin.Int': FqName@30) = null
+    _packageFragments('kotlin.io': FqName@22) = null
+    _packageFragments('kotlin.jvm': FqName@21) = null
+    _packageFragments('kotlin.x': FqName@24) = null
+    _packageFragments('x': FqName@23) = null
+}
+
+LazyJavaPackageFragment@6['<root>'] {
+    classes('Int': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@7
+    classes('x': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@7
+}
+
+LazyJavaPackageFragment@18['java'] {
+    _functions('lang': Name@36) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('lang': Name@32) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    deserializedPackageScope = JetScope$1@34 // through LazyPackageFragmentScopeForJavaPackage@33
+    memberIndex = computeMemberIndex$1@35 // through LazyPackageFragmentScopeForJavaPackage@33
+}
+
+LazyJavaPackageFragment@0['lang'] {
+    classes('x': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
+}

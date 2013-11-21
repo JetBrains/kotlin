@@ -1,0 +1,38 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1
+    <name not found> = JetTypeImpl@2
+}
+
+LazyJavaPackageFragmentProvider@15 {
+    _packageFragments('<root>': FqName@16) = LazyJavaPackageFragment@17['<root>']
+    _packageFragments('Int': FqName@29) = null
+    _packageFragments('T': FqName@25) = null
+    _packageFragments('aaa': FqName@18) = null
+    _packageFragments('aaa.Int': FqName@28) = null
+    _packageFragments('aaa.T': FqName@24) = null
+    _packageFragments('java': FqName@19) = LazyJavaPackageFragment@3['java']
+    _packageFragments('java.lang': FqName@20) = LazyJavaPackageFragment@10['lang']
+    _packageFragments('java.lang.Int': FqName@31) = null
+    _packageFragments('java.lang.T': FqName@27) = null
+    _packageFragments('kotlin': FqName@21) = null
+    _packageFragments('kotlin.Int': FqName@30) = null
+    _packageFragments('kotlin.T': FqName@26) = null
+    _packageFragments('kotlin.io': FqName@23) = null
+    _packageFragments('kotlin.jvm': FqName@22) = null
+}
+
+LazyJavaPackageFragment@3['java'] {
+    _functions('lang': Name@8) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@5
+    classes('lang': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@5
+    deserializedPackageScope = JetScope$1@6 // through LazyPackageFragmentScopeForJavaPackage@5
+    memberIndex = computeMemberIndex$1@7 // through LazyPackageFragmentScopeForJavaPackage@5
+}
+
+LazyJavaPackageFragment@10['lang'] {
+    _functions('foo': Name@14) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@11
+    _functions('id': Name@13) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@11
+    classes('foo': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@11
+    classes('id': Name@13) = null // through LazyPackageFragmentScopeForJavaPackage@11
+    deserializedPackageScope = JetScope$1@6 // through LazyPackageFragmentScopeForJavaPackage@11
+    memberIndex = computeMemberIndex$1@12 // through LazyPackageFragmentScopeForJavaPackage@11
+}

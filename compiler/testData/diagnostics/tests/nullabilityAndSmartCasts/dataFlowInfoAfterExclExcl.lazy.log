@@ -1,0 +1,41 @@
+DescriptorResolver@7 {
+    <name not found> = JetTypeImpl@8
+}
+
+LazyJavaPackageFragmentProvider@13 {
+    _packageFragments('<root>': FqName@14) = LazyJavaPackageFragment@15['<root>']
+    _packageFragments('Any': FqName@21) = null
+    _packageFragments('String': FqName@24) = null
+    _packageFragments('java': FqName@16) = LazyJavaPackageFragment@0['java']
+    _packageFragments('java.lang': FqName@17) = LazyJavaPackageFragment@9['lang']
+    _packageFragments('java.lang.Any': FqName@23) = null
+    _packageFragments('java.lang.String': FqName@26) = null
+    _packageFragments('kotlin': FqName@18) = null
+    _packageFragments('kotlin.Any': FqName@22) = null
+    _packageFragments('kotlin.String': FqName@25) = null
+    _packageFragments('kotlin.io': FqName@20) = null
+    _packageFragments('kotlin.jvm': FqName@19) = null
+}
+
+LazyJavaPackageFragment@15['<root>'] {
+    _functions('doString': Name@12) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@28
+    classes('Any': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@28
+    classes('String': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@28
+    classes('doString': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@28
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@28
+    memberIndex = computeMemberIndex$1@30 // through LazyPackageFragmentScopeForJavaPackage@28
+}
+
+LazyJavaPackageFragment@0['java'] {
+    _functions('lang': Name@5) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('lang': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+    memberIndex = computeMemberIndex$1@4 // through LazyPackageFragmentScopeForJavaPackage@2
+}
+
+LazyJavaPackageFragment@9['lang'] {
+    _functions('doString': Name@12) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@10
+    classes('doString': Name@12) = null // through LazyPackageFragmentScopeForJavaPackage@10
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@10
+    memberIndex = computeMemberIndex$1@11 // through LazyPackageFragmentScopeForJavaPackage@10
+}

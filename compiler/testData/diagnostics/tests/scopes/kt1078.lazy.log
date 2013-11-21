@@ -1,0 +1,36 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@2
+    <name not found> = MutableClassDescriptor$1@1
+}
+
+LazyJavaPackageFragmentProvider@10 {
+    _packageFragments('<root>': FqName@11) = LazyJavaPackageFragment@12['<root>']
+    _packageFragments('B': FqName@21) = null
+    _packageFragments('java': FqName@14) = LazyJavaPackageFragment@3['java']
+    _packageFragments('java.lang': FqName@15) = LazyJavaPackageFragment@16['lang']
+    _packageFragments('java.lang.B': FqName@23) = null
+    _packageFragments('kotlin': FqName@17) = null
+    _packageFragments('kotlin.B': FqName@22) = null
+    _packageFragments('kotlin.io': FqName@19) = null
+    _packageFragments('kotlin.jvm': FqName@18) = null
+    _packageFragments('kt1078': FqName@13) = null
+    _packageFragments('kt1078.B': FqName@20) = null
+}
+
+LazyJavaPackageFragment@3['java'] {
+    _functions('lang': Name@8) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@5
+    classes('lang': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@5
+    deserializedPackageScope = JetScope$1@6 // through LazyPackageFragmentScopeForJavaPackage@5
+    memberIndex = computeMemberIndex$1@7 // through LazyPackageFragmentScopeForJavaPackage@5
+}
+
+LazyJavaPackageFragment@16['lang'] {
+    _functions('B': Name@27) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    _functions('bar': Name@28) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    _functions('foo': Name@26) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('B': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('bar': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    classes('foo': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@24
+    deserializedPackageScope = JetScope$1@6 // through LazyPackageFragmentScopeForJavaPackage@24
+    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@24
+}

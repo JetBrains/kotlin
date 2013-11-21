@@ -1,0 +1,90 @@
+DescriptorResolver@15 {
+    <name not found> = ErrorTypeImpl@16
+    <name not found> = JetTypeImpl@9
+    <name not found> = JetTypeImpl@17
+    <name not found> = JetTypeImpl@18
+}
+
+LazyJavaClassDescriptor@5['StringBuilder'] {
+    _constructors = ArrayList@10[4] { JavaConstructorDescriptor@11['<init>'], JavaConstructorDescriptor@12['<init>'], JavaConstructorDescriptor@13['<init>'], ... } // through LazyJavaClassMemberScope@14
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@8['StringBuilder']
+    defaultType = JetTypeImpl@9
+}
+
+LazyJavaClassTypeConstructor@8['StringBuilder'] {
+    _parameters = ArrayList@59[empty]
+}
+
+LazyJavaClassifierType@29['CharSequence'] {
+    _arguments = ArrayList@32[empty]
+    _nullable = Boolean@25
+    _typeConstructor = DeserializedClassTypeConstructor@31
+    classifier = JavaClassImpl@30['CharSequence']
+}
+
+LazyJavaClassifierType@33['CharSequence'] {
+    _arguments = ArrayList@35[empty]
+    _nullable = Boolean@34
+    _typeConstructor = DeserializedClassTypeConstructor@31
+    classifier = JavaClassImpl@30['CharSequence']
+}
+
+LazyJavaClassifierType@24['String'] {
+    _arguments = ArrayList@28[empty]
+    _nullable = Boolean@25
+    _typeConstructor = DeserializedClassTypeConstructor@27
+    classifier = JavaClassImpl@26['String']
+}
+
+LazyJavaClassifierType@41['String'] {
+    _arguments = ArrayList@42[empty]
+    _nullable = Boolean@34
+    _typeConstructor = DeserializedClassTypeConstructor@27
+    classifier = JavaClassImpl@26['String']
+}
+
+LazyJavaPackageFragmentProvider@43 {
+    _packageFragments('<root>': FqName@44) = LazyJavaPackageFragment@19['<root>']
+    _packageFragments('Byte': FqName@53) = null
+    _packageFragments('Foo': FqName@56) = null
+    _packageFragments('Foo1': FqName@57) = null
+    _packageFragments('Int': FqName@50) = null
+    _packageFragments('java': FqName@45) = LazyJavaPackageFragment@36['java']
+    _packageFragments('java.lang': FqName@46) = LazyJavaPackageFragment@0['lang']
+    _packageFragments('java.lang.Byte': FqName@55) = null
+    _packageFragments('java.lang.Int': FqName@52) = null
+    _packageFragments('kotlin': FqName@47) = null
+    _packageFragments('kotlin.Byte': FqName@54) = null
+    _packageFragments('kotlin.Int': FqName@51) = null
+    _packageFragments('kotlin.io': FqName@49) = null
+    _packageFragments('kotlin.jvm': FqName@48) = null
+    topLevelClasses(JavaClassImpl@58['StringBuilder']) = LazyJavaClassDescriptor@5['StringBuilder']
+}
+
+LazyJavaPackageFragment@19['<root>'] {
+    _functions('StringBuilder': Name@4) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    _functions('println': Name@7) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('Byte': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('Int': Name@20) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('StringBuilder': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('println': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@21
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@21
+    memberIndex = computeMemberIndex$1@23 // through LazyPackageFragmentScopeForJavaPackage@21
+}
+
+LazyJavaPackageFragment@36['java'] {
+    _functions('lang': Name@40) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('lang': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@38
+    memberIndex = computeMemberIndex$1@39 // through LazyPackageFragmentScopeForJavaPackage@38
+}
+
+LazyJavaPackageFragment@0['lang'] {
+    _functions('StringBuilder': Name@4) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    _functions('println': Name@7) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('StringBuilder': Name@4) = LazyJavaClassDescriptor@5['StringBuilder'] // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('println': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@2
+    memberIndex = computeMemberIndex$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+}

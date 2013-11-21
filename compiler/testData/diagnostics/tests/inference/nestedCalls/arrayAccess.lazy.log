@@ -1,0 +1,150 @@
+DescriptorResolver@33 {
+    <name not found> = JetTypeImpl@34
+}
+
+LazyJavaClassDescriptor@63['Exception'] {
+    _constructors = ArrayList@71[5] { JavaConstructorDescriptor@72['<init>'], JavaConstructorDescriptor@73['<init>'], JavaConstructorDescriptor@74['<init>'], ... } // through LazyJavaClassMemberScope@75
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@10['Exception']
+    defaultType = JetTypeImpl@70
+}
+
+LazyJavaClassTypeConstructor@10['Exception'] {
+    _parameters = ArrayList@11[empty]
+    _supertypes = ArrayList@12[1] { LazyJavaClassifierType@13['Throwable'] }
+}
+
+LazyJavaClassifierType@0['String'] {
+    _arguments = ArrayList@4[empty]
+    _nullable = Boolean@1
+    _typeConstructor = DeserializedClassTypeConstructor@3
+    classifier = JavaClassImpl@2['String']
+}
+
+LazyJavaClassifierType@17['String'] {
+    _arguments = ArrayList@18[empty]
+    _nullable = Boolean@6
+    _typeConstructor = DeserializedClassTypeConstructor@3
+    classifier = JavaClassImpl@2['String']
+}
+
+LazyJavaClassifierType@24['String'] {
+    _arguments = ArrayList@26[empty]
+    _nullable = Boolean@6
+    _typeConstructor = DeserializedClassTypeConstructor@3
+    classifier = JavaClassImpl@25['String']
+}
+
+LazyJavaClassifierType@31['String'] {
+    _arguments = ArrayList@32[empty]
+    _nullable = Boolean@1
+    _typeConstructor = DeserializedClassTypeConstructor@3
+    classifier = JavaClassImpl@25['String']
+}
+
+LazyJavaClassifierType@81['String'] {
+    _arguments = ArrayList@83[empty]
+    _nullable = Boolean@6
+    _typeConstructor = DeserializedClassTypeConstructor@3
+    classifier = JavaClassImpl@82['String']
+}
+
+LazyJavaClassifierType@84['String'] {
+    _arguments = ArrayList@85[empty]
+    _nullable = Boolean@1
+    _typeConstructor = DeserializedClassTypeConstructor@3
+    classifier = JavaClassImpl@82['String']
+}
+
+LazyJavaClassifierType@5['Throwable'] {
+    _arguments = ArrayList@9[empty]
+    _nullable = Boolean@6
+    _typeConstructor = DeserializedClassTypeConstructor@8
+    classifier = JavaClassImpl@7['Throwable']
+}
+
+LazyJavaClassifierType@14['Throwable'] {
+    _arguments = ArrayList@16[empty]
+    _nullable = Boolean@1
+    _typeConstructor = DeserializedClassTypeConstructor@8
+    classifier = JavaClassImpl@15['Throwable']
+}
+
+LazyJavaClassifierType@19['Throwable'] {
+    _arguments = ArrayList@21[empty]
+    _nullable = Boolean@6
+    _typeConstructor = DeserializedClassTypeConstructor@8
+    classifier = JavaClassImpl@20['Throwable']
+}
+
+LazyJavaClassifierType@22['Throwable'] {
+    _arguments = ArrayList@23[empty]
+    _nullable = Boolean@6
+    _typeConstructor = DeserializedClassTypeConstructor@8
+    classifier = JavaClassImpl@15['Throwable']
+}
+
+LazyJavaClassifierType@29['Throwable'] {
+    _arguments = ArrayList@30[empty]
+    _nullable = Boolean@1
+    _typeConstructor = DeserializedClassTypeConstructor@8
+    classifier = JavaClassImpl@7['Throwable']
+}
+
+LazyJavaClassifierType@86['Throwable'] {
+    _arguments = ArrayList@87[empty]
+    _nullable = Boolean@1
+    _typeConstructor = DeserializedClassTypeConstructor@8
+    classifier = JavaClassImpl@20['Throwable']
+}
+
+LazyJavaClassifierType@13['Throwable'] {
+    _arguments = ArrayList@28[empty]
+    _typeConstructor = DeserializedClassTypeConstructor@8
+    classifier = JavaClassImpl@27['Throwable']
+}
+
+LazyJavaPackageFragmentProvider@35 {
+    _packageFragments('<root>': FqName@36) = LazyJavaPackageFragment@37['<root>']
+    _packageFragments('A': FqName@55) = null
+    _packageFragments('Int': FqName@51) = null
+    _packageFragments('List': FqName@47) = null
+    _packageFragments('T': FqName@59) = null
+    _packageFragments('b': FqName@38) = null
+    _packageFragments('b.A': FqName@54) = null
+    _packageFragments('b.Int': FqName@50) = null
+    _packageFragments('b.List': FqName@46) = null
+    _packageFragments('b.T': FqName@58) = null
+    _packageFragments('java': FqName@39) = LazyJavaPackageFragment@40['java']
+    _packageFragments('java.lang': FqName@41) = LazyJavaPackageFragment@42['lang']
+    _packageFragments('java.lang.A': FqName@57) = null
+    _packageFragments('java.lang.Int': FqName@53) = null
+    _packageFragments('java.lang.List': FqName@49) = null
+    _packageFragments('java.lang.T': FqName@61) = null
+    _packageFragments('kotlin': FqName@43) = null
+    _packageFragments('kotlin.A': FqName@56) = null
+    _packageFragments('kotlin.Int': FqName@52) = null
+    _packageFragments('kotlin.List': FqName@48) = null
+    _packageFragments('kotlin.T': FqName@60) = null
+    _packageFragments('kotlin.io': FqName@45) = null
+    _packageFragments('kotlin.jvm': FqName@44) = null
+    topLevelClasses(JavaClassImpl@62['Exception']) = LazyJavaClassDescriptor@63['Exception']
+}
+
+LazyJavaPackageFragment@40['java'] {
+    _functions('lang': Name@68) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@65
+    classes('lang': Name@64) = null // through LazyPackageFragmentScopeForJavaPackage@65
+    deserializedPackageScope = JetScope$1@66 // through LazyPackageFragmentScopeForJavaPackage@65
+    memberIndex = computeMemberIndex$1@67 // through LazyPackageFragmentScopeForJavaPackage@65
+}
+
+LazyJavaPackageFragment@42['lang'] {
+    _functions('Exception': Name@80) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@76
+    _functions('bar': Name@78) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@76
+    _functions('get': Name@79) = EmptyList@69[empty] // through LazyPackageFragmentScopeForJavaPackage@76
+    classes('Exception': Name@80) = LazyJavaClassDescriptor@63['Exception'] // through LazyPackageFragmentScopeForJavaPackage@76
+    classes('bar': Name@78) = null // through LazyPackageFragmentScopeForJavaPackage@76
+    classes('get': Name@79) = null // through LazyPackageFragmentScopeForJavaPackage@76
+    deserializedPackageScope = JetScope$1@66 // through LazyPackageFragmentScopeForJavaPackage@76
+    memberIndex = computeMemberIndex$1@77 // through LazyPackageFragmentScopeForJavaPackage@76
+}

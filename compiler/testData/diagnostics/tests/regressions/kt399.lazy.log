@@ -1,0 +1,56 @@
+LazyJavaPackageFragmentProvider@20 {
+    _packageFragments('<root>': FqName@21) = LazyJavaPackageFragment@13['<root>']
+    _packageFragments('Any': FqName@33) = null
+    _packageFragments('Boolean': FqName@36) = null
+    _packageFragments('Function1': FqName@30) = null
+    _packageFragments('String': FqName@39) = null
+    _packageFragments('T': FqName@27) = null
+    _packageFragments('java': FqName@22) = LazyJavaPackageFragment@8['java']
+    _packageFragments('java.lang': FqName@23) = LazyJavaPackageFragment@0['lang']
+    _packageFragments('java.lang.Any': FqName@35) = null
+    _packageFragments('java.lang.Boolean': FqName@38) = null
+    _packageFragments('java.lang.Function1': FqName@32) = null
+    _packageFragments('java.lang.String': FqName@41) = null
+    _packageFragments('java.lang.T': FqName@29) = null
+    _packageFragments('kotlin': FqName@24) = null
+    _packageFragments('kotlin.Any': FqName@34) = null
+    _packageFragments('kotlin.Boolean': FqName@37) = null
+    _packageFragments('kotlin.Function1': FqName@31) = null
+    _packageFragments('kotlin.String': FqName@40) = null
+    _packageFragments('kotlin.T': FqName@28) = null
+    _packageFragments('kotlin.io': FqName@26) = null
+    _packageFragments('kotlin.jvm': FqName@25) = null
+}
+
+LazyJavaPackageFragment@13['<root>'] {
+    _functions('getSameTypeChecker': Name@4) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@15
+    _functions('invoke': Name@6) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@15
+    _functions('not': Name@7) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('Any': Name@16) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('Boolean': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('Function1': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('String': Name@18) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('getSameTypeChecker': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('invoke': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    classes('not': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@15
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@15
+    memberIndex = computeMemberIndex$1@19 // through LazyPackageFragmentScopeForJavaPackage@15
+}
+
+LazyJavaPackageFragment@8['java'] {
+    _functions('lang': Name@12) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@10
+    classes('lang': Name@9) = null // through LazyPackageFragmentScopeForJavaPackage@10
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@10
+    memberIndex = computeMemberIndex$1@11 // through LazyPackageFragmentScopeForJavaPackage@10
+}
+
+LazyJavaPackageFragment@0['lang'] {
+    _functions('getSameTypeChecker': Name@4) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    _functions('invoke': Name@6) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    _functions('not': Name@7) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('getSameTypeChecker': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('invoke': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('not': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@2
+    memberIndex = computeMemberIndex$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+}

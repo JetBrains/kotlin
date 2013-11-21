@@ -1,0 +1,59 @@
+LazyJavaClassDescriptor@4['ExceptionHandlingStrategy'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@10['ExceptionHandlingStrategy']
+    defaultType = JetTypeImpl@11
+}
+
+LazyJavaClassDescriptor@0['LockBasedStorageManager'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@5['LockBasedStorageManager']
+    defaultType = JetTypeImpl@6
+    nestedClassIndex = LinkedHashMap@1 // through LazyJavaClassMemberScope@2
+    nestedClasses('ExceptionHandlingStrategy': Name@3) = LazyJavaClassDescriptor@4['ExceptionHandlingStrategy'] // through LazyJavaClassMemberScope@2
+}
+
+LazyJavaClassTypeConstructor@10['ExceptionHandlingStrategy'] {
+    _parameters = ArrayList@41[empty]
+    _supertypes = ArrayList@42[1] { JetTypeImpl@43 }
+}
+
+LazyJavaClassTypeConstructor@5['LockBasedStorageManager'] {
+    _parameters = ArrayList@7[empty]
+    _supertypes = ArrayList@8[1] { LazyJavaClassifierType@9['StorageManager'] }
+}
+
+LazyJavaClassifierType@38['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@40
+    classifier = JavaClassImpl@39['Object']
+}
+
+LazyJavaClassifierType@9['StorageManager'] {
+    _typeConstructor = TypeConstructorImpl$1@13
+    classifier = JavaClassImpl@12['StorageManager']
+}
+
+LazyJavaPackageFragmentProvider@14 {
+    _packageFragments('<root>': FqName@15) = LazyJavaPackageFragment@16['<root>']
+    _packageFragments('ExceptionTracker': FqName@28) = null
+    _packageFragments('LockBasedStorageManager': FqName@24) = null
+    _packageFragments('StorageManager': FqName@31) = null
+    _packageFragments('java': FqName@17) = LazyJavaPackageFragment@18['java']
+    _packageFragments('java.lang': FqName@19) = LazyJavaPackageFragment@20['lang']
+    _packageFragments('java.lang.ExceptionTracker': FqName@30) = null
+    _packageFragments('java.lang.LockBasedStorageManager': FqName@26) = null
+    _packageFragments('kotlin': FqName@21) = null
+    _packageFragments('kotlin.ExceptionTracker': FqName@29) = null
+    _packageFragments('kotlin.LockBasedStorageManager': FqName@25) = null
+    _packageFragments('kotlin.io': FqName@23) = null
+    _packageFragments('kotlin.jvm': FqName@22) = null
+    topLevelClasses(JavaClassImpl@27['LockBasedStorageManager']) = LazyJavaClassDescriptor@0['LockBasedStorageManager']
+}
+
+LazyJavaPackageFragment@16['<root>'] {
+    classes('LockBasedStorageManager': Name@44) = LazyJavaClassDescriptor@0['LockBasedStorageManager'] // through LazyPackageFragmentScopeForJavaPackage@45
+}
+
+LazyJavaPackageFragment@18['java'] {
+    _functions('lang': Name@36) = EmptyList@37[empty] // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('lang': Name@32) = null // through LazyPackageFragmentScopeForJavaPackage@33
+    deserializedPackageScope = JetScope$1@34 // through LazyPackageFragmentScopeForJavaPackage@33
+    memberIndex = computeMemberIndex$1@35 // through LazyPackageFragmentScopeForJavaPackage@33
+}

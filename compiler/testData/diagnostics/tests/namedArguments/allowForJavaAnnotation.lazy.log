@@ -1,0 +1,46 @@
+LazyAnnotationDescriptor@9 {
+    _resolutionResults = OverloadResolutionResultsImpl@11
+    _type = JetTypeImpl@10
+    _valueArguments(ValueParameterDescriptorImpl@12['x']) = IntegerValueTypeConstant@13
+    _valueArguments(ValueParameterDescriptorImpl@14['y']) = StringValue@15
+}
+
+LazyJavaClassDescriptor@2['A'] {
+    _constructors = ArrayList@6[1] { JavaConstructorDescriptor@7['<init>'] } // through LazyJavaClassMemberScope@8
+    _typeConstructor = LazyJavaClassTypeConstructor@4['A']
+    defaultType = JetTypeImpl@5
+}
+
+LazyJavaClassTypeConstructor@4['A'] {
+    _parameters = ArrayList@33[empty]
+}
+
+LazyJavaClassifierType@16['String'] {
+    _arguments = ArrayList@19[empty]
+    _typeConstructor = DeserializedClassTypeConstructor@18
+    classifier = JavaClassImpl@17['String']
+}
+
+LazyJavaPackageFragmentProvider@20 {
+    _packageFragments('<root>': FqName@21) = LazyJavaPackageFragment@0['<root>']
+    _packageFragments('A': FqName@29) = null
+    _packageFragments('java': FqName@22) = LazyJavaPackageFragment@23['java']
+    _packageFragments('java.lang': FqName@24) = LazyJavaPackageFragment@25['lang']
+    _packageFragments('java.lang.A': FqName@31) = null
+    _packageFragments('kotlin': FqName@26) = null
+    _packageFragments('kotlin.A': FqName@30) = null
+    _packageFragments('kotlin.io': FqName@28) = null
+    _packageFragments('kotlin.jvm': FqName@27) = null
+    topLevelClasses(JavaClassImpl@32['A']) = LazyJavaClassDescriptor@2['A']
+}
+
+LazyJavaPackageFragment@0['<root>'] {
+    classes('A': Name@1) = LazyJavaClassDescriptor@2['A'] // through LazyPackageFragmentScopeForJavaPackage@3
+}
+
+LazyJavaPackageFragment@23['java'] {
+    _functions('lang': Name@38) = EmptyList@39[empty] // through LazyPackageFragmentScopeForJavaPackage@35
+    classes('lang': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@35
+    deserializedPackageScope = JetScope$1@36 // through LazyPackageFragmentScopeForJavaPackage@35
+    memberIndex = computeMemberIndex$1@37 // through LazyPackageFragmentScopeForJavaPackage@35
+}

@@ -1,0 +1,57 @@
+LazyAnnotationDescriptor@5 {
+    _resolutionResults = OverloadResolutionResultsImpl@7
+    _type = ErrorTypeImpl@6
+}
+
+LazyAnnotationDescriptor@10 {
+    _resolutionResults = OverloadResolutionResultsImpl@12
+    _type = ErrorTypeImpl@11
+}
+
+LazyAnnotationDescriptor@13 {
+    _resolutionResults = OverloadResolutionResultsImpl@15
+    _type = ErrorTypeImpl@14
+}
+
+LazyAnnotationDescriptor@16 {
+    _resolutionResults = OverloadResolutionResultsImpl@18
+    _type = ErrorTypeImpl@17
+}
+
+LazyJavaPackageFragmentProvider@19 {
+    _packageFragments('<root>': FqName@20) = LazyJavaPackageFragment@0['<root>']
+    _packageFragments('Any': FqName@27) = null
+    _packageFragments('Hello': FqName@33) = null
+    _packageFragments('Int': FqName@30) = null
+    _packageFragments('bar': FqName@34) = null
+    _packageFragments('java': FqName@21) = LazyJavaPackageFragment@22['java']
+    _packageFragments('java.lang': FqName@23) = LazyJavaPackageFragment@8['lang']
+    _packageFragments('java.lang.Any': FqName@29) = null
+    _packageFragments('java.lang.Int': FqName@32) = null
+    _packageFragments('java.lang.varargs': FqName@38) = null
+    _packageFragments('kotlin': FqName@24) = null
+    _packageFragments('kotlin.Any': FqName@28) = null
+    _packageFragments('kotlin.Int': FqName@31) = null
+    _packageFragments('kotlin.io': FqName@26) = null
+    _packageFragments('kotlin.jvm': FqName@25) = null
+    _packageFragments('kotlin.varargs': FqName@37) = null
+    _packageFragments('varargs': FqName@36) = null
+    _packageFragments('x': FqName@35) = null
+}
+
+LazyJavaPackageFragment@0['<root>'] {
+    classes('Any': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('Int': Name@3) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('varargs': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@2
+}
+
+LazyJavaPackageFragment@22['java'] {
+    _functions('lang': Name@43) = EmptyList@44[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('lang': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@40
+    deserializedPackageScope = JetScope$1@41 // through LazyPackageFragmentScopeForJavaPackage@40
+    memberIndex = computeMemberIndex$1@42 // through LazyPackageFragmentScopeForJavaPackage@40
+}
+
+LazyJavaPackageFragment@8['lang'] {
+    classes('varargs': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@9
+}

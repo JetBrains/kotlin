@@ -1,0 +1,39 @@
+LazyAnnotationDescriptor@17 {
+    _resolutionResults = OverloadResolutionResultsImpl@19
+    _type = JetTypeImpl@18
+    _valueArguments(ValueParameterDescriptorImpl@20['names']) = ArrayValue@21
+}
+
+LazyAnnotationDescriptor@31 {
+    _resolutionResults = OverloadResolutionResultsImpl@33
+    _type = JetTypeImpl@32
+    _valueArguments(ValueParameterDescriptorImpl@20['names']) = ArrayValue@34
+}
+
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('C': FqName@16) = null
+    _packageFragments('String': FqName@10) = null
+    _packageFragments('java': FqName@3) = LazyJavaPackageFragment@4['java']
+    _packageFragments('java.lang': FqName@5) = LazyJavaPackageFragment@6['lang']
+    _packageFragments('java.lang.String': FqName@12) = null
+    _packageFragments('java.lang.suppress': FqName@15) = null
+    _packageFragments('kotlin': FqName@7) = null
+    _packageFragments('kotlin.String': FqName@11) = null
+    _packageFragments('kotlin.io': FqName@9) = null
+    _packageFragments('kotlin.jvm': FqName@8) = null
+    _packageFragments('kotlin.suppress': FqName@14) = null
+    _packageFragments('suppress': FqName@13) = null
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    classes('String': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('suppress': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@29
+}
+
+LazyJavaPackageFragment@4['java'] {
+    _functions('lang': Name@26) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@23
+    classes('lang': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@23
+    deserializedPackageScope = JetScope$1@24 // through LazyPackageFragmentScopeForJavaPackage@23
+    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@23
+}

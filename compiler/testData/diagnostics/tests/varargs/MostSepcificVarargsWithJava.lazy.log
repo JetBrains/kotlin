@@ -1,0 +1,148 @@
+LazyJavaClassDescriptor@14['C'] {
+    _functions('from': Name@40) = ArrayList@69[5] { JavaMethodDescriptor@70['from'], JavaMethodDescriptor@71['from'], JavaMethodDescriptor@72['from'], ... } // through LazyJavaClassMemberScope@67
+    _properties('from': Name@40) = EmptyList@31[empty] // through LazyJavaClassMemberScope@67
+    _typeConstructor = LazyJavaClassTypeConstructor@57['C']
+    defaultType = JetTypeImpl@75
+    enumEntryIndex = LinkedHashMap@74 // through LazyJavaClassMemberScope@67
+    memberIndex = computeMemberIndex$1@66 // through LazyJavaClassMemberScope@67
+    nestedClassIndex = LinkedHashMap@73 // through LazyJavaClassMemberScope@67
+    nestedClasses('from': Name@40) = null // through LazyJavaClassMemberScope@67
+    thisAsReceiverParameter = LazyClassReceiverParameterDescriptor@68['<this>']
+}
+
+LazyJavaClassTypeConstructor@57['C'] {
+    _parameters = ArrayList@58[empty]
+    _supertypes = ArrayList@59[1] { JetTypeImpl@60 }
+}
+
+LazyJavaClassifierType@32['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@34
+    classifier = JavaClassImpl@33['Object']
+}
+
+LazyJavaClassifierType@21['String'] {
+    _arguments = ArrayList@25[empty]
+    _nullable = Boolean@22
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@23['String']
+}
+
+LazyJavaClassifierType@35['String'] {
+    _arguments = ArrayList@37[empty]
+    _nullable = Boolean@22
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@36['String']
+}
+
+LazyJavaClassifierType@41['String'] {
+    _arguments = ArrayList@43[empty]
+    _nullable = Boolean@22
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@42['String']
+}
+
+LazyJavaClassifierType@44['String'] {
+    _arguments = ArrayList@47[empty]
+    _nullable = Boolean@45
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@46['String']
+}
+
+LazyJavaClassifierType@48['String'] {
+    _arguments = ArrayList@49[empty]
+    _nullable = Boolean@22
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@46['String']
+}
+
+LazyJavaClassifierType@55['String'] {
+    _arguments = ArrayList@56[empty]
+    _nullable = Boolean@45
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@36['String']
+}
+
+LazyJavaClassifierType@61['String'] {
+    _arguments = ArrayList@62[empty]
+    _nullable = Boolean@45
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@42['String']
+}
+
+LazyJavaClassifierType@63['String'] {
+    _arguments = ArrayList@65[empty]
+    _nullable = Boolean@45
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@64['String']
+}
+
+LazyJavaClassifierType@76['String'] {
+    _arguments = ArrayList@77[empty]
+    _nullable = Boolean@45
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@23['String']
+}
+
+LazyJavaClassifierType@78['String'] {
+    _arguments = ArrayList@80[empty]
+    _nullable = Boolean@45
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@79['String']
+}
+
+LazyJavaClassifierType@81['String'] {
+    _arguments = ArrayList@82[empty]
+    _nullable = Boolean@22
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@79['String']
+}
+
+LazyJavaClassifierType@83['String'] {
+    _arguments = ArrayList@84[empty]
+    _nullable = Boolean@22
+    _typeConstructor = DeserializedClassTypeConstructor@24
+    classifier = JavaClassImpl@64['String']
+}
+
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('Array': FqName@15) = null
+    _packageFragments('C': FqName@10) = null
+    _packageFragments('String': FqName@18) = null
+    _packageFragments('java': FqName@3) = LazyJavaPackageFragment@4['java']
+    _packageFragments('java.lang': FqName@5) = LazyJavaPackageFragment@6['lang']
+    _packageFragments('java.lang.Array': FqName@17) = null
+    _packageFragments('java.lang.C': FqName@12) = null
+    _packageFragments('java.lang.String': FqName@20) = null
+    _packageFragments('kotlin': FqName@7) = null
+    _packageFragments('kotlin.Array': FqName@16) = null
+    _packageFragments('kotlin.C': FqName@11) = null
+    _packageFragments('kotlin.String': FqName@19) = null
+    _packageFragments('kotlin.io': FqName@9) = null
+    _packageFragments('kotlin.jvm': FqName@8) = null
+    topLevelClasses(JavaClassImpl@13['C']) = LazyJavaClassDescriptor@14['C']
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    _functions('from': Name@40) = EmptyList@31[empty] // through LazyPackageFragmentScopeForJavaPackage@51
+    classes('Array': Name@52) = null // through LazyPackageFragmentScopeForJavaPackage@51
+    classes('C': Name@50) = LazyJavaClassDescriptor@14['C'] // through LazyPackageFragmentScopeForJavaPackage@51
+    classes('String': Name@53) = null // through LazyPackageFragmentScopeForJavaPackage@51
+    classes('from': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@51
+    deserializedPackageScope = JetScope$1@28 // through LazyPackageFragmentScopeForJavaPackage@51
+    memberIndex = computeMemberIndex$1@54 // through LazyPackageFragmentScopeForJavaPackage@51
+}
+
+LazyJavaPackageFragment@4['java'] {
+    _functions('lang': Name@30) = EmptyList@31[empty] // through LazyPackageFragmentScopeForJavaPackage@27
+    classes('lang': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@27
+    deserializedPackageScope = JetScope$1@28 // through LazyPackageFragmentScopeForJavaPackage@27
+    memberIndex = computeMemberIndex$1@29 // through LazyPackageFragmentScopeForJavaPackage@27
+}
+
+LazyJavaPackageFragment@6['lang'] {
+    _functions('from': Name@40) = EmptyList@31[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('from': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    deserializedPackageScope = JetScope$1@28 // through LazyPackageFragmentScopeForJavaPackage@38
+    memberIndex = computeMemberIndex$1@39 // through LazyPackageFragmentScopeForJavaPackage@38
+}

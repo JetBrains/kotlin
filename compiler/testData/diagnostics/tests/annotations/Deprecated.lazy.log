@@ -1,0 +1,59 @@
+LazyAnnotationDescriptor@14 {
+    _resolutionResults = OverloadResolutionResultsImpl@16
+    _type = JetTypeImpl@15
+}
+
+LazyAnnotationDescriptor@43 {
+    _resolutionResults = OverloadResolutionResultsImpl@45
+    _type = JetTypeImpl@44
+}
+
+LazyJavaClassDescriptor@17['Deprecated'] {
+    _constructors = ArrayList@20[1] { JavaConstructorDescriptor@21['<init>'] } // through LazyJavaClassMemberScope@22
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@18['Deprecated']
+    defaultType = JetTypeImpl@19
+}
+
+LazyJavaClassTypeConstructor@18['Deprecated'] {
+    _parameters = ArrayList@38[empty]
+}
+
+LazyJavaPackageFragmentProvider@23 {
+    _packageFragments('<root>': FqName@24) = LazyJavaPackageFragment@7['<root>']
+    _packageFragments('Deprecated': FqName@33) = null
+    _packageFragments('deprecated': FqName@35) = null
+    _packageFragments('java': FqName@25) = LazyJavaPackageFragment@0['java']
+    _packageFragments('java.lang': FqName@26) = LazyJavaPackageFragment@27['lang']
+    _packageFragments('java.lang.Deprecated': FqName@31) = null
+    _packageFragments('java.lang.deprecated': FqName@37) = null
+    _packageFragments('kotlin': FqName@28) = null
+    _packageFragments('kotlin.Deprecated': FqName@34) = null
+    _packageFragments('kotlin.deprecated': FqName@36) = null
+    _packageFragments('kotlin.io': FqName@30) = null
+    _packageFragments('kotlin.jvm': FqName@29) = null
+    topLevelClasses(JavaClassImpl@32['Deprecated']) = LazyJavaClassDescriptor@17['Deprecated']
+}
+
+LazyJavaPackageFragment@7['<root>'] {
+    _functions('java': Name@13) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@9
+    classes('Deprecated': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@9
+    classes('deprecated': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@9
+    classes('java': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@9
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@9
+    memberIndex = computeMemberIndex$1@12 // through LazyPackageFragmentScopeForJavaPackage@9
+}
+
+LazyJavaPackageFragment@0['java'] {
+    _functions('lang': Name@5) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('lang': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+    memberIndex = computeMemberIndex$1@4 // through LazyPackageFragmentScopeForJavaPackage@2
+}
+
+LazyJavaPackageFragment@27['lang'] {
+    _functions('Deprecated': Name@42) = EmptyList@6[empty] // through LazyPackageFragmentScopeForJavaPackage@40
+    classes('Deprecated': Name@39) = LazyJavaClassDescriptor@17['Deprecated'] // through LazyPackageFragmentScopeForJavaPackage@40
+    deserializedPackageScope = JetScope$1@3 // through LazyPackageFragmentScopeForJavaPackage@40
+    memberIndex = computeMemberIndex$1@41 // through LazyPackageFragmentScopeForJavaPackage@40
+}

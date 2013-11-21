@@ -1,0 +1,49 @@
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1
+    <name not found> = JetTypeImpl@1
+    <name not found> = JetTypeImpl@2
+}
+
+LazyJavaPackageFragmentProvider@11 {
+    _packageFragments('<root>': FqName@12) = LazyJavaPackageFragment@13['<root>']
+    _packageFragments('Any': FqName@30) = null
+    _packageFragments('Int': FqName@34) = null
+    _packageFragments('MyClass': FqName@26) = null
+    _packageFragments('MyClass2': FqName@22) = null
+    _packageFragments('a': FqName@14) = null
+    _packageFragments('a.Any': FqName@29) = null
+    _packageFragments('a.Int': FqName@33) = null
+    _packageFragments('a.MyClass': FqName@25) = null
+    _packageFragments('a.MyClass2': FqName@21) = null
+    _packageFragments('java': FqName@15) = LazyJavaPackageFragment@16['java']
+    _packageFragments('java.lang': FqName@17) = LazyJavaPackageFragment@3['lang']
+    _packageFragments('java.lang.Any': FqName@32) = null
+    _packageFragments('java.lang.Int': FqName@36) = null
+    _packageFragments('java.lang.MyClass': FqName@28) = null
+    _packageFragments('java.lang.MyClass2': FqName@24) = null
+    _packageFragments('kotlin': FqName@18) = null
+    _packageFragments('kotlin.Any': FqName@31) = null
+    _packageFragments('kotlin.Int': FqName@35) = null
+    _packageFragments('kotlin.MyClass': FqName@27) = null
+    _packageFragments('kotlin.MyClass2': FqName@23) = null
+    _packageFragments('kotlin.io': FqName@20) = null
+    _packageFragments('kotlin.jvm': FqName@19) = null
+}
+
+LazyJavaPackageFragment@16['java'] {
+    _functions('lang': Name@40) = EmptyList@8[empty] // through LazyPackageFragmentScopeForJavaPackage@38
+    classes('lang': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@38
+    deserializedPackageScope = JetScope$1@4 // through LazyPackageFragmentScopeForJavaPackage@38
+    memberIndex = computeMemberIndex$1@39 // through LazyPackageFragmentScopeForJavaPackage@38
+}
+
+LazyJavaPackageFragment@3['lang'] {
+    _functions('component1': Name@7) = EmptyList@8[empty] // through LazyPackageFragmentScopeForJavaPackage@5
+    _functions('component2': Name@9) = EmptyList@8[empty] // through LazyPackageFragmentScopeForJavaPackage@5
+    _functions('use': Name@10) = EmptyList@8[empty] // through LazyPackageFragmentScopeForJavaPackage@5
+    classes('component1': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@5
+    classes('component2': Name@9) = null // through LazyPackageFragmentScopeForJavaPackage@5
+    classes('use': Name@10) = null // through LazyPackageFragmentScopeForJavaPackage@5
+    deserializedPackageScope = JetScope$1@4 // through LazyPackageFragmentScopeForJavaPackage@5
+    memberIndex = computeMemberIndex$1@6 // through LazyPackageFragmentScopeForJavaPackage@5
+}

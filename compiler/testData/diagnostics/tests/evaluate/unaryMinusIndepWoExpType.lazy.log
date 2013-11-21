@@ -1,0 +1,114 @@
+DescriptorResolver@55 {
+    <name not found> = ByteValue@61
+    <name not found> = DeserializedType@60['kotlin.Byte']
+    <name not found> = DeserializedType@63['kotlin.Short']
+    <name not found> = IntValue@57
+    <name not found> = IntValue@62
+    <name not found> = JetTypeImpl@56
+    <name not found> = JetTypeImpl@58
+    <name not found> = JetTypeImpl@56
+    <name not found> = JetTypeImpl@58
+    <name not found> = JetTypeImpl@66
+    <name not found> = JetTypeImpl@67
+    <name not found> = JetTypeImpl@68
+    <name not found> = JetTypeImpl@69
+    <name not found> = LongValue@59
+    <name not found> = LongValue@65
+    <name not found> = ShortValue@64
+}
+
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('Byte': FqName@16) = null
+    _packageFragments('Int': FqName@10) = null
+    _packageFragments('Long': FqName@13) = null
+    _packageFragments('Short': FqName@19) = null
+    _packageFragments('java': FqName@3) = LazyJavaPackageFragment@4['java']
+    _packageFragments('java.lang': FqName@5) = LazyJavaPackageFragment@6['lang']
+    _packageFragments('java.lang.Byte': FqName@18) = null
+    _packageFragments('java.lang.Int': FqName@12) = null
+    _packageFragments('java.lang.Long': FqName@15) = null
+    _packageFragments('java.lang.Short': FqName@21) = null
+    _packageFragments('kotlin': FqName@7) = null
+    _packageFragments('kotlin.Byte': FqName@17) = null
+    _packageFragments('kotlin.Int': FqName@11) = null
+    _packageFragments('kotlin.Long': FqName@14) = null
+    _packageFragments('kotlin.Short': FqName@20) = null
+    _packageFragments('kotlin.io': FqName@9) = null
+    _packageFragments('kotlin.jvm': FqName@8) = null
+    _packageFragments('p1': FqName@22) = null
+    _packageFragments('p2': FqName@23) = null
+    _packageFragments('p3': FqName@26) = null
+    _packageFragments('p4': FqName@25) = null
+    _packageFragments('p5': FqName@24) = null
+    _packageFragments('p6': FqName@27) = null
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    _functions('fooByte': Name@50) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('fooInt': Name@41) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('fooLong': Name@48) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('fooShort': Name@49) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('minus': Name@35) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('toByte': Name@38) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('toInt': Name@39) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('toLong': Name@37) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    _functions('toShort': Name@40) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('Byte': Name@31) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('Int': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('Long': Name@30) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('Short': Name@32) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('fooByte': Name@50) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('fooInt': Name@41) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('fooLong': Name@48) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('fooShort': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('minus': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('p1': Name@42) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('p2': Name@43) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('p3': Name@44) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('p4': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('p5': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('p6': Name@47) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('toByte': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('toInt': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('toLong': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('toShort': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    deserializedPackageScope = JetScope$1@33 // through LazyPackageFragmentScopeForJavaPackage@29
+    memberIndex = computeMemberIndex$1@34 // through LazyPackageFragmentScopeForJavaPackage@29
+}
+
+LazyJavaPackageFragment@4['java'] {
+    _functions('lang': Name@54) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@52
+    classes('lang': Name@51) = null // through LazyPackageFragmentScopeForJavaPackage@52
+    deserializedPackageScope = JetScope$1@33 // through LazyPackageFragmentScopeForJavaPackage@52
+    memberIndex = computeMemberIndex$1@53 // through LazyPackageFragmentScopeForJavaPackage@52
+}
+
+LazyJavaPackageFragment@6['lang'] {
+    _functions('fooByte': Name@50) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@70
+    _functions('fooInt': Name@41) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@70
+    _functions('fooLong': Name@48) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@70
+    _functions('fooShort': Name@49) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@70
+    _functions('minus': Name@35) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@70
+    _functions('toByte': Name@38) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@70
+    _functions('toInt': Name@39) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@70
+    _functions('toLong': Name@37) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@70
+    _functions('toShort': Name@40) = EmptyList@36[empty] // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('fooByte': Name@50) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('fooInt': Name@41) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('fooLong': Name@48) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('fooShort': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('minus': Name@35) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('p1': Name@42) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('p2': Name@43) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('p3': Name@44) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('p4': Name@45) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('p5': Name@46) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('p6': Name@47) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('toByte': Name@38) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('toInt': Name@39) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('toLong': Name@37) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    classes('toShort': Name@40) = null // through LazyPackageFragmentScopeForJavaPackage@70
+    deserializedPackageScope = JetScope$1@33 // through LazyPackageFragmentScopeForJavaPackage@70
+    memberIndex = computeMemberIndex$1@71 // through LazyPackageFragmentScopeForJavaPackage@70
+}

@@ -1,0 +1,168 @@
+LazyAnnotationDescriptor@15 {
+    _resolutionResults = OverloadResolutionResultsImpl@17
+    _type = JetTypeImpl@16
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@19 {
+    _resolutionResults = OverloadResolutionResultsImpl@21
+    _type = JetTypeImpl@20
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@22 {
+    _resolutionResults = OverloadResolutionResultsImpl@24
+    _type = JetTypeImpl@23
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@25 {
+    _resolutionResults = OverloadResolutionResultsImpl@27
+    _type = JetTypeImpl@26
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@34 {
+    _resolutionResults = OverloadResolutionResultsImpl@36
+    _type = JetTypeImpl@35
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@37 {
+    _resolutionResults = OverloadResolutionResultsImpl@39
+    _type = JetTypeImpl@38
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@40 {
+    _resolutionResults = OverloadResolutionResultsImpl@42
+    _type = JetTypeImpl@41
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@43 {
+    _resolutionResults = OverloadResolutionResultsImpl@45
+    _type = JetTypeImpl@44
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@46 {
+    _resolutionResults = OverloadResolutionResultsImpl@48
+    _type = JetTypeImpl@47
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@49 {
+    _resolutionResults = OverloadResolutionResultsImpl@51
+    _type = JetTypeImpl@50
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@52 {
+    _resolutionResults = OverloadResolutionResultsImpl@54
+    _type = JetTypeImpl@53
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@55 {
+    _resolutionResults = OverloadResolutionResultsImpl@57
+    _type = JetTypeImpl@56
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@58 {
+    _resolutionResults = OverloadResolutionResultsImpl@60
+    _type = JetTypeImpl@59
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@61 {
+    _resolutionResults = OverloadResolutionResultsImpl@63
+    _type = JetTypeImpl@62
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@64 {
+    _resolutionResults = OverloadResolutionResultsImpl@66
+    _type = JetTypeImpl@65
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@67 {
+    _resolutionResults = OverloadResolutionResultsImpl@69
+    _type = JetTypeImpl@68
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@70 {
+    _resolutionResults = OverloadResolutionResultsImpl@72
+    _type = JetTypeImpl@71
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@73 {
+    _resolutionResults = OverloadResolutionResultsImpl@75
+    _type = JetTypeImpl@74
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@76 {
+    _resolutionResults = OverloadResolutionResultsImpl@78
+    _type = JetTypeImpl@77
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@79 {
+    _resolutionResults = OverloadResolutionResultsImpl@81
+    _type = JetTypeImpl@80
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@82 {
+    _resolutionResults = OverloadResolutionResultsImpl@84
+    _type = JetTypeImpl@83
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@85 {
+    _resolutionResults = OverloadResolutionResultsImpl@87
+    _type = JetTypeImpl@86
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@88 {
+    _resolutionResults = OverloadResolutionResultsImpl@90
+    _type = JetTypeImpl@89
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyAnnotationDescriptor@93 {
+    _resolutionResults = OverloadResolutionResultsImpl@95
+    _type = JetTypeImpl@94
+    _valueArguments(ValueParameterDescriptorImpl@18['strategy']) = null
+}
+
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('A': FqName@13) = null
+    _packageFragments('B': FqName@14) = null
+    _packageFragments('inline': FqName@10) = null
+    _packageFragments('java': FqName@3) = LazyJavaPackageFragment@4['java']
+    _packageFragments('java.lang': FqName@5) = LazyJavaPackageFragment@6['lang']
+    _packageFragments('java.lang.inline': FqName@12) = null
+    _packageFragments('kotlin': FqName@7) = null
+    _packageFragments('kotlin.inline': FqName@11) = null
+    _packageFragments('kotlin.io': FqName@9) = null
+    _packageFragments('kotlin.jvm': FqName@8) = null
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    classes('inline': Name@91) = null // through LazyPackageFragmentScopeForJavaPackage@92
+}
+
+LazyJavaPackageFragment@4['java'] {
+    _functions('lang': Name@32) = EmptyList@33[empty] // through LazyPackageFragmentScopeForJavaPackage@29
+    classes('lang': Name@28) = null // through LazyPackageFragmentScopeForJavaPackage@29
+    deserializedPackageScope = JetScope$1@30 // through LazyPackageFragmentScopeForJavaPackage@29
+    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@29
+}

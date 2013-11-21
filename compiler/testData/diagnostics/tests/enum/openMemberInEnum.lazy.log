@@ -1,0 +1,36 @@
+DescriptorResolver@10 {
+    <name not found> = IntValue@13
+    <name not found> = IntValue@15
+    <name not found> = JetTypeImpl@11
+    <name not found> = JetTypeImpl@11
+    <name not found> = JetTypeImpl@11
+    <name not found> = JetTypeImpl@11
+    <name not found> = JetTypeImpl@11
+    <name not found> = JetTypeImpl@11
+    <name not found> = StringValue@12
+    <name not found> = StringValue@14
+}
+
+LazyJavaPackageFragmentProvider@16 {
+    _packageFragments('<root>': FqName@17) = LazyJavaPackageFragment@0['<root>']
+    _packageFragments('EnumWithOpenMembers': FqName@27) = null
+    _packageFragments('String': FqName@24) = null
+    _packageFragments('java': FqName@18) = LazyJavaPackageFragment@3['java']
+    _packageFragments('java.lang': FqName@19) = LazyJavaPackageFragment@20['lang']
+    _packageFragments('java.lang.String': FqName@26) = null
+    _packageFragments('kotlin': FqName@21) = null
+    _packageFragments('kotlin.String': FqName@25) = null
+    _packageFragments('kotlin.io': FqName@23) = null
+    _packageFragments('kotlin.jvm': FqName@22) = null
+}
+
+LazyJavaPackageFragment@0['<root>'] {
+    classes('String': Name@1) = null // through LazyPackageFragmentScopeForJavaPackage@2
+}
+
+LazyJavaPackageFragment@3['java'] {
+    _functions('lang': Name@8) = EmptyList@9[empty] // through LazyPackageFragmentScopeForJavaPackage@5
+    classes('lang': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@5
+    deserializedPackageScope = JetScope$1@6 // through LazyPackageFragmentScopeForJavaPackage@5
+    memberIndex = computeMemberIndex$1@7 // through LazyPackageFragmentScopeForJavaPackage@5
+}

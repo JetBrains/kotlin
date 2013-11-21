@@ -1,0 +1,38 @@
+DescriptorResolver@9 {
+    <name not found> = IntValue@10
+    <name not found> = IntValue@11
+    <name not found> = IntValue@12
+    <name not found> = IntValue@13
+}
+
+LazyJavaPackageFragmentProvider@14 {
+    _packageFragments('<root>': FqName@15) = LazyJavaPackageFragment@16['<root>']
+    _packageFragments('Int': FqName@25) = null
+    _packageFragments('abstract': FqName@17) = null
+    _packageFragments('abstract.Int': FqName@24) = null
+    _packageFragments('abstract.MyClass': FqName@28) = null
+    _packageFragments('java': FqName@18) = LazyJavaPackageFragment@19['java']
+    _packageFragments('java.lang': FqName@20) = LazyJavaPackageFragment@0['lang']
+    _packageFragments('java.lang.Int': FqName@27) = null
+    _packageFragments('kotlin': FqName@21) = null
+    _packageFragments('kotlin.Int': FqName@26) = null
+    _packageFragments('kotlin.io': FqName@23) = null
+    _packageFragments('kotlin.jvm': FqName@22) = null
+}
+
+LazyJavaPackageFragment@19['java'] {
+    _functions('lang': Name@32) = EmptyList@33[empty] // through LazyPackageFragmentScopeForJavaPackage@30
+    classes('lang': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@30
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@30
+    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@30
+}
+
+LazyJavaPackageFragment@0['lang'] {
+    classes('a': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('c': Name@3) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('c1': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('c2': Name@5) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('c3': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('i': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@2
+}

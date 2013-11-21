@@ -1,0 +1,43 @@
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('A': FqName@12) = null
+    _packageFragments('Int': FqName@28) = null
+    _packageFragments('IntArray': FqName@24) = null
+    _packageFragments('Nothing': FqName@20) = null
+    _packageFragments('T': FqName@16) = null
+    _packageFragments('d': FqName@3) = null
+    _packageFragments('d.A': FqName@11) = null
+    _packageFragments('d.Int': FqName@27) = null
+    _packageFragments('d.IntArray': FqName@23) = null
+    _packageFragments('d.Nothing': FqName@19) = null
+    _packageFragments('d.T': FqName@15) = null
+    _packageFragments('java': FqName@4) = LazyJavaPackageFragment@5['java']
+    _packageFragments('java.lang': FqName@6) = LazyJavaPackageFragment@7['lang']
+    _packageFragments('java.lang.A': FqName@14) = null
+    _packageFragments('java.lang.Int': FqName@30) = null
+    _packageFragments('java.lang.IntArray': FqName@26) = null
+    _packageFragments('java.lang.Nothing': FqName@22) = null
+    _packageFragments('java.lang.T': FqName@18) = null
+    _packageFragments('kotlin': FqName@8) = null
+    _packageFragments('kotlin.A': FqName@13) = null
+    _packageFragments('kotlin.Int': FqName@29) = null
+    _packageFragments('kotlin.IntArray': FqName@25) = null
+    _packageFragments('kotlin.Nothing': FqName@21) = null
+    _packageFragments('kotlin.T': FqName@17) = null
+    _packageFragments('kotlin.io': FqName@10) = null
+    _packageFragments('kotlin.jvm': FqName@9) = null
+}
+
+LazyJavaPackageFragment@5['java'] {
+    _functions('lang': Name@39) = EmptyList@35[empty] // through LazyPackageFragmentScopeForJavaPackage@37
+    classes('lang': Name@36) = null // through LazyPackageFragmentScopeForJavaPackage@37
+    deserializedPackageScope = JetScope$1@31 // through LazyPackageFragmentScopeForJavaPackage@37
+    memberIndex = computeMemberIndex$1@38 // through LazyPackageFragmentScopeForJavaPackage@37
+}
+
+LazyJavaPackageFragment@7['lang'] {
+    _functions('infer': Name@34) = EmptyList@35[empty] // through LazyPackageFragmentScopeForJavaPackage@32
+    classes('infer': Name@34) = null // through LazyPackageFragmentScopeForJavaPackage@32
+    deserializedPackageScope = JetScope$1@31 // through LazyPackageFragmentScopeForJavaPackage@32
+    memberIndex = computeMemberIndex$1@33 // through LazyPackageFragmentScopeForJavaPackage@32
+}

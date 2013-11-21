@@ -1,0 +1,78 @@
+DescriptorResolver@57 {
+    <name not found> = JetTypeImpl@58
+}
+
+LazyJavaClassDescriptor@14['Inner'] {
+    _constructors = ArrayList@17[1] { JavaConstructorDescriptor@18['<init>'] } // through LazyJavaClassMemberScope@19
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@15['Inner']
+    defaultType = JetTypeImpl@16
+}
+
+LazyJavaClassDescriptor@21['M'] {
+    _functionTypeForSamInterface = null
+    _functions('Inner': Name@27) = EmptyList@12[empty] // through LazyJavaClassMemberScope@23
+    _functions('Inner': Name@30) = EmptyList@12[empty] // through LazyJavaStaticClassScope@29
+    _properties('Inner': Name@27) = EmptyList@12[empty] // through LazyJavaClassMemberScope@23
+    _properties('Inner': Name@30) = EmptyList@12[empty] // through LazyJavaStaticClassScope@29
+    _typeConstructor = LazyJavaClassTypeConstructor@0['M']
+    defaultType = JetTypeImpl@25
+    memberIndex = computeMemberIndex$1@26 // through LazyJavaClassMemberScope@23
+    memberIndex = computeMemberIndex$1@28 // through LazyJavaStaticClassScope@29
+    nestedClassIndex = LinkedHashMap@22 // through LazyJavaClassMemberScope@23
+    nestedClasses('Inner': Name@24) = LazyJavaClassDescriptor@14['Inner'] // through LazyJavaClassMemberScope@23
+}
+
+LazyJavaClassTypeConstructor@15['Inner'] {
+    _parameters = ArrayList@20[empty]
+}
+
+LazyJavaClassTypeConstructor@0['M'] {
+    _parameters = ArrayList@1[empty]
+    _supertypes = ArrayList@2[1] { JetTypeImpl@3 }
+}
+
+LazyJavaClassifierType@4['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@6
+    classifier = JavaClassImpl@5['Object']
+}
+
+LazyJavaPackageFragmentProvider@31 {
+    _packageFragments('<root>': FqName@32) = LazyJavaPackageFragment@33['<root>']
+    _packageFragments('Inner': FqName@46) = null
+    _packageFragments('a': FqName@41) = LazyJavaPackageFragment@42['a']
+    _packageFragments('a.M': FqName@43) = null
+    _packageFragments('b': FqName@34) = null
+    _packageFragments('b.Inner': FqName@45) = null
+    _packageFragments('java': FqName@35) = LazyJavaPackageFragment@36['java']
+    _packageFragments('java.lang': FqName@37) = LazyJavaPackageFragment@7['lang']
+    _packageFragments('java.lang.Inner': FqName@48) = null
+    _packageFragments('kotlin': FqName@38) = null
+    _packageFragments('kotlin.Inner': FqName@47) = null
+    _packageFragments('kotlin.io': FqName@40) = null
+    _packageFragments('kotlin.jvm': FqName@39) = null
+    topLevelClasses(JavaClassImpl@44['M']) = LazyJavaClassDescriptor@21['M']
+}
+
+LazyJavaPackageFragment@42['a'] {
+    _functions('M': Name@56) = EmptyList@12[empty] // through LazyPackageFragmentScopeForJavaPackage@54
+    classes('M': Name@53) = LazyJavaClassDescriptor@21['M'] // through LazyPackageFragmentScopeForJavaPackage@54
+    deserializedPackageScope = JetScope$1@8 // through LazyPackageFragmentScopeForJavaPackage@54
+    memberIndex = computeMemberIndex$1@55 // through LazyPackageFragmentScopeForJavaPackage@54
+}
+
+LazyJavaPackageFragment@36['java'] {
+    _functions('lang': Name@52) = EmptyList@12[empty] // through LazyPackageFragmentScopeForJavaPackage@50
+    classes('lang': Name@49) = null // through LazyPackageFragmentScopeForJavaPackage@50
+    deserializedPackageScope = JetScope$1@8 // through LazyPackageFragmentScopeForJavaPackage@50
+    memberIndex = computeMemberIndex$1@51 // through LazyPackageFragmentScopeForJavaPackage@50
+}
+
+LazyJavaPackageFragment@7['lang'] {
+    _functions('Inner': Name@13) = EmptyList@12[empty] // through LazyPackageFragmentScopeForJavaPackage@9
+    _functions('doSmth': Name@11) = EmptyList@12[empty] // through LazyPackageFragmentScopeForJavaPackage@9
+    classes('Inner': Name@13) = null // through LazyPackageFragmentScopeForJavaPackage@9
+    classes('doSmth': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@9
+    deserializedPackageScope = JetScope$1@8 // through LazyPackageFragmentScopeForJavaPackage@9
+    memberIndex = computeMemberIndex$1@10 // through LazyPackageFragmentScopeForJavaPackage@9
+}

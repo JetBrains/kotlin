@@ -26,8 +26,11 @@ import com.intellij.psi.PsiFile;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.context.SimpleGlobalContext;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
@@ -46,6 +49,8 @@ import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.ExceptionTracker;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.jetbrains.jet.utils.UtilsPackage;
@@ -57,6 +62,14 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE;
 
 public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
+
+    public static final Function1<String, String> HASH_SANITIZER = new Function1<String, String>() {
+        @Override
+        public String invoke(String s) {
+            return s.replaceAll("@(\\d)+", "");
+        }
+    };
+
     @Override
     protected void analyzeAndCheck(File testDataFile, List<TestFile> testFiles) {
         Map<TestModule, List<TestFile>> groupedByModule = KotlinPackage.groupByTo(
@@ -76,6 +89,8 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         List<JetFile> allJetFiles = new ArrayList<JetFile>();
         Map<TestModule, ModuleDescriptorImpl> modules = createModules(groupedByModule);
         Map<TestModule, BindingContext> moduleBindings = new HashMap<TestModule, BindingContext>();
+
+        LazyOperationsLog lazyOperationsLog = new LazyOperationsLog(HASH_SANITIZER);
 
         for (Map.Entry<TestModule, List<TestFile>> entry : groupedByModule.entrySet()) {
             TestModule testModule = entry.getKey();
@@ -101,8 +116,18 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
             // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
             // albeit with same class names
-            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+            ExceptionTracker tracker = new ExceptionTracker();
+            GlobalContext context = new SimpleGlobalContext(
+                    new LoggingStorageManager(
+                            LockBasedStorageManager.createWithExceptionHandling(tracker),
+                            lazyOperationsLog.getAddRecordFunction()
+                    ),
+                    tracker
+            );
+
+            TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
                     getProject(),
+                    context,
                     jetFiles,
                     moduleTrace,
                     Predicates.<PsiFile>alwaysTrue(),
@@ -116,6 +141,8 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         // We want to always create a test data file (txt) if it was missing,
         // but don't want to skip the following checks in case this one fails
+        Throwable exceptionFromLazyResolveLogValidation = checkLazyResolveLog(lazyOperationsLog, testDataFile);
+
         Throwable exceptionFromDescriptorValidation = null;
         try {
             File expectedFile = new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".txt");
@@ -143,6 +170,27 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         if (exceptionFromDescriptorValidation != null) {
             throw UtilsPackage.rethrow(exceptionFromDescriptorValidation);
         }
+        if (exceptionFromLazyResolveLogValidation != null) {
+            throw UtilsPackage.rethrow(exceptionFromLazyResolveLogValidation);
+        }
+    }
+
+    @Nullable
+    private static Throwable checkLazyResolveLog(LazyOperationsLog lazyOperationsLog, File testDataFile) {
+        Throwable exceptionFromLazyResolveLogValidation = null;
+        try {
+            File expectedFile = new File(FileUtil.getNameWithoutExtension(testDataFile.getAbsolutePath()) + ".lazy.log");
+
+            JetTestUtils.assertEqualsToFile(
+                    expectedFile,
+                    lazyOperationsLog.getText(),
+                    HASH_SANITIZER
+            );
+        }
+        catch (Throwable e) {
+            exceptionFromLazyResolveLogValidation = e;
+        }
+        return exceptionFromLazyResolveLogValidation;
     }
 
     private void validateAndCompareDescriptorWithFile(

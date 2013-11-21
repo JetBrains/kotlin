@@ -1,0 +1,53 @@
+LazyJavaPackageFragmentProvider@15 {
+    _packageFragments('<root>': FqName@16) = LazyJavaPackageFragment@10['<root>']
+    _packageFragments('Any': FqName@23) = null
+    _packageFragments('Int': FqName@26) = null
+    _packageFragments('java': FqName@17) = LazyJavaPackageFragment@18['java']
+    _packageFragments('java.lang': FqName@19) = LazyJavaPackageFragment@0['lang']
+    _packageFragments('java.lang.Any': FqName@25) = null
+    _packageFragments('java.lang.Int': FqName@28) = null
+    _packageFragments('kotlin': FqName@20) = null
+    _packageFragments('kotlin.Any': FqName@24) = null
+    _packageFragments('kotlin.Int': FqName@27) = null
+    _packageFragments('kotlin.io': FqName@22) = null
+    _packageFragments('kotlin.jvm': FqName@21) = null
+}
+
+LazyJavaPackageFragment@10['<root>'] {
+    _functions('foo': Name@8) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@12
+    _functions('getT': Name@4) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@12
+    _functions('getTT': Name@7) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@12
+    _functions('getTTT': Name@9) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@12
+    _functions('ggetT': Name@6) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@12
+    classes('Any': Name@11) = null // through LazyPackageFragmentScopeForJavaPackage@12
+    classes('Int': Name@14) = null // through LazyPackageFragmentScopeForJavaPackage@12
+    classes('foo': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@12
+    classes('getT': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@12
+    classes('getTT': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@12
+    classes('getTTT': Name@9) = null // through LazyPackageFragmentScopeForJavaPackage@12
+    classes('ggetT': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@12
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@12
+    memberIndex = computeMemberIndex$1@13 // through LazyPackageFragmentScopeForJavaPackage@12
+}
+
+LazyJavaPackageFragment@18['java'] {
+    _functions('lang': Name@32) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@30
+    classes('lang': Name@29) = null // through LazyPackageFragmentScopeForJavaPackage@30
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@30
+    memberIndex = computeMemberIndex$1@31 // through LazyPackageFragmentScopeForJavaPackage@30
+}
+
+LazyJavaPackageFragment@0['lang'] {
+    _functions('foo': Name@8) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    _functions('getT': Name@4) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    _functions('getTT': Name@7) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    _functions('getTTT': Name@9) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    _functions('ggetT': Name@6) = EmptyList@5[empty] // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('foo': Name@8) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('getT': Name@4) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('getTT': Name@7) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('getTTT': Name@9) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    classes('ggetT': Name@6) = null // through LazyPackageFragmentScopeForJavaPackage@2
+    deserializedPackageScope = JetScope$1@1 // through LazyPackageFragmentScopeForJavaPackage@2
+    memberIndex = computeMemberIndex$1@3 // through LazyPackageFragmentScopeForJavaPackage@2
+}

@@ -1,0 +1,82 @@
+ClosureExpressionsTypingVisitor$1@2 {
+    <name not found> = JetTypeImpl@3
+}
+
+ClosureExpressionsTypingVisitor$1@24 {
+    <name not found> = JetTypeImpl@25
+}
+
+DescriptorResolver@0 {
+    <name not found> = JetTypeImpl@1
+}
+
+DescriptorResolver@55 {
+    <name not found> = JetTypeImpl@56
+}
+
+LazyAnnotationDescriptor@31 {
+    _resolutionResults = OverloadResolutionResultsImpl@33
+    _type = JetTypeImpl@32
+    _valueArguments(ValueParameterDescriptorImpl@34['strategy']) = null
+}
+
+LazyAnnotationDescriptor@52 {
+    _resolutionResults = OverloadResolutionResultsImpl@54
+    _type = JetTypeImpl@53
+    _valueArguments(ValueParameterDescriptorImpl@34['strategy']) = null
+}
+
+LazyAnnotationDescriptor@4 {
+    _resolutionResults = OverloadResolutionResultsImpl@6
+    _type = JetTypeImpl@5
+    _valueArguments(ValueParameterDescriptorImpl@7['value']) = ArrayValue@8
+}
+
+LazyJavaPackageFragmentProvider@35 {
+    _packageFragments('<root>': FqName@36) = LazyJavaPackageFragment@16['<root>']
+    _packageFragments('R': FqName@43) = null
+    _packageFragments('inline': FqName@46) = null
+    _packageFragments('inlineOptions': FqName@49) = null
+    _packageFragments('java': FqName@37) = LazyJavaPackageFragment@26['java']
+    _packageFragments('java.lang': FqName@38) = LazyJavaPackageFragment@9['lang']
+    _packageFragments('java.lang.R': FqName@45) = null
+    _packageFragments('java.lang.inline': FqName@48) = null
+    _packageFragments('java.lang.inlineOptions': FqName@51) = null
+    _packageFragments('kotlin': FqName@39) = null
+    _packageFragments('kotlin.InlineOption': FqName@42) = null
+    _packageFragments('kotlin.R': FqName@44) = null
+    _packageFragments('kotlin.inline': FqName@47) = null
+    _packageFragments('kotlin.inlineOptions': FqName@50) = null
+    _packageFragments('kotlin.io': FqName@41) = null
+    _packageFragments('kotlin.jvm': FqName@40) = null
+}
+
+LazyJavaPackageFragment@16['<root>'] {
+    _functions('invoke': Name@15) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    _functions('kotlin': Name@21) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    _functions('p': Name@13) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('ONLY_LOCAL_RETURN': Name@23) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('inline': Name@19) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('inlineOptions': Name@22) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('invoke': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('kotlin': Name@17) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    classes('p': Name@13) = null // through LazyPackageFragmentScopeForJavaPackage@18
+    deserializedPackageScope = JetScope$1@10 // through LazyPackageFragmentScopeForJavaPackage@18
+    memberIndex = computeMemberIndex$1@20 // through LazyPackageFragmentScopeForJavaPackage@18
+}
+
+LazyJavaPackageFragment@26['java'] {
+    _functions('lang': Name@30) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@28
+    classes('lang': Name@27) = null // through LazyPackageFragmentScopeForJavaPackage@28
+    deserializedPackageScope = JetScope$1@10 // through LazyPackageFragmentScopeForJavaPackage@28
+    memberIndex = computeMemberIndex$1@29 // through LazyPackageFragmentScopeForJavaPackage@28
+}
+
+LazyJavaPackageFragment@9['lang'] {
+    _functions('invoke': Name@15) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@11
+    _functions('p': Name@13) = EmptyList@14[empty] // through LazyPackageFragmentScopeForJavaPackage@11
+    classes('invoke': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@11
+    classes('p': Name@13) = null // through LazyPackageFragmentScopeForJavaPackage@11
+    deserializedPackageScope = JetScope$1@10 // through LazyPackageFragmentScopeForJavaPackage@11
+    memberIndex = computeMemberIndex$1@12 // through LazyPackageFragmentScopeForJavaPackage@11
+}

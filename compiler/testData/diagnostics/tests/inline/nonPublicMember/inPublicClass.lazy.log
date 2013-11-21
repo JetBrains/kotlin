@@ -1,0 +1,72 @@
+DescriptorResolver@27 {
+    <name not found> = IntValue@29
+    <name not found> = IntValue@30
+    <name not found> = JetTypeImpl@28
+    <name not found> = JetTypeImpl@28
+}
+
+LazyAnnotationDescriptor@33 {
+    _resolutionResults = OverloadResolutionResultsImpl@35
+    _type = JetTypeImpl@34
+    _valueArguments(ValueParameterDescriptorImpl@36['strategy']) = null
+}
+
+LazyAnnotationDescriptor@37 {
+    _resolutionResults = OverloadResolutionResultsImpl@39
+    _type = JetTypeImpl@38
+    _valueArguments(ValueParameterDescriptorImpl@36['strategy']) = null
+}
+
+LazyAnnotationDescriptor@40 {
+    _resolutionResults = OverloadResolutionResultsImpl@42
+    _type = JetTypeImpl@41
+    _valueArguments(ValueParameterDescriptorImpl@36['strategy']) = null
+}
+
+LazyAnnotationDescriptor@43 {
+    _resolutionResults = OverloadResolutionResultsImpl@45
+    _type = JetTypeImpl@44
+    _valueArguments(ValueParameterDescriptorImpl@36['strategy']) = null
+}
+
+LazyJavaPackageFragmentProvider@0 {
+    _packageFragments('<root>': FqName@1) = LazyJavaPackageFragment@2['<root>']
+    _packageFragments('Z': FqName@14) = null
+    _packageFragments('Z2': FqName@13) = null
+    _packageFragments('inline': FqName@10) = null
+    _packageFragments('java': FqName@3) = LazyJavaPackageFragment@4['java']
+    _packageFragments('java.lang': FqName@5) = LazyJavaPackageFragment@6['lang']
+    _packageFragments('java.lang.inline': FqName@12) = null
+    _packageFragments('kotlin': FqName@7) = null
+    _packageFragments('kotlin.inline': FqName@11) = null
+    _packageFragments('kotlin.io': FqName@9) = null
+    _packageFragments('kotlin.jvm': FqName@8) = null
+}
+
+LazyJavaPackageFragment@2['<root>'] {
+    _functions('Z': Name@24) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@22
+    _functions('privateFun': Name@25) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@22
+    classes('Z': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@22
+    classes('inline': Name@21) = null // through LazyPackageFragmentScopeForJavaPackage@22
+    classes('privateFun': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@22
+    classes('privateProperty': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@22
+    deserializedPackageScope = JetScope$1@17 // through LazyPackageFragmentScopeForJavaPackage@22
+    memberIndex = computeMemberIndex$1@23 // through LazyPackageFragmentScopeForJavaPackage@22
+}
+
+LazyJavaPackageFragment@4['java'] {
+    _functions('lang': Name@19) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@16
+    classes('lang': Name@15) = null // through LazyPackageFragmentScopeForJavaPackage@16
+    deserializedPackageScope = JetScope$1@17 // through LazyPackageFragmentScopeForJavaPackage@16
+    memberIndex = computeMemberIndex$1@18 // through LazyPackageFragmentScopeForJavaPackage@16
+}
+
+LazyJavaPackageFragment@6['lang'] {
+    _functions('Z': Name@24) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    _functions('privateFun': Name@25) = EmptyList@20[empty] // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('Z': Name@24) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('privateFun': Name@25) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    classes('privateProperty': Name@26) = null // through LazyPackageFragmentScopeForJavaPackage@31
+    deserializedPackageScope = JetScope$1@17 // through LazyPackageFragmentScopeForJavaPackage@31
+    memberIndex = computeMemberIndex$1@32 // through LazyPackageFragmentScopeForJavaPackage@31
+}

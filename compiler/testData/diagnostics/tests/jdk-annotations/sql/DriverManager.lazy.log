@@ -1,0 +1,465 @@
+LazyJavaClassDescriptor@159['AutoCloseable'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@13['AutoCloseable']
+}
+
+LazyJavaClassDescriptor@63['ClassLoader'] {
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@41['ClassLoader']
+}
+
+LazyJavaClassDescriptor@29['Connection'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@0['Connection']
+}
+
+LazyJavaClassDescriptor@23['Driver'] {
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Driver']
+}
+
+LazyJavaClassDescriptor@20['DriverManager'] {
+    _functionTypeForSamInterface = null
+    _functions('getConnection': Name@167) = ArrayList@168[4] { JavaMethodDescriptor@169['getConnection'], JavaMethodDescriptor@170['getConnection'], JavaMethodDescriptor@171['getConnection'], ... } // through LazyJavaStaticClassScope@163
+    _functions('getConnection': Name@167) = EmptyList@27[empty] // through LazyJavaClassMemberScope@165
+    _functions('getDriver': Name@173) = ArrayList@174[1] { JavaMethodDescriptor@175['getDriver'] } // through LazyJavaStaticClassScope@163
+    _functions('getDriver': Name@173) = EmptyList@27[empty] // through LazyJavaClassMemberScope@165
+    _functions('getDrivers': Name@179) = ArrayList@180[1] { JavaMethodDescriptor@181['getDrivers'] } // through LazyJavaStaticClassScope@163
+    _functions('getDrivers': Name@179) = EmptyList@27[empty] // through LazyJavaClassMemberScope@165
+    _functions('registerDriver': Name@176) = ArrayList@177[1] { JavaMethodDescriptor@178['registerDriver'] } // through LazyJavaStaticClassScope@163
+    _functions('registerDriver': Name@176) = EmptyList@27[empty] // through LazyJavaClassMemberScope@165
+    _properties('getConnection': Name@167) = EmptyList@27[empty] // through LazyJavaClassMemberScope@165
+    _properties('getConnection': Name@167) = EmptyList@27[empty] // through LazyJavaStaticClassScope@163
+    _properties('getDriver': Name@173) = EmptyList@27[empty] // through LazyJavaClassMemberScope@165
+    _properties('getDriver': Name@173) = EmptyList@27[empty] // through LazyJavaStaticClassScope@163
+    _properties('getDrivers': Name@179) = EmptyList@27[empty] // through LazyJavaClassMemberScope@165
+    _properties('getDrivers': Name@179) = EmptyList@27[empty] // through LazyJavaStaticClassScope@163
+    _properties('registerDriver': Name@176) = EmptyList@27[empty] // through LazyJavaClassMemberScope@165
+    _properties('registerDriver': Name@176) = EmptyList@27[empty] // through LazyJavaStaticClassScope@163
+    _typeConstructor = LazyJavaClassTypeConstructor@58['DriverManager']
+    enumEntryIndex = LinkedHashMap@166 // through LazyJavaClassMemberScope@165
+    memberIndex = computeMemberIndex$1@172 // through LazyJavaClassMemberScope@165
+    memberIndex = computeMemberIndex$1@162 // through LazyJavaStaticClassScope@163
+    nestedClassIndex = LinkedHashMap@164 // through LazyJavaClassMemberScope@165
+    nestedClasses('getConnection': Name@167) = null // through LazyJavaClassMemberScope@165
+    nestedClasses('getDriver': Name@173) = null // through LazyJavaClassMemberScope@165
+    nestedClasses('getDrivers': Name@179) = null // through LazyJavaClassMemberScope@165
+    nestedClasses('registerDriver': Name@176) = null // through LazyJavaClassMemberScope@165
+}
+
+LazyJavaClassDescriptor@35['Enumeration'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@51['Enumeration']
+}
+
+LazyJavaClassDescriptor@32['Properties'] {
+    _functionTypeForSamInterface = null
+    _typeConstructor = LazyJavaClassTypeConstructor@39['Properties']
+}
+
+LazyJavaClassTypeConstructor@13['AutoCloseable'] {
+    _supertypes = ArrayList@121[1] { JetTypeImpl@60 }
+}
+
+LazyJavaClassTypeConstructor@41['ClassLoader'] {
+    _parameters = ArrayList@42[empty]
+}
+
+LazyJavaClassTypeConstructor@0['Connection'] {
+    _parameters = ArrayList@1[empty]
+    _supertypes = ArrayList@2[1] { LazyJavaClassifierType@3['AutoCloseable'] }
+}
+
+LazyJavaClassTypeConstructor@16['Driver'] {
+    _parameters = ArrayList@214[empty]
+    _supertypes = ArrayList@215[1] { JetTypeImpl@60 }
+}
+
+LazyJavaClassTypeConstructor@58['DriverManager'] {
+    _supertypes = ArrayList@59[1] { JetTypeImpl@60 }
+}
+
+LazyJavaClassTypeConstructor@51['Enumeration'] {
+    _parameters = ArrayList@111[1] { LazyJavaTypeParameterDescriptor@6['E'] }
+    _supertypes = ArrayList@112[1] { JetTypeImpl@60 }
+}
+
+LazyJavaClassTypeConstructor@39['Properties'] {
+    _parameters = ArrayList@61[empty]
+    _supertypes = ArrayList@62[1] { JetTypeImpl@60 }
+}
+
+LazyJavaClassifierType@3['AutoCloseable'] {
+    _typeConstructor = LazyJavaClassTypeConstructor@13['AutoCloseable']
+    classifier = JavaClassImpl@12['AutoCloseable']
+}
+
+LazyJavaClassifierType@108['ClassLoader'] {
+    _arguments = ArrayList@110[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@41['ClassLoader']
+    classifier = JavaClassImpl@109['ClassLoader']
+}
+
+LazyJavaClassifierType@197['ClassLoader'] {
+    _arguments = ArrayList@198[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@41['ClassLoader']
+    classifier = JavaClassImpl@109['ClassLoader']
+}
+
+LazyJavaClassifierType@52['Connection'] {
+    _arguments = ArrayList@54[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@0['Connection']
+    classifier = JavaClassImpl@53['Connection']
+}
+
+LazyJavaClassifierType@55['Connection'] {
+    _arguments = ArrayList@57[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@0['Connection']
+    classifier = JavaClassImpl@56['Connection']
+}
+
+LazyJavaClassifierType@79['Connection'] {
+    _arguments = ArrayList@81[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@0['Connection']
+    classifier = JavaClassImpl@80['Connection']
+}
+
+LazyJavaClassifierType@97['Connection'] {
+    _arguments = ArrayList@98[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@0['Connection']
+    classifier = JavaClassImpl@56['Connection']
+}
+
+LazyJavaClassifierType@105['Connection'] {
+    _arguments = ArrayList@107[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@0['Connection']
+    classifier = JavaClassImpl@106['Connection']
+}
+
+LazyJavaClassifierType@185['Connection'] {
+    _arguments = ArrayList@186[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@0['Connection']
+    classifier = JavaClassImpl@80['Connection']
+}
+
+LazyJavaClassifierType@199['Connection'] {
+    _arguments = ArrayList@200[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@0['Connection']
+    classifier = JavaClassImpl@106['Connection']
+}
+
+LazyJavaClassifierType@203['Connection'] {
+    _arguments = ArrayList@204[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@0['Connection']
+    classifier = JavaClassImpl@53['Connection']
+}
+
+LazyJavaClassifierType@14['Driver'] {
+    _arguments = ArrayList@17[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Driver']
+    classifier = JavaClassImpl@15['Driver']
+}
+
+LazyJavaClassifierType@45['Driver'] {
+    _arguments = ArrayList@47[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Driver']
+    classifier = JavaClassImpl@46['Driver']
+}
+
+LazyJavaClassifierType@70['Driver'] {
+    _arguments = ArrayList@72[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Driver']
+    classifier = JavaClassImpl@71['Driver']
+}
+
+LazyJavaClassifierType@77['Driver'] {
+    _arguments = ArrayList@78[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Driver']
+    classifier = JavaClassImpl@46['Driver']
+}
+
+LazyJavaClassifierType@101['Driver'] {
+    _arguments = ArrayList@102[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Driver']
+    classifier = JavaClassImpl@15['Driver']
+}
+
+LazyJavaClassifierType@122['Driver'] {
+    _arguments = ArrayList@123[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Driver']
+    classifier = JavaClassImpl@71['Driver']
+}
+
+LazyJavaClassifierType@126['Driver'] {
+    _arguments = ArrayList@128[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Driver']
+    classifier = JavaClassImpl@127['Driver']
+}
+
+LazyJavaClassifierType@132['Driver'] {
+    _arguments = ArrayList@133[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@16['Driver']
+    classifier = JavaClassImpl@127['Driver']
+}
+
+LazyJavaClassifierType@73['Enumeration<Driver>'] {
+    _arguments = ArrayList@75[1] { TypeProjectionImpl@76 }
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@51['Enumeration']
+    classifier = JavaClassImpl@74['Enumeration']
+}
+
+LazyJavaClassifierType@182['Enumeration<Driver>'] {
+    _arguments = ArrayList@183[1] { TypeProjectionImpl@184 }
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@51['Enumeration']
+    classifier = JavaClassImpl@74['Enumeration']
+}
+
+LazyJavaClassifierType@43['Hashtable<Object, Object>'] {
+    _typeConstructor = TypeConstructorImpl$1@44
+    classifier = null
+}
+
+LazyJavaClassifierType@118['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@120
+    classifier = JavaClassImpl@119['Object']
+}
+
+LazyJavaClassifierType@201['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@120
+    classifier = JavaClassImpl@202['Object']
+}
+
+LazyJavaClassifierType@205['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@120
+    classifier = JavaClassImpl@206['Object']
+}
+
+LazyJavaClassifierType@220['Object'] {
+    _typeConstructor = DeserializedClassTypeConstructor@120
+    classifier = JavaClassImpl@221['Object']
+}
+
+LazyJavaClassifierType@36['Properties'] {
+    _arguments = ArrayList@40[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@39['Properties']
+    classifier = JavaClassImpl@38['Properties']
+}
+
+LazyJavaClassifierType@113['Properties'] {
+    _arguments = ArrayList@115[empty]
+    _nullable = Boolean@37
+    _typeConstructor = LazyJavaClassTypeConstructor@39['Properties']
+    classifier = JavaClassImpl@114['Properties']
+}
+
+LazyJavaClassifierType@187['Properties'] {
+    _arguments = ArrayList@188[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@39['Properties']
+    classifier = JavaClassImpl@38['Properties']
+}
+
+LazyJavaClassifierType@189['Properties'] {
+    _arguments = ArrayList@190[empty]
+    _nullable = Boolean@8
+    _typeConstructor = LazyJavaClassTypeConstructor@39['Properties']
+    classifier = JavaClassImpl@114['Properties']
+}
+
+LazyJavaClassifierType@7['String'] {
+    _arguments = ArrayList@11[empty]
+    _nullable = Boolean@8
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@9['String']
+}
+
+LazyJavaClassifierType@48['String'] {
+    _arguments = ArrayList@50[empty]
+    _nullable = Boolean@37
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@49['String']
+}
+
+LazyJavaClassifierType@67['String'] {
+    _arguments = ArrayList@69[empty]
+    _nullable = Boolean@37
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@68['String']
+}
+
+LazyJavaClassifierType@82['String'] {
+    _arguments = ArrayList@84[empty]
+    _nullable = Boolean@8
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@83['String']
+}
+
+LazyJavaClassifierType@85['String'] {
+    _arguments = ArrayList@87[empty]
+    _nullable = Boolean@8
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@86['String']
+}
+
+LazyJavaClassifierType@88['String'] {
+    _arguments = ArrayList@89[empty]
+    _nullable = Boolean@8
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@68['String']
+}
+
+LazyJavaClassifierType@90['String'] {
+    _arguments = ArrayList@92[empty]
+    _nullable = Boolean@8
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@91['String']
+}
+
+LazyJavaClassifierType@93['String'] {
+    _arguments = ArrayList@94[empty]
+    _nullable = Boolean@37
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@83['String']
+}
+
+LazyJavaClassifierType@95['String'] {
+    _arguments = ArrayList@96[empty]
+    _nullable = Boolean@8
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@49['String']
+}
+
+LazyJavaClassifierType@99['String'] {
+    _arguments = ArrayList@100[empty]
+    _nullable = Boolean@37
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@86['String']
+}
+
+LazyJavaClassifierType@103['String'] {
+    _arguments = ArrayList@104[empty]
+    _nullable = Boolean@37
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@91['String']
+}
+
+LazyJavaClassifierType@124['String'] {
+    _arguments = ArrayList@125[empty]
+    _nullable = Boolean@37
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@9['String']
+}
+
+LazyJavaClassifierType@129['String'] {
+    _arguments = ArrayList@131[empty]
+    _nullable = Boolean@8
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@130['String']
+}
+
+LazyJavaClassifierType@216['String'] {
+    _arguments = ArrayList@217[empty]
+    _nullable = Boolean@37
+    _typeConstructor = DeserializedClassTypeConstructor@10
+    classifier = JavaClassImpl@130['String']
+}
+
+LazyJavaClassifierType@116['Wrapper'] {
+    _typeConstructor = TypeConstructorImpl$1@117
+    classifier = null
+}
+
+LazyJavaPackageFragmentProvider@134 {
+    _packageFragments('<root>': FqName@135) = LazyJavaPackageFragment@136['<root>']
+    _packageFragments('DriverManager': FqName@155) = null
+    _packageFragments('String': FqName@147) = null
+    _packageFragments('java': FqName@137) = LazyJavaPackageFragment@138['java']
+    _packageFragments('java.lang': FqName@139) = LazyJavaPackageFragment@140['lang']
+    _packageFragments('java.lang.DriverManager': FqName@157) = null
+    _packageFragments('java.lang.String': FqName@149) = null
+    _packageFragments('java.sql': FqName@144) = LazyJavaPackageFragment@18['sql']
+    _packageFragments('java.sql.Connection': FqName@158) = null
+    _packageFragments('java.sql.Driver': FqName@153) = null
+    _packageFragments('java.sql.DriverManager': FqName@145) = null
+    _packageFragments('java.util': FqName@150) = LazyJavaPackageFragment@30['util']
+    _packageFragments('java.util.Enumeration': FqName@160) = null
+    _packageFragments('java.util.Properties': FqName@151) = null
+    _packageFragments('kotlin': FqName@141) = null
+    _packageFragments('kotlin.DriverManager': FqName@156) = null
+    _packageFragments('kotlin.String': FqName@148) = null
+    _packageFragments('kotlin.io': FqName@143) = null
+    _packageFragments('kotlin.jvm': FqName@142) = null
+    topLevelClasses(JavaClassImpl@12['AutoCloseable']) = LazyJavaClassDescriptor@159['AutoCloseable']
+    topLevelClasses(JavaClassImpl@109['ClassLoader']) = LazyJavaClassDescriptor@63['ClassLoader']
+    topLevelClasses(JavaClassImpl@106['Connection']) = LazyJavaClassDescriptor@29['Connection']
+    topLevelClasses(JavaClassImpl@154['Driver']) = LazyJavaClassDescriptor@23['Driver']
+    topLevelClasses(JavaClassImpl@146['DriverManager']) = LazyJavaClassDescriptor@20['DriverManager']
+    topLevelClasses(JavaClassImpl@161['Enumeration']) = LazyJavaClassDescriptor@35['Enumeration']
+    topLevelClasses(JavaClassImpl@152['Properties']) = LazyJavaClassDescriptor@32['Properties']
+}
+
+LazyJavaPackageFragment@136['<root>'] {
+    _functions('java': Name@195) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@192
+    classes('DriverManager': Name@196) = null // through LazyPackageFragmentScopeForJavaPackage@192
+    classes('String': Name@193) = null // through LazyPackageFragmentScopeForJavaPackage@192
+    classes('java': Name@191) = null // through LazyPackageFragmentScopeForJavaPackage@192
+    deserializedPackageScope = JetScope$1@24 // through LazyPackageFragmentScopeForJavaPackage@192
+    memberIndex = computeMemberIndex$1@194 // through LazyPackageFragmentScopeForJavaPackage@192
+}
+
+LazyJavaPackageFragment@138['java'] {
+    _functions('lang': Name@212) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@208
+    _functions('sql': Name@213) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@208
+    classes('lang': Name@207) = null // through LazyPackageFragmentScopeForJavaPackage@208
+    classes('sql': Name@209) = null // through LazyPackageFragmentScopeForJavaPackage@208
+    classes('util': Name@210) = null // through LazyPackageFragmentScopeForJavaPackage@208
+    deserializedPackageScope = JetScope$1@24 // through LazyPackageFragmentScopeForJavaPackage@208
+    memberIndex = computeMemberIndex$1@211 // through LazyPackageFragmentScopeForJavaPackage@208
+}
+
+LazyJavaPackageFragment@140['lang'] {
+    classes('java': Name@218) = null // through LazyPackageFragmentScopeForJavaPackage@219
+    deserializedPackageScope = JetScope$1@24 // through LazyPackageFragmentScopeForJavaPackage@219
+}
+
+LazyJavaPackageFragment@18['sql'] {
+    _functions('DriverManager': Name@26) = EmptyList@27[empty] // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('Connection': Name@28) = LazyJavaClassDescriptor@29['Connection'] // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('Driver': Name@22) = LazyJavaClassDescriptor@23['Driver'] // through LazyPackageFragmentScopeForJavaPackage@21
+    classes('DriverManager': Name@19) = LazyJavaClassDescriptor@20['DriverManager'] // through LazyPackageFragmentScopeForJavaPackage@21
+    deserializedPackageScope = JetScope$1@24 // through LazyPackageFragmentScopeForJavaPackage@21
+    memberIndex = computeMemberIndex$1@25 // through LazyPackageFragmentScopeForJavaPackage@21
+}
+
+LazyJavaPackageFragment@30['util'] {
+    classes('Enumeration': Name@34) = LazyJavaClassDescriptor@35['Enumeration'] // through LazyPackageFragmentScopeForJavaPackage@33
+    classes('Properties': Name@31) = LazyJavaClassDescriptor@32['Properties'] // through LazyPackageFragmentScopeForJavaPackage@33
+}
+
+LazyJavaTypeParameterDescriptor@6['E'] {
+    typeConstructor = AbstractLazyTypeParameterDescriptor$1@66
+    upperBounds = LinkedHashSet@64[1] { NullableType@65 }
+    upperBoundsAsType = NullableType@65
+}
+
+LazyJavaTypeParameterResolver@4 {
+    resolve(JavaTypeParameterImpl@5['E']) = LazyJavaTypeParameterDescriptor@6['E']
+}
