@@ -151,23 +151,29 @@ public class CallExpressionResolver {
             @NotNull ClassifierDescriptor classifier,
             @NotNull ResolutionContext context
     ) {
-        if (isLHSOfDot(expression) && classifier instanceof ClassDescriptor) {
-            List<JetScope> scopes = new ArrayList<JetScope>(3);
-
-            scopes.add(classObjectType.getMemberScope());
-            scopes.add(getStaticNestedClassesScope((ClassDescriptor) classifier));
-
-            Name referencedName = expression.getReferencedNameAsName();
-            NamespaceDescriptor namespace = context.scope.getNamespace(referencedName);
-            if (namespace != null) {
-                //for enums loaded from java binaries
-                scopes.add(namespace.getMemberScope());
-            }
-
-            JetScope scope = new ChainedScope(classifier, scopes.toArray(new JetScope[scopes.size()]));
-            return new NamespaceType(referencedName, scope, new ExpressionReceiver(expression, classObjectType));
+        if (!isLHSOfDot(expression) || !(classifier instanceof ClassDescriptor)) {
+            return classObjectType;
         }
-        return classObjectType;
+        ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
+
+        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            return classObjectType;
+        }
+
+        List<JetScope> scopes = new ArrayList<JetScope>(3);
+
+        scopes.add(classObjectType.getMemberScope());
+        scopes.add(getStaticNestedClassesScope(classDescriptor));
+
+        Name referencedName = expression.getReferencedNameAsName();
+        NamespaceDescriptor namespace = context.scope.getNamespace(referencedName);
+        if (namespace != null) {
+            //for enums loaded from java binaries
+            scopes.add(namespace.getMemberScope());
+        }
+
+        JetScope scope = new ChainedScope(classifier, scopes.toArray(new JetScope[scopes.size()]));
+        return new NamespaceType(referencedName, scope, new ExpressionReceiver(expression, classObjectType));
     }
 
     private boolean furtherNameLookup(
