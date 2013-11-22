@@ -46,7 +46,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
 
     private static final FqName NAMESPACE = new FqName("test");
 
-    private BindingContext context;
+    protected BindingContext context;
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -115,7 +115,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     @NotNull
-    private static PropertyDescriptor getPropertyDescriptor(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull String name) {
+    protected static PropertyDescriptor getPropertyDescriptor(@NotNull NamespaceDescriptor namespaceDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
         JetScope memberScope = namespaceDescriptor.getMemberScope();
         Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName);

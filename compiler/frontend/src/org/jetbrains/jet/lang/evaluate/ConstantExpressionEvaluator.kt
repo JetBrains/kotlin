@@ -340,7 +340,11 @@ private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
     return when (value) {
         null -> null
         is StringValue -> value
-        else -> StringValue(value.getValue().toString())
+        is IntValue, is ByteValue, is ShortValue, is LongValue,
+        is CharValue,
+        is DoubleValue, is FloatValue,
+        is BooleanValue -> StringValue(value.getValue().toString())
+        else -> null
     }
 }
 
