@@ -35,6 +35,8 @@ import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import kotlin.test.assertTrue
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.PsiSearchScopeUtil
 
 fun PsiElement.getParentByTypeAndPredicate<T: PsiElement>(
         parentClass : Class<T>, strict : Boolean = false, predicate: (T) -> Boolean
@@ -148,3 +150,5 @@ fun <T: JetClassOrObject> StubBasedPsiElementBase<out PsiJetClassOrObjectStub<T>
 
     return result
 }
+
+fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
