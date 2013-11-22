@@ -90,7 +90,7 @@ class ArraysJVMTest {
         expect(2000000000000, { longArray(3000000000000, 2000000000000).min() })
         expect(1, { byteArray(1, 3, 2).min() })
         expect(2, { shortArray(3, 2).min() })
-        expect(2.0, { floatArray(3.0, 2.0).min() })
+        expect(2.0.toFloat(), { floatArray(3.0.toFloat(), 2.0.toFloat()).min() })
         expect(2.0, { doubleArray(2.0, 3.0).min() })
     }
 
@@ -101,7 +101,7 @@ class ArraysJVMTest {
         expect(3000000000000, { longArray(3000000000000, 2000000000000).max() })
         expect(3, { byteArray(1, 3, 2).max() })
         expect(3, { shortArray(3, 2).max() })
-        expect(3.0, { floatArray(3.0, 2.0).max() })
+        expect(3.0.toFloat(), { floatArray(3.0.toFloat(), 2.0.toFloat()).max() })
         expect(3.0, { doubleArray(2.0, 3.0).max() })
     }
 
@@ -112,7 +112,7 @@ class ArraysJVMTest {
         expect(2000000000000, { longArray(3000000000000, 2000000000000).minBy { it + 1 } })
         expect(1, { byteArray(1, 3, 2).minBy { it * it } })
         expect(3, { shortArray(3, 2).minBy { "a" } })
-        expect(2.0, { floatArray(3.0, 2.0).minBy { it.toString() } })
+        expect(2.0.toFloat(), { floatArray(3.0.toFloat(), 2.0.toFloat()).minBy { it.toString() } })
         expect(2.0, { doubleArray(2.0, 3.0).minBy { Math.sqrt(it) } })
     }
 
@@ -128,7 +128,7 @@ class ArraysJVMTest {
         expect(3000000000000, { longArray(3000000000000, 2000000000000).maxBy { it + 1 } })
         expect(3, { byteArray(1, 3, 2).maxBy { it * it } })
         expect(3, { shortArray(3, 2).maxBy { "a" } })
-        expect(3.0, { floatArray(3.0, 2.0).maxBy { it.toString() } })
+        expect(3.0.toFloat(), { floatArray(3.0.toFloat(), 2.0.toFloat()).maxBy { it.toString() } })
         expect(3.0, { doubleArray(2.0, 3.0).maxBy { Math.sqrt(it) } })
     }
 
@@ -144,6 +144,6 @@ class ArraysJVMTest {
         expect(200) { byteArray(100, 100).sum() }
         expect(50000) { shortArray(20000, 30000).sum() }
         expect(3000000000000) { longArray(1000000000000, 2000000000000).sum() }
-        expect(3.0) { floatArray(1.0, 2.0).sum() }
+        expect(3.0.toFloat()) { floatArray(1.0.toFloat(), 2.0.toFloat()).sum() }
     }
 }

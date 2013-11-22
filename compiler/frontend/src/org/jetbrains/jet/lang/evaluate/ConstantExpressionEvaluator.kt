@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.types.TypeUtils
 import java.lang.Short as JShort
 import java.lang.Byte as JByte
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.jet.JetNodeTypes
 
 [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
 public class ConstantExpressionEvaluator private (val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
@@ -71,7 +72,19 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 
     override fun visitConstantExpression(expression: JetConstantExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        return trace.get(BindingContext.COMPILE_TIME_VALUE, expression)
+        val text = expression.getText()
+        if (text == null) return null
+        val result: Any? = when (expression.getNode().getElementType()) {
+            JetNodeTypes.INTEGER_CONSTANT -> CompileTimeConstantResolver.parseLongValue(text)
+            JetNodeTypes.FLOAT_CONSTANT -> CompileTimeConstantResolver.parseDoubleValue(text)
+            JetNodeTypes.BOOLEAN_CONSTANT -> CompileTimeConstantResolver.parseBooleanValue(text)
+            JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantResolver.parseCharValue(text)
+            JetNodeTypes.NULL -> null
+            else -> throw IllegalArgumentException("Unsupported constant: " + expression)
+        }
+        if (result == null && expression.getNode().getElementType() == JetNodeTypes.NULL) return NullValue.NULL
+
+        return createCompileTimeConstant(result, expectedType)
     }
 
     override fun visitParenthesizedExpression(expression: JetParenthesizedExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -164,7 +177,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         else if (argumentsEntrySet.size() == 1) {
             val (parameter, argument) = argumentsEntrySet.first()
 
-            val argumentForParameter = createOperationArgumentForFristParameter(argument, parameter)
+            val argumentForParameter = createOperationArgumentForFirstParameter(argument, parameter)
             if (argumentForParameter == null) return null
 
             val function = binaryOperations[BinaryOperationKey(argumentForReceiver.ctcType, argumentForParameter.ctcType, resultingDescriptorName)]
@@ -258,7 +271,6 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 
     private fun resolveArguments(valueArguments: List<ValueArgument>, expectedType: JetType): List<CompileTimeConstant<*>> {
-        //todo flatMap
         val constants = arrayListOf<CompileTimeConstant<*>>()
         for (argument in valueArguments) {
             val argumentExpression = argument.getArgumentExpression()
@@ -298,7 +310,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         return OperationArgument(receiverValue, receiverCompileTimeType)
     }
 
-    private fun createOperationArgumentForFristParameter(argument: ResolvedValueArgument, parameter: ValueParameterDescriptor): OperationArgument? {
+    private fun createOperationArgumentForFirstParameter(argument: ResolvedValueArgument, parameter: ValueParameterDescriptor): OperationArgument? {
         val argumentCompileTimeType = getCompileTimeType(parameter.getType())
         if (argumentCompileTimeType == null) return null
 
@@ -348,44 +360,39 @@ private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
     }
 }
 
-private fun createCompileTimeConstant(value: Any?, expectedType: JetType?): CompileTimeConstant<*>? {
+public fun createCompileTimeConstant(value: Any?, expectedType: JetType?): CompileTimeConstant<*>? {
     return when(value) {
         null -> null
         is Byte, is Short, is Int, is Long -> getIntegerValue((value as Number).toLong(), expectedType ?: TypeUtils.NO_EXPECTED_TYPE)
         is Char -> CharValue(value)
-        is Float -> if (CompileTimeConstantResolver.noExpectedTypeOrError(expectedType) ||
-        expectedType == KotlinBuiltIns.getInstance().getDoubleType()) DoubleValue(value.toDouble())
-        else FloatValue(value)
+        is Float -> FloatValue(value)
         is Double -> DoubleValue(value)
-        is Boolean -> if (value) BooleanValue.TRUE else BooleanValue.FALSE
+        is Boolean -> BooleanValue.valueOf(value)
         is String -> StringValue(value)
         else -> null
     }
 }
+
 private fun getIntegerValue(value: Long, expectedType: JetType): CompileTimeConstant<*>? {
-    if (CompileTimeConstantResolver.noExpectedTypeOrError(expectedType)) {
-        if (Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE) {
-            return IntValue(value.toInt())
-        }
-
-        return LongValue(value)
-    }
-
     fun defaultIntegerValue(value: Long) = when (value) {
-        in Integer.MIN_VALUE..Integer.MAX_VALUE.toLong() -> IntValue(value.toInt())
+        value.toInt().toLong() -> IntValue(value.toInt())
         else -> LongValue(value)
     }
 
+    if (CompileTimeConstantResolver.noExpectedTypeOrError(expectedType)) {
+        return defaultIntegerValue(value)
+    }
+
     val builtIns = KotlinBuiltIns.getInstance()
+
     return when (TypeUtils.makeNotNullable(expectedType)) {
-        builtIns.getIntType() -> IntValue(value.toInt())
         builtIns.getLongType() -> LongValue(value)
         builtIns.getShortType() -> when (value) {
-            in JShort.MIN_VALUE..JShort.MAX_VALUE.toLong() -> ShortValue(value.toShort())
+            value.toShort().toLong() -> ShortValue(value.toShort())
             else -> defaultIntegerValue(value)
         }
         builtIns.getByteType() -> when (value) {
-            in JByte.MIN_VALUE..JByte.MAX_VALUE.toLong() -> ByteValue(value.toByte())
+            value.toByte().toLong() -> ByteValue(value.toByte())
             else -> defaultIntegerValue(value)
         }
         builtIns.getCharType() -> IntValue(value.toInt())

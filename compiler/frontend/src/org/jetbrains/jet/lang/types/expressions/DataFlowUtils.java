@@ -20,7 +20,6 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -166,11 +165,7 @@ public class DataFlowUtils {
         }
 
         if (expression instanceof JetConstantExpression) {
-            Diagnostic diagnostic =
-                    new CompileTimeConstantResolver().checkConstantExpressionType((JetConstantExpression) expression, expectedType);
-            if (diagnostic != null) {
-                trace.report(diagnostic);
-            }
+            new CompileTimeConstantResolver(trace, true).checkConstantExpressionType((JetConstantExpression) expression, expectedType);
             return expressionType;
         }
 

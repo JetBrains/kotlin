@@ -71,7 +71,7 @@ class ArraysTest {
     test fun floatArray() {
         val arr = FloatArray(2)
 
-        val expected: Float = 0.0
+        val expected: Float = 0.0.toFloat()
         assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])

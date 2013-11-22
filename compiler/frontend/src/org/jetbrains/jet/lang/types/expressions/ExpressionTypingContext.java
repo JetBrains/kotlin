@@ -120,7 +120,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
 
     public CompileTimeConstantResolver getCompileTimeConstantResolver() {
         if (compileTimeConstantResolver == null) {
-            compileTimeConstantResolver = new CompileTimeConstantResolver();
+            compileTimeConstantResolver = new CompileTimeConstantResolver(trace, false);
         }
         return compileTimeConstantResolver;
     }

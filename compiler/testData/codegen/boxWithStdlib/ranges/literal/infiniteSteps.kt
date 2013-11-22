@@ -17,7 +17,7 @@ fun box(): String {
         list2.add(i)
         if (list2.size() > 23) break
     }
-    if (list2 != listOf<Float>(0.0)) {
+    if (list2 != listOf<Float>(0.0.toFloat())) {
         return "Wrong elements for 0.0.toFloat()..5.0.toFloat() step j.Float.POSITIVE_INFINITY: $list2"
     }
 
@@ -35,7 +35,7 @@ fun box(): String {
         list4.add(i)
         if (list4.size() > 23) break
     }
-    if (list4 != listOf<Float>(5.0)) {
+    if (list4 != listOf<Float>(5.0.toFloat())) {
         return "Wrong elements for 5.0.toFloat() downTo 0.0.toFloat() step j.Float.POSITIVE_INFINITY: $list4"
     }
 

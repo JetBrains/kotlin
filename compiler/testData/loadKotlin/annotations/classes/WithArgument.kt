@@ -15,6 +15,6 @@ ByteAnno(42)
 LongAnno(42)
 CharAnno('A')
 BooleanAnno(false)
-FloatAnno(3.14)
+FloatAnno(3.14.toFloat())
 DoubleAnno(3.14)
 class Class

@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
@@ -71,7 +72,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver.ErrorValueWithDiagnostic;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
@@ -134,7 +134,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         IElementType elementType = expression.getNode().getElementType();
         String text = expression.getNode().getText();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
 
         if (noExpectedType(context.expectedType) && context.contextDependency == DEPENDENT) {
             if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
@@ -150,15 +149,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
         }
-
-        CompileTimeConstant<?> value = compileTimeConstantResolver.getCompileTimeConstant(expression, context.expectedType);
-        if (value instanceof ErrorValue) {
-            assert value instanceof ErrorValueWithDiagnostic;
-            //noinspection CastConflictsWithInstanceof
-            context.trace.report(((ErrorValueWithDiagnostic)value).getDiagnostic());
+        CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
+        boolean hasError = compileTimeConstantResolver.checkConstantExpressionType(expression, context.expectedType);
+        if (hasError) {
             return JetTypeInfo.create(getDefaultType(elementType), context.dataFlowInfo);
         }
-        context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, value);
+        CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
+        assert value != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
         return DataFlowUtils.checkType(value.getType(builtIns), expression, context, context.dataFlowInfo);
     }
 
@@ -1173,10 +1170,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, ExpressionTypingContext contextWithExpectedType) {
         final ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
-        final StringBuilder builder = new StringBuilder();
-        final boolean[] isCompileTimeValue = new boolean[] { true };
         final DataFlowInfo[] dataFlowInfo = new DataFlowInfo[] { context.dataFlowInfo };
-
         for (JetStringTemplateEntry entry : expression.getEntries()) {
             entry.accept(new JetVisitorVoid() {
 
@@ -1187,32 +1181,18 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                         JetTypeInfo typeInfo = facade.getTypeInfo(entryExpression, context.replaceDataFlowInfo(dataFlowInfo[0]));
                         dataFlowInfo[0] = typeInfo.getDataFlowInfo();
                     }
-                    isCompileTimeValue[0] = false;
-                }
-
-                @Override
-                public void visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry) {
-                    builder.append(entry.getText());
                 }
 
                 @Override
                 public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
-                    CompileTimeConstant<?> character = CompileTimeConstantResolver.escapedStringToCharValue(entry.getText(), entry);
-                    if (character instanceof ErrorValue) {
-                        assert character instanceof ErrorValueWithDiagnostic;
-                        //noinspection CastConflictsWithInstanceof
-                        context.trace.report(((ErrorValueWithDiagnostic) character).getDiagnostic());
-                        isCompileTimeValue[0] = false;
-                    }
-                    else {
-                        builder.append(((CharValue) character).getValue());
+                    Character character = CompileTimeConstantResolver.escapedStringToCharValue(entry.getText());
+                    if (character == null) {
+                        context.trace.report(Errors.ILLEGAL_ESCAPE.on(entry, entry));
                     }
                 }
             });
         }
-        if (isCompileTimeValue[0]) {
-            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new StringValue(builder.toString()));
-        }
+        ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, contextWithExpectedType.expectedType);
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getStringType(), expression, contextWithExpectedType, dataFlowInfo[0]);
     }
 

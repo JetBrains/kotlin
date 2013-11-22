@@ -244,10 +244,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         try {
             if (selector instanceof JetExpression) {
                 JetExpression expression = (JetExpression) selector;
-                CompileTimeConstant<?> constant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
-                if (constant != null) {
-                    return StackValue.constant(constant.getValue(), expressionType(expression));
-                }
                 JavaClassDescriptor samInterface = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
                 if (samInterface != null) {
                     return genSamInterfaceValue(expression, samInterface, visitor);

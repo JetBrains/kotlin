@@ -22,15 +22,17 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
-import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -299,11 +301,7 @@ public class ArgumentTypeResolver {
             }
             return;
         }
-        CompileTimeConstant<?> constant =
-                new CompileTimeConstantResolver().getCompileTimeConstant((JetConstantExpression) expression, numberType);
 
-        if (!(constant instanceof ErrorValue)) {
-            context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, constant);
-        }
+        ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, numberType);
     }
 }

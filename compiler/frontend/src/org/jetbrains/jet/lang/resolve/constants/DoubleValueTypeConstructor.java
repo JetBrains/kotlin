@@ -34,7 +34,7 @@ public class DoubleValueTypeConstructor extends NumberValueTypeConstructor {
         // order of types matters
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
         // for expected type 'Any' result type 'Double' should be returned
-        supertypes = Lists.newArrayList(KotlinBuiltIns.getInstance().getDoubleType(), KotlinBuiltIns.getInstance().getFloatType());
+        supertypes = Lists.newArrayList(KotlinBuiltIns.getInstance().getDoubleType());
     }
 
     @NotNull

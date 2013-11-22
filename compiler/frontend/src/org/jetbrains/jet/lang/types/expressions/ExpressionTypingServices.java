@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
@@ -395,11 +396,7 @@ public class ExpressionTypingServices {
             if (defaultValue != null) {
                 getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), dataFlowInfo, trace);
                 if (DescriptorUtils.isAnnotationClass(DescriptorUtils.getContainingClass(declaringScope))) {
-                    CompileTimeConstant<?> constant =
-                            AnnotationResolver.resolveExpressionToCompileTimeValue(defaultValue, valueParameterDescriptor.getType(), trace);
-                    if (constant != null) {
-                        trace.record(BindingContext.COMPILE_TIME_VALUE, defaultValue, constant);
-                    }
+                    ConstantExpressionEvaluator.object$.evaluate(defaultValue, trace, valueParameterDescriptor.getType());
                 }
             }
         }
