@@ -226,7 +226,7 @@ public final class JavaClassResolver {
     }
 
     private void cacheNegativeValue(@NotNull FqNameUnsafe fqNameUnsafe) {
-        if (unresolvedCache.contains(fqNameUnsafe) || classDescriptorCache.containsKey(fqNameUnsafe)) {
+        if (classDescriptorCache.containsKey(fqNameUnsafe)) {
             throw new IllegalStateException("rewrite at " + fqNameUnsafe);
         }
         unresolvedCache.add(fqNameUnsafe);
