@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -71,7 +72,7 @@ public class CallExpressionResolver {
     }
 
     @Nullable
-    private JetType lookupNamespaceOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ResolutionContext context) {
+    private JetType lookupNamespaceOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
         Name referencedName = expression.getReferencedNameAsName();
         final ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
         if (classifier != null) {
@@ -133,7 +134,7 @@ public class CallExpressionResolver {
     private static void checkClassObjectVisibility(
             @NotNull ClassifierDescriptor classifier,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull ResolutionContext context
+            @NotNull ExpressionTypingContext context
     ) {
         if (!(classifier instanceof ClassDescriptor)) return;
         ClassDescriptor classObject = ((ClassDescriptor) classifier).getClassObjectDescriptor();
@@ -235,7 +236,7 @@ public class CallExpressionResolver {
 
     @Nullable
     private JetType getVariableType(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context, @NotNull boolean[] result
+            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result
     ) {
         TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
                 context, "trace to resolve as local variable or property", nameExpression);
@@ -252,7 +253,7 @@ public class CallExpressionResolver {
             return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
         }
 
-        ResolutionContext newContext = receiver.exists()
+        ExpressionTypingContext newContext = receiver.exists()
                                              ? context.replaceScope(receiver.getType().getMemberScope())
                                              : context;
         TemporaryTraceAndCache temporaryForNamespaceOrClassObject = TemporaryTraceAndCache.create(
@@ -276,7 +277,7 @@ public class CallExpressionResolver {
 
     @NotNull
     public JetTypeInfo getSimpleNameExpressionTypeInfo(@NotNull JetSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context
+            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         boolean[] result = new boolean[1];
 
@@ -313,10 +314,9 @@ public class CallExpressionResolver {
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfo(
             @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context
+            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
-        JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(
-                callExpression, receiver, callOperationNode, context);
+        JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
         if (context.contextDependency == INDEPENDENT) {
             DataFlowUtils.checkType(typeInfo, callExpression, context);
         }
@@ -326,7 +326,7 @@ public class CallExpressionResolver {
     @NotNull
     public JetTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
             @NotNull JetCallExpression callExpression, @NotNull ReceiverValue receiver,
-            @Nullable ASTNode callOperationNode, @NotNull ResolutionContext context
+            @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         boolean[] result = new boolean[1];
         Call call = CallMaker.makeCall(receiver, callOperationNode, callExpression);
@@ -387,7 +387,7 @@ public class CallExpressionResolver {
             @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode,
             @NotNull JetExpression selectorExpression,
-            @NotNull ResolutionContext context
+            @NotNull ExpressionTypingContext context
     ) {
         if (selectorExpression instanceof JetCallExpression) {
             return getCallExpressionTypeInfoWithoutFinalTypeCheck((JetCallExpression) selectorExpression, receiver,
@@ -404,7 +404,7 @@ public class CallExpressionResolver {
 
     @NotNull
     public JetTypeInfo getQualifiedExpressionTypeInfo(
-            @NotNull JetQualifiedExpression expression, @NotNull ResolutionContext context
+            @NotNull JetQualifiedExpression expression, @NotNull ExpressionTypingContext context
     ) {
         // TODO : functions as values
         JetExpression selectorExpression = expression.getSelectorExpression();
