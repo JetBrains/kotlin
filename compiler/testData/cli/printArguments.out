@@ -1,3 +1,0 @@
-INFO: Invoking compiler org.jetbrains.jet.cli.jvm.K2JVMCompiler with arguments -printArgs -script compiler/testData/cli/hello.ktscript
-hello
-OK

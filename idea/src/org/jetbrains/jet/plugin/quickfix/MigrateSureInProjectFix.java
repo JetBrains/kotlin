@@ -106,7 +106,7 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
             declaration.acceptChildren(new JetVisitorVoid() {
 
                 @Override
-                public void visitCallExpression(JetCallExpression expression) {
+                public void visitCallExpression(@NotNull JetCallExpression expression) {
                     expression.acceptChildren(this);
 
                     if (!isUnresolvedSure(expression.getCalleeExpression())) return;

@@ -33,7 +33,42 @@ import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
 @TestMetadata("idea/testData/editor/quickDoc")
 public class JetQuickDocProviderTestGenerated extends AbstractJetQuickDocProviderTest {
     public void testAllFilesPresentInQuickDoc() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/editor/quickDoc"), Pattern.compile("^(.+)\\.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/editor/quickDoc"), Pattern.compile("^([^_]+)\\.[^\\.]*$"), true);
+    }
+    
+    @TestMetadata("AtFunctionParameter.kt")
+    public void testAtFunctionParameter() throws Exception {
+        doTest("idea/testData/editor/quickDoc/AtFunctionParameter.kt");
+    }
+    
+    @TestMetadata("AtTypeParameter.kt")
+    public void testAtTypeParameter() throws Exception {
+        doTest("idea/testData/editor/quickDoc/AtTypeParameter.kt");
+    }
+    
+    @TestMetadata("AtVariableDeclaration.kt")
+    public void testAtVariableDeclaration() throws Exception {
+        doTest("idea/testData/editor/quickDoc/AtVariableDeclaration.kt");
+    }
+    
+    @TestMetadata("JavaClassUsedInKotlin.kt")
+    public void testJavaClassUsedInKotlin() throws Exception {
+        doTest("idea/testData/editor/quickDoc/JavaClassUsedInKotlin.kt");
+    }
+    
+    @TestMetadata("JavaMethodUsedInKotlin.kt")
+    public void testJavaMethodUsedInKotlin() throws Exception {
+        doTest("idea/testData/editor/quickDoc/JavaMethodUsedInKotlin.kt");
+    }
+    
+    @TestMetadata("KotlinClassUsedFromJava.java")
+    public void testKotlinClassUsedFromJava() throws Exception {
+        doTest("idea/testData/editor/quickDoc/KotlinClassUsedFromJava.java");
+    }
+    
+    @TestMetadata("KotlinPackageClassUsedFromJava.java")
+    public void testKotlinPackageClassUsedFromJava() throws Exception {
+        doTest("idea/testData/editor/quickDoc/KotlinPackageClassUsedFromJava.java");
     }
     
     @TestMetadata("MethodFromStdLib.kt")
@@ -54,6 +89,11 @@ public class JetQuickDocProviderTestGenerated extends AbstractJetQuickDocProvide
     @TestMetadata("OnMethodUsage.kt")
     public void testOnMethodUsage() throws Exception {
         doTest("idea/testData/editor/quickDoc/OnMethodUsage.kt");
+    }
+    
+    @TestMetadata("TopLevelMethodFromJava.java")
+    public void testTopLevelMethodFromJava() throws Exception {
+        doTest("idea/testData/editor/quickDoc/TopLevelMethodFromJava.java");
     }
     
 }

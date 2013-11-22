@@ -19,11 +19,14 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.utils.CommonSuppliers;
+import org.jetbrains.jet.utils.Printer;
 
 import java.util.*;
 
@@ -307,7 +310,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void addClassifierDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
         checkMayWrite();
 
-        if (isObject(classDescriptor)) {
+        if (DescriptorUtils.isSingleton(classDescriptor)) {
             throw new IllegalStateException("must not be object: " + classDescriptor);
         }
 
@@ -318,7 +321,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void addObjectDescriptor(@NotNull ClassDescriptor objectDescriptor) {
         checkMayWrite();
 
-        if (!objectDescriptor.getKind().isObject()) {
+        if (!objectDescriptor.getKind().isSingleton()) {
             throw new IllegalStateException("must be object: " + objectDescriptor);
         }
         
@@ -495,16 +498,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         return declaredDescriptorsAccessibleBySimpleName.values();
     }
 
-    private static boolean isObject(@NotNull ClassifierDescriptor classifier) {
-        if (classifier instanceof ClassDescriptor) {
-            ClassDescriptor clazz = (ClassDescriptor) classifier;
-            return clazz.getKind().isObject();
-        }
-        else if (classifier instanceof TypeParameterDescriptor) {
-            return false;
-        }
-        else {
-            throw new IllegalStateException("unknown classifier: " + classifier);
-        }
+    @TestOnly
+    @Override
+    protected void printAdditionalScopeStructure(@NotNull Printer p) {
+        p.println("allDescriptorsDone = ", allDescriptorsDone);
     }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.jvm;
 
 import junit.framework.Assert;
+import org.jetbrains.jet.cli.CliBaseTest;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.junit.Test;
@@ -24,44 +25,30 @@ import org.junit.Test;
 import java.io.File;
 
 public class K2JvmCliTest extends CliBaseTest {
-
-    protected static final String ANOTHER_NOT_EXISTING_PATH = "yet/another/not/existing/path";
-
     @Test
     public void wrongKotlinSignature() throws Exception {
-        String[] args = {
-                "-src", "compiler/testData/cli/wrongKotlinSignature.kt",
-                "-classpath", "compiler/testData/cli/wrongKotlinSignatureLib",
-                "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutputJVM(args);
+        executeCompilerCompareOutputJVM();
     }
 
     @Test
     public void wrongAbiVersion() throws Exception {
-        String[] args = {
-                "-src", "compiler/testData/cli/wrongAbiVersion.kt",
-                "-classpath", "compiler/testData/cli/wrongAbiVersionLib",
-                "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutputJVM(args);
+        executeCompilerCompareOutputJVM();
     }
 
     @Test
-    public void nonExistingClassPathAndAnnotationsPath() {
-        String[] args = {
-                "-src", "compiler/testData/cli/simple.kt",
-                "-classpath", NOT_EXISTING_PATH,
-                "-annotations", ANOTHER_NOT_EXISTING_PATH,
-                "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutputJVM(args);
+    public void nonExistingClassPathAndAnnotationsPath() throws Exception {
+        executeCompilerCompareOutputJVM();
 
         Assert.assertTrue(new File(tmpdir.getTmpDir(), PackageClassUtils.getPackageClassName(FqName.ROOT) + ".class").isFile());
     }
 
     @Test
-    public void nonExistingSourcePath() {
-        String[] args = {
-                "-src", NOT_EXISTING_PATH,
-                "-output", tmpdir.getTmpDir().getPath()};
-        executeCompilerCompareOutputJVM(args);
+    public void nonExistingSourcePath() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
+    public void script() throws Exception {
+        executeCompilerCompareOutputJVM();
     }
 }

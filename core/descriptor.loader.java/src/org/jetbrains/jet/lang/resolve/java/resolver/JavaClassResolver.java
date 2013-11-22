@@ -428,7 +428,7 @@ public final class JavaClassResolver {
         JavaEnumClassObjectDescriptor classObject = new JavaEnumClassObjectDescriptor(enumClass);
 
         classObject.setModality(Modality.FINAL);
-        classObject.setVisibility(enumClass.getVisibility());
+        classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
         classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         classObject.createTypeConstructor();
 

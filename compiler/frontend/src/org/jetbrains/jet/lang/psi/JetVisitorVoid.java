@@ -17,161 +17,162 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElementVisitor;
+import org.jetbrains.annotations.NotNull;
 
 public class JetVisitorVoid extends PsiElementVisitor {
-    public void visitJetElement(JetElement element) {
+    public void visitJetElement(@NotNull JetElement element) {
         visitElement(element);
     }
 
-    public void visitDeclaration(JetDeclaration dcl) {
+    public void visitDeclaration(@NotNull JetDeclaration dcl) {
         visitExpression(dcl);
     }
 
-    public void visitClass(JetClass klass) {
+    public void visitClass(@NotNull JetClass klass) {
         visitNamedDeclaration(klass);
     }
 
-    public void visitClassObject(JetClassObject classObject) {
+    public void visitClassObject(@NotNull JetClassObject classObject) {
         visitDeclaration(classObject);
     }
 
-    public void visitNamedFunction(JetNamedFunction function) {
+    public void visitNamedFunction(@NotNull JetNamedFunction function) {
         visitNamedDeclaration(function);
     }
 
-    public void visitProperty(JetProperty property) {
+    public void visitProperty(@NotNull JetProperty property) {
         visitNamedDeclaration(property);
     }
 
-    public void visitTypedef(JetTypedef typedef) {
+    public void visitTypedef(@NotNull JetTypedef typedef) {
         visitNamedDeclaration(typedef);
     }
 
-    public void visitJetFile(JetFile file) {
+    public void visitJetFile(@NotNull JetFile file) {
         visitFile(file);
     }
 
-    public void visitScript(JetScript script) {
+    public void visitScript(@NotNull JetScript script) {
         visitDeclaration(script);
     }
 
-    public void visitImportDirective(JetImportDirective importDirective) {
+    public void visitImportDirective(@NotNull JetImportDirective importDirective) {
         visitJetElement(importDirective);
     }
 
-    public void visitImportList(JetImportList importList) {
+    public void visitImportList(@NotNull JetImportList importList) {
         visitJetElement(importList);
     }
 
-    public void visitClassBody(JetClassBody classBody) {
+    public void visitClassBody(@NotNull JetClassBody classBody) {
         visitJetElement(classBody);
     }
 
-    public void visitModifierList(JetModifierList list) {
+    public void visitModifierList(@NotNull JetModifierList list) {
         visitJetElement(list);
     }
 
-    public void visitAnnotation(JetAnnotation annotation) {
+    public void visitAnnotation(@NotNull JetAnnotation annotation) {
         visitJetElement(annotation);
     }
 
-    public void visitAnnotationEntry(JetAnnotationEntry annotationEntry) {
+    public void visitAnnotationEntry(@NotNull JetAnnotationEntry annotationEntry) {
         visitJetElement(annotationEntry);
     }
 
-    public void visitTypeParameterList(JetTypeParameterList list) {
+    public void visitTypeParameterList(@NotNull JetTypeParameterList list) {
         visitJetElement(list);
     }
 
-    public void visitTypeParameter(JetTypeParameter parameter) {
+    public void visitTypeParameter(@NotNull JetTypeParameter parameter) {
         visitNamedDeclaration(parameter);
     }
 
-    public void visitEnumEntry(JetEnumEntry enumEntry) {
+    public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
         visitClass(enumEntry);
     }
 
-    public void visitParameterList(JetParameterList list) {
+    public void visitParameterList(@NotNull JetParameterList list) {
         visitJetElement(list);
     }
 
-    public void visitParameter(JetParameter parameter) {
+    public void visitParameter(@NotNull JetParameter parameter) {
         visitNamedDeclaration(parameter);
     }
 
-    public void visitDelegationSpecifierList(JetDelegationSpecifierList list) {
+    public void visitDelegationSpecifierList(@NotNull JetDelegationSpecifierList list) {
         visitJetElement(list);
     }
 
-    public void visitDelegationSpecifier(JetDelegationSpecifier specifier) {
+    public void visitDelegationSpecifier(@NotNull JetDelegationSpecifier specifier) {
         visitJetElement(specifier);
     }
 
-    public void visitDelegationByExpressionSpecifier(JetDelegatorByExpressionSpecifier specifier) {
+    public void visitDelegationByExpressionSpecifier(@NotNull JetDelegatorByExpressionSpecifier specifier) {
         visitDelegationSpecifier(specifier);
     }
 
-    public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
+    public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
         visitDelegationSpecifier(call);
     }
 
-    public void visitDelegationToSuperClassSpecifier(JetDelegatorToSuperClass specifier) {
+    public void visitDelegationToSuperClassSpecifier(@NotNull JetDelegatorToSuperClass specifier) {
         visitDelegationSpecifier(specifier);
     }
 
-    public void visitDelegationToThisCall(JetDelegatorToThisCall thisCall) {
+    public void visitDelegationToThisCall(@NotNull JetDelegatorToThisCall thisCall) {
         visitDelegationSpecifier(thisCall);
     }
 
-    public void visitPropertyDelegate(JetPropertyDelegate delegate) {
+    public void visitPropertyDelegate(@NotNull JetPropertyDelegate delegate) {
         visitJetElement(delegate);
     }
 
-    public void visitTypeReference(JetTypeReference typeReference) {
+    public void visitTypeReference(@NotNull JetTypeReference typeReference) {
         visitJetElement(typeReference);
     }
 
-    public void visitValueArgumentList(JetValueArgumentList list) {
+    public void visitValueArgumentList(@NotNull JetValueArgumentList list) {
         visitJetElement(list);
     }
 
-    public void visitArgument(JetValueArgument argument) {
+    public void visitArgument(@NotNull JetValueArgument argument) {
         visitJetElement(argument);
     }
 
-    public void visitExpression(JetExpression expression) {
+    public void visitExpression(@NotNull JetExpression expression) {
         visitJetElement(expression);
     }
 
-    public void visitLoopExpression(JetLoopExpression loopExpression) {
+    public void visitLoopExpression(@NotNull JetLoopExpression loopExpression) {
         visitExpression(loopExpression);
     }
 
-    public void visitConstantExpression(JetConstantExpression expression) {
+    public void visitConstantExpression(@NotNull JetConstantExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+    public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
         visitReferenceExpression(expression);
     }
 
-    public void visitReferenceExpression(JetReferenceExpression expression) {
+    public void visitReferenceExpression(@NotNull JetReferenceExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitPrefixExpression(JetPrefixExpression expression) {
+    public void visitPrefixExpression(@NotNull JetPrefixExpression expression) {
         visitUnaryExpression(expression);
     }
 
-    public void visitPostfixExpression(JetPostfixExpression expression) {
+    public void visitPostfixExpression(@NotNull JetPostfixExpression expression) {
         visitUnaryExpression(expression);
     }
 
-    public void visitUnaryExpression(JetUnaryExpression expression) {
+    public void visitUnaryExpression(@NotNull JetUnaryExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitBinaryExpression(JetBinaryExpression expression) {
+    public void visitBinaryExpression(@NotNull JetBinaryExpression expression) {
         visitExpression(expression);
     }
 
@@ -179,231 +180,231 @@ public class JetVisitorVoid extends PsiElementVisitor {
 //        visitExpression(expression);
 //    }
 //
-    public void visitReturnExpression(JetReturnExpression expression) {
+    public void visitReturnExpression(@NotNull JetReturnExpression expression) {
         visitLabelQualifiedExpression(expression);
     }
 
-    public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
+    public void visitLabelQualifiedExpression(@NotNull JetLabelQualifiedExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitThrowExpression(JetThrowExpression expression) {
+    public void visitThrowExpression(@NotNull JetThrowExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitBreakExpression(JetBreakExpression expression) {
+    public void visitBreakExpression(@NotNull JetBreakExpression expression) {
         visitLabelQualifiedExpression(expression);
     }
 
-    public void visitContinueExpression(JetContinueExpression expression) {
+    public void visitContinueExpression(@NotNull JetContinueExpression expression) {
         visitLabelQualifiedExpression(expression);
     }
 
-    public void visitIfExpression(JetIfExpression expression) {
+    public void visitIfExpression(@NotNull JetIfExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitWhenExpression(JetWhenExpression expression) {
+    public void visitWhenExpression(@NotNull JetWhenExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitTryExpression(JetTryExpression expression) {
+    public void visitTryExpression(@NotNull JetTryExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitForExpression(JetForExpression expression) {
+    public void visitForExpression(@NotNull JetForExpression expression) {
         visitLoopExpression(expression);
     }
 
-    public void visitWhileExpression(JetWhileExpression expression) {
+    public void visitWhileExpression(@NotNull JetWhileExpression expression) {
         visitLoopExpression(expression);
     }
 
-    public void visitDoWhileExpression(JetDoWhileExpression expression) {
+    public void visitDoWhileExpression(@NotNull JetDoWhileExpression expression) {
         visitLoopExpression(expression);
     }
 
-    public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
+    public void visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitAnnotatedExpression(JetAnnotatedExpression expression) {
+    public void visitAnnotatedExpression(@NotNull JetAnnotatedExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitCallExpression(JetCallExpression expression) {
+    public void visitCallExpression(@NotNull JetCallExpression expression) {
         visitReferenceExpression(expression);
     }
 
-    public void visitArrayAccessExpression(JetArrayAccessExpression expression) {
+    public void visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression) {
         visitReferenceExpression(expression);
     }
 
-    public void visitQualifiedExpression(JetQualifiedExpression expression) {
+    public void visitQualifiedExpression(@NotNull JetQualifiedExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitCallableReferenceExpression(JetCallableReferenceExpression expression) {
+    public void visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitDotQualifiedExpression(JetDotQualifiedExpression expression) {
+    public void visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression) {
         visitQualifiedExpression(expression);
     }
 
-    public void visitSafeQualifiedExpression(JetSafeQualifiedExpression expression) {
+    public void visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression) {
         visitQualifiedExpression(expression);
     }
 
-    public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
+    public void visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitRootNamespaceExpression(JetRootNamespaceExpression expression) {
+    public void visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitBlockExpression(JetBlockExpression expression) {
+    public void visitBlockExpression(@NotNull JetBlockExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitCatchSection(JetCatchClause catchClause) {
+    public void visitCatchSection(@NotNull JetCatchClause catchClause) {
         visitJetElement(catchClause);
     }
 
-    public void visitFinallySection(JetFinallySection finallySection) {
+    public void visitFinallySection(@NotNull JetFinallySection finallySection) {
         visitJetElement(finallySection);
     }
 
-    public void visitTypeArgumentList(JetTypeArgumentList typeArgumentList) {
+    public void visitTypeArgumentList(@NotNull JetTypeArgumentList typeArgumentList) {
         visitJetElement(typeArgumentList);
     }
 
-    public void visitThisExpression(JetThisExpression expression) {
+    public void visitThisExpression(@NotNull JetThisExpression expression) {
         visitLabelQualifiedExpression(expression);
     }
 
-    public void visitSuperExpression(JetSuperExpression expression) {
+    public void visitSuperExpression(@NotNull JetSuperExpression expression) {
         visitLabelQualifiedExpression(expression);
     }
 
-    public void visitParenthesizedExpression(JetParenthesizedExpression expression) {
+    public void visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitInitializerList(JetInitializerList list) {
+    public void visitInitializerList(@NotNull JetInitializerList list) {
         visitJetElement(list);
     }
 
-    public void visitAnonymousInitializer(JetClassInitializer initializer) {
+    public void visitAnonymousInitializer(@NotNull JetClassInitializer initializer) {
         visitDeclaration(initializer);
     }
 
-    public void visitPropertyAccessor(JetPropertyAccessor accessor) {
+    public void visitPropertyAccessor(@NotNull JetPropertyAccessor accessor) {
         visitDeclaration(accessor);
     }
 
-    public void visitTypeConstraintList(JetTypeConstraintList list) {
+    public void visitTypeConstraintList(@NotNull JetTypeConstraintList list) {
         visitJetElement(list);
     }
 
-    public void visitTypeConstraint(JetTypeConstraint constraint) {
+    public void visitTypeConstraint(@NotNull JetTypeConstraint constraint) {
         visitJetElement(constraint);
     }
 
-    private void visitTypeElement(JetTypeElement type) {
+    private void visitTypeElement(@NotNull JetTypeElement type) {
         visitJetElement(type);
     }
 
-    public void visitUserType(JetUserType type) {
+    public void visitUserType(@NotNull JetUserType type) {
         visitTypeElement(type);
     }
 
-    public void visitFunctionType(JetFunctionType type) {
+    public void visitFunctionType(@NotNull JetFunctionType type) {
         visitTypeElement(type);
     }
 
-    public void visitSelfType(JetSelfType type) {
+    public void visitSelfType(@NotNull JetSelfType type) {
         visitTypeElement(type);
     }
 
-    public void visitBinaryWithTypeRHSExpression(JetBinaryExpressionWithTypeRHS expression) {
+    public void visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression) {
         visitExpression(expression);
     }
 
-    public void visitStringTemplateExpression(JetStringTemplateExpression expression) {
+    public void visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitNamedDeclaration(JetNamedDeclaration declaration) {
+    public void visitNamedDeclaration(@NotNull JetNamedDeclaration declaration) {
         visitDeclaration(declaration);
     }
 
-    public void visitNullableType(JetNullableType nullableType) {
+    public void visitNullableType(@NotNull JetNullableType nullableType) {
         visitTypeElement(nullableType);
     }
 
-    public void visitTypeProjection(JetTypeProjection typeProjection) {
+    public void visitTypeProjection(@NotNull JetTypeProjection typeProjection) {
         visitJetElement(typeProjection);
     }
 
-    public void visitWhenEntry(JetWhenEntry jetWhenEntry) {
+    public void visitWhenEntry(@NotNull JetWhenEntry jetWhenEntry) {
         visitJetElement(jetWhenEntry);
     }
 
-    public void visitIsExpression(JetIsExpression expression) {
+    public void visitIsExpression(@NotNull JetIsExpression expression) {
         visitExpression(expression);
     }
 
-    public void visitWhenConditionIsPattern(JetWhenConditionIsPattern condition) {
+    public void visitWhenConditionIsPattern(@NotNull JetWhenConditionIsPattern condition) {
         visitJetElement(condition);
     }
 
-    public void visitWhenConditionInRange(JetWhenConditionInRange condition) {
+    public void visitWhenConditionInRange(@NotNull JetWhenConditionInRange condition) {
         visitJetElement(condition);
     }
 
-    public void visitWhenConditionWithExpression(JetWhenConditionWithExpression condition) {
+    public void visitWhenConditionWithExpression(@NotNull JetWhenConditionWithExpression condition) {
         visitJetElement(condition);
     }
 
-    public void visitObjectDeclaration(JetObjectDeclaration declaration) {
+    public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
         visitNamedDeclaration(declaration);
     }
 
-    public void visitObjectDeclarationName(JetObjectDeclarationName declaration) {
+    public void visitObjectDeclarationName(@NotNull JetObjectDeclarationName declaration) {
         visitNamedDeclaration(declaration);
     }
 
-    public void visitStringTemplateEntry(JetStringTemplateEntry entry) {
+    public void visitStringTemplateEntry(@NotNull JetStringTemplateEntry entry) {
         visitJetElement(entry);
     }
 
-    public void visitStringTemplateEntryWithExpression(JetStringTemplateEntryWithExpression entry) {
+    public void visitStringTemplateEntryWithExpression(@NotNull JetStringTemplateEntryWithExpression entry) {
         visitStringTemplateEntry(entry);
     }
 
-    public void visitBlockStringTemplateEntry(JetBlockStringTemplateEntry entry) {
+    public void visitBlockStringTemplateEntry(@NotNull JetBlockStringTemplateEntry entry) {
         visitStringTemplateEntryWithExpression(entry);
     }
 
-    public void visitSimpleNameStringTemplateEntry(JetSimpleNameStringTemplateEntry entry) {
+    public void visitSimpleNameStringTemplateEntry(@NotNull JetSimpleNameStringTemplateEntry entry) {
         visitStringTemplateEntryWithExpression(entry);
     }
 
-    public void visitLiteralStringTemplateEntry(JetLiteralStringTemplateEntry entry) {
+    public void visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry) {
         visitStringTemplateEntry(entry);
     }
 
-    public void visitEscapeStringTemplateEntry(JetEscapeStringTemplateEntry entry) {
+    public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
         visitStringTemplateEntry(entry);
     }
 
-    public void visitMultiDeclaration(JetMultiDeclaration declaration) {
+    public void visitMultiDeclaration(@NotNull JetMultiDeclaration declaration) {
         visitDeclaration(declaration);
     }
 
-    public void visitMultiDeclarationEntry(JetMultiDeclarationEntry entry) {
+    public void visitMultiDeclarationEntry(@NotNull JetMultiDeclarationEntry entry) {
         visitNamedDeclaration(entry);
     }
 }

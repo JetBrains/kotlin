@@ -437,13 +437,13 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override
-            public void visitJetElement(JetElement element) {
+            public void visitJetElement(@NotNull JetElement element) {
                 element.acceptChildren(this);
                 super.visitJetElement(element);
             }
 
             @Override
-            public void visitExpression(JetExpression expression) {
+            public void visitExpression(@NotNull JetExpression expression) {
                 if (PsiEquivalenceUtil.areElementsEquivalent(expression, actualExpression, null, new Comparator<PsiElement>() {
                     @Override
                     public int compare(PsiElement element1, PsiElement element2) {

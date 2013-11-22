@@ -37,13 +37,15 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForType;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassDescriptorForTypeConstructor;
 import static org.jetbrains.jet.lang.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createClassObjectInitializer;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction;
 
@@ -136,7 +138,7 @@ public final class ClassTranslator extends AbstractTranslator {
         if (!isTopLevelDeclaration) {
             qualifiedReference = null;
         }
-        else if (descriptor.getKind().isObject()) {
+        else if (descriptor.getKind().isSingleton()) {
             qualifiedReference = null;
             declarationContext.literalFunctionTranslator().setDefinitionPlace(
                     new NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>() {
@@ -220,16 +222,13 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsExpression> getSupertypesNameReferences() {
-        Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+        List<JetType> supertypes = getSupertypesWithoutFakes(descriptor);
         if (supertypes.isEmpty()) {
             return Collections.emptyList();
         }
         if (supertypes.size() == 1) {
-            JetType type = supertypes.iterator().next();
+            JetType type = supertypes.get(0);
             ClassDescriptor supertypeDescriptor = getClassDescriptorForType(type);
-            if (isAny(supertypeDescriptor)) {
-                return Collections.emptyList();
-            }
             return Collections.<JsExpression>singletonList(getClassReference(supertypeDescriptor));
         }
 
@@ -244,9 +243,7 @@ public final class ClassTranslator extends AbstractTranslator {
         for (TypeConstructor typeConstructor : sortedAllSuperTypes) {
             if (supertypeConstructors.contains(typeConstructor)) {
                 ClassDescriptor supertypeDescriptor = getClassDescriptorForTypeConstructor(typeConstructor);
-                if (!isAny(supertypeDescriptor)) {
-                    supertypesRefs.add(getClassReference(supertypeDescriptor));
-                }
+                supertypesRefs.add(getClassReference(supertypeDescriptor));
             }
         }
         return supertypesRefs;

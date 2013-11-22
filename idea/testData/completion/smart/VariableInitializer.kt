@@ -1,6 +1,6 @@
 val foo = ""
 
-fun f(p1: Object, p2: String) {
+fun f(p1: Any, p2: String) {
     var a : String = <caret>
 }
 

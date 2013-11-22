@@ -14,7 +14,6 @@
   <property name="verify.dir" value="${basedir}"/>
 
   <property name="kotlin.plugin.dir" value="${basedir}"/>
-  <property name="kannotator.plugin.dir" value="${basedir}"/>
 
   <property name="verifier.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/88722:id/plugin-verifier.jar"/>
 
@@ -65,8 +64,7 @@
       <filterchain>
         <tokenfilter>
           <filetokenizer/>
-          <replaceregex pattern="^(.*)(http://download\.jetbrains\.com/idea/ideaIC\-\d+\.\d+\.tar\.gz)(.*)$"
-                        replace="\2" flags="s"/>
+          <replaceregex pattern="^(.*)(http://download\.jetbrains\.com/idea/ideaIC\-\d+\.\d+\.tar\.gz)(.*)$" replace="\2" flags="s"/>
         </tokenfilter>
       </filterchain>
     </loadresource>
@@ -76,7 +74,7 @@
     <property name="download.url" value="${idea.release.download.page.url}" />
   </target>
 
-  <target name="verifyAndPublish" depends="setEapDownload, setReleasedDownload" if="is.expected.branch">
+  <target name="ideaDownload" depends="setEapDownload, setReleasedDownload">
     <echo message="From external parameters: ${download.eap} Release ${download.release} Version ${version}" />
 
     <mkdir dir="${verify.dir}" />
@@ -95,8 +93,10 @@
 
     <!--suppress AntResolveInspection -->
     <loadfile property="idea.version" srcfile="${idea.dir}/build.txt" />
+  </target>
 
-    <echo message="IDEA version is ${idea.version} located ${idea.dir}"/>
+  <target name="verifyAndPublish" depends="ideaDownload" if="is.expected.branch">
+    <mkdir dir="${verify.dir}" />
 
     <!-- Get plugin verifier -->
     <delete file="plugin-verifier.jar" failonerror="false"/>
@@ -123,34 +123,24 @@
     <!--suppress AntResolveInspection -->
     <echo message="Kotlin Plugin version is ${kotlin.plugin.version} located ${kotlin.plugin.path}"/>
 
-    <!-- Get kannotator plugin -->
-    <pathconvert property="kannotator.plugin.path">
-      <fileset dir="${kannotator.plugin.dir}">
-        <include name="kannotator-plugin-*"/>
-      </fileset>
-    </pathconvert>
-    <basename property="kannotator.plugin.filename" file="${kannotator.plugin.path}"/>
-    <loadresource property="kannotator.plugin.version">
-      <string value="${kannotator.plugin.filename}"/>
-      <filterchain>
-        <tokenfilter>
-          <filetokenizer/>
-          <replaceregex pattern="^kannotator-plugin-(\d+\.\d+\.\d+).zip$" replace="\1" flags="s"/>
-        </tokenfilter>
-      </filterchain>
-    </loadresource>
-
-    <!--suppress AntResolveInspection -->
-    <echo message="Kannotator Plugin version is ${kannotator.plugin.version} located ${kannotator.plugin.path}"/>
-
     <!-- Verify both plugins -->
     <verifyPlugin verifier.jar="${verify.dir}/plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kotlin.plugin.path}" />
-    <verifyPlugin verifier.jar="${verify.dir}/plugin-verifier.jar" verify.against.idea.dir="${idea.dir}" verify.plugin.path="${kannotator.plugin.path}" />
 
     <!-- Everything is ok, publish plugin and xml descriptor -->
     <!--suppress AntResolveInspection -->
-    <echo message="##teamcity[buildStatus text='kotlin-${kotlin.plugin.version} and kannotator-${kannotator.plugin.version} have been verified against ${idea.version}']"/>
+    <echo message="##teamcity[buildStatus text='kotlin-${kotlin.plugin.version} has been verified against ${idea.version}']"/>
     <echo message="##teamcity[publishArtifacts '${kotlin.plugin.path}']"/>
-    <echo message="##teamcity[publishArtifacts '${kannotator.plugin.path}']"/>
+  </target>
+
+  <target name="generateUpdateXml">
+    <echoxml file="updatePlugins.xml">
+      <plugins>
+        <plugin id="org.jetbrains.kotlin"
+                url="%teamcity.serverUrl%/guestAuth/repository/download/bt345/%dep.bt345.teamcity.build.id%:id/kotlin-plugin-%dep.bt345.build.number%.zip"
+                version="%dep.bt345.build.number%" />
+      </plugins>
+    </echoxml>
+
+    <echo message="##teamcity[publishArtifacts 'updatePlugins.xml']" />
   </target>
 </project>

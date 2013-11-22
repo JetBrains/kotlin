@@ -57,6 +57,7 @@ public final class JetTypeImpl extends AbstractJetType {
                 classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList()));
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations;

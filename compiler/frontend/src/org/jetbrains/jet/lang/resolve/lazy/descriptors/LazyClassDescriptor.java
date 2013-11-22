@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
@@ -53,6 +52,7 @@ import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
@@ -76,12 +76,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     private final ClassKind kind;
     private final boolean isInner;
 
-    private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
     private final NotNullLazyValue<List<AnnotationDescriptor>> annotations;
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
-    private final JetScope unsubstitutedInnerClassesScope;
 
     private final NotNullLazyValue<JetScope> scopeForClassHeaderResolution;
     private final NotNullLazyValue<JetScope> scopeForMemberDeclarationResolution;
@@ -93,7 +91,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
             @NotNull Name name,
             @NotNull JetClassLikeInfo classLikeInfo
     ) {
-        super(containingDeclaration, name);
+        super(resolveSession.getStorageManager(), containingDeclaration, name);
         this.resolveSession = resolveSession;
 
         if (classLikeInfo.getCorrespondingClassOrObject() != null) {
@@ -107,29 +105,25 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                 resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfoForMembers);
 
         this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this);
-        this.unsubstitutedInnerClassesScope = new InnerClassesScopeWrapper(unsubstitutedMemberScope);
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
-        JetModifierList modifierList = classLikeInfo.getModifierList();
         this.kind = classLikeInfo.getClassKind();
-        if (kind.isObject()) {
+
+        JetModifierList modifierList = classLikeInfo.getModifierList();
+        if (kind.isSingleton()) {
             this.modality = Modality.FINAL;
         }
         else {
             Modality defaultModality = kind == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
             this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
         }
-        this.visibility = resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
+        this.visibility = isEnumClassObject(this)
+                          ? DescriptorUtils.getSyntheticClassObjectVisibility()
+                          : resolveVisibilityFromModifiers(modifierList, getDefaultClassVisibility(this));
         this.isInner = isInnerClass(modifierList);
 
         StorageManager storageManager = resolveSession.getStorageManager();
-        this.thisAsReceiverParameter = storageManager.createLazyValue(new Function0<ReceiverParameterDescriptor>() {
-            @Override
-            public ReceiverParameterDescriptor invoke() {
-                return DescriptorFactory.createLazyReceiverParameterDescriptor(LazyClassDescriptor.this);
-            }
-        });
         this.annotations = storageManager.createLazyValue(new Function0<List<AnnotationDescriptor>>() {
             @Override
             public List<AnnotationDescriptor> invoke() {
@@ -162,15 +156,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         });
     }
 
+    @NotNull
     @Override
     protected JetScope getScopeForMemberLookup() {
         return unsubstitutedMemberScope;
-    }
-
-    @NotNull
-    @Override
-    public JetScope getUnsubstitutedInnerClassesScope() {
-        return unsubstitutedInnerClassesScope;
     }
 
     @NotNull
@@ -256,12 +245,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     @Override
-    public JetType getClassObjectType() {
-        ClassDescriptor classObjectDescriptor = getClassObjectDescriptor();
-        return classObjectDescriptor == null ? null : classObjectDescriptor.getDefaultType();
-    }
-
-    @Override
     public ClassDescriptor getClassObjectDescriptor() {
         return classObjectDescriptor.invoke();
     }
@@ -321,11 +304,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     }
 
     @NotNull
-    @Override
-    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        return thisAsReceiverParameter.invoke();
-    }
-
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations.invoke();
@@ -475,6 +453,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
             return LazyClassDescriptor.this;
         }
 
+        @NotNull
         @Override
         public List<AnnotationDescriptor> getAnnotations() {
             return Collections.emptyList(); // TODO

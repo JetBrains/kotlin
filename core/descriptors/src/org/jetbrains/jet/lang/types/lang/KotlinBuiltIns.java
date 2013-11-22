@@ -850,6 +850,10 @@ public class KotlinBuiltIns {
         return false;
     }
 
+    public boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
+        return setContainsClassOf(extensionFunctionClassesSet, type) || setContainsClassOf(functionClassesSet, type);
+    }
+
     public boolean isExtensionFunctionType(@NotNull JetType type) {
         if (setContainsClassOf(extensionFunctionClassesSet, type)) return true;
 

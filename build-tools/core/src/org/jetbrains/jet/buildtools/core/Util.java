@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.buildtools.core;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -30,14 +32,15 @@ public final class Util {
 
 
     /**
-     * {@code file.getCanonicalFile().getPath()} convenience wrapper.
+     * {@code file.getCanonicalPath()} convenience wrapper.
      *
      * @param f file to get its canonical path.
      * @return file's canonical path
      */
-    public static String getPath(File f) {
+    @NotNull
+    public static String getPath(@NotNull File f) {
         try {
-            return f.getCanonicalFile().getPath();
+            return f.getCanonicalPath();
         }
         catch (IOException e) {
             throw new RuntimeException(String.format("Failed to resolve canonical file of [%s]: %s", f, e), e);

@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.refactoring;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -213,13 +214,13 @@ public class JetNameSuggester {
     private static void addNamesForExpression(final ArrayList<String> result, JetExpression expression, final JetNameValidator validator) {
         expression.accept(new JetVisitorVoid() {
             @Override
-            public void visitQualifiedExpression(JetQualifiedExpression expression) {
+            public void visitQualifiedExpression(@NotNull JetQualifiedExpression expression) {
                 JetExpression selectorExpression = expression.getSelectorExpression();
                 addNamesForExpression(result, selectorExpression, validator);
             }
 
             @Override
-            public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+            public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
                 String referenceName = expression.getReferencedName();
                 if (referenceName.equals(referenceName.toUpperCase())) {
                     addName(result, referenceName, validator);
@@ -230,12 +231,12 @@ public class JetNameSuggester {
             }
 
             @Override
-            public void visitCallExpression(JetCallExpression expression) {
+            public void visitCallExpression(@NotNull JetCallExpression expression) {
                 addNamesForExpression(result, expression.getCalleeExpression(), validator);
             }
 
             @Override
-            public void visitPostfixExpression(JetPostfixExpression expression) {
+            public void visitPostfixExpression(@NotNull JetPostfixExpression expression) {
                 addNamesForExpression(result, expression.getBaseExpression(), validator);
             }
         });

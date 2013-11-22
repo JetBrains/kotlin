@@ -116,7 +116,7 @@ public class JetImportOptimizer implements ImportOptimizer {
             }
 
             @Override
-            public void visitUserType(JetUserType type) {
+            public void visitUserType(@NotNull JetUserType type) {
                 if (type.getQualifier() == null) {
                     super.visitUserType(type);
                 }
@@ -130,7 +130,7 @@ public class JetImportOptimizer implements ImportOptimizer {
             }
 
             @Override
-            public void visitReferenceExpression(JetReferenceExpression expression) {
+            public void visitReferenceExpression(@NotNull JetReferenceExpression expression) {
                 if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class) == null &&
                         PsiTreeUtil.getParentOfType(expression, JetNamespaceHeader.class) == null) {
 
@@ -161,7 +161,7 @@ public class JetImportOptimizer implements ImportOptimizer {
             }
 
             @Override
-            public void visitForExpression(JetForExpression expression) {
+            public void visitForExpression(@NotNull JetForExpression expression) {
                 BindingContext context = AnalyzerFacadeWithCache.getContextForElement(expression);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange());
                 addResolvedCallFqName(resolvedCall);
@@ -170,7 +170,7 @@ public class JetImportOptimizer implements ImportOptimizer {
             }
 
             @Override
-            public void visitMultiDeclaration(JetMultiDeclaration declaration) {
+            public void visitMultiDeclaration(@NotNull JetMultiDeclaration declaration) {
                 BindingContext context = AnalyzerFacadeWithCache.getContextForElement(declaration);
                 List<JetMultiDeclarationEntry> entries = declaration.getEntries();
                 for (JetMultiDeclarationEntry entry : entries) {

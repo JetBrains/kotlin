@@ -70,7 +70,7 @@ public final class TranslationUtils {
             List<JetFile> allLibFiles = getAllLibFiles(project);
             Predicate<PsiFile> filesWithCode = new Predicate<PsiFile>() {
                 @Override
-                public boolean apply(@javax.annotation.Nullable PsiFile file) {
+                public boolean apply(@Nullable PsiFile file) {
                     assert file != null;
                     return isFileWithCode((JetFile) file);
                 }

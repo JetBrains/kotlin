@@ -17,7 +17,7 @@ internal final enum class E : jet.Enum<test.E> {
     public final override /*1*/ /*fake_override*/ fun name(): jet.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     
-    internal class object <class-object-for-E> {
+    public class object <class-object-for-E> {
         /*primary*/ private constructor <class-object-for-E>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.E
         public final /*synthesized*/ fun values(): jet.Array<test.E>

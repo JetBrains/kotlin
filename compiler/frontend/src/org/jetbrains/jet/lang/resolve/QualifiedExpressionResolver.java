@@ -104,7 +104,9 @@ public class QualifiedExpressionResolver {
         }
 
         for (DeclarationDescriptor descriptor : descriptors) {
-            importer.addAliasImport(descriptor, aliasName);
+            if (!DescriptorUtils.isSingleton(descriptor)) {
+                importer.addAliasImport(descriptor, aliasName);
+            }
         }
 
         return descriptors;
@@ -140,7 +142,7 @@ public class QualifiedExpressionResolver {
         if (descriptor instanceof NamespaceDescriptor) {
             return true;
         }
-        if (descriptor instanceof ClassDescriptor && !((ClassDescriptor)descriptor).getKind().isObject()) {
+        if (descriptor instanceof ClassDescriptor && !((ClassDescriptor)descriptor).getKind().isSingleton()) {
             return true;
         }
         trace.report(CANNOT_IMPORT_FROM_ELEMENT.on(reference, descriptor));

@@ -28,7 +28,7 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
-import com.intellij.util.containers.CollectionFactory;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class JetLiveTemplateCompletionContributor extends CompletionContributor 
     private static List<TemplateImpl> listApplicableTemplates(PsiFile file, int offset) {
         Set<TemplateContextType> contextTypes = TemplateManagerImpl.getApplicableContextTypes(file, offset);
 
-        ArrayList<TemplateImpl> result = CollectionFactory.arrayList();
+        ArrayList<TemplateImpl> result = ContainerUtil.newArrayList();
         for (TemplateImpl template : TemplateSettings.getInstance().getTemplates()) {
             if (!template.isDeactivated() && !template.isSelectionTemplate() && TemplateManagerImpl.isApplicable(template, contextTypes)) {
                 result.add(template);

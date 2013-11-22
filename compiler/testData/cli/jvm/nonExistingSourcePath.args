@@ -1,0 +1,4 @@
+-src
+not/existing/path
+-output
+$TEMP_DIR$

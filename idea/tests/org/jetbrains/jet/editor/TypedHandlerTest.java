@@ -18,30 +18,255 @@ package org.jetbrains.jet.editor;
 
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import org.jetbrains.jet.utils.ExceptionUtils;
+
+import java.io.IOException;
 
 public class TypedHandlerTest extends LightCodeInsightTestCase {
-    public void testTypeStringTemplateStart() throws Exception {
-        configureFromFileText("a.kt", "val x = \"$<caret>\"");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText("val x = \"${}\"");
+    public void testTypeStringTemplateStart() {
+        doCharTypeTest(
+                '{',
+
+                "val x = \"$<caret>\"",
+
+                "val x = \"${}\""
+        );
     }
 
-    public void testTypeStringTemplateStartWithCloseBraceAfter() throws Exception {
-        configureFromFileText("a.kt", "fun foo() { \"$<caret>\" }");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText("fun foo() { \"${}\" }");
+    public void testAutoIndentRightOpenBrace() {
+        doCharTypeTest(
+                '{',
+
+                "fun test() {\n" +
+                "<caret>\n" +
+                "}",
+
+                "fun test() {\n" +
+                "    {<caret>}\n" +
+                "}"
+        );
     }
 
-    public void testTypeStringTemplateStartBeforeString() throws Exception {
-        configureFromFileText("a.kt", "fun foo() { \"$<caret>something\" }");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText("fun foo() { \"${}something\" }");
+    public void testAutoIndentLeftOpenBrace() {
+        doCharTypeTest(
+                '{',
+
+                "fun test() {\n" +
+                "      <caret>\n" +
+                "}",
+
+                "fun test() {\n" +
+                "    {<caret>}\n" +
+                "}"
+        );
     }
 
-    public void testKT3575() throws Exception {
-        configureFromFileText("a.kt", "val x = \"$<caret>]\"");
-        EditorTestUtil.performTypingAction(getEditor(), '{');
-        checkResultByText("val x = \"${}]\"");
+    public void testTypeStringTemplateStartWithCloseBraceAfter() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() { \"$<caret>\" }",
+
+                "fun foo() { \"${}\" }"
+        );
+    }
+
+    public void testTypeStringTemplateStartBeforeString() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() { \"$<caret>something\" }",
+
+                "fun foo() { \"${}something\" }"
+        );
+    }
+
+    public void testKT3575() {
+        doCharTypeTest(
+                '{',
+
+                "val x = \"$<caret>]\"",
+
+                "val x = \"${}]\""
+        );
+    }
+
+    public void testAutoCloseBraceInFunctionDeclaration() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() <caret>",
+
+                "fun foo() {<caret>}"
+        );
+    }
+
+    public void testAutoCloseBraceInLocalFunctionDeclaration() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    fun bar() <caret>\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    fun bar() {<caret>}\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceInAssignment() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    val a = <caret>\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    val a = {<caret>}\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedIfSurroundOnSameLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    if() <caret>foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    if() {foo()\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnSameLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    while() <caret>foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    while() {foo()\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedWhileSurroundOnNewLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    while()\n" +
+                "<caret>\n" +
+                "    foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    while()\n" +
+                "    {\n" +
+                "    foo()\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedIfSurroundOnOtherLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    if(true) <caret>\n" +
+                "    foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    if(true) {<caret>\n" +
+                "    foo()\n" +
+                "}"
+        );
+    }
+
+    public void testDoNotAutoCloseBraceInUnfinishedIfSurroundOnNewLine() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    if(true)\n" +
+                "        <caret>\n" +
+                "    foo()\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    if(true)\n" +
+                "    {<caret>\n" +
+                "    foo()\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceInsideFor() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    for (elem in some.filter <caret>) {\n" +
+                "    }\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    for (elem in some.filter {<caret>}) {\n" +
+                "    }\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceInsideForAfterCloseParen() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    for (elem in some.foo(true) <caret>) {\n" +
+                "    }\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    for (elem in some.foo(true) {<caret>}) {\n" +
+                "    }\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceBeforeIf() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    <caret>if (true) {}\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    {<caret>if (true) {}\n" +
+                "}"
+        );
+    }
+
+    public void testAutoCloseBraceInIfCondition() {
+        doCharTypeTest(
+                '{',
+
+                "fun foo() {\n" +
+                "    if (some.hello (12) <caret>)\n" +
+                "}",
+
+                "fun foo() {\n" +
+                "    if (some.hello (12) {<caret>})\n" +
+                "}"
+        );
     }
 
     public void testTypeLtInFunDeclaration() throws Exception {
@@ -81,6 +306,17 @@ public class TypedHandlerTest extends LightCodeInsightTestCase {
         EditorTestUtil.performTypingAction(getEditor(), '>');
         EditorTestUtil.performTypingAction(getEditor(), '>');
         checkResultByText("val a: List<Set<Int>><caret>");
+    }
+
+    private void doCharTypeTest(char ch, String beforeText, String afterText) {
+        try {
+            configureFromFileText("a.kt", beforeText);
+            EditorTestUtil.performTypingAction(getEditor(), ch);
+            checkResultByText(afterText);
+        }
+        catch (IOException e) {
+            throw ExceptionUtils.rethrow(e);
+        }
     }
 
     private void doLtGtTestNoAutoClose(String initText) throws Exception {

@@ -249,10 +249,10 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         // Members from supertypes
         Collection<PropertyDescriptor> fromSupertypes = Lists.newArrayList();
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {
-            fromSupertypes.addAll((Set) supertype.getMemberScope().getProperties(name));
+            fromSupertypes.addAll((Collection) supertype.getMemberScope().getProperties(name));
         }
         result.addAll(generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_PROPERTIES, result));
-        generateFakeOverrides(name, fromSupertypes, (Set) result, PropertyDescriptor.class);
+        generateFakeOverrides(name, fromSupertypes, (Collection) result, PropertyDescriptor.class);
     }
 
     @NotNull
@@ -356,7 +356,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         ConstructorDescriptor primaryConstructor = null;
         if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
             JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-            if (!thisDescriptor.getKind().isObject()) {
+            if (!thisDescriptor.getKind().isSingleton()) {
                 JetClass jetClass = (JetClass) classOrObject;
                 ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
                         .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),

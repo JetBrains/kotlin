@@ -9,10 +9,10 @@ public final class Class implements jet.JetObject {
     private java.lang.String notNullVar;
 
     @org.jetbrains.annotations.NotNull
-    public final java.lang.String notNull(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "a") java.lang.String p) { /* compiled code */ }
+    public final java.lang.String notNull(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "a") java.lang.String a) { /* compiled code */ }
 
     @org.jetbrains.annotations.Nullable
-    public final java.lang.String nullable(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "a", type = "?") java.lang.String p) { /* compiled code */ }
+    public final java.lang.String nullable(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "a", type = "?") java.lang.String a) { /* compiled code */ }
 
     @org.jetbrains.annotations.NotNull
     public final java.lang.String notNullWithNN() { /* compiled code */ }
@@ -56,7 +56,7 @@ public final class Class implements jet.JetObject {
 
     @org.jetbrains.annotations.Nullable
     @org.jetbrains.annotations.NotNull
-    public final void setNotNullVarWithGetSet(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "v") java.lang.String p) { /* compiled code */ }
+    public final void setNotNullVarWithGetSet(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "v") java.lang.String v) { /* compiled code */ }
 
     @org.jetbrains.annotations.NotNull
     @org.jetbrains.annotations.Nullable
@@ -67,7 +67,7 @@ public final class Class implements jet.JetObject {
     public final java.lang.String getNullableVarWithGetSet() { /* compiled code */ }
 
     @org.jetbrains.annotations.NotNull
-    public final void setNullableVarWithGetSet(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "v", type = "?") java.lang.String p) { /* compiled code */ }
+    public final void setNullableVarWithGetSet(@org.jetbrains.annotations.Nullable @jet.runtime.typeinfo.JetValueParameter(name = "v", type = "?") java.lang.String v) { /* compiled code */ }
 
     @org.jetbrains.annotations.NotNull
     public Class() { /* compiled code */ }

@@ -114,7 +114,7 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
         JetPsiReference reference = (JetPsiReference) configureByFile(getTestName(true) + ".kt");
         PsiElement resolved = reference.resolve();
         assertNotNull(resolved);
-        assertEmpty(reference.multiResolve(false));
+        assertEquals(1, reference.multiResolve(false).length);
 
         List<PsiComment> comments = PsiTreeUtil.getChildrenOfTypeAsList(getFile(), PsiComment.class);
         String[] expectedTarget = comments.get(comments.size() - 1).getText().substring(2).split(":");

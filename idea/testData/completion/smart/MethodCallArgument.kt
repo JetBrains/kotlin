@@ -1,10 +1,10 @@
 val s = ""
 
-fun f(p1: Object, p2: String) {
+fun f(p1: Any, p2: String) {
     foo(<caret>)
 }
 
-fun foo(p1: String, p2: Object) : String{
+fun foo(p1: String, p2: Any) : String{
 }
 
 // ABSENT: p1

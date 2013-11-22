@@ -133,7 +133,11 @@ public class JavaVisibilities {
     private static boolean isInSameNamespace(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
         NamespaceDescriptor whatPackage = DescriptorUtils.getParentOfType(first, NamespaceDescriptor.class, false);
         NamespaceDescriptor fromPackage = DescriptorUtils.getParentOfType(second, NamespaceDescriptor.class, false);
-        return fromPackage != null && whatPackage != null && whatPackage.equals(fromPackage);
+        return fromPackage != null && whatPackage != null && fqNamesEqual(whatPackage, fromPackage);
+    }
+
+    private static boolean fqNamesEqual(@NotNull NamespaceDescriptor a, @NotNull NamespaceDescriptor b) {
+        return DescriptorUtils.getFQName(a).equals(DescriptorUtils.getFQName(b));
     }
 
     @Nullable

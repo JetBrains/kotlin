@@ -1,0 +1,9 @@
+OUT Buildfile: [TestData]/build.xml
+OUT 
+OUT build:
+ERR 
+ERR BUILD FAILED
+ERR [TestData]/build.xml:5: "src" should be specified
+ERR 
+ERR Total time: [time]
+Return code: 1

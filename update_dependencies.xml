@@ -171,6 +171,19 @@
         <!-- CLI Parser -->
         <get-maven-library prefix="com/github/spullara/cli-parser" lib="cli-parser" version="1.1.1"/>
 
+        <!-- Closure Compiler -->
+        <!-- A download url taken from http://code.google.com/p/closure-compiler/wiki/BinaryDownloads -->
+        <get src="http://dl.google.com/closure-compiler/compiler-20131014.zip"
+             dest="dependencies/download/closure-compiler.zip" usetimestamp="true"/>
+
+        <delete file="dependencies/closure-compiler.jar" failonerror="false"/>
+        <unzip src="dependencies/download/closure-compiler.zip" dest="dependencies">
+            <patternset>
+                <include name="compiler.jar"/>
+            </patternset>
+            <mapper type="merge" to="closure-compiler.jar"/>
+        </unzip>
+
         <!-- Bootstrap compiler -->
         <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
              dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>

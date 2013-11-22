@@ -1324,12 +1324,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void lookupConstructorExpressionsInClosureIfPresent(final ConstructorContext constructorContext) {
         JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override
-            public void visitJetElement(JetElement e) {
+            public void visitJetElement(@NotNull JetElement e) {
                 e.acceptChildren(this);
             }
 
             @Override
-            public void visitSimpleNameExpression(JetSimpleNameExpression expr) {
+            public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expr) {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expr);
                 if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                     ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) constructorContext.getContextDescriptor();
@@ -1355,7 +1355,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             @Override
-            public void visitThisExpression(JetThisExpression expression) {
+            public void visitThisExpression(@NotNull JetThisExpression expression) {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
                 assert descriptor instanceof CallableDescriptor ||
                        descriptor instanceof ClassDescriptor : "'This' reference target should be class or callable descriptor but was " + descriptor;

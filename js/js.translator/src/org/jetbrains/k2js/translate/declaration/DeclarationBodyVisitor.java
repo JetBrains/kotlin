@@ -35,12 +35,12 @@ import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createClassObjectInitializer;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes;
 
 public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @KotlinSignature("val result: MutableList<JsPropertyInitializer>")
@@ -75,12 +75,12 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     public Void visitEnumEntry(@NotNull JetEnumEntry enumEntry, TranslationContext data) {
         JsExpression jsEnumEntryCreation;
         ClassDescriptor descriptor = getClassDescriptor(data.bindingContext(), enumEntry);
-        Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+        List<JetType> supertypes = getSupertypesWithoutFakes(descriptor);
         if (enumEntry.getBody() != null || supertypes.size() > 1) {
             jsEnumEntryCreation = ClassTranslator.generateClassCreation(enumEntry, descriptor, data);
         } else {
             assert supertypes.size() == 1 : "Simple Enum entry must have one supertype";
-            jsEnumEntryCreation = new ClassInitializerTranslator(enumEntry, data).generateEnumEntryInstanceCreation(supertypes.iterator().next());
+            jsEnumEntryCreation = new ClassInitializerTranslator(enumEntry, data).generateEnumEntryInstanceCreation(supertypes.get(0));
         }
         enumEntryList.add(new JsPropertyInitializer(data.getNameForDescriptor(descriptor).makeRef(), jsEnumEntryCreation));
         return null;

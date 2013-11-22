@@ -2,4 +2,7 @@
   <item name='com.google.common.collect.Multimap java.util.Set&lt;K&gt; keySet()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.google.common.collect.SetMultimap java.util.Map&lt;K,java.util.Collection&lt;V&gt;&gt; asMap()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>

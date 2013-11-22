@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.psi.PsiDocumentManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -44,12 +45,12 @@ public class ReferenceToClassesShortening {
         for (JetElement element : elementsToCompact) {
             element.accept(new JetVisitorVoid() {
                 @Override
-                public void visitJetElement(JetElement element) {
+                public void visitJetElement(@NotNull JetElement element) {
                     element.acceptChildren(this);
                 }
 
                 @Override
-                public void visitTypeReference(JetTypeReference typeReference) {
+                public void visitTypeReference(@NotNull JetTypeReference typeReference) {
                     super.visitTypeReference(typeReference);
 
                     JetTypeElement typeElement = typeReference.getTypeElement();

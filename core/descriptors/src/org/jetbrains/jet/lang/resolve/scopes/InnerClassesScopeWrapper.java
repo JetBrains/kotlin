@@ -87,6 +87,6 @@ public class InnerClassesScopeWrapper extends AbstractScopeAdapter {
     }
 
     private static boolean isClass(DeclarationDescriptor descriptor) {
-        return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isObject();
+        return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).getKind().isSingleton();
     }
 }

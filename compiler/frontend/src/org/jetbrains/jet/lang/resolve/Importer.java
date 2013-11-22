@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -86,20 +87,21 @@ public interface Importer {
         }
 
         protected void importAllUnderDeclaration(@NotNull DeclarationDescriptor descriptor, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-            JetScope scopeToImport = null;
+            List<JetScope> scopesToImport = new ArrayList<JetScope>(2);
             if (descriptor instanceof NamespaceDescriptor) {
-                scopeToImport = ((NamespaceDescriptor) descriptor).getMemberScope();
+                scopesToImport.add(((NamespaceDescriptor) descriptor).getMemberScope());
             }
-            if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
+            else if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-                scopeToImport = classDescriptor.getUnsubstitutedInnerClassesScope();
+                scopesToImport.add(classDescriptor.getUnsubstitutedInnerClassesScope());
                 ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
                 if (classObjectDescriptor != null) {
-                    scopeToImport = classObjectDescriptor.getUnsubstitutedInnerClassesScope();
+                    scopesToImport.add(classObjectDescriptor.getUnsubstitutedInnerClassesScope());
                 }
             }
-            if (scopeToImport != null) {
-                namespaceScope.importScope(createFilteringScope(scopeToImport, descriptor, platformToKotlinClassMap));
+
+            for (JetScope scope : scopesToImport) {
+                namespaceScope.importScope(createFilteringScope(scope, descriptor, platformToKotlinClassMap));
             }
         }
 
@@ -146,6 +148,7 @@ public interface Importer {
 
         @Override
         public void addAliasImport(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
+            assert !DescriptorUtils.isSingleton(descriptor) : "Never import objects: " + descriptor;
             imports.add(new AliasImportEntry(descriptor, aliasName));
         }
 

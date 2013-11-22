@@ -69,32 +69,6 @@ public class BindingContextUtils {
             Slices.<DeclarationDescriptor, PsiElement>sliceBuilder().setKeyNormalizer(DECLARATION_DESCRIPTOR_NORMALIZER).setDebugName("DESCRIPTOR_TO_DECLARATION").build();
 
     @Nullable
-    public static PsiElement resolveToDeclarationPsiElement(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-        if (declarationDescriptor == null) {
-            return bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression);
-        }
-
-        PsiElement element = descriptorToDeclaration(bindingContext, declarationDescriptor);
-        if (element != null) {
-            return element;
-        }
-
-        return null;
-    }
-
-    @NotNull
-    public static List<PsiElement> resolveToDeclarationPsiElements(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-        if (declarationDescriptor == null) {
-            return Lists.newArrayList(bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression));
-        }
-
-        return descriptorToDeclarations(bindingContext, declarationDescriptor);
-    }
-
-
-    @Nullable
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable JetElement element, boolean onlyReference) {
         DeclarationDescriptor descriptor = null;
         if (!onlyReference && (element instanceof JetVariableDeclaration || element instanceof JetParameter)) {

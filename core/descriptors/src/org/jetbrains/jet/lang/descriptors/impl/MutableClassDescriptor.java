@@ -69,7 +69,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
 
         constructors.add(constructorDescriptor);
 
-        if (defaultType != null) {
+        if (defaultType.isComputed()) {
             ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
         }
 

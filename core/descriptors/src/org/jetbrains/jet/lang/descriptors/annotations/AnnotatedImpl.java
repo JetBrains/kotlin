@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.descriptors.annotations;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public abstract class AnnotatedImpl implements Annotated {
@@ -25,6 +27,7 @@ public abstract class AnnotatedImpl implements Annotated {
         this.annotations = annotations;
     }
 
+    @NotNull
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations;

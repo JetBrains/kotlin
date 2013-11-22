@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
+import org.jetbrains.jet.cli.AbstractKotlincExecutableTest;
 import org.jetbrains.jet.codegen.AbstractBytecodeTextTest;
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
 import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest;
@@ -257,6 +258,14 @@ public class GenerateTests {
         );
 
         generateTest(
+                "compiler/tests/",
+                "KotlincExecutableTestGenerated",
+                AbstractKotlincExecutableTest.class,
+                testModel("compiler/testData/cli/jvm", true, "args", "doJvmTest"),
+                testModel("compiler/testData/cli/js", true, "args", "doJsTest")
+        );
+
+        generateTest(
                 "idea/tests/",
                 "JetPsiMatcherTest",
                 AbstractJetPsiMatcherTest.class,
@@ -387,6 +396,7 @@ public class GenerateTests {
                 testModel("idea/testData/intentions/branched/ifWhen/ifToWhen", "doTestIfToWhen"),
                 testModel("idea/testData/intentions/branched/ifWhen/whenToIf", "doTestWhenToIf"),
                 testModel("idea/testData/intentions/branched/when/flatten", "doTestFlattenWhen"),
+                testModel("idea/testData/intentions/branched/when/merge", "doTestMergeWhen"),
                 testModel("idea/testData/intentions/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
                 testModel("idea/testData/intentions/branched/when/eliminateSubject", "doTestEliminateWhenSubject"),
                 testModel("idea/testData/intentions/declarations/split", "doTestSplitProperty"),
@@ -444,7 +454,7 @@ public class GenerateTests {
                 "idea/tests/",
                 "JetQuickDocProviderTestGenerated",
                 AbstractJetQuickDocProviderTest.class,
-                testModel("idea/testData/editor/quickDoc", "doTest")
+                testModelWithPattern("idea/testData/editor/quickDoc", "^([^_]+)\\.[^\\.]*$", "doTest")
         );
 
         generateTest(

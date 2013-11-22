@@ -138,7 +138,7 @@ public class JetPsiUtil {
         final Set<JetElement> shadowedElements = new HashSet<JetElement>();
         JetVisitorVoid shadowAllChildren = new JetVisitorVoid() {
             @Override
-            public void visitJetElement(JetElement element) {
+            public void visitJetElement(@NotNull JetElement element) {
                 if (shadowedElements.add(element)) {
                     element.acceptChildren(this);
                 }
@@ -429,6 +429,13 @@ public class JetPsiUtil {
 
         PsiElement selectorParent = selector.getParent();
         return selectorParent instanceof JetQualifiedExpression && (((JetQualifiedExpression) selectorParent).getSelectorExpression() == selector);
+    }
+
+    public static boolean isLHSOfDot(@NotNull JetExpression expression) {
+        PsiElement parent = expression.getParent();
+        if (!(parent instanceof JetQualifiedExpression)) return false;
+        JetQualifiedExpression qualifiedParent = (JetQualifiedExpression) parent;
+        return qualifiedParent.getReceiverExpression() == expression || isLHSOfDot(qualifiedParent);
     }
 
     public static boolean isVoidType(@Nullable JetTypeReference typeReference) {
@@ -841,7 +848,7 @@ public class JetPsiUtil {
         ((JetElement) root).accept(
                 new JetVisitorVoid() {
                     @Override
-                    public void visitJetElement(JetElement element) {
+                    public void visitJetElement(@NotNull JetElement element) {
                         if (predicate.apply(element)) {
                             //noinspection unchecked
                             results.add(element);

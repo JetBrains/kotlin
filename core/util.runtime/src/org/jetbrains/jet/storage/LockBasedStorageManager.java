@@ -265,7 +265,7 @@ public class LockBasedStorageManager implements StorageManager {
 
         @Override
         @Nullable
-        public V invoke(@NotNull K input) {
+        public V invoke(K input) {
             Object value = cache.get(input);
             if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
@@ -277,13 +277,13 @@ public class LockBasedStorageManager implements StorageManager {
                 try {
                     V typedValue = compute.invoke(input);
                     Object oldValue = cache.put(input, WrappedValues.escapeNull(typedValue));
-                    assert oldValue == null : "Race condition detected";
+                    assert oldValue == null : "Race condition or recursion detected. Old value is " + oldValue;
 
                     return typedValue;
                 }
                 catch (Throwable throwable) {
                     Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
-                    assert oldValue == null : "Race condition detected";
+                    assert oldValue == null : "Race condition or recursion detected. Old value is " + oldValue;
 
                     throw ExceptionUtils.rethrow(throwable);
                 }
@@ -306,7 +306,7 @@ public class LockBasedStorageManager implements StorageManager {
 
         @NotNull
         @Override
-        public V invoke(@NotNull K input) {
+        public V invoke(K input) {
             V result = super.invoke(input);
             assert result != null : "compute() returned null";
             return result;

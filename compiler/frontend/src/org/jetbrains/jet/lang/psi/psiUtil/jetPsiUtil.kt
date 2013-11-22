@@ -21,8 +21,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetClass
-import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.jet.lang.psi.JetPsiFactory
 
 fun PsiElement.getParentByTypeAndPredicate<T: PsiElement>(
         parentClass : Class<T>, strict : Boolean = false, predicate: (T) -> Boolean
@@ -67,3 +71,24 @@ fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
             else ->
                 getDeclarations()
         }
+
+fun JetClass.isAbstract() = isTrait() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
+
+[suppress("UNCHECKED_CAST")]
+fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newElement)!! as T
+
+fun JetElement.blockExpressionsOrSingle(): Iterator<JetElement> =
+        if (this is JetBlockExpression) getStatements().iterator() else SingleIterator(this)
+
+fun JetElement.outermostLastBlockElement(predicate: (JetElement) -> Boolean = { true }): JetElement? {
+    return JetPsiUtil.getOutermostLastBlockElement(this) { e -> e != null && predicate(e) }
+}
+
+fun JetBlockExpression.appendElement(element: JetElement): JetElement =
+        addAfter(element, getRBrace()!!.getPrevSibling()!!)!! as JetElement
+
+fun JetElement.wrapInBlock(): JetBlockExpression {
+    val block = JetPsiFactory.createEmptyBody(getProject()) as JetBlockExpression
+    block.appendElement(this)
+    return block
+}

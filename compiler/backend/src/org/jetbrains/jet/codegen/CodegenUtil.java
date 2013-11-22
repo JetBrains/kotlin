@@ -292,7 +292,7 @@ public class CodegenUtil {
         ReceiverParameterDescriptor expectedThisObject = descriptor.getExpectedThisObject();
         if (expectedThisObject != null) {
             ClassDescriptor expectedThisClass = (ClassDescriptor) expectedThisObject.getContainingDeclaration();
-            if (!expectedThisClass.getKind().isObject()) {
+            if (!expectedThisClass.getKind().isSingleton()) {
                 return expectedThisClass;
             }
         }

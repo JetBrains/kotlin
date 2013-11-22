@@ -1285,7 +1285,7 @@ public class DescriptorResolver {
                 classDescriptor,
                 valueParameter.getAnnotations(),
                 resolveModalityFromModifiers(parameter, Modality.FINAL),
-                resolveVisibilityFromModifiers(parameter),
+                resolveVisibilityFromModifiers(parameter, Visibilities.INTERNAL),
                 isMutable,
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION

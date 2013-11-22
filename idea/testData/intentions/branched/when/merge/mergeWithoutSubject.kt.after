@@ -1,0 +1,18 @@
+fun test(n: Int) {
+    val res: String
+
+    <caret>when {
+        n == 1 -> {
+            res = "one"
+            println("A")
+        }
+        n == 2 -> {
+            res = "two"
+            println("B")
+        }
+        else -> {
+            res = "unknown"
+            println("C")
+        }
+    }
+}

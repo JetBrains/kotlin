@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.FilteringScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -239,6 +238,14 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ENUM_ENTRY);
     }
 
+    public static boolean isSingleton(@NotNull DeclarationDescriptor classifier) {
+        if (classifier instanceof ClassDescriptor) {
+            ClassDescriptor clazz = (ClassDescriptor) classifier;
+            return clazz.getKind().isSingleton();
+        }
+        return false;
+    }
+
     public static boolean isEnumClass(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.ENUM_CLASS);
     }
@@ -297,7 +304,7 @@ public class DescriptorUtils {
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
-            if (classDescriptor.getKind().isObject()) {
+            if (classDescriptor.getKind().isSingleton()) {
                 return inStaticContext(classDescriptor.getContainingDeclaration());
             }
 
@@ -321,10 +328,15 @@ public class DescriptorUtils {
         if (classKind == ClassKind.ENUM_CLASS) {
             return Visibilities.PRIVATE;
         }
-        if (classKind.isObject()) {
+        if (classKind.isSingleton()) {
             return Visibilities.PRIVATE;
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.TRAIT || classKind == ClassKind.ANNOTATION_CLASS;
+        return Visibilities.PUBLIC;
+    }
+
+    @NotNull
+    public static Visibility getSyntheticClassObjectVisibility() {
         return Visibilities.PUBLIC;
     }
 
@@ -409,7 +421,7 @@ public class DescriptorUtils {
         return descriptor instanceof ClassDescriptor &&
                containing instanceof ClassDescriptor &&
                !((ClassDescriptor) descriptor).isInner() &&
-               !((ClassDescriptor) containing).getKind().isObject();
+               !((ClassDescriptor) containing).getKind().isSingleton();
     }
 
     @Nullable

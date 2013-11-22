@@ -16,28 +16,30 @@
 
 package org.jetbrains.jet.plugin.references;
 
+import com.beust.jcommander.internal.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.MultiRangeReference;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.jet.lang.psi.JetContainerNode;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
 
 class JetArrayAccessReference extends JetPsiReference implements MultiRangeReference {
-    private JetArrayAccessExpression expression;
+    private final JetArrayAccessExpression expression;
 
     public static PsiReference[] create(JetArrayAccessExpression expression) {
         JetContainerNode indicesNode = expression.getIndicesNode();
@@ -54,32 +56,22 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
         return getElement().getTextRange().shiftRight(-getElement().getTextOffset());
     }
 
+    @Nullable
     @Override
-    protected PsiElement doResolve() {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) getElement().getContainingFile())
-                .getBindingContext();
-        ResolvedCall<FunctionDescriptor> getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
-        ResolvedCall<FunctionDescriptor> setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);
-        if (getFunction != null && setFunction != null) {
-            return null; // Call doMultiResolve
-        }
-        return super.doResolve();
-    }
+    protected Collection<? extends DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
+        List<DeclarationDescriptor> result = Lists.newArrayList();
 
-    @Override
-    protected ResolveResult[] doMultiResolve() {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) getElement().getContainingFile())
-                .getBindingContext();
-        ResolvedCall<FunctionDescriptor> getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
-        ResolvedCall<FunctionDescriptor> setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);
-        if (getFunction == null || setFunction == null) {
-            return new ResolveResult[0];
+        ResolvedCall<FunctionDescriptor> getFunction = context.get(INDEXED_LVALUE_GET, expression);
+        if (getFunction != null) {
+            result.add(getFunction.getResultingDescriptor());
         }
-        PsiElement getFunctionElement = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, getFunction.getResultingDescriptor());
-        assert getFunctionElement != null;
-        PsiElement setFunctionElement = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, setFunction.getResultingDescriptor());
-        assert setFunctionElement != null;
-        return new ResolveResult[] {new PsiElementResolveResult(getFunctionElement, true), new PsiElementResolveResult(setFunctionElement, true)};
+
+        ResolvedCall<FunctionDescriptor> setFunction = context.get(INDEXED_LVALUE_SET, expression);
+        if (setFunction != null) {
+            result.add(setFunction.getResultingDescriptor());
+        }
+
+        return result;
     }
 
     @Override

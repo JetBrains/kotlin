@@ -46,7 +46,7 @@ import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
@@ -157,8 +157,8 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
     @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
     public static boolean isInside(@NotNull PsiElement place, @NotNull PsiElement ancestor) {
-        if (ancestor instanceof JetClsMethod) {
-            ancestor = ((JetClsMethod) ancestor).getOrigin();
+        if (ancestor instanceof KotlinLightMethod) {
+            ancestor = ((KotlinLightMethod) ancestor).getOrigin();
         }
         return JavaSafeDeleteProcessor.isInside(place, ancestor);
     }
@@ -312,7 +312,8 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         for (PsiMethod overridingMethod : overridingMethods) {
             Collection<PsiReference> overridingReferences =
                     ReferencesSearch.search(
-                            overridingMethod instanceof JetClsMethod ? ((JetClsMethod) overridingMethod).getOrigin() : overridingMethod
+                            overridingMethod instanceof KotlinLightMethod
+                            ? ((KotlinLightMethod) overridingMethod).getOrigin() : overridingMethod
                     ).findAll();
             methodToReferences.put(overridingMethod, overridingReferences);
         }
@@ -578,7 +579,8 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     ) {
         PsiMethod[] methods = method.findSuperMethods();
         for (PsiMethod superMethod : methods) {
-            PsiElement relevantElement = superMethod instanceof JetClsMethod ? ((JetClsMethod) superMethod).getOrigin() : superMethod;
+            PsiElement relevantElement = superMethod instanceof KotlinLightMethod
+                                         ? ((KotlinLightMethod) superMethod).getOrigin() : superMethod;
             relevantElement = JetPsiUtil.ascendIfPropertyAccessor(relevantElement);
             if (ArrayUtilRt.find(ignore, relevantElement) < 0 && !MethodSignatureUtil.isSuperMethod(originalMethod, superMethod)) {
                 return true;
@@ -738,8 +740,8 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     }
 
     private static boolean checkPsiMethodEquality(@NotNull PsiMethod method1, @NotNull PsiMethod method2) {
-        if (method1 instanceof JetClsMethod && method2 instanceof JetClsMethod) {
-            return ((JetClsMethod) method1).getOrigin().equals(((JetClsMethod) method2).getOrigin());
+        if (method1 instanceof KotlinLightMethod && method2 instanceof KotlinLightMethod) {
+            return ((KotlinLightMethod) method1).getOrigin().equals(((KotlinLightMethod) method2).getOrigin());
         }
         return method1.equals(method2);
     }
@@ -749,8 +751,8 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         Collection<PsiMethod> overridingMethods = OverridingMethodsSearch.search(method, true).findAll();
         overrideLoop:
         for (PsiMethod overridingMethod : overridingMethods) {
-            PsiElement overridingElement = overridingMethod instanceof JetClsMethod
-                                           ? ((JetClsMethod) overridingMethod).getOrigin()
+            PsiElement overridingElement = overridingMethod instanceof KotlinLightMethod
+                                           ? ((KotlinLightMethod) overridingMethod).getOrigin()
                                            : overridingMethod;
 
             Collection<PsiMethod> currentSuperMethods = new ArrayList<PsiMethod>();
@@ -847,8 +849,8 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     }
 
     private static void addParameter(@NotNull PsiMethod method, @NotNull Set<PsiElement> result, int parameterIndex) {
-        if (method instanceof JetClsMethod) {
-            JetDeclaration declaration = ((JetClsMethod) method).getOrigin();
+        if (method instanceof KotlinLightMethod) {
+            JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
             if (declaration instanceof JetNamedFunction) {
                 result.add(((JetNamedFunction) declaration).getValueParameters().get(parameterIndex));
             }

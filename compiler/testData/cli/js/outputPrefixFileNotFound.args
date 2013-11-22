@@ -1,0 +1,6 @@
+-sourceFiles
+$TESTDATA_DIR$/simple2js.kt
+-output
+$TEMP_DIR$/out.js
+-outputPrefix
+not/existing/path

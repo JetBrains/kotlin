@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -116,7 +116,7 @@ public class JetRefactoringUtil {
     }
 
     private static PsiElement toJetDeclarationOrMethod(PsiMethod method) {
-        return (method instanceof JetClsMethod) ? ((JetClsMethod) method).getOrigin() : method;
+        return (method instanceof KotlinLightMethod) ? ((KotlinLightMethod) method).getOrigin() : method;
     }
 
     @NotNull
@@ -311,8 +311,8 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static String formatJavaOrLightMethod(@NotNull PsiMethod method) {
-        if (method instanceof JetClsMethod) {
-            JetDeclaration declaration = ((JetClsMethod) method).getOrigin();
+        if (method instanceof KotlinLightMethod) {
+            JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
             BindingContext bindingContext =
                     AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
             DeclarationDescriptor descriptor =

@@ -3,7 +3,7 @@ class Bar : Foo()
 
 val foo = Foo()
 val bar = Bar()
-val o : Object = Object()
+val o : Any = ""
 
 fun f(p1 : Foo, p2 : Bar, p3 : String, p4 : Foo?) {
     var a : Foo

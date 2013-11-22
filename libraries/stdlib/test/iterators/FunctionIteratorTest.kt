@@ -18,4 +18,9 @@ class FunctionIteratorTest {
         val list = iter.toList()
         assertEquals(arrayList(2, 1, 0), list)
     }
+
+    Test fun iterateOverFunction2() {
+        val values = iterate<Int>(3) { n -> if (n > 0) n - 1 else null }
+        assertEquals(arrayList(3, 2, 1, 0), values.toList())
+    }
 }

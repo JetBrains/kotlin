@@ -5,7 +5,7 @@ internal final enum class EnumWithPrimitiveConstructorParameter : jet.Enum<test.
     public final override /*1*/ /*fake_override*/ fun name(): jet.String
     public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
     
-    internal class object <class-object-for-EnumWithPrimitiveConstructorParameter> {
+    public class object <class-object-for-EnumWithPrimitiveConstructorParameter> {
         /*primary*/ private constructor <class-object-for-EnumWithPrimitiveConstructorParameter>()
         public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.EnumWithPrimitiveConstructorParameter
         public final /*synthesized*/ fun values(): jet.Array<test.EnumWithPrimitiveConstructorParameter>

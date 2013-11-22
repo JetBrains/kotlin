@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetClsMethod;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage;
@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
@@ -238,8 +239,8 @@ public class SignaturesPropagationData {
                 continue;
             }
 
-            DeclarationDescriptor superFun = superMethod.getPsi() instanceof JetClsMethod
-                                             ? trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ((JetClsMethod) superMethod.getPsi()).getOrigin())
+            DeclarationDescriptor superFun = superMethod.getPsi() instanceof KotlinLightMethod
+                                             ? trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ((KotlinLightMethod) superMethod.getPsi()).getOrigin())
                                              : findSuperFunction(superclassToFunctions.get(classFqName), superMethod);
             if (superFun == null) {
                 // Super methods which are Object methods in interfaces are not loaded by JDR.
@@ -597,7 +598,8 @@ public class SignaturesPropagationData {
             boolean annotatedAsNotNull = howThisTypeIsUsed != TYPE_ARGUMENT && !autoType.isNullable();
 
             if (annotatedAsNotNull && someSupersNotCovariantNullable) {
-                reportError("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + autoType);
+                DescriptorRenderer renderer = DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES;
+                reportError("In superclass type is nullable: " + typesFromSuper + ", in subclass it is not: " + renderer.renderType(autoType));
                 return true;
             }
 

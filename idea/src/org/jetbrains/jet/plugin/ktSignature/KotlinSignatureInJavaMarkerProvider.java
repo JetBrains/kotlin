@@ -89,12 +89,12 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        Module module = ModuleUtilCore.findModuleForPsiElement(elements.get(0));
-        if (module == null) {
+        if (!ProjectStructureUtil.hasJvmKotlinModules(project)) {
             return;
         }
 
-        if (!ProjectStructureUtil.isUsedInKotlinJavaModule(module)) {
+        Module module = ModuleUtilCore.findModuleForPsiElement(elements.get(0));
+        if (module != null && !ProjectStructureUtil.isUsedInKotlinJavaModule(module)) {
             return;
         }
 

@@ -1,5 +1,8 @@
 <component name="libraryTable">
   <library name="intellij-core">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="file://$PROJECT_DIR$/ideaSDK/core" />
       <root url="jar://$PROJECT_DIR$/dependencies/cli-parser-1.1.1.jar!/" />
