@@ -25,9 +25,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -55,7 +53,6 @@ public class InlineCallResolverExtension implements CallResolverExtension {
             ValueParameterDescriptor next = iterator.next();
             JetType type = next.getType();
             if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type)) {
-                //TODO check annotations
                 if (!InlineUtil.hasNoinlineAnnotation(next)) {
                     inlinableParameters.add(next);
                 }
@@ -97,19 +94,26 @@ public class InlineCallResolverExtension implements CallResolverExtension {
 
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
             ResolvedValueArgument value = entry.getValue();
-            if (value instanceof ExpressionValueArgument) {
-                JetExpression jetExpression = ((ExpressionValueArgument) value).getValueArgument().getArgumentExpression();
-
-                DeclarationDescriptor varDescriptor = getDescriptor(context, jetExpression);
-
-                if (varDescriptor != null && inlinableParameters.contains(varDescriptor)) {
-                    checkFunctionCall(context, targetDescriptor, jetExpression);
+            if (!(value instanceof DefaultValueArgument)) {
+                for (ValueArgument argument : value.getArguments()) {
+                    checkValueParameter(context, targetDescriptor, argument, value instanceof VarargValueArgument);
                 }
             }
-            //TODO default and vararg
         }
 
         checkVisibility(targetDescriptor, expression, context);
+    }
+
+    private void checkValueParameter(BasicCallResolutionContext context, CallableDescriptor targetDescriptor, ValueArgument argument, boolean isVararg) {
+        JetExpression jetExpression = argument.getArgumentExpression();
+        if (jetExpression == null) {
+            return;
+        }
+        CallableDescriptor varDescriptor = getDescriptor(context, jetExpression);
+
+        if (varDescriptor != null && inlinableParameters.contains(varDescriptor)) {
+            checkFunctionCall(context, targetDescriptor, jetExpression, isVararg);
+        }
     }
 
     private void checkCallWithReceiver(
@@ -159,7 +163,17 @@ public class InlineCallResolverExtension implements CallResolverExtension {
             CallableDescriptor targetDescriptor,
             JetExpression receiverExpresssion
     ) {
-        if (!isInvokeOrInlineExtension(targetDescriptor)) {
+        checkFunctionCall(context, targetDescriptor, receiverExpresssion, false);
+    }
+
+    private void checkFunctionCall(
+            BasicCallResolutionContext context,
+            CallableDescriptor targetDescriptor,
+            JetExpression receiverExpresssion,
+            boolean isVararg
+    ) {
+        boolean inlineCall = isInvokeOrInlineExtension(targetDescriptor);
+        if (!inlineCall || isVararg) {
             context.trace.report(Errors.USAGE_IS_NOT_INLINABLE.on(receiverExpresssion, receiverExpresssion, descriptor));
         }
     }
