@@ -1,4 +1,4 @@
-Invalid argument: -wrongArgument
+Wrong value for inline option: 'wrong'. Should be 'on' or 'off'
 Usage: org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
   -jar [String] jar file name
   -src [String] source file or directory (allows many paths separated by the system path separator)

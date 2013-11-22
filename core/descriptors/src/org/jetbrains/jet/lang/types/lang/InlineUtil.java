@@ -31,6 +31,14 @@ import java.util.List;
 
 public class InlineUtil {
 
+    public static boolean DEFAULT_INLINE_FLAG = false;
+
+    public static boolean DEFAULT_INLINE_FLAG_FOR_TEST = true;
+
+    public static boolean DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW = false;
+
+    public static boolean DEFAULT_INLINE_FLAG_FOR_STUB = false; /*always false*/
+
     @NotNull
     public static InlineStrategy getInlineType(@NotNull Annotated annotated) {
         return getInlineType(annotated.getAnnotations());

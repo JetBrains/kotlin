@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
@@ -60,7 +61,8 @@ public class CodegenTestUtil {
                 environment.getProject(), ClassBuilderFactories.TEST, Progress.DEAF, analyzeExhaust.getBindingContext(), files.getPsiFiles(),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true),
-                /*generateDeclaredClasses = */true
+                /*generateDeclaredClasses = */true,
+                configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineUtil.DEFAULT_INLINE_FLAG_FOR_TEST)
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state.getFactory();

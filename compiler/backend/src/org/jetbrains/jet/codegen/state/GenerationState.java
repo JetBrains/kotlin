@@ -70,11 +70,13 @@ public class GenerationState {
 
     private final boolean generateDeclaredClasses;
 
+    private final boolean inlineEnabled;
+
     @Nullable
     private List<ScriptDescriptor> earlierScriptsForReplInterpreter;
 
-    public GenerationState(Project project, ClassBuilderFactory builderFactory, BindingContext bindingContext, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, bindingContext, files, true, false, true);
+    public GenerationState(Project project, ClassBuilderFactory builderFactory, BindingContext bindingContext, List<JetFile> files, boolean inlineEnabled) {
+        this(project, builderFactory, Progress.DEAF, bindingContext, files, true, false, true, inlineEnabled);
     }
 
     public GenerationState(
@@ -85,12 +87,14 @@ public class GenerationState {
             @NotNull List<JetFile> files,
             boolean generateNotNullAssertions,
             boolean generateNotNullParamAssertions,
-            boolean generateDeclaredClasses
+            boolean generateDeclaredClasses,
+            boolean inlineEnabled
     ) {
         this.project = project;
         this.progress = progress;
         this.files = files;
         this.classBuilderMode = builderFactory.getClassBuilderMode();
+        this.inlineEnabled = inlineEnabled;
 
         bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
         this.bindingContext = bindingTrace.getBindingContext();
@@ -167,6 +171,10 @@ public class GenerationState {
 
     public boolean isGenerateDeclaredClasses() {
         return generateDeclaredClasses;
+    }
+
+    public boolean isInlineEnabled() {
+        return inlineEnabled;
     }
 
     public void beforeCompile() {

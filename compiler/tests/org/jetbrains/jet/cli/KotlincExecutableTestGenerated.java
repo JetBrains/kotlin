@@ -33,7 +33,7 @@ import org.jetbrains.jet.cli.AbstractKotlincExecutableTest;
 @InnerTestClasses({KotlincExecutableTestGenerated.Jvm.class, KotlincExecutableTestGenerated.Js.class})
 public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTest {
     @TestMetadata("compiler/testData/cli/jvm")
-    @InnerTestClasses({Jvm.WrongAbiVersionLib.class})
+    @InnerTestClasses({Jvm.Inline.class, Jvm.WrongAbiVersionLib.class})
     public static class Jvm extends AbstractKotlincExecutableTest {
         public void testAllFilesPresentInJvm() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), true);
@@ -104,6 +104,29 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest("compiler/testData/cli/jvm/wrongKotlinSignature.args");
         }
         
+        @TestMetadata("compiler/testData/cli/jvm/inline")
+        public static class Inline extends AbstractKotlincExecutableTest {
+            public void testAllFilesPresentInInline() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/cli/jvm/inline"), Pattern.compile("^(.+)\\.args$"), true);
+            }
+            
+            @TestMetadata("off.args")
+            public void testOff() throws Exception {
+                doJvmTest("compiler/testData/cli/jvm/inline/off.args");
+            }
+            
+            @TestMetadata("on.args")
+            public void testOn() throws Exception {
+                doJvmTest("compiler/testData/cli/jvm/inline/on.args");
+            }
+            
+            @TestMetadata("wrong.args")
+            public void testWrong() throws Exception {
+                doJvmTest("compiler/testData/cli/jvm/inline/wrong.args");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/cli/jvm/wrongAbiVersionLib")
         @InnerTestClasses({})
         public static class WrongAbiVersionLib extends AbstractKotlincExecutableTest {
@@ -121,6 +144,7 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Jvm");
             suite.addTestSuite(Jvm.class);
+            suite.addTestSuite(Inline.class);
             suite.addTest(WrongAbiVersionLib.innerSuite());
             return suite;
         }

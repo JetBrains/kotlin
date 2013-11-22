@@ -57,6 +57,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.utils.ExceptionUtils;
@@ -236,7 +237,7 @@ public class ReplInterpreter {
 
         BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), module).getBindingContext();
         GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.BINARIES,
-                                                              bindingContext, Collections.singletonList(psiFile));
+                                                              bindingContext, Collections.singletonList(psiFile), InlineUtil.DEFAULT_INLINE_FLAG);
 
         compileScript(psiFile.getScript(), scriptClassType, earlierScripts, generationState,
                       CompilationErrorHandler.THROW_EXCEPTION);
