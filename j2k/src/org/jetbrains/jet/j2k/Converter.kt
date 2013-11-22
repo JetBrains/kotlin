@@ -41,8 +41,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     private val dispatcher: Dispatcher = Dispatcher(this)
 
-    private val javaToKotlinClassMap: JavaToKotlinClassMap = JavaToKotlinClassMap.getInstance()
-
     public var methodReturnType: PsiType? = null
         private set
 
@@ -75,22 +73,10 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 
     public fun fileToFile(javaFile: PsiJavaFile): File {
-        val importList: PsiImportList? = javaFile.getImportList()
-        val imports: MutableList<Import> = (if (importList == null)
-            arrayListOf()
-        else
-            ArrayList(importsToImportList(importList.getAllImportStatements()) filter {
-                // If name is invalid, like with star imports, don't try to filter
-                if (!QualifiedNamesUtil.isValidJavaFqName(it.name))
-                    true
-                else {
-                    // If imported class has a kotlin analog, drop the import
-                    val kotlinAnalogsForClass = javaToKotlinClassMap.mapPlatformClass(FqName(it.name))
-                    kotlinAnalogsForClass.isEmpty()
-                }
-            }))
+        val psiImportList = javaFile.getImportList()
+        val importList = if (psiImportList != null) importsToImportList(psiImportList) else null
 
-        val body: ArrayList<Node> = arrayListOf()
+        val body = ArrayList<Node>()
         for (element in javaFile.getChildren()) {
             if (element !is PsiImportStatementBase) {
                 val node = topElementToElement(element)
@@ -99,7 +85,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                 }
             }
         }
-        return File(quoteKeywords(javaFile.getPackageName()), imports, body, createMainFunction(javaFile))
+        return File(quoteKeywords(javaFile.getPackageName()), importList, body, createMainFunction(javaFile))
     }
 
     public fun anonymousClassToAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {
@@ -461,7 +447,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return expression
     }
 
-    private fun quoteKeywords(packageName: String): String {
+    public fun quoteKeywords(packageName: String): String {
         return packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
     }
 
@@ -498,32 +484,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             it == Expression.EMPTY_EXPRESSION ||
             it == Element.EMPTY_ELEMENT
         }
-    }
-
-    private fun importsToImportList(imports: Array<PsiImportStatementBase>): List<Import> {
-        val result = ArrayList<Import>()
-        for (i : PsiImportStatementBase? in imports) {
-            if (i == null) continue
-            val anImport: Import = importToImport(i)
-            val name: String = anImport.name
-            if (!name.isEmpty() && !NOT_NULL_ANNOTATIONS.contains(name)) {
-                result.add(anImport)
-            }
-
-        }
-        return result
-    }
-
-    private fun importToImport(i: PsiImportStatementBase): Import {
-        val reference: PsiJavaCodeReferenceElement? = i.getImportReference()
-        if (reference != null) {
-            return Import(quoteKeywords(reference.getQualifiedName()!!) + ((if (i.isOnDemand())
-                ".*"
-            else
-                "")))
-        }
-
-        return Import("")
     }
 
     public fun identifierToIdentifier(identifier: PsiIdentifier?): Identifier {
@@ -582,8 +542,8 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 }
 
-private val NOT_NULL_ANNOTATIONS: Set<String> = ImmutableSet.of<String>("org.jetbrains.annotations.NotNull", "com.sun.istack.internal.NotNull", "javax.annotation.Nonnull")!!
-private val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = ImmutableMap.builder<String, String>()
+public val NOT_NULL_ANNOTATIONS: Set<String> = ImmutableSet.of<String>("org.jetbrains.annotations.NotNull", "com.sun.istack.internal.NotNull", "javax.annotation.Nonnull")!!
+public val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = ImmutableMap.builder<String, String>()
 ?.put("byte", BYTE.asString())
 ?.put("short", SHORT.asString())
 ?.put("int", INT.asString())
