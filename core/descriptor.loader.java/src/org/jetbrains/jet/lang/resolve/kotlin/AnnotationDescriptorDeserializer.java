@@ -44,7 +44,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
@@ -184,7 +185,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             private CompileTimeConstant<?> enumEntryValue(@NotNull JvmClassName enumClassName, @NotNull Name name) {
                 ClassDescriptor enumClass = resolveClass(enumClassName);
                 if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-                    ClassifierDescriptor classifier = getEnumEntriesScope(enumClass).getClassifier(name);
+                    ClassifierDescriptor classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name);
                     if (classifier instanceof ClassDescriptor) {
                         return new EnumValue((ClassDescriptor) classifier);
                     }

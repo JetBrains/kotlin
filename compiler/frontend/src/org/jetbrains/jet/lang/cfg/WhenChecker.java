@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getEnumEntriesScope;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 
 public final class WhenChecker {
@@ -54,7 +53,7 @@ public final class WhenChecker {
         if (classDescriptor.getKind() != ClassKind.ENUM_CLASS || classDescriptor.getModality().isOverridable()) return false;
         boolean isExhaust = true;
         boolean notEmpty = false;
-        for (DeclarationDescriptor descriptor : getEnumEntriesScope(classDescriptor).getAllDescriptors()) {
+        for (DeclarationDescriptor descriptor : classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {
             if (isEnumEntry(descriptor)) {
                 notEmpty = true;
                 if (!containsEnumEntryCase(expression, (ClassDescriptor) descriptor, trace)) {

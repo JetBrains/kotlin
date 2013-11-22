@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getEnumEntriesScope;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
@@ -140,7 +139,7 @@ public final class JavaAnnotationArgumentResolver {
         ClassDescriptor enumClass = classResolver.resolveClass(fqName, INCLUDE_KOTLIN_SOURCES, taskList);
         if (enumClass == null) return null;
 
-        ClassifierDescriptor classifier = getEnumEntriesScope(enumClass).getClassifier(field.getName());
+        ClassifierDescriptor classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(field.getName());
         if (!(classifier instanceof ClassDescriptor)) return null;
 
         return new EnumValue((ClassDescriptor) classifier);
