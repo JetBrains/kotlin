@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNREACHABLE_CODE
 trait Tr<T> {
     var v: T
 }

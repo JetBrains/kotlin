@@ -1402,6 +1402,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkInnerLocalDeclarations.kt");
             }
             
+            @TestMetadata("DeadCode.kt")
+            public void testDeadCode() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/DeadCode.kt");
+            }
+            
             @TestMetadata("kt1001.kt")
             public void testKt1001() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt1001.kt");
@@ -3099,6 +3104,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/checkBackingFieldException.kt");
                 }
                 
+                @TestMetadata("completeFunctionArgumentsOfNestedCalls.kt")
+                public void testCompleteFunctionArgumentsOfNestedCalls() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/completeFunctionArgumentsOfNestedCalls.kt");
+                }
+                
                 @TestMetadata("funEquals.kt")
                 public void testFunEquals() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError/funEquals.kt");
@@ -3286,6 +3296,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/possibleCycleOnConstraints.kt");
             }
             
+            @TestMetadata("tryNumberLowerBoundsBeforeUpperBounds.kt")
+            public void testTryNumberLowerBoundsBeforeUpperBounds() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/tryNumberLowerBoundsBeforeUpperBounds.kt");
+            }
+            
             @TestMetadata("typeConstructorMismatch.kt")
             public void testTypeConstructorMismatch() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/typeConstructorMismatch.kt");
@@ -3305,6 +3320,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             public static class Constraints extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInConstraints() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/constraints"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("constraintOnFunctionLiteral.kt")
+                public void testConstraintOnFunctionLiteral() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/constraints/constraintOnFunctionLiteral.kt");
                 }
                 
                 @TestMetadata("equalityConstraintOnNullableType.kt")
@@ -5350,6 +5370,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/resolve/invoke/kt3833-invokeInsideNestedClass.kt");
                 }
                 
+                @TestMetadata("kt4204-completeNestedCallsForInvoke.kt")
+                public void testKt4204_completeNestedCallsForInvoke() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/invoke/kt4204-completeNestedCallsForInvoke.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls")
@@ -5361,6 +5386,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 @TestMetadata("analyzeArgsInFreeExpressionPosition.kt")
                 public void testAnalyzeArgsInFreeExpressionPosition() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/resolve/nestedCalls/analyzeArgsInFreeExpressionPosition.kt");
+                }
+                
+                @TestMetadata("analyzeUnmappedArguments.kt")
+                public void testAnalyzeUnmappedArguments() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/nestedCalls/analyzeUnmappedArguments.kt");
+                }
+                
+                @TestMetadata("completeUnmappedArguments.kt")
+                public void testCompleteUnmappedArguments() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/nestedCalls/completeUnmappedArguments.kt");
                 }
                 
             }

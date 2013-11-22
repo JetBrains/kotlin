@@ -7,4 +7,5 @@ fun main(args: Array<String>) {
     }
 }
 
-fun test<R>(callback: (R) -> Unit):Unit = callback(null!!)
+// callback is unused due to KT-4233
+fun test<R>(<!UNUSED_PARAMETER!>callback<!>: (R) -> Unit):Unit = <!UNREACHABLE_CODE!>callback(null!!)<!>

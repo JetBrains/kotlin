@@ -69,14 +69,14 @@ public class JetControlFlowProcessor {
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) subroutine;
             List<JetParameter> valueParameters = declarationWithBody.getValueParameters();
             for (JetParameter valueParameter : valueParameters) {
-                valueParameter.accept(cfpVisitor);
+                cfpVisitor.generateInstructions(valueParameter);
             }
             JetExpression bodyExpression = declarationWithBody.getBodyExpression();
             if (bodyExpression != null) {
-                bodyExpression.accept(cfpVisitor);
+                cfpVisitor.generateInstructions(bodyExpression);
             }
         } else {
-            subroutine.accept(cfpVisitor);
+            cfpVisitor.generateInstructions(subroutine);
         }
         return builder.exitSubroutine(subroutine);
     }
@@ -115,16 +115,13 @@ public class JetControlFlowProcessor {
                 throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
             }
         };
-        private final JetVisitorVoid patternVisitor = new JetVisitorVoid() {
-
-            @Override
-            public void visitJetElement(@NotNull JetElement element) {
-                throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
-            }
-        };
 
         private CFPVisitor(boolean inCondition) {
             this.inCondition = inCondition;
+        }
+
+        public void generateInstructions(@Nullable JetElement element) {
+            generateInstructions(element, inCondition);
         }
 
         private void generateInstructions(@Nullable JetElement element, boolean inCondition) {
@@ -137,6 +134,21 @@ public class JetControlFlowProcessor {
                 visitor = new CFPVisitor(inCondition);
             }
             element.accept(visitor);
+            checkNothingType(element);
+        }
+
+        private void checkNothingType(JetElement element) {
+            if (!(element instanceof JetExpression)) return;
+            JetExpression expression = JetPsiUtil.deparenthesize((JetExpression) element);
+            if (expression instanceof JetStatementExpression || expression instanceof JetTryExpression
+                    || expression instanceof JetIfExpression || expression instanceof JetWhenExpression) {
+                return;
+            }
+
+            JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+            if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
+                builder.jumpToError();
+            }
         }
 
         @Override
@@ -172,12 +184,6 @@ public class JetControlFlowProcessor {
         @Override
         public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
             builder.read(expression);
-            if (trace.get(BindingContext.PROCESSED, expression)) {
-                JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
-                if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
-                    builder.jumpToError();
-                }
-            }
         }
 
         @Override
@@ -662,12 +668,6 @@ public class JetControlFlowProcessor {
                 generateInstructions(selectorExpression, false);
             }
             builder.read(expression);
-            if (trace.get(BindingContext.PROCESSED, expression)) {
-                JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
-                if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
-                    builder.jumpToError();
-                }
-            }
         }
 
         private void visitCall(JetCallElement call) {
@@ -685,17 +685,6 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitCallExpression(@NotNull JetCallExpression expression) {
-            //inline functions after M1
-//            ResolvedCall<? extends CallableDescriptor> resolvedCall = trace.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
-//            assert resolvedCall != null;
-//            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-//            PsiElement element = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, resultingDescriptor);
-//            if (element instanceof JetNamedFunction) {
-//                JetNamedFunction namedFunction = (JetNamedFunction) element;
-//                if (namedFunction.hasModifier(JetTokens.INLINE_KEYWORD)) {
-//                }
-//            }
-
             for (JetTypeProjection typeArgument : expression.getTypeArguments()) {
                 generateInstructions(typeArgument, false);
             }
@@ -704,21 +693,7 @@ public class JetControlFlowProcessor {
 
             generateInstructions(expression.getCalleeExpression(), false);
             builder.read(expression);
-            if (trace.get(BindingContext.PROCESSED, expression)) {
-                JetType type = trace.getBindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
-                if (type != null && KotlinBuiltIns.getInstance().isNothing(type)) {
-                    builder.jumpToError();
-                }
-            }
         }
-
-//        @Override
-//        public void visitNewExpression(JetNewExpression expression) {
-//            // TODO : Instantiated class is loaded
-//            // TODO : type arguments?
-//            visitCall(expression);
-//            builder.read(expression);
-//        }
 
         @Override
         public void visitProperty(@NotNull JetProperty property) {
@@ -800,7 +775,7 @@ public class JetControlFlowProcessor {
             if (subjectExpression != null) {
                 generateInstructions(subjectExpression, inCondition);
             }
-            boolean hasElseOrIrrefutableBranch = false;
+            boolean hasElse = false;
 
             Label doneLabel = builder.createUnboundLabel();
 
@@ -810,17 +785,13 @@ public class JetControlFlowProcessor {
 
                 builder.read(whenEntry);
 
-                if (whenEntry.isElse()) {
-                    hasElseOrIrrefutableBranch = true;
+                boolean isElse = whenEntry.isElse();
+                if (isElse) {
+                    hasElse = true;
                     if (iterator.hasNext()) {
                         trace.report(ELSE_MISPLACED_IN_WHEN.on(whenEntry));
                     }
                 }
-                boolean isIrrefutable = whenEntry.isElse();
-                if (isIrrefutable) {
-                    hasElseOrIrrefutableBranch = true;
-                }
-
                 Label bodyLabel = builder.createUnboundLabel();
 
                 JetWhenCondition[] conditions = whenEntry.getConditions();
@@ -832,7 +803,7 @@ public class JetControlFlowProcessor {
                     }
                 }
 
-                if (!isIrrefutable) {
+                if (!isElse) {
                     nextLabel = builder.createUnboundLabel();
                     builder.nondeterministicJump(nextLabel);
                 }
@@ -841,12 +812,12 @@ public class JetControlFlowProcessor {
                 generateInstructions(whenEntry.getExpression(), inCondition);
                 builder.jump(doneLabel);
 
-                if (!isIrrefutable) {
+                if (!isElse) {
                     builder.bindLabel(nextLabel);
                 }
             }
             builder.bindLabel(doneLabel);
-            if (!hasElseOrIrrefutableBranch && WhenChecker.mustHaveElse(expression, trace)) {
+            if (!hasElse && WhenChecker.mustHaveElse(expression, trace)) {
                 trace.report(NO_ELSE_IN_WHEN.on(expression));
             }
         }

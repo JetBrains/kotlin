@@ -429,7 +429,7 @@ public interface Errors {
 
     // Control flow / Data flow
 
-    DiagnosticFactory0<JetElement> UNREACHABLE_CODE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetElement> UNREACHABLE_CODE = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<JetVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, NAME_IDENTIFIER);
 

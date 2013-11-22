@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNREACHABLE_CODE -UNUSED_PARAMETER
+// t is unused due to KT-4233
 trait Tr<T> {
     var v: T
 }

@@ -60,6 +60,7 @@ import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults.Code.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
@@ -360,7 +361,7 @@ public class CallResolver {
         if (results.isSingleResult()) {
             Set<ValueArgument> unmappedArguments = results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments();
             argumentTypeResolver.checkUnmappedArgumentTypes(context, unmappedArguments);
-            candidateResolver.completeNestedCallsForNotResolvedInvocation(context, unmappedArguments);
+            candidateResolver.completeUnmappedArguments(context, unmappedArguments);
         }
 
         if (!results.isSingleResult()) return results;
@@ -374,7 +375,9 @@ public class CallResolver {
             candidateResolver.checkValueArgumentTypes(callCandidateResolutionContext);
             return results;
         }
-        ResolvedCallImpl<D> copy = CallResolverUtil.copy(resolvedCall, context);
+        ResolvedCallImpl<D> copy = CallResolverUtil.copy(resolvedCall);
+        context.trace.record(RESOLVED_CALL, context.call.getCalleeExpression(), copy);
+
         CallCandidateResolutionContext<D> callCandidateResolutionContext =
                 CallCandidateResolutionContext.createForCallBeingAnalyzed(copy, context, tracing);
         candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
@@ -396,7 +399,7 @@ public class CallResolver {
         if (callKey == null) return;
 
         DelegatingBindingTrace deltasTraceToCacheResolve = new DelegatingBindingTrace(
-                new BindingTraceContext().getBindingContext(), "delta trace for caching resolve of", context.call);
+                BindingContext.EMPTY, "delta trace for caching resolve of", context.call);
         traceToResolveCall.addAllMyDataTo(deltasTraceToCacheResolve);
 
         context.resolutionResultsCache.recordResolutionResults(callKey, memberType, results);
@@ -448,8 +451,6 @@ public class CallResolver {
                 if (results.isSuccess()) {
                     debugInfo.set(ResolutionDebugInfo.RESULT, results.getResultingCall());
                 }
-
-                resolveFunctionArguments(context, results);
                 return results;
             }
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
@@ -470,7 +471,6 @@ public class CallResolver {
 
                 debugInfo.set(ResolutionDebugInfo.RESULT, resultsForFirstNonemptyCandidateSet.getResultingCall());
             }
-            resolveFunctionArguments(context, resultsForFirstNonemptyCandidateSet);
         }
         else {
             context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
@@ -479,20 +479,7 @@ public class CallResolver {
         return resultsForFirstNonemptyCandidateSet != null ? resultsForFirstNonemptyCandidateSet : OverloadResolutionResultsImpl.<F>nameNotFound();
     }
 
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> resolveFunctionArguments(
-            @NotNull BasicCallResolutionContext context,
-            @NotNull OverloadResolutionResultsImpl<D> results
-    ) {
-        if (results.isSingleResult()) {
-            argumentTypeResolver.checkTypesForFunctionArguments(context, results.getResultingCall().getCallToCompleteTypeArgumentInference());
-        }
-        else {
-            argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(context);
-        }
-        return results;
-    }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> performResolutionGuardedForExtraFunctionLiteralArguments(

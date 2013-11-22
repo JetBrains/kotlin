@@ -52,13 +52,13 @@ public class CallResolverUtil {
 
     private CallResolverUtil() {}
 
-    public static <D extends CallableDescriptor> ResolvedCallImpl<D> copy(@NotNull ResolvedCallImpl<D> call, @NotNull CallResolutionContext<?> context) {
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> copy(@NotNull ResolvedCallImpl<D> call) {
         ResolutionCandidate<D> candidate = ResolutionCandidate.create(call.getCandidateDescriptor(), call.getThisObject(),
                                                                       call.getReceiverArgument(), call.getExplicitReceiverKind(),
                                                                       call.isSafeCall());
 
-        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(candidate, TraceUtil.DELEGATING_TRACE_STUB, call.getTracing(), call.getDataFlowInfoForArguments());
-        context.trace.record(BindingContext.RESOLVED_CALL, context.call.getCalleeExpression(), copy);
+        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(
+                candidate, TraceUtil.DELEGATING_TRACE_STUB, call.getTracing(), call.getDataFlowInfoForArguments());
 
         copy.addStatus(call.getStatus());
         if (call.isDirty()) {

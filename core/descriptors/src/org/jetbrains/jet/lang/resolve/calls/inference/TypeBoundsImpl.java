@@ -185,18 +185,9 @@ public class TypeBoundsImpl implements TypeBounds {
         }
         ContainerUtil.addIfNotNull(superTypeOfLowerBounds, values);
 
-        Set<JetType> upperBounds = filterBounds(bounds, BoundKind.UPPER_BOUND, values);
-        JetType intersectionOfUpperBounds = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
-        if (!upperBounds.isEmpty() && intersectionOfUpperBounds != null) {
-            if (tryPossibleAnswer(intersectionOfUpperBounds)) {
-                return Collections.singleton(intersectionOfUpperBounds);
-            }
-        }
         //todo
         //fun <T> foo(t: T, consumer: Consumer<T>): T
         //foo(1, c: Consumer<Any>) - infer Int, not Any here
-
-        values.addAll(filterBounds(bounds, BoundKind.UPPER_BOUND));
 
         JetType superTypeOfNumberLowerBounds = TypeUtils.commonSupertypeForNumberTypes(numberLowerBounds);
         if (tryPossibleAnswer(superTypeOfNumberLowerBounds)) {
@@ -211,6 +202,17 @@ public class TypeBoundsImpl implements TypeBounds {
                 return Collections.singleton(superTypeOfAllLowerBounds);
             }
         }
+
+        Set<JetType> upperBounds = filterBounds(bounds, BoundKind.UPPER_BOUND, values);
+        JetType intersectionOfUpperBounds = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
+        if (!upperBounds.isEmpty() && intersectionOfUpperBounds != null) {
+            if (tryPossibleAnswer(intersectionOfUpperBounds)) {
+                return Collections.singleton(intersectionOfUpperBounds);
+            }
+        }
+
+        values.addAll(filterBounds(bounds, BoundKind.UPPER_BOUND));
+
         return values;
     }
 

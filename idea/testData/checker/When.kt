@@ -36,7 +36,7 @@ fun test() {
 
   when (z) {
     <error>else</error> -> 1
-    <error>1 -> 2</error>
+    <warning>1 -> 2</warning>
   }
 
   when (z) {
