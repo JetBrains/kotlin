@@ -139,7 +139,7 @@ public class CallExpressionResolver {
         if (!(classifier instanceof ClassDescriptor)) return;
         ClassDescriptor classObject = ((ClassDescriptor) classifier).getClassObjectDescriptor();
         assert classObject != null : "This check should be done only for classes with class objects: " + classifier;
-        DeclarationDescriptor from = context.scope.getContainingDeclaration();
+        DeclarationDescriptor from = context.scopeForVisibility.getContainingDeclaration();
         if (!Visibilities.isVisible(classObject, from)) {
             context.trace.report(INVISIBLE_MEMBER.on(expression, classObject, classObject.getVisibility(), from));
         }

@@ -2532,6 +2532,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/enum"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("classObjectOfPrivateEnum.kt")
+            public void testClassObjectOfPrivateEnum() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/classObjectOfPrivateEnum.kt");
+            }
+            
             @TestMetadata("dontCreateNamespaceTypeForEnumEntry.kt")
             public void testDontCreateNamespaceTypeForEnumEntry() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/enum/dontCreateNamespaceTypeForEnumEntry.kt");

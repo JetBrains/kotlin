@@ -69,12 +69,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull CallResolverExtension callResolverExtension,
             boolean isAnnotationContext
     ) {
-        return new ExpressionTypingContext(expressionTypingServices, labelResolver, trace, scope, dataFlowInfo, expectedType,
+        return new ExpressionTypingContext(expressionTypingServices, labelResolver, trace, scope, scope, dataFlowInfo, expectedType,
                                            contextDependency, resolutionResultsCache, callResolverExtension, isAnnotationContext);
     }
 
     public final ExpressionTypingServices expressionTypingServices;
-
+    public final JetScope scopeForVisibility;
     private CompileTimeConstantResolver compileTimeConstantResolver;
 
     private ExpressionTypingContext(
@@ -82,6 +82,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull LabelResolver labelResolver,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
+            @NotNull JetScope scopeForVisibility,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
@@ -92,6 +93,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, labelResolver, callResolverExtension,
               isAnnotationContext);
         this.expressionTypingServices = expressionTypingServices;
+        this.scopeForVisibility = scopeForVisibility;
     }
 
     @Override
@@ -104,8 +106,9 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver
     ) {
-        return new ExpressionTypingContext(expressionTypingServices, this.labelResolver, trace, scope, dataFlowInfo, expectedType,
-                                           contextDependency, resolutionResultsCache, callResolverExtension, isAnnotationContext);
+        return new ExpressionTypingContext(expressionTypingServices, this.labelResolver, trace, scope, scopeForVisibility, dataFlowInfo,
+                                           expectedType, contextDependency, resolutionResultsCache, callResolverExtension,
+                                           isAnnotationContext);
     }
 
     @Override
