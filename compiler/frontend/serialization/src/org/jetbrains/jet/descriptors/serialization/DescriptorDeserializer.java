@@ -19,6 +19,7 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -226,11 +227,10 @@ public class DescriptorDeserializer {
     @NotNull
     private CallableMemberDescriptor loadFunction(@NotNull Callable proto) {
         int flags = proto.getFlags();
-        SimpleFunctionDescriptorImpl function = new SimpleFunctionDescriptorImpl(
-                containingDeclaration,
-                getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
-                nameResolver.getName(proto.getName()),
-                memberKind(Flags.MEMBER_KIND.get(flags))
+        DeserializedSimpleFunctionDescriptor function = new DeserializedSimpleFunctionDescriptor(
+                containingDeclaration, proto,
+                annotationDeserializer,
+                nameResolver
         );
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
         DescriptorDeserializer local = createChildDeserializer(function, proto.getTypeParameterList(), typeParameters);
@@ -274,6 +274,17 @@ public class DescriptorDeserializer {
 
     @NotNull
     private List<AnnotationDescriptor> getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
+        return getAnnotations(containingDeclaration, proto, flags, kind, annotationDeserializer, nameResolver);
+    }
+
+    public static List<AnnotationDescriptor> getAnnotations(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Callable proto,
+            int flags,
+            @NotNull AnnotatedCallableKind kind,
+            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull NameResolver nameResolver
+    ) {
         assert containingDeclaration instanceof ClassOrNamespaceDescriptor
                 : "Only members in classes or namespaces should be serialized: " + containingDeclaration;
         return Flags.HAS_ANNOTATIONS.get(flags)
@@ -282,7 +293,7 @@ public class DescriptorDeserializer {
                : Collections.<AnnotationDescriptor>emptyList();
     }
 
-    private static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {
+    public static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {
         switch (memberKind) {
             case DECLARATION:
                 return CallableMemberDescriptor.Kind.DECLARATION;

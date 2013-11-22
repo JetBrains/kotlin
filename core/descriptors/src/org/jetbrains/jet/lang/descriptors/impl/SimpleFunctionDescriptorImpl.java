@@ -41,7 +41,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         super(containingDeclaration, annotations, name, kind);
     }
 
-    private SimpleFunctionDescriptorImpl(
+    protected SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull SimpleFunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
