@@ -414,6 +414,14 @@ class CollectionTest {
         expect(arrayList(2, 3, 1)) { list }
     }
 
+    test fun sum() {
+        expect(0) { ArrayList<Int>().sum() }
+        expect(14) { arrayListOf(2, 3, 9).sum() }
+        expect(3.0) { arrayListOf(1.0, 2.0).sum() }
+        expect(3000000000000) { arrayListOf<Long>(1000000000000, 2000000000000).sum() }
+        expect(3.0) { arrayListOf<Float>(1.0, 2.0).sum() }
+    }
+
     class IterableWrapper<T>(collection : Iterable<T>) : Iterable<T> {
         private val collection = collection
 

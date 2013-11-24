@@ -381,3 +381,10 @@ public inline fun LongArray.withIndices() : Iterator<Pair<Int, Long>> {
     return IndexIterator(iterator())
 }
 
+/**
+ * Sums up the elements
+ */
+public fun LongArray.sum() : Long {
+    return fold(0.toLong(), {a,b -> a+b})
+}
+
