@@ -36,8 +36,10 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
+import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.*;
@@ -155,8 +157,37 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
+    private void generateCopyFunction(@NotNull final FunctionDescriptor function, @NotNull List<JsPropertyInitializer> properties) {
+        JsFunction copyFunction = context().getFunctionObject(function);
+        FunctionTranslator.addParameters(copyFunction.getParameters(), function, context());
+
+        final ConstructorDescriptor constructor = descriptor.getConstructors().iterator().next();
+        List<JsExpression> ctorArgs = new ArrayList<JsExpression>();
+        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
+            final JsExpression useProp = new JsNameRef(parameter.getName().asString(), JsLiteral.THIS);
+            final JsExpression useArg = new JsNameRef(context().getNameForDescriptor(parameter));
+            final JsExpression argIsUndef = new JsBinaryOperation(JsBinaryOperator.REF_EQ, useArg, JsLiteral.UNDEFINED);
+            final JsExpression updateProp = new JsConditional(argIsUndef, useProp, useArg);
+            ctorArgs.add(updateProp);
+        }
+
+        final JsExpression ctorCall = CallBuilder.build(context()).descriptor(constructor).args(ctorArgs).translate();
+        copyFunction.getBody().getStatements().add(new JsReturn(ctorCall));
+
+        final JsName functionName = context().getNameForDescriptor(function);
+        properties.add(new JsPropertyInitializer(functionName.makeRef(), copyFunction));
+    }
+
+    private void generateCopyFunctionForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
+        FunctionDescriptor copyFunction = context().bindingContext().get(BindingContext.DATA_CLASS_COPY_FUNCTION, descriptor);
+        if (copyFunction != null) {
+            generateCopyFunction(copyFunction, properties);
+        }
+    }
+
     private void generateFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
         generateComponentFunctionsForDataClasses(properties);
+        generateCopyFunctionForDataClasses(properties);
     }
 
     private List<JsExpression> getClassCreateInvocationArguments(@NotNull TranslationContext declarationContext) {
