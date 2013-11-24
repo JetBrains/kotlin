@@ -58,4 +58,14 @@ class ArraysJVMTest {
             intArray().reduceRight { a, b -> a + b}
         }
     }
+
+    test fun sum() {
+        expect(0) {intArray().sum()}
+        expect(14) {intArray(2,3,9).sum()}
+        expect(3.0) {doubleArray(1.0,2.0).sum()}
+        expect(3) {byteArray(1,2).sum()}
+        expect(3) {shortArray(1,2).sum()}
+        expect(3000000000000) {longArray(1000000000000,2000000000000).sum()}
+        expect(3.0) {floatArray(1.0,2.0).sum()}
+    }
 }

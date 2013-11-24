@@ -381,3 +381,10 @@ public inline fun ShortArray.withIndices() : Iterator<Pair<Int, Short>> {
     return IndexIterator(iterator())
 }
 
+/**
+ * Sums up the elements
+ */
+public inline fun ShortArray.sum() : Short {
+    return fold(0.toShort(), {a,b -> (a+b).toShort()})
+}
+

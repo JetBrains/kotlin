@@ -408,3 +408,45 @@ public inline fun <T> Array<out T>.withIndices() : Iterator<Pair<Int, T>> {
     return IndexIterator(iterator())
 }
 
+/**
+ * Sums up the elements
+ */
+public inline fun Array<Byte>.sum() : Byte {
+    return fold(0.toByte(), {a,b -> (a+b).toByte()})
+}
+
+/**
+ * Sums up the elements
+ */
+public inline fun Array<Short>.sum() : Short {
+    return fold(0.toShort(), {a,b -> (a+b).toShort()})
+}
+
+/**
+ * Sums up the elements
+ */
+public inline fun Array<Int>.sum() : Int {
+    return fold(0, {a,b -> a+b})
+}
+
+/**
+ * Sums up the elements
+ */
+public inline fun Array<Long>.sum() : Long {
+    return fold(0.toLong(), {a,b -> a+b})
+}
+
+/**
+ * Sums up the elements
+ */
+public inline fun Array<Float>.sum() : Float {
+    return fold(0.toFloat(), {a,b -> a+b})
+}
+
+/**
+ * Sums up the elements
+ */
+public inline fun Array<Double>.sum() : Double {
+    return fold(0.0, {a,b -> a+b})
+}
+
