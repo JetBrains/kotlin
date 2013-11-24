@@ -53,4 +53,7 @@ public class MultiDeclarationTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testMultiDataClass() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

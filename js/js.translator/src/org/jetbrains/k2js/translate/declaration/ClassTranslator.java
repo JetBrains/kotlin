@@ -23,12 +23,17 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -128,6 +133,32 @@ public final class ClassTranslator extends AbstractTranslator {
         return descriptor.getKind().equals(ClassKind.TRAIT);
     }
 
+    private void generateComponentFunction(@NotNull final FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter,
+            @NotNull List<JsPropertyInitializer> properties) {
+        JsFunction componentFunction = context().getFunctionObject(function);
+        final JsNameRef propertyAccess = new JsNameRef(parameter.getName().asString(), JsLiteral.THIS);
+        componentFunction.getBody().getStatements().add(new JsReturn(propertyAccess));
+        final JsName functionName = context().getNameForDescriptor(function);
+        properties.add(new JsPropertyInitializer(functionName.makeRef(), componentFunction));
+    }
+
+    private void generateComponentFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
+        if (!classDeclaration.hasPrimaryConstructor() || !KotlinBuiltIns.getInstance().isData(descriptor)) return;
+
+        ConstructorDescriptor constructor = descriptor.getConstructors().iterator().next();
+
+        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
+            FunctionDescriptor function = context().bindingContext().get(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter);
+            if (function != null) {
+                generateComponentFunction(function, parameter, properties);
+            }
+        }
+    }
+
+    private void generateFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
+        generateComponentFunctionsForDataClasses(properties);
+    }
+
     private List<JsExpression> getClassCreateInvocationArguments(@NotNull TranslationContext declarationContext) {
         List<JsExpression> invocationArguments = new ArrayList<JsExpression>();
 
@@ -170,6 +201,7 @@ public final class ClassTranslator extends AbstractTranslator {
         translatePropertiesAsConstructorParameters(declarationContext, properties);
         DeclarationBodyVisitor bodyVisitor = new DeclarationBodyVisitor(properties, staticProperties);
         bodyVisitor.traverseContainer(classDeclaration, declarationContext);
+        generateFunctionsForDataClasses(properties);
         mayBeAddEnumEntry(bodyVisitor.getEnumEntryList(), staticProperties, declarationContext);
 
         if (isTopLevelDeclaration) {
