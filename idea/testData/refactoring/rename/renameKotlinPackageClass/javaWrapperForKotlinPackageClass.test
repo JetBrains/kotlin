@@ -1,0 +1,2 @@
+// RENAME: JAVA_CLASS->testing.rename.RenamePackage->NewPackageName
+// HINT: Can't rename kotlin package class

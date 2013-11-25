@@ -68,27 +68,44 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
             String[] strings = renameDirective.split("->");
             Assert.assertTrue("'// RENAME:' directive should have at least AbstractRenameTest.RenameType parameter", strings.length > 0);
 
+            String hintDirective = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// HINT:");
+
             String renameTypeStr = strings[0];
             RenameType type = RenameType.valueOf(renameTypeStr);
 
-            FqNameUnsafe fqNameUnsafe = new FqNameUnsafe(strings[1]);
-            
-            switch (type) {
-                case JAVA_CLASS:
-                    renameJavaClassTest(fqNameUnsafe.asString(), strings[2]);
-                    break;
-                case JAVA_METHOD:
-                    renameJavaMethodTest(fqNameUnsafe.asString(), strings[2], strings[3]);
-                    break;
-                case KOTLIN_CLASS:
-                    renameKotlinClassTest(fqNameUnsafe.toSafe(), strings[2]);
-                    break;
-                case KOTLIN_FUNCTION:
-                    renameKotlinFunctionTest(fqNameUnsafe.parent().toSafe(),fqNameUnsafe.shortName().asString(), strings[2]);
-                    break;
-                case KOTLIN_PROPERTY:
-                    renameKotlinPropertyTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2]);
-                    break;
+            try {
+                FqNameUnsafe fqNameUnsafe = new FqNameUnsafe(strings[1]);
+
+                switch (type) {
+                    case JAVA_CLASS:
+                        renameJavaClassTest(fqNameUnsafe.asString(), strings[2]);
+                        break;
+                    case JAVA_METHOD:
+                        renameJavaMethodTest(fqNameUnsafe.asString(), strings[2], strings[3]);
+                        break;
+                    case KOTLIN_CLASS:
+                        renameKotlinClassTest(fqNameUnsafe.toSafe(), strings[2]);
+                        break;
+                    case KOTLIN_FUNCTION:
+                        renameKotlinFunctionTest(fqNameUnsafe.parent().toSafe(),fqNameUnsafe.shortName().asString(), strings[2]);
+                        break;
+                    case KOTLIN_PROPERTY:
+                        renameKotlinPropertyTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2]);
+                        break;
+                }
+
+                if (hintDirective != null) {
+                    Assert.fail(String.format("Hint \"%s\" was expected", hintDirective));
+                }
+            }
+            catch (CommonRefactoringUtil.RefactoringErrorHintException hintException) {
+                String hintExceptionUnquoted = StringUtil.unquoteString(hintException.getMessage());
+                if (hintDirective != null) {
+                    Assert.assertEquals(hintDirective, hintExceptionUnquoted);
+                }
+                else {
+                    Assert.fail(String.format("Unexpected hint: // HINT: %s", hintExceptionUnquoted));
+                }
             }
         }
         catch (Exception e) {
