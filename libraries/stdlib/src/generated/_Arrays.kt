@@ -411,15 +411,15 @@ public inline fun <T> Array<out T>.withIndices() : Iterator<Pair<Int, T>> {
 /**
  * Sums up the elements
  */
-public fun Array<Byte>.sum() : Byte {
-    return fold(0.toByte(), {a,b -> (a+b).toByte()})
+public fun Array<Byte>.sum() : Int {
+    return fold(0, {a,b -> a+b})
 }
 
 /**
  * Sums up the elements
  */
-public fun Array<Short>.sum() : Short {
-    return fold(0.toShort(), {a,b -> (a+b).toShort()})
+public fun Array<Short>.sum() : Int {
+    return fold(0, {a,b -> a+b})
 }
 
 /**

@@ -418,8 +418,6 @@ class CollectionTest {
         expect(0) {ArrayList<Int>().sum()}
         expect(14) {arrayListOf(2,3,9).sum()}
         expect(3.0) {arrayListOf(1.0,2.0).sum()}
-        expect(3) {arrayListOf<Byte>(1,2).sum()}
-        expect(3) {arrayListOf<Short>(1,2).sum()}
         expect(3000000000000) {arrayListOf<Long>(1000000000000,2000000000000).sum()}
         expect(3.0) {arrayListOf<Float>(1.0,2.0).sum()}
     }
