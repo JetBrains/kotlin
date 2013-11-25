@@ -25,10 +25,18 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory0;
+import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.diagnostics.SimpleDiagnostic;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public abstract class FunctionGenerationStrategy {
 

@@ -20,8 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +55,13 @@ public class FunctionAnalyzerExtension {
 
     @NotNull
     private List<AnalyzerExtension> getExtensions(@NotNull FunctionDescriptor functionDescriptor) {
-        return Collections.emptyList();
+        List<AnalyzerExtension> extensions = new ArrayList<AnalyzerExtension>(4);
+
+        if (KotlinBuiltIns.getInstance().isTailRecursive(functionDescriptor)) {
+            extensions.add(TailRecursionsFunctionAnalyzerExtension.INSTANCE);
+        }
+
+        return extensions;
     }
 
 }

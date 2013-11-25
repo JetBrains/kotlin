@@ -17,12 +17,16 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -64,6 +68,7 @@ public class ControlFlowAnalyzer {
             JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
+            assert expectedReturnType != null : "functionDescriptor is not yet fully initialized or broken so return type is null";
             checkFunction(function, expectedReturnType);
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
@@ -90,17 +95,17 @@ public class ControlFlowAnalyzer {
             PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
-            assert accessorDescriptor != null;
-            checkFunction(accessor, accessorDescriptor.getReturnType());
+            assert accessorDescriptor != null : "no property accessor descriptor";
+            JetType returnType = accessorDescriptor.getReturnType();
+            assert returnType != null : "property accessor has no return type";
+            checkFunction(accessor, returnType);
         }
     }
 
-    private void checkFunction(JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
-        assert function instanceof JetDeclaration;
-
+    private void checkFunction(@NotNull JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, trace);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
 
         boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
         if (!isPropertyAccessor) {

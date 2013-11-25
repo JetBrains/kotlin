@@ -535,11 +535,11 @@ public class CallResolver {
             @NotNull ResolutionTask<D, F> task,
             @NotNull CallTransformer<D, F> callTransformer
     ) {
-
         for (ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
             TemporaryBindingTrace candidateTrace = TemporaryBindingTrace.create(
                     task.trace, "trace to resolve candidate");
-            Collection<CallCandidateResolutionContext<D>> contexts = callTransformer.createCallContexts(resolutionCandidate, task, candidateTrace);
+            Collection<CallCandidateResolutionContext<D>> contexts = callTransformer.createCallContexts(resolutionCandidate, task,
+                                                                                                        candidateTrace);
             for (CallCandidateResolutionContext<D> context : contexts) {
 
                 candidateResolver.performResolutionForCandidateCall(context, task);

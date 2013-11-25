@@ -1594,6 +1594,10 @@ public final annotation class suppress : jet.Annotation {
     /*primary*/ public constructor suppress(/*0*/ vararg names: jet.String /*jet.Array<jet.String>*/)
 }
 
+public final annotation class tailRecursive : jet.Annotation {
+    /*primary*/ public constructor tailRecursive()
+}
+
 public final annotation class volatile : jet.Annotation {
     /*primary*/ public constructor volatile()
 }
