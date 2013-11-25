@@ -70,6 +70,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         is PsiExpression -> expressionToExpression(element)
         is PsiComment -> Comment(element.getText()!!)
         is PsiImportList -> importsToImportList(element)
+        is PsiImportStatementBase -> importToImport(element)
         else -> null
     }
 
