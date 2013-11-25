@@ -139,7 +139,7 @@ public final class ClassTranslator extends AbstractTranslator {
     private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter,
             @NotNull List<JsPropertyInitializer> properties) {
         JsFunction componentFunction = context().getFunctionObject(function);
-        final JsNameRef propertyAccess = new JsNameRef(parameter.getName().asString(), JsLiteral.THIS);
+        final JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
         componentFunction.getBody().getStatements().add(new JsReturn(propertyAccess));
         final JsName functionName = context().getNameForDescriptor(function);
         properties.add(new JsPropertyInitializer(functionName.makeRef(), componentFunction));
@@ -170,7 +170,7 @@ public final class ClassTranslator extends AbstractTranslator {
 
         List<JsExpression> ctorArgs = new ArrayList<JsExpression>();
         for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
-            final JsExpression useProp = new JsNameRef(parameter.getName().asString(), JsLiteral.THIS);
+            final JsExpression useProp = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
             final JsExpression useArg = new JsNameRef(context().getNameForDescriptor(parameter));
             final JsExpression argIsUndef = new JsBinaryOperation(JsBinaryOperator.REF_EQ, useArg, JsLiteral.UNDEFINED);
             final JsExpression updateProp = new JsConditional(argIsUndef, useProp, useArg);
