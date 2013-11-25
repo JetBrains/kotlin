@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -145,7 +146,7 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     private void generateComponentFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
-        if (!classDeclaration.hasPrimaryConstructor() || !KotlinBuiltIns.getInstance().isData(descriptor)) return;
+        if (!classDeclaration.hasPrimaryConstructor()) return;
 
         ConstructorDescriptor constructor = descriptor.getConstructors().iterator().next();
 
@@ -161,7 +162,12 @@ public final class ClassTranslator extends AbstractTranslator {
         JsFunction copyFunction = context().getFunctionObject(function);
         FunctionTranslator.addParameters(copyFunction.getParameters(), function, context());
 
-        final ConstructorDescriptor constructor = descriptor.getConstructors().iterator().next();
+        final ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(descriptor);
+        assert function.getValueParameters().size() == constructor.getValueParameters().size() :
+                "Number of parameters of copy function and constructor are different. " +
+                "Copy: " + function.getValueParameters().size() + ", " +
+                "constructor: " + constructor.getValueParameters().size();
+
         List<JsExpression> ctorArgs = new ArrayList<JsExpression>();
         for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
             final JsExpression useProp = new JsNameRef(parameter.getName().asString(), JsLiteral.THIS);
@@ -186,6 +192,8 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     private void generateFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
+        if (!KotlinBuiltIns.getInstance().isData(descriptor)) return;
+
         generateComponentFunctionsForDataClasses(properties);
         generateCopyFunctionForDataClasses(properties);
     }
