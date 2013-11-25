@@ -78,7 +78,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             JetNodeTypes.INTEGER_CONSTANT -> CompileTimeConstantResolver.parseLong(text)
             JetNodeTypes.FLOAT_CONSTANT -> CompileTimeConstantResolver.parseDouble(text)
             JetNodeTypes.BOOLEAN_CONSTANT -> CompileTimeConstantResolver.parseBoolean(text)
-            JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantResolver.parseChar(text)
+            JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantResolver.parseChar(expression)
             JetNodeTypes.NULL -> null
             else -> throw IllegalArgumentException("Unsupported constant: " + expression)
         }

@@ -23,7 +23,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetConstantExpression;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -120,31 +123,18 @@ public class CompileTimeConstantResolver {
     }
 
     private boolean checkCharValue(CompileTimeConstant<?> constant, JetType expectedType, JetConstantExpression expression) {
-        String text = expression.getText();
         if (!noExpectedTypeOrError(expectedType)
             && !JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getCharType(), expectedType)) {
             return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "character", expectedType));
         }
 
-        // Strip the quotes
-        if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
-            return reportError(INCORRECT_CHARACTER_LITERAL.on(expression));
-        }
-        text = text.substring(1, text.length() - 1); // now there're no quotes
-
-        if (text.length() == 0) {
-            return reportError(EMPTY_CHARACTER_LITERAL.on(expression));
+        if (constant != null) {
+            return false;
         }
 
-        if (text.charAt(0) != '\\') {
-            // No escape
-            if (text.length() == 1) {
-                return false;
-            }
-            return reportError(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.on(expression, expression));
-        }
-        if (constant == null) {
-            return reportError(ILLEGAL_ESCAPE.on(expression, expression));
+        CompileTimeConstant<?> compileTimeConstant = parseCharValue(expression);
+        if (compileTimeConstant instanceof ErrorCharValueWithDiagnostic) {
+            return reportError(((ErrorCharValueWithDiagnostic) compileTimeConstant).getDiagnostic());
         }
         return false;
     }
@@ -154,6 +144,95 @@ public class CompileTimeConstantResolver {
             return reportError(NULL_FOR_NONNULL_TYPE.on(expression, expectedType));
         }
         return false;
+    }
+
+    @NotNull
+    private static CompileTimeConstant<?> parseCharValue(@NotNull JetConstantExpression expression) {
+        String text = expression.getText();
+        // Strip the quotes
+        if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
+            return createErrorValue(INCORRECT_CHARACTER_LITERAL.on(expression));
+        }
+        text = text.substring(1, text.length() - 1); // now there're no quotes
+
+        if (text.length() == 0) {
+            return createErrorValue(EMPTY_CHARACTER_LITERAL.on(expression));
+        }
+
+        if (text.charAt(0) != '\\') {
+            // No escape
+            if (text.length() == 1) {
+                return new CharValue(text.charAt(0));
+            }
+            return createErrorValue(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.on(expression, expression));
+        }
+        return escapedStringToCharValue(text, expression);
+    }
+
+    @NotNull
+    public static CompileTimeConstant<?> escapedStringToCharValue(@NotNull String text, @NotNull JetElement expression) {
+        assert text.length() > 0 && text.charAt(0) == '\\' : "Only escaped sequences must be passed to this routine: " + text;
+
+        // Escape
+        String escape = text.substring(1); // strip the slash
+        switch (escape.length()) {
+            case 0:
+                // bare slash
+                return illegalEscape(expression);
+            case 1:
+                // one-char escape
+                Character escaped = translateEscape(escape.charAt(0));
+                if (escaped == null) {
+                    return illegalEscape(expression);
+                }
+                return new CharValue(escaped);
+            case 5:
+                // unicode escape
+                if (escape.charAt(0) == 'u') {
+                    try {
+                        Integer intValue = Integer.valueOf(escape.substring(1), 16);
+                        return new CharValue((char) intValue.intValue());
+                    } catch (NumberFormatException e) {
+                        // Will be reported below
+                    }
+                }
+                break;
+        }
+        return illegalEscape(expression);
+    }
+
+    @NotNull
+    private static CompileTimeConstant<?> illegalEscape(@NotNull JetElement expression) {
+        return createErrorValue(ILLEGAL_ESCAPE.on(expression, expression));
+    }
+
+    @NotNull
+    private static ErrorValue createErrorValue(@NotNull Diagnostic diagnostic) {
+        return new ErrorCharValueWithDiagnostic(diagnostic);
+    }
+
+    public static class ErrorCharValueWithDiagnostic extends ErrorValue {
+        private final Diagnostic diagnostic;
+
+        public ErrorCharValueWithDiagnostic(@NotNull Diagnostic diagnostic) {
+            this.diagnostic = diagnostic;
+        }
+
+        @NotNull
+        public Diagnostic getDiagnostic() {
+            return diagnostic;
+        }
+
+        @NotNull
+        @Override
+        public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String toString() {
+            return DefaultErrorMessages.RENDERER.render(diagnostic);
+        }
     }
 
     @Nullable
@@ -200,52 +279,10 @@ public class CompileTimeConstantResolver {
     }
 
     @Nullable
-    public static Character parseChar(@NotNull String text) {
-        // Strip the quotes
-        if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
-            return null;
-        }
-        text = text.substring(1, text.length() - 1); // now there're no quotes
-
-        if (text.length() == 0) {
-            return null;
-        }
-
-        if (text.charAt(0) != '\\') {
-            // No escape
-            if (text.length() == 1) {
-                return text.charAt(0);
-            }
-        }
-        return escapedStringToChar(text);
-    }
-
-    @Nullable
-    public static Character escapedStringToChar(@NotNull String text) {
-        if (!(text.length() > 0 && text.charAt(0) == '\\')) return null;
-
-        // Escape
-        String escape = text.substring(1); // strip the slash
-        switch (escape.length()) {
-            case 0: return null;
-            case 1:
-                // one-char escape
-                Character escaped = translateEscape(escape.charAt(0));
-                if (escaped == null) {
-                    return null;
-                }
-                return escaped;
-            case 5:
-                // unicode escape
-                if (escape.charAt(0) == 'u') {
-                    try {
-                        Integer intValue = Integer.valueOf(escape.substring(1), 16);
-                        return (char) intValue.intValue();
-                    } catch (NumberFormatException e) {
-                        // Will be reported below
-                    }
-                }
-                break;
+    public static Character parseChar(@NotNull JetConstantExpression expression) {
+        CompileTimeConstant<?> compileTimeConstant = parseCharValue(expression);
+        if (compileTimeConstant instanceof CharValue) {
+            return ((CharValue) compileTimeConstant).getValue();
         }
         return null;
     }
