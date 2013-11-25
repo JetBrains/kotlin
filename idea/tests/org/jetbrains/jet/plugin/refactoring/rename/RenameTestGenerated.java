@@ -43,6 +43,11 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest("idea/testData/refactoring/rename/renameJavaClass/renameJavaClass.test");
     }
     
+    @TestMetadata("renameJavaInterface/renameJavaInterface.test")
+    public void testRenameJavaInterface_RenameJavaInterface() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameJavaInterface/renameJavaInterface.test");
+    }
+    
     @TestMetadata("renameKotlinBaseMethod/javaWrapperForBaseFunction.test")
     public void testRenameKotlinBaseMethod_JavaWrapperForBaseFunction() throws Exception {
         doTest("idea/testData/refactoring/rename/renameKotlinBaseMethod/javaWrapperForBaseFunction.test");
