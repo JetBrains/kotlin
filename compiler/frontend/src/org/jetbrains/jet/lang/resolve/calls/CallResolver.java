@@ -368,26 +368,25 @@ public class CallResolver {
 
         if (!results.isSingleResult()) return results;
 
-        ResolvedCallImpl<D> resolvedCall = results.getResultingCall().getCallToCompleteTypeArgumentInference();
+        ResolvedCallWithTrace<D> resolvedCall = results.getResultingCall();
+        ResolvedCallImpl<D> callToCompleteInference = resolvedCall.getCallToCompleteTypeArgumentInference();
 
-        if (!resolvedCall.hasIncompleteTypeParameters()) {
+        if (!callToCompleteInference.hasIncompleteTypeParameters()) {
             CallCandidateResolutionContext<D> callCandidateResolutionContext =
-                    CallCandidateResolutionContext.createForCallBeingAnalyzed(resolvedCall, context, tracing);
+                    CallCandidateResolutionContext.createForCallBeingAnalyzed(callToCompleteInference, context, tracing);
             candidateResolver.completeNestedCallsInference(callCandidateResolutionContext);
             candidateResolver.checkValueArgumentTypes(callCandidateResolutionContext);
             return results;
         }
-        ResolvedCallImpl<D> copy = CallResolverUtil.copy(resolvedCall);
-        context.trace.record(RESOLVED_CALL, context.call.getCalleeExpression(), copy);
 
         CallCandidateResolutionContext<D> callCandidateResolutionContext =
-                CallCandidateResolutionContext.createForCallBeingAnalyzed(copy, context, tracing);
+                CallCandidateResolutionContext.createForCallBeingAnalyzed(callToCompleteInference, context, tracing);
         candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
 
-        if (copy.getStatus().isSuccess()) {
-            return OverloadResolutionResultsImpl.success(copy);
+        if (callToCompleteInference.getStatus().isSuccess()) {
+            return OverloadResolutionResultsImpl.success(resolvedCall);
         }
-        return OverloadResolutionResultsImpl.incompleteTypeInference(copy);
+        return OverloadResolutionResultsImpl.incompleteTypeInference(resolvedCall);
     }
 
     private static <F extends CallableDescriptor> void cacheResults(

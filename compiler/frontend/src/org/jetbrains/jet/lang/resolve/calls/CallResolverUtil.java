@@ -52,29 +52,6 @@ public class CallResolverUtil {
 
     private CallResolverUtil() {}
 
-    public static <D extends CallableDescriptor> ResolvedCallImpl<D> copy(@NotNull ResolvedCallImpl<D> call) {
-        ResolutionCandidate<D> candidate = ResolutionCandidate.create(call.getCandidateDescriptor(), call.getThisObject(),
-                                                                      call.getReceiverArgument(), call.getExplicitReceiverKind(),
-                                                                      call.isSafeCall());
-
-        ResolvedCallImpl<D> copy = ResolvedCallImpl.create(
-                candidate, TraceUtil.DELEGATING_TRACE_STUB, call.getTracing(), call.getDataFlowInfoForArguments());
-
-        copy.addStatus(call.getStatus());
-        if (call.isDirty()) {
-            copy.argumentHasNoType();
-        }
-        copy.setHasUnknownTypeParameters(call.hasIncompleteTypeParameters());
-        ConstraintSystem constraintSystem = call.getConstraintSystem();
-        if (constraintSystem != null) {
-            copy.setConstraintSystem(constraintSystem.copy());
-        }
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
-            copy.recordValueArgument(entry.getKey(), entry.getValue());
-        }
-        return copy;
-    }
-
 
     public static boolean hasUnknownFunctionParameter(@NotNull JetType type) {
         assert KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type);
