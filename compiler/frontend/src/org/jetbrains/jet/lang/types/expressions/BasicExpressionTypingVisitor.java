@@ -142,12 +142,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     return createNumberValueTypeInfo(new IntegerValueTypeConstructor((long) longValue), longValue, context.dataFlowInfo);
                 }
             }
-            else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
-                Double doubleValue = CompileTimeConstantResolver.parseDoubleValue(text);
-                if (doubleValue != null) {
-                    return createNumberValueTypeInfo(new DoubleValueTypeConstructor(doubleValue), doubleValue, context.dataFlowInfo);
-                }
-            }
         }
         CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
         boolean hasError = compileTimeConstantResolver.checkConstantExpressionType(expression, context.expectedType);
