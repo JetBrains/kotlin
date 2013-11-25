@@ -384,7 +384,7 @@ public inline fun ByteArray.withIndices() : Iterator<Pair<Int, Byte>> {
 /**
  * Sums up the elements
  */
-public inline fun ByteArray.sum() : Byte {
+public fun ByteArray.sum() : Byte {
     return fold(0.toByte(), {a,b -> (a+b).toByte()})
 }
 

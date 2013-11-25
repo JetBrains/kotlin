@@ -18,7 +18,7 @@ enum class Family {
 class GenericFunction(val signature : String): Comparable<GenericFunction> {
     var doc : String = ""
     var toNullableT : Boolean = false
-    val isInline : Boolean = true;
+    var isInline : Boolean = true;
     private val customReceivers = HashMap<Family, String>()
     val blockedFor = HashSet<Family>()
     val bodies = HashMap<Family, String>()

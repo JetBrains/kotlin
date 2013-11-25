@@ -384,7 +384,7 @@ public inline fun IntArray.withIndices() : Iterator<Pair<Int, Int>> {
 /**
  * Sums up the elements
  */
-public inline fun IntArray.sum() : Int {
+public fun IntArray.sum() : Int {
     return fold(0, {a,b -> a+b})
 }
 

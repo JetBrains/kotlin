@@ -379,42 +379,42 @@ public inline fun <T> Iterable<T>.withIndices() : Iterator<Pair<Int, T>> {
 /**
  * Sums up the elements
  */
-public inline fun Iterable<Byte>.sum() : Byte {
+public fun Iterable<Byte>.sum() : Byte {
     return fold(0.toByte(), {a,b -> (a+b).toByte()})
 }
 
 /**
  * Sums up the elements
  */
-public inline fun Iterable<Short>.sum() : Short {
+public fun Iterable<Short>.sum() : Short {
     return fold(0.toShort(), {a,b -> (a+b).toShort()})
 }
 
 /**
  * Sums up the elements
  */
-public inline fun Iterable<Int>.sum() : Int {
+public fun Iterable<Int>.sum() : Int {
     return fold(0, {a,b -> a+b})
 }
 
 /**
  * Sums up the elements
  */
-public inline fun Iterable<Long>.sum() : Long {
+public fun Iterable<Long>.sum() : Long {
     return fold(0.toLong(), {a,b -> a+b})
 }
 
 /**
  * Sums up the elements
  */
-public inline fun Iterable<Float>.sum() : Float {
+public fun Iterable<Float>.sum() : Float {
     return fold(0.toFloat(), {a,b -> a+b})
 }
 
 /**
  * Sums up the elements
  */
-public inline fun Iterable<Double>.sum() : Double {
+public fun Iterable<Double>.sum() : Double {
     return fold(0.0, {a,b -> a+b})
 }
 

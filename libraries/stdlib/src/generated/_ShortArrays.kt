@@ -384,7 +384,7 @@ public inline fun ShortArray.withIndices() : Iterator<Pair<Int, Short>> {
 /**
  * Sums up the elements
  */
-public inline fun ShortArray.sum() : Short {
+public fun ShortArray.sum() : Short {
     return fold(0.toShort(), {a,b -> (a+b).toShort()})
 }
 

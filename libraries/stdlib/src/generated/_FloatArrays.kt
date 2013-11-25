@@ -384,7 +384,7 @@ public inline fun FloatArray.withIndices() : Iterator<Pair<Int, Float>> {
 /**
  * Sums up the elements
  */
-public inline fun FloatArray.sum() : Float {
+public fun FloatArray.sum() : Float {
     return fold(0.toFloat(), {a,b -> a+b})
 }
 

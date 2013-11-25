@@ -384,7 +384,7 @@ public inline fun LongArray.withIndices() : Iterator<Pair<Int, Long>> {
 /**
  * Sums up the elements
  */
-public inline fun LongArray.sum() : Long {
+public fun LongArray.sum() : Long {
     return fold(0.toLong(), {a,b -> a+b})
 }
 

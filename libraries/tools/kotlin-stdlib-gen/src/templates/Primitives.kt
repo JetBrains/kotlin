@@ -29,6 +29,7 @@ fun sumFunction(primitive: PrimitiveType) = primitive.zero()?.let { zero ->
     }
     f("sum()") {
         doc = "Sums up the elements"
+        isInline = false
         Family.Iterables.customReceiver("Iterable<${primitive.name}>")
         Family.Arrays.customReceiver("Array<${primitive.name}>")
         returns(primitive.name)
