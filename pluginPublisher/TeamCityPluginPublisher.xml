@@ -15,6 +15,9 @@
 
   <property name="kotlin.plugin.dir" value="${basedir}"/>
 
+  <property name="kotlin.plugin.build.number" value="snapshot"/>
+  <property name="kotlin.plugin.url" value="http://localhost/"/>
+
   <property name="verifier.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/88722:id/plugin-verifier.jar"/>
 
   <condition property="download.eap">
@@ -136,8 +139,8 @@
     <echoxml file="updatePlugins.xml">
       <plugins>
         <plugin id="org.jetbrains.kotlin"
-                url="%teamcity.serverUrl%/guestAuth/repository/download/bt345/%dep.bt345.teamcity.build.id%:id/kotlin-plugin-%dep.bt345.build.number%.zip"
-                version="%dep.bt345.build.number%" />
+                url="${kotlin.plugin.url}"
+                version="${kotlin.plugin.build.number}" />
       </plugins>
     </echoxml>
 
