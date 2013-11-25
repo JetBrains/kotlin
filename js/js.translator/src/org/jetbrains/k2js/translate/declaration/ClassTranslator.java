@@ -135,7 +135,7 @@ public final class ClassTranslator extends AbstractTranslator {
         return descriptor.getKind().equals(ClassKind.TRAIT);
     }
 
-    private void generateComponentFunction(@NotNull final FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter,
+    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter,
             @NotNull List<JsPropertyInitializer> properties) {
         JsFunction componentFunction = context().getFunctionObject(function);
         final JsNameRef propertyAccess = new JsNameRef(parameter.getName().asString(), JsLiteral.THIS);
@@ -157,7 +157,7 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
-    private void generateCopyFunction(@NotNull final FunctionDescriptor function, @NotNull List<JsPropertyInitializer> properties) {
+    private void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<JsPropertyInitializer> properties) {
         JsFunction copyFunction = context().getFunctionObject(function);
         FunctionTranslator.addParameters(copyFunction.getParameters(), function, context());
 
