@@ -152,3 +152,7 @@ fun <T: JetClassOrObject> StubBasedPsiElementBase<out PsiJetClassOrObjectStub<T>
 }
 
 fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
+
+fun JetClass.isInheritable(): Boolean {
+    return isTrait() || hasModifier(JetTokens.OPEN_KEYWORD)
+}
