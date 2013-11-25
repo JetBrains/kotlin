@@ -142,7 +142,10 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
                 PsiMethod methodBySignature = aClass.findMethodBySignature(manager.getElementFactory().createMethodFromText(methodSignature + "{}", null), false);
                 assertNotNull("Method with signature '" + methodSignature + "' wasn't found in class " + className, methodBySignature);
 
-                new RenameProcessor(myProject, methodBySignature, newName, false, false).run();
+                PsiElement substitution = RenamePsiElementProcessor.forElement(methodBySignature).substituteElementToRename(methodBySignature, null);
+                assert substitution != null;
+
+                new RenameProcessor(myProject, substitution, newName, false, false).run();
 
                 PsiDocumentManager.getInstance(myProject).commitAllDocuments();
                 FileDocumentManager.getInstance().saveAllDocuments();
