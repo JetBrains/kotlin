@@ -48,7 +48,6 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -137,7 +136,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         if (noExpectedType(context.expectedType) && context.contextDependency == DEPENDENT) {
             if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-                Long longValue = CompileTimeConstantResolver.parseLongValue(text);
+                Long longValue = CompileTimeConstantResolver.parseLong(text);
                 if (longValue != null) {
                     return createNumberValueTypeInfo(new IntegerValueTypeConstructor((long) longValue), longValue, context.dataFlowInfo);
                 }
@@ -1179,7 +1178,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
                 @Override
                 public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
-                    Character character = CompileTimeConstantResolver.escapedStringToCharValue(entry.getText());
+                    Character character = CompileTimeConstantResolver.escapedStringToChar(entry.getText());
                     if (character == null) {
                         context.trace.report(Errors.ILLEGAL_ESCAPE.on(entry, entry));
                     }

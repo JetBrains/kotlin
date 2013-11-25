@@ -75,10 +75,10 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val text = expression.getText()
         if (text == null) return null
         val result: Any? = when (expression.getNode().getElementType()) {
-            JetNodeTypes.INTEGER_CONSTANT -> CompileTimeConstantResolver.parseLongValue(text)
-            JetNodeTypes.FLOAT_CONSTANT -> CompileTimeConstantResolver.parseDoubleValue(text)
-            JetNodeTypes.BOOLEAN_CONSTANT -> CompileTimeConstantResolver.parseBooleanValue(text)
-            JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantResolver.parseCharValue(text)
+            JetNodeTypes.INTEGER_CONSTANT -> CompileTimeConstantResolver.parseLong(text)
+            JetNodeTypes.FLOAT_CONSTANT -> CompileTimeConstantResolver.parseDouble(text)
+            JetNodeTypes.BOOLEAN_CONSTANT -> CompileTimeConstantResolver.parseBoolean(text)
+            JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantResolver.parseChar(text)
             JetNodeTypes.NULL -> null
             else -> throw IllegalArgumentException("Unsupported constant: " + expression)
         }

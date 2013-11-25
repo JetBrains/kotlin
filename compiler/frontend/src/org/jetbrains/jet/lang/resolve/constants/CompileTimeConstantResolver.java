@@ -157,7 +157,7 @@ public class CompileTimeConstantResolver {
     }
 
     @Nullable
-    public static Long parseLongValue(String text) {
+    public static Long parseLong(String text) {
         try {
             long value;
             if (text.startsWith("0x") || text.startsWith("0X")) {
@@ -179,7 +179,7 @@ public class CompileTimeConstantResolver {
     }
 
     @Nullable
-    public static Double parseDoubleValue(String text) {
+    public static Double parseDouble(String text) {
         try {
             return Double.parseDouble(text);
         }
@@ -189,7 +189,7 @@ public class CompileTimeConstantResolver {
     }
 
     @NotNull
-    public static Object parseBooleanValue(@NotNull String text) {
+    public static Object parseBoolean(@NotNull String text) {
         if ("true".equals(text)) {
             return true;
         }
@@ -200,7 +200,7 @@ public class CompileTimeConstantResolver {
     }
 
     @Nullable
-    public static Character parseCharValue(@NotNull String text) {
+    public static Character parseChar(@NotNull String text) {
         // Strip the quotes
         if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
             return null;
@@ -217,11 +217,11 @@ public class CompileTimeConstantResolver {
                 return text.charAt(0);
             }
         }
-        return escapedStringToCharValue(text);
+        return escapedStringToChar(text);
     }
 
     @Nullable
-    public static Character escapedStringToCharValue(@NotNull String text) {
+    public static Character escapedStringToChar(@NotNull String text) {
         if (!(text.length() > 0 && text.charAt(0) == '\\')) return null;
 
         // Escape
