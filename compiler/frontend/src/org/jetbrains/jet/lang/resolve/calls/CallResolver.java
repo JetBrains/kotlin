@@ -340,14 +340,14 @@ public class CallResolver {
             @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
+        if (context.call.getCallType() == Call.CallType.INVOKE) return;
         if (!results.isSingleResult()) {
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
                 argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
             }
             return;
         }
-        //call for 'invoke' was completed earlier
-        if (results.getResultingCall() instanceof VariableAsFunctionResolvedCall) return;
+
         CallCandidateResolutionContext<D> candidateContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                 results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
         candidateResolver.completeTypeInferenceDependentOnFunctionLiteralsForCall(candidateContext);
@@ -358,6 +358,8 @@ public class CallResolver {
             @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
+        if (context.call.getCallType() == Call.CallType.INVOKE) return results;
+
         if (results.isSingleResult()) {
             Set<ValueArgument> unmappedArguments = results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments();
             argumentTypeResolver.checkUnmappedArgumentTypes(context, unmappedArguments);

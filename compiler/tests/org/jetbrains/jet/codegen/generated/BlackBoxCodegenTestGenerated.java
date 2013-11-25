@@ -1343,6 +1343,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/closures/closureInsideClosure/localFunInsideLocalFunDifferentSignatures.kt");
             }
             
+            @TestMetadata("propertyAndFunctionNameClash.kt")
+            public void testPropertyAndFunctionNameClash() throws Exception {
+                doTest("compiler/testData/codegen/box/closures/closureInsideClosure/propertyAndFunctionNameClash.kt");
+            }
+            
             @TestMetadata("threeLevels.kt")
             public void testThreeLevels() throws Exception {
                 doTest("compiler/testData/codegen/box/closures/closureInsideClosure/threeLevels.kt");
