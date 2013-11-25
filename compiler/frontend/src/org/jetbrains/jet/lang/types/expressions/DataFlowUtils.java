@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -27,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
@@ -165,7 +167,8 @@ public class DataFlowUtils {
         }
 
         if (expression instanceof JetConstantExpression) {
-            new CompileTimeConstantResolver(trace, true).checkConstantExpressionType((JetConstantExpression) expression, expectedType);
+            CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, trace, expectedType);
+            new CompileTimeConstantResolver(trace, true).checkConstantExpressionType(value, (JetConstantExpression) expression, expectedType);
             return expressionType;
         }
 

@@ -144,11 +144,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
-        boolean hasError = compileTimeConstantResolver.checkConstantExpressionType(expression, context.expectedType);
+        CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
+        boolean hasError = compileTimeConstantResolver.checkConstantExpressionType(value, expression, context.expectedType);
         if (hasError) {
             return JetTypeInfo.create(getDefaultType(elementType), context.dataFlowInfo);
         }
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
         assert value != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
         return DataFlowUtils.checkType(value.getType(builtIns), expression, context, context.dataFlowInfo);
     }

@@ -51,8 +51,11 @@ public class CompileTimeConstantResolver {
     }
 
     // return true if there is an error
-    public boolean checkConstantExpressionType(@NotNull JetConstantExpression expression, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.object$.evaluate(expression, trace, expectedType);
+    public boolean checkConstantExpressionType(
+            @Nullable CompileTimeConstant compileTimeConstant,
+            @NotNull JetConstantExpression expression,
+            @NotNull JetType expectedType
+    ) {
         IElementType elementType = expression.getNode().getElementType();
 
         if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
