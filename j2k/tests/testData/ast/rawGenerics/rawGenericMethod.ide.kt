@@ -1,6 +1,6 @@
 package demo
 class TestT() {
-fun getT<T>() {
+fun <T> getT() {
 }
 }
 class U() {

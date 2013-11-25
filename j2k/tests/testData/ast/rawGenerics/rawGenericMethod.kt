@@ -1,6 +1,6 @@
 package demo
 open class TestT() {
-open fun getT<T>() {
+open fun <T> getT() {
 }
 }
 open class U() {

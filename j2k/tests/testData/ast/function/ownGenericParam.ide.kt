@@ -1,2 +1,2 @@
-fun putU<U>(u : U) {
+fun <U> putU(u : U) {
 }

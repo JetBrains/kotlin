@@ -29,12 +29,12 @@ public open class Function(val converter: Converter,
                            val typeParameters: List<Element>,
                            val params: Element,
                            var block: Block?) : Member(modifiers) {
-    private fun typeParametersToKotlin(): String {
-        return (if (typeParameters.size() > 0)
-            "<" + typeParameters.map { it.toKotlin() }.makeString(", ") + ">"
-        else
-            "")
+
+    private fun typeParametersToKotlin() = when {
+        !typeParameters.isEmpty() -> typeParameters.map { it.toKotlin() }.makeString(", ", "<", "> ")
+        else -> ""
     }
+
 
     private fun hasWhere(): Boolean = typeParameters.any { it is TypeParameter && it.hasWhere() }
 
@@ -65,10 +65,10 @@ public open class Function(val converter: Converter,
         }
 
         if (converter.settings.openByDefault &&
-            !modifiers.contains(Modifier.ABSTRACT) &&
-            !isOverride &&
-            !modifiers.contains(Modifier.FINAL) &&
-            !modifiers.contains(Modifier.PRIVATE)) {
+        !modifiers.contains(Modifier.ABSTRACT) &&
+        !isOverride &&
+        !modifiers.contains(Modifier.FINAL) &&
+        !modifiers.contains(Modifier.PRIVATE)) {
             resultingModifiers.add(Modifier.OPEN)
         }
 
@@ -83,11 +83,11 @@ public open class Function(val converter: Converter,
 
     public override fun toKotlin(): String {
         return docComments.toKotlin("\n", "", "\n") +
-            modifiersToKotlin() +
-            "fun ${name.toKotlin()}${typeParametersToKotlin()}" +
-            "(${params.toKotlin()})" +
-            returnTypeToKotlin() +
-            typeParameterWhereToKotlin() +
-            block?.toKotlin()
+        modifiersToKotlin() +
+        "fun ${typeParametersToKotlin()}${name.toKotlin()}" +
+        "(${params.toKotlin()})" +
+        returnTypeToKotlin() +
+        typeParameterWhereToKotlin() +
+        block?.toKotlin()
     }
 }

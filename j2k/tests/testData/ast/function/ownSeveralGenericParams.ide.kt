@@ -1,2 +1,2 @@
-fun putUVW<U, V, W>(u : U, v : V, w : W) {
+fun <U, V, W> putUVW(u : U, v : V, w : W) {
 }

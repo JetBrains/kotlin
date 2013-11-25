@@ -1,6 +1,6 @@
 package demo
 open class Map() {
-open fun put<K, V>(k : K?, v : V?) {
+open fun <K, V> put(k : K?, v : V?) {
 }
 }
 open class U() {
