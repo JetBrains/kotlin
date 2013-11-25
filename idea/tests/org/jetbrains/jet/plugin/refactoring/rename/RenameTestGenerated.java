@@ -33,7 +33,9 @@ import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest;
 @TestMetadata("idea/testData/refactoring/rename")
 public class RenameTestGenerated extends AbstractRenameTest {
     public void testAllFilesPresentInRename() throws Exception {
-        JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"));
+        JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests",
+                                                                 new File("idea/testData/refactoring/rename"),
+                                                                 Pattern.compile("^(.+)\\.test$"));
     }
     
     @TestMetadata("renameJavaClass/renameJavaClass.test")
@@ -74,6 +76,11 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameKotlinPackageClass/javaWrapperForKotlinPackageClass.test")
     public void testRenameKotlinPackageClass_JavaWrapperForKotlinPackageClass() throws Exception {
         doTest("idea/testData/refactoring/rename/renameKotlinPackageClass/javaWrapperForKotlinPackageClass.test");
+    }
+    
+    @TestMetadata("renameKotlinPackageFunctionFromJava/renameKotlinPackageFunctionFromJava.test")
+    public void testRenameKotlinPackageFunctionFromJava_RenameKotlinPackageFunctionFromJava() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameKotlinPackageFunctionFromJava/renameKotlinPackageFunctionFromJava.test");
     }
     
 }
