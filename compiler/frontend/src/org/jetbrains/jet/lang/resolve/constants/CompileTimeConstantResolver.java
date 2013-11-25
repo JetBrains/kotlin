@@ -23,9 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
-import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.JetConstantExpression;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -65,7 +63,7 @@ public class CompileTimeConstantResolver {
             return checkFloatValue(compileTimeConstant, expectedType, expression);
         }
         else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
-            return checkBooleanValue(compileTimeConstant, expectedType, expression);
+            return checkBooleanValue(expectedType, expression);
         }
         else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
             return checkCharValue(compileTimeConstant, expectedType, expression);
@@ -93,7 +91,7 @@ public class CompileTimeConstantResolver {
         return false;
     }
 
-    public boolean checkFloatValue(
+    private boolean checkFloatValue(
             @Nullable CompileTimeConstant value,
             @NotNull JetType expectedType,
             @NotNull JetConstantExpression expression
@@ -106,6 +104,54 @@ public class CompileTimeConstantResolver {
             if (!JetTypeChecker.INSTANCE.isSubtypeOf(valueType, expectedType)) {
                 return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "floating-point", expectedType));
             }
+        }
+        return false;
+    }
+
+    private boolean checkBooleanValue(
+            @NotNull JetType expectedType,
+            @NotNull JetConstantExpression expression
+    ) {
+        if (!noExpectedTypeOrError(expectedType)
+            && !JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getBooleanType(), expectedType)) {
+            return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "boolean", expectedType));
+        }
+        return false;
+    }
+
+    private boolean checkCharValue(CompileTimeConstant<?> constant, JetType expectedType, JetConstantExpression expression) {
+        String text = expression.getText();
+        if (!noExpectedTypeOrError(expectedType)
+            && !JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getCharType(), expectedType)) {
+            return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "character", expectedType));
+        }
+
+        // Strip the quotes
+        if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
+            return reportError(INCORRECT_CHARACTER_LITERAL.on(expression));
+        }
+        text = text.substring(1, text.length() - 1); // now there're no quotes
+
+        if (text.length() == 0) {
+            return reportError(EMPTY_CHARACTER_LITERAL.on(expression));
+        }
+
+        if (text.charAt(0) != '\\') {
+            // No escape
+            if (text.length() == 1) {
+                return false;
+            }
+            return reportError(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.on(expression, expression));
+        }
+        if (constant == null) {
+            return reportError(ILLEGAL_ESCAPE.on(expression, expression));
+        }
+        return false;
+    }
+
+    private boolean checkNullValue(@NotNull JetType expectedType, @NotNull JetConstantExpression expression) {
+        if (!noExpectedTypeOrError(expectedType) && !expectedType.isNullable()) {
+            return reportError(NULL_FOR_NONNULL_TYPE.on(expression, expectedType));
         }
         return false;
     }
@@ -151,18 +197,6 @@ public class CompileTimeConstantResolver {
             return false;
         }
         throw new IllegalStateException("Must not happen. A boolean literal has text: " + text);
-    }
-
-    private boolean checkBooleanValue(
-            @Nullable CompileTimeConstant value,
-            @NotNull JetType expectedType,
-            @NotNull JetConstantExpression expression
-    ) {
-        if (!noExpectedTypeOrError(expectedType)
-                && !JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getBooleanType(), expectedType)) {
-            return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "boolean", expectedType));
-        }
-        return false;
     }
 
     @Nullable
@@ -216,38 +250,8 @@ public class CompileTimeConstantResolver {
         return null;
     }
 
-    private boolean checkCharValue(CompileTimeConstant<?> constant, JetType expectedType, JetConstantExpression expression) {
-        String text = expression.getText();
-        if (!noExpectedTypeOrError(expectedType)
-                && !JetTypeChecker.INSTANCE.isSubtypeOf(builtIns.getCharType(), expectedType)) {
-            return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "character", expectedType));
-        }
-
-        // Strip the quotes
-        if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
-            return reportError(INCORRECT_CHARACTER_LITERAL.on(expression));
-        }
-        text = text.substring(1, text.length() - 1); // now there're no quotes
-
-        if (text.length() == 0) {
-            return reportError(EMPTY_CHARACTER_LITERAL.on(expression));
-        }
-
-        if (text.charAt(0) != '\\') {
-            // No escape
-            if (text.length() == 1) {
-                return false;
-            }
-            return reportError(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.on(expression, expression));
-        }
-        if (constant == null) {
-            return reportError(ILLEGAL_ESCAPE.on(expression, expression));
-        }
-        return false;
-    }
-
     @Nullable
-    public static Character translateEscape(char c) {
+    private static Character translateEscape(char c) {
         switch (c) {
             case 't':
                 return '\t';
@@ -267,13 +271,6 @@ public class CompileTimeConstantResolver {
                 return '$';
         }
         return null;
-    }
-
-    public boolean checkNullValue(@NotNull JetType expectedType, @NotNull JetConstantExpression expression) {
-        if (!noExpectedTypeOrError(expectedType) && !expectedType.isNullable()) {
-            return reportError(NULL_FOR_NONNULL_TYPE.on(expression, expectedType));
-        }
-        return false;
     }
 
     public static boolean noExpectedTypeOrError(JetType expectedType) {
