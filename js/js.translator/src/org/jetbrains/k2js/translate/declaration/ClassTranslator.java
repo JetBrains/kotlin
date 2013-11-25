@@ -139,9 +139,9 @@ public final class ClassTranslator extends AbstractTranslator {
     private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter,
             @NotNull List<JsPropertyInitializer> properties) {
         JsFunction componentFunction = context().getFunctionObject(function);
-        final JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
+        JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
         componentFunction.getBody().getStatements().add(new JsReturn(propertyAccess));
-        final JsName functionName = context().getNameForDescriptor(function);
+        JsName functionName = context().getNameForDescriptor(function);
         properties.add(new JsPropertyInitializer(functionName.makeRef(), componentFunction));
     }
 
@@ -162,7 +162,7 @@ public final class ClassTranslator extends AbstractTranslator {
         JsFunction copyFunction = context().getFunctionObject(function);
         FunctionTranslator.addParameters(copyFunction.getParameters(), function, context());
 
-        final ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(descriptor);
+        ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(descriptor);
         assert function.getValueParameters().size() == constructor.getValueParameters().size() :
                 "Number of parameters of copy function and constructor are different. " +
                 "Copy: " + function.getValueParameters().size() + ", " +
@@ -170,17 +170,17 @@ public final class ClassTranslator extends AbstractTranslator {
 
         List<JsExpression> ctorArgs = new ArrayList<JsExpression>();
         for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
-            final JsExpression useProp = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
-            final JsExpression useArg = new JsNameRef(context().getNameForDescriptor(parameter));
-            final JsExpression argIsUndef = new JsBinaryOperation(JsBinaryOperator.REF_EQ, useArg, JsLiteral.UNDEFINED);
-            final JsExpression updateProp = new JsConditional(argIsUndef, useProp, useArg);
+            JsExpression useProp = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
+            JsExpression useArg = new JsNameRef(context().getNameForDescriptor(parameter));
+            JsExpression argIsUndef = new JsBinaryOperation(JsBinaryOperator.REF_EQ, useArg, JsLiteral.UNDEFINED);
+            JsExpression updateProp = new JsConditional(argIsUndef, useProp, useArg);
             ctorArgs.add(updateProp);
         }
 
-        final JsExpression ctorCall = CallBuilder.build(context()).descriptor(constructor).args(ctorArgs).translate();
+        JsExpression ctorCall = CallBuilder.build(context()).descriptor(constructor).args(ctorArgs).translate();
         copyFunction.getBody().getStatements().add(new JsReturn(ctorCall));
 
-        final JsName functionName = context().getNameForDescriptor(function);
+        JsName functionName = context().getNameForDescriptor(function);
         properties.add(new JsPropertyInitializer(functionName.makeRef(), copyFunction));
     }
 
