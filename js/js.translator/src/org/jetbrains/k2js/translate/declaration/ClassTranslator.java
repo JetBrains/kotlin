@@ -162,9 +162,8 @@ public final class ClassTranslator extends AbstractTranslator {
 
     private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull List<JsPropertyInitializer> properties) {
-        JsFunction componentFunction = context().getFunctionObject(function);
         JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(propertyDescriptor), JsLiteral.THIS);
-        componentFunction.getBody().getStatements().add(new JsReturn(propertyAccess));
+        JsFunction componentFunction = simpleReturnFunction(context().getScopeForDescriptor(function), propertyAccess);
         JsName functionName = context().getNameForDescriptor(function);
         properties.add(new JsPropertyInitializer(functionName.makeRef(), componentFunction));
     }
@@ -177,9 +176,6 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     private void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<JsPropertyInitializer> properties) {
-        JsFunction copyFunction = context().getFunctionObject(function);
-        FunctionTranslator.addParameters(copyFunction.getParameters(), function, context());
-
         ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(descriptor);
         assert function.getValueParameters().size() == constructor.getValueParameters().size() :
                 "Number of parameters of copy function and constructor are different. " +
@@ -202,7 +198,8 @@ public final class ClassTranslator extends AbstractTranslator {
         }
 
         JsExpression ctorCall = CallBuilder.build(context()).descriptor(constructor).args(ctorArgs).translate();
-        copyFunction.getBody().getStatements().add(new JsReturn(ctorCall));
+        JsFunction copyFunction = simpleReturnFunction(context().getScopeForDescriptor(function), ctorCall);
+        FunctionTranslator.addParameters(copyFunction.getParameters(), function, context());
 
         JsName functionName = context().getNameForDescriptor(function);
         properties.add(new JsPropertyInitializer(functionName.makeRef(), copyFunction));
