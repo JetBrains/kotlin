@@ -1,13 +1,11 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-
-tailRecursive fun test(x : Int, z : Any) : Int {
+tailRecursive fun test(x : Int) : Int {
     if (x == 10) {
-        return 1 + <!NON_TAIL_RECURSIVE_CALL!>test<!>(x - 1, "no tail")
+        return 1 + <!NON_TAIL_RECURSIVE_CALL!>test<!>(x - 1)
     }
     if (x > 0) {
-        return test(x - 1, "tail")
+        return test(x - 1)
     }
     return 0
 }
 
-fun box() : String = if (test(1000000, "test") == 1) "OK" else "FAIL"
+fun box() : String = if (test(1000000) == 1) "OK" else "FAIL"

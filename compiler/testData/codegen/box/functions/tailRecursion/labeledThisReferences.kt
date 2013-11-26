@@ -2,9 +2,9 @@
 
 class B {
     inner class C {
-        tailRecursive fun h(counter : Int, x : Any) {
+        tailRecursive fun h(counter : Int) {
             if (counter > 0) {
-                this@C.h(counter - 1, "tail")
+                this@C.h(counter - 1)
             }
         }
 
@@ -21,7 +21,7 @@ class B {
 }
 
 fun box() : String {
-    B().makeC().h(1000000, "test")
+    B().makeC().h(1000000)
     B().makeC().h2(0)
     return "OK"
 }
