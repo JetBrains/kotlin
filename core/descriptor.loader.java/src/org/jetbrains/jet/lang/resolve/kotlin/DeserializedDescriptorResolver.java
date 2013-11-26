@@ -61,12 +61,6 @@ public final class DeserializedDescriptorResolver {
             return javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()), INCLUDE_KOTLIN_SOURCES);
         }
 
-        @Nullable
-        @Override
-        public PackageFragmentDescriptor findPackage(@NotNull FqName name) {
-            return javaPackageFragmentProvider.getOrCreatePackage(name);
-        }
-
         @NotNull
         @Override
         public Collection<Name> getClassNames(@NotNull FqName packageName) {
@@ -100,7 +94,7 @@ public final class DeserializedDescriptorResolver {
         if (data != null) {
             ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
             return new DeserializedClassDescriptor(storageManager, annotationDeserializer, javaDescriptorFinder,
-                                                   classData.getNameResolver(), classData.getClassProto());
+                                                   javaPackageFragmentProvider, classData.getNameResolver(), classData.getClassProto());
         }
         return null;
     }

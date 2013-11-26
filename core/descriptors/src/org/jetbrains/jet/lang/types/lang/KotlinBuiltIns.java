@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -157,31 +156,8 @@ public class KotlinBuiltIns {
     }
 
     private static void loadBuiltIns(@NotNull ModuleDescriptorImpl module) throws IOException {
-        final PackageFragmentDescriptor rootPackage = new MutablePackageFragmentDescriptor(module, FqName.ROOT);
-        final PackageFragmentDescriptor builtinsPackage = new BuiltinsPackageFragment(new LockBasedStorageManager(), module);
-
-        module.addFragmentProvider(new PackageFragmentProvider() {
-            @NotNull
-            @Override
-            public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
-                if (fqName.isRoot()) {
-                    return Collections.singletonList(rootPackage);
-                }
-                else if (BUILT_INS_PACKAGE_FQ_NAME.equals(fqName)) {
-                    return Collections.singletonList(builtinsPackage);
-                }
-                return Collections.emptyList();
-            }
-
-            @NotNull
-            @Override
-            public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
-                if (fqName.isRoot()) {
-                    return Collections.singleton(BUILT_INS_PACKAGE_FQ_NAME);
-                }
-                return Collections.emptyList();
-            }
-        });
+        BuiltinsPackageFragment builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), module);
+        module.addFragmentProvider(builtinsPackageFragment.packageFragmentProvider);
     }
 
     private void doInitialize() {

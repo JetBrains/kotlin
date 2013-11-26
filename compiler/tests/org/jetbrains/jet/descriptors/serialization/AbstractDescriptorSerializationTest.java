@@ -26,7 +26,6 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -94,7 +93,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
         MutablePackageFragmentDescriptor packageFragment = JetTestUtils.createTestPackageFragment(TEST_PACKAGE_NAME, "<fake>");
 
-        DescriptorFinder descriptorFinder = new DescriptorFinderFromClassDataOrJava(javaDescriptorResolver, packageFragment, classDataMap);
+        DescriptorFinder descriptorFinder = new DescriptorFinderFromClassDataOrJava(
+                javaDescriptorResolver, classDataMap, packageFragment.getContainingDeclaration().getPackageFragmentProvider());
 
         for (ClassDescriptor classDescriptor : classesAndObjects) {
             ClassId classId = getClassId(classDescriptor);
@@ -161,17 +161,15 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
 
     private static class DescriptorFinderFromClassDataOrJava extends AbstractDescriptorFinder {
         private final JavaDescriptorResolver javaDescriptorResolver;
-        private final PackageFragmentDescriptor packageForClasses;
         private final Map<String, ClassData> classDataMap;
 
         public DescriptorFinderFromClassDataOrJava(
                 @NotNull JavaDescriptorResolver javaDescriptorResolver,
-                @NotNull PackageFragmentDescriptor packageForClasses,
-                @NotNull Map<String, ClassData> classDataMap
+                @NotNull Map<String, ClassData> classDataMap,
+                @NotNull PackageFragmentProvider packageFragmentProvider
         ) {
-            super(new LockBasedStorageManager(), UNSUPPORTED);
+            super(new LockBasedStorageManager(), UNSUPPORTED, packageFragmentProvider);
             this.javaDescriptorResolver = javaDescriptorResolver;
-            this.packageForClasses = packageForClasses;
             this.classDataMap = classDataMap;
         }
 
@@ -186,13 +184,6 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         @Override
         protected ClassData getClassData(@NotNull ClassId classId) {
             return classDataMap.get(classId.asSingleFqName().asString());
-        }
-
-        @Nullable
-        @Override
-        public PackageFragmentDescriptor findPackage(@NotNull FqName name) {
-            assert DescriptorUtils.getFQName(packageForClasses).equals(name.toUnsafe()) : name + " : " + packageForClasses;
-            return packageForClasses;
         }
 
         @NotNull

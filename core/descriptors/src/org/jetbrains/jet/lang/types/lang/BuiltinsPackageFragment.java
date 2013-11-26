@@ -8,6 +8,7 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPacka
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -29,11 +30,14 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
     private final ModuleDescriptor module;
+    final PackageFragmentProvider packageFragmentProvider;
 
     public BuiltinsPackageFragment(@NotNull StorageManager storageManager, @NotNull ModuleDescriptor module) {
         super(Collections.<AnnotationDescriptor>emptyList(), KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
         this.module = module;
         nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
+
+        packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
         members = new DeserializedPackageMemberScope(storageManager, this, UNSUPPORTED, new BuiltInsDescriptorFinder(storageManager),
                                                      loadPackage(), nameResolver);
@@ -94,11 +98,36 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
         return KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);
     }
 
+    private class BuiltinsPackageFragmentProvider implements PackageFragmentProvider {
+        private final PackageFragmentDescriptor rootPackage = new MutablePackageFragmentDescriptor(module, FqName.ROOT);
+
+        @NotNull
+        @Override
+        public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
+            if (fqName.isRoot()) {
+                return Collections.singletonList(rootPackage);
+            }
+            else if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName)) {
+                return Collections.<PackageFragmentDescriptor>singletonList(BuiltinsPackageFragment.this);
+            }
+            return Collections.emptyList();
+        }
+
+        @NotNull
+        @Override
+        public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
+            if (fqName.isRoot()) {
+                return Collections.singleton(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+            }
+            return Collections.emptyList();
+        }
+    }
+
     private class BuiltInsDescriptorFinder extends AbstractDescriptorFinder {
         private final NotNullLazyValue<Collection<Name>> classNames;
 
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
-            super(storageManager, UNSUPPORTED);
+            super(storageManager, UNSUPPORTED, packageFragmentProvider);
 
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override
@@ -151,12 +180,6 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
             catch (IOException e) {
                 throw new IllegalStateException(e);
             }
-        }
-
-        @Nullable
-        @Override
-        public PackageFragmentDescriptor findPackage(@NotNull FqName fqName) {
-            return fqName.equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) ? BuiltinsPackageFragment.this : null;
         }
 
         @NotNull
