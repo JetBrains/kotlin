@@ -2,7 +2,7 @@ package foo
 
 data class A(var a: Int, var b: String) {}
 
-fun box() : Boolean {
+fun box() : String {
     var result = ""
     val a = A(1, "a")
     val b = a.copy()
@@ -25,7 +25,7 @@ fun box() : Boolean {
         result += "4"
     }
     if (result == "1234") {
-        return true
+        return "OK"
     }
-    return false
+    return result
 }

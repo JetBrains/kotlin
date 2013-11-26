@@ -18,38 +18,36 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-public class MultiDeclarationTest extends SingleFileTranslationTest {
-    public MultiDeclarationTest() {
-        super("multideclaration/");
+public class DataClassesTest extends SingleFileTranslationTest {
+    public DataClassesTest() {
+        super("dataClasses/");
     }
 
-    // TODO: Add support Map.Entry
-    public void TestMultiValForMap() throws Exception {
+    public void testComponentWithPrivateProperty() throws Exception {
         checkFooBoxIsOk();
     }
 
-    public void testMultiValOrVar() throws Exception {
+    public void testConstructorWithDefaultParam() throws Exception {
         checkFooBoxIsOk();
     }
 
-    public void testMultiValInFor() throws Exception {
+    public void testKt3033() throws Exception {
         checkFooBoxIsOk();
     }
 
-    public void testMultiValInIntFor() throws Exception {
+    public void testMultiDeclarationWithDataClass() throws Exception {
         checkFooBoxIsOk();
     }
 
-    public void testMultiValInIntRangeFor() throws Exception {
+    public void testNativeInConstructorParams() throws Exception {
         checkFooBoxIsOk();
     }
 
-    public void testMultiValForArray() throws Exception {
+    public void testVarInConstructorParams() throws Exception {
         checkFooBoxIsOk();
     }
 
-    // TODO: Add support ranges for user types
-    public void TestMultiValForRange() throws Exception {
+    public void testWithGenericParameter() throws Exception {
         checkFooBoxIsOk();
     }
 }

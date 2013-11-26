@@ -2,11 +2,11 @@ package foo
 
 data class A(val a: Double, val b: Double)
 
-fun box() : Boolean {
+fun box() : String {
     val a = A(1.0, 1.0)
     val b = a.copy()
     if (b.a == 1.0 && b.b == 1.0) {
-        return true
+        return "OK"
     }
-    return false
+    return "${b.a} ${b.b}"
 }
