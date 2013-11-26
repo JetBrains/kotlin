@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +46,9 @@ public class FunctionAnalyzerExtension {
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : bodiesResolveContext.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
+
+            if (!bodiesResolveContext.completeAnalysisNeeded(function.getContainingFile())) continue;
+
             List<AnalyzerExtension> extensions = getExtensions(functionDescriptor);
             for (AnalyzerExtension extension : extensions) {
                 extension.process(functionDescriptor, function, trace);
