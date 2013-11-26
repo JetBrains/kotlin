@@ -45,7 +45,7 @@ public class RenameKotlinFunctionProcessor : RenamePsiElementProcessor() {
     }
 
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is JetNamedFunction || element is KotlinLightMethod
+        return element is JetNamedFunction || (element is KotlinLightMethod && element.getOrigin() is JetNamedFunction)
     }
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
@@ -56,7 +56,12 @@ public class RenameKotlinFunctionProcessor : RenamePsiElementProcessor() {
         }
 
         // Use java dialog to ask we should rename function with the base element
-        return unwrapPsiMethod(javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor))
+        val subtitudedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
+
+        return when (subtitudedJavaElement) {
+            is KotlinLightMethod -> subtitudedJavaElement.getOrigin() as? JetNamedFunction
+            else -> subtitudedJavaElement
+        }
     }
 
     override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
@@ -67,9 +72,5 @@ public class RenameKotlinFunctionProcessor : RenamePsiElementProcessor() {
         is KotlinLightMethod -> element
         is JetNamedFunction -> ApplicationManager.getApplication()!!.runReadAction(Computable { LightClassUtil.getLightClassMethod(element) })
         else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
-    }
-
-    private fun unwrapPsiMethod(element: PsiElement?): JetNamedFunction? {
-        return (element as? KotlinLightMethod)?.getOrigin() as? JetNamedFunction
     }
 }

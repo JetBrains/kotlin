@@ -46,6 +46,16 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest("idea/testData/refactoring/rename/renameJavaInterface/renameJavaInterface.test");
     }
     
+    @TestMetadata("renameJavaMethod/javaBaseMethod.test")
+    public void testRenameJavaMethod_JavaBaseMethod() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameJavaMethod/javaBaseMethod.test");
+    }
+    
+    @TestMetadata("renameJavaMethod/kotlinOverridenMethod.test")
+    public void testRenameJavaMethod_KotlinOverridenMethod() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameJavaMethod/kotlinOverridenMethod.test");
+    }
+    
     @TestMetadata("renameKotlinBaseMethod/javaWrapperForBaseFunction.test")
     public void testRenameKotlinBaseMethod_JavaWrapperForBaseFunction() throws Exception {
         doTest("idea/testData/refactoring/rename/renameKotlinBaseMethod/javaWrapperForBaseFunction.test");
