@@ -137,13 +137,11 @@ public final class ClassTranslator extends AbstractTranslator {
         return descriptor.getKind().equals(ClassKind.TRAIT);
     }
 
-    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull PropertyDescriptor parameter,
-            @NotNull List<JsPropertyInitializer> properties) {
-        JsFunction componentFunction = context().getFunctionObject(function);
-        JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
-        componentFunction.getBody().getStatements().add(new JsReturn(propertyAccess));
-        JsName functionName = context().getNameForDescriptor(function);
-        properties.add(new JsPropertyInitializer(functionName.makeRef(), componentFunction));
+    private void generateFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
+        if (!KotlinBuiltIns.getInstance().isData(descriptor)) return;
+
+        generateComponentFunctionsForDataClasses(properties);
+        generateCopyFunctionForDataClasses(properties);
     }
 
     private void generateComponentFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
@@ -159,6 +157,22 @@ public final class ClassTranslator extends AbstractTranslator {
                 assert descriptor != null;
                 generateComponentFunction(function, descriptor, properties);
             }
+        }
+    }
+
+    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull PropertyDescriptor parameter,
+            @NotNull List<JsPropertyInitializer> properties) {
+        JsFunction componentFunction = context().getFunctionObject(function);
+        JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
+        componentFunction.getBody().getStatements().add(new JsReturn(propertyAccess));
+        JsName functionName = context().getNameForDescriptor(function);
+        properties.add(new JsPropertyInitializer(functionName.makeRef(), componentFunction));
+    }
+
+    private void generateCopyFunctionForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
+        FunctionDescriptor copyFunction = context().bindingContext().get(BindingContext.DATA_CLASS_COPY_FUNCTION, descriptor);
+        if (copyFunction != null) {
+            generateCopyFunction(copyFunction, properties);
         }
     }
 
@@ -192,20 +206,6 @@ public final class ClassTranslator extends AbstractTranslator {
 
         JsName functionName = context().getNameForDescriptor(function);
         properties.add(new JsPropertyInitializer(functionName.makeRef(), copyFunction));
-    }
-
-    private void generateCopyFunctionForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
-        FunctionDescriptor copyFunction = context().bindingContext().get(BindingContext.DATA_CLASS_COPY_FUNCTION, descriptor);
-        if (copyFunction != null) {
-            generateCopyFunction(copyFunction, properties);
-        }
-    }
-
-    private void generateFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
-        if (!KotlinBuiltIns.getInstance().isData(descriptor)) return;
-
-        generateComponentFunctionsForDataClasses(properties);
-        generateCopyFunctionForDataClasses(properties);
     }
 
     private List<JsExpression> getClassCreateInvocationArguments(@NotNull TranslationContext declarationContext) {
