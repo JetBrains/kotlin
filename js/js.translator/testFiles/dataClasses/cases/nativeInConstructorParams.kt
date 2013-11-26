@@ -1,7 +1,5 @@
 package foo
 
-data class AA(a: Int, val b: Int, c: Int)
-
 data class A(native("foo") val a: Int)
 
 fun box(): String {
