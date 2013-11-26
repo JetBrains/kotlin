@@ -10,10 +10,10 @@ import java.beans.*
 // TODO this file may be deleted when this issue is implemented
 // http://youtrack.jetbrains.com/issue/KT-1752
 
-inline fun Component.addPropertyChangeListener(fn: (PropertyChangeEvent) -> Unit): Unit {
+fun Component.addPropertyChangeListener(fn: (PropertyChangeEvent) -> Unit): Unit {
     addPropertyChangeListener(propertyChangeListener(fn))
 }
 
-inline fun Component.addPropertyChangeListener(name: String, fn: (PropertyChangeEvent) -> Unit): Unit {
+fun Component.addPropertyChangeListener(name: String, fn: (PropertyChangeEvent) -> Unit): Unit {
     addPropertyChangeListener(name, propertyChangeListener(fn))
 }
