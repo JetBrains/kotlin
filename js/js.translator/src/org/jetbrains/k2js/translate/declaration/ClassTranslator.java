@@ -160,10 +160,10 @@ public final class ClassTranslator extends AbstractTranslator {
         }
     }
 
-    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull PropertyDescriptor parameter,
+    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull List<JsPropertyInitializer> properties) {
         JsFunction componentFunction = context().getFunctionObject(function);
-        JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
+        JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(propertyDescriptor), JsLiteral.THIS);
         componentFunction.getBody().getStatements().add(new JsReturn(propertyAccess));
         JsName functionName = context().getNameForDescriptor(function);
         properties.add(new JsPropertyInitializer(functionName.makeRef(), componentFunction));
@@ -190,12 +190,12 @@ public final class ClassTranslator extends AbstractTranslator {
         for (ValueParameterDescriptor parameterDescriptor : constructor.getValueParameters()) {
             JsExpression useArg = new JsNameRef(context().getNameForDescriptor(parameterDescriptor));
             JetParameter parameter = BindingUtils.getParameterForDescriptor(context().bindingContext(), parameterDescriptor);
-            PropertyDescriptor descriptor = getPropertyDescriptorForConstructorParameter(bindingContext(), parameter);
-            if (descriptor == null) {
+            PropertyDescriptor propertyDescriptor = getPropertyDescriptorForConstructorParameter(bindingContext(), parameter);
+            if (propertyDescriptor == null) {
                 ctorArgs.add(useArg);
                 continue;
             }
-            JsExpression useProp = new JsNameRef(context().getNameForDescriptor(parameterDescriptor), JsLiteral.THIS);
+            JsExpression useProp = new JsNameRef(context().getNameForDescriptor(propertyDescriptor), JsLiteral.THIS);
             JsExpression argIsUndef = new JsBinaryOperation(JsBinaryOperator.REF_EQ, useArg, context().namer().getUndefinedExpression());
             JsExpression updateProp = new JsConditional(argIsUndef, useProp, useArg);
             ctorArgs.add(updateProp);
