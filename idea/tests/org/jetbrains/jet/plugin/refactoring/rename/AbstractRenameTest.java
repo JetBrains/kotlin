@@ -31,6 +31,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.Function;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -70,6 +71,8 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
 
             String hintDirective = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// HINT:");
 
+            String mainFile = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FILE:");
+
             String renameTypeStr = strings[0];
             RenameType type = RenameType.valueOf(renameTypeStr);
 
@@ -84,13 +87,13 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
                         renameJavaMethodTest(fqNameUnsafe.asString(), strings[2], strings[3]);
                         break;
                     case KOTLIN_CLASS:
-                        renameKotlinClassTest(fqNameUnsafe.toSafe(), strings[2]);
+                        renameKotlinClassTest(fqNameUnsafe.toSafe(), strings[2], mainFile);
                         break;
                     case KOTLIN_FUNCTION:
-                        renameKotlinFunctionTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2]);
+                        renameKotlinFunctionTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2], mainFile);
                         break;
                     case KOTLIN_PROPERTY:
-                        renameKotlinPropertyTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2]);
+                        renameKotlinPropertyTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2], mainFile);
                         break;
                 }
 
@@ -153,7 +156,7 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
         });
     }
 
-    private void renameKotlinFunctionTest(final FqName qClassName, final String oldMethodName, String newMethodName) throws Exception {
+    private void renameKotlinFunctionTest(final FqName qClassName, final String oldMethodName, String newMethodName, String mainFile) throws Exception {
         doTestWithKotlinRename(new Function<PsiFile, PsiElement>() {
             @Override
             public PsiElement fun(PsiFile file) {
@@ -166,10 +169,10 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
                 FunctionDescriptor methodDescriptor = scope.getFunctions(Name.identifier(oldMethodName)).iterator().next();
                 return BindingContextUtils.callableDescriptorToDeclaration(bindingContext, methodDescriptor);
             }
-        }, newMethodName);
+        }, newMethodName, mainFile);
     }
 
-    private void renameKotlinPropertyTest(final FqName qClassName, final String oldPropertyName, String newPropertyName) throws Exception {
+    private void renameKotlinPropertyTest(final FqName qClassName, final String oldPropertyName, String newPropertyName, String mainFile) throws Exception {
         doTestWithKotlinRename(new Function<PsiFile, PsiElement>() {
             @Override
             public PsiElement fun(PsiFile file) {
@@ -181,10 +184,10 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
                 VariableDescriptor propertyName = scope.getProperties(Name.identifier(oldPropertyName)).iterator().next();
                 return BindingContextUtils.descriptorToDeclaration(bindingContext, propertyName);
             }
-        }, newPropertyName);
+        }, newPropertyName, mainFile);
     }
 
-    private void renameKotlinClassTest(@NonNls final FqName qClassName, @NonNls String newName) throws Exception {
+    private void renameKotlinClassTest(@NonNls final FqName qClassName, @NonNls String newName, String mainFile) throws Exception {
         doTestWithKotlinRename(new Function<PsiFile, PsiElement>() {
             @Override
             public PsiElement fun(PsiFile file) {
@@ -196,14 +199,18 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
 
                 return BindingContextUtils.classDescriptorToDeclaration(bindingContext, classDescriptor);
             }
-        }, newName);
+        }, newName, mainFile);
     }
 
-    private void doTestWithKotlinRename(@NonNls final Function<PsiFile, PsiElement> elementToRenameCallback, final @NonNls String newName) throws Exception {
+    private void doTestWithKotlinRename(
+            @NonNls final Function<PsiFile, PsiElement> elementToRenameCallback,
+            @NonNls final String newName,
+            @Nullable final String mainFile
+    ) throws Exception {
         doTest(new MultiFileTestCase.PerformAction() {
             @Override
             public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
-                VirtualFile child = rootDir.findChild(getTestDirName(false) + ".kt");
+                VirtualFile child = rootDir.findChild(mainFile == null ? (getTestDirName(false) + ".kt") : mainFile);
                 assertNotNull(child);
 
                 Document document = FileDocumentManager.getInstance().getDocument(child);

@@ -33,9 +33,7 @@ import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest;
 @TestMetadata("idea/testData/refactoring/rename")
 public class RenameTestGenerated extends AbstractRenameTest {
     public void testAllFilesPresentInRename() throws Exception {
-        JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests",
-                                                                 new File("idea/testData/refactoring/rename"),
-                                                                 Pattern.compile("^(.+)\\.test$"));
+        JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"));
     }
     
     @TestMetadata("renameJavaClass/renameJavaClass.test")
@@ -76,6 +74,16 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameKotlinClassConstructor/renameKotlinConstructor.test")
     public void testRenameKotlinClassConstructor_RenameKotlinConstructor() throws Exception {
         doTest("idea/testData/refactoring/rename/renameKotlinClassConstructor/renameKotlinConstructor.test");
+    }
+    
+    @TestMetadata("renameKotlinClassWithFile/javaClassWrapper.test")
+    public void testRenameKotlinClassWithFile_JavaClassWrapper() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameKotlinClassWithFile/javaClassWrapper.test");
+    }
+    
+    @TestMetadata("renameKotlinClassWithFile/kotlinClass.test")
+    public void testRenameKotlinClassWithFile_KotlinClass() throws Exception {
+        doTest("idea/testData/refactoring/rename/renameKotlinClassWithFile/kotlinClass.test");
     }
     
     @TestMetadata("renameKotlinMethod/javaWrapperForKotlinMethod.test")
