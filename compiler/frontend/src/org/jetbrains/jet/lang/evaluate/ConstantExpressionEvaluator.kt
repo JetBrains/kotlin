@@ -38,7 +38,14 @@ import java.lang.Long.parseLong as javaParseLong
 [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
 public class ConstantExpressionEvaluator private (val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
 
-    public fun evaluate(expression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
+    class object {
+        public fun evaluate(expression: JetExpression, trace: BindingTrace, expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE): CompileTimeConstant<*>? {
+            val evaluator = ConstantExpressionEvaluator(trace)
+            return evaluator.evaluate(expression, expectedType)
+        }
+    }
+
+    private fun evaluate(expression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val recordedCompileTimeConstant = trace.get(BindingContext.COMPILE_TIME_VALUE, expression)
         if (recordedCompileTimeConstant != null) {
             return recordedCompileTimeConstant
@@ -98,26 +105,26 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val deparenthesizedExpression = JetPsiUtil.deparenthesize(expression)
         return if (deparenthesizedExpression != null && deparenthesizedExpression != expression) {
             evaluate(deparenthesizedExpression, expectedType)
-        } else {
+        }
+        else {
             super.visitPrefixExpression(expression, expectedType)
         }
     }
 
     override fun visitStringTemplateExpression(expression: JetStringTemplateExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        return with(StringBuilder()) {
-            var interupted = false
-            for (entry in expression.getEntries()) {
-                val constant = stringExpressionEvaluator.evaluate(entry)
-                if (constant == null) {
-                    interupted = true
-                    break
-                }
-                else {
-                    append(constant.getValue())
-                }
+        val sb = StringBuilder()
+        var interupted = false
+        for (entry in expression.getEntries()) {
+            val constant = stringExpressionEvaluator.evaluate(entry)
+            if (constant == null) {
+                interupted = true
+                break
             }
-            if (!interupted) createCompileTimeConstant(toString(), expectedType) else null
+            else {
+                sb.append(constant.getValue())
+            }
         }
+        return if (!interupted) createCompileTimeConstant(sb.toString(), expectedType) else null
     }
 
     override fun visitBinaryExpression(expression: JetBinaryExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -190,7 +197,6 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     override fun visitUnaryExpression(expression: JetUnaryExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val leftExpression = expression.getBaseExpression()
         if (leftExpression == null) return null
-
         val result = evaluateCall(expression.getOperationReference(), leftExpression)
         return createCompileTimeConstant(result, expectedType)
     }
@@ -287,12 +293,6 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         return null
     }
 
-    class object {
-        public fun evaluate(expression: JetExpression, trace: BindingTrace, expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE): CompileTimeConstant<*>? {
-            val evaluator = ConstantExpressionEvaluator(trace)
-            return evaluator.evaluate(expression, expectedType)
-        }
-    }
 
     private class OperationArgument(val value: Any?, val ctcType: CompileTimeType<*>)
 
