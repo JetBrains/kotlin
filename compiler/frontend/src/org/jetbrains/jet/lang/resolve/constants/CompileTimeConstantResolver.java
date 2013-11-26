@@ -236,49 +236,6 @@ public class CompileTimeConstantResolver {
     }
 
     @Nullable
-    public static Long parseLong(String text) {
-        try {
-            long value;
-            if (text.startsWith("0x") || text.startsWith("0X")) {
-                String hexString = text.substring(2);
-                value = Long.parseLong(hexString, 16);
-            }
-            else if (text.startsWith("0b") || text.startsWith("0B")) {
-                String binString = text.substring(2);
-                value = Long.parseLong(binString, 2);
-            }
-            else {
-                value = Long.parseLong(text);
-            }
-            return value;
-        }
-        catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    @Nullable
-    public static Double parseDouble(String text) {
-        try {
-            return Double.parseDouble(text);
-        }
-        catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    @NotNull
-    public static Object parseBoolean(@NotNull String text) {
-        if ("true".equals(text)) {
-            return true;
-        }
-        else if ("false".equals(text)) {
-            return false;
-        }
-        throw new IllegalStateException("Must not happen. A boolean literal has text: " + text);
-    }
-
-    @Nullable
     public static Character parseChar(@NotNull JetConstantExpression expression) {
         CompileTimeConstant<?> compileTimeConstant = parseCharValue(expression);
         if (compileTimeConstant instanceof CharValue) {

@@ -31,10 +31,9 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.resolve.BindingContext.COMPILE_TIME_INITIALIZER
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.jet.lang.types.TypeUtils
-import java.lang.Short as JShort
-import java.lang.Byte as JByte
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.JetNodeTypes
+import java.lang.Long.parseLong as javaParseLong
 
 [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
 public class ConstantExpressionEvaluator private (val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
@@ -75,9 +74,9 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val text = expression.getText()
         if (text == null) return null
         val result: Any? = when (expression.getNode().getElementType()) {
-            JetNodeTypes.INTEGER_CONSTANT -> CompileTimeConstantResolver.parseLong(text)
-            JetNodeTypes.FLOAT_CONSTANT -> CompileTimeConstantResolver.parseDouble(text)
-            JetNodeTypes.BOOLEAN_CONSTANT -> CompileTimeConstantResolver.parseBoolean(text)
+            JetNodeTypes.INTEGER_CONSTANT -> parseLong(text)
+            JetNodeTypes.FLOAT_CONSTANT -> parseDouble(text)
+            JetNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
             JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantResolver.parseChar(expression)
             JetNodeTypes.NULL -> null
             else -> throw IllegalArgumentException("Unsupported constant: " + expression)
@@ -323,6 +322,40 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         return OperationArgument(argumentValue, argumentCompileTimeType)
     }
 }
+
+public fun parseLong(text: String): Long? {
+    try {
+        return when {
+            text.startsWith("0x") || text.startsWith("0X") -> javaParseLong(text.substring(2), 16)
+            text.startsWith("0b") || text.startsWith("0B") -> javaParseLong(text.substring(2), 2)
+            else -> javaParseLong(text)
+        }
+    }
+    catch (e: NumberFormatException) {
+        return null
+    }
+}
+
+private fun parseDouble(text: String): Double? {
+    try {
+        return java.lang.Double.parseDouble(text)
+    }
+    catch (e: NumberFormatException) {
+        return null
+    }
+}
+
+private fun parseBoolean(text: String): Boolean {
+    if ("true".equals(text)) {
+        return true
+    }
+    else if ("false".equals(text)) {
+        return false
+    }
+
+    throw IllegalStateException("Must not happen. A boolean literal has text: " + text)
+}
+
 
 private fun createCompileTimeConstantForEquals(result: Any?, operationToken: IElementType): CompileTimeConstant<*>? {
     if (result is Boolean) {
