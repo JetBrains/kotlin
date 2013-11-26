@@ -51,7 +51,7 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
     }
 
     public void testBuiltIns() throws Exception {
-        Collection<DeclarationDescriptor> allDescriptors = KotlinBuiltIns.getInstance().getBuiltInsScope().getAllDescriptors();
+        Collection<DeclarationDescriptor> allDescriptors = KotlinBuiltIns.getInstance().getBuiltInsPackageScope().getAllDescriptors();
         PackageFragmentDescriptor actualPackage = getDeserializedDescriptorsAsPackage(allDescriptors);
 
         RecursiveDescriptorComparator.Configuration configuration = RecursiveDescriptorComparator.RECURSIVE.withRenderer(

@@ -227,9 +227,8 @@ public class KotlinBuiltIns {
         return builtInsModule.getPackageFragmentProvider().getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME).get(0);
     }
 
-    @Deprecated
     @NotNull
-    public JetScope getBuiltInsScope() { // TODO 1 scope?
+    public JetScope getBuiltInsPackageScope() {
         return getBuiltInsPackageFragment().getMemberScope();
     }
 
@@ -241,7 +240,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsScope().getClassifier(simpleName);
+        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
     }

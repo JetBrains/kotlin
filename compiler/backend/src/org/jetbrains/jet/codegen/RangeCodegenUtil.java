@@ -105,7 +105,7 @@ public class RangeCodegenUtil {
     ) {
         ClassifierDescriptor declarationDescriptor = rangeOrProgression.getConstructor().getDeclarationDescriptor();
         assert declarationDescriptor != null;
-        if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsScope().getClassifier(declarationDescriptor.getName())) {
+        if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsPackageScope().getClassifier(declarationDescriptor.getName())) {
             // Must be a standard library class
             return null;
         }

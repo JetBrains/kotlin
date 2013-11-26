@@ -174,7 +174,7 @@ public final class JavaClassResolver {
         List<Name> segments = qualifiedName.pathSegments();
         if (segments.size() < 2) return null;
 
-        JetScope scope = KotlinBuiltIns.getInstance().getBuiltInsScope();
+        JetScope scope = KotlinBuiltIns.getInstance().getBuiltInsPackageScope();
         for (int i = 1, size = segments.size(); i < size; i++) {
             ClassifierDescriptor classifier = scope.getClassifier(segments.get(i));
             if (classifier == null) return null;

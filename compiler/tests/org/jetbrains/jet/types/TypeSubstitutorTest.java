@@ -96,7 +96,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                                 topLevelDeclarations,
                                 typeParameters,
                                 contextClass.getDefaultType().getMemberScope(),
-                                KotlinBuiltIns.getInstance().getBuiltInsScope());
+                                KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
     }
 
     private void doTest(@Nullable String expectedTypeStr, String initialTypeStr, Pair<String, String>... substitutionStrs) {
