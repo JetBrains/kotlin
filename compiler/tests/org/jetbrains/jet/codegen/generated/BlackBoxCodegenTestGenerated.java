@@ -2361,7 +2361,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
     
     @TestMetadata("compiler/testData/codegen/box/functions")
-    @InnerTestClasses({Functions.Invoke.class, Functions.LocalFunctions.class, Functions.Tail_recursion.class})
+    @InnerTestClasses({Functions.Invoke.class, Functions.LocalFunctions.class, Functions.TailRecursion.class})
     public static class Functions extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInFunctions() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2623,120 +2623,120 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             
         }
         
-        @TestMetadata("compiler/testData/codegen/box/functions/tail-recursion")
-        public static class Tail_recursion extends AbstractBlackBoxCodegenTest {
-            public void testAllFilesPresentInTail_recursion() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions/tail-recursion"), Pattern.compile("^(.+)\\.kt$"), true);
+        @TestMetadata("compiler/testData/codegen/box/functions/tailRecursion")
+        public static class TailRecursion extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInTailRecursion() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/box/functions/tailRecursion"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
             @TestMetadata("defaultArgs.kt")
             public void testDefaultArgs() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/defaultArgs.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/defaultArgs.kt");
             }
             
             @TestMetadata("insideElvis.kt")
             public void testInsideElvis() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/insideElvis.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/insideElvis.kt");
             }
             
             @TestMetadata("labeledThisReferences.kt")
             public void testLabeledThisReferences() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/labeledThisReferences.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/labeledThisReferences.kt");
             }
             
             @TestMetadata("loops.kt")
             public void testLoops() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/loops.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/loops.kt");
             }
             
             @TestMetadata("multilevelBlocks.kt")
             public void testMultilevelBlocks() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/multilevelBlocks.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/multilevelBlocks.kt");
             }
             
             @TestMetadata("realIteratorFoldl.kt")
             public void testRealIteratorFoldl() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/realIteratorFoldl.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/realIteratorFoldl.kt");
             }
             
             @TestMetadata("realStringEscape.kt")
             public void testRealStringEscape() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/realStringEscape.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/realStringEscape.kt");
             }
             
             @TestMetadata("realStringRepeat.kt")
             public void testRealStringRepeat() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/realStringRepeat.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/realStringRepeat.kt");
             }
             
             @TestMetadata("recursiveInnerFunction.kt")
             public void testRecursiveInnerFunction() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/recursiveInnerFunction.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/recursiveInnerFunction.kt");
             }
             
             @TestMetadata("returnInCatch.kt")
             public void testReturnInCatch() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/returnInCatch.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInCatch.kt");
             }
             
             @TestMetadata("returnInFinally.kt")
             public void testReturnInFinally() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/returnInFinally.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInFinally.kt");
             }
             
             @TestMetadata("returnInIfInFinally.kt")
             public void testReturnInIfInFinally() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/returnInIfInFinally.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInIfInFinally.kt");
             }
             
             @TestMetadata("returnInTry.kt")
             public void testReturnInTry() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/returnInTry.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInTry.kt");
             }
             
             @TestMetadata("simpleBlock.kt")
             public void testSimpleBlock() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/simpleBlock.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/simpleBlock.kt");
             }
             
             @TestMetadata("simpleReturn.kt")
             public void testSimpleReturn() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/simpleReturn.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/simpleReturn.kt");
             }
             
             @TestMetadata("simpleReturnWithElse.kt")
             public void testSimpleReturnWithElse() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/simpleReturnWithElse.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/simpleReturnWithElse.kt");
             }
             
             @TestMetadata("thisReferences.kt")
             public void testThisReferences() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/thisReferences.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/thisReferences.kt");
             }
             
             @TestMetadata("unitBlocks.kt")
             public void testUnitBlocks() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/unitBlocks.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/unitBlocks.kt");
             }
             
             @TestMetadata("whenWithCondition.kt")
             public void testWhenWithCondition() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/whenWithCondition.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/whenWithCondition.kt");
             }
             
             @TestMetadata("whenWithInRange.kt")
             public void testWhenWithInRange() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/whenWithInRange.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/whenWithInRange.kt");
             }
             
             @TestMetadata("whenWithIs.kt")
             public void testWhenWithIs() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/whenWithIs.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/whenWithIs.kt");
             }
             
             @TestMetadata("whenWithoutCondition.kt")
             public void testWhenWithoutCondition() throws Exception {
-                doTest("compiler/testData/codegen/box/functions/tail-recursion/whenWithoutCondition.kt");
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/whenWithoutCondition.kt");
             }
             
         }
@@ -2746,7 +2746,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             suite.addTestSuite(Functions.class);
             suite.addTestSuite(Invoke.class);
             suite.addTestSuite(LocalFunctions.class);
-            suite.addTestSuite(Tail_recursion.class);
+            suite.addTestSuite(TailRecursion.class);
             return suite;
         }
     }

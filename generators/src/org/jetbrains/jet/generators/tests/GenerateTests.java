@@ -225,7 +225,7 @@ public class GenerateTests {
                 "compiler/tests",
                 "TailRecursionDetectorTestGenerated",
                 AbstractTailRecursionTest.class,
-                testModel("compiler/testData/codegen/box/functions/tail-recursion")
+                testModel("compiler/testData/codegen/box/functions/tailRecursion")
         );
 
         generateTest("compiler/tests",
