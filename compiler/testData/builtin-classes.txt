@@ -710,6 +710,22 @@ public trait Hashable {
     public abstract fun hashCode(): jet.Int
 }
 
+public final enum class InlineStrategy : jet.Enum<jet.InlineStrategy> {
+    /*primary*/ private constructor InlineStrategy()
+    public final override /*1*/ /*fake_override*/ fun name(): jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+    
+    public class object <class-object-for-InlineStrategy> {
+        /*primary*/ private constructor <class-object-for-InlineStrategy>()
+        public final val AS_FUNCTION: jet.InlineStrategy
+            public final fun <get-AS_FUNCTION>(): jet.InlineStrategy
+        public final val IN_PLACE: jet.InlineStrategy
+            public final fun <get-IN_PLACE>(): jet.InlineStrategy
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): jet.InlineStrategy
+        public final /*synthesized*/ fun values(): jet.Array<jet.InlineStrategy>
+    }
+}
+
 public final class Int : jet.Number, jet.Comparable<jet.Int> {
     /*primary*/ private constructor Int()
     public final fun and(/*0*/ other: jet.Int): jet.Int
@@ -1588,6 +1604,16 @@ public final annotation class data : jet.Annotation {
 
 public final annotation class deprecated : jet.Annotation {
     /*primary*/ public constructor deprecated(/*0*/ value: jet.String)
+}
+
+public final annotation class inline : jet.Annotation {
+    /*primary*/ public constructor inline(/*0*/ strategy: jet.InlineStrategy = ...)
+    public final val strategy: jet.InlineStrategy
+        public final fun <get-strategy>(): jet.InlineStrategy
+}
+
+public final annotation class noinline : jet.Annotation {
+    /*primary*/ public constructor noinline()
 }
 
 public final annotation class suppress : jet.Annotation {
