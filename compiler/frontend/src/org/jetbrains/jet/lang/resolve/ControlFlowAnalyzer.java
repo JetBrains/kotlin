@@ -59,6 +59,8 @@ public class ControlFlowAnalyzer {
             JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
+            assert expectedReturnType != null
+                    : "functionDescriptor is not yet fully initialized or broken so return type is null " + functionDescriptor;
             checkFunction(function, expectedReturnType);
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
@@ -85,12 +87,14 @@ public class ControlFlowAnalyzer {
             PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
-            assert accessorDescriptor != null;
-            checkFunction(accessor, accessorDescriptor.getReturnType());
+            assert accessorDescriptor != null : "no property accessor descriptor " + accessor.getText();
+            JetType returnType = accessorDescriptor.getReturnType();
+            assert returnType != null : "property accessor has no return type " + accessorDescriptor;
+            checkFunction(accessor, returnType);
         }
     }
 
-    private void checkFunction(JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
+    private void checkFunction(@NotNull JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
