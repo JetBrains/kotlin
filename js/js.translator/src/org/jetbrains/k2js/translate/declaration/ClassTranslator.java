@@ -41,6 +41,7 @@ import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.*;
@@ -136,7 +137,7 @@ public final class ClassTranslator extends AbstractTranslator {
         return descriptor.getKind().equals(ClassKind.TRAIT);
     }
 
-    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter,
+    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull PropertyDescriptor parameter,
             @NotNull List<JsPropertyInitializer> properties) {
         JsFunction componentFunction = context().getFunctionObject(function);
         JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
@@ -150,10 +151,13 @@ public final class ClassTranslator extends AbstractTranslator {
 
         ConstructorDescriptor constructor = descriptor.getConstructors().iterator().next();
 
-        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
-            FunctionDescriptor function = context().bindingContext().get(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter);
+        for (ValueParameterDescriptor parameterDescriptor : constructor.getValueParameters()) {
+            FunctionDescriptor function = context().bindingContext().get(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameterDescriptor);
             if (function != null) {
-                generateComponentFunction(function, parameter, properties);
+                JetParameter parameter = BindingUtils.getParameterForDescriptor(context().bindingContext(), parameterDescriptor);
+                PropertyDescriptor descriptor = getPropertyDescriptorForConstructorParameter(bindingContext(), parameter);
+                assert descriptor != null;
+                generateComponentFunction(function, descriptor, properties);
             }
         }
     }
