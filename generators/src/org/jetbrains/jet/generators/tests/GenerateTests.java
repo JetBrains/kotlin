@@ -22,7 +22,6 @@ import org.jetbrains.jet.cfg.AbstractControlFlowTest;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
-import org.jetbrains.jet.checkers.AbstractTailRecursionTest;
 import org.jetbrains.jet.cli.AbstractKotlincExecutableTest;
 import org.jetbrains.jet.codegen.AbstractBytecodeTextTest;
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
@@ -98,7 +97,8 @@ public class GenerateTests {
                 "JetDiagnosticsTestGenerated",
                 AbstractDiagnosticsTestWithEagerResolve.class,
                 testModel("compiler/testData/diagnostics/tests"),
-                testModel("compiler/testData/diagnostics/tests/script", true, "ktscript", "doTest")
+                testModel("compiler/testData/diagnostics/tests/script", true, "ktscript", "doTest"),
+                testModel("compiler/testData/codegen/box/functions/tailRecursion")
         );
 
         generateTest(
@@ -219,13 +219,6 @@ public class GenerateTests {
                 "LazyResolveDescriptorRendererTestGenerated",
                 AbstractLazyResolveDescriptorRendererTest.class,
                 testModel("compiler/testData/renderer")
-        );
-
-        generateTest(
-                "compiler/tests",
-                "TailRecursionDetectorTestGenerated",
-                AbstractTailRecursionTest.class,
-                testModel("compiler/testData/codegen/box/functions/tailRecursion")
         );
 
         generateTest("compiler/tests",

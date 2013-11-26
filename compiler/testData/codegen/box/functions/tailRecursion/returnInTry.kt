@@ -1,8 +1,10 @@
-tailRecursive fun test(counter : Int, a : Any) : Int {
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
+<!NO_TAIL_CALLS_FOUND!>tailRecursive fun test(counter : Int, a : Any) : Int<!> {
     if (counter == 0) return 0
 
     try {
-        return test(counter - 1, "no tail")
+        return <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>test<!>(counter - 1, "no tail")
     } catch (any : Throwable) {
         return -1
     }

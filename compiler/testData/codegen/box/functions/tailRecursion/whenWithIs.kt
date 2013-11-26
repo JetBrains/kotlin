@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
 tailRecursive fun withWhen(counter : Int, d : Any, x : Any) : Int =
     if (counter == 0) {
         0

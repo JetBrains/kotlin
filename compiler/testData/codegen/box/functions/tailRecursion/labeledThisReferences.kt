@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
 class B {
     inner class C {
         tailRecursive fun h(counter : Int, x : Any) {
@@ -6,7 +8,7 @@ class B {
             }
         }
 
-        tailRecursive fun h2(x : Any) {
+        <!NO_TAIL_CALLS_FOUND!>tailRecursive fun h2(x : Any)<!> {
             this@B.h2("no recursion") // keep vigilance
         }
 

@@ -1,7 +1,9 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
 tailRecursive fun test(x : Int, a : Any) : Int =
     if (x == 1) {
-        test(x - 1, "no tail")
-        1 + test(x - 1, "no tail")
+        <!NON_TAIL_RECURSIVE_CALL!>test<!>(x - 1, "no tail")
+        1 + <!NON_TAIL_RECURSIVE_CALL!>test<!>(x - 1, "no tail")
     } else if (x > 0) {
         test(x - 1, "tail")
     } else {
