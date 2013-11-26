@@ -173,10 +173,16 @@ public final class ClassTranslator extends AbstractTranslator {
                 "constructor: " + constructor.getValueParameters().size();
 
         List<JsExpression> ctorArgs = new ArrayList<JsExpression>();
-        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
-            JsExpression useProp = new JsNameRef(context().getNameForDescriptor(parameter), JsLiteral.THIS);
-            JsExpression useArg = new JsNameRef(context().getNameForDescriptor(parameter));
-            JsExpression argIsUndef = new JsBinaryOperation(JsBinaryOperator.REF_EQ, useArg, JsLiteral.UNDEFINED);
+        for (ValueParameterDescriptor parameterDescriptor : constructor.getValueParameters()) {
+            JsExpression useArg = new JsNameRef(context().getNameForDescriptor(parameterDescriptor));
+            JetParameter parameter = BindingUtils.getParameterForDescriptor(context().bindingContext(), parameterDescriptor);
+            PropertyDescriptor descriptor = getPropertyDescriptorForConstructorParameter(bindingContext(), parameter);
+            if (descriptor == null) {
+                ctorArgs.add(useArg);
+                continue;
+            }
+            JsExpression useProp = new JsNameRef(context().getNameForDescriptor(parameterDescriptor), JsLiteral.THIS);
+            JsExpression argIsUndef = new JsBinaryOperation(JsBinaryOperator.REF_EQ, useArg, context().namer().getUndefinedExpression());
             JsExpression updateProp = new JsConditional(argIsUndef, useProp, useArg);
             ctorArgs.add(updateProp);
         }
