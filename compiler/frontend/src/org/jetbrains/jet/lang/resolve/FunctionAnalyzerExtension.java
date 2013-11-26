@@ -21,9 +21,11 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +60,9 @@ public class FunctionAnalyzerExtension {
         if (functionDescriptor instanceof SimpleFunctionDescriptor &&
                 ((SimpleFunctionDescriptor) functionDescriptor).isInline()) {
             list.add(InlineAnalyzerExtension.INSTANCE);
+        }
+        if (KotlinBuiltIns.getInstance().isTailRecursive(functionDescriptor)) {
+            list.add(TailRecursionsFunctionAnalyzerExtension.INSTANCE);
         }
         return list;
     }

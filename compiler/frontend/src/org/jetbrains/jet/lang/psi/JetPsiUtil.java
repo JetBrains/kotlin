@@ -42,10 +42,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class JetPsiUtil {
     private JetPsiUtil() {
@@ -1030,5 +1027,38 @@ public class JetPsiUtil {
                 "JetOperationExpression should have operation token of type JetToken: " +
                 expression;
         return (JetToken) elementType;
+    }
+
+    @NotNull
+    public static <T> T visitUpwardToRoot(
+            @NotNull PsiElement element,
+            @NotNull JetVisitor<BacktraceVisitorStatus<T>, VisitorData<T>> visitor,
+            T def
+    ) {
+        List<PsiElement> track = new ArrayList<PsiElement>();
+        List<PsiElement> view = Collections.unmodifiableList(track);
+        @NotNull
+        BacktraceVisitorStatus<T> lastStatus = new BacktraceVisitorStatus<T>(def, true);
+        VisitorData<T> data = new VisitorData<T>(view);
+
+        do {
+            track.add(element);
+            PsiElement parent = element.getParent();
+            if (parent instanceof JetElement) {
+                JetElement jet = (JetElement) parent;
+                data.last = element;
+                data.data = lastStatus.getData();
+
+                BacktraceVisitorStatus<T> status = jet.accept(visitor, data);
+                if (status == null) {
+                    throw new IllegalStateException("visitor has returned null status");
+                }
+                lastStatus = status;
+            }
+
+            element = parent;
+        } while (element != null && !lastStatus.isAbortTrace());
+
+        return lastStatus.getData();
     }
 }
