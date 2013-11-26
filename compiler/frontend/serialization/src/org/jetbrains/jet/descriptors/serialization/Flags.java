@@ -28,6 +28,7 @@ public class Flags {
 
     public static final FlagField<ProtoBuf.Callable.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND,
                                                                                               ProtoBuf.Callable.MemberKind.values());
+    @Deprecated
     public static final FlagField<Boolean> INLINE = FlagField.booleanAfter(MEMBER_KIND);
     public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(INLINE);
     public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);

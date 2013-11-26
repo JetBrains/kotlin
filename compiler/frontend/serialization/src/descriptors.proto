@@ -156,7 +156,6 @@ message Callable {
      has_annotations
      CallableKind
      MemberKind
-     inline
      hasGetter
      hasSetter
    */
