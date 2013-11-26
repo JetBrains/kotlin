@@ -77,19 +77,19 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
     }
 
     public override fun visitForStatement(statement: PsiForStatement?) {
-        val initialization: PsiStatement? = statement?.getInitialization()
-        val update: PsiStatement? = statement?.getUpdate()
-        val condition: PsiExpression? = statement?.getCondition()
-        val body: PsiStatement? = statement?.getBody()
-        val firstChild: PsiLocalVariable? = (if (initialization != null && (initialization.getFirstChild() is PsiLocalVariable))
+        val initialization = statement?.getInitialization()
+        val update = statement?.getUpdate()
+        val condition = statement?.getCondition()
+        val body = statement?.getBody()
+        val firstChild = (if (initialization != null && (initialization.getFirstChild() is PsiLocalVariable))
             (initialization.getFirstChild() as PsiLocalVariable)
         else
             null)
-        var bodyWriteCount: Int = countWritingAccesses(firstChild, body)
-        var conditionWriteCount: Int = countWritingAccesses(firstChild, condition)
-        var updateWriteCount: Int = countWritingAccesses(firstChild, update)
-        val onceWritableIterator: Boolean = updateWriteCount == 1 && bodyWriteCount + conditionWriteCount == 0
-        val operationTokenType: IElementType? = (if (condition is PsiBinaryExpression)
+        var bodyWriteCount = countWritingAccesses(firstChild, body)
+        var conditionWriteCount = countWritingAccesses(firstChild, condition)
+        var updateWriteCount = countWritingAccesses(firstChild, update)
+        val onceWritableIterator = updateWriteCount == 1 && bodyWriteCount + conditionWriteCount == 0
+        val operationTokenType = (if (condition is PsiBinaryExpression)
             condition.getOperationTokenType()
         else
             null)
@@ -98,8 +98,8 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
         (isPlusPlusExpression(update.getChildren()[0])) && (operationTokenType == JavaTokenType.LT || operationTokenType == JavaTokenType.LE) &&
         initialization.getFirstChild() != null && (initialization.getFirstChild() is PsiLocalVariable) &&
         firstChild != null && firstChild.getNameIdentifier() != null && onceWritableIterator) {
-            val end: Expression = getConverter().expressionToExpression((condition as PsiBinaryExpression).getROperand())
-            val endExpression: Expression = (if (operationTokenType == JavaTokenType.LT)
+            val end = getConverter().expressionToExpression((condition as PsiBinaryExpression).getROperand())
+            val endExpression = (if (operationTokenType == JavaTokenType.LT)
                 BinaryExpression(end, Identifier("1"), "-")
             else
                 end)

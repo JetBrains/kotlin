@@ -44,9 +44,9 @@ public open class Class(val converter: Converter,
     }
 
     open fun primaryConstructorBodyToKotlin(): String? {
-        val maybeConstructor: Constructor? = getPrimaryConstructor()
+        val maybeConstructor = getPrimaryConstructor()
         if (maybeConstructor != null && !(maybeConstructor.block?.isEmpty() ?: true)) {
-            return maybeConstructor.primaryBodyToKotlin()
+            return maybeConstructor.primaryBodyToKotlin() + "\n"
         }
 
         return ""
@@ -57,7 +57,7 @@ public open class Class(val converter: Converter,
     open fun typeParameterWhereToKotlin(): String {
         if (hasWhere()) {
             val wheres = typeParameters.filter { it is TypeParameter }.map { (it as TypeParameter).getWhereToKotlin() }
-            return " where " + wheres.makeString(", ") + " "
+            return " where " + wheres.makeString(", ")
         }
         return ""
     }
@@ -122,7 +122,7 @@ public open class Class(val converter: Converter,
     open fun needsOpenModifier() = !isDefinitelyFinal() && converter.settings.openByDefault
 
     fun bodyToKotlin(): String {
-        return " {\n" + getNonStatic(membersExceptConstructors()).toKotlin("\n") + "\n" + primaryConstructorBodyToKotlin() + "\n" + classObjectToKotlin() + "\n}"
+        return " {\n" + getNonStatic(membersExceptConstructors()).toKotlin("\n", "", "\n") + primaryConstructorBodyToKotlin() + classObjectToKotlin() + "}"
     }
 
     private fun classObjectToKotlin(): String {

@@ -28,8 +28,8 @@ public class Import(val name: String) : Node {
     public override fun toKotlin() = "import " + name
 }
 
-public class ImportList(val imports: List<Import>) : Node {
-    override fun toKotlin() = imports.filter {
+public class ImportList(val imports: List<Import>) : Element {
+    val filteredImports = imports.filter {
         !it.name.isEmpty() && it.name !in NOT_NULL_ANNOTATIONS
     }.filter {
         // If name is invalid, like with star imports, don't try to filter
@@ -40,7 +40,13 @@ public class ImportList(val imports: List<Import>) : Node {
             val kotlinAnalogsForClass = JavaToKotlinClassMap.getInstance().mapPlatformClass(FqName(it.name))
             kotlinAnalogsForClass.isEmpty()
         }
-    }.toKotlin("\n")
+    }
+
+    override fun isEmpty(): Boolean {
+        return filteredImports.isEmpty()
+    }
+
+    override fun toKotlin() = filteredImports.toKotlin("\n")
 }
 
 public fun Converter.importsToImportList(importList: PsiImportList): ImportList =

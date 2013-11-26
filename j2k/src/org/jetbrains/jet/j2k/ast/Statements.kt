@@ -20,7 +20,8 @@ package org.jetbrains.jet.j2k.ast
 public abstract class Statement() : Element {
     class object {
         public val EMPTY_STATEMENT: Statement = object : Statement() {
-            public override fun toKotlin() = ""
+            override fun toKotlin() = ""
+            override fun isEmpty() = true
         }
     }
 }
@@ -55,9 +56,9 @@ public open class IfStatement(val condition: Expression,
                               val thenStatement: Element,
                               val elseStatement: Element) : Expression() {
     public override fun toKotlin(): String {
-        val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin() + "\n"
+        val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin()
         if (elseStatement != Statement.EMPTY_STATEMENT) {
-            return result + "else\n" + elseStatement.toKotlin()
+            return result + "\nelse\n" + elseStatement.toKotlin()
         }
 
         return result

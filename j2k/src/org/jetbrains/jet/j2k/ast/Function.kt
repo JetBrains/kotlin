@@ -42,7 +42,7 @@ public open class Function(val converter: Converter,
         if (hasWhere())
         {
             val wheres = typeParameters.filter { it is TypeParameter }.map { ((it as TypeParameter).getWhereToKotlin() ) }
-            return " where " + wheres.makeString(", ") + " "
+            return "where " + wheres.makeString(", ") + " "
         }
 
         return ""

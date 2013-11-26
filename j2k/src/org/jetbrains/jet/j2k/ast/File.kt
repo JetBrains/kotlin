@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.j2k.ast
 
-public open class File(val packageName: String,
-                       val body: MutableList<Node>,
-                       val mainFunction: String) : Node {
+public class File(val packageName: String,
+                  val body: List<Node>,
+                  val mainFunction: String) : Node {
 
-    public override fun toKotlin(): String {
-        val common = body.toKotlin("\n") + "\n" + mainFunction
+    override fun toKotlin(): String {
+        val common = body.filterNot { it is Element && it.isEmpty() }.toKotlin("\n") + mainFunction
         if (packageName.isEmpty()) {
             return common
         }
