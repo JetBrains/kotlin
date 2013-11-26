@@ -87,7 +87,7 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
                         renameKotlinClassTest(fqNameUnsafe.toSafe(), strings[2]);
                         break;
                     case KOTLIN_FUNCTION:
-                        renameKotlinFunctionTest(fqNameUnsafe.parent().toSafe(),fqNameUnsafe.shortName().asString(), strings[2]);
+                        renameKotlinFunctionTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2]);
                         break;
                     case KOTLIN_PROPERTY:
                         renameKotlinPropertyTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2]);
@@ -200,7 +200,7 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
         doTest(new MultiFileTestCase.PerformAction() {
             @Override
             public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
-                VirtualFile child = rootDir.findChild(getTestDirName() + ".kt");
+                VirtualFile child = rootDir.findChild(getTestDirName(false) + ".kt");
                 assertNotNull(child);
 
                 Document document = FileDocumentManager.getInstance().getDocument(child);
@@ -224,14 +224,14 @@ public abstract class AbstractRenameTest extends MultiFileTestCase {
         });
     }
 
-    protected String getTestDirName() {
-        String testName = getTestName(true);
+    protected String getTestDirName(boolean lowercaseFirstLetter) {
+        String testName = getTestName(lowercaseFirstLetter);
         return testName.substring(0, testName.indexOf('_'));
     }
 
     @Override
     protected void doTest(PerformAction performAction) throws Exception {
-        super.doTest(performAction, getTestDirName());
+        super.doTest(performAction, getTestDirName(true));
     }
 
     @Override
