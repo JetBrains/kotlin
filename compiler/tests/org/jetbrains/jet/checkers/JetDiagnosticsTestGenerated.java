@@ -4178,6 +4178,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/AssertNotNull.kt");
             }
             
+            @TestMetadata("funcLiteralArgsInsideAmbiguity.kt")
+            public void testFuncLiteralArgsInsideAmbiguity() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/funcLiteralArgsInsideAmbiguity.kt");
+            }
+            
             @TestMetadata("funcLiteralArgsInsideUnresolvedFunction.kt")
             public void testFuncLiteralArgsInsideUnresolvedFunction() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/funcLiteralArgsInsideUnresolvedFunction.kt");
