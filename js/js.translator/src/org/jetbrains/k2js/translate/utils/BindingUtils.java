@@ -83,7 +83,7 @@ public final class BindingUtils {
     }
 
     @NotNull
-    private static JetParameter getParameterForDescriptor(@NotNull BindingContext context,
+    public static JetParameter getParameterForDescriptor(@NotNull BindingContext context,
             @NotNull ValueParameterDescriptor descriptor) {
         PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
         assert result instanceof JetParameter :
