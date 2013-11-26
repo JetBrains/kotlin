@@ -1,3 +1,3 @@
 open class C() {
-var f : Foo? = null
+    var f: Foo? = null
 }

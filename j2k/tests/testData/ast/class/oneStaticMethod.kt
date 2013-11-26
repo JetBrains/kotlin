@@ -1,7 +1,7 @@
 class S() {
-class object {
-fun staticF() : Boolean {
-return true
-}
-}
+    class object {
+        fun staticF(): Boolean {
+            return true
+        }
+    }
 }

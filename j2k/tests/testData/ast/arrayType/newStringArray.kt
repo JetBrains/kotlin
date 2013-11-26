@@ -1,1 +1,1 @@
-var a : Array<String?>? = array<String?>("abc")
+var a: Array<String?>? = array<String?>("abc")

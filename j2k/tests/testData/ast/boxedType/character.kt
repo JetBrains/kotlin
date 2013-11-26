@@ -1,1 +1,1 @@
-var i : Char? = 10
+var i: Char? = 10

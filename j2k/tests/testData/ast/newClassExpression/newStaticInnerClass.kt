@@ -1,12 +1,13 @@
 package demo
+
 open class Foo() {
-class object {
-open class Bar() {
-}
-}
+    class object {
+        open class Bar() {
+        }
+    }
 }
 open class User() {
-open fun main() {
-var boo : Foo.Bar? = Foo.Bar()
-}
+    open fun main() {
+        var boo: Foo.Bar? = Foo.Bar()
+    }
 }

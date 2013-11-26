@@ -1,14 +1,14 @@
 public class NonDefault() {
-class object {
-public fun main(args : Array<String>) {
-val value = 3
-val valueString = ""
-when (value) {
-else -> {
+    class object {
+        public fun main(args: Array<String>) {
+            val value = 3
+            val valueString = ""
+            when (value) {
+                else -> {
+                }
+            }
+            System.out.println(valueString)
+        }
+    }
 }
-}
-System.out.println(valueString)
-}
-}
-}
-fun main(args : Array<String>) = NonDefault.main(args as Array<String?>?)
+fun main(args: Array<String>) = NonDefault.main(args as Array<String?>?)

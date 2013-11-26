@@ -1,15 +1,15 @@
 class Library() {
-class object {
-fun call() {
-}
-fun getString() : String {
-return ""
-}
-}
+    class object {
+        fun call() {
+        }
+        fun getString(): String {
+            return ""
+        }
+    }
 }
 class User() {
-fun main() {
-Library.call()
-Library.getString().isEmpty()
-}
+    fun main() {
+        Library.call()
+        Library.getString().isEmpty()
+    }
 }

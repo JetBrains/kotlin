@@ -1,1 +1,1 @@
-var d2 : Array<IntArray?>? = array<IntArray?>()
+var d2: Array<IntArray?>? = array<IntArray?>()

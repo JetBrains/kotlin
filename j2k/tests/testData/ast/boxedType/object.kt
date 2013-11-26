@@ -1,1 +1,1 @@
-var i : Any? = 10
+var i: Any? = 10

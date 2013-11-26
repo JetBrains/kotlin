@@ -1,1 +1,1 @@
-var i : Short? = 10
+var i: Short? = 10

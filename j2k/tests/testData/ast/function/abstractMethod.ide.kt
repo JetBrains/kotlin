@@ -1,1 +1,1 @@
-abstract fun getNoofGears() : Int
+abstract fun getNoofGears(): Int

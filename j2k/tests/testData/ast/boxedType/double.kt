@@ -1,1 +1,1 @@
-var i : Double? = 10
+var i: Double? = 10

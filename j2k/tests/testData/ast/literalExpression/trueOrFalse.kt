@@ -1,8 +1,8 @@
 open class Test() {
-open fun test() {
-var t1 : Boolean = true
-var t2 : Boolean? = true
-var f1 : Boolean = false
-var f2 : Boolean? = false
-}
+    open fun test() {
+        var t1: Boolean = true
+        var t2: Boolean? = true
+        var f1: Boolean = false
+        var f2: Boolean? = false
+    }
 }

@@ -1,8 +1,8 @@
 open class A() {
-open fun a() {
-}
+    open fun a() {
+    }
 }
 class B() : A() {
-override fun a() {
-}
+    override fun a() {
+    }
 }

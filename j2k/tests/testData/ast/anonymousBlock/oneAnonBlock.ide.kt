@@ -1,6 +1,6 @@
 class Test() {
-var str : String = 0
-{
-str = "Ola"
-}
+    var str: String = 0
+    {
+        str = "Ola"
+    }
 }

@@ -1,1 +1,1 @@
-var a : FloatArray? = floatArray(1.0, 2.0, 3.0)
+var a: FloatArray? = floatArray(1.0, 2.0, 3.0)

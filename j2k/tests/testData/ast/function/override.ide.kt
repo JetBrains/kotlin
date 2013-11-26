@@ -1,8 +1,8 @@
 class A() {
-fun a() {
-}
+    fun a() {
+    }
 }
 class B() : A() {
-override fun a() {
-}
+    override fun a() {
+    }
 }

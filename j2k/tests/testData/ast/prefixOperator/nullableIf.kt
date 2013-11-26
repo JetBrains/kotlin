@@ -1,4 +1,4 @@
-var s : String? = null
+var s: String? = null
 if (!s?.isEmpty()!!)
 {
 }

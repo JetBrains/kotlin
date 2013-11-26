@@ -1,1 +1,1 @@
-var s : String?
+var s: String?

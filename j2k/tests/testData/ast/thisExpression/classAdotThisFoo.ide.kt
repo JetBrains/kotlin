@@ -1,11 +1,11 @@
 class Base() {
-fun foo() {
-}
+    fun foo() {
+    }
 }
 class A() : Base() {
-class C() {
-fun test() {
-this@A.foo()
-}
-}
+    class C() {
+        fun test() {
+            this@A.foo()
+        }
+    }
 }

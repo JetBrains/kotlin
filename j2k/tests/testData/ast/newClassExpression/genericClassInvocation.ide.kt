@@ -1,6 +1,7 @@
 import java.util.LinkedList
+
 class User() {
-fun main() {
-val list = LinkedList<String>()
-}
+    fun main() {
+        val list = LinkedList<String>()
+    }
 }

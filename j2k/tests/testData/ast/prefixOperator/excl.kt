@@ -1,2 +1,2 @@
-var i : Boolean = true
-var j : Boolean = !i
+var i: Boolean = true
+var j: Boolean = !i

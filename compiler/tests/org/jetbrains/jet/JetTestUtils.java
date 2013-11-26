@@ -313,7 +313,8 @@ public class JetTestUtils {
         }
     }
 
-    public static JetFile createFile(@NonNls String name, String text, @NotNull Project project) {
+    @NotNull
+    public static JetFile createFile(@NotNull @NonNls String name, @NotNull String text, @NotNull Project project) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         return (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(project)).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);

@@ -1,6 +1,6 @@
 enum class Coin {
-PENNY
-NICKEL
-DIME
-QUARTER
+    PENNY
+    NICKEL
+    DIME
+    QUARTER
 }

@@ -1,1 +1,1 @@
-val s : Int
+val s: Int

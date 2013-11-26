@@ -1,1 +1,1 @@
-var a : IntArray? = intArray(1, 2, 3)
+var a: IntArray? = intArray(1, 2, 3)

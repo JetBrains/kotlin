@@ -1,3 +1,3 @@
-fun getString() : String? {
-return ""
+fun getString(): String? {
+    return ""
 }

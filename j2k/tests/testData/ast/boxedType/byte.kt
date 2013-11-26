@@ -1,1 +1,1 @@
-var i : Byte? = 10
+var i: Byte? = 10

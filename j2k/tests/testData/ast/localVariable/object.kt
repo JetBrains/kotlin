@@ -1,1 +1,1 @@
-var i : Int
+var i: Int

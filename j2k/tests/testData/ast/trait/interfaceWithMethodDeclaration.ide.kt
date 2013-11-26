@@ -1,4 +1,4 @@
 trait INode {
-fun getTag() : Tag
-fun toKotlin() : String
+    fun getTag(): Tag
+    fun toKotlin(): String
 }

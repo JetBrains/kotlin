@@ -1,5 +1,6 @@
 package demo
+
 class Final() {
-fun test() {
-}
+    fun test() {
+    }
 }

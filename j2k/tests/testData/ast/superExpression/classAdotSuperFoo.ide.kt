@@ -1,10 +1,10 @@
 class Base() {
-fun foo()
+    fun foo()
 }
 class A() : Base() {
-class C() {
-fun test() {
-super@A.foo()
-}
-}
+    class C() {
+        fun test() {
+            super@A.foo()
+        }
+    }
 }

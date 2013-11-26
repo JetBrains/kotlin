@@ -1,1 +1,1 @@
-var a : IntArray? = IntArray(10)
+var a: IntArray? = IntArray(10)
