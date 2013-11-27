@@ -111,6 +111,11 @@ public class JetSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/NoConstructorWithQualifier.kt");
     }
     
+    @TestMetadata("NoNothing.kt")
+    public void testNoNothing() throws Exception {
+        doTest("idea/testData/completion/smart/NoNothing.kt");
+    }
+    
     @TestMetadata("NoSillyAssignment.kt")
     public void testNoSillyAssignment() throws Exception {
         doTest("idea/testData/completion/smart/NoSillyAssignment.kt");

@@ -14,6 +14,7 @@ import org.jetbrains.jet.plugin.completion.handlers.*
 import com.google.common.collect.SetMultimap
 import java.util.*
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -51,6 +52,9 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
     fun typesOf(descriptor: DeclarationDescriptor): Iterable<JetType> {
         if (descriptor is CallableDescriptor) {
             var returnType = descriptor.getReturnType()
+            if (returnType != null && KotlinBuiltIns.getInstance().isNothing(returnType!!)) { //TODO: maybe we should include them on the second press?
+                return listOf()
+            }
             if (descriptor is VariableDescriptor) {
                 if (notNullVariables.contains(descriptor) && returnType != null) {
                     returnType = TypeUtils.makeNotNullable(returnType!!)
