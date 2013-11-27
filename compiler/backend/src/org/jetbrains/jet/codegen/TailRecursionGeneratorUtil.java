@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
@@ -26,7 +25,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
@@ -66,7 +65,7 @@ public class TailRecursionGeneratorUtil {
         return status != null && status.isDoGenerateTailRecursion();
     }
 
-    public StackValue generateTailRecursion(ResolvedCall<? extends CallableDescriptor> resolvedCall, JetCallExpression callExpression) {
+    public StackValue generateTailRecursion(ResolvedCall<? extends CallableDescriptor> resolvedCall, Call call) {
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
         assert fd instanceof FunctionDescriptor : "the resolved call is not refer to the function descriptor so why do we use generateTailRecursion for something strange?";
         CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false);
@@ -76,7 +75,7 @@ public class TailRecursionGeneratorUtil {
         // we can't store values to the variables in the loop above because it will affect expressions evaluation
         for (ValueParameterDescriptor parameterDescriptor : Lists.reverse(parametersStored)) {
             Type asmType = types.get(parameterDescriptor.getIndex());
-            int index = getParameterVariableIndex(parameterDescriptor, callExpression);
+            int index = getParameterVariableIndex(parameterDescriptor, call);
 
             v.store(index, asmType);
         }
@@ -127,14 +126,14 @@ public class TailRecursionGeneratorUtil {
         return descriptorsStored;
     }
 
-    private int getParameterVariableIndex(ValueParameterDescriptor parameterDescriptor, PsiElement node) {
+    private int getParameterVariableIndex(ValueParameterDescriptor parameterDescriptor, Call call) {
         int index = codegen.lookupLocalIndex(parameterDescriptor);
         if (index == -1) {
             index = codegen.lookupLocalIndex(parameterDescriptor.getOriginal());
         }
 
         if (index == -1) {
-            throw new CompilationException("Failed to obtain parameter index: " + parameterDescriptor.getName(), null, node);
+            throw new CompilationException("Failed to obtain parameter index: " + parameterDescriptor.getName(), null, call.getCallElement());
         }
 
         return index;

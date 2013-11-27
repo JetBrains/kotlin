@@ -1593,17 +1593,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitReturnExpression(@NotNull JetReturnExpression expression, StackValue receiver) {
         JetExpression returnedExpression = expression.getReturnedExpression();
         if (returnedExpression != null) {
-            if (returnedExpression instanceof JetCallExpression) {
-                JetCallExpression callExpression = (JetCallExpression) returnedExpression;
-                JetExpression calleeExpression = callExpression.getCalleeExpression();
-                if (calleeExpression != null) {
-                    ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, calleeExpression);
-                    if (resolvedCall != null && tailRecursionGeneratorUtil.isTailRecursion(resolvedCall)) {
-                        return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, callExpression);
-                    }
-                }
-            }
-
             gen(returnedExpression, returnType);
             doFinallyOnReturn();
             v.areturn(returnType);
@@ -1933,10 +1922,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        if (tailRecursionGeneratorUtil.isTailRecursion(resolvedCall)) {
-            return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, expression);
-        }
-
         return invokeFunction(call, receiver, resolvedCall);
     }
 
@@ -2011,6 +1996,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
+        if (tailRecursionGeneratorUtil.isTailRecursion(resolvedCall)) {
+            return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, call);
+        }
+
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
             ResolvedCallWithTrace<FunctionDescriptor> functionCall = variableAsFunctionResolvedCall.getFunctionCall();
