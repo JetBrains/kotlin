@@ -111,12 +111,13 @@ public class Visibilities {
     private Visibilities() {
     }
 
-    public static boolean isVisible(@Nullable DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+    public static boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
         return findInvisibleMember(what, from) == null;
     }
 
+    @Nullable
     public static DeclarationDescriptorWithVisibility findInvisibleMember(
-            @Nullable DeclarationDescriptorWithVisibility what,
+            @NotNull DeclarationDescriptorWithVisibility what,
             @NotNull DeclarationDescriptor from
     ) {
         if (from instanceof PackageViewDescriptor) {
