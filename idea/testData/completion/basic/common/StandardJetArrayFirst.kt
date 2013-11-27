@@ -4,10 +4,10 @@ fun main(args: Array<String>) {
 
 // INVOCATION_COUNT: 2
 // WITH_ORDER: 1
-// EXIST: Array~(jet)
-// EXIST_JAVA_ONLY: Array~(java.sql)
-// EXIST_JAVA_ONLY: ArrayList~<E> (java.util)
-// EXIST_JS_ONLY: ArrayList~(java.util)
+// EXIST: { lookupString:"Array", tailText:" (jet)" }
+// EXIST_JAVA_ONLY: { lookupString:"Array", tailText:" (java.sql)" }
+// EXIST_JAVA_ONLY: { lookupString:"ArrayList", tailText:"<E> (java.util)" }
+// EXIST_JS_ONLY: { lookupString:"ArrayList", tailText:" (java.util)" }
 
 
 

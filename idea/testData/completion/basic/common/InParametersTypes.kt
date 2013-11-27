@@ -5,10 +5,11 @@ class SomeClass {
 }
 
 // INVOCATION_COUNT: 1
-// EXIST: SomeClass, SomeInternal
-// EXIST: String~(jet)
+// EXIST: SomeClass
+// EXIST: SomeInternal
+// EXIST: { lookupString:"String", tailText:" (jet)" }
 // EXIST: IllegalStateException
 // EXIST: StringBuilder
 // EXIST_JAVA_ONLY: StringBuffer
 // ABSENT: HTMLStyleElement
-// ABSENT: Statement@Statement~(java.sql)
+// ABSENT: Statement

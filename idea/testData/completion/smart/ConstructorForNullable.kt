@@ -4,4 +4,4 @@ fun foo(p : Any){
     var a : Foo? = <caret>
 }
 
-// EXIST: Foo@Foo()
+// EXIST: { lookupString:"Foo", itemText:"Foo()" }

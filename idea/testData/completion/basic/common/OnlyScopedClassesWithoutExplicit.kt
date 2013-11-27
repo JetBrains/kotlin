@@ -5,5 +5,5 @@ fun firstFun() {
 }
 
 // INVOCATION_COUNT: 0
-// EXIST: Int~(jet)
-// ABSENT: Int~(jet.runtime.SharedVar)
+// EXIST: { lookupString:"Int", tailText:" (jet)" }
+// ABSENT: { lookupString:"Int", tailText:" (jet.runtime.SharedVar)" }
