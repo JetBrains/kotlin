@@ -22,10 +22,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
@@ -64,7 +61,7 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
 
-        checkUsageOfDeserializedScope(packageFromBinary);
+        checkUsageOfDeserializedScope(DescriptorUtils.getExactlyOnePackageFragment(packageFromBinary.getModule(), TEST_PACKAGE_FQNAME));
 
         for (DeclarationDescriptor descriptor : packageFromBinary.getMemberScope().getAllDescriptors()) {
             if (descriptor instanceof ClassDescriptor) {
@@ -79,21 +76,20 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
                                       txtFile);
     }
 
-    // TODO 2 do something
-    private static void checkUsageOfDeserializedScope(@NotNull PackageViewDescriptor packageFromBinary) {
-        //JetScope scope = packageFromBinary.getMemberScope();
-        //boolean hasOwnMembers = false;
-        //for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
-        //    if (declarationDescriptor instanceof CallableMemberDescriptor) {
-        //        hasOwnMembers = true;
-        //    }
-        //}
-        //if (hasOwnMembers) {
-        //    assert scope instanceof DeserializedPackageMemberScope : "If namespace has members, members should be inside deserialized scope.";
-        //}
-        //else {
-        //    //NOTE: should probably change
-        //    assert !(scope instanceof DeserializedPackageMemberScope) : "We don't use deserialized scopes for namespaces without members.";
-        //}
+    private static void checkUsageOfDeserializedScope(@NotNull PackageFragmentDescriptor packageFromBinary) {
+        JetScope scope = packageFromBinary.getMemberScope();
+        boolean hasOwnMembers = false;
+        for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
+            if (declarationDescriptor instanceof CallableMemberDescriptor) {
+                hasOwnMembers = true;
+            }
+        }
+        if (hasOwnMembers) {
+            assert scope instanceof DeserializedPackageMemberScope : "If namespace has members, members should be inside deserialized scope.";
+        }
+        else {
+            //NOTE: should probably change
+            assert !(scope instanceof DeserializedPackageMemberScope) : "We don't use deserialized scopes for namespaces without members.";
+        }
     }
 }
