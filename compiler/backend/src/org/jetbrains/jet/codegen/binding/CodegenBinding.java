@@ -50,7 +50,7 @@ public class CodegenBinding {
 
     public static final WritableSlice<ScriptDescriptor, ClassDescriptor> CLASS_FOR_SCRIPT = Slices.createSimpleSlice();
 
-    public static final WritableSlice<DeclarationDescriptor, Type> ASM_TYPE = Slices.createSimpleSlice();
+    public static final WritableSlice<ClassDescriptor, Type> ASM_TYPE = Slices.createSimpleSlice();
 
     public static final WritableSlice<ClassDescriptor, Boolean> ENUM_ENTRY_CLASS_NEED_SUBCLASS = Slices.createSimpleSetSlice();
 
@@ -288,73 +288,46 @@ public class CodegenBinding {
         return false;
     }
 
-    // TODO 2 accept ClassDescriptor and simplify
     @NotNull
-    public static Type getAsmType(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
-        descriptor = descriptor.getOriginal();
-        Type alreadyComputedType = bindingTrace.getBindingContext().get(ASM_TYPE, descriptor);
+    public static Type getAsmType(@NotNull BindingTrace bindingTrace, @NotNull ClassDescriptor klass) {
+        klass = (ClassDescriptor) klass.getOriginal();
+        Type alreadyComputedType = bindingTrace.getBindingContext().get(ASM_TYPE, klass);
         if (alreadyComputedType != null) {
             return alreadyComputedType;
         }
 
-        Type asmType = Type.getObjectType(getAsmTypeImpl(bindingTrace, descriptor));
+        Type asmType = Type.getObjectType(getAsmTypeImpl(bindingTrace, klass));
 
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, asmType);
-        bindingTrace.record(ASM_TYPE, descriptor, asmType);
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, klass, asmType);
+        bindingTrace.record(ASM_TYPE, klass, asmType);
         return asmType;
     }
 
-    // TODO 2 accept ClassDescriptor and simplify
     @NotNull
-    private static String getAsmTypeImpl(@NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof PackageFragmentDescriptor) {
-            throw new IllegalStateException("package is unexpected: " + descriptor);
-        }
-
-        if (descriptor instanceof FunctionDescriptor) {
-            throw new IllegalStateException("requested fq name for function: " + descriptor);
-        }
-
-        if (descriptor instanceof ModuleDescriptor) {
-            throw new IllegalStateException("module is unexpected: " + descriptor);
-        }
-
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        if (container == null) {
-            throw new IllegalStateException("descriptor has no container: " + descriptor);
-        }
-
-        if (container instanceof ScriptDescriptor) {
-            return descriptor.getName().getIdentifier();
-        }
-
+    private static String getAsmTypeImpl(@NotNull BindingTrace bindingTrace, @NotNull ClassDescriptor klass) {
+        DeclarationDescriptor container = klass.getContainingDeclaration();
 
         if (container instanceof PackageFragmentDescriptor) {
-            String shortName = descriptor.getName().getIdentifier();
+            String shortName = klass.getName().getIdentifier();
             FqName fqName = ((PackageFragmentDescriptor) container).getFqName();
             return fqName.isRoot() ? shortName : fqName.asString().replace('.', '/') + '/' + shortName;
         }
 
-        if (descriptor instanceof ClassDescriptor) {
-            assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + descriptor;
+        assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
 
-            String containerInternalName = getAsmType(bindingTrace, container).getInternalName();
-            ClassDescriptor klass = (ClassDescriptor) descriptor;
-            if (klass.getKind() == ClassKind.OBJECT || klass.getKind() == ClassKind.CLASS_OBJECT) {
-                if (isEnumClass(container)) {
-                    return containerInternalName;
-                }
-                else if (klass.getKind() == ClassKind.OBJECT) {
-                    return containerInternalName + "$" + klass.getName();
-                }
-                else {
-                    return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
-                }
+        String containerInternalName = getAsmType(bindingTrace, (ClassDescriptor) container).getInternalName();
+        if (klass.getKind() == ClassKind.OBJECT || klass.getKind() == ClassKind.CLASS_OBJECT) {
+            if (isEnumClass(container)) {
+                return containerInternalName;
             }
-            return containerInternalName + "$" + descriptor.getName().getIdentifier();
+            else if (klass.getKind() == ClassKind.OBJECT) {
+                return containerInternalName + "$" + klass.getName();
+            }
+            else {
+                return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
+            }
         }
-
-        throw new IllegalStateException("neither top-level nor nested class: " + descriptor);
+        return containerInternalName + "$" + klass.getName().getIdentifier();
     }
 
     public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
