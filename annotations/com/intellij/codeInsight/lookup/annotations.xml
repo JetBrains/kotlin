@@ -7,6 +7,26 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder create(com.intellij.psi.PsiNamedElement)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder create(java.lang.Object, java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder create(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder createWithIcon(com.intellij.psi.PsiNamedElement)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder setTypeText(java.lang.String, boolean)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withInsertHandler(com.intellij.codeInsight.completion.InsertHandler&lt;com.intellij.codeInsight.lookup.LookupElement&gt;)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
@@ -16,6 +36,14 @@
   </item>
   <item
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withTailText(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withTypeText(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withTypeText(java.lang.String, boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
