@@ -36,6 +36,11 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/evaluate"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("divideByZero.kt")
+    public void testDivideByZero() throws Exception {
+        doTest("compiler/testData/evaluate/divideByZero.kt");
+    }
+    
     @TestMetadata("floatsAndDoubles.kt")
     public void testFloatsAndDoubles() throws Exception {
         doTest("compiler/testData/evaluate/floatsAndDoubles.kt");

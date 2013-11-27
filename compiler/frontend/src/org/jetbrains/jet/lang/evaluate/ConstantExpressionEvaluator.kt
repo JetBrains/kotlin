@@ -34,6 +34,9 @@ import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.JetNodeTypes
 import java.lang.Long.parseLong as javaParseLong
+import java.math.BigInteger
+import org.jetbrains.jet.lang.diagnostics.Errors
+import com.intellij.psi.util.PsiTreeUtil
 
 [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
 public class ConstantExpressionEvaluator private (val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
@@ -176,9 +179,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 
         val argumentsEntrySet = resolvedCall.getValueArguments().entrySet()
         if (argumentsEntrySet.isEmpty()) {
-            val function = unaryOperations[UnaryOperationKey(argumentForReceiver.ctcType, resultingDescriptorName)]
-            if (function == null) return null
-            return function(argumentForReceiver.value)
+            return evaluateUnaryAndCheck(argumentForReceiver, resultingDescriptorName, callExpression)
         }
         else if (argumentsEntrySet.size() == 1) {
             val (parameter, argument) = argumentsEntrySet.first()
@@ -186,12 +187,65 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             val argumentForParameter = createOperationArgumentForFirstParameter(argument, parameter)
             if (argumentForParameter == null) return null
 
-            val function = binaryOperations[BinaryOperationKey(argumentForReceiver.ctcType, argumentForParameter.ctcType, resultingDescriptorName)]
-            if (function == null) return null
-            return function(argumentForReceiver.value, argumentForParameter.value)
+            return evaluateBinaryAndCheck(argumentForReceiver, argumentForParameter, resultingDescriptorName, callExpression)
         }
 
         return null
+    }
+
+    private fun evaluateUnaryAndCheck(receiver: OperationArgument, name: String, callExpression: JetExpression): Any? {
+        val functions = unaryOperations[UnaryOperationKey(receiver.ctcType, name)]
+        if (functions == null) return null
+
+        val (function, check) = functions
+        val result = function(receiver.value)
+        if (check == emptyUnaryFun) {
+            return result
+        }
+        assert (isIntegerType(receiver.value), "Only integer constants should be checked for overflow")
+        assert (name == "minus", "Only negation should be checked for overflow")
+
+        if (receiver.value == result) {
+            trace.report(Errors.INTEGER_OVERFLOW.on(PsiTreeUtil.getParentOfType(callExpression, javaClass<JetExpression>()) ?: callExpression))
+        }
+        return result
+    }
+
+    private fun evaluateBinaryAndCheck(receiver: OperationArgument, parameter: OperationArgument, name: String, callExpression: JetExpression): Any? {
+        val functions = binaryOperations[BinaryOperationKey(receiver.ctcType, parameter.ctcType, name)]
+        if (functions == null) return null
+
+        if (isDividingByZero(name, parameter.value)) {
+            return null
+        }
+
+        val (function, checker) = functions
+        val actualResult = function(receiver.value, parameter.value)
+        if (checker == emptyBinaryFun) {
+            return actualResult
+        }
+        assert (isIntegerType(receiver.value) && isIntegerType(parameter.value)) { "Only integer constants should be checked for overflow" }
+
+        fun toBigInteger(value: Any?) = BigInteger.valueOf((value as Number).toLong())
+
+        val resultInBigIntegers = checker(toBigInteger(receiver.value), toBigInteger(parameter.value))
+
+        if (toBigInteger(actualResult) != resultInBigIntegers) {
+            trace.report(Errors.INTEGER_OVERFLOW.on(PsiTreeUtil.getParentOfType(callExpression, javaClass<JetExpression>()) ?: callExpression))
+        }
+        return actualResult
+    }
+
+    private fun isDividingByZero(name: String, parameter: Any?): Boolean  {
+        if (name == OperatorConventions.BINARY_OPERATION_NAMES[JetTokens.DIV]!!.asString()) {
+            if (isIntegerType(parameter)) {
+                return (parameter as Number).toLong() == 0.toLong()
+            }
+            else if (parameter is Float || parameter is Double) {
+                return (parameter as Number).toDouble() == 0.0
+            }
+        }
+        return false
     }
 
     override fun visitUnaryExpression(expression: JetUnaryExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -406,6 +460,8 @@ public fun createCompileTimeConstant(value: Any?, expectedType: JetType?): Compi
     }
 }
 
+fun isIntegerType(value: Any?) = value is Byte || value is Short || value is Int || value is Long
+
 private fun getIntegerValue(value: Long, expectedType: JetType): CompileTimeConstant<*>? {
     fun defaultIntegerValue(value: Long) = when (value) {
         value.toInt().toLong() -> IntValue(value.toInt())
@@ -474,19 +530,22 @@ private val STRING = CompileTimeType<String>()
 private val ANY = CompileTimeType<Any>()
 
 [suppress("UNCHECKED_CAST")]
-private fun <A, B> binaryOperationKey(
+private fun <A, B> binaryOperation(
         a: CompileTimeType<A>,
         b: CompileTimeType<B>,
         functionName: String,
-        f: (A, B) -> Any
-) = BinaryOperationKey(a, b, functionName) to f as Function2<Any?, Any?, Any>
+        operation: Function2<A, B, Any>,
+        checker: Function2<BigInteger, BigInteger, BigInteger>
+) = BinaryOperationKey(a, b, functionName) to Pair(operation, checker) as Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>
 
 [suppress("UNCHECKED_CAST")]
-private fun <A> unaryOperationKey(
+private fun <A> unaryOperation(
         a: CompileTimeType<A>,
         functionName: String,
-        f: (A) -> Any
-) = UnaryOperationKey(a, functionName) to f  as Function1<Any?, Any>
+        operation: Function1<A, Any>,
+        checker: Function1<Long, Long>
+) = UnaryOperationKey(a, functionName) to Pair(operation, checker) as Pair<Function1<Any?, Any>, Function1<Long, Long>>
 
 private data class BinaryOperationKey<A, B>(val f: CompileTimeType<out A>, val s: CompileTimeType<out B>, val functionName: String)
 private data class UnaryOperationKey<A>(val f: CompileTimeType<out A>, val functionName: String)
+

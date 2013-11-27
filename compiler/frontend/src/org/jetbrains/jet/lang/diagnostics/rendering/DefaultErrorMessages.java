@@ -297,6 +297,7 @@ public class DefaultErrorMessages {
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", DescriptorRenderer.TEXT);
 
         MAP.put(CONSTANT_EXPECTED_TYPE_MISMATCH, "An {0} literal does not conform to the expected type {1}", TO_STRING, RENDER_TYPE);
+        MAP.put(INTEGER_OVERFLOW, "This operation has led to an overflow");
         MAP.put(INT_LITERAL_OUT_OF_RANGE, "The value is out of range");
         MAP.put(FLOAT_LITERAL_OUT_OF_RANGE, "The value is out of range");
         MAP.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal");
