@@ -47,10 +47,7 @@ public class MutablePackageFragmentDescriptor extends DeclarationDescriptorImpl 
         this.module = module;
         this.fqName = fqName;
 
-        scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING,
-                                           "Members of " + fqName + " in " + module);
-
-        // TODO 1 make read-only after
+        scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Members of " + fqName + " in " + module);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
         builder = new ScopeBasedNamespaceLikeBuilder(this, scope);
     }

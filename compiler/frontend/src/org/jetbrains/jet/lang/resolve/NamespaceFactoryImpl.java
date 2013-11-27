@@ -81,15 +81,6 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     @Override
     @NotNull
     public PackageFragmentDescriptor createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName) {
-        for (FqName pathElement : fqName.path()) {
-            if (pathElement.isRoot()) {
-                getOrCreatePackageFragment(FqName.ROOT, null, RedeclarationHandler.DO_NOTHING);
-            }
-            else {
-                getOrCreatePackageFragment(pathElement, null, RedeclarationHandler.DO_NOTHING);
-            }
-
-        }
         return packageFragmentProvider.getOrCreateFragment(fqName);
     }
 

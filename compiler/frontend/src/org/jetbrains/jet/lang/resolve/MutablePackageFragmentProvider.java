@@ -56,4 +56,9 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
     public ModuleDescriptor getModule() {
         return module;
     }
+
+    @NotNull
+    public Collection<MutablePackageFragmentDescriptor> getAllFragments() {
+        return fqNameToPackage.values();
+    }
 }
