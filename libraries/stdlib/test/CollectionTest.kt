@@ -414,6 +414,28 @@ class CollectionTest {
         expect(arrayList(2, 3, 1)) { list }
     }
 
+    test fun min() {
+        expect(null, { listOf<Int>().min() })
+        expect(1, { listOf(1).min() })
+        expect(2, { listOf(2, 3).min() })
+        expect(2000000000000, { listOf(3000000000000, 2000000000000).min() })
+        expect('a', { listOf('a', 'b').min() })
+        expect("a", { listOf("a", "b").min() })
+        expect(null, { listOf<Int>().iterator().min() })
+        expect(2, { listOf(2, 3).iterator().min() })
+    }
+
+    test fun max() {
+        expect(null, { listOf<Int>().max() })
+        expect(1, { listOf(1).max() })
+        expect(3, { listOf(2, 3).max() })
+        expect(3000000000000, { listOf(3000000000000, 2000000000000).max() })
+        expect('b', { listOf('a', 'b').max() })
+        expect("b", { listOf("a", "b").max() })
+        expect(null, { listOf<Int>().iterator().max() })
+        expect(3, { listOf(2, 3).iterator().max() })
+    }
+
     test fun sum() {
         expect(0) { ArrayList<Int>().sum() }
         expect(14) { arrayListOf(2, 3, 9).sum() }

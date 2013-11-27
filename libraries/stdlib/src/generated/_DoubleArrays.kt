@@ -212,6 +212,32 @@ public inline fun <R, C: MutableCollection<in R>> DoubleArray.mapTo(result: C, t
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun DoubleArray.max() : Double? {
+    var max: Double? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun DoubleArray.min() : Double? {
+    var min: Double? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun DoubleArray.partition(predicate: (Double) -> Boolean) : Pair<List<Double>, List<Double>> {

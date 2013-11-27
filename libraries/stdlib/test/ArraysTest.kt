@@ -101,6 +101,24 @@ class ArraysTest {
         assertEquals(false, arr[1])
     }
 
+    test fun min() {
+        expect(null, { array<Int>().min() })
+        expect(1, { array(1).min() })
+        expect(2, { array(2, 3).min() })
+        expect(2000000000000, { array(3000000000000, 2000000000000).min() })
+        expect('a', { array('a', 'b').min() })
+        expect("a", { array("a", "b").min() })
+    }
+
+    test fun max() {
+        expect(null, { array<Int>().max() })
+        expect(1, { array(1).max() })
+        expect(3, { array(2, 3).max() })
+        expect(3000000000000, { array(3000000000000, 2000000000000).max() })
+        expect('b', { array('a', 'b').max() })
+        expect("b", { array("a", "b").max() })
+    }
+
     test fun sum() {
         expect(0) { array<Int>().sum() }
         expect(14) { array(2, 3, 9).sum() }

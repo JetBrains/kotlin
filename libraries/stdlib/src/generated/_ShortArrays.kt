@@ -212,6 +212,32 @@ public inline fun <R, C: MutableCollection<in R>> ShortArray.mapTo(result: C, tr
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun ShortArray.max() : Short? {
+    var max: Short? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun ShortArray.min() : Short? {
+    var min: Short? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun ShortArray.partition(predicate: (Short) -> Boolean) : Pair<List<Short>, List<Short>> {

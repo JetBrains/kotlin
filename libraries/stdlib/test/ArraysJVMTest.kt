@@ -59,6 +59,28 @@ class ArraysJVMTest {
         }
     }
 
+    test fun min() {
+        expect(null, { intArray().min() })
+        expect(1, { intArray(1).min() })
+        expect(2, { intArray(2, 3).min() })
+        expect(2000000000000, { longArray(3000000000000, 2000000000000).min() })
+        expect(1, { byteArray(1, 3, 2).min() })
+        expect(2, { shortArray(3, 2).min() })
+        expect(2.0, { floatArray(3.0, 2.0).min() })
+        expect(2.0, { doubleArray(2.0, 3.0).min() })
+    }
+
+    test fun max() {
+        expect(null, { intArray().max() })
+        expect(1, { intArray(1).max() })
+        expect(3, { intArray(2, 3).max() })
+        expect(3000000000000, { longArray(3000000000000, 2000000000000).max() })
+        expect(3, { byteArray(1, 3, 2).max() })
+        expect(3, { shortArray(3, 2).max() })
+        expect(3.0, { floatArray(3.0, 2.0).max() })
+        expect(3.0, { doubleArray(2.0, 3.0).max() })
+    }
+
     test fun sum() {
         expect(0) { intArray().sum() }
         expect(14) { intArray(2, 3, 9).sum() }

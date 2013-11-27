@@ -212,6 +212,32 @@ public inline fun <R, C: MutableCollection<in R>> IntArray.mapTo(result: C, tran
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun IntArray.max() : Int? {
+    var max: Int? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun IntArray.min() : Int? {
+    var min: Int? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun IntArray.partition(predicate: (Int) -> Boolean) : Pair<List<Int>, List<Int>> {
