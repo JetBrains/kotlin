@@ -101,6 +101,15 @@ class ArraysTest {
         assertEquals(false, arr[1])
     }
 
+    test fun sum() {
+        expect(0) {array<Int>().sum()}
+        expect(14) {array(2,3,9).sum()}
+        expect(3.0) {array(1.0,2.0).sum()}
+        expect(200) {array<Byte>(100,100).sum()}
+        expect(50000) {array<Short>(20000,30000).sum()}
+        expect(3000000000000) {array<Long>(1000000000000,2000000000000).sum()}
+        expect(3.0) {array<Float>(1.0,2.0).sum()}
+    }
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers
