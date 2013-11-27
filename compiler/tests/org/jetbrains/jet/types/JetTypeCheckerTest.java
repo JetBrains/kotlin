@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -576,7 +577,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 getEnvironment()
         );
 
-        PackageFragmentDescriptor testData = moduleDescriptor.getPackageFragmentProvider().getPackageFragments(new FqName("testData")).get(0); // TODO 2 hack
+        PackageFragmentDescriptor testData = DescriptorUtils.getExactlyOnePackageFragment(moduleDescriptor, new FqName("testData"));
         return addImports(testData.getMemberScope());
     }
 

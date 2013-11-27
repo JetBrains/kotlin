@@ -26,6 +26,7 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -60,9 +61,8 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 JetTestUtils.createFile(ktFile.getName(), FileUtil.loadFile(ktFile), getProject())
         ), getEnvironment());
 
-        PackageFragmentDescriptor testPackage = moduleDescriptor.getPackageFragmentProvider()
-                .getPackageFragments(FqName.topLevel(TEST_PACKAGE_NAME)).get(0); // TODO 2 hack
-        assert testPackage != null;
+        PackageFragmentDescriptor testPackage = DescriptorUtils.getExactlyOnePackageFragment(
+                moduleDescriptor, FqName.topLevel(TEST_PACKAGE_NAME));
 
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();

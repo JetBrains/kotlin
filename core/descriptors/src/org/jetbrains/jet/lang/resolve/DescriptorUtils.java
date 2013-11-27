@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
@@ -483,5 +484,13 @@ public class DescriptorUtils {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         return isTopLevelDeclaration(descriptor) ||
                containing instanceof ClassDescriptor && isTopLevelOrInnerClass((ClassDescriptor) containing);
+    }
+
+    @TestOnly
+    @NotNull
+    public static PackageFragmentDescriptor getExactlyOnePackageFragment(@NotNull ModuleDescriptor module, @NotNull FqName fqName) {
+        List<PackageFragmentDescriptor> packageFragments = module.getPackageFragmentProvider().getPackageFragments(fqName);
+        assert packageFragments.size() == 1 : "Exactly one package fragment expected: " + packageFragments;
+        return packageFragments.get(0);
     }
 }
