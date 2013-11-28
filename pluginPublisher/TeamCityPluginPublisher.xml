@@ -74,7 +74,7 @@
     <property name="download.url" value="${idea.release.download.page.url}" />
   </target>
 
-  <target name="ideaDownload" depends="setEapDownload, setReleasedDownload">
+  <target name="ideaDownload" depends="setEapDownload, setReleasedDownload" if="is.expected.branch">
     <echo message="From external parameters: ${download.eap} Release ${download.release} Version ${version}" />
 
     <mkdir dir="${verify.dir}" />
