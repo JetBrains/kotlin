@@ -1906,12 +1906,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         Call call = bindingContext.get(CALL, expression.getCalleeExpression());
-        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
-            ResolvedCallWithTrace<FunctionDescriptor> functionCall = variableAsFunctionResolvedCall.getFunctionCall();
-            return invokeFunction(call, receiver, functionCall);
-        }
-
         if (funDescriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptor original = ((SimpleFunctionDescriptor) funDescriptor).getOriginal();
             if (original instanceof SamConstructorDescriptor) {
@@ -1993,6 +1987,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
+            ResolvedCallWithTrace<FunctionDescriptor> functionCall = variableAsFunctionResolvedCall.getFunctionCall();
+            return invokeFunction(call, receiver, functionCall);
+        }
+
         FunctionDescriptor fd = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
         boolean superCall = isSuperCall(call);
 
