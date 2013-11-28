@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     }
 
     @NotNull
-    public MutablePackageFragmentDescriptor createPackageFragmentIfNeeded(@NotNull JetFile file, @NotNull RedeclarationHandler handler) {
+    public MutablePackageFragmentDescriptor createPackageFragmentIfNeeded(@NotNull JetFile file) {
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
 
         // TODO 2 make this code neater
@@ -67,13 +66,13 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         ContainerUtil.addIfNotNull(allNamespaceNames, namespaceHeader.getLastPartExpression());
         for (JetSimpleNameExpression nameExpression : allNamespaceNames) {
             FqName parentFqName = namespaceHeader.getParentFqName(nameExpression);
-            getOrCreatePackageFragment(parentFqName, nameExpression, handler);
+            getOrCreatePackageFragment(parentFqName, nameExpression);
 
             trace.record(RESOLUTION_SCOPE, nameExpression, module.getPackage(parentFqName).getMemberScope());
         }
 
         MutablePackageFragmentDescriptor fragment = getOrCreatePackageFragment(
-                namespaceHeader.getFqName(), namespaceHeader.getLastPartExpression(), handler);
+                namespaceHeader.getFqName(), namespaceHeader.getLastPartExpression());
         storeBindingForFile(file, fragment);
         return fragment;
     }
@@ -87,10 +86,8 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     @NotNull
     private MutablePackageFragmentDescriptor getOrCreatePackageFragment(
             @NotNull FqName fqName,
-            @Nullable JetReferenceExpression expression,
-            @NotNull RedeclarationHandler handler
+            @Nullable JetReferenceExpression expression
     ) {
-        // TODO 1 use handler
         MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(fqName);
         if (expression != null) {
             trace.record(REFERENCE_TARGET, expression, packageFragmentProvider.getModule().getPackage(fqName));

@@ -450,8 +450,7 @@ public class TypeHierarchyResolver {
 
         @Override
         public void visitJetFile(@NotNull JetFile file) {
-            MutablePackageFragmentDescriptor packageFragment =
-                    namespaceFactory.createPackageFragmentIfNeeded(file, RedeclarationHandler.DO_NOTHING);
+            MutablePackageFragmentDescriptor packageFragment = namespaceFactory.createPackageFragmentIfNeeded(file);
             context.getPackageFragments().put(file, packageFragment);
 
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
