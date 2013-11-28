@@ -16,9 +16,13 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
+import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiFile;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
@@ -46,6 +50,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
 
@@ -59,14 +64,13 @@ public final class LoadDescriptorUtil {
 
     @NotNull
     public static AnalyzeExhaust compileKotlinToDirAndGetAnalyzeExhaust(
-            @NotNull File kotlinFile,
+            @NotNull List<File> kotlinFiles,
             @NotNull File outDir,
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind
     ) throws IOException {
-        JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(kotlinFile, disposable, configurationKind);
-        GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getJetFile().getProject(), fileAndExhaust.getExhaust(), Collections.singletonList(
-                fileAndExhaust.getJetFile()));
+        JetFilesAndExhaust fileAndExhaust = JetFilesAndExhaust.createJetFilesAndAnalyze(kotlinFiles, disposable, configurationKind);
+        GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getJetFiles().get(0).getProject(), fileAndExhaust.getExhaust(), fileAndExhaust.getJetFiles());
         OutputFileCollection outputFiles = state.getFactory();
         OutputUtilsPackage.writeAllTo(outputFiles, outDir);
         return fileAndExhaust.getExhaust();
@@ -121,38 +125,53 @@ public final class LoadDescriptorUtil {
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind
     ) throws Exception {
-        JetFileAndExhaust fileAndExhaust = JetFileAndExhaust.createJetFileAndAnalyze(ktFile, disposable, configurationKind);
+        JetFilesAndExhaust fileAndExhaust = JetFilesAndExhaust.createJetFilesAndAnalyze(Collections.singletonList(ktFile), disposable, configurationKind);
         PackageViewDescriptor packageView =
                 fileAndExhaust.getExhaust().getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
         return packageView;
     }
 
-    private static class JetFileAndExhaust {
+    private static class JetFilesAndExhaust {
 
         @NotNull
-        public static JetFileAndExhaust createJetFileAndAnalyze(@NotNull File kotlinFile, @NotNull Disposable disposable, @NotNull ConfigurationKind configurationKind)
+        public static JetFilesAndExhaust createJetFilesAndAnalyze(
+                @NotNull List<File> kotlinFiles,
+                @NotNull Disposable disposable,
+                @NotNull ConfigurationKind configurationKind
+        )
                 throws IOException {
-            JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
-            JetFile jetFile = JetTestUtils.createFile(kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), jetCoreEnvironment.getProject());
-            AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                    jetFile, Collections.<AnalyzerScriptParameter>emptyList());
-            return new JetFileAndExhaust(jetFile, exhaust);
+            final JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
+            List<JetFile> jetFiles = ContainerUtil.map(kotlinFiles, new Function<File, JetFile>() {
+                @Override
+                public JetFile fun(File kotlinFile) {
+                    try {
+                        return JetTestUtils.createFile(
+                                kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), jetCoreEnvironment.getProject());
+                    }
+                    catch (IOException e) {
+                        throw new AssertionError(e);
+                    }
+                }
+            });
+            AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                    jetCoreEnvironment.getProject(), jetFiles, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue());
+            return new JetFilesAndExhaust(jetFiles, exhaust);
         }
 
         @NotNull
-        private final JetFile jetFile;
+        private final List<JetFile> jetFiles;
         @NotNull
         private final AnalyzeExhaust exhaust;
 
-        private JetFileAndExhaust(@NotNull JetFile file, @NotNull AnalyzeExhaust exhaust) {
-            jetFile = file;
+        private JetFilesAndExhaust(@NotNull List<JetFile> files, @NotNull AnalyzeExhaust exhaust) {
+            jetFiles = files;
             this.exhaust = exhaust;
         }
 
         @NotNull
-        public JetFile getJetFile() {
-            return jetFile;
+        public List<JetFile> getJetFiles() {
+            return jetFiles;
         }
 
         @NotNull

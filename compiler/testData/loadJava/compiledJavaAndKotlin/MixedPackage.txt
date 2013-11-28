@@ -1,0 +1,28 @@
+package test
+
+public fun topLevelFunction(): jet.Unit
+
+public open class JavaClass : java.lang.Object {
+    public constructor JavaClass()
+    public open fun instanceMethod(): jet.Unit
+}
+
+public final class KotlinClass {
+    public constructor KotlinClass()
+}
+
+package JavaClass {
+    public open fun staticMethod(): jet.Unit
+}
+
+package sub {
+    
+    public open class JavaClassInSubpackage : java.lang.Object {
+        public constructor JavaClassInSubpackage()
+        public open fun instanceMethod(): jet.Unit
+    }
+    
+    package JavaClassInSubpackage {
+        public open fun staticMethod(): jet.Unit
+    }
+}

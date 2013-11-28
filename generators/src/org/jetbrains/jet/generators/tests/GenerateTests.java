@@ -205,7 +205,8 @@ public class GenerateTests {
                           "doTestCompiledJavaIncludeObjectMethods"),
                 testModel("compiler/testData/loadJava/compiledJava", true, "java", "doTestCompiledJava"),
                 testModel("compiler/testData/loadJava/sourceJava", true, "java", "doTestSourceJava"),
-                testModel("compiler/testData/loadJava/javaAgainstKotlin", true, "txt", "doTestJavaAgainstKotlin")
+                testModel("compiler/testData/loadJava/javaAgainstKotlin", true, "txt", "doTestJavaAgainstKotlin"),
+                testModel("compiler/testData/loadJava/compiledJavaAndKotlin", true, "txt", "doTestCompiledJavaAndKotlin")
         );
 
         generateTest(

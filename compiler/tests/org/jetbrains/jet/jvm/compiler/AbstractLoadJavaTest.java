@@ -30,7 +30,6 @@ import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
@@ -38,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.junit.Assert;
 
@@ -49,6 +47,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
@@ -72,6 +71,21 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
         doTestCompiledJava(javaFileName, DONT_INCLUDE_METHODS_OF_OBJECT);
+    }
+
+    // Java-Kotlin dependencies are not supported in this method for simplicity
+    protected void doTestCompiledJavaAndKotlin(@NotNull String expectedFileName) throws Exception {
+        File expectedFile = new File(expectedFileName);
+        File sourcesDir = new File(expectedFileName.replaceFirst("\\.txt$", ""));
+
+        List<File> kotlinSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt"), sourcesDir);
+        compileKotlinToDirAndGetAnalyzeExhaust(kotlinSources, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+
+        List<File> javaSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.java"), sourcesDir);
+        Pair<PackageViewDescriptor, BindingContext> binaryPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
+                javaSources, tmpdir, myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+
+        checkJavaPackage(expectedFile, binaryPackageAndContext.first, binaryPackageAndContext.second, DONT_INCLUDE_METHODS_OF_OBJECT);
     }
 
     protected void doTestCompiledJavaIncludeObjectMethods(@NotNull String javaFileName) throws Exception {
