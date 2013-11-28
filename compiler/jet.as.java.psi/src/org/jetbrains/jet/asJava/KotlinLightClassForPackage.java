@@ -21,7 +21,6 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.LightEmptyImplementsList;
 import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.javadoc.PsiDocComment;
@@ -32,8 +31,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -48,7 +47,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
     private final GlobalSearchScope searchScope;
     private final Collection<JetFile> files;
     private final int hashCode;
-    private final CachedValue<PsiJavaFileStub> javaFileStub;
+    private final CachedValue<GeneratedLightClassData> javaFileStub;
     private final PsiModifierList modifierList;
     private final LightEmptyImplementsList implementsList;
 
@@ -266,7 +265,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
     @NotNull
     @Override
     public PsiClass getDelegate() {
-        PsiClass psiClass = LightClassUtil.findClass(packageClassFqName, javaFileStub.getValue());
+        PsiClass psiClass = LightClassUtil.findClass(packageClassFqName, javaFileStub.getValue().getJavaFileStub());
         if (psiClass == null) {
             throw new IllegalStateException("Package class was not found " + packageFqName);
         }

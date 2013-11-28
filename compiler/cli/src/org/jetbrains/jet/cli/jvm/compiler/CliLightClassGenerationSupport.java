@@ -82,10 +82,20 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         trace = null;
     }
 
+    private LightClassConstructionContext analyzeRelevantCode() {
+        return new LightClassConstructionContext(getTrace().getBindingContext(), null);
+    }
+
     @NotNull
     @Override
     public LightClassConstructionContext analyzeRelevantCode(@NotNull Collection<JetFile> files) {
-        return new LightClassConstructionContext(getTrace().getBindingContext(), null);
+        return analyzeRelevantCode();
+    }
+
+    @NotNull
+    @Override
+    public LightClassConstructionContext analyzeRelevantCode(@NotNull JetClassOrObject classOrObject) {
+        return analyzeRelevantCode();
     }
 
     @NotNull

@@ -570,10 +570,6 @@ public class JetPsiUtil {
         return statements.isEmpty() ? null : statements.get(statements.size() - 1);
     }
 
-    public static boolean isLocalClass(@NotNull JetClassOrObject classOrObject) {
-        return getOutermostClassOrObject(classOrObject) == null;
-    }
-
     public static boolean isTrait(@NotNull JetClassOrObject classOrObject) {
         return classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait();
     }
@@ -595,7 +591,7 @@ public class JetPsiUtil {
             }
             if (!(parent instanceof JetClassBody)) {
                 // It is a local class, no legitimate outer
-                return null;
+                return current;
             }
 
             current = (JetClassOrObject) parent.getParent();

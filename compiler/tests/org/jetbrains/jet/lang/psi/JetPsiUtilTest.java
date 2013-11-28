@@ -78,10 +78,10 @@ public class JetPsiUtilTest extends JetLiteFixture {
         for (JetClassOrObject classOrObject : classOrObjects) {
             String classOrObjectName = classOrObject.getName();
             if (classOrObjectName != null && classOrObjectName.contains("Local")) {
-                assertTrue("JetPsiUtil.isLocalClass should return true for " + classOrObjectName, JetPsiUtil.isLocalClass(classOrObject));
+                assertTrue("JetPsiUtil.isLocalClass should return true for " + classOrObjectName, JetPsiUtil.isLocal(classOrObject));
             }
             else {
-                assertFalse("JetPsiUtil.isLocalClass should return false for " + classOrObjectName, JetPsiUtil.isLocalClass(classOrObject));
+                assertFalse("JetPsiUtil.isLocalClass should return false for " + classOrObjectName, JetPsiUtil.isLocal(classOrObject));
             }
         }
     }

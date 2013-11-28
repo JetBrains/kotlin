@@ -69,6 +69,13 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     @Override
+    public LightClassConstructionContext analyzeRelevantCode(@NotNull JetClassOrObject classOrObject) {
+        KotlinCacheManager cacheManager = KotlinCacheManager.getInstance(project);
+        return new LightClassConstructionContext(cacheManager.getLightClassContextCache().getLightClassContext(classOrObject), null);
+    }
+
+    @NotNull
+    @Override
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
         return JetFullClassNameIndex.getInstance().get(fqName.asString(), project, kotlinSources(searchScope));
     }

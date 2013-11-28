@@ -39,6 +39,9 @@ public abstract class LightClassGenerationSupport {
     public abstract LightClassConstructionContext analyzeRelevantCode(@NotNull Collection<JetFile> files);
 
     @NotNull
+    public abstract LightClassConstructionContext analyzeRelevantCode(@NotNull JetClassOrObject classOrObject);
+
+    @NotNull
     public abstract Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
 
     /*

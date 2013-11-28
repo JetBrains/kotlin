@@ -26,12 +26,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex;
 
 import java.util.Collection;
@@ -60,9 +58,9 @@ public class KotlinDirectInheritorsSearcher extends QueryExecutorBase<PsiClass, 
                 GlobalSearchScope scope = (GlobalSearchScope) queryParameters.getScope();
                 Collection<JetClassOrObject> candidates = JetSuperClassIndex.getInstance().get(name, clazz.getProject(), scope);
                 for (JetClassOrObject candidate : candidates) {
-                    JetFile containingFile = (JetFile) candidate.getContainingFile();
-                    KotlinCodeAnalyzer sessionForFile = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
-                    ClassDescriptor classDescriptor = (ClassDescriptor) sessionForFile.resolveToDescriptor(candidate);
+                    ClassDescriptor classDescriptor = (ClassDescriptor) UsagesSearchPackage.getDescriptor(candidate);
+                    if (classDescriptor == null) continue;
+
                     for (JetType type : classDescriptor.getTypeConstructor().getSupertypes()) {
                         ClassifierDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
                         if (declarationDescriptor != null) {

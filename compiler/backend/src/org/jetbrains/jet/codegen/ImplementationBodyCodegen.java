@@ -234,7 +234,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         boolean isLocalOrAnonymousClass = isObjectLiteral ||
                                           !(parentDescriptor instanceof NamespaceDescriptor || parentDescriptor instanceof ClassDescriptor);
-        if (isLocalOrAnonymousClass) {
+        // Do not emit enclosing method in "light-classes mode" since currently we genenerate local light classes as if they're top level
+        if (isLocalOrAnonymousClass && getState().getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
             String outerClassName = getOuterClassName(descriptor, typeMapper);
             FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
 

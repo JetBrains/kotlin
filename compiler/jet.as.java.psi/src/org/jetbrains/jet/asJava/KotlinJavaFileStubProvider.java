@@ -37,20 +37,24 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFileStub> {
+public class KotlinJavaFileStubProvider implements CachedValueProvider<GeneratedLightClassData> {
 
     @NotNull
     public static KotlinJavaFileStubProvider createForPackageClass(
@@ -58,90 +62,131 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
             @NotNull final FqName packageFqName,
             @NotNull final GlobalSearchScope searchScope
     ) {
-        return new KotlinJavaFileStubProvider(project, new StubGenerationStrategy.NoDeclaredClasses() {
+        return new KotlinJavaFileStubProvider(
+                project,
+                false,
+                new StubGenerationStrategy.NoDeclaredClasses() {
+                    @NotNull
+                    @Override
+                    public LightClassConstructionContext createLightClassConstructionContext(@NotNull Collection<JetFile> files) {
+                        return LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(files);
+                    }
 
-            @NotNull
-            @Override
-            public Collection<JetFile> getFiles() {
-                // Don't memoize this, it can be called again after an out-of-code-block modification occurs,
-                // and the set of files changes
-                return LightClassGenerationSupport.getInstance(project).findFilesForPackage(packageFqName, searchScope);
-            }
+                    @NotNull
+                    @Override
+                    public Collection<JetFile> getFiles() {
+                        // Don't memoize this, it can be called again after an out-of-code-block modification occurs,
+                        // and the set of files changes
+                        return LightClassGenerationSupport.getInstance(project).findFilesForPackage(packageFqName, searchScope);
+                    }
 
-            @NotNull
-            @Override
-            public FqName getPackageFqName() {
-                return packageFqName;
-            }
+                    @NotNull
+                    @Override
+                    public GeneratedLightClassData createStubWithName(PsiJavaFileStub javaFileStub, BindingContext bindingContext) {
+                        return new GeneratedLightClassData(javaFileStub, "", null);
+                    }
 
-            @Override
-            public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
-                NamespaceCodegen codegen = state.getFactory().forNamespace(packageFqName, files);
-                codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
-                state.getFactory().asList();
-            }
-        });
+                    @NotNull
+                    @Override
+                    public FqName getPackageFqName() {
+                        return packageFqName;
+                    }
+
+                    @Override
+                    public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
+                        NamespaceCodegen codegen = state.getFactory().forNamespace(packageFqName, files);
+                        codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
+                        state.getFactory().asList();
+                    }
+                }
+        );
     }
 
     @NotNull
-    public static KotlinJavaFileStubProvider createForDeclaredTopLevelClass(@NotNull final JetClassOrObject classOrObject) {
-        return new KotlinJavaFileStubProvider(classOrObject.getProject(), new StubGenerationStrategy.WithDeclaredClasses() {
-            private JetFile getFile() {
-                JetFile file = (JetFile) classOrObject.getContainingFile();
-                assert classOrObject.getParent() == file : "Not a top-level class: " + classOrObject.getText();
-                return file;
-            }
+    public static KotlinJavaFileStubProvider createForDeclaredClass(@NotNull final JetClassOrObject classOrObject) {
+        return new KotlinJavaFileStubProvider(
+                classOrObject.getProject(),
+                JetPsiUtil.isLocal(classOrObject),
+                new StubGenerationStrategy.WithDeclaredClasses() {
+                    private JetFile getFile() {
+                        return (JetFile) classOrObject.getContainingFile();
+                    }
 
-            @NotNull
-            @Override
-            public Collection<JetFile> getFiles() {
-                return Collections.singletonList(getFile());
-            }
+                    @NotNull
+                    @Override
+                    public LightClassConstructionContext createLightClassConstructionContext(@NotNull Collection<JetFile> files) {
+                        return LightClassGenerationSupport.getInstance(classOrObject.getProject()).analyzeRelevantCode(classOrObject);
+                    }
 
-            @NotNull
-            @Override
-            public FqName getPackageFqName() {
-                return JetPsiUtil.getFQName(getFile());
-            }
+                    @NotNull
+                    @Override
+                    public GeneratedLightClassData createStubWithName(PsiJavaFileStub javaFileStub, BindingContext bindingContext) {
+                        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
+                        assert (classDescriptor != null);
 
-            @Override
-            public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
-                NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(getPackageFqName(), files);
-                namespaceCodegen.generateClassOrObject(classOrObject);
-                state.getFactory().asList();
-            }
-        });
+                        Type asmType = bindingContext.get(CodegenBinding.ASM_TYPE, classDescriptor);
+                        assert (asmType != null);
+
+                        String jvmInternalName = asmType.getClassName();
+                        assert (jvmInternalName != null);
+
+                        return new GeneratedLightClassData(javaFileStub, jvmInternalName, classDescriptor);
+                    }
+
+                    @NotNull
+                    @Override
+                    public Collection<JetFile> getFiles() {
+                        return Collections.singletonList(getFile());
+                    }
+
+                    @NotNull
+                    @Override
+                    public FqName getPackageFqName() {
+                        return JetPsiUtil.getFQName(getFile());
+                    }
+
+                    @Override
+                    public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
+                        NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(getPackageFqName(), files);
+                        namespaceCodegen.generateClassOrObject(classOrObject);
+                        state.getFactory().asList();
+                    }
+                }
+        );
     }
 
     private static final Logger LOG = Logger.getInstance(KotlinJavaFileStubProvider.class);
 
     private final Project project;
     private final StubGenerationStrategy stubGenerationStrategy;
+    private final boolean local;
 
     private KotlinJavaFileStubProvider(
             @NotNull Project project,
+            boolean local,
             @NotNull StubGenerationStrategy stubGenerationStrategy
     ) {
         this.project = project;
         this.stubGenerationStrategy = stubGenerationStrategy;
+        this.local = local;
     }
 
     @Nullable
     @Override
-    public Result<PsiJavaFileStub> compute() {
+    public Result<GeneratedLightClassData> compute() {
         FqName packageFqName = stubGenerationStrategy.getPackageFqName();
         Collection<JetFile> files = stubGenerationStrategy.getFiles();
 
         checkForBuiltIns(packageFqName, files);
 
-        LightClassConstructionContext context = LightClassGenerationSupport.getInstance(project).analyzeRelevantCode(files);
-
+        LightClassConstructionContext context = stubGenerationStrategy.createLightClassConstructionContext(files);
         Throwable error = context.getError();
         if (error != null) {
             throw new IllegalStateException("failed to analyze: " + error, error);
         }
 
         PsiJavaFileStub javaFileStub = createJavaFileStub(packageFqName, getRepresentativeVirtualFile(files));
+        BindingContext bindingContext;
         try {
             Stack<StubElement> stubStack = new Stack<StubElement>();
             stubStack.push(javaFileStub);
@@ -156,6 +201,8 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
                     /*generateDeclaredClasses=*/stubGenerationStrategy.generateDeclaredClasses(),
                     InlineUtil.DEFAULT_INLINE_FLAG_FOR_STUB);
             state.beforeCompile();
+
+            bindingContext = state.getBindingContext();
 
             stubGenerationStrategy.generate(state, files);
 
@@ -173,7 +220,10 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
             throw e;
         }
 
-        return Result.create(javaFileStub, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+        return Result.create(
+                stubGenerationStrategy.createStubWithName(javaFileStub, bindingContext),
+                local ? PsiModificationTracker.MODIFICATION_COUNT : PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+        );
     }
 
     @NotNull
@@ -231,6 +281,9 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
     }
 
     private interface StubGenerationStrategy {
+        @NotNull LightClassConstructionContext createLightClassConstructionContext(@NotNull Collection<JetFile> files);
+        @NotNull
+        GeneratedLightClassData createStubWithName(PsiJavaFileStub javaFileStub, BindingContext bindingContext);
         @NotNull Collection<JetFile> getFiles();
         @NotNull FqName getPackageFqName();
         boolean generateDeclaredClasses();
