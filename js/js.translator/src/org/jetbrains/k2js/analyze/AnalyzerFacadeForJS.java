@@ -154,7 +154,9 @@ public final class AnalyzerFacadeForJS {
         LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
-        return new ResolveSession(config.getProject(), storageManager, createJsModule("<lazy module>"), declarationProviderFactory);
+        ModuleDescriptorImpl module = createJsModule("<lazy module>");
+        module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        return new ResolveSession(config.getProject(), storageManager, module, declarationProviderFactory);
     }
 
     @NotNull

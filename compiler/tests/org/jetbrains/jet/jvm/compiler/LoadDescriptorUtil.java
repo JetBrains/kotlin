@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
@@ -85,7 +86,7 @@ public final class LoadDescriptorUtil {
         );
         JetCoreEnvironment jetCoreEnvironment = JetCoreEnvironment.createForTests(disposable, configuration);
         BindingTraceContext trace = new BindingTraceContext();
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(jetCoreEnvironment.getProject(), trace);
+        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(jetCoreEnvironment.getProject(), trace);
         PackageViewDescriptor packageView = injector.getModule().getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null;
 

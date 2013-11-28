@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil
 
 class KotlinLightClassContextCache(val project: Project) {
     private val cacheKey = Key.create<CachedValue<ResolveElementCache>>("KOTLIN_LIGHT_CLASS_CONTEXT_CACHE")
@@ -56,7 +57,7 @@ class KotlinLightClassContextCache(val project: Project) {
                     project,
                     JetFilesProvider.getInstance(project)!!.allInScope(GlobalSearchScope.allScope(project)),
                     trace,
-                    InjectorForJavaDescriptorResolver(project, trace),
+                    InjectorForJavaDescriptorResolverUtil.create(project, trace),
                     true
             )
             return Result.create(

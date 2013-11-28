@@ -224,6 +224,9 @@ public class JetSourceNavigationHelper {
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
                                                                          AnalyzerFacadeForJVM.DEFAULT_IMPORTS,
                                                                          PlatformToKotlinClassMap.EMPTY);
+
+        moduleDescriptor.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+
         KotlinCodeAnalyzer analyzer = new ResolveSession(
                 project,
                 storageManager,

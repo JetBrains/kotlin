@@ -36,6 +36,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -99,7 +100,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         }
 
         BindingTrace trace = createDelegatingTrace(project);
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, trace);
+        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, trace);
 
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 

@@ -103,6 +103,9 @@ public class ReplInterpreter {
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
+        module.addFragmentProvider(injector.getTopDownAnalyzer().getPackageFragmentProvider());
+        module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        module.addFragmentProvider(injector.getJavaPackageFragmentProvider());
 
         List<URL> classpath = Lists.newArrayList();
 
@@ -284,9 +287,6 @@ public class ReplInterpreter {
                 new TraceBasedRedeclarationHandler(trace), "Root scope in analyzeNamespace");
 
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-
-        module.addFragmentProvider(injector.getTopDownAnalyzer().getPackageFragmentProvider());
-        module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
         // Import a scope that contains all top-level namespaces that come from dependencies
         // This makes the namespaces visible at all, does not import themselves

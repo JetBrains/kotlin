@@ -36,6 +36,7 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -95,7 +96,8 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
                 BindingTrace trace = new BindingTraceContext();
-                InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(commonEnvironment.getProject(), trace);
+                InjectorForJavaDescriptorResolver injector =
+                        InjectorForJavaDescriptorResolverUtil.create(commonEnvironment.getProject(), trace);
 
                 BindingContext bindingContext = trace.getBindingContext();
                 JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -33,6 +34,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ModuleDescriptor {
+    private static final Logger LOG = Logger.getInstance(ModuleDescriptorImpl.class);
+
     private final List<PackageFragmentProvider> fragmentProviders = Lists.newArrayList();
     private final CompositePackageFragmentProvider packageFragmentProvider = new CompositePackageFragmentProvider(fragmentProviders);
     private final List<ImportPath> defaultImports;
@@ -52,6 +55,9 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements M
     }
 
     public void addFragmentProvider(@NotNull PackageFragmentProvider provider) {
+        if (fragmentProviders.contains(provider)) {
+            LOG.error("Trying to add already present fragment provider: " + provider);
+        }
         fragmentProviders.add(provider);
     }
 

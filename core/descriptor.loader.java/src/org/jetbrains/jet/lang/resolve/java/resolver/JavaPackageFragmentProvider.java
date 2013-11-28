@@ -86,8 +86,6 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
     @Inject
     public void setModule(ModuleDescriptor module) {
         this.module = module;
-        // TODO 1 hacky
-        ((ModuleDescriptorImpl) module).addFragmentProvider(this);
     }
 
     @NotNull

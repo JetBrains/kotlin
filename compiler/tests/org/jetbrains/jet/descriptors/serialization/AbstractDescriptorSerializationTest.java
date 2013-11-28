@@ -23,6 +23,7 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -64,7 +65,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         PackageFragmentDescriptor testPackage = DescriptorUtils.getExactlyOnePackageFragment(
                 moduleDescriptor, FqName.topLevel(TEST_PACKAGE_NAME));
 
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(getProject(), new BindingTraceContext());
+        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         PackageFragmentDescriptor deserialized = serializeAndDeserialize(javaDescriptorResolver, testPackage);

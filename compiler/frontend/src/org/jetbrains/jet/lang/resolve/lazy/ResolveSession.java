@@ -120,8 +120,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         this.trace = storageManager.createSafeTrace(delegationTrace);
         this.injector = new InjectorForLazyResolve(project, this, rootDescriptor);
         this.module = rootDescriptor;
-        PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(FqName.ROOT);
-        assert provider != null : "No declaration provider for root package in " + rootDescriptor;
 
         this.packages = storageManager.createMemoizedFunctionWithNullableValues(new MemoizedFunctionToNullable<FqName, LazyPackageDescriptor>() {
             @Nullable
@@ -132,8 +130,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         });
 
         this.declarationProviderFactory = declarationProviderFactory;
-
-        rootDescriptor.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
         this.packageFragmentProvider = new PackageFragmentProvider() {
             @NotNull
