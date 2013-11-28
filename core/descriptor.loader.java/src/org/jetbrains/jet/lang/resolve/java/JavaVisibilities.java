@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 
 public class JavaVisibilities {
     private JavaVisibilities() {
@@ -68,7 +68,8 @@ public class JavaVisibilities {
             else {
                 DeclarationDescriptor whatDeclarationDescriptor = what.getContainingDeclaration();
                 assert whatDeclarationDescriptor instanceof JavaPackageFragmentDescriptor : "Only static declarations can have protected_static visibility";
-                whatClass = JavaFunctionResolver.getClassForCorrespondingJavaPackage((JavaPackageFragmentDescriptor) whatDeclarationDescriptor);
+                whatClass = DescriptorResolverUtils
+                        .getClassForCorrespondingJavaPackage((JavaPackageFragmentDescriptor) whatDeclarationDescriptor);
             }
 
             assert whatClass != null : "Couldn't find ClassDescriptor for protected static member " + what;

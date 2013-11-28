@@ -21,11 +21,11 @@ import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -257,7 +257,7 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
     }
 
     if (classDescriptor is JavaClassDescriptor) {
-        val pseudoPackage = JavaFunctionResolver.getPackageForCorrespondingJavaClass(classDescriptor)
+        val pseudoPackage = DescriptorResolverUtils.getPackageForCorrespondingJavaClass(classDescriptor)
         if (pseudoPackage != null) {
             pseudoPackage.getMemberScope().getAllDescriptors().filterTo(descriptors, isSuitableCallable)
         }
