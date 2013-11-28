@@ -55,18 +55,19 @@ public class JetAnnotationElementType extends JetStubElementType<PsiJetAnnotatio
     }
 
     @Override
-    public void serialize(PsiJetAnnotationStub stub, StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull PsiJetAnnotationStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getShortName());
     }
 
+    @NotNull
     @Override
-    public PsiJetAnnotationStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public PsiJetAnnotationStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef text = dataStream.readName();
         return new PsiJetAnnotationStubImpl(parentStub, JetStubElementTypes.ANNOTATION_ENTRY, text);
     }
 
     @Override
-    public void indexStub(PsiJetAnnotationStub stub, IndexSink sink) {
+    public void indexStub(@NotNull PsiJetAnnotationStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexAnnotation(stub, sink);
     }
 }

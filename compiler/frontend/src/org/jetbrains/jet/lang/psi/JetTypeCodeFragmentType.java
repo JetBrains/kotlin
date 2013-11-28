@@ -33,6 +33,7 @@ public class JetTypeCodeFragmentType extends JetFileElementType {
         super(NAME);
     }
 
+    @NotNull
     @Override
     public String getExternalId() {
         return NAME;

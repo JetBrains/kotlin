@@ -79,7 +79,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
     }
 
     @Override
-    public void serialize(PsiJetPropertyStub stub, StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull PsiJetPropertyStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isVar());
         dataStream.writeBoolean(stub.isTopLevel());
@@ -91,8 +91,9 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
         dataStream.writeName(stub.getInferenceBodyText());
     }
 
+    @NotNull
     @Override
-    public PsiJetPropertyStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public PsiJetPropertyStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         boolean isVar = dataStream.readBoolean();
         boolean isTopLevel = dataStream.readBoolean();
@@ -108,7 +109,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
     }
 
     @Override
-    public void indexStub(PsiJetPropertyStub stub, IndexSink sink) {
+    public void indexStub(@NotNull PsiJetPropertyStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexProperty(stub, sink);
     }
 }

@@ -50,17 +50,18 @@ public class JetParameterListElementType extends JetStubElementType<PsiJetParame
     }
 
     @Override
-    public void serialize(PsiJetParameterListStub stub, StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull PsiJetParameterListStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         // Nothing to serialize
     }
 
+    @NotNull
     @Override
-    public PsiJetParameterListStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public PsiJetParameterListStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         return new PsiJetParameterListStubImpl(JetStubElementTypes.VALUE_PARAMETER_LIST, parentStub);
     }
 
     @Override
-    public void indexStub(PsiJetParameterListStub stub, IndexSink sink) {
+    public void indexStub(@NotNull PsiJetParameterListStub stub, @NotNull IndexSink sink) {
         // No index
     }
 }
