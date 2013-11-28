@@ -18,10 +18,9 @@ package org.jetbrains.jet.plugin.liveTemplates;
 
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Condition;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -32,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
+
+import java.util.Arrays;
 
 public abstract class JetTemplateContextType extends TemplateContextType {
     protected JetTemplateContextType(@NotNull @NonNls String id, @NotNull String presentableName, @Nullable java.lang.Class<? extends TemplateContextType> baseContextType) {
@@ -143,15 +144,17 @@ public abstract class JetTemplateContextType extends TemplateContextType {
 
         @Override
         protected boolean isInContext(@NotNull PsiElement element) {
-            PsiElement parent = element.getParent();
-            if (parent instanceof JetSimpleNameExpression) {
-                parent = parent.getParent();
-            }
-            if (parent instanceof JetBinaryExpression) {
-                // Example: sout<caret> foo()
-                parent = parent.getParent();
-            }
-            return parent instanceof JetBlockExpression;
+            PsiElement parentStatement = PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
+                @Override
+                public boolean value(PsiElement element) {
+                    return element instanceof JetExpression && (element.getParent() instanceof JetBlockExpression);
+                }
+            });
+
+            if (parentStatement == null) return false;
+
+            // We are in the leftmost position in parentStatement
+            return element.getTextOffset() == parentStatement.getTextOffset();
         }
     }
 
