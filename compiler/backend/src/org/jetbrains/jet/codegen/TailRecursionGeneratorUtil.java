@@ -25,16 +25,15 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TAIL_RECURSION_CALL;
 
 public class TailRecursionGeneratorUtil {
@@ -65,33 +64,36 @@ public class TailRecursionGeneratorUtil {
         return status != null && status.isDoGenerateTailRecursion();
     }
 
-    public StackValue generateTailRecursion(ResolvedCall<? extends CallableDescriptor> resolvedCall, Call call) {
+    public void generateTailRecursion(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
         assert fd instanceof FunctionDescriptor : "the resolved call is not refer to the function descriptor so why do we use generateTailRecursion for something strange?";
         CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false);
-        List<Type> types = callable.getValueParameterTypes();
-        List<ValueParameterDescriptor> parametersStored = prepareParameterValuesOnStack(fd, types, resolvedCall.getValueArgumentsByIndex());
 
-        // we can't store values to the variables in the loop above because it will affect expressions evaluation
-        for (ValueParameterDescriptor parameterDescriptor : Lists.reverse(parametersStored)) {
-            Type asmType = types.get(parameterDescriptor.getIndex());
-            int index = getParameterVariableIndex(parameterDescriptor, call);
+        assignParameterValues(fd, callable, resolvedCall.getValueArgumentsByIndex());
+        if (callable.getReceiverClass() != null) {
+            if (resolvedCall.getReceiverArgument() != fd.getReceiverParameter().getValue()) {
+                StackValue expression = context.getReceiverExpression(codegen.typeMapper);
+                expression.store(callable.getReceiverClass(), v);
+            }
+            else {
+                AsmUtil.pop(v, callable.getReceiverClass());
+            }
+        }
 
-            v.store(index, asmType);
+        if (callable.getThisType() != null) {
+            AsmUtil.pop(v, callable.getThisType());
         }
 
         v.goTo(context.getMethodStartLabel());
-
-        return StackValue.none();
     }
 
-    private List<ValueParameterDescriptor> prepareParameterValuesOnStack(
+    private void assignParameterValues(
             CallableDescriptor fd,
-            List<Type> types,
+            CallableMethod callableMethod,
             List<ResolvedValueArgument> valueArguments
     ) {
-        List<ValueParameterDescriptor> descriptorsStored = new ArrayList<ValueParameterDescriptor>(valueArguments.size());
-        for (ValueParameterDescriptor parameterDescriptor : fd.getValueParameters()) {
+        List<Type> types = callableMethod.getValueParameterTypes();
+        for (ValueParameterDescriptor parameterDescriptor : Lists.reverse(fd.getValueParameters())) {
             ResolvedValueArgument arg = valueArguments.get(parameterDescriptor.getIndex());
             Type type = types.get(parameterDescriptor.getIndex());
 
@@ -101,39 +103,44 @@ public class TailRecursionGeneratorUtil {
                 JetExpression argumentExpression = argument == null ? null : argument.getArgumentExpression();
 
                 if (argumentExpression instanceof JetSimpleNameExpression) {
-                    JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) argumentExpression;
-                    if (nameExpression.getReferencedNameAsName().equals(parameterDescriptor.getName())) {
+                    ResolvedCall<? extends CallableDescriptor> resolvedCall = state.getBindingContext().get(RESOLVED_CALL, argumentExpression);
+                    if (resolvedCall != null && resolvedCall.getResultingDescriptor().equals(parameterDescriptor.getOriginal())) {
                         // do nothing: we shouldn't store argument to itself again
+                        AsmUtil.pop(v, type);
                         continue;
                     }
                 }
-
-                codegen.gen(argumentExpression, type);
+                //assign the parameter below
             }
             else if (arg instanceof DefaultValueArgument) {
+                AsmUtil.pop(v, type);
                 DefaultParameterValueLoader.DEFAULT.putValueOnStack(parameterDescriptor, codegen);
             }
             else if (arg instanceof VarargValueArgument) {
-                VarargValueArgument valueArgument = (VarargValueArgument) arg;
-                codegen.genVarargs(parameterDescriptor, valueArgument);
+                // assign the parameter below
             }
             else {
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException("Unknown argument type: " + arg + " in " + fd);
             }
 
-            descriptorsStored.add(parameterDescriptor);
+            store(parameterDescriptor, type);
         }
-        return descriptorsStored;
     }
 
-    private int getParameterVariableIndex(ValueParameterDescriptor parameterDescriptor, Call call) {
+    private void store(ValueParameterDescriptor parameterDescriptor, Type type) {
+        int index = getParameterVariableIndex(parameterDescriptor);
+        v.store(index, type);
+    }
+
+    private int getParameterVariableIndex(ValueParameterDescriptor parameterDescriptor) {
         int index = codegen.lookupLocalIndex(parameterDescriptor);
         if (index == -1) {
+            // in the case of a generic function recursively calling itself, the parameters on the call site are substituted
             index = codegen.lookupLocalIndex(parameterDescriptor.getOriginal());
         }
 
         if (index == -1) {
-            throw new CompilationException("Failed to obtain parameter index: " + parameterDescriptor.getName(), null, call.getCallElement());
+            throw new IllegalStateException("Failed to obtain parameter index: " + parameterDescriptor);
         }
 
         return index;

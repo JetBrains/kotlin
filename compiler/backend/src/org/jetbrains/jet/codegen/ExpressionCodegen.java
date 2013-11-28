@@ -1996,10 +1996,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
-        if (tailRecursionGeneratorUtil.isTailRecursion(resolvedCall)) {
-            return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, call);
-        }
-
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
             ResolvedCallWithTrace<FunctionDescriptor> functionCall = variableAsFunctionResolvedCall.getFunctionCall();
@@ -2149,6 +2145,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private void pushArgumentsAndInvoke(@NotNull ResolvedCall<?> resolvedCall, @NotNull CallableMethod callable) {
         int mask = pushMethodArguments(resolvedCall, callable.getValueParameterTypes());
+
+        if (tailRecursionGeneratorUtil.isTailRecursion(resolvedCall)) {
+            tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall);
+            return;
+        }
+
         if (mask == 0) {
             callable.invokeWithNotNullAssertion(v, state, resolvedCall);
         }
