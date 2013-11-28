@@ -77,16 +77,17 @@ public final class NavigationTestUtils {
                            searchTextList.isEmpty());
 
         List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
+        boolean enableCheckbox = InTextDirectivesUtils.isDirectiveDefined(editor.getDocument().getText(), "// CHECK_BOX");
 
         String searchText = searchTextList.get(0);
 
         List<Object> elementsByName = new ArrayList<Object>();
 
         GotoSymbolModel2 model = new GotoSymbolModel2(project);
-        String[] names = model.getNames(false);
+        String[] names = model.getNames(enableCheckbox);
         for (String name : names) {
             if (name != null && name.startsWith(searchText)) {
-                elementsByName.addAll(Arrays.asList(model.getElementsByName(name, false, name + "*")));
+                elementsByName.addAll(Arrays.asList(model.getElementsByName(name, enableCheckbox, name + "*")));
             }
         }
 
