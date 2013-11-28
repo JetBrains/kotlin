@@ -210,8 +210,7 @@
 
     <lookup.charFilter implementation="org.jetbrains.jet.plugin.completion.JetCompletionCharFilter"/>
 
-    <psi.referenceContributor language="jet" order="after JetCompletionContributor"
-                              implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
+    <psi.referenceContributor language="jet" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
 
     <renamePsiElementProcessor id="KotlinClass"
                                implementation="org.jetbrains.jet.plugin.refactoring.rename.RenameJetClassProcessor"
