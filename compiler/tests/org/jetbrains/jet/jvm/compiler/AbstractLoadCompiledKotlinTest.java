@@ -41,14 +41,6 @@ import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.validate
 public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir {
 
     public void doTest(@NotNull String ktFileName) throws Exception {
-        doTest(ktFileName, false);
-    }
-
-    public void doTestWithAccessors(@NotNull String ktFileName) throws Exception {
-        doTest(ktFileName, true);
-    }
-
-    private void doTest(@NotNull String ktFileName, boolean includeAccessors) throws Exception {
         File ktFile = new File(ktFileName);
         File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
         AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(),
@@ -72,7 +64,7 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
         validateAndCompareDescriptors(packageFromSource, packageFromBinary,
                                       RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
                                               .checkPrimaryConstructors(true)
-                                              .checkPropertyAccessors(includeAccessors),
+                                              .checkPropertyAccessors(true),
                                       txtFile);
     }
 
