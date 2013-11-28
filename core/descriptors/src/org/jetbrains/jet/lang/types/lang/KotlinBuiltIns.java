@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
@@ -94,6 +93,7 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final ModuleDescriptorImpl builtInsModule;
+    private final BuiltinsPackageFragment builtinsPackageFragment;
 
     private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
 
@@ -124,40 +124,31 @@ public class KotlinBuiltIns {
     private volatile JetType annotationType;
 
     private KotlinBuiltIns() {
-        try {
-            this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
-                                                           Collections.<ImportPath>emptyList(),
-                                                           PlatformToKotlinClassMap.EMPTY);
-            loadBuiltIns(builtInsModule);
+        this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
+                                                       Collections.<ImportPath>emptyList(),
+                                                       PlatformToKotlinClassMap.EMPTY);
+        builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), builtInsModule);
+        builtInsModule.addFragmentProvider(builtinsPackageFragment.packageFragmentProvider);
 
-            this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
-            this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
+        this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
+        this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
 
-            this.primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
-            this.primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-            this.primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-            this.primitiveTypeToArrayClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
-            this.primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-            this.primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
-            this.jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
+        this.primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
+        this.primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+        this.primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+        this.primitiveTypeToArrayClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
+        this.primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+        this.primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
+        this.jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
 
-            this.nothingClass = getBuiltInClassByName("Nothing");
-            this.arrayClass = getBuiltInClassByName("Array");
-            this.deprecatedAnnotationClass = getBuiltInClassByName("deprecated");
-            this.dataAnnotationClass = getBuiltInClassByName("data");
-            this.functionClasses = new ClassDescriptor[FUNCTION_TRAIT_COUNT];
-            for (int i = 0; i < functionClasses.length; i++) {
-                functionClasses[i] = getBuiltInClassByName("Function" + i);
-            }
+        this.nothingClass = getBuiltInClassByName("Nothing");
+        this.arrayClass = getBuiltInClassByName("Array");
+        this.deprecatedAnnotationClass = getBuiltInClassByName("deprecated");
+        this.dataAnnotationClass = getBuiltInClassByName("data");
+        this.functionClasses = new ClassDescriptor[FUNCTION_TRAIT_COUNT];
+        for (int i = 0; i < functionClasses.length; i++) {
+            functionClasses[i] = getBuiltInClassByName("Function" + i);
         }
-        catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static void loadBuiltIns(@NotNull ModuleDescriptorImpl module) throws IOException {
-        BuiltinsPackageFragment builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), module);
-        module.addFragmentProvider(builtinsPackageFragment.packageFragmentProvider);
     }
 
     private void doInitialize() {
@@ -200,12 +191,12 @@ public class KotlinBuiltIns {
 
     @NotNull
     public PackageFragmentDescriptor getBuiltInsPackageFragment() {
-        return builtInsModule.getPackageFragmentProvider().getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME).get(0);
+        return builtinsPackageFragment;
     }
 
     @NotNull
     public JetScope getBuiltInsPackageScope() {
-        return getBuiltInsPackageFragment().getMemberScope();
+        return builtinsPackageFragment.getMemberScope();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
