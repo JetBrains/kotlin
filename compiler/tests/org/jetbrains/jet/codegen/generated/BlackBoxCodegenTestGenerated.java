@@ -2407,6 +2407,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/functions/functionNtoString.kt");
         }
         
+        @TestMetadata("infixRecursiveCall.kt")
+        public void testInfixRecursiveCall() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/infixRecursiveCall.kt");
+        }
+        
         @TestMetadata("kt1038.kt")
         public void testKt1038() throws Exception {
             doTest("compiler/testData/codegen/box/functions/kt1038.kt");
@@ -2510,6 +2515,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("nothisnoclosure.kt")
         public void testNothisnoclosure() throws Exception {
             doTest("compiler/testData/codegen/box/functions/nothisnoclosure.kt");
+        }
+        
+        @TestMetadata("prefixRecursiveCall.kt")
+        public void testPrefixRecursiveCall() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/prefixRecursiveCall.kt");
+        }
+        
+        @TestMetadata("recursiveCompareTo.kt")
+        public void testRecursiveCompareTo() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/recursiveCompareTo.kt");
+        }
+        
+        @TestMetadata("recursiveIncrementCall.kt")
+        public void testRecursiveIncrementCall() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/recursiveIncrementCall.kt");
         }
         
         @TestMetadata("compiler/testData/codegen/box/functions/invoke")
