@@ -22,18 +22,14 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder;
@@ -154,41 +150,11 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
         }
 
         JavaClass javaClass = javaClassFinder.findClass(fqName);
-        if (javaClass != null && shouldCreateStaticMembersPackage(javaClass)) {
+        if (javaClass != null && DescriptorResolverUtils.isJavaClassVisibleAsPackage(javaClass)) {
             cache.recordClassStaticMembersNamespace(packageFragment);
             return new JavaClassStaticMembersScope(packageFragment, javaClass, memberResolver);
         }
         return null;
-    }
-
-    // TODO 2 move to more decent place
-    public static boolean shouldCreateStaticMembersPackage(@NotNull JavaClass javaClass) {
-        return !DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass) && hasStaticMembers(javaClass);
-    }
-
-    private static boolean hasStaticMembers(@NotNull JavaClass javaClass) {
-        for (JavaMethod method : javaClass.getMethods()) {
-            if (method.isStatic() && !DescriptorResolverUtils.shouldBeInEnumClassObject(method)) {
-                return true;
-            }
-        }
-
-        for (JavaField field : javaClass.getFields()) {
-            if (field.isStatic() && !field.isEnumEntry()) {
-                return true;
-            }
-        }
-
-        for (JavaClass nestedClass : javaClass.getInnerClasses()) {
-            if (SingleAbstractMethodUtils.isSamInterface(nestedClass)) {
-                return true;
-            }
-            if (nestedClass.isStatic() && hasStaticMembers(nestedClass)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @NotNull

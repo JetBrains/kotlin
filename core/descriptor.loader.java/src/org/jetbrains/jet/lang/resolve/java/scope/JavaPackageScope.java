@@ -113,7 +113,7 @@ public final class JavaPackageScope extends JavaBaseScope {
             result.add(subPackage.getFqName());
         }
         for (JavaClass javaClass : DescriptorResolverUtils.getClassesInPackage(javaPackage)) {
-            if (JavaPackageFragmentProvider.shouldCreateStaticMembersPackage(javaClass)) {
+            if (DescriptorResolverUtils.isJavaClassVisibleAsPackage(javaClass)) {
                 result.add(javaClass.getFqName());
             }
         }

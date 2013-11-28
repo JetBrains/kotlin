@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -61,7 +62,7 @@ public final class DescriptorResolverUtils {
         return false;
     }
 
-    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
+    private static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
         return isCompiledKotlinClass(javaClass) || isCompiledKotlinPackageClass(javaClass);
     }
 
@@ -340,5 +341,34 @@ public final class DescriptorResolverUtils {
 
         JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
         return provider.getOrCreatePackage(getFQName(javaClass).toSafe());
+    }
+
+    public static boolean isJavaClassVisibleAsPackage(@NotNull JavaClass javaClass) {
+        return !isCompiledKotlinClassOrPackageClass(javaClass) && hasStaticMembers(javaClass);
+    }
+
+    private static boolean hasStaticMembers(@NotNull JavaClass javaClass) {
+        for (JavaMethod method : javaClass.getMethods()) {
+            if (method.isStatic() && !shouldBeInEnumClassObject(method)) {
+                return true;
+            }
+        }
+
+        for (JavaField field : javaClass.getFields()) {
+            if (field.isStatic() && !field.isEnumEntry()) {
+                return true;
+            }
+        }
+
+        for (JavaClass nestedClass : javaClass.getInnerClasses()) {
+            if (SingleAbstractMethodUtils.isSamInterface(nestedClass)) {
+                return true;
+            }
+            if (nestedClass.isStatic() && hasStaticMembers(nestedClass)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

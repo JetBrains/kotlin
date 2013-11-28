@@ -20,8 +20,8 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -52,7 +52,7 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     public Collection<FqName> getSubPackages() {
         List<FqName> result = Lists.newArrayList();
         for (JavaClass nested : javaClass.getInnerClasses()) {
-            if (JavaPackageFragmentProvider.shouldCreateStaticMembersPackage(nested)) {
+            if (DescriptorResolverUtils.isJavaClassVisibleAsPackage(nested)) {
                 result.add(nested.getFqName());
             }
         }
