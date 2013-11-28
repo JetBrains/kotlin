@@ -25,7 +25,7 @@
 
     <property name="idea.sdk.fetch.needed" value="true"/>
 
-    <property name="continuous.idea.version" value="unknown"/>
+    <property name="continuous.idea.version" value=".lastSuccessful"/>
 
     <target name="update" depends="fetch-third-party">
         <execute_update
@@ -43,8 +43,8 @@
 
     <target name="jb_update_continuous_local" depends="fetch-third-party">
         <execute_update
-            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/IDEA_Trunk_Installers/${continuous.idea.version}"
-            build.zip="ideaIC-${continuous.idea.version}.win.zip"
+            base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform13_IdeaTrunk_Installers/${continuous.idea.version}"
+            build.zip="ideaIC-{build.number}.win.zip"
         />
     </target>
 
