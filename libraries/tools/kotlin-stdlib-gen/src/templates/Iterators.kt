@@ -122,5 +122,53 @@ fun iterators(): List<GenericFunction> {
         }
     }
 
+    templates add f("minBy(f: (T) -> R)") {
+        doc = "Returns the first element yielding the smallest value of the given function or null if there are no elements"
+        typeParam("R: Comparable<R>")
+        typeParam("T: Any")
+        returns("T?")
+        body {
+            """
+                if (!hasNext()) return null
+
+                var minElem = next()
+                var minValue = f(minElem)
+                while (hasNext()) {
+                    val e = next()
+                    val v = f(e)
+                    if (minValue > v) {
+                       minElem = e
+                       minValue = v
+                    }
+                }
+                return minElem
+            """
+        }
+    }
+
+    templates add f("maxBy(f: (T) -> R)") {
+        doc = "Returns the first element yielding the largest value of the given function or null if there are no elements"
+        typeParam("R: Comparable<R>")
+        typeParam("T: Any")
+        returns("T?")
+        body {
+            """
+                if (!hasNext()) return null
+
+                var maxElem = next()
+                var maxValue = f(maxElem)
+                while (hasNext()) {
+                    val e = next()
+                    val v = f(e)
+                    if (maxValue < v) {
+                       maxElem = e
+                       maxValue = v
+                    }
+                }
+                return maxElem
+            """
+        }
+    }
+
     return templates.sort()
 }

@@ -436,6 +436,44 @@ class CollectionTest {
         expect(3, { listOf(2, 3).iterator().max() })
     }
 
+    test fun minBy() {
+        expect(null, { listOf<Int>().minBy { it } })
+        expect(1, { listOf(1).minBy { it } })
+        expect(3, { listOf(2, 3).minBy { -it } })
+        expect('a', { listOf('a', 'b').minBy { "x$it" } })
+        expect("b", { listOf("b", "abc").minBy { it.length } })
+        expect(null, { listOf<Int>().iterator().minBy { it } })
+        expect(3, { listOf(2, 3).iterator().minBy { -it } })
+    }
+
+    test fun maxBy() {
+        expect(null, { listOf<Int>().maxBy { it } })
+        expect(1, { listOf(1).maxBy { it } })
+        expect(2, { listOf(2, 3).maxBy { -it } })
+        expect('b', { listOf('a', 'b').maxBy { "x$it" } })
+        expect("abc", { listOf("b", "abc").maxBy { it.length } })
+        expect(null, { listOf<Int>().iterator().maxBy { it } })
+        expect(2, { listOf(2, 3).iterator().maxBy { -it } })
+    }
+
+    test fun minByEvaluateOnce() {
+        var c = 0
+        expect(1, { listOf(5, 4, 3, 2, 1).minBy { c++; it * it } })
+        assertEquals(5, c)
+        c = 0
+        expect(1, { listOf(5, 4, 3, 2, 1).iterator().minBy { c++; it * it } })
+        assertEquals(5, c)
+    }
+
+    test fun maxByEvaluateOnce() {
+        var c = 0
+        expect(5, { listOf(5, 4, 3, 2, 1).maxBy { c++; it * it } })
+        assertEquals(5, c)
+        c = 0
+        expect(5, { listOf(5, 4, 3, 2, 1).iterator().maxBy { c++; it * it } })
+        assertEquals(5, c)
+    }
+
     test fun sum() {
         expect(0) { ArrayList<Int>().sum() }
         expect(14) { arrayListOf(2, 3, 9).sum() }

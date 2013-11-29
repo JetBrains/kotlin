@@ -239,6 +239,25 @@ public fun LongArray.max() : Long? {
 }
 
 /**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> LongArray.maxBy(f: (Long) -> R) : Long? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
  * Returns the smallest element or null if there are no elements
  */
 public fun LongArray.min() : Long? {
@@ -249,6 +268,25 @@ public fun LongArray.min() : Long? {
         }
     }
     return min
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> LongArray.minBy(f: (Long) -> R) : Long? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
 }
 
 /**
