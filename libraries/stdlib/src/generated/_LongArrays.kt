@@ -212,6 +212,32 @@ public inline fun <R, C: MutableCollection<in R>> LongArray.mapTo(result: C, tra
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun LongArray.max() : Long? {
+    var max: Long? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun LongArray.min() : Long? {
+    var min: Long? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun LongArray.partition(predicate: (Long) -> Boolean) : Pair<List<Long>, List<Long>> {

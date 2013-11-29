@@ -212,6 +212,32 @@ public inline fun <R, C: MutableCollection<in R>> FloatArray.mapTo(result: C, tr
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun FloatArray.max() : Float? {
+    var max: Float? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun FloatArray.min() : Float? {
+    var min: Float? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun FloatArray.partition(predicate: (Float) -> Boolean) : Pair<List<Float>, List<Float>> {

@@ -227,6 +227,32 @@ public inline fun <T, R, C: MutableCollection<in R>> Array<out T>.mapTo(result: 
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun <T: Comparable<T>> Array<out T>.max() : T? {
+    var max: T? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun <T: Comparable<T>> Array<out T>.min() : T? {
+    var min: T? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean) : Pair<List<T>, List<T>> {

@@ -21,6 +21,7 @@ class GenericFunction(val signature : String): Comparable<GenericFunction> {
     var isInline : Boolean = true;
     private val customReceivers = HashMap<Family, String>()
     val blockedFor = HashSet<Family>()
+    private val blockedForPrimitive = HashSet<PrimitiveType>()
     val bodies = HashMap<Family, String>()
     val returnTypes = HashMap<Family, String>()
     val typeParams = ArrayList<String>()
@@ -57,6 +58,10 @@ class GenericFunction(val signature : String): Comparable<GenericFunction> {
         blockedFor.addAll(f.toList())
     }
 
+    fun absentFor(vararg p: PrimitiveType) {
+        blockedForPrimitive.addAll(p.toList())
+    }
+
     private fun effectiveTypeParams(f : Family) : List<String> {
         val types = ArrayList(typeParams)
         if (typeParams.find { it.startsWith("T") } == null && !customReceivers.containsKey(f)) {
@@ -74,6 +79,7 @@ class GenericFunction(val signature : String): Comparable<GenericFunction> {
 
     fun buildFor(f: Family, primitiveType: PrimitiveType?) : String {
         if (blockedFor.contains(f)) return ""
+        if (primitiveType != null && blockedForPrimitive.contains(primitiveType)) return ""
 
         if (returnTypes[f] == null) throw RuntimeException("No return type specified for $signature")
         val retType = returnTypes[f]!!
