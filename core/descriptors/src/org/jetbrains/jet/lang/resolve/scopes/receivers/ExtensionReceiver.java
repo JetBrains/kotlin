@@ -32,7 +32,7 @@ public class ExtensionReceiver extends AbstractReceiverValue implements ThisRece
 
     @NotNull
     @Override
-    public DeclarationDescriptor getDeclarationDescriptor() {
+    public CallableDescriptor getDeclarationDescriptor() {
         return descriptor;
     }
 

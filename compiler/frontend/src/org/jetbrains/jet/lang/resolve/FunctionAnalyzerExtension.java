@@ -20,9 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension;
 
 import javax.inject.Inject;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class FunctionAnalyzerExtension {
     private BindingTrace trace;
 
     @Inject
-    public void setTrace(BindingTrace trace) {
+    public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 
@@ -52,8 +53,13 @@ public class FunctionAnalyzerExtension {
     }
 
     @NotNull
-    private List<AnalyzerExtension> getExtensions(@NotNull FunctionDescriptor functionDescriptor) {
-        return Collections.emptyList();
+    private static List<AnalyzerExtension> getExtensions(@NotNull FunctionDescriptor functionDescriptor) {
+        List<AnalyzerExtension> list = new ArrayList<AnalyzerExtension>();
+        if (functionDescriptor instanceof SimpleFunctionDescriptor &&
+                ((SimpleFunctionDescriptor) functionDescriptor).isInline()) {
+            list.add(InlineAnalyzerExtension.INSTANCE);
+        }
+        return list;
     }
 
 }
