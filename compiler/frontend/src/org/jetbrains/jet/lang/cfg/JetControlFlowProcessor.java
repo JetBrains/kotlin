@@ -339,7 +339,7 @@ public class JetControlFlowProcessor {
                 generateInstructions(thenBranch, inCondition);
             }
             else {
-                builder.readUnit(expression);
+                builder.loadUnit(expression);
             }
             Label resultLabel = builder.createUnboundLabel();
             builder.jump(resultLabel);
@@ -349,7 +349,7 @@ public class JetControlFlowProcessor {
                 generateInstructions(elseBranch, inCondition);
             }
             else {
-                builder.readUnit(expression);
+                builder.loadUnit(expression);
             }
             builder.bindLabel(resultLabel);
         }
@@ -493,7 +493,7 @@ public class JetControlFlowProcessor {
             }
             builder.jump(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
-            builder.readUnit(expression);
+            builder.loadUnit(expression);
         }
 
         @Override
@@ -513,7 +513,7 @@ public class JetControlFlowProcessor {
             }
             builder.jumpOnTrue(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
-            builder.readUnit(expression);
+            builder.loadUnit(expression);
         }
 
         @Override
@@ -549,7 +549,7 @@ public class JetControlFlowProcessor {
 
             builder.nondeterministicJump(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
-            builder.readUnit(expression);
+            builder.loadUnit(expression);
         }
 
         @Override
@@ -644,7 +644,7 @@ public class JetControlFlowProcessor {
                 generateInstructions(statement, false);
             }
             if (statements.isEmpty()) {
-                builder.readUnit(expression);
+                builder.loadUnit(expression);
             }
         }
 

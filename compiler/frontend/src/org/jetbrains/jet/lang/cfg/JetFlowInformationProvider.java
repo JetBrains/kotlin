@@ -167,7 +167,7 @@ public class JetFlowInformationProvider {
         Collection<JetElement> unreachableElements = Lists.newArrayList();
         for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
             if (deadInstruction instanceof JetElementInstruction &&
-                !(deadInstruction instanceof ReadUnitValueInstruction)) {
+                !(deadInstruction instanceof LoadUnitValueInstruction)) {
                 unreachableElements.add(((JetElementInstruction) deadInstruction).getElement());
             }
         }

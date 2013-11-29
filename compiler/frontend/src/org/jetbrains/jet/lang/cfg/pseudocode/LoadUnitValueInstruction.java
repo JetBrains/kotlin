@@ -19,15 +19,15 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
-public class ReadUnitValueInstruction extends InstructionWithNext {
+public class LoadUnitValueInstruction extends InstructionWithNext {
 
-    public ReadUnitValueInstruction(@NotNull JetExpression expression) {
+    public LoadUnitValueInstruction(@NotNull JetExpression expression) {
         super(expression);
     }
 
     @Override
     public void accept(InstructionVisitor visitor) {
-        visitor.visitReadUnitValue(this);
+        visitor.visitLoadUnitValue(this);
     }
 
     @Override
@@ -37,6 +37,6 @@ public class ReadUnitValueInstruction extends InstructionWithNext {
 
     @Override
     protected Instruction createCopy() {
-        return new ReadUnitValueInstruction((JetExpression) element);
+        return new LoadUnitValueInstruction((JetExpression) element);
     }
 }

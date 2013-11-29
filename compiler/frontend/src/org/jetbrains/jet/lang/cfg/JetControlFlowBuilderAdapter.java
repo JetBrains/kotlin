@@ -33,9 +33,9 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void readUnit(@NotNull JetExpression expression) {
+    public void loadUnit(@NotNull JetExpression expression) {
         assert builder != null;
-        builder.readUnit(expression);
+        builder.loadUnit(expression);
     }
 
     @Override
