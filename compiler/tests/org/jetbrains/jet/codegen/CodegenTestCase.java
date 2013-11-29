@@ -20,9 +20,19 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.asm4.ClassReader;
+import org.jetbrains.asm4.tree.ClassNode;
+import org.jetbrains.asm4.tree.MethodNode;
+import org.jetbrains.asm4.tree.analysis.Analyzer;
+import org.jetbrains.asm4.tree.analysis.AnalyzerException;
+import org.jetbrains.asm4.tree.analysis.BasicValue;
+import org.jetbrains.asm4.tree.analysis.SimpleVerifier;
+import org.jetbrains.asm4.util.Textifier;
+import org.jetbrains.asm4.util.TraceMethodVisitor;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
@@ -32,6 +42,7 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -117,7 +128,14 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected GeneratedClassLoader generateAndCreateClassLoader() {
-        return createClassLoader(generateClassesInFile());
+        ClassFileFactory factory = generateClassesInFile();
+        GeneratedClassLoader loader = createClassLoader(factory);
+
+        if (!verifyAllFilesWithAsm(factory, loader)) {
+            fail("Verification failed: see exceptions above");
+        }
+
+        return loader;
     }
 
     @NotNull
@@ -193,6 +211,44 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             }
         }
         return classFileFactory;
+    }
+
+    private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {
+        boolean noErrors = true;
+        for (OutputFile file : factory.asList()) {
+            noErrors &= verifyWithAsm(file.asByteArray(), loader);
+        }
+        return noErrors;
+    }
+
+    private static boolean verifyWithAsm(@NotNull byte[] bytecode, ClassLoader loader) {
+        ClassNode classNode = new ClassNode();
+        new ClassReader(bytecode).accept(classNode, 0);
+
+        SimpleVerifier verifier = new SimpleVerifier();
+        verifier.setClassLoader(loader);
+        Analyzer<BasicValue> analyzer = new Analyzer<BasicValue>(verifier);
+
+        boolean noErrors = true;
+        for (MethodNode method : classNode.methods) {
+            try {
+                analyzer.analyze(classNode.name, method);
+            }
+            catch (AnalyzerException e) {
+                System.err.println(classNode.name + "::" + method.name + method.desc);
+
+                // Print the erroneous instruction
+                TraceMethodVisitor tmv = new TraceMethodVisitor(new Textifier());
+                e.node.accept(tmv);
+                PrintWriter pw = new PrintWriter(System.err);
+                tmv.p.print(pw);
+                pw.flush();
+
+                e.printStackTrace();
+                noErrors = false;
+            }
+        }
+        return noErrors;
     }
 
     @NotNull
