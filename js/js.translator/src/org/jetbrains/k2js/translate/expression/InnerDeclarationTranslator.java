@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.context.UsageTracker;
 
 import java.util.List;
 
@@ -39,15 +40,18 @@ abstract class InnerDeclarationTranslator {
     }
 
     public JsExpression translate(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
-        boolean hasCaptured = context.usageTracker().hasCaptured();
+        UsageTracker usageTracker = context.usageTracker();
+        assert usageTracker != null : "Usage tracker should not be null for InnerDeclarationTranslator";
+
+        boolean hasCaptured = usageTracker.hasCaptured();
         if (!hasCaptured && self == JsLiteral.NULL) {
             return createExpression(nameRef, self);
         }
 
         JsInvocation invocation = createInvocation(nameRef, self);
         if (hasCaptured) {
-            final List<JsExpression> expressions = invocation.getArguments();
-            context.usageTracker().forEachCaptured(new Consumer<CallableDescriptor>() {
+            final List<JsExpression> invocationArguments = invocation.getArguments();
+            usageTracker.forEachCaptured(new Consumer<CallableDescriptor>() {
                 @Override
                 public void consume(CallableDescriptor descriptor) {
                     JsName name;
@@ -55,11 +59,13 @@ abstract class InnerDeclarationTranslator {
                         name = context.getNameForDescriptor(descriptor);
                     }
                     else {
-                        name = ((JsNameRef) context.getAliasForDescriptor(descriptor)).getName();
-                        assert name != null;
+                        JsExpression alias = context.getAliasForDescriptor(descriptor);
+                        assert alias != null : "Alias not found for captured descriptor: " + descriptor;
+                        name = ((JsNameRef) alias).getName();
+                        assert name != null : "Descriptor's alias don't have name: " + descriptor;
                     }
                     fun.getParameters().add(new JsParameter(name));
-                    expressions.add(name.makeRef());
+                    invocationArguments.add(name.makeRef());
                 }
             });
         }

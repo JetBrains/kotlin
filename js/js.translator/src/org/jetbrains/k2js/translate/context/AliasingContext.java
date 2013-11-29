@@ -138,7 +138,10 @@ public class AliasingContext {
                 aliasesForDescriptors.put(singletonMap.keySet().iterator().next(), singletonMap.values().iterator().next());
             }
             JsExpression prev = aliasesForDescriptors.put(descriptor, alias);
-            assert prev == null;
+            assert prev == null : "Alias for descriptor already registered." +
+                                  " Descriptor: " + descriptor +
+                                  " prev alias: " + prev +
+                                  " new alias: " + alias;
         }
     }
 }
