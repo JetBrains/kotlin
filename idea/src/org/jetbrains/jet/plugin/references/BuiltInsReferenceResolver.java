@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -46,7 +45,10 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private volatile BindingContext bindingContext;
@@ -178,20 +180,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         else {
             return null;
         }
-    }
-
-    @NotNull
-    public Collection<PsiElement> resolveBuiltInSymbol(
-            @NotNull BindingContext originalContext,
-            @Nullable JetReferenceExpression referenceExpression
-    ) {
-        if (bindingContext == null) {
-            return Collections.emptyList();
-        }
-
-        DeclarationDescriptor declarationDescriptor = originalContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-
-        return declarationDescriptor != null ? resolveBuiltInSymbol(declarationDescriptor) : Collections.<PsiElement>emptyList();
     }
 
     @NotNull
