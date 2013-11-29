@@ -18,6 +18,7 @@ package org.jetbrains.jet.generators.tests;
 
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cfg.AbstractControlFlowTest;
 import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest;
 import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
@@ -265,6 +266,13 @@ public class GenerateTests {
                 AbstractKotlincExecutableTest.class,
                 testModel("compiler/testData/cli/jvm", true, "args", "doJvmTest"),
                 testModel("compiler/testData/cli/js", true, "args", "doJsTest")
+        );
+
+        generateTest(
+                "compiler/tests/",
+                "ControlFlowTestGenerated",
+                AbstractControlFlowTest.class,
+                testModel("compiler/testData/cfg")
         );
 
         generateTest(
