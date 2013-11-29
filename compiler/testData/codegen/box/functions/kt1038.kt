@@ -39,7 +39,7 @@ fun<TItem> Iterable<TItem>.where(predicate : (TItem)->Boolean) : Iterable<TItem>
                         if (predicate(next))
                             return next
                     }
-                    null
+                    return null
                 }
                     { yielder() }
             }

@@ -49,6 +49,7 @@ import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORW
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class JetFlowInformationProvider {
@@ -58,13 +59,21 @@ public class JetFlowInformationProvider {
     private final BindingTrace trace;
     private PseudocodeVariablesData pseudocodeVariablesData;
 
-    public JetFlowInformationProvider(
+    private JetFlowInformationProvider(
             @NotNull JetElement declaration,
-            @NotNull BindingTrace trace) {
-
+            @NotNull BindingTrace trace,
+            @NotNull Pseudocode pseudocode
+    ) {
         subroutine = declaration;
         this.trace = trace;
-        pseudocode = new JetControlFlowProcessor(trace).generatePseudocode(declaration);
+        this.pseudocode = pseudocode;
+    }
+
+    public JetFlowInformationProvider(
+            @NotNull JetElement declaration,
+            @NotNull BindingTrace trace
+    ) {
+        this(declaration, trace, new JetControlFlowProcessor(trace).generatePseudocode(declaration));
     }
 
     public PseudocodeVariablesData getPseudocodeVariablesData() {
@@ -84,9 +93,10 @@ public class JetFlowInformationProvider {
             recordInitializedVariables();
         }
 
-        if (isLocalObject) return;
-
         checkDefiniteReturn(expectedReturnType);
+        checkDefiniteReturnInLocalFunctions();
+
+        if (isLocalObject) return;
 
         if (!isPropertyAccessor) {
             // Property accessor is checked through initialization of a class/object or package properties (at 'checkDeclarationContainer')
@@ -155,6 +165,21 @@ public class JetFlowInformationProvider {
                     }
                 }
             });
+        }
+    }
+
+    private void checkDefiniteReturnInLocalFunctions() {
+        for (LocalFunctionDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            JetElement element = localDeclarationInstruction.getElement();
+            if (element instanceof JetNamedFunction) {
+                JetNamedFunction localFunction = (JetNamedFunction) element;
+                SimpleFunctionDescriptor functionDescriptor = trace.getBindingContext().get(BindingContext.FUNCTION, localFunction);
+                JetType expectedType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
+
+                JetFlowInformationProvider providerForLocalDeclaration =
+                        new JetFlowInformationProvider(localFunction, trace, localDeclarationInstruction.getBody());
+                providerForLocalDeclaration.checkDefiniteReturn(expectedType != null ? expectedType : NO_EXPECTED_TYPE);
+            }
         }
     }
 

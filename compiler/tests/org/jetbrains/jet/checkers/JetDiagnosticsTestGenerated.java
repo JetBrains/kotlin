@@ -1392,6 +1392,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis")
+        @InnerTestClasses({ControlFlowAnalysis.DefiniteReturn.class})
         public static class ControlFlowAnalysis extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInControlFlowAnalysis() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/controlFlowAnalysis"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1572,6 +1573,35 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unreachableCode.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn")
+            public static class DefiniteReturn extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInDefiniteReturn() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("kt3444_ReturnFromLocalFunctions.kt")
+                public void testKt3444_ReturnFromLocalFunctions() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/kt3444_ReturnFromLocalFunctions.kt");
+                }
+                
+                @TestMetadata("kt4034.kt")
+                public void testKt4034() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/kt4034.kt");
+                }
+                
+                @TestMetadata("ReturnFromFunctionInObject.kt")
+                public void testReturnFromFunctionInObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/ReturnFromFunctionInObject.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("ControlFlowAnalysis");
+                suite.addTestSuite(ControlFlowAnalysis.class);
+                suite.addTestSuite(DefiniteReturn.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/controlStructures")
@@ -6619,7 +6649,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTest(Cast.innerSuite());
             suite.addTestSuite(CheckArguments.class);
             suite.addTestSuite(ClassObjects.class);
-            suite.addTestSuite(ControlFlowAnalysis.class);
+            suite.addTest(ControlFlowAnalysis.innerSuite());
             suite.addTestSuite(ControlStructures.class);
             suite.addTestSuite(DataClasses.class);
             suite.addTest(DataFlow.innerSuite());

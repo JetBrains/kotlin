@@ -12,7 +12,7 @@ fun Array<String>.test1Nested(): Array<String> {
 fun Array<String>.test2() : Array<String> {
     class Z2() {
         fun run(): Array<String> {
-            this@test2
+            return this@test2
         }
     }
     return Z2().run()
@@ -34,7 +34,7 @@ fun Array<String>.test2Nested() : Array<String> {
 
 fun Array<String>.test3(): Array<String> {
     fun local(): Array<String> {
-        this@test3
+        return this@test3
     }
     return local()
 }
@@ -42,7 +42,7 @@ fun Array<String>.test3(): Array<String> {
 fun Array<String>.test3Nested(): Array<String> {
     fun local(): Array<String> {
         fun local2(): Array<String> {
-            this@test3Nested
+            return this@test3Nested
         }
         return local2()
     }
