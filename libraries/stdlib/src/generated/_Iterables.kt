@@ -226,6 +226,26 @@ public fun <T: Comparable<T>> Iterable<T>.max() : T? {
 }
 
 /**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>, T: Any> Iterable<T>.maxBy(f: (T) -> R) : T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    
+    var maxElem = iterator.next()
+    var maxValue = f(maxElem)
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
  * Returns the smallest element or null if there are no elements
  */
 public fun <T: Comparable<T>> Iterable<T>.min() : T? {
@@ -236,6 +256,26 @@ public fun <T: Comparable<T>> Iterable<T>.min() : T? {
         }
     }
     return min
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>, T: Any> Iterable<T>.minBy(f: (T) -> R) : T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    
+    var minElem = iterator.next()
+    var minValue = f(minElem)
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
 }
 
 /**

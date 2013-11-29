@@ -240,6 +240,25 @@ public fun <T: Comparable<T>> Array<out T>.max() : T? {
 }
 
 /**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>, T: Any> Array<out T>.maxBy(f: (T) -> R) : T? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
  * Returns the smallest element or null if there are no elements
  */
 public fun <T: Comparable<T>> Array<out T>.min() : T? {
@@ -250,6 +269,25 @@ public fun <T: Comparable<T>> Array<out T>.min() : T? {
         }
     }
     return min
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>, T: Any> Array<out T>.minBy(f: (T) -> R) : T? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
 }
 
 /**

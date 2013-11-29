@@ -119,6 +119,34 @@ class ArraysTest {
         expect("b", { array("a", "b").max() })
     }
 
+    test fun minBy() {
+        expect(null, { array<Int>().minBy { it } })
+        expect(1, { array(1).minBy { it } })
+        expect(3, { array(2, 3).minBy { -it } })
+        expect('a', { array('a', 'b').minBy { "x$it" } })
+        expect("b", { array("b", "abc").minBy { it.length } })
+    }
+
+    test fun maxBy() {
+        expect(null, { array<Int>().maxBy { it } })
+        expect(1, { array(1).maxBy { it } })
+        expect(2, { array(2, 3).maxBy { -it } })
+        expect('b', { array('a', 'b').maxBy { "x$it" } })
+        expect("abc", { array("b", "abc").maxBy { it.length } })
+    }
+
+    test fun minByEvaluateOnce() {
+        var c = 0
+        expect(1, { array(5, 4, 3, 2, 1).minBy { c++; it * it } })
+        assertEquals(5, c)
+    }
+
+    test fun maxByEvaluateOnce() {
+        var c = 0
+        expect(5, { array(5, 4, 3, 2, 1).maxBy { c++; it * it } })
+        assertEquals(5, c)
+    }
+
     test fun sum() {
         expect(0) { array<Int>().sum() }
         expect(14) { array(2, 3, 9).sum() }

@@ -226,6 +226,44 @@ public inline fun <R, C: MutableCollection<in R>> CharArray.mapTo(result: C, tra
 }
 
 /**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> CharArray.maxBy(f: (Char) -> R) : Char? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> CharArray.minBy(f: (Char) -> R) : Char? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun CharArray.partition(predicate: (Char) -> Boolean) : Pair<List<Char>, List<Char>> {
