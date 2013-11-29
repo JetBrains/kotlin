@@ -56,7 +56,7 @@ public class JetFlowInformationProvider {
     private final JetElement subroutine;
     private final Pseudocode pseudocode;
     private final PseudocodeVariablesData pseudocodeVariablesData;
-    private BindingTrace trace;
+    private final BindingTrace trace;
 
     public JetFlowInformationProvider(
             @NotNull JetElement declaration,
