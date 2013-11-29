@@ -438,7 +438,7 @@ public class JetControlFlowProcessor {
                     }
                     JetParameter catchParameter = catchClause.getCatchParameter();
                     if (catchParameter != null) {
-                        builder.declare(catchParameter);
+                        builder.declareParameter(catchParameter);
                         builder.write(catchParameter, catchParameter);
                     }
                     JetExpression catchBody = catchClause.getCatchBody();
@@ -629,7 +629,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitParameter(@NotNull JetParameter parameter) {
-            builder.declare(parameter);
+            builder.declareParameter(parameter);
             JetExpression defaultValue = parameter.getDefaultValue();
             if (defaultValue != null) {
                 generateInstructions(defaultValue, inCondition);
@@ -697,7 +697,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitProperty(@NotNull JetProperty property) {
-            builder.declare(property);
+            builder.declareVariable(property);
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
                 generateInstructions(initializer, false);
@@ -720,7 +720,7 @@ public class JetControlFlowProcessor {
             }
             List<JetMultiDeclarationEntry> entries = declaration.getEntries();
             for (JetMultiDeclarationEntry entry : entries) {
-                builder.declare(entry);
+                builder.declareVariable(entry);
                 builder.write(entry, entry);
             }
         }

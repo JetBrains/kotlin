@@ -237,12 +237,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void declare(@NotNull JetParameter parameter) {
+        public void declareParameter(@NotNull JetParameter parameter) {
             add(new VariableDeclarationInstruction(parameter));
         }
 
         @Override
-        public void declare(@NotNull JetVariableDeclaration property) {
+        public void declareVariable(@NotNull JetVariableDeclaration property) {
             add(new VariableDeclarationInstruction(property));
         }
 

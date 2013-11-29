@@ -42,8 +42,8 @@ public interface JetControlFlowBuilder {
     Label getExitPoint(@NotNull JetElement labelElement);
 
     // Declarations
-    void declare(@NotNull JetParameter parameter);
-    void declare(@NotNull JetVariableDeclaration property);
+    void declareParameter(@NotNull JetParameter parameter);
+    void declareVariable(@NotNull JetVariableDeclaration property);
     void declareFunction(@NotNull JetElement subroutine, @NotNull Pseudocode pseudocode);
 
     // Labels
