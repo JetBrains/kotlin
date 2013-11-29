@@ -35,6 +35,7 @@ public class UnsupportedElementInstruction extends InstructionWithNext {
         return "unsupported(" + element + " : " + element.getText() + ")";
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new UnsupportedElementInstruction(element);

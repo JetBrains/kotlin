@@ -62,6 +62,7 @@ public class LocalFunctionDeclarationInstruction extends InstructionWithNext {
         return "d" + "(" + element.getText() + ")";
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new LocalFunctionDeclarationInstruction(element, body);

@@ -35,6 +35,7 @@ public class ReadValueInstruction extends InstructionWithNext {
         return "r(" + element.getText() + ")";
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new ReadValueInstruction(element);

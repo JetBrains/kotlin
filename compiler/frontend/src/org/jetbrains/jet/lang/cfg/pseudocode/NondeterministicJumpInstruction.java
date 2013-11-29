@@ -85,6 +85,7 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
         return sb.toString();
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return createCopy(getTargetLabels());

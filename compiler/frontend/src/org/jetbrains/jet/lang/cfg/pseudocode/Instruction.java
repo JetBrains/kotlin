@@ -32,7 +32,7 @@ public interface Instruction {
     @NotNull
     Collection<Instruction> getNextInstructions();
 
-    void accept(InstructionVisitor visitor);
+    void accept(@NotNull InstructionVisitor visitor);
 
     @NotNull
     Collection<Instruction> getCopies();

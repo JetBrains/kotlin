@@ -45,6 +45,7 @@ public class VariableDeclarationInstruction extends InstructionWithNext {
         return "v(" + element.getText() + ")";
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         if (element instanceof JetParameter) {

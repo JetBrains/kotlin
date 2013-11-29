@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElement;
 
 public abstract class JetElementInstructionImpl extends InstructionImpl implements JetElementInstruction {
+    @NotNull
     protected final JetElement element;
 
     public JetElementInstructionImpl(@NotNull JetElement element) {

@@ -35,6 +35,7 @@ public class LoadUnitValueInstruction extends InstructionWithNext {
         return "read (Unit)";
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new LoadUnitValueInstruction((JetExpression) element);

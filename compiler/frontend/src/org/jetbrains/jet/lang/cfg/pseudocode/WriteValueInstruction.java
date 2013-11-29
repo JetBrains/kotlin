@@ -35,7 +35,7 @@ public class WriteValueInstruction extends InstructionWithNext {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitWriteValue(this);
     }
 
@@ -48,6 +48,7 @@ public class WriteValueInstruction extends InstructionWithNext {
         return "w(" + lValue.getText() + ")";
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new WriteValueInstruction(element, lValue);
