@@ -67,6 +67,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         builder.enterSubroutine(subroutine);
     }
 
+    @NotNull
     @Override
     public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
         super.exitSubroutine(subroutine);
@@ -165,11 +166,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             return returnSubroutine;// subroutineInfo.empty() ? null : subroutineInfo.peek().getElement();
         }
 
+        @NotNull
         @Override
         public Label getEntryPoint(@NotNull JetElement labelElement) {
             return elementToBlockInfo.get(labelElement).getEntryPoint();
         }
 
+        @NotNull
         @Override
         public Label getExitPoint(@NotNull JetElement labelElement) {
             BreakableBlockInfo blockInfo = elementToBlockInfo.get(labelElement);
@@ -201,6 +204,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             }
         }
 
+        @NotNull
         @Override
         public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
             bindLabel(getExitPoint(subroutine));
@@ -211,7 +215,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             pseudocode.addSinkInstruction(new SubroutineSinkInstruction(subroutine, "<SINK>"));
             elementToBlockInfo.remove(subroutine);
             allBlocks.pop();
-            return null;
+            return pseudocode;
         }
 
         @Override
@@ -277,13 +281,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void nondeterministicJump(Label label) {
+        public void nondeterministicJump(@NotNull Label label) {
             handleJumpInsideTryFinally(label);
             add(new NondeterministicJumpInstruction(label));
         }
 
         @Override
-        public void nondeterministicJump(List<Label> labels) {
+        public void nondeterministicJump(@NotNull List<Label> labels) {
             //todo
             //handleJumpInsideTryFinally(label);
             add(new NondeterministicJumpInstruction(labels));

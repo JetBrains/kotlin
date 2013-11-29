@@ -21,14 +21,31 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.*;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface JetControlFlowBuilder {
-    void read(@NotNull JetElement element);
-    void readUnit(@NotNull JetExpression expression);
+    // Subroutines
+    void enterSubroutine(@NotNull JetElement subroutine);
 
-    // General label management
+    @NotNull
+    Pseudocode exitSubroutine(@NotNull JetElement subroutine);
+
+    @NotNull
+    JetElement getCurrentSubroutine();
+    @Nullable
+    JetElement getReturnSubroutine();
+
+    // Entry/exit points
+    @NotNull
+    Label getEntryPoint(@NotNull JetElement labelElement);
+    @NotNull
+    Label getExitPoint(@NotNull JetElement labelElement);
+
+    // Declarations
+    void declare(@NotNull JetParameter parameter);
+    void declare(@NotNull JetVariableDeclaration property);
+
+    // Labels
     @NotNull
     Label createUnboundLabel();
     @NotNull
@@ -40,13 +57,14 @@ public interface JetControlFlowBuilder {
     void jump(@NotNull Label label);
     void jumpOnFalse(@NotNull Label label);
     void jumpOnTrue(@NotNull Label label);
-    void nondeterministicJump(Label label); // Maybe, jump to label
-    void nondeterministicJump(List<Label> label);
+    void nondeterministicJump(@NotNull Label label); // Maybe, jump to label
+    void nondeterministicJump(@NotNull List<Label> label);
     void jumpToError();
 
-    // Entry/exit points
-    Label getEntryPoint(@NotNull JetElement labelElement);
-    Label getExitPoint(@NotNull JetElement labelElement);
+    void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine);
+    void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine);
+
+    void throwException(@NotNull JetThrowExpression throwExpression);
 
     // Loops
     LoopInfo enterLoop(@NotNull JetExpression expression, @Nullable Label loopExitPoint, @Nullable Label conditionEntryPoint);
@@ -55,33 +73,17 @@ public interface JetControlFlowBuilder {
     @Nullable
     JetElement getCurrentLoop();
 
-    // Finally
+    // Try-Finally
     void enterTryFinally(@NotNull GenerationTrigger trigger);
     void exitTryFinally();
 
-    // Subroutines
-    void enterSubroutine(@NotNull JetElement subroutine);
+    void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel);
 
-    Pseudocode exitSubroutine(@NotNull JetElement subroutine);
-
-    @NotNull
-    JetElement getCurrentSubroutine();
-    @Nullable
-    JetElement getReturnSubroutine();
-    
-    void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine);
-
-    void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine);
-    
-    void throwException(@NotNull JetThrowExpression throwExpression);
-
+    // Reading values
+    void readUnit(@NotNull JetExpression expression);
+    void read(@NotNull JetElement element);
     void write(@NotNull JetElement assignment, @NotNull JetElement lValue);
     
-    void declare(@NotNull JetParameter parameter);
-    void declare(@NotNull JetVariableDeclaration property);
-
     // Other
     void unsupported(JetElement element);
-
-    void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel);
 }

@@ -78,13 +78,13 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     }
 
     @Override
-    public void nondeterministicJump(Label label) {
+    public void nondeterministicJump(@NotNull Label label) {
         assert builder != null;
         builder.nondeterministicJump(label);
     }
 
     @Override
-    public void nondeterministicJump(List<Label> labels) {
+    public void nondeterministicJump(@NotNull List<Label> labels) {
         assert builder != null;
         builder.nondeterministicJump(labels);
     }
@@ -101,11 +101,13 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
         builder.throwException(throwExpression);
     }
     
+    @NotNull
     public Label getEntryPoint(@NotNull JetElement labelElement) {
         assert builder != null;
         return builder.getEntryPoint(labelElement);
     }
 
+    @NotNull
     @Override
     public Label getExitPoint(@NotNull JetElement labelElement) {
         assert builder != null;
@@ -149,6 +151,7 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
         builder.enterSubroutine(subroutine);
     }
 
+    @NotNull
     @Override
     public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
         assert builder != null;
