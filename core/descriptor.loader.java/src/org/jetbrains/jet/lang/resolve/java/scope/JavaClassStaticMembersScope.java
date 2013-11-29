@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
+public final class JavaClassStaticMembersScope extends JavaClassMembersScope implements JavaPackageFragmentScope {
     @NotNull
     private final JavaClass javaClass;
 
@@ -48,6 +48,7 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
         return Collections.emptyList();
     }
 
+    @Override
     @NotNull
     public Collection<FqName> getSubPackages() {
         List<FqName> result = Lists.newArrayList();

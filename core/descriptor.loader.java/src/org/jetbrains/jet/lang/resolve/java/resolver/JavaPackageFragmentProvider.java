@@ -28,7 +28,9 @@ import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageFragmentScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaPurePackageScope;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
@@ -93,20 +95,12 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
     @NotNull
     @Override
     public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
-        PackageFragmentDescriptor packageFragment = getOrCreatePackage(fqName);
+        JavaPackageFragmentDescriptor packageFragment = getOrCreatePackage(fqName);
         if (packageFragment == null) {
             return Collections.emptyList();
         }
 
-        JetScope scope = packageFragment.getMemberScope();
-        // TODO 2 replace instanceof with interface
-        if (scope instanceof JavaPackageScope) {
-            return ((JavaPackageScope) scope).getSubPackages();
-        }
-        if (scope instanceof JavaClassStaticMembersScope) {
-            return ((JavaClassStaticMembersScope) scope).getSubPackages();
-        }
-        return Collections.emptyList();
+        return packageFragment.getMemberScope().getSubPackages();
     }
 
     @Nullable
@@ -115,10 +109,11 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
             return packageFragments.get(fqName);
         }
 
-        JavaPackageFragmentDescriptor packageFragment = JavaPackageFragmentDescriptor.create(this, fqName, new NullableFunction<JavaPackageFragmentDescriptor, JetScope>() {
+        JavaPackageFragmentDescriptor packageFragment = JavaPackageFragmentDescriptor.create(
+                this, fqName, new NullableFunction<JavaPackageFragmentDescriptor, JavaPackageFragmentScope>() {
             @Override
             @Nullable
-            public JetScope fun(JavaPackageFragmentDescriptor packageFragment) {
+            public JavaPackageFragmentScope fun(JavaPackageFragmentDescriptor packageFragment) {
                 return createPackageScope(fqName, packageFragment);
             }
         });
@@ -128,7 +123,7 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
     }
 
     @Nullable
-    private JetScope createPackageScope(
+    private JavaPackageFragmentScope createPackageScope(
             @NotNull FqName fqName,
             @NotNull PackageFragmentDescriptor packageFragment
     ) {
@@ -142,11 +137,14 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
             if (kotlinClass != null) {
                 JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinClass);
                 if (kotlinPackageScope != null) {
-                    return kotlinPackageScope;
+                    return new JavaFullPackageScope(packageFragment, kotlinPackageScope,
+                                                    new JavaPurePackageScope(packageFragment, javaPackage, fqName, memberResolver,
+                                                                             /* includeCompiledKotlinClasses = */ false));
                 }
             }
 
-            return new JavaPackageScope(packageFragment, javaPackage, fqName, memberResolver);
+            return new JavaPurePackageScope(packageFragment, javaPackage, fqName, memberResolver,
+                                            /* includeCompiledKotlinClasses = */ true);
         }
 
         JavaClass javaClass = javaClassFinder.findClass(fqName);
@@ -165,7 +163,7 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
         Collection<JavaClass> classes = DescriptorResolverUtils.getClassesInPackage(javaPackage);
         List<Name> result = new ArrayList<Name>(classes.size());
         for (JavaClass javaClass : classes) {
-            if (DescriptorResolverUtils.isCompiledKotlinClass(javaClass)) {
+            if (!DescriptorResolverUtils.isCompiledKotlinPackageClass(javaClass)) {
                 result.add(javaClass.getName());
             }
         }

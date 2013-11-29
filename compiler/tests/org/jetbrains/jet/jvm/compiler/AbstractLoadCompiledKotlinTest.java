@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
@@ -78,11 +78,11 @@ public abstract class AbstractLoadCompiledKotlinTest extends TestCaseWithTmpdir 
             }
         }
         if (hasOwnMembers) {
-            assert scope instanceof DeserializedPackageMemberScope : "If namespace has members, members should be inside deserialized scope.";
+            assert scope instanceof JavaFullPackageScope : "If namespace has members, members should be inside deserialized scope.";
         }
         else {
             //NOTE: should probably change
-            assert !(scope instanceof DeserializedPackageMemberScope) : "We don't use deserialized scopes for namespaces without members.";
+            assert !(scope instanceof JavaFullPackageScope) : "We don't use deserialized scopes for namespaces without members.";
         }
     }
 }

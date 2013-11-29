@@ -47,10 +47,8 @@ public final class DescriptorResolverUtils {
 
     public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
         if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
-            FqName fqName = javaClass.getFqName();
-            if (fqName != null && PackageClassUtils.isPackageClassFqName(fqName)) {
-                return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE) != null;
-            }
+            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE) != null
+                   || javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT) != null;
         }
         return false;
     }

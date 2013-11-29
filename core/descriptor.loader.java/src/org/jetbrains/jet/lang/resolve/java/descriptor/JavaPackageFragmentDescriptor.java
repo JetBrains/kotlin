@@ -26,8 +26,8 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageFragmentScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
@@ -35,12 +35,12 @@ import java.util.Collections;
 public class JavaPackageFragmentDescriptor extends DeclarationDescriptorImpl implements PackageFragmentDescriptor {
     private final JavaPackageFragmentProvider provider;
     private final FqName fqName;
-    private final JetScope memberScope;
+    private final JavaPackageFragmentScope memberScope;
 
     private JavaPackageFragmentDescriptor(
             @NotNull JavaPackageFragmentProvider provider,
             @NotNull FqName fqName,
-            @NotNull NullableFunction<JavaPackageFragmentDescriptor, JetScope> scopeFactory
+            @NotNull NullableFunction<JavaPackageFragmentDescriptor, JavaPackageFragmentScope> scopeFactory
     ) {
         super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
         this.provider = provider;
@@ -52,7 +52,7 @@ public class JavaPackageFragmentDescriptor extends DeclarationDescriptorImpl imp
     public static JavaPackageFragmentDescriptor create(
             @NotNull JavaPackageFragmentProvider provider,
             @NotNull FqName fqName,
-            @NotNull NullableFunction<JavaPackageFragmentDescriptor, JetScope> scopeFactory
+            @NotNull NullableFunction<JavaPackageFragmentDescriptor, JavaPackageFragmentScope> scopeFactory
     ) {
         JavaPackageFragmentDescriptor descriptor = new JavaPackageFragmentDescriptor(provider, fqName, scopeFactory);
         return descriptor.memberScope == null ? null : descriptor;
@@ -77,7 +77,7 @@ public class JavaPackageFragmentDescriptor extends DeclarationDescriptorImpl imp
 
     @NotNull
     @Override
-    public JetScope getMemberScope() {
+    public JavaPackageFragmentScope getMemberScope() {
         return memberScope;
     }
 

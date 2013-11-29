@@ -44,7 +44,8 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescrip
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaPurePackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -126,7 +127,10 @@ public class JetTypeMapper extends BindingTraceAware {
             @NotNull DeclarationDescriptor descriptor,
             boolean insideModule
     ) {
-        if (!(packageFragment instanceof JavaPackageFragmentDescriptor) || packageFragment.getMemberScope() instanceof DeserializedPackageMemberScope) {
+        JetScope packageScope = packageFragment.getMemberScope();
+        if (!(packageFragment instanceof JavaPackageFragmentDescriptor)
+            || packageScope instanceof DeserializedPackageMemberScope
+            || packageScope instanceof JavaFullPackageScope) {
             JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
             if (insideModule && file != null) {
                 return NamespaceCodegen.getNamespacePartInternalName(file);
@@ -136,8 +140,8 @@ public class JetTypeMapper extends BindingTraceAware {
             }
         }
 
-        if (!(packageFragment.getMemberScope() instanceof JavaClassStaticMembersScope)) {
-            throw new IllegalStateException("Unexpected scope: " + packageFragment.getMemberScope().getClass());
+        if (!(packageScope instanceof JavaClassStaticMembersScope)) {
+            throw new IllegalStateException("Unexpected scope: " + packageScope.getClass());
         }
 
         JavaPackageFragmentProvider javaFragmentProvider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
@@ -153,7 +157,7 @@ public class JetTypeMapper extends BindingTraceAware {
             if (memberScope instanceof JavaClassStaticMembersScope) {
                 r.append("$");
             }
-            else if (memberScope instanceof JavaPackageScope) {
+            else if (memberScope instanceof JavaPurePackageScope || memberScope instanceof JavaFullPackageScope) {
                 r.append("/");
             }
             else {
