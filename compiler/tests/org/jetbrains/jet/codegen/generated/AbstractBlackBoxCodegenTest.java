@@ -94,11 +94,13 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         JetFile firstFile = myFiles.getPsiFiles().get(0);
         String fqName = getPackageClassFqName(JetPsiUtil.getFQName(firstFile)).asString();
 
+        Class<?> aClass = generateClass(fqName);
         try {
-            Method method = generateClass(fqName).getMethod("box");
+            Method method = aClass.getMethod("box");
             String r = (String) method.invoke(null);
             assertEquals("OK", r);
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             System.out.println(generateToText());
             throw ExceptionUtils.rethrow(e);
         }

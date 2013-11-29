@@ -38,7 +38,6 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -183,7 +182,8 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     protected Class<?> generateClass(@NotNull String name) {
         try {
             return generateAndCreateClassLoader().loadClass(name);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             fail("No class file was generated for: " + name);
             return null;
         }
@@ -198,16 +198,24 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 if (DxChecker.RUN_DX_CHECKER) {
                     DxChecker.check(classFileFactory);
                 }
-            } catch (Throwable e) {
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+                System.err.println("Generating instructions as text...");
                 try {
-                    System.out.println(generateToText());
+                    if (classFileFactory == null) {
+                        System.out.println("Cannot generate text: exception was thrown during generation");
+                    }
+                    else {
+                        System.out.println(classFileFactory.createText());
+                    }
                 }
                 catch (Throwable e1) {
                     System.err.println("Exception thrown while trying to generate text, the actual exception follows:");
                     e1.printStackTrace();
                     System.err.println("-----------------------------------------------------------------------------");
                 }
-                throw ExceptionUtils.rethrow(e);
+                fail("See exceptions above");
             }
         }
         return classFileFactory;
