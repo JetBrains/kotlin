@@ -225,7 +225,7 @@ public class JetFlowInformationProvider {
         Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
         Map<Instruction, Edges<Map<VariableDescriptor,VariableInitState>>> initializers = pseudocodeVariablesData.getVariableInitializers();
         recordInitializedVariables(pseudocode, initializers);
-        for (LocalDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
+        for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
             recordInitializedVariables(instruction.getBody(), initializers);
         }
     }

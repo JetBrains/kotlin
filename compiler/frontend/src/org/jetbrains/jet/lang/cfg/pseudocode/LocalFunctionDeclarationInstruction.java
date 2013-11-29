@@ -18,18 +18,17 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetElement;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class LocalDeclarationInstruction extends InstructionWithNext {
+public class LocalFunctionDeclarationInstruction extends InstructionWithNext {
 
     private final Pseudocode body;
     private Instruction sink;
 
-    public LocalDeclarationInstruction(@NotNull JetElement element, Pseudocode body) {
+    public LocalFunctionDeclarationInstruction(@NotNull JetElement element, Pseudocode body) {
         super(element);
         this.body = body;
     }
@@ -55,7 +54,7 @@ public class LocalDeclarationInstruction extends InstructionWithNext {
 
     @Override
     public void accept(InstructionVisitor visitor) {
-        visitor.visitLocalDeclarationInstruction(this);
+        visitor.visitLocalFunctionDeclarationInstruction(this);
     }
 
     @Override
@@ -65,6 +64,6 @@ public class LocalDeclarationInstruction extends InstructionWithNext {
 
     @Override
     protected Instruction createCopy() {
-        return new LocalDeclarationInstruction((JetDeclaration) element, body);
+        return new LocalFunctionDeclarationInstruction(element, body);
     }
 }

@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
-import org.jetbrains.jet.lang.cfg.pseudocode.LocalDeclarationInstruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.LocalFunctionDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.psi.*;
@@ -56,8 +56,8 @@ public class JetControlFlowProcessor {
     public Pseudocode generatePseudocode(@NotNull JetElement subroutine) {
         Pseudocode pseudocode = generate(subroutine);
         ((PseudocodeImpl) pseudocode).postProcess();
-        for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
-            ((PseudocodeImpl)localDeclarationInstruction.getBody()).postProcess();
+        for (LocalFunctionDeclarationInstruction localFunctionDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            ((PseudocodeImpl) localFunctionDeclarationInstruction.getBody()).postProcess();
         }
         return pseudocode;
     }

@@ -74,7 +74,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
         if (!builders.empty()) {
             JetControlFlowInstructionsGeneratorWorker builder = builders.peek();
-            LocalDeclarationInstruction instruction = new LocalDeclarationInstruction(subroutine, worker.getPseudocode());
+            LocalFunctionDeclarationInstruction instruction = new LocalFunctionDeclarationInstruction(subroutine, worker.getPseudocode());
             builder.add(instruction);
         }
         return worker.getPseudocode();

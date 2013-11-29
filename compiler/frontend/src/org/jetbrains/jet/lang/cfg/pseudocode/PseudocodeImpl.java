@@ -74,7 +74,7 @@ public class PseudocodeImpl implements Pseudocode {
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
 
-    private Set<LocalDeclarationInstruction> localDeclarations = null;
+    private Set<LocalFunctionDeclarationInstruction> localDeclarations = null;
     //todo getters
     private final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
     private final Map<JetExpression, LoopInfo> loopInfo = Maps.newHashMap();
@@ -99,7 +99,7 @@ public class PseudocodeImpl implements Pseudocode {
 
     @NotNull
     @Override
-    public Set<LocalDeclarationInstruction> getLocalDeclarations() {
+    public Set<LocalFunctionDeclarationInstruction> getLocalDeclarations() {
         if (localDeclarations == null) {
             localDeclarations = getLocalDeclarations(this);
         }
@@ -107,12 +107,12 @@ public class PseudocodeImpl implements Pseudocode {
     }
 
     @NotNull
-    private static Set<LocalDeclarationInstruction> getLocalDeclarations(@NotNull Pseudocode pseudocode) {
-        Set<LocalDeclarationInstruction> localDeclarations = Sets.newLinkedHashSet();
+    private static Set<LocalFunctionDeclarationInstruction> getLocalDeclarations(@NotNull Pseudocode pseudocode) {
+        Set<LocalFunctionDeclarationInstruction> localDeclarations = Sets.newLinkedHashSet();
         for (Instruction instruction : pseudocode.getInstructions()) {
-            if (instruction instanceof LocalDeclarationInstruction) {
-                localDeclarations.add((LocalDeclarationInstruction) instruction);
-                localDeclarations.addAll(getLocalDeclarations(((LocalDeclarationInstruction)instruction).getBody()));
+            if (instruction instanceof LocalFunctionDeclarationInstruction) {
+                localDeclarations.add((LocalFunctionDeclarationInstruction) instruction);
+                localDeclarations.addAll(getLocalDeclarations(((LocalFunctionDeclarationInstruction)instruction).getBody()));
             }
         }
         return localDeclarations;
@@ -287,7 +287,7 @@ public class PseudocodeImpl implements Pseudocode {
             }
 
             @Override
-            public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
+            public void visitLocalFunctionDeclarationInstruction(LocalFunctionDeclarationInstruction instruction) {
                 ((PseudocodeImpl)instruction.getBody()).postProcess();
                 instruction.setNext(getSinkInstruction());
             }

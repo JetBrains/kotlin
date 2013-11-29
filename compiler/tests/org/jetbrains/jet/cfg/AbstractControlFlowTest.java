@@ -55,7 +55,7 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
         for (JetDeclaration declaration : declarations) {
             Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
             data.put(declaration, pseudocode);
-            for (LocalDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
+            for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
                 Pseudocode localPseudocode = instruction.getBody();
                 data.put(localPseudocode.getCorrespondingElement(), localPseudocode);
             }
@@ -228,9 +228,9 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
         }
         for (int i = 0, instructionsSize = instructions.size(); i < instructionsSize; i++) {
             Instruction instruction = instructions.get(i);
-            if (instruction instanceof LocalDeclarationInstruction) {
-                LocalDeclarationInstruction localDeclarationInstruction = (LocalDeclarationInstruction) instruction;
-                locals.add((PseudocodeImpl) localDeclarationInstruction.getBody());
+            if (instruction instanceof LocalFunctionDeclarationInstruction) {
+                LocalFunctionDeclarationInstruction localFunctionDeclarationInstruction = (LocalFunctionDeclarationInstruction) instruction;
+                locals.add((PseudocodeImpl) localFunctionDeclarationInstruction.getBody());
             }
             for (PseudocodeImpl.PseudocodeLabel label: labels) {
                 if (label.getTargetInstructionIndex() == i) {
@@ -251,7 +251,7 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
         for (Instruction fromInst : instructions) {
             fromInst.accept(new InstructionVisitor() {
                 @Override
-                public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
+                public void visitLocalFunctionDeclarationInstruction(LocalFunctionDeclarationInstruction instruction) {
                     int index = count[0];
 //                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
                     printEdge(out, nodeToName.get(instruction), nodeToName.get(((PseudocodeImpl)instruction.getBody()).getAllInstructions().get(0)), null);
@@ -336,7 +336,7 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
             else if (node instanceof UnsupportedElementInstruction) {
                 shape = "box, fillcolor=red, style=filled";
             }
-            else if (node instanceof LocalDeclarationInstruction) {
+            else if (node instanceof LocalFunctionDeclarationInstruction) {
                 shape = "Mcircle";
             }
             else if (node instanceof SubroutineEnterInstruction || node instanceof SubroutineExitInstruction) {

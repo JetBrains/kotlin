@@ -21,7 +21,7 @@ public class InstructionVisitor {
         visitInstructionWithNext(instruction);
     }
 
-    public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
+    public void visitLocalFunctionDeclarationInstruction(LocalFunctionDeclarationInstruction instruction) {
         visitInstructionWithNext(instruction);
     }
 

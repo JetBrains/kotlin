@@ -68,7 +68,7 @@ public class PseudocodeTraverser {
     }
 
     private static boolean shouldLookInside(Instruction instruction, LookInsideStrategy lookInside) {
-        return lookInside == LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS && instruction instanceof LocalDeclarationInstruction;
+        return lookInside == LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS && instruction instanceof LocalFunctionDeclarationInstruction;
     }
 
     public static <D> Map<Instruction, Edges<D>> collectData(
@@ -99,7 +99,7 @@ public class PseudocodeTraverser {
         for (Instruction instruction : instructions) {
             edgesMap.put(instruction, initialEdge);
             if (shouldLookInside(instruction, lookInside)) {
-                initializeEdgesMap(((LocalDeclarationInstruction) instruction).getBody(), lookInside, edgesMap, initialDataValue);
+                initializeEdgesMap(((LocalFunctionDeclarationInstruction) instruction).getBody(), lookInside, edgesMap, initialDataValue);
             }
         }
     }
@@ -131,7 +131,7 @@ public class PseudocodeTraverser {
             }
 
             if (shouldLookInside(instruction, lookInside)) {
-                Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
+                Pseudocode subroutinePseudocode = ((LocalFunctionDeclarationInstruction) instruction).getBody();
                 collectDataFromSubgraph(subroutinePseudocode, traversalOrder, lookInside, edgesMap, instructionDataMergeStrategy,
                                         previousInstructions,
                                         changed, true);
@@ -168,8 +168,8 @@ public class PseudocodeTraverser {
 
         List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
         for (Instruction instruction : instructions) {
-            if (instruction instanceof LocalDeclarationInstruction) {
-                traverse(((LocalDeclarationInstruction) instruction).getBody(), traversalOrder, instructionAnalyzeStrategy);
+            if (instruction instanceof LocalFunctionDeclarationInstruction) {
+                traverse(((LocalFunctionDeclarationInstruction) instruction).getBody(), traversalOrder, instructionAnalyzeStrategy);
             }
             instructionAnalyzeStrategy.execute(instruction);
         }
@@ -182,8 +182,8 @@ public class PseudocodeTraverser {
 
         List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
         for (Instruction instruction : instructions) {
-            if (instruction instanceof LocalDeclarationInstruction) {
-                traverse(((LocalDeclarationInstruction) instruction).getBody(), traversalOrder, edgesMap,
+            if (instruction instanceof LocalFunctionDeclarationInstruction) {
+                traverse(((LocalFunctionDeclarationInstruction) instruction).getBody(), traversalOrder, edgesMap,
                          instructionDataAnalyzeStrategy);
             }
             Edges<D> edges = edgesMap.get(instruction);

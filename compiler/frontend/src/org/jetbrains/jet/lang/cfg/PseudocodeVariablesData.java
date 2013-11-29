@@ -86,8 +86,8 @@ public class PseudocodeVariablesData {
         Set<VariableDescriptor> declaredVariables = Sets.newHashSet();
         declaredVariables.addAll(getUpperLevelDeclaredVariables(pseudocode));
 
-        for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
-            Pseudocode localPseudocode = localDeclarationInstruction.getBody();
+        for (LocalFunctionDeclarationInstruction localFunctionDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            Pseudocode localPseudocode = localFunctionDeclarationInstruction.getBody();
             declaredVariables.addAll(getUpperLevelDeclaredVariables(localPseudocode));
         }
         return declaredVariables;
@@ -154,8 +154,8 @@ public class PseudocodeVariablesData {
         });
 
 
-        for (LocalDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
-            Pseudocode localPseudocode = localDeclarationInstruction.getBody();
+        for (LocalFunctionDeclarationInstruction localFunctionDeclarationInstruction : pseudocode.getLocalDeclarations()) {
+            Pseudocode localPseudocode = localFunctionDeclarationInstruction.getBody();
             Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> initializersForLocalDeclaration = getVariableInitializers(localPseudocode);
 
             for (Instruction instruction : initializersForLocalDeclaration.keySet()) {
