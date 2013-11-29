@@ -121,10 +121,14 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetExpression getBaseExpressionIfLabeledExpression(@NotNull JetPrefixExpression expression) {
-        if (JetTokens.LABELS.contains(expression.getOperationReference().getReferencedNameElementType())) {
+        if (isLabeledExpression(expression)) {
             return expression.getBaseExpression();
         }
         return null;
+    }
+
+    public static boolean isLabeledExpression(JetPrefixExpression expression) {
+        return JetTokens.LABELS.contains(expression.getOperationReference().getReferencedNameElementType());
     }
 
     @NotNull

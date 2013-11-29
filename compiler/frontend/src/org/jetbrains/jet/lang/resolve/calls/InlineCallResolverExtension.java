@@ -25,16 +25,19 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.model.*;
+import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class InlineCallResolverExtension implements CallResolverExtension {
 
@@ -55,7 +58,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
             }
         }
 
-        //add extension receiver as inlineable
+        //add extension receiver as inlinable
         ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
         if (receiverParameter != null) {
             if (isInlinableParameter(receiverParameter)) {
@@ -68,25 +71,23 @@ public class InlineCallResolverExtension implements CallResolverExtension {
     public <F extends CallableDescriptor> void run(
             @NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context
     ) {
-        CallableDescriptor targetDescriptor = resolvedCall.getResultingDescriptor();
         JetExpression expression = context.call.getCalleeExpression();
         if (expression == null) {
             return;
         }
 
         //checking that only invoke or inlinable extension called on function parameter
+        CallableDescriptor targetDescriptor = resolvedCall.getResultingDescriptor();
         checkCallWithReceiver(context, targetDescriptor, resolvedCall.getThisObject(), expression);
         checkCallWithReceiver(context, targetDescriptor, resolvedCall.getReceiverArgument(), expression);
 
-        boolean isInlinableClosure = inlinableParameters.contains(targetDescriptor);
-        if (isInlinableClosure) {
+        if (inlinableParameters.contains(targetDescriptor)) {
             if (!couldAccessVariable(expression)) {
                 context.trace.report(Errors.USAGE_IS_NOT_INLINABLE.on(expression, expression, descriptor));
             }
         }
 
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
-            ResolvedValueArgument value = entry.getValue();
+        for (ResolvedValueArgument value : resolvedCall.getValueArguments().values()) {
             if (!(value instanceof DefaultValueArgument)) {
                 for (ValueArgument argument : value.getArguments()) {
                     checkValueParameter(context, targetDescriptor, argument, value instanceof VarargValueArgument);
@@ -97,7 +98,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         checkVisibility(targetDescriptor, expression, context);
     }
 
-    private boolean couldAccessVariable(JetExpression expression) {
+    private static boolean couldAccessVariable(JetExpression expression) {
         PsiElement parent = expression.getParent();
         while (parent != null) {
             if (parent instanceof JetValueArgument ||
@@ -109,12 +110,15 @@ public class InlineCallResolverExtension implements CallResolverExtension {
             }
             else if (parent instanceof JetParenthesizedExpression || parent instanceof JetBinaryExpressionWithTypeRHS) {
                 parent = parent.getParent();
-            } else if (parent instanceof JetPrefixExpression) {
-                boolean isLabeled = JetTokens.LABELS.contains(((JetPrefixExpression) parent).getOperationReference().getReferencedNameElementType());
-                if (isLabeled) {
-                    parent = parent.getParent();
+            }
+            else if (parent instanceof JetPrefixExpression) {
+                boolean isLabeled = JetPsiUtil.isLabeledExpression((JetPrefixExpression) parent);
+                if (!isLabeled) {
+                    return false;
                 }
-            } else {
+                parent = parent.getParent();
+            }
+            else {
                 return false;
             }
         }
@@ -139,30 +143,27 @@ public class InlineCallResolverExtension implements CallResolverExtension {
             @NotNull ReceiverValue receiver,
             @Nullable JetExpression expression
     ) {
-        if (receiver.exists()) {
-            CallableDescriptor varDescriptor = null;
-            JetExpression receiverExpression = null;
-            if (receiver instanceof ExpressionReceiver) {
-                receiverExpression = ((ExpressionReceiver) receiver).getExpression();
-                varDescriptor = getDescriptor(context, receiverExpression);
-            }
-            else if (receiver instanceof ExtensionReceiver) {
-                ExtensionReceiver extensionReceiver = (ExtensionReceiver) receiver;
-                CallableDescriptor extensionFunction = extensionReceiver.getDeclarationDescriptor();
+        if (!receiver.exists()) return;
 
-                ReceiverParameterDescriptor receiverParameter = extensionFunction.getReceiverParameter();
-                assert receiverParameter != null : "Extension function should have receiverParameterDescriptor: " + extensionFunction;
-                varDescriptor = receiverParameter;
+        CallableDescriptor varDescriptor = null;
+        JetExpression receiverExpression = null;
+        if (receiver instanceof ExpressionReceiver) {
+            receiverExpression = ((ExpressionReceiver) receiver).getExpression();
+            varDescriptor = getDescriptor(context, receiverExpression);
+        }
+        else if (receiver instanceof ExtensionReceiver) {
+            ExtensionReceiver extensionReceiver = (ExtensionReceiver) receiver;
+            CallableDescriptor extension = extensionReceiver.getDeclarationDescriptor();
 
-                receiverExpression = expression;
-            }
+            varDescriptor = extension.getReceiverParameter();
+            assert varDescriptor != null : "Extension should have receiverParameterDescriptor: " + extension;
 
-            if (varDescriptor != null) {
-                if (inlinableParameters.contains(varDescriptor)) {
-                    //check that it's invoke
-                    checkFunctionCall(context, targetDescriptor, receiverExpression);
-                }
-            }
+            receiverExpression = expression;
+        }
+
+        if (inlinableParameters.contains(varDescriptor)) {
+            //check that it's invoke or inlinable extension
+            checkFunctionCall(context, targetDescriptor, receiverExpression, false);
         }
     }
 
@@ -178,24 +179,16 @@ public class InlineCallResolverExtension implements CallResolverExtension {
     private void checkFunctionCall(
             BasicCallResolutionContext context,
             CallableDescriptor targetDescriptor,
-            JetExpression receiverExpresssion
-    ) {
-        checkFunctionCall(context, targetDescriptor, receiverExpresssion, false);
-    }
-
-    private void checkFunctionCall(
-            BasicCallResolutionContext context,
-            CallableDescriptor targetDescriptor,
             JetExpression receiverExpresssion,
             boolean isVararg
     ) {
-        boolean inlineCall = isInvokeOrInlineExtension(targetDescriptor);
-        if (!inlineCall || isVararg) {
+        boolean inlinableCall = isInvokeOrInlineExtension(targetDescriptor);
+        if (!inlinableCall || isVararg) {
             context.trace.report(Errors.USAGE_IS_NOT_INLINABLE.on(receiverExpresssion, receiverExpresssion, descriptor));
         }
     }
 
-    private boolean isInlinableParameter(@NotNull CallableDescriptor descriptor) {
+    private static boolean isInlinableParameter(@NotNull CallableDescriptor descriptor) {
         JetType type = descriptor.getReturnType();
         return type != null &&
                KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) &&
@@ -211,7 +204,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         boolean isInvoke = descriptor.getName().asString().equals("invoke") &&
                            containingDeclaration instanceof ClassDescriptor &&
-                           isExactFunctionOrExtensionFunctionType(((ClassDescriptor) containingDeclaration).getDefaultType());
+                           KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(((ClassDescriptor) containingDeclaration).getDefaultType());
 
         return isInvoke ||
                //or inline extension

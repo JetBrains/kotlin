@@ -44,8 +44,8 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
                 "This method should be invoced on inline function: " + descriptor;
 
         checkDefaults(descriptor, function, trace);
-        checkModality(descriptor, function, trace);
-        checkHashInlinableAndNullability(descriptor, function, trace);
+        checkNotVirual(descriptor, function, trace);
+        checkHasInlinableAndNullability(descriptor, function, trace);
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
 
@@ -90,7 +90,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         }
     }
 
-    private static void checkModality(
+    private static void checkNotVirual(
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetFunction function,
             @NotNull BindingTrace trace
@@ -99,15 +99,15 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             return;
         }
 
-        DeclarationDescriptor declaration = functionDescriptor.getContainingDeclaration();
-        if (declaration instanceof NamespaceDescriptor) {
+        if (functionDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
             return;
         }
 
         trace.report(Errors.DECLARATION_CANT_BE_INLINED.on(function));
     }
 
-    private void checkHashInlinableAndNullability(
+
+    private static void checkHasInlinableAndNullability(
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetFunction function,
             @NotNull BindingTrace trace
@@ -116,12 +116,13 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
         int index = 0;
         for (ValueParameterDescriptor parameter : parameters) {
-            hasInlinable |= checkParameter(parameter, function.getValueParameters().get(index++), functionDescriptor, trace);
+            hasInlinable |= checkInlinableParameter(parameter, function.getValueParameters().get(index++), functionDescriptor, trace);
         }
         ReceiverParameterDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         if (receiverParameter != null) {
             JetTypeReference receiver = function.getReceiverTypeRef();
-            hasInlinable |= checkParameter(receiverParameter, receiver, functionDescriptor, trace);
+            assert receiver != null : "Descriptor has a receiver but psi doesn't " + function.getText();
+            hasInlinable |= checkInlinableParameter(receiverParameter, receiver, functionDescriptor, trace);
         }
 
         if (!hasInlinable) {
@@ -129,7 +130,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         }
     }
 
-    private static boolean checkParameter(
+    private static boolean checkInlinableParameter(
             @NotNull CallableDescriptor parameter,
             @NotNull JetElement expression,
             @NotNull FunctionDescriptor functionDescriptor,
@@ -141,7 +142,8 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             if (!InlineUtil.hasNoinlineAnnotation(parameter)) {
                 if (type.isNullable()) {
                     trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
-                } else {
+                }
+                else {
                     return true;
                 }
             }
