@@ -91,28 +91,9 @@ public class ControlFlowAnalyzer {
     }
 
     private void checkFunction(JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
-        assert function instanceof JetDeclaration;
-
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, trace);
-
-        boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
-        if (!isPropertyAccessor) {
-            flowInformationProvider.recordInitializedVariables();
-        }
-
-        if (topDownAnalysisParameters.isDeclaredLocally()) return;
-
-        flowInformationProvider.checkDefiniteReturn(expectedReturnType);
-
-        if (!isPropertyAccessor) {
-            // Property accessor is checked through initialization of a class/object or package properties (at 'checkDeclarationContainer')
-            flowInformationProvider.markUninitializedVariables();
-        }
-
-        flowInformationProvider.markUnusedVariables();
-
-        flowInformationProvider.markUnusedLiteralsInBlock();
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
+        flowInformationProvider.checkFunction(function, expectedReturnType, topDownAnalysisParameters.isDeclaredLocally());
     }
 }

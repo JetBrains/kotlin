@@ -74,6 +74,30 @@ public class JetFlowInformationProvider {
         return pseudocodeVariablesData;
     }
 
+    public void checkFunction(
+            @NotNull JetDeclarationWithBody function,
+            @NotNull JetType expectedReturnType,
+            boolean isLocalObject
+    ) {
+        boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
+        if (!isPropertyAccessor) {
+            recordInitializedVariables();
+        }
+
+        if (isLocalObject) return;
+
+        checkDefiniteReturn(expectedReturnType);
+
+        if (!isPropertyAccessor) {
+            // Property accessor is checked through initialization of a class/object or package properties (at 'checkDeclarationContainer')
+            markUninitializedVariables();
+        }
+
+        markUnusedVariables();
+
+        markUnusedLiteralsInBlock();
+    }
+
     private void collectReturnExpressions(@NotNull final Collection<JetElement> returnedExpressions) {
         final Set<Instruction> instructions = Sets.newHashSet(pseudocode.getInstructions());
         SubroutineExitInstruction exitInstruction = pseudocode.getExitInstruction();
