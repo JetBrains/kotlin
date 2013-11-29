@@ -136,7 +136,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     public void testDuplicateObjectInBinaryAndSources() throws Exception {
         Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(compileLibrary("library"));
-        assertEquals(allDescriptors.size(), 2);
+        assertEquals(allDescriptors.toString(), 2, allDescriptors.size());
         for (DeclarationDescriptor descriptor : allDescriptors) {
             assertTrue("Wrong name: " + descriptor, descriptor.getName().asString().equals("Lol"));
             assertTrue("Should be an object: " + descriptor, isObject(descriptor));
