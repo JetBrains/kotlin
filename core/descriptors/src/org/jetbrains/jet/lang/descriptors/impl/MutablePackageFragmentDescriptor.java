@@ -85,9 +85,4 @@ public class MutablePackageFragmentDescriptor extends DeclarationDescriptorImpl 
     public NamespaceLikeBuilder getBuilder() {
         return builder;
     }
-
-    @Override
-    public String toString() {
-        return "fragment of " + fqName + " in " + module;
-    }
 }

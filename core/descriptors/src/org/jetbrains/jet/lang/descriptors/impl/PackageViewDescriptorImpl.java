@@ -113,11 +113,6 @@ public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl impleme
         return result;
     }
 
-    @Override
-    public String toString() {
-        return DescriptorRenderer.DEBUG_TEXT.render(this);
-    }
-
     private class SubpackagesScope extends JetScopeImpl {
         @NotNull
         @Override
