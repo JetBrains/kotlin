@@ -6,7 +6,7 @@ import java.util.Comparator
 * Helper method for implementing [[Comparable]] methods using a list of functions
 * to calculate the values to compare
 */
-inline fun <T : Any> compareBy(a: T?, b: T?, vararg functions: T.() -> Comparable<*>?): Int {
+fun <T : Any> compareBy(a: T?, b: T?, vararg functions: T.() -> Comparable<*>?): Int {
     require(functions.size > 0)
     if (a === b) return 0
     if (a == null) return - 1
@@ -25,7 +25,7 @@ inline fun <T : Any> compareBy(a: T?, b: T?, vararg functions: T.() -> Comparabl
  * they are compared via [[#equals()]] and if they are not the same then
  * the [[#hashCode()]] method is used as the difference
  */
-public inline fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
+public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
     if (a === b) return 0
     if (a == null) return - 1
     if (b == null) return 1

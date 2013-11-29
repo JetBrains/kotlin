@@ -3,21 +3,21 @@ package kotlin
 /**
  * Get the first element in the list or throws [[EmptyIterableException]] if list is empty.
  */
-public inline fun <T> List<T>.first() : T {
+public fun <T> List<T>.first() : T {
     return if (size() > 0) get(0) else throw EmptyIterableException(this)
 }
 
 /**
  * Get the first element in the list or *null* if list is empty.
  */
-public inline fun <T:Any> List<T>.firstOrNull() : T? {
+public fun <T:Any> List<T>.firstOrNull() : T? {
     return if (size() > 0) get(0) else null
 }
 
 /**
  * Get the last element in the list or throws [[EmptyIterableException]] if list is empty.
  */
-public inline fun <T> List<T>.last() : T {
+public fun <T> List<T>.last() : T {
     val s = size()
     return if (s > 0) get(s - 1) else throw EmptyIterableException(this)
 }
@@ -25,7 +25,7 @@ public inline fun <T> List<T>.last() : T {
 /**
  * Get the last element in the list or *null* if list is empty.
  */
-public inline fun <T:Any> List<T>.lastOrNull() : T? {
+public fun <T:Any> List<T>.lastOrNull() : T? {
     val s = size()
     return if (s > 0) get(s - 1) else null
 }
@@ -71,7 +71,7 @@ public inline fun <T> List<T>.reduceRight(operation: (T, T) -> T) : T {
 /**
  * Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
-public inline fun <T:Any> List<T?>.requireNoNulls() : List<T> {
+public fun <T:Any> List<T?>.requireNoNulls() : List<T> {
     for (element in this) {
         if (element == null) {
             throw IllegalArgumentException("null element found in $this")

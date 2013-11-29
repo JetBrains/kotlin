@@ -77,17 +77,17 @@ fun Element.hasClass(cssClass: String): Boolean {
 
 
 /** Returns the children of the element as a list */
-inline fun Element?.children(): List<Node> {
+fun Element?.children(): List<Node> {
     return this?.childNodes.toList()
 }
 
 /** Returns the child elements of this element */
-inline fun Element?.childElements(): List<Element> {
+fun Element?.childElements(): List<Element> {
     return children().filter<Node>{ it.nodeType == Node.ELEMENT_NODE }.map { it as Element }
 }
 
 /** Returns the child elements of this element with the given name */
-inline fun Element?.childElements(name: String): List<Element> {
+fun Element?.childElements(name: String): List<Element> {
     return children().filter<Node>{ it.nodeType == Node.ELEMENT_NODE && it.nodeName == name }.map { it as Element }
 }
 
@@ -101,26 +101,26 @@ get() = this?.getElementsByTagName("*").toElementList()
 
 
 /** Returns all the descendant elements given the local element name */
-inline fun Element?.elements(localName: String): List<Element> {
+fun Element?.elements(localName: String): List<Element> {
     return this?.getElementsByTagName(localName).toElementList()
 }
 
 /** Returns all the descendant elements given the local element name */
-inline fun Document?.elements(localName: String): List<Element> {
+fun Document?.elements(localName: String): List<Element> {
     return this?.getElementsByTagName(localName).toElementList()
 }
 
 /** Returns all the descendant elements given the namespace URI and local element name */
-inline fun Element?.elements(namespaceUri: String, localName: String): List<Element> {
+fun Element?.elements(namespaceUri: String, localName: String): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
 
 /** Returns all the descendant elements given the namespace URI and local element name */
-inline fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
+fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
 
-inline fun NodeList?.toList(): List<Node> {
+fun NodeList?.toList(): List<Node> {
     return if (this == null) {
         // TODO the following is easier to convert to JS
         emptyNodeList()
@@ -130,7 +130,7 @@ inline fun NodeList?.toList(): List<Node> {
     }
 }
 
-inline fun NodeList?.toElementList(): List<Element> {
+fun NodeList?.toElementList(): List<Element> {
     return if (this == null) {
         // TODO the following is easier to convert to JS
         //emptyElementList()
@@ -297,7 +297,7 @@ fun Node.isText(): Boolean {
 }
 
 /** Returns the attribute value or empty string if its not present */
-inline fun Element.attribute(name: String): String {
+fun Element.attribute(name: String): String {
     return this.getAttribute(name) ?: ""
 }
 
@@ -342,16 +342,16 @@ public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = fal
 
 // Syntax sugar
 
-inline fun Node.plus(child: Node?): Node {
+fun Node.plus(child: Node?): Node {
     if (child != null) {
         this.appendChild(child)
     }
     return this
 }
 
-inline fun Element.plus(text: String?): Element = this.addText(text)
+fun Element.plus(text: String?): Element = this.addText(text)
 
-inline fun Element.plusAssign(text: String?): Element = this.addText(text)
+fun Element.plusAssign(text: String?): Element = this.addText(text)
 
 
 // Builder

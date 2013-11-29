@@ -21,7 +21,7 @@ public /*inline*/ fun <T: Any> iterate(initialValue: T, nextFunction: (T) -> T?)
 /**
  * Returns an iterator whose values are pairs composed of values produced by given pair of iterators
  */
-public inline fun <T, S> Iterator<T>.zip(iterator: Iterator<S>): Iterator<Pair<T, S>> = PairIterator(this, iterator)
+public fun <T, S> Iterator<T>.zip(iterator: Iterator<S>): Iterator<Pair<T, S>> = PairIterator(this, iterator)
 
 /**
  * Returns an iterator shifted to right by the given number of elements

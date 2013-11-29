@@ -17,27 +17,27 @@ public val Int.indices: IntRange
     get() = 0..this-1
 
 /** Returns true if the collection is not empty */
-public inline fun <T> Collection<T>.isNotEmpty() : Boolean = !this.isEmpty()
+public fun <T> Collection<T>.isNotEmpty() : Boolean = !this.isEmpty()
 
 /** Returns true if this collection is not empty */
 val Collection<*>.notEmpty : Boolean
     get() = isNotEmpty()
 
 /** Returns the Collection if its not null otherwise it returns the empty list */
-public inline fun <T> Collection<T>?.orEmpty() : Collection<T>
+public fun <T> Collection<T>?.orEmpty() : Collection<T>
     = if (this != null) this else Collections.emptyList<T>() as Collection<T>
 
 
 /** TODO these functions don't work when they generate the Array<T> versions when they are in JLIterables */
-public inline fun <T: Comparable<T>> Iterable<T>.toSortedList() : List<T> = toCollection(ArrayList<T>()).sort()
+public fun <T: Comparable<T>> Iterable<T>.toSortedList() : List<T> = toCollection(ArrayList<T>()).sort()
 
-public inline fun <T: Comparable<T>> Iterable<T>.toSortedList(comparator: java.util.Comparator<T>) : List<T> = toList().sort(comparator)
+public fun <T: Comparable<T>> Iterable<T>.toSortedList(comparator: java.util.Comparator<T>) : List<T> = toList().sort(comparator)
 
 
 // List APIs
 
 /** Returns the List if its not null otherwise returns the empty list */
-public inline fun <T> List<T>?.orEmpty() : List<T>
+public fun <T> List<T>?.orEmpty() : List<T>
     = if (this != null) this else Collections.emptyList<T>() as List<T>
 
 /**
