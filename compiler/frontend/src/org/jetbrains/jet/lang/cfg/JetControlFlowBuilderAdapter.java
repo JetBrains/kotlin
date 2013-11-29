@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.psi.*;
 
-import java.util.Collection;
 import java.util.List;
 
 public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
@@ -206,6 +205,12 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     public void declare(@NotNull JetVariableDeclaration property) {
         assert builder != null;
         builder.declare(property);
+    }
+
+    @Override
+    public void declareFunction(@NotNull JetElement subroutine, @NotNull Pseudocode pseudocode) {
+        assert builder != null;
+        builder.declareFunction(subroutine, pseudocode);
     }
 
     @Override

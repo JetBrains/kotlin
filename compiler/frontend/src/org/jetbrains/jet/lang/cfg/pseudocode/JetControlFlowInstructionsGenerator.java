@@ -74,8 +74,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
         if (!builders.empty()) {
             JetControlFlowInstructionsGeneratorWorker builder = builders.peek();
-            LocalFunctionDeclarationInstruction instruction = new LocalFunctionDeclarationInstruction(subroutine, worker.getPseudocode());
-            builder.add(instruction);
+            builder.declareFunction(subroutine, worker.getPseudocode());
         }
         return worker.getPseudocode();
     }
@@ -245,6 +244,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public void declare(@NotNull JetVariableDeclaration property) {
             add(new VariableDeclarationInstruction(property));
+        }
+
+        @Override
+        public void declareFunction(@NotNull JetElement subroutine, @NotNull Pseudocode pseudocode) {
+            add(new LocalFunctionDeclarationInstruction(subroutine, pseudocode));
         }
 
         @Override

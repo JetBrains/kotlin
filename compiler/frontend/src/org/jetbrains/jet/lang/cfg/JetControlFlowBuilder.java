@@ -44,6 +44,7 @@ public interface JetControlFlowBuilder {
     // Declarations
     void declare(@NotNull JetParameter parameter);
     void declare(@NotNull JetVariableDeclaration property);
+    void declareFunction(@NotNull JetElement subroutine, @NotNull Pseudocode pseudocode);
 
     // Labels
     @NotNull
