@@ -16,38 +16,32 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import junit.framework.Test;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 public class DataClassesTest extends SingleFileTranslationTest {
-    public DataClassesTest() {
+
+    public DataClassesTest(@NotNull String filename) {
         super("dataClasses/");
     }
 
-    public void testComponentWithPrivateProperty() throws Exception {
-        checkFooBoxIsOk();
+    @Override
+    public void runTest() throws Exception {
+        checkFooBoxIsOk(getTestName(true));
     }
 
-    public void testConstructorWithDefaultParam() throws Exception {
-        checkFooBoxIsOk();
-    }
-
-    public void testKt3033() throws Exception {
-        checkFooBoxIsOk();
-    }
-
-    public void testMultiDeclarationWithDataClass() throws Exception {
-        checkFooBoxIsOk();
-    }
-
-    public void testNativeInConstructorParams() throws Exception {
-        checkFooBoxIsOk();
-    }
-
-    public void testVarInConstructorParams() throws Exception {
-        checkFooBoxIsOk();
-    }
-
-    public void testWithGenericParameter() throws Exception {
-        checkFooBoxIsOk();
+    public static Test suite() throws Exception {
+        return TranslatorTestCaseBuilder
+                .suiteForDirectory(BasicTest.pathToTestFilesRoot() + "dataClasses/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+                    @NotNull
+                    @Override
+                    public Test createTest(@NotNull String filename) {
+                        DataClassesTest examplesTest = new DataClassesTest(filename);
+                        examplesTest.setName(filename);
+                        return examplesTest;
+                    }
+                });
     }
 }
