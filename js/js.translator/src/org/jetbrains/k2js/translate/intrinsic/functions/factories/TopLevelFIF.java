@@ -128,12 +128,49 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
 
     @NotNull
+    public static final String HASH_CODE_NAME = "hashCode";
+
+    @NotNull
+    public static final KotlinFunctionIntrinsic HASH_CODE = new KotlinFunctionIntrinsic(HASH_CODE_NAME);
+
+    @NotNull
+    public static final KotlinFunctionIntrinsic HASH_CHAR_IMPL = new KotlinFunctionIntrinsic("hashCharImpl");
+
+    @NotNull
+    public static final KotlinFunctionIntrinsic HASH_INT_IMPL = new KotlinFunctionIntrinsic("hashIntImpl");
+
+    @NotNull
+    public static final KotlinFunctionIntrinsic HASH_FLOAT_IMPL = new KotlinFunctionIntrinsic("hashFloatImpl");
+
+    @NotNull
+    public static final KotlinFunctionIntrinsic HASH_LONG_IMPL = new KotlinFunctionIntrinsic("hashLongImpl");
+
+    @NotNull
+    public static final KotlinFunctionIntrinsic HASH_DOUBLE_IMPL = new KotlinFunctionIntrinsic("hashDoubleImpl");
+
+    @NotNull
+    public static final KotlinFunctionIntrinsic HASH_STRING_IMPL = new KotlinFunctionIntrinsic("hashStringImpl");
+
+    @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
         add(pattern("jet", "toString").receiverExists(), TO_STRING);
+        add(pattern("jet", HASH_CODE_NAME).receiverExists(), HASH_CODE);
         add(pattern("jet", "equals").receiverExists(), EQUALS);
         add(pattern("jet", "identityEquals").receiverExists(), IDENTITY_EQUALS);
+
+        add(pattern(new NamePredicate(
+                PrimitiveType.BOOLEAN.getTypeName().toString(),
+                PrimitiveType.BYTE.getTypeName().toString(),
+                PrimitiveType.SHORT.getTypeName().toString(),
+                PrimitiveType.INT.getTypeName().toString()), HASH_CODE_NAME), HASH_INT_IMPL);
+        add(pattern(new NamePredicate(PrimitiveType.CHAR.getTypeName().toString()), HASH_CODE_NAME), HASH_CHAR_IMPL);
+        add(pattern(new NamePredicate(PrimitiveType.FLOAT.getTypeName().toString()), HASH_CODE_NAME), HASH_FLOAT_IMPL);
+        add(pattern(new NamePredicate(PrimitiveType.DOUBLE.getTypeName().toString()), HASH_CODE_NAME), HASH_DOUBLE_IMPL);
+        add(pattern(new NamePredicate(PrimitiveType.LONG.getTypeName().toString()), HASH_CODE_NAME), HASH_LONG_IMPL);
+        add(pattern(NamePredicate.STRING, HASH_CODE_NAME), HASH_STRING_IMPL);
+
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
         add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));

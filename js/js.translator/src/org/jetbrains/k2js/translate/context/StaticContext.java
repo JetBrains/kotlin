@@ -26,6 +26,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FunctionDescriptorUtil;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
@@ -171,6 +174,17 @@ public final class StaticContext {
         return name;
     }
 
+    public static boolean methodIsExplicitlyDeclared(
+            @NotNull String name,
+            @NotNull ClassDescriptor descriptor,
+            @NotNull ClassifierDescriptor returnedClassifier,
+            @NotNull ClassifierDescriptor... valueParameterClassifiers
+    ) {
+        assert descriptor instanceof ClassDescriptor;
+        return FunctionDescriptorUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier(name), returnedClassifier,
+                                                                        valueParameterClassifiers) != null;
+    }
+
     private final class NameGenerator extends Generator<JsName> {
 
         public NameGenerator() {
@@ -206,10 +220,22 @@ public final class StaticContext {
                         return scope.declareFreshName(descriptor.getName().asString());
                     }
 
+                    ClassDescriptor classDescriptor = (ClassDescriptor) declaration;
                     Collection<FunctionDescriptor> functions =
-                            ((ClassDescriptor) declaration).getDefaultType().getMemberScope().getFunctions(descriptor.getName());
+                            classDescriptor.getDefaultType().getMemberScope().getFunctions(descriptor.getName());
                     String name = descriptor.getName().asString();
                     int counter = -1;
+                    {
+                        ClassDescriptor stringType = KotlinBuiltIns.getInstance().getString();
+                        ClassDescriptor intType = KotlinBuiltIns.getInstance().getInt();
+                        ClassDescriptor booleanType = KotlinBuiltIns.getInstance().getBoolean();
+                        ClassDescriptor anyType = KotlinBuiltIns.getInstance().getAny();
+                        if ((name.equals(Namer.TO_STRING) && !methodIsExplicitlyDeclared(Namer.TO_STRING, classDescriptor, stringType)) ||
+                            (name.equals(Namer.HASH_CODE) && !methodIsExplicitlyDeclared(Namer.HASH_CODE, classDescriptor, intType)) ||
+                            (name.equals(Namer.EQUALS) && !methodIsExplicitlyDeclared(Namer.EQUALS, classDescriptor, booleanType, anyType))) {
+                            counter = 0;
+                        }
+                    }
                     if (functions.size() > 1) {
                         // see testOverloadedFun
                         FunctionDescriptor[] sorted = functions.toArray(new FunctionDescriptor[functions.size()]);

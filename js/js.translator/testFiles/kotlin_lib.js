@@ -40,6 +40,9 @@ String.prototype.contains = function (s) {
         }
 
         if (typeof obj1 == "object" && obj1.equals !== undefined) {
+            if (Object.prototype.toString.call(obj1) != Object.prototype.toString.call(obj2)) {
+                return false;
+            }
             return obj1.equals(obj2);
         }
 
@@ -53,13 +56,99 @@ String.prototype.contains = function (s) {
         else if (Array.isArray(o)) {
             return Kotlin.arrayToString(o);
         }
-        else {
-            return o.toString();
-        }
+        return o.toString();
     };
     
+    Kotlin.hashCode = function (o) {
+        if (o == null) {
+            return 0;
+        }
+        if (typeof o == "object" && o.hashCode != undefined) {
+            return o.hashCode();
+        }
+        if (typeof o == "number") {
+            return Kotlin.hashLongImpl(o);
+        }
+        if (typeof o == "string") {
+            return Kotlin.hashStringImpl(o);
+        }
+        return 0;
+    }
+
+    Kotlin.floatToIntBits = function (f)
+    {
+        var buf = new ArrayBuffer(4);
+        (new Float32Array(buf))[0] = f;
+        return (new Uint32Array(buf))[0];
+    }
+
+    Kotlin.doubleToIntBits = function (f)
+    {
+        var buf = new ArrayBuffer(8);
+        (new Float64Array(buf))[0] = f;
+        return [ (new Uint32Array(buf))[0] ,(new Uint32Array(buf))[1] ];
+    }
+
+    Kotlin.hashCharImpl = function(jvmChar) {
+        return jvmChar.charCodeAt(0);
+    }
+
+    Kotlin.hashIntImpl = function(jvmInt) {
+        return jvmInt;
+    };
+
+    Kotlin.hashFloatImpl = function(jvmFloat) {
+        return Kotlin.floatToIntBits(jvmFloat);
+    };
+
+    Kotlin.hashLongImpl = function(jvmLong) {
+        return jvmLong ^ (jvmLong >>> 31);
+    };
+
+    Kotlin.hashDoubleImpl = function(jvmDouble) {
+        var doubleBits = Kotlin.doubleToIntBits(jvmDouble);
+        return (doubleBits[0] ^ doubleBits[1]) | 0;
+    };
+
+    Kotlin.hashStringImpl = function(jvmString) {
+        var result = 0;
+        for (var i = 0; i < jvmString.length; ++i) {
+            result = (31 * result + jvmString.charCodeAt(i)) | 0;
+        }
+        return result;
+    };
+
+    Kotlin.hashNullableImpl = function(jvmVal, hashCB) {
+        if (jvmVal == null) {
+            return 0;
+        }
+        return hashCB(jvmVal);
+    }
+
+    Kotlin.hashArrayImpl = function(jvmArray, hashCB) {
+        var result = 1;
+        for (var i = 0; i < jvmArray.length; ++i) {
+            result = (31 * result + hashCB(jvmArray[i])) | 0;
+        }
+        return result;
+    };
+
+    Kotlin.arrayJoin = function(a, sep) {
+        var result = "";
+        var first = true;
+        for (var i = 0; i < a.length; ++i) {
+            if (first) {
+                first = false;
+            } else {
+                result += sep;
+            }
+            result += Kotlin.toString(a[i]);
+        }
+        return result;
+    }
+
     Kotlin.arrayToString = function(a) {
-        return "[" + a.join(", ") + "]";
+        return "[" + Kotlin.arrayJoin(a, ", ") + "]";
     };
 
     Kotlin.intUpto = function (from, to) {
@@ -301,7 +390,7 @@ String.prototype.contains = function (s) {
                 return this.array.slice(0, this.$size);
             },
             toString: function () {
-                return "[" + this.array.join(", ") + "]";
+                return "[" + Kotlin.arrayJoin(this.array, ", ") + "]";
             },
             toJSON: function () {
                 return this.array;
