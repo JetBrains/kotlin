@@ -1,10 +1,10 @@
 package kotlin
 
 /** Returns true if the array is not empty */
-public inline fun <T> Array<T>.isNotEmpty() : Boolean = !this.isEmpty()
+public inline fun <T> Array<out T>.isNotEmpty() : Boolean = !this.isEmpty()
 
 /** Returns true if the array is empty */
-public inline fun <T> Array<T>.isEmpty() : Boolean = this.size == 0
+public inline fun <T> Array<out T>.isEmpty() : Boolean = this.size == 0
 
 public inline val          BooleanArray.lastIndex : Int
     get() = this.size - 1
@@ -30,5 +30,5 @@ public inline val           DoubleArray.lastIndex : Int
 public inline val             CharArray.lastIndex : Int
     get() = this.size - 1
 
-public inline val <T: Any?> Array<T>.lastIndex : Int
+public inline val <T: Any?> Array<out T>.lastIndex : Int
     get() = this.size - 1
