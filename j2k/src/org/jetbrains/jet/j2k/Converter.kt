@@ -31,6 +31,7 @@ import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.psi.util.PsiUtil
 import com.intellij.openapi.project.Project
+import com.intellij.psi.javadoc.PsiDocComment
 
 public class Converter(val project: Project, val settings: ConverterSettings) {
 
@@ -86,27 +87,18 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return AnonymousClass(this, getMembers(anonymousClass))
     }
 
-    private fun getMembers(psiClass: PsiClass): MutableList<Node> {
+    private fun getMembers(psiClass: PsiClass): List<Node> {
         val members = ArrayList<Node>()
-        val lbraceOffset = psiClass.getLBrace()?.getTextRange()?.getStartOffset() ?: 0
-        for (e : PsiElement? in psiClass.getChildren()) {
-            val isDocComment = e?.getTextRange()?.getStartOffset() ?: 0 < lbraceOffset
-            if (isDocComment) continue
+        for (e in psiClass.getChildren()) {
             val converted = memberToMember(e, psiClass)
             if (converted != null) members.add(converted)
         }
         return members
     }
 
-    private fun getDocComments(element: PsiElement): List<Node> {
-        val comments = ArrayList<Node>()
-        val textOffset = element.getTextOffset()
-        for (e : PsiElement? in element.getChildren()) {
-            if (e is PsiComment && e.getTextRange()?.getStartOffset() ?: 0 < textOffset) {
-                comments.add(Comment(e.getText()!!));
-            }
-        }
-        return comments
+    private fun getDocComment(element: PsiDocCommentOwner): Comment? {
+        val psiDocComment = element.getDocComment()
+        return if (psiDocComment != null) Comment(psiDocComment.getText()!!) else null
     }
 
     private fun memberToMember(e: PsiElement?, containingClass: PsiClass): Node? = when(e) {
@@ -114,6 +106,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         is PsiField -> fieldToField(e, containingClass)
         is PsiClass -> classToClass(e)
         is PsiClassInitializer -> initializerToInitializer(e)
+        is PsiDocComment -> null
         is PsiComment -> Comment(e.getText()!!)
         else -> null
     }
@@ -126,8 +119,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         val extendsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getExtendsListTypes())
         val name: Identifier = Identifier(psiClass.getName()!!)
         val baseClassParams = ArrayList<Expression>()
-        val members = getMembers(psiClass)
-        val docComments = getDocComments(psiClass)
+        val members = ArrayList(getMembers(psiClass))
         val visitor: SuperVisitor = SuperVisitor()
         psiClass.accept(visitor)
         val resolvedSuperCallParameters = visitor.resolvedSuperCallParameters
@@ -175,7 +167,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     }
                 }
             }
-            members.add(Constructor(this, Identifier.EMPTY_IDENTIFIER, arrayListOf(), Collections.emptySet<Modifier>(),
+            members.add(Constructor(this, Identifier.EMPTY_IDENTIFIER, null, Collections.emptySet<Modifier>(),
                                     ClassType(name, Collections.emptyList<Element>(), false, this),
                                     Collections.emptyList<Element>(),
                                     ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
@@ -184,14 +176,14 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
 
         if (psiClass.isInterface()) {
-            return Trait(this, name, docComments, modifiers, typeParameters, extendsTypes, Collections.emptyList<Expression>(), implementsTypes, members)
+            return Trait(this, name, getDocComment(psiClass), modifiers, typeParameters, extendsTypes, Collections.emptyList<Expression>(), implementsTypes, members)
         }
 
         if (psiClass.isEnum()) {
-            return Enum(this, name, docComments, modifiers, typeParameters, Collections.emptyList<Type>(), Collections.emptyList<Expression>(), implementsTypes, members)
+            return Enum(this, name, getDocComment(psiClass), modifiers, typeParameters, Collections.emptyList<Type>(), Collections.emptyList<Expression>(), implementsTypes, members)
         }
 
-        return Class(this, name, docComments, modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members)
+        return Class(this, name, getDocComment(psiClass), modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, members)
     }
 
     private fun initializerToInitializer(i: PsiClassInitializer): Initializer {
@@ -204,10 +196,9 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     private fun fieldToField(field: PsiField, psiClass: PsiClass?): Field {
         val modifiers = modifiersListToModifiersSet(field.getModifierList())
-        val docComments = getDocComments(field)
         if (field is PsiEnumConstant) {
             return EnumConstant(Identifier(field.getName()!!),
-                                docComments,
+                                getDocComment(field),
                                 modifiers,
                                 typeToType(field.getType()),
                                 elementToElement(field.getArgumentList()))
@@ -219,7 +210,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
 
         return Field(Identifier(field.getName()!!),
-                     docComments,
+                     getDocComment(field),
                      modifiers,
                      kType,
                      expressionToExpression(field.getInitializer(), field.getType()),
@@ -245,7 +236,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         val params: Element = createFunctionParameters(method)
         val typeParameters = elementsToElementList(method.getTypeParameters())
         val modifiers = modifiersListToModifiersSet(method.getModifierList())
-        val docComments = getDocComments(method)
         if (isOverride(method)) {
             modifiers.add(Modifier.OVERRIDE)
         }
@@ -260,11 +250,11 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
 
         if (method.isConstructor()) {
-            return Constructor(this, identifier, docComments, modifiers, returnType, typeParameters, params,
+            return Constructor(this, identifier, getDocComment(method), modifiers, returnType, typeParameters, params,
                                Block(body.statements), isConstructorPrimary(method))
         }
 
-        return Function(this, identifier, docComments, modifiers, returnType, typeParameters, params, body)
+        return Function(this, identifier, getDocComment(method), modifiers, returnType, typeParameters, params, body)
     }
 
     private fun createFunctionParameters(method: PsiMethod): ParameterList {

@@ -21,13 +21,13 @@ import org.jetbrains.jet.j2k.*
 import java.util.ArrayList
 
 public open class Field(val identifier: Identifier,
-                        val docComments: List<Node>,
+                        docComment: Comment?,
                         modifiers: Set<Modifier>,
                         val `type`: Type,
                         val initializer: Element,
-                        val writingAccesses: Int) : Member(modifiers) {
+                        val writingAccesses: Int) : Member(docComment, modifiers) {
 
-    open fun modifiersToKotlin(): String {
+    fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()
         if (isAbstract()) {
             modifierList.add(Modifier.ABSTRACT)
@@ -41,11 +41,10 @@ public open class Field(val identifier: Identifier,
         return modifierList.toKotlin() + (if (isVal()) "val " else "var ")
     }
 
-    public open fun isVal(): Boolean = modifiers.contains(Modifier.FINAL)
-    public override fun isStatic(): Boolean = modifiers.contains(Modifier.STATIC)
+    public fun isVal(): Boolean = modifiers.contains(Modifier.FINAL)
 
     public override fun toKotlin(): String {
-        val declaration: String = docComments.toKotlin("\n", "", "\n") +
+        val declaration: String = docCommentToKotlin() +
         modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
         if (initializer.isEmpty()) {
             return declaration + ((if (isVal() && !isStatic() && writingAccesses != 0)

@@ -21,7 +21,7 @@ import org.jetbrains.jet.j2k.ast.types.Type
 
 public class Enum(converter: Converter,
                        name: Identifier,
-                       docComments: List<Node>,
+                       docComments: Comment?,
                        modifiers: Set<Modifier>,
                        typeParameters: List<Element>,
                        extendsTypes: List<Type>,

@@ -21,13 +21,13 @@ import org.jetbrains.jet.j2k.ast.types.Type
 
 public class Trait(converter: Converter,
                         name: Identifier,
-                        docComments: List<Node>,
+                        docComment: Comment?,
                         modifiers: Set<Modifier>,
                         typeParameters: List<Element>,
                         extendsTypes: List<Type>,
                         baseClassParams: List<Expression>,
                         implementsTypes: List<Type>,
-                        members: List<Node>) : Class(converter, name, docComments, modifiers, typeParameters,
+                        members: List<Node>) : Class(converter, name, docComment, modifiers, typeParameters,
                                                      extendsTypes, baseClassParams, implementsTypes, members) {
 
     override val TYPE: String

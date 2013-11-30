@@ -23,12 +23,12 @@ import org.jetbrains.jet.j2k.Converter
 
 public open class Function(val converter: Converter,
                            val name: Identifier,
-                           val docComments: List<Node>,
+                           docComment: Comment?,
                            modifiers: Set<Modifier>,
                            val `type`: Type,
                            val typeParameters: List<Element>,
                            val params: Element,
-                           var block: Block?) : Member(modifiers) {
+                           var block: Block?) : Member(docComment, modifiers) {
 
     private fun typeParametersToKotlin() = when {
         !typeParameters.isEmpty() -> typeParameters.map { it.toKotlin() }.makeString(", ", "<", "> ")
@@ -82,7 +82,7 @@ public open class Function(val converter: Converter,
     private fun returnTypeToKotlin() = if (!`type`.isUnit()) " : " + `type`.toKotlin() + " " else " "
 
     public override fun toKotlin(): String {
-        return docComments.toKotlin("\n", "", "\n") +
+        return docCommentToKotlin() +
         modifiersToKotlin() +
         "fun ${typeParametersToKotlin()}${name.toKotlin()}" +
         "(${params.toKotlin()})" +

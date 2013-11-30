@@ -19,10 +19,10 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class EnumConstant(identifier: Identifier,
-                               docComments: List<Node>,
+                               docComment: Comment?,
                                modifiers: Set<Modifier>,
                                `type`: Type,
-                               params: Element) : Field(identifier, docComments, modifiers, `type`.convertedToNotNull(), params, 0) {
+                               params: Element) : Field(identifier, docComment, modifiers, `type`.convertedToNotNull(), params, 0) {
 
     public override fun toKotlin(): String {
         if (initializer.toKotlin().isEmpty()) {

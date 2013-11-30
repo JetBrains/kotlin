@@ -24,13 +24,13 @@ import java.util.ArrayList
 
 public open class Class(val converter: Converter,
                         val name: Identifier,
-                        val docComments: List<Node>,
+                        docComment: Comment?,
                         modifiers: Set<Modifier>,
                         val typeParameters: List<Element>,
                         val extendsTypes: List<Type>,
                         val baseClassParams: List<Expression>,
                         val implementsTypes: List<Type>,
-                        val members: List<Node>) : Member(modifiers) {
+                        val members: List<Node>) : Member(docComment, modifiers) {
     open val TYPE: String
         get() = "class"
 
@@ -77,7 +77,7 @@ public open class Class(val converter: Converter,
         val constructorTypeParameters = ArrayList<Element>()
         constructorTypeParameters.addAll(typeParameters)
         constructorTypeParameters.addAll(f.typeParameters)
-        return Function(converter, Identifier("init"), arrayList(), modifiers,
+        return Function(converter, Identifier("init"), null, modifiers,
                         ClassType(name, constructorTypeParameters, false, converter),
                         constructorTypeParameters, f.params, block)
     }
@@ -133,7 +133,7 @@ public open class Class(val converter: Converter,
     }
 
     public override fun toKotlin(): String =
-            docComments.toKotlin("\n", "", "\n") +
+            docCommentToKotlin() +
             modifiersToKotlin() +
             TYPE + " " + name.toKotlin() +
             typeParametersToKotlin() +

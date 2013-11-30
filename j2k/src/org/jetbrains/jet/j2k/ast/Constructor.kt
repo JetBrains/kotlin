@@ -21,13 +21,13 @@ import org.jetbrains.jet.j2k.Converter
 
 public class Constructor(converter: Converter,
                               identifier: Identifier,
-                              docComments: List<Node>,
+                              docComment: Comment?,
                               modifiers: Set<Modifier>,
                               `type`: Type,
                               typeParameters: List<Element>,
                               params: Element,
                               block: Block,
-                              val isPrimary: Boolean) : Function(converter, identifier, docComments, modifiers,
+                              val isPrimary: Boolean) : Function(converter, identifier, docComment, modifiers,
                                                                  `type`, typeParameters, params, block) {
 
     public fun primarySignatureToKotlin(): String {
