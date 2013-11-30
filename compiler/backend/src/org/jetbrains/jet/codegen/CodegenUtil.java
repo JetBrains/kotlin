@@ -154,43 +154,6 @@ public class CodegenUtil {
         return member;
     }
 
-    @Nullable
-    public static FunctionDescriptor getDeclaredFunctionByRawSignature(
-            @NotNull ClassDescriptor owner,
-            @NotNull Name name,
-            @NotNull ClassifierDescriptor returnedClassifier,
-            @NotNull ClassifierDescriptor... valueParameterClassifiers
-    ) {
-        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name);
-        for (FunctionDescriptor function : functions) {
-            if (!CallResolverUtil.isOrOverridesSynthesized(function)
-                && function.getTypeParameters().isEmpty()
-                && valueParameterClassesMatch(function.getValueParameters(), Arrays.asList(valueParameterClassifiers))
-                && rawTypeMatches(function.getReturnType(), returnedClassifier)) {
-                return function;
-            }
-        }
-        return null;
-    }
-
-    private static boolean valueParameterClassesMatch(
-            @NotNull List<ValueParameterDescriptor> parameters,
-            @NotNull List<ClassifierDescriptor> classifiers) {
-        if (parameters.size() != classifiers.size()) return false;
-        for (int i = 0; i < parameters.size(); i++) {
-            ValueParameterDescriptor parameterDescriptor = parameters.get(i);
-            ClassifierDescriptor classDescriptor = classifiers.get(i);
-            if (!rawTypeMatches(parameterDescriptor.getType(), classDescriptor)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean rawTypeMatches(JetType type, ClassifierDescriptor classifier) {
-        return type.getConstructor().getDeclarationDescriptor().getOriginal() == classifier.getOriginal();
-    }
-
     public static boolean isCallInsideSameClassAsDeclared(CallableMemberDescriptor declarationDescriptor, CodegenContext context) {
         boolean isFakeOverride = declarationDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         boolean isDelegate = declarationDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;

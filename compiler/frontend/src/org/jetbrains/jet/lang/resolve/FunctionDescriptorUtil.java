@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -85,6 +87,43 @@ public class FunctionDescriptorUtil {
         parameterScope.addLabeledDeclaration(descriptor);
         parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
         return parameterScope;
+    }
+
+    @Nullable
+    public static FunctionDescriptor getDeclaredFunctionByRawSignature(
+            @NotNull ClassDescriptor owner,
+            @NotNull Name name,
+            @NotNull ClassifierDescriptor returnedClassifier,
+            @NotNull ClassifierDescriptor... valueParameterClassifiers
+    ) {
+        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name);
+        for (FunctionDescriptor function : functions) {
+            if (!CallResolverUtil.isOrOverridesSynthesized(function)
+                && function.getTypeParameters().isEmpty()
+                && valueParameterClassesMatch(function.getValueParameters(), Arrays.asList(valueParameterClassifiers))
+                && rawTypeMatches(function.getReturnType(), returnedClassifier)) {
+                return function;
+            }
+        }
+        return null;
+    }
+
+    private static boolean valueParameterClassesMatch(
+            @NotNull List<ValueParameterDescriptor> parameters,
+            @NotNull List<ClassifierDescriptor> classifiers) {
+        if (parameters.size() != classifiers.size()) return false;
+        for (int i = 0; i < parameters.size(); i++) {
+            ValueParameterDescriptor parameterDescriptor = parameters.get(i);
+            ClassifierDescriptor classDescriptor = classifiers.get(i);
+            if (!rawTypeMatches(parameterDescriptor.getType(), classDescriptor)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean rawTypeMatches(JetType type, ClassifierDescriptor classifier) {
+        return type.getConstructor().getDeclarationDescriptor().getOriginal() == classifier.getOriginal();
     }
 
     public static void initializeFromFunctionType(

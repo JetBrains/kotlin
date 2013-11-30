@@ -43,10 +43,7 @@ import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -480,7 +477,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateToArray() {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (isSubclass(descriptor, builtIns.getCollection())) {
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
+            if (FunctionDescriptorUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
                 MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toArray", "()[Ljava/lang/Object;", null, null);
                 InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -516,7 +513,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @NotNull ClassifierDescriptor returnedClassifier,
             @NotNull ClassifierDescriptor... valueParameterClassifiers
     ) {
-        if (CodegenUtil.getDeclaredFunctionByRawSignature(
+        if (FunctionDescriptorUtil.getDeclaredFunctionByRawSignature(
                 descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers) == null) {
             MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, name, desc, null, null);
             AsmUtil.genMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
@@ -610,14 +607,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateDataClassToStringIfNeeded(List<PropertyDescriptor> properties) {
         ClassDescriptor stringClass = KotlinBuiltIns.getInstance().getString();
-        if (getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toString"), stringClass) == null) {
+        if (FunctionDescriptorUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toString"), stringClass) == null) {
             generateDataClassToStringMethod(properties);
         }
     }
 
     private void generateDataClassHashCodeIfNeeded(List<PropertyDescriptor> properties) {
         ClassDescriptor intClass = KotlinBuiltIns.getInstance().getInt();
-        if (getDeclaredFunctionByRawSignature(descriptor, Name.identifier("hashCode"), intClass) == null) {
+        if (FunctionDescriptorUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("hashCode"), intClass) == null) {
             generateDataClassHashCodeMethod(properties);
         }
     }
@@ -625,7 +622,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateDataClassEqualsIfNeeded(List<PropertyDescriptor> properties) {
         ClassDescriptor booleanClass = KotlinBuiltIns.getInstance().getBoolean();
         ClassDescriptor anyClass = KotlinBuiltIns.getInstance().getAny();
-        FunctionDescriptor equalsFunction = getDeclaredFunctionByRawSignature(descriptor, Name.identifier("equals"), booleanClass, anyClass);
+        FunctionDescriptor equalsFunction = FunctionDescriptorUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("equals"),
+                                                                                                     booleanClass, anyClass);
         if (equalsFunction == null) {
             generateDataClassEqualsMethod(properties);
         }
