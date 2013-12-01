@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: String = ""): String {
+public fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: String = ""): String {
     val result = StringBuilder()
     if (size() > 0) {
         result.append(prefix)
@@ -31,7 +31,7 @@ fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: String =
     return result.toString()
 }
 
-fun Collection<Modifier>.toKotlin(separator: String = " "): String {
+public fun Collection<Modifier>.toKotlin(separator: String = " "): String {
     val result = StringBuilder()
     for (x in this) {
         result.append(x.name)
@@ -40,5 +40,6 @@ fun Collection<Modifier>.toKotlin(separator: String = " "): String {
     return result.toString()
 }
 
-fun String.withPrefix(prefix: String) = if (isEmpty()) "" else prefix + this
-fun Expression.withPrefix(prefix: String) = if (isEmpty()) "" else prefix + toKotlin()
+public fun String.withSuffix(suffix: String): String = if (isEmpty()) "" else this + suffix
+public fun String.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + this
+public fun Expression.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + toKotlin()

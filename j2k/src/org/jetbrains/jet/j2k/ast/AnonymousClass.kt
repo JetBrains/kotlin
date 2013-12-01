@@ -25,7 +25,7 @@ public class AnonymousClass(converter: Converter, members: List<Node>)
         Identifier("anonClass"),
         null,
         Collections.emptySet<Modifier>(),
-        Collections.emptyList<Element>(),
+        TypeParameterList.Empty,
         Collections.emptyList<Type>(),
         Collections.emptyList<Expression>(),
         Collections.emptyList<Type>(), members) {

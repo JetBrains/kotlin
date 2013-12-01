@@ -112,15 +112,15 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 
     private fun classToClass(psiClass: PsiClass): Class {
-        val modifiers: Set<Modifier> = modifiersListToModifiersSet(psiClass.getModifierList())
-        val fields: List<Field> = fieldsToFieldList(psiClass.getFields(), psiClass)
-        val typeParameters: List<Element> = elementsToElementList(psiClass.getTypeParameters())
-        val implementsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getImplementsListTypes())
-        val extendsTypes: List<Type> = typesToNotNullableTypeList(psiClass.getExtendsListTypes())
+        val modifiers = modifiersListToModifiersSet(psiClass.getModifierList())
+        val fields = fieldsToFieldList(psiClass.getFields(), psiClass)
+        val typeParameters = typeParameterListToTypeParameterList(psiClass.getTypeParameterList())
+        val implementsTypes = typesToNotNullableTypeList(psiClass.getImplementsListTypes())
+        val extendsTypes = typesToNotNullableTypeList(psiClass.getExtendsListTypes())
         val name: Identifier = Identifier(psiClass.getName()!!)
         val baseClassParams = ArrayList<Expression>()
         val members = ArrayList(getMembers(psiClass))
-        val visitor: SuperVisitor = SuperVisitor()
+        val visitor = SuperVisitor()
         psiClass.accept(visitor)
         val resolvedSuperCallParameters = visitor.resolvedSuperCallParameters
         if (resolvedSuperCallParameters.size() == 1) {
@@ -169,7 +169,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             }
             members.add(Constructor(this, Identifier.EMPTY_IDENTIFIER, null, Collections.emptySet<Modifier>(),
                                     ClassType(name, Collections.emptyList<Element>(), false, this),
-                                    Collections.emptyList<Element>(),
+                                    TypeParameterList.Empty,
                                     ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
                                     Block(createInitStatementsFromFields(finalOrWithEmptyInitializer)),
                                     true))
@@ -234,7 +234,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         val body = blockToBlock(method.getBody(), notEmpty)
 
         val params: Element = createFunctionParameters(method)
-        val typeParameters = elementsToElementList(method.getTypeParameters())
+        val typeParameterList = typeParameterListToTypeParameterList(method.getTypeParameterList())
         val modifiers = modifiersListToModifiersSet(method.getModifierList())
         if (isOverride(method)) {
             modifiers.add(Modifier.OVERRIDE)
@@ -250,11 +250,11 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
 
         if (method.isConstructor()) {
-            return Constructor(this, identifier, getDocComment(method), modifiers, returnType, typeParameters, params,
+            return Constructor(this, identifier, getDocComment(method), modifiers, returnType, typeParameterList, params,
                                Block(body.statements), isConstructorPrimary(method))
         }
 
-        return Function(this, identifier, getDocComment(method), modifiers, returnType, typeParameters, params, body)
+        return Function(this, identifier, getDocComment(method), modifiers, returnType, typeParameterList, params, body)
     }
 
     private fun createFunctionParameters(method: PsiMethod): ParameterList {

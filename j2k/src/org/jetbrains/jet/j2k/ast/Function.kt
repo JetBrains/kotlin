@@ -26,27 +26,9 @@ public open class Function(val converter: Converter,
                            docComment: Comment?,
                            modifiers: Set<Modifier>,
                            val `type`: Type,
-                           val typeParameters: List<Element>,
+                           val typeParameterList: TypeParameterList,
                            val params: Element,
                            var block: Block?) : Member(docComment, modifiers) {
-
-    private fun typeParametersToKotlin() = when {
-        !typeParameters.isEmpty() -> typeParameters.map { it.toKotlin() }.makeString(", ", "<", "> ")
-        else -> ""
-    }
-
-
-    private fun hasWhere(): Boolean = typeParameters.any { it is TypeParameter && it.hasWhere() }
-
-    private fun typeParameterWhereToKotlin(): String {
-        if (hasWhere())
-        {
-            val wheres = typeParameters.filter { it is TypeParameter }.map { ((it as TypeParameter).getWhereToKotlin() ) }
-            return "where " + wheres.makeString(", ") + " "
-        }
-
-        return ""
-    }
 
     private fun modifiersToKotlin(): String {
         val resultingModifiers = ArrayList<Modifier>()
@@ -84,10 +66,10 @@ public open class Function(val converter: Converter,
     public override fun toKotlin(): String {
         return docCommentToKotlin() +
         modifiersToKotlin() +
-        "fun ${typeParametersToKotlin()}${name.toKotlin()}" +
+        "fun ${typeParameterList.toKotlin().withSuffix(" ")}${name.toKotlin()}" +
         "(${params.toKotlin()})" +
         returnTypeToKotlin() +
-        typeParameterWhereToKotlin() +
+        typeParameterList.whereToKotlin() +
         block?.toKotlin()
     }
 }
