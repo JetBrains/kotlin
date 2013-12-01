@@ -59,6 +59,30 @@ class ArraysJVMTest {
         }
     }
 
+    test fun isEmpty() {
+        assertTrue(intArray().isEmpty())
+        assertFalse(intArray(1).isEmpty())
+        assertTrue(byteArray().isEmpty())
+        assertFalse(byteArray(1).isEmpty())
+        assertTrue(shortArray().isEmpty())
+        assertFalse(shortArray(1).isEmpty())
+        assertTrue(longArray().isEmpty())
+        assertFalse(longArray(1).isEmpty())
+        assertTrue(charArray().isEmpty())
+        assertFalse(charArray('a').isEmpty())
+        assertTrue(floatArray().isEmpty())
+        assertFalse(floatArray(0.1).isEmpty())
+        assertTrue(doubleArray().isEmpty())
+        assertFalse(doubleArray(0.1).isEmpty())
+        assertTrue(booleanArray().isEmpty())
+        assertFalse(booleanArray(false).isEmpty())
+    }
+
+    test fun isNotEmpty() {
+        assertFalse(intArray().isNotEmpty())
+        assertTrue(intArray(1).isNotEmpty())
+    }
+
     test fun min() {
         expect(null, { intArray().min() })
         expect(1, { intArray(1).min() })
