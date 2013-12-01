@@ -3,7 +3,7 @@ package templates
 import java.util.ArrayList
 import templates.Family.*
 
-fun iterables(): List<GenericFunction> {
+fun iterables(): ArrayList<GenericFunction> {
 
     val templates = commons()
 
@@ -140,5 +140,5 @@ fun iterables(): List<GenericFunction> {
         }
     }
 
-    return templates.sort()
+    return templates
 }

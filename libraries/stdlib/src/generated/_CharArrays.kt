@@ -184,6 +184,20 @@ public inline fun <K> CharArray.groupByTo(result: MutableMap<K, MutableList<Char
 }
 
 /**
+ * Returns true if the array is empty
+ */
+public fun CharArray.isEmpty() : Boolean {
+    return size == 0
+}
+
+/**
+ * Returns true if the array is empty
+ */
+public fun CharArray.isNotEmpty() : Boolean {
+    return !isEmpty()
+}
+
+/**
  * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."

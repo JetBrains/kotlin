@@ -32,19 +32,19 @@ fun main(args: Array<String>) {
         buildFor(Iterators, null)
     }
 
-    val iterables = iterables()
+    val arrays = arrays()
     val sumFunctions = PrimitiveType.values().map(::sumFunction).filterNotNull()
-    (iterables + sumFunctions).writeTo(File(outDir, "_Arrays.kt")) {
+    (arrays + sumFunctions).writeTo(File(outDir, "_Arrays.kt")) {
         buildFor(Arrays, null)
     }
 
     for (primitive in PrimitiveType.values()) {
-        (iterables + sumFunction(primitive)).filterNotNull().writeTo(File(outDir, "_${primitive.name}Arrays.kt")) {
+        (arrays + sumFunction(primitive)).filterNotNull().writeTo(File(outDir, "_${primitive.name}Arrays.kt")) {
             buildFor(PrimitiveArrays, primitive)
         }
     }
 
-    (iterables + sumFunctions).writeTo(File(outDir, "_Iterables.kt")) {
+    (iterables().sort() + sumFunctions).writeTo(File(outDir, "_Iterables.kt")) {
         buildFor(Iterables, null)
     }
 
