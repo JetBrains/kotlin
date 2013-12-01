@@ -30,7 +30,7 @@ public open class ExpressionVisitorForDirectObjectInheritors(converter: Converte
             myResult = MethodCallExpression.build(Identifier("System", false), "identityHashCode", arrayList(Identifier("this")))
         }
         else if (superMethodInvocation(methodExpression, "equals")) {
-            myResult = MethodCallExpression.build(Identifier("this", false), "identityEquals", getConverter().argumentsToExpressionList(expression!!))
+            myResult = MethodCallExpression.build(Identifier("this", false), "identityEquals", getConverter().convertArguments(expression!!))
         }
         else if (superMethodInvocation(methodExpression, "toString")) {
             myResult = DummyStringExpression(java.lang.String.format("getJavaClass<%s>.getName() + '@' + Integer.toHexString(hashCode())",

@@ -49,10 +49,10 @@ public class ImportList(val imports: List<Import>) : Element {
     override fun toKotlin() = filteredImports.toKotlin("\n")
 }
 
-public fun Converter.importsToImportList(importList: PsiImportList): ImportList =
-        ImportList(importList.getAllImportStatements() map { importToImport(it) })
+public fun Converter.convertImportList(importList: PsiImportList): ImportList =
+        ImportList(importList.getAllImportStatements() map { convertImport(it) })
 
-public fun Converter.importToImport(i: PsiImportStatementBase): Import {
+public fun Converter.convertImport(i: PsiImportStatementBase): Import {
     val reference = i.getImportReference()
     if (reference != null) {
         return Import(quoteKeywords(reference.getQualifiedName()!!) + if (i.isOnDemand()) ".*" else "")

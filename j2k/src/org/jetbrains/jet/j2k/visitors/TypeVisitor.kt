@@ -50,7 +50,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
 
     public override fun visitArrayType(arrayType: PsiArrayType?): Type {
         if (myResult is EmptyType) {
-            myResult = ArrayType(myConverter.typeToType(arrayType?.getComponentType()), true, myConverter)
+            myResult = ArrayType(myConverter.convertType(arrayType?.getComponentType()), true, myConverter)
         }
 
         return myResult
@@ -76,7 +76,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
             }
         }
         else {
-            myResult = ClassType(identifier, myConverter.typesToTypeList(classType.getParameters()), true, myConverter)
+            myResult = ClassType(identifier, myConverter.convertTypes(classType.getParameters()), true, myConverter)
         }
         return myResult
     }
@@ -118,7 +118,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
                     val superTypes = p!!.getSuperTypes()
                     val boundType: Type = (if (superTypes.size > 0)
                         ClassType(Identifier(getClassTypeName(superTypes[0])),
-                                  myConverter.typesToTypeList(superTypes[0].getParameters()),
+                                  myConverter.convertTypes(superTypes[0].getParameters()),
                                   true, myConverter)
                     else
                         StarProjectionType())
@@ -132,11 +132,11 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
 
     public override fun visitWildcardType(wildcardType: PsiWildcardType?): Type {
         if (wildcardType!!.isExtends()) {
-            myResult = OutProjectionType(myConverter.typeToType(wildcardType.getExtendsBound()))
+            myResult = OutProjectionType(myConverter.convertType(wildcardType.getExtendsBound()))
         }
         else
             if (wildcardType.isSuper()) {
-                myResult = InProjectionType(myConverter.typeToType(wildcardType.getSuperBound()))
+                myResult = InProjectionType(myConverter.convertType(wildcardType.getSuperBound()))
             }
             else {
                 myResult = StarProjectionType()
@@ -145,7 +145,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
     }
 
     public override fun visitEllipsisType(ellipsisType: PsiEllipsisType?): Type {
-        myResult = VarArg(myConverter.typeToType(ellipsisType?.getComponentType()))
+        myResult = VarArg(myConverter.convertType(ellipsisType?.getComponentType()))
         return myResult
     }
 

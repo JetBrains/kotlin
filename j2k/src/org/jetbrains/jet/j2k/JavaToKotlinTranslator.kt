@@ -98,7 +98,7 @@ object JavaToKotlinTranslator {
         if (file is PsiJavaFile) {
             val converter = Converter(file.getProject(), TestSettings)
             setClassIdentifiers(converter, file)
-            return prettify(converter.fileToFile(file).toKotlin())
+            return prettify(converter.convertFile(file).toKotlin())
         }
         return ""
     }

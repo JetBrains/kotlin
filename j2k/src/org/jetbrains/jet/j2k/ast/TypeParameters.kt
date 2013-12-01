@@ -65,11 +65,11 @@ public class TypeParameterList(val parameters: List<TypeParameter>) : Element {
     }
 }
 
-public fun Converter.typeParameterToTypeParameter(psiTypeParameter: PsiTypeParameter): TypeParameter {
-    return elementToElement(psiTypeParameter) as TypeParameter
+public fun Converter.convertTypeParameter(psiTypeParameter: PsiTypeParameter): TypeParameter {
+    return convertElement(psiTypeParameter) as TypeParameter
 }
 
-public fun Converter.typeParameterListToTypeParameterList(psiTypeParameterlist: PsiTypeParameterList?): TypeParameterList {
+public fun Converter.convertTypeParameterList(psiTypeParameterlist: PsiTypeParameterList?): TypeParameterList {
     return if (psiTypeParameterlist == null) TypeParameterList.Empty
-    else TypeParameterList(psiTypeParameterlist.getTypeParameters()!!.toList().map { typeParameterToTypeParameter(it) })
+    else TypeParameterList(psiTypeParameterlist.getTypeParameters()!!.toList().map { convertTypeParameter(it) })
 }

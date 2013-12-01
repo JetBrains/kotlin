@@ -133,7 +133,7 @@ public class JavaToKotlinActionUtil {
             if (psiFile instanceof PsiJavaFile && virtualFile != null) {
                 String result = "";
                 try {
-                    result = converter.fileToFile((PsiJavaFile) psiFile).toKotlin();
+                    result = converter.convertFile((PsiJavaFile) psiFile).toKotlin();
                 } catch (Exception e) {
                     //noinspection CallToPrintStackTrace
                     e.printStackTrace();
