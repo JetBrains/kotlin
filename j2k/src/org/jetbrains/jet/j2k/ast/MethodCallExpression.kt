@@ -17,6 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
+import java.util.ArrayList
 
 public open class MethodCallExpression(val methodCall: Expression,
                                        val arguments: List<Expression>,
@@ -31,10 +32,10 @@ public open class MethodCallExpression(val methodCall: Expression,
     }
 
     class object {
-        fun build(receiver: Expression, methodName: String, arguments: List<Expression> = arrayList()): MethodCallExpression {
+        fun build(receiver: Expression, methodName: String, arguments: List<Expression> = ArrayList()): MethodCallExpression {
             return MethodCallExpression(CallChainExpression(receiver, Identifier(methodName, false)),
                                         arguments,
-                                        arrayList(), false)
+                                        ArrayList(), false)
         }
     }
 }

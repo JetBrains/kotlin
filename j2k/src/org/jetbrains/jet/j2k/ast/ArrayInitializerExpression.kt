@@ -45,7 +45,7 @@ public open class ArrayInitializerExpression(val arrayType: ArrayType, val initi
     }
 
     private fun explicitConvertIfNeeded(i: Expression): String {
-        val doubleOrFloatTypes = hashSet("double", "float", "java.lang.double", "java.lang.float")
+        val doubleOrFloatTypes = setOf("double", "float", "java.lang.double", "java.lang.float")
         val afterReplace: String = innerTypeStr().replace(">", "").replace("<", "").replace("?", "")
         if (doubleOrFloatTypes.contains(afterReplace))
         {

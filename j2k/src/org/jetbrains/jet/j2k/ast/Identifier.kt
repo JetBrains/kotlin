@@ -39,7 +39,7 @@ public open class Identifier(val name: String,
             return "`" + str + "`"
         }
 
-        public val ONLY_KOTLIN_KEYWORDS: Set<String> = hashSet(
+        public val ONLY_KOTLIN_KEYWORDS: Set<String> = setOf(
                 "package", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"
         );
     }

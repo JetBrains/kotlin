@@ -27,7 +27,7 @@ public open class ExpressionVisitorForDirectObjectInheritors(converter: Converte
     public override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
         val methodExpression = expression?.getMethodExpression()!!
         if (superMethodInvocation(methodExpression, "hashCode")) {
-            myResult = MethodCallExpression.build(Identifier("System", false), "identityHashCode", arrayList(Identifier("this")))
+            myResult = MethodCallExpression.build(Identifier("System", false), "identityHashCode", listOf(Identifier("this")))
         }
         else if (superMethodInvocation(methodExpression, "equals")) {
             myResult = MethodCallExpression.build(Identifier("this", false), "identityEquals", getConverter().convertArguments(expression!!))

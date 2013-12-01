@@ -20,7 +20,7 @@ import com.intellij.psi.*
 import java.util.HashSet
 
 public open class SuperVisitor() : JavaRecursiveElementVisitor() {
-    public val resolvedSuperCallParameters: HashSet<PsiExpressionList> = hashSet()
+    public val resolvedSuperCallParameters: HashSet<PsiExpressionList> = HashSet()
 
     public override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
         if (expression != null && isSuper(expression.getMethodExpression())) {

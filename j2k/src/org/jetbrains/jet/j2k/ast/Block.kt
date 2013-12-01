@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import java.util.ArrayList
+
 public open class Block(val statements: List<Element>, val notEmpty: Boolean = false) : Statement() {
     public override fun isEmpty(): Boolean {
         return !notEmpty && statements.all { it.isEmpty() }
@@ -30,6 +32,6 @@ public open class Block(val statements: List<Element>, val notEmpty: Boolean = f
     }
 
     class object {
-        public val EMPTY_BLOCK: Block = Block(arrayList())
+        public val EMPTY_BLOCK: Block = Block(ArrayList())
     }
 }
