@@ -35,6 +35,7 @@ import java.util.Collection;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.DECLARATION_CANT_BE_INLINED;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
+import static org.jetbrains.jet.renderer.DescriptorRenderer.SHORT_NAMES_IN_TYPES;
 
 public class DefaultErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
@@ -473,13 +474,13 @@ public class DefaultErrorMessages {
         MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Callable reference left-hand side cannot be a type parameter");
 
         //Inline
-        MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-api ''{0}'' member from effectively public-api ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "''{0}'' construction not yet supported in inline functions", ELEMENT_TEXT, TO_STRING);
+        MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-api ''{0}'' member from effectively public-api ''{1}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "''{0}'' construction not yet supported in inline functions", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(DECLARATION_CANT_BE_INLINED, "Inline annotation could be present only on nonvirtual members (private or final)");
-        MAP.put(NOTHING_TO_INLINE, "There are no parameters of Function types to be inlined in ''{0}''", TO_STRING);
-        MAP.put(USAGE_IS_NOT_INLINABLE, "Illegal usage of inline-parameter ''{0}'' in ''{1}''. Annotate the parameter with [noinline]", ELEMENT_TEXT, TO_STRING);
-        MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Annotate the parameter with [noinline] or make not nullable", ELEMENT_TEXT, TO_STRING);
-        MAP.put(RECURSION_IN_INLINE, "Inline-function ''{1}'' couldn't be recursive", ELEMENT_TEXT, TO_STRING);
+        MAP.put(NOTHING_TO_INLINE, "There are no parameters of Function types to be inlined in ''{0}''", SHORT_NAMES_IN_TYPES);
+        MAP.put(USAGE_IS_NOT_INLINABLE, "Illegal usage of inline-parameter ''{0}'' in ''{1}''. Annotate the parameter with [noinline]", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Annotate the parameter with [noinline] or make not nullable", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(RECURSION_IN_INLINE, "Inline-function ''{1}'' can't be recursive", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
 
         MAP.setImmutable();
 
