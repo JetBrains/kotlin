@@ -48,12 +48,6 @@ public class SyntheticClassObjectInfo implements JetClassLikeInfo {
         return classInfo.getContainingPackageFqName();
     }
 
-    @NotNull
-    @Override
-    public List<JetDelegationSpecifier> getDelegationSpecifiers() {
-        return Collections.emptyList();
-    }
-
     @Nullable
     @Override
     public JetModifierList getModifierList() {
