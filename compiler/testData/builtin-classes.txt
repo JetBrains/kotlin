@@ -717,12 +717,32 @@ public final enum class InlineStrategy : jet.Enum<jet.InlineStrategy> {
     
     public class object <class-object-for-InlineStrategy> {
         /*primary*/ private constructor <class-object-for-InlineStrategy>()
-        public final val AS_FUNCTION: jet.InlineStrategy
-            public final fun <get-AS_FUNCTION>(): jet.InlineStrategy
-        public final val IN_PLACE: jet.InlineStrategy
-            public final fun <get-IN_PLACE>(): jet.InlineStrategy
         public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): jet.InlineStrategy
         public final /*synthesized*/ fun values(): jet.Array<jet.InlineStrategy>
+    }
+    
+    public enum entry AS_FUNCTION : jet.InlineStrategy {
+        /*primary*/ private constructor AS_FUNCTION()
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        
+        public class object <class-object-for-AS_FUNCTION> : jet.InlineStrategy.AS_FUNCTION {
+            /*primary*/ private constructor <class-object-for-AS_FUNCTION>()
+            public final override /*1*/ /*fake_override*/ fun name(): jet.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        }
+    }
+    
+    public enum entry IN_PLACE : jet.InlineStrategy {
+        /*primary*/ private constructor IN_PLACE()
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        
+        public class object <class-object-for-IN_PLACE> : jet.InlineStrategy.IN_PLACE {
+            /*primary*/ private constructor <class-object-for-IN_PLACE>()
+            public final override /*1*/ /*fake_override*/ fun name(): jet.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        }
     }
 }
 
