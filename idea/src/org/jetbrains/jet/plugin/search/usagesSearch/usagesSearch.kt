@@ -108,7 +108,7 @@ public object UsagesSearch: QueryFactory<PsiReference, UsagesSearchRequest>() {
             private val referenceService = PsiReferenceService.getService()!!
 
             override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
-                referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
+                return referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
                     ProgressManager.checkCanceled()
 
                     when {
