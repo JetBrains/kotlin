@@ -33,6 +33,7 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,6 +149,13 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      * @parameter
      */
     public String testModule;
+
+    /**
+     * Switch method inlining on/off: possible values are "on" and "off".
+     *
+     * @parameter
+     */
+    public String inline;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -295,6 +303,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         arguments.noJdkAnnotations = true;
         arguments.annotations = getFullAnnotationsPath(log, annotationPaths);
         log.info("Using kotlin annotations from " + arguments.annotations);
+        arguments.enableInline = inline;
+        log.info("Method inlining is " + InlineUtil.optionToInlineFlag(arguments.enableInline));
     }
 
     protected String getFullAnnotationsPath(Log log, List<String> annotations) {
