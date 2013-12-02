@@ -229,11 +229,12 @@ public inline fun <R, C: MutableCollection<in R>> DoubleArray.mapTo(result: C, t
  * Returns the largest element or null if there are no elements
  */
 public fun DoubleArray.max() : Double? {
-    var max: Double? = null
-    for (e in this) {
-        if (max == null || max!! < e) {
-           max = e
-        }
+    if (isEmpty()) return null
+    
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
     }
     return max
 }
@@ -261,11 +262,12 @@ public inline fun <R: Comparable<R>> DoubleArray.maxBy(f: (Double) -> R) : Doubl
  * Returns the smallest element or null if there are no elements
  */
 public fun DoubleArray.min() : Double? {
-    var min: Double? = null
-    for (e in this) {
-        if (min == null || min!! > e) {
-           min = e
-        }
+    if (isEmpty()) return null
+    
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
     }
     return min
 }
