@@ -16,4 +16,4 @@ Ann(
     p5 = 1.toInt() + 1.toInt()
 ) class MyClass
 
-// EXPECTED: Ann[p1 = -2147483648.toInt(): jet.Int, p2 = 2.toInt(): jet.Int, p3 = -2147483648.toLong(): jet.Long, p4 = 2.toLong(): jet.Long, p5 = 2.toInt(): jet.Int]
+// EXPECTED: Ann[p1 = -2147483648.toInt(): jet.Int, p2 = 2.toInt(): jet.Int, p3 = -2147483648.toLong(): jet.Long, p4 = 2.toInt(): jet.Int, p5 = 2.toInt(): jet.Int]

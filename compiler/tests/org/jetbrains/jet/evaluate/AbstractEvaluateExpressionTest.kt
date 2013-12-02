@@ -28,25 +28,57 @@ import kotlin.test.assertNotNull
 import java.util.regex.Pattern
 import org.intellij.lang.annotations.RegExp
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.jet.util.slicedmap.WritableSlice
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 
 abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResolveTest() {
 
     // Test directives should look like [// val testedPropertyName: expectedValue]
-    fun doTest(path: String) {
-        val fileText = FileUtil.loadFile(File(path))
+    fun doConstantTest(path: String) {
+        doTest(path) {
+            property, context ->
+            val compileTimeConstant = context.get(BindingContext.COMPILE_TIME_VALUE, property.getInitializer())
+            compileTimeConstant.toString()
+        }
+    }
+
+    // Test directives should look like [// val testedPropertyName: expectedValue]
+    fun doIsPureTest(path: String) {
+        doTest(path) {
+            property, context ->
+            val isPureKey = context.get(BindingContext.IS_PURE_CONSTANT_EXPRESSION, property.getInitializer())
+            isPureKey.toString()
+        }
+    }
+
+    private fun doTest(path: String, getValueToTest: (JetProperty, BindingContext) -> String) {
+        val myFile = File(path)
+        val fileText = FileUtil.loadFile(myFile)
         val namespaceDescriptor = getNamespaceDescriptor(fileText)
 
         val propertiesForTest = getObjectsToTest(fileText)
 
+        val expectedActual = hashMapOf<String, String>()
+
         for (propertyName in propertiesForTest) {
+            val expectedProperyPrefix = "// val ${propertyName}: "
+            val expected = InTextDirectivesUtils.findStringWithPrefixes(fileText, expectedProperyPrefix)
+            assertNotNull(expected, "Failed to find expected directive: $expectedProperyPrefix")
+
             val property = AbstractAnnotationDescriptorResolveTest.getPropertyDescriptor(namespaceDescriptor, propertyName)
             val jetProperty = BindingContextUtils.descriptorToDeclaration(context!!, property) as JetProperty
-            val compileTimeConstant = context!!.get(BindingContext.COMPILE_TIME_VALUE, jetProperty.getInitializer())
 
-            val expected = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// val ${propertyName}: ")
-            assertNotNull(expected, "Failed to find expected directive: // val ${propertyName}: ")
-            assertEquals(expected, StringUtil.unquoteString(compileTimeConstant.toString()), "Failed for $propertyName")
+            val testedObject = getValueToTest(jetProperty, context!!)
+            expectedActual[expectedProperyPrefix + expected!!] = expectedProperyPrefix + StringUtil.unquoteString(testedObject)
         }
+
+        var actualFileText = fileText
+        for ((expected, actual) in expectedActual) {
+            actualFileText = actualFileText.replace(expected, actual)
+        }
+
+        JetTestUtils.assertEqualsToFile(myFile, actualFileText)
     }
 
     fun getObjectsToTest(fileText: String): List<String> {

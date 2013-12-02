@@ -2749,6 +2749,21 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/evaluate/otherOverflow.kt");
             }
             
+            @TestMetadata("unaryMinusDepOnExpType.kt")
+            public void testUnaryMinusDepOnExpType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/unaryMinusDepOnExpType.kt");
+            }
+            
+            @TestMetadata("unaryMinusIndepWoExpType.kt")
+            public void testUnaryMinusIndepWoExpType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/unaryMinusIndepWoExpType.kt");
+            }
+            
+            @TestMetadata("unaryMinusIndependentExpType.kt")
+            public void testUnaryMinusIndependentExpType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/unaryMinusIndependentExpType.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/extensions")

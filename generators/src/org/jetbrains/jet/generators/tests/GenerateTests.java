@@ -571,7 +571,8 @@ public class GenerateTests {
                 "compiler/tests",
                 "EvaluateExpressionTestGenerated",
                 AbstractEvaluateExpressionTest.class,
-                testModel("compiler/testData/evaluate")
+                testModel("compiler/testData/evaluate/constant", "doConstantTest"),
+                testModel("compiler/testData/evaluate/isPure", "doIsPureTest")
         );
     }
 

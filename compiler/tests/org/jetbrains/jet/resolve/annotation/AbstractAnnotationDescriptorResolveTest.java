@@ -281,4 +281,14 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         }, " ");
         assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
     }
+
+    @NotNull
+    protected static String getAnnotations(DeclarationDescriptor member) {
+        return StringUtil.join(member.getAnnotations(), new Function<AnnotationDescriptor, String>() {
+            @Override
+            public String fun(AnnotationDescriptor annotationDescriptor) {
+                return annotationDescriptor.getType().toString() + DescriptorUtils.getSortedValueArguments(annotationDescriptor, DescriptorRenderer.TEXT);
+            }
+        }, " ");
+    }
 }

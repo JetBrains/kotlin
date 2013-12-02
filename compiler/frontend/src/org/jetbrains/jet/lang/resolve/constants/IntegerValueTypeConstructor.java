@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
 
-public class IntegerValueTypeConstructor extends NumberValueTypeConstructor {
+public class IntegerValueTypeConstructor extends NumberValueTypeConstructor<Long> {
     private final long value;
     private final Collection<JetType> supertypes = Lists.newArrayList();
 
@@ -42,6 +42,11 @@ public class IntegerValueTypeConstructor extends NumberValueTypeConstructor {
         if (value >= minValue && value <= maxValue) {
             supertypes.add(kotlinType);
         }
+    }
+
+    @Override
+    public Long getValue() {
+        return value;
     }
 
     @NotNull

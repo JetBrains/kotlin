@@ -19,6 +19,7 @@ package org.jetbrains.jet.resolve.annotation
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.InTextDirectivesUtils
 import java.io.File
+import org.jetbrains.jet.JetTestUtils
 
 public abstract class AbstractAnnotationParameterTest : AbstractAnnotationDescriptorResolveTest() {
     fun doTest(path: String) {
@@ -27,6 +28,8 @@ public abstract class AbstractAnnotationParameterTest : AbstractAnnotationDescri
         val classDescriptor = AbstractAnnotationDescriptorResolveTest.getClassDescriptor(namespaceDescriptor, "MyClass")
 
         val expected = InTextDirectivesUtils.findListWithPrefixes(fileText, "// EXPECTED: ").makeString(", ")
-        AbstractAnnotationDescriptorResolveTest.checkDescriptor(expected, classDescriptor)
+        val actual = AbstractAnnotationDescriptorResolveTest.getAnnotations(classDescriptor)
+
+        JetTestUtils.assertEqualsToFile(File(path), fileText.replace(expected, actual))
     }
 }

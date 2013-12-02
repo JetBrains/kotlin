@@ -10,6 +10,6 @@ internal final annotation class Anno : jet.Annotation {
         internal final fun <get-string>(): jet.String
 }
 
-test.Anno(double = 3.14.toDouble(): jet.Double, int = 42.toInt(): jet.Int, string = "OK": jet.String) internal final class Class {
+test.Anno(double = 3.14.toDouble(): jet.Double, int = IntegerValueType(42): IntegerValueType(42), string = "OK": jet.String) internal final class Class {
     /*primary*/ public constructor Class()
 }

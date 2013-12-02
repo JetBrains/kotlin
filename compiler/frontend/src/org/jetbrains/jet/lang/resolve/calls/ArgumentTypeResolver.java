@@ -264,7 +264,7 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    public <D extends CallableDescriptor> JetType updateResultArgumentTypeIfNotDenotable(
+    public static <D extends CallableDescriptor> JetType updateResultArgumentTypeIfNotDenotable(
             @NotNull ResolutionContext context,
             @NotNull JetExpression expression
     ) {
@@ -273,35 +273,35 @@ public class ArgumentTypeResolver {
             if (type.getConstructor() instanceof NumberValueTypeConstructor) {
                 NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
                 JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
-                updateNumberType(primitiveType, expression, context);
+                updateNumberType(primitiveType, expression, context.trace);
                 return primitiveType;
             }
         }
         return type;
     }
 
-    private <D extends CallableDescriptor> void updateNumberType(
+    public static <D extends CallableDescriptor> void updateNumberType(
             @NotNull JetType numberType,
             @Nullable JetExpression expression,
-            @NotNull ResolutionContext context
+            @NotNull BindingTrace trace
     ) {
         if (expression == null) return;
-        BindingContextUtils.updateRecordedType(numberType, expression, context.trace, false);
+        BindingContextUtils.updateRecordedType(numberType, expression, trace, false);
 
         if (!(expression instanceof JetConstantExpression)) {
             JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression, false);
             if (deparenthesized != expression) {
-                updateNumberType(numberType, deparenthesized, context);
+                updateNumberType(numberType, deparenthesized, trace);
             }
             if (deparenthesized instanceof JetBlockExpression) {
                 JetElement lastStatement = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) deparenthesized);
                 if (lastStatement instanceof JetExpression) {
-                    updateNumberType(numberType, (JetExpression) lastStatement, context);
+                    updateNumberType(numberType, (JetExpression) lastStatement, trace);
                 }
             }
             return;
         }
 
-        ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, numberType);
+        ConstantExpressionEvaluator.object$.evaluate(expression, trace, numberType);
     }
 }

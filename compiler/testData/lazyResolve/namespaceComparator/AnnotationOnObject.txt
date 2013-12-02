@@ -7,7 +7,7 @@ internal final annotation class A : jet.Annotation {
     internal final val c: jet.String
 }
 
-test.A(a = 12.toInt(): jet.Int, c = "Hello": jet.String) internal object SomeObject {
+test.A(a = IntegerValueType(12): IntegerValueType(12), c = "Hello": jet.String) internal object SomeObject {
     /*primary*/ private constructor SomeObject()
     
     public class object <class-object-for-SomeObject> : test.SomeObject {

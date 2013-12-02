@@ -12,4 +12,4 @@ annotation class Ann(
 
 Ann(-1, -1, -1, -1, -1.0, -1.0.toFloat(), -'c') class MyClass
 
-// EXPECTED: Ann[b1 = -1.toByte(): jet.Byte, b2 = -1.toShort(): jet.Short, b3 = -1.toInt(): jet.Int, b4 = -1.toLong(): jet.Long, b5 = -1.0.toDouble(): jet.Double, b6 = -1.0.toFloat(): jet.Float, b7 = -99.toInt(): jet.Int]
+// EXPECTED: Ann[b1 = IntegerValueType(-1): IntegerValueType(-1), b2 = IntegerValueType(-1): IntegerValueType(-1), b3 = IntegerValueType(-1): IntegerValueType(-1), b4 = IntegerValueType(-1): IntegerValueType(-1), b5 = -1.0.toDouble(): jet.Double, b6 = -1.0.toFloat(): jet.Float, b7 = IntegerValueType(-99): IntegerValueType(-99)]

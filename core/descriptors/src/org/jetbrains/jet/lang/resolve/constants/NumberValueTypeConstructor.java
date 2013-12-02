@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class NumberValueTypeConstructor implements TypeConstructor {
+public abstract class NumberValueTypeConstructor<T extends Number> implements TypeConstructor {
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getParameters() {
@@ -54,4 +54,6 @@ public abstract class NumberValueTypeConstructor implements TypeConstructor {
     public List<AnnotationDescriptor> getAnnotations() {
         return Collections.emptyList();
     }
+
+    public abstract T getValue();
 }

@@ -18,7 +18,7 @@ internal final annotation class CharAnno : jet.Annotation {
         internal final fun <get-value>(): jet.Char
 }
 
-test.IntAnno(value = 42.toInt(): jet.Int) test.ShortAnno(value = 42.toShort(): jet.Short) test.ByteAnno(value = 42.toByte(): jet.Byte) test.LongAnno(value = 42.toLong(): jet.Long) test.CharAnno(value = #65(A): jet.Char) test.BooleanAnno(value = false: jet.Boolean) test.FloatAnno(value = 3.14.toFloat(): jet.Float) test.DoubleAnno(value = 3.14.toDouble(): jet.Double) internal final class Class {
+test.IntAnno(value = IntegerValueType(42): IntegerValueType(42)) test.ShortAnno(value = IntegerValueType(42): IntegerValueType(42)) test.ByteAnno(value = IntegerValueType(42): IntegerValueType(42)) test.LongAnno(value = IntegerValueType(42): IntegerValueType(42)) test.CharAnno(value = #65(A): jet.Char) test.BooleanAnno(value = false: jet.Boolean) test.FloatAnno(value = 3.14.toFloat(): jet.Float) test.DoubleAnno(value = 3.14.toDouble(): jet.Double) internal final class Class {
     /*primary*/ public constructor Class()
 }
 

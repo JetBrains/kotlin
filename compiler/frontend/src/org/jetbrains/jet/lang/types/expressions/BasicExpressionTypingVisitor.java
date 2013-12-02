@@ -22,16 +22,15 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
@@ -50,7 +49,7 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
-import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -73,12 +72,10 @@ import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
-import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver.ErrorCharValueWithDiagnostic;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
+import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.resolveSpecialConstructionAsCall;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
@@ -122,39 +119,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return facade.getTypeInfo(innerExpression, context.replaceScope(context.scope), isStatement);
     }
 
-    private static JetTypeInfo createNumberValueTypeInfo(
-            @NotNull NumberValueTypeConstructor numberValueTypeConstructor,
-            @NotNull Number value,
-            @NotNull DataFlowInfo dataFlowInfo
-    ) {
-        return JetTypeInfo.create(new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(), numberValueTypeConstructor,
-                false, Collections.<TypeProjection>emptyList(),
-                ErrorUtils.createErrorScope("Scope for number value type (" + value + ")", true)), dataFlowInfo);
-    }
-
     @Override
     public JetTypeInfo visitConstantExpression(@NotNull JetConstantExpression expression, ExpressionTypingContext context) {
-        IElementType elementType = expression.getNode().getElementType();
-        String text = expression.getNode().getText();
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
 
-        if (noExpectedType(context.expectedType) && context.contextDependency == DEPENDENT) {
-            if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
-                Long longValue = EvaluatePackage.parseLong(text);
-                if (longValue != null) {
-                    return createNumberValueTypeInfo(new IntegerValueTypeConstructor(longValue), longValue, context.dataFlowInfo);
-                }
+        if (!(value instanceof NumberValueTypeConstant)) {
+            CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
+            boolean hasError = compileTimeConstantResolver.checkConstantExpressionType(value, expression, context.expectedType);
+            if (hasError) {
+                IElementType elementType = expression.getNode().getElementType();
+                return JetTypeInfo.create(getDefaultType(elementType), context.dataFlowInfo);
             }
         }
-        CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
-        CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
-        boolean hasError = compileTimeConstantResolver.checkConstantExpressionType(value, expression, context.expectedType);
-        if (hasError) {
-            return JetTypeInfo.create(getDefaultType(elementType), context.dataFlowInfo);
-        }
+
         assert value != null : "CompileTimeConstant should be evaluated for constant expression or an error should be recorded " + expression.getText();
-        return DataFlowUtils.checkType(value.getType(builtIns), expression, context, context.dataFlowInfo);
+        return createCompileTimeConstantTypeInfo(value, expression, context);
     }
 
     @Override
@@ -715,7 +694,29 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else {
             result = returnType;
         }
+
+        CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, contextWithExpectedType.trace,
+                                                                                    contextWithExpectedType.expectedType);
+        if (value != null) {
+            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
+        }
+
         return DataFlowUtils.checkType(result, expression, contextWithExpectedType, dataFlowInfo);
+    }
+
+    @NotNull
+    private static JetTypeInfo createCompileTimeConstantTypeInfo(
+            @NotNull CompileTimeConstant<?> value,
+            @NotNull JetExpression expression,
+            @NotNull ExpressionTypingContext context
+    ) {
+        JetType expressionType = value.getType(KotlinBuiltIns.getInstance());
+        if (value instanceof NumberValueTypeConstant && context.contextDependency == INDEPENDENT) {
+            expressionType = getPrimitiveNumberType(((NumberValueTypeConstant) value).getValue(), context.expectedType);
+            ArgumentTypeResolver.updateNumberType(expressionType, expression, context.trace);
+        }
+
+        return DataFlowUtils.checkType(expressionType, expression, context, context.dataFlowInfo);
     }
 
     private JetTypeInfo visitExclExclExpression(@NotNull JetUnaryExpression expression, @NotNull ExpressionTypingContext context) {

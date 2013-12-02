@@ -21,6 +21,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -30,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -161,13 +163,16 @@ public class DataFlowUtils {
         JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
         recordExpectedType(trace, expression, expectedType);
 
-        if (expressionType == null || noExpectedType(expectedType) ||
+        if (expressionType == null || noExpectedType(expectedType) || !expectedType.getConstructor().isDenotable() ||
             JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, expectedType)) {
             return expressionType;
         }
 
         if (expression instanceof JetConstantExpression) {
             CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, trace, expectedType);
+            if (value instanceof NumberValueTypeConstant) {
+                value = EvaluatePackage.getCompileTimeConstantForNumberType(((NumberValueTypeConstant) value).getValue(), expectedType);
+            }
             new CompileTimeConstantResolver(trace, true).checkConstantExpressionType(value, (JetConstantExpression) expression, expectedType);
             return expressionType;
         }

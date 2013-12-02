@@ -21,7 +21,7 @@ import java.io.IOException;
 public class AnnotationDescriptorResolveTest extends AbstractAnnotationDescriptorResolveTest {
     public void testIntAnnotation() throws IOException {
         String content = getContent("AnnInt(1)");
-        String expectedAnnotation = "AnnInt[a = 1.toInt(): jet.Int]";
+        String expectedAnnotation = "AnnInt[a = IntegerValueType(1): IntegerValueType(1)]";
         doTest(content, expectedAnnotation);
     }
 
@@ -51,13 +51,13 @@ public class AnnotationDescriptorResolveTest extends AbstractAnnotationDescripto
 
     public void testIntArrayAnnotation() throws IOException {
         String content = getContent("AnnIntArray(intArray(1, 2))");
-        String expectedAnnotation = "AnnIntArray[a = [1.toInt(), 2.toInt()]: jet.IntArray]";
+        String expectedAnnotation = "AnnIntArray[a = [IntegerValueType(1), IntegerValueType(2)]: jet.IntArray]";
         doTest(content, expectedAnnotation);
     }
 
     public void testIntArrayVarargAnnotation() throws IOException {
         String content = getContent("AnnIntVararg(1, 2)");
-        String expectedAnnotation = "AnnIntVararg[a = [1.toInt(), 2.toInt()]: jet.IntArray]";
+        String expectedAnnotation = "AnnIntVararg[a = [IntegerValueType(1), IntegerValueType(2)]: jet.IntArray]";
         doTest(content, expectedAnnotation);
     }
 
@@ -81,7 +81,7 @@ public class AnnotationDescriptorResolveTest extends AbstractAnnotationDescripto
 
     public void testAnnotationAnnotation() throws Exception {
         String content = getContent("AnnAnn(AnnInt(1))");
-        String expectedAnnotation = "AnnAnn[a = AnnInt[a = 1.toInt()]: test.AnnInt]";
+        String expectedAnnotation = "AnnAnn[a = AnnInt[a = IntegerValueType(1)]: test.AnnInt]";
         doTest(content, expectedAnnotation);
     }
 

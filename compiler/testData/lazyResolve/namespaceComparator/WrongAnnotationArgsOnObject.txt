@@ -6,7 +6,7 @@ internal final annotation class BadAnnotation : jet.Annotation {
     /*primary*/ public constructor BadAnnotation(/*0*/ s: jet.String)
 }
 
-test.BadAnnotation(s = 1.toInt(): jet.Int) internal object SomeObject {
+test.BadAnnotation(s = IntegerValueType(1): IntegerValueType(1)) internal object SomeObject {
     /*primary*/ private constructor SomeObject()
     
     public class object <class-object-for-SomeObject> : test.SomeObject {

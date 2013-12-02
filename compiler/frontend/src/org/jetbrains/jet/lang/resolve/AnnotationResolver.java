@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -34,6 +35,8 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstant;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -49,6 +52,7 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.getPrimitiveNumberType;
 
 public class AnnotationResolver {
 
@@ -243,6 +247,11 @@ public class AnnotationResolver {
             JetExpression argumentExpression = argument.getArgumentExpression();
             if (argumentExpression != null) {
                 CompileTimeConstant<?> constant = resolveExpressionToCompileTimeValue(argumentExpression, expectedType, trace);
+                if (constant instanceof NumberValueTypeConstant) {
+                    NumberValueTypeConstructor typeConstructor = ((NumberValueTypeConstant) constant).getValue();
+                    JetType defaultType = getPrimitiveNumberType(typeConstructor, expectedType);
+                    ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, trace);
+                }
                 if (constant != null) {
                     constants.add(constant);
                 }
