@@ -33,6 +33,8 @@ import java.util.Map;
 
 public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
 
+    private JetControlFlowBuilder builder = null;
+
     private final Stack<BreakableBlockInfo> loopInfo = new Stack<BreakableBlockInfo>();
     private final Map<JetElement, BreakableBlockInfo> elementToBlockInfo = new HashMap<JetElement, BreakableBlockInfo>();
     private int labelCount = 0;
@@ -41,6 +43,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     private final Stack<JetControlFlowInstructionsGeneratorWorker> builders = new Stack<JetControlFlowInstructionsGeneratorWorker>();
 
     private final Stack<BlockInfo> allBlocks = new Stack<BlockInfo>();
+
+    @NotNull
+    @Override
+    protected JetControlFlowBuilder getDelegateBuilder() {
+        return builder;
+    }
 
     private void pushBuilder(JetElement scopingElement, JetElement subroutine) {
         JetControlFlowInstructionsGeneratorWorker worker = new JetControlFlowInstructionsGeneratorWorker(scopingElement, subroutine);

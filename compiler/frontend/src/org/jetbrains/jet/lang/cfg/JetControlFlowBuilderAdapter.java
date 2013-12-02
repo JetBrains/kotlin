@@ -27,204 +27,206 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.List;
 
-public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
-    protected JetControlFlowBuilder builder;
+public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
+
+    @NotNull
+    protected abstract JetControlFlowBuilder getDelegateBuilder();
 
     @Override
     public void loadUnit(@NotNull JetExpression expression) {
-        builder.loadUnit(expression);
+        getDelegateBuilder().loadUnit(expression);
     }
 
     @Override
     public void loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
-        builder.loadConstant(expression, constant);
+        getDelegateBuilder().loadConstant(expression, constant);
     }
 
     @Override
     public void createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
-        builder.createAnonymousObject(expression);
+        getDelegateBuilder().createAnonymousObject(expression);
     }
 
     @Override
     public void loadStringTemplate(@NotNull JetStringTemplateExpression expression) {
-        builder.loadStringTemplate(expression);
+        getDelegateBuilder().loadStringTemplate(expression);
     }
 
     @Override
     public void readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
-        builder.readThis(expression, parameterDescriptor);
+        getDelegateBuilder().readThis(expression, parameterDescriptor);
     }
 
     @Override
     public void readVariable(@NotNull JetExpression expression, @Nullable VariableDescriptor variableDescriptor) {
-        builder.readVariable(expression, variableDescriptor);
+        getDelegateBuilder().readVariable(expression, variableDescriptor);
     }
 
     @Override
     public void call(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
-        builder.call(expression, resolvedCall);
+        getDelegateBuilder().call(expression, resolvedCall);
     }
 
     @Override
     public void predefinedOperation(@NotNull JetExpression expression, @Nullable PredefinedOperation operation) {
-        builder.predefinedOperation(expression, operation);
+        getDelegateBuilder().predefinedOperation(expression, operation);
     }
 
     @Override
     public void compilationError(@NotNull JetElement element, @NotNull String message) {
-        builder.compilationError(element, message);
+        getDelegateBuilder().compilationError(element, message);
     }
 
     @Override
     @NotNull
     public Label createUnboundLabel() {
-        return builder.createUnboundLabel();
+        return getDelegateBuilder().createUnboundLabel();
     }
 
     @NotNull
     @Override
     public Label createUnboundLabel(@NotNull String name) {
-        return builder.createUnboundLabel(name);
+        return getDelegateBuilder().createUnboundLabel(name);
     }
 
     @Override
     public void bindLabel(@NotNull Label label) {
-        builder.bindLabel(label);
+        getDelegateBuilder().bindLabel(label);
     }
 
     @Override
     public void jump(@NotNull Label label) {
-        builder.jump(label);
+        getDelegateBuilder().jump(label);
     }
 
     @Override
     public void jumpOnFalse(@NotNull Label label) {
-        builder.jumpOnFalse(label);
+        getDelegateBuilder().jumpOnFalse(label);
     }
 
     @Override
     public void jumpOnTrue(@NotNull Label label) {
-        builder.jumpOnTrue(label);
+        getDelegateBuilder().jumpOnTrue(label);
     }
 
     @Override
     public void nondeterministicJump(@NotNull Label label) {
-        builder.nondeterministicJump(label);
+        getDelegateBuilder().nondeterministicJump(label);
     }
 
     @Override
     public void nondeterministicJump(@NotNull List<Label> labels) {
-        builder.nondeterministicJump(labels);
+        getDelegateBuilder().nondeterministicJump(labels);
     }
 
     @Override
     public void jumpToError() {
-        builder.jumpToError();
+        getDelegateBuilder().jumpToError();
     }
 
     @Override
     public void throwException(@NotNull JetThrowExpression throwExpression) {
-        builder.throwException(throwExpression);
+        getDelegateBuilder().throwException(throwExpression);
     }
 
     @Override
     @NotNull
     public Label getEntryPoint(@NotNull JetElement labelElement) {
-        return builder.getEntryPoint(labelElement);
+        return getDelegateBuilder().getEntryPoint(labelElement);
     }
 
     @NotNull
     @Override
     public Label getExitPoint(@NotNull JetElement labelElement) {
-        return builder.getExitPoint(labelElement);
+        return getDelegateBuilder().getExitPoint(labelElement);
     }
 
     @Override
     public LoopInfo enterLoop(@NotNull JetExpression expression, @Nullable Label loopExitPoint, Label conditionEntryPoint) {
-        return builder.enterLoop(expression, loopExitPoint, conditionEntryPoint);
+        return getDelegateBuilder().enterLoop(expression, loopExitPoint, conditionEntryPoint);
     }
 
     @Override
     public void exitLoop(@NotNull JetExpression expression) {
-        builder.exitLoop(expression);
+        getDelegateBuilder().exitLoop(expression);
     }
 
     @Override
     @Nullable
     public JetElement getCurrentLoop() {
-        return builder.getCurrentLoop();
+        return getDelegateBuilder().getCurrentLoop();
     }
 
     @Override
     public void enterTryFinally(@NotNull GenerationTrigger trigger) {
-        builder.enterTryFinally(trigger);
+        getDelegateBuilder().enterTryFinally(trigger);
     }
 
     @Override
     public void exitTryFinally() {
-        builder.exitTryFinally();
+        getDelegateBuilder().exitTryFinally();
     }
 
     @Override
     public void enterSubroutine(@NotNull JetElement subroutine) {
-        builder.enterSubroutine(subroutine);
+        getDelegateBuilder().enterSubroutine(subroutine);
     }
 
     @NotNull
     @Override
     public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
-        return builder.exitSubroutine(subroutine);
+        return getDelegateBuilder().exitSubroutine(subroutine);
     }
 
     @NotNull
     @Override
     public JetElement getCurrentSubroutine() {
-        return builder.getCurrentSubroutine();
+        return getDelegateBuilder().getCurrentSubroutine();
     }
 
     @Override
     @Nullable
     public JetElement getReturnSubroutine() {
-        return builder.getReturnSubroutine();
+        return getDelegateBuilder().getReturnSubroutine();
     }
 
     @Override
     public void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine) {
-        builder.returnValue(returnExpression, subroutine);
+        getDelegateBuilder().returnValue(returnExpression, subroutine);
     }
 
     @Override
     public void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine) {
-        builder.returnNoValue(returnExpression, subroutine);
+        getDelegateBuilder().returnNoValue(returnExpression, subroutine);
     }
 
     @Override
     public void unsupported(JetElement element) {
-        builder.unsupported(element);
+        getDelegateBuilder().unsupported(element);
     }
 
     @Override
     public void write(@NotNull JetElement assignment, @NotNull JetElement lValue) {
-        builder.write(assignment, lValue);
+        getDelegateBuilder().write(assignment, lValue);
     }
 
     @Override
     public void declareParameter(@NotNull JetParameter parameter) {
-        builder.declareParameter(parameter);
+        getDelegateBuilder().declareParameter(parameter);
     }
 
     @Override
     public void declareVariable(@NotNull JetVariableDeclaration property) {
-        builder.declareVariable(property);
+        getDelegateBuilder().declareVariable(property);
     }
 
     @Override
     public void declareFunction(@NotNull JetElement subroutine, @NotNull Pseudocode pseudocode) {
-        builder.declareFunction(subroutine, pseudocode);
+        getDelegateBuilder().declareFunction(subroutine, pseudocode);
     }
 
     @Override
     public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
-        builder.repeatPseudocode(startLabel, finishLabel);
+        getDelegateBuilder().repeatPseudocode(startLabel, finishLabel);
     }
 }
