@@ -251,13 +251,19 @@ public abstract class StackValue {
             }
         }
         else if (fromType.getSort() == Type.OBJECT) {
-            if (toType.getSort() == Type.BOOLEAN || toType.getSort() == Type.CHAR) {
-                coerce(fromType, boxType(toType), v);
+            if (fromType.equals(getType(Boolean.class)) || fromType.equals(getType(Character.class))) {
+                unbox(unboxType(fromType), v);
+                coerce(unboxType(fromType), toType, v);
             }
             else {
-                coerce(fromType, getType(Number.class), v);
+                if (toType.getSort() == Type.BOOLEAN || toType.getSort() == Type.CHAR) {
+                    coerce(fromType, boxType(toType), v);
+                }
+                else {
+                    coerce(fromType, getType(Number.class), v);
+                }
+                unbox(toType, v);
             }
-            unbox(toType, v);
         }
         else {
             v.cast(fromType, toType);

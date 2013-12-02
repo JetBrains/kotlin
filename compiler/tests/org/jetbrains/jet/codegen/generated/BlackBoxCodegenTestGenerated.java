@@ -3807,6 +3807,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/primitiveTypes/kt3576.kt");
         }
         
+        @TestMetadata("kt4098.kt")
+        public void testKt4098() throws Exception {
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt4098.kt");
+        }
+        
+        @TestMetadata("kt4210.kt")
+        public void testKt4210() throws Exception {
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt4210.kt");
+        }
+        
+        @TestMetadata("kt4251.kt")
+        public void testKt4251() throws Exception {
+            doTest("compiler/testData/codegen/box/primitiveTypes/kt4251.kt");
+        }
+        
         @TestMetadata("kt446.kt")
         public void testKt446() throws Exception {
             doTest("compiler/testData/codegen/box/primitiveTypes/kt446.kt");
@@ -3890,6 +3905,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("nullAsNullableIntIsNull.kt")
         public void testNullAsNullableIntIsNull() throws Exception {
             doTest("compiler/testData/codegen/box/primitiveTypes/nullAsNullableIntIsNull.kt");
+        }
+        
+        @TestMetadata("nullableCharBoolean.kt")
+        public void testNullableCharBoolean() throws Exception {
+            doTest("compiler/testData/codegen/box/primitiveTypes/nullableCharBoolean.kt");
         }
         
         @TestMetadata("unboxComparable.kt")
