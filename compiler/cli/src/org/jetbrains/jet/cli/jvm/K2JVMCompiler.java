@@ -32,6 +32,7 @@ import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
@@ -107,7 +108,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, arguments.notNullAssertions);
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);
-        configuration.put(JVMConfigurationKeys.ENABLE_INLINE, !"off".equalsIgnoreCase(arguments.enableInline));
+        configuration.put(JVMConfigurationKeys.ENABLE_INLINE, InlineUtil.optionToInlineFlag(arguments.enableInline));
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
