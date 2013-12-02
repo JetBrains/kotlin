@@ -42,6 +42,7 @@ public inline fun Throwable.printStackTrace(stream: PrintStream): Unit {
 /**
  * A helper method for creating a [[Callable]] from a function
  */
+deprecated("Use SAM constructor: Callable(...)")
 public /*inline*/ fun <T> callable(action: ()-> T): Callable<T> {
     return object: Callable<T> {
         public override fun call() = action()
@@ -51,6 +52,7 @@ public /*inline*/ fun <T> callable(action: ()-> T): Callable<T> {
 /**
  * A helper method for creating a [[Runnable]] from a function
  */
+deprecated("Use SAM constructor: Runnable(...)")
 public /*inline*/ fun runnable(action: ()-> Unit): Runnable {
     return object: Runnable {
         public override fun run() {
