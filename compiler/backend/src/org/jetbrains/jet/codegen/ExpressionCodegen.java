@@ -429,7 +429,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (body != null) {
             gen(body, Type.VOID_TYPE);
         }
-        
+
         v.goTo(condition);
 
         v.mark(end);
@@ -465,7 +465,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             conditionValue = generateBlock(statements, true);
         }
         else {
-            gen(body, Type.VOID_TYPE);
+            if (body != null) {
+                gen(body, Type.VOID_TYPE);
+            }
+
             conditionValue = gen(condition);
         }
 
