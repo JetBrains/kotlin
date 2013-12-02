@@ -150,7 +150,7 @@ fun illegalWhenBlock(a: Any): Int {
         is Int -> return a
         is String -> return <!TYPE_MISMATCH!>a<!>
     }
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun declarations(a: Any?) {
     if (a is String) {
        val <!UNUSED_VARIABLE!>p4<!>: String = a

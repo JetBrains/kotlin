@@ -166,6 +166,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/ReturnFromExpression.kt");
     }
     
+    @TestMetadata("returnsInWhen.kt")
+    public void testReturnsInWhen() throws Exception {
+        doTest("compiler/testData/cfg/returnsInWhen.kt");
+    }
+    
     @TestMetadata("ShortFunction.kt")
     public void testShortFunction() throws Exception {
         doTest("compiler/testData/cfg/ShortFunction.kt");

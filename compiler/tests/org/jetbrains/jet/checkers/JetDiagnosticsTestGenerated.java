@@ -1407,6 +1407,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/DeadCode.kt");
             }
             
+            @TestMetadata("definiteReturnInWhen.kt")
+            public void testDefiniteReturnInWhen() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturnInWhen.kt");
+            }
+            
             @TestMetadata("kt1001.kt")
             public void testKt1001() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt1001.kt");
