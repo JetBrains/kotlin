@@ -652,7 +652,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         protected abstract void increment(@NotNull Label loopExit);
 
         public void body() {
-            gen(forExpression.getBody(), Type.VOID_TYPE);
+            JetExpression body = forExpression.getBody();
+            if (body != null) {
+                gen(body, Type.VOID_TYPE);
+            }
         }
 
         private void scheduleLeaveVariable(Runnable runnable) {
