@@ -3936,6 +3936,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     doTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/localClass.kt");
                 }
                 
+                @TestMetadata("localClass2.kt")
+                public void testLocalClass2() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/localClass2.kt");
+                }
+                
+                @TestMetadata("localFun.kt")
+                public void testLocalFun() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/localFun.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/inline/unaryExpressions")
