@@ -1,0 +1,18 @@
+== test ==
+fun test(s: String?) {
+    s?.length
+}
+---------------------
+L0:
+    <START>                 NEXT:[v(s: String?)]           PREV:[]
+    v(s: String?)           NEXT:[w(s)]                    PREV:[<START>]
+    w(s)                    NEXT:[r(s)]                    PREV:[v(s: String?)]
+    r(s)                    NEXT:[call(length, length)]    PREV:[w(s)]
+    call(length, length)    NEXT:[<END>]                   PREV:[r(s)]
+L1:
+    <END>                   NEXT:[<SINK>]                  PREV:[call(length, length)]
+error:
+    <ERROR>                 NEXT:[<SINK>]                  PREV:[]
+sink:
+    <SINK>                  NEXT:[]                        PREV:[<ERROR>, <END>]
+=====================

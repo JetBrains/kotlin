@@ -19,7 +19,11 @@ package org.jetbrains.jet.lang.cfg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.List;
 
@@ -82,7 +86,24 @@ public interface JetControlFlowBuilder {
 
     // Reading values
     void loadUnit(@NotNull JetExpression expression);
-    void read(@NotNull JetElement element);
+    void loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant);
+    void createAnonymousObject(@NotNull JetObjectLiteralExpression expression);
+    void loadStringTemplate(@NotNull JetStringTemplateExpression expression);
+
+    void readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor);
+    void readVariable(@NotNull JetExpression expression, @Nullable VariableDescriptor variableDescriptor);
+
+    void call(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall);
+
+    enum PredefinedOperation {
+        AND,
+        OR,
+        NOT_NULL_ASSERTION
+    }
+    void predefinedOperation(@NotNull JetExpression expression, @Nullable PredefinedOperation operation);
+
+    void compilationError(@NotNull JetElement element, @NotNull String message);
+
     void write(@NotNull JetElement assignment, @NotNull JetElement lValue);
     
     // Other

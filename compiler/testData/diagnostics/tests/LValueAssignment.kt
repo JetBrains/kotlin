@@ -110,7 +110,7 @@ class Test() {
         a++
         (@ a)++
         (a : Int)++
-        (a)++
+        <!UNUSED_CHANGED_VALUE!>(a)++<!>
     }
 
     fun testVariables1() {

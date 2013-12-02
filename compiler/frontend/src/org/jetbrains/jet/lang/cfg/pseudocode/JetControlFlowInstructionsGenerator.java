@@ -20,7 +20,11 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.*;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -252,11 +256,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void read(@NotNull JetElement element) {
-            add(new ReadValueInstruction(element));
-        }
-
-        @Override
         public void loadUnit(@NotNull JetExpression expression) {
             add(new LoadUnitValueInstruction(expression));
         }
@@ -313,7 +312,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             handleJumpInsideTryFinally(error);
             add(new ThrowExceptionInstruction(expression, error));
         }
-        
+
         public void exitTryFinally() {
             BlockInfo pop = allBlocks.pop();
             assert pop instanceof TryFinallyBlockInfo;
@@ -327,6 +326,50 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
             pseudocode.repeatPart(startLabel, finishLabel);
+        }
+
+        @Override
+        public void loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
+            read(expression);
+        }
+
+        @Override
+        public void createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
+            read(expression);
+        }
+
+        @Override
+        public void loadStringTemplate(@NotNull JetStringTemplateExpression expression) {
+            read(expression);
+        }
+
+        @Override
+        public void readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
+            read(expression);
+        }
+
+        @Override
+        public void readVariable(@NotNull JetExpression expression, @Nullable VariableDescriptor variableDescriptor) {
+            read(expression);
+        }
+
+        @Override
+        public void call(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
+            add(new CallInstruction(expression, resolvedCall));
+        }
+
+        @Override
+        public void predefinedOperation(@NotNull JetExpression expression, @Nullable PredefinedOperation operation) {
+            read(expression);
+        }
+
+        @Override
+        public void compilationError(@NotNull JetElement element, @NotNull String message) {
+            add(new CompilationErrorInstruction(element, message));
+        }
+
+        private void read(@NotNull JetElement element) {
+            add(new ReadValueInstruction(element));
         }
     }
 

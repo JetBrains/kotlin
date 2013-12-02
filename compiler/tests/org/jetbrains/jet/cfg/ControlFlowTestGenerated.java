@@ -46,9 +46,19 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/ArrayAccess.kt");
     }
     
+    @TestMetadata("arrayAccessExpression.kt")
+    public void testArrayAccessExpression() throws Exception {
+        doTest("compiler/testData/cfg/arrayAccessExpression.kt");
+    }
+    
     @TestMetadata("Assignments.kt")
     public void testAssignments() throws Exception {
         doTest("compiler/testData/cfg/Assignments.kt");
+    }
+    
+    @TestMetadata("backingFieldAccess.kt")
+    public void testBackingFieldAccess() throws Exception {
+        doTest("compiler/testData/cfg/backingFieldAccess.kt");
     }
     
     @TestMetadata("Basic.kt")
@@ -96,6 +106,16 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/If.kt");
     }
     
+    @TestMetadata("incrementAtTheEnd.kt")
+    public void testIncrementAtTheEnd() throws Exception {
+        doTest("compiler/testData/cfg/incrementAtTheEnd.kt");
+    }
+    
+    @TestMetadata("invoke.kt")
+    public void testInvoke() throws Exception {
+        doTest("compiler/testData/cfg/invoke.kt");
+    }
+    
     @TestMetadata("LazyBooleans.kt")
     public void testLazyBooleans() throws Exception {
         doTest("compiler/testData/cfg/LazyBooleans.kt");
@@ -111,6 +131,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/MultiDecl.kt");
     }
     
+    @TestMetadata("multiDeclarationWithError.kt")
+    public void testMultiDeclarationWithError() throws Exception {
+        doTest("compiler/testData/cfg/multiDeclarationWithError.kt");
+    }
+    
     @TestMetadata("ObjectExpression.kt")
     public void testObjectExpression() throws Exception {
         doTest("compiler/testData/cfg/ObjectExpression.kt");
@@ -119,6 +144,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     @TestMetadata("OnlyWhileInFunctionBody.kt")
     public void testOnlyWhileInFunctionBody() throws Exception {
         doTest("compiler/testData/cfg/OnlyWhileInFunctionBody.kt");
+    }
+    
+    @TestMetadata("propertySafeCall.kt")
+    public void testPropertySafeCall() throws Exception {
+        doTest("compiler/testData/cfg/propertySafeCall.kt");
     }
     
     @TestMetadata("ReturnFromExpression.kt")

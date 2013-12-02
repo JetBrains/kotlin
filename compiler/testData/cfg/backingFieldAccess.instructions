@@ -1,0 +1,47 @@
+== C ==
+class C {
+    val a: Int
+        get() = 1
+
+    {
+        $a
+    }
+}
+---------------------
+L0:
+    <START>               NEXT:[v(val a: Int get() = 1) ]    PREV:[]
+    v(val a: Int
+            get() = 1)    NEXT:[jmp?(L2)]                    PREV:[<START>]
+    jmp?(L2)              NEXT:[r($a), d(get() = 1)]         PREV:[v(val a: Int get() = 1) ]
+    d(get() = 1)          NEXT:[<SINK>]                      PREV:[jmp?(L2)]
+L2:
+    r($a)                 NEXT:[<END>]                       PREV:[jmp?(L2)]
+L1:
+    <END>                 NEXT:[<SINK>]                      PREV:[r($a)]
+error:
+    <ERROR>               NEXT:[<SINK>]                      PREV:[]
+sink:
+    <SINK>                NEXT:[]                            PREV:[<ERROR>, <END>, d(get() = 1)]
+L3:
+    <START>    NEXT:[r(1)]      PREV:[]
+    r(1)       NEXT:[<END>]     PREV:[<START>]
+L4:
+    <END>      NEXT:[<SINK>]    PREV:[r(1)]
+error:
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+=====================
+== get_a ==
+get() = 1
+---------------------
+L3:
+    <START>    NEXT:[r(1)]      PREV:[]
+    r(1)       NEXT:[<END>]     PREV:[<START>]
+L4:
+    <END>      NEXT:[<SINK>]    PREV:[r(1)]
+error:
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+=====================

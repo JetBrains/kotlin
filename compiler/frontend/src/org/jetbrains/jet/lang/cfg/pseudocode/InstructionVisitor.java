@@ -80,11 +80,19 @@ public class InstructionVisitor {
         visitInstructionWithNext(instruction);
     }
 
-    public void visitWriteValue(WriteValueInstruction writeValueInstruction) {
-        visitInstructionWithNext(writeValueInstruction);
+    public void visitWriteValue(WriteValueInstruction instruction) {
+        visitInstructionWithNext(instruction);
     }
 
     public void visitLoadUnitValue(LoadUnitValueInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
+    public void visitCallInstruction(CallInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
+    public void visitCompilationErrorInstruction(CompilationErrorInstruction instruction) {
         visitInstructionWithNext(instruction);
     }
 }

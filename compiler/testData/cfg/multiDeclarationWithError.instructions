@@ -1,0 +1,23 @@
+== foo ==
+fun foo(x: Int) {
+    val (a, b) = x
+    a
+}
+---------------------
+L0:
+    <START>      NEXT:[v(x: Int)]    PREV:[]
+    v(x: Int)    NEXT:[w(x)]         PREV:[<START>]
+    w(x)         NEXT:[r(x)]         PREV:[v(x: Int)]
+    r(x)         NEXT:[v(a)]         PREV:[w(x)]
+    v(a)         NEXT:[w(a)]         PREV:[r(x)]
+    w(a)         NEXT:[v(b)]         PREV:[v(a)]
+    v(b)         NEXT:[w(b)]         PREV:[w(a)]
+    w(b)         NEXT:[r(a)]         PREV:[v(b)]
+    r(a)         NEXT:[<END>]        PREV:[w(b)]
+L1:
+    <END>        NEXT:[<SINK>]       PREV:[r(a)]
+error:
+    <ERROR>      NEXT:[<SINK>]       PREV:[]
+sink:
+    <SINK>       NEXT:[]             PREV:[<ERROR>, <END>]
+=====================

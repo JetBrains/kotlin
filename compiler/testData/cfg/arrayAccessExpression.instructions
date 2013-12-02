@@ -1,0 +1,34 @@
+== Ab ==
+abstract class Ab {
+    abstract fun getArray() : Array<Int>
+}
+---------------------
+L0:
+    <START>    NEXT:[<END>]     PREV:[]
+L1:
+    <END>      NEXT:[<SINK>]    PREV:[<START>]
+error:
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+=====================
+== test ==
+fun test(ab: Ab) {
+    ab.getArray()[1]
+}
+---------------------
+L0:
+    <START>                        NEXT:[v(ab: Ab)]                      PREV:[]
+    v(ab: Ab)                      NEXT:[w(ab)]                          PREV:[<START>]
+    w(ab)                          NEXT:[r(ab)]                          PREV:[v(ab: Ab)]
+    r(ab)                          NEXT:[call(getArray, getArray)]       PREV:[w(ab)]
+    call(getArray, getArray)       NEXT:[r(1)]                           PREV:[r(ab)]
+    r(1)                           NEXT:[call(ab.getArray()[1], get)]    PREV:[call(getArray, getArray)]
+    call(ab.getArray()[1], get)    NEXT:[<END>]                          PREV:[r(1)]
+L1:
+    <END>                          NEXT:[<SINK>]                         PREV:[call(ab.getArray()[1], get)]
+error:
+    <ERROR>                        NEXT:[<SINK>]                         PREV:[]
+sink:
+    <SINK>                         NEXT:[]                               PREV:[<ERROR>, <END>]
+=====================

@@ -19,7 +19,11 @@ package org.jetbrains.jet.lang.cfg;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.List;
 
@@ -27,13 +31,48 @@ public class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
     protected JetControlFlowBuilder builder;
 
     @Override
-    public void read(@NotNull JetElement element) {
-        builder.read(element);
+    public void loadUnit(@NotNull JetExpression expression) {
+        builder.loadUnit(expression);
     }
 
     @Override
-    public void loadUnit(@NotNull JetExpression expression) {
-        builder.loadUnit(expression);
+    public void loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
+        builder.loadConstant(expression, constant);
+    }
+
+    @Override
+    public void createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
+        builder.createAnonymousObject(expression);
+    }
+
+    @Override
+    public void loadStringTemplate(@NotNull JetStringTemplateExpression expression) {
+        builder.loadStringTemplate(expression);
+    }
+
+    @Override
+    public void readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
+        builder.readThis(expression, parameterDescriptor);
+    }
+
+    @Override
+    public void readVariable(@NotNull JetExpression expression, @Nullable VariableDescriptor variableDescriptor) {
+        builder.readVariable(expression, variableDescriptor);
+    }
+
+    @Override
+    public void call(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
+        builder.call(expression, resolvedCall);
+    }
+
+    @Override
+    public void predefinedOperation(@NotNull JetExpression expression, @Nullable PredefinedOperation operation) {
+        builder.predefinedOperation(expression, operation);
+    }
+
+    @Override
+    public void compilationError(@NotNull JetElement element, @NotNull String message) {
+        builder.compilationError(element, message);
     }
 
     @Override
