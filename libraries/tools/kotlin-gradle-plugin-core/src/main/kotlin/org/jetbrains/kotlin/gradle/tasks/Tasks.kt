@@ -114,6 +114,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
         args.noStdlib = true
         args.noJdkAnnotations = true
+        args.enableInline = kotlinOptions.enableInline
 
         val messageCollector = GradleMessageCollector(logger)
         val exitCode = compiler.exec(messageCollector, args)

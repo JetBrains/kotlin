@@ -45,6 +45,7 @@ task show << {
 
 compileKotlin {
     kotlinOptions.annotations = "externalAnnotations"
+    kotlinOptions.enableInline = "off";
 }
 
 
