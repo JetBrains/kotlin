@@ -425,7 +425,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue conditionValue = gen(expression.getCondition());
         conditionValue.condJump(end, true, v);
 
-        gen(expression.getBody(), Type.VOID_TYPE);
+        JetExpression body = expression.getBody();
+        if (body != null) {
+            gen(body, Type.VOID_TYPE);
+        }
+        
         v.goTo(condition);
 
         v.mark(end);
