@@ -3,6 +3,7 @@ package switch_demo
 public class SwitchDemo() {
     class object {
         public fun main(args: Array<String>) {
+
             val month = 8
             val monthString: String
             when (month) {

@@ -82,6 +82,10 @@ public open class ElementVisitor(val myConverter: Converter) : JavaElementVisito
     }
 
     public override fun visitComment(comment: PsiComment?) {
-        myResult = Comment(comment?.getText()!!)
+        myResult = Comment(comment!!.getText()!!)
+    }
+
+    override fun visitWhiteSpace(space: PsiWhiteSpace?) {
+        myResult = WhiteSpace(space!!.getText()!!)
     }
 }

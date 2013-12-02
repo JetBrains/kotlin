@@ -123,7 +123,7 @@ public open class SwitchContainer(val expression: Expression, val caseContainers
     public override fun toKotlin() = "when (" + expression.toKotlin() + ") {\n" + caseContainers.toKotlin("\n") + "\n}"
 }
 
-public open class CaseContainer(val caseStatement: List<Element>, statements: List<Element>) : Statement() {
+public open class CaseContainer(val caseStatement: List<Element>, statements: List<Statement>) : Statement() {
     private val myBlock: Block
 
     {

@@ -10,6 +10,7 @@ open class User() {
         var lib: Library? = Library()
         lib?.call()
         lib?.getString()?.isEmpty()
+
         Library().call()
         Library().getString()?.isEmpty()
     }

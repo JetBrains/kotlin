@@ -17,7 +17,6 @@
 package org.jetbrains.jet.j2k.visitors
 
 import com.intellij.psi.*
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.countWritingAccesses
@@ -109,16 +108,17 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
                                                  getConverter().convertStatement(body))
         }
         else {
-            var forStatements = ArrayList<Element>()
+            var forStatements = ArrayList<Statement>()
             forStatements.add(getConverter().convertStatement(initialization))
+            val bodyAndUpdate = listOf(getConverter().convertStatement(body),
+                                       Block(listOf(getConverter().convertStatement(update))))
             forStatements.add(WhileStatement(
                     if (condition == null)
                         LiteralExpression("true")
                     else
                         getConverter().convertExpression(condition),
-                    Block(arrayListOf(getConverter().convertStatement(body),
-                                      Block(arrayListOf(getConverter().convertStatement(update)), false)), false)))
-            myResult = Block(forStatements, false)
+                    Block(bodyAndUpdate)))
+            myResult = Block(forStatements)
         }
     }
 
@@ -174,21 +174,21 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
         for (ls in cases) {
             // TODO assert {(ls?.size()).sure() > 0}
             if (ls.size() > 0) {
-                var label = ls[0]
-                hasDefaultCase = hasDefaultCase || (label as PsiSwitchLabelStatement).isDefaultCase()
+                var label = ls[0] as PsiSwitchLabelStatement
+                hasDefaultCase = hasDefaultCase || label.isDefaultCase()
                 // TODO assert {(label is PsiSwitchLabelStatement?)}
                 // TODO assert("not a right index") {allSwitchStatements?.get(i) == label}
                 if (ls.size() > 1) {
                     pendingLabels.add(getConverter().convertStatement(label))
                     val slice: List<PsiElement> = ls.subList(1, (ls.size()))
                     if (!containsBreak(slice)) {
-                        val statements = ArrayList(getConverter().convertStatements(slice))
-                        statements.addAll(getConverter().convertStatements(getAllToNextBreak(allSwitchStatements, i + ls.size())))
+                        val statements = ArrayList(getConverter().convertStatements(slice).statements)
+                        statements.addAll(getConverter().convertStatements(getAllToNextBreak(allSwitchStatements, i + ls.size())).statements)
                         result.add(CaseContainer(pendingLabels, statements))
                         pendingLabels = ArrayList()
                     }
                     else {
-                        result.add(CaseContainer(pendingLabels, getConverter().convertStatements(slice)))
+                        result.add(CaseContainer(pendingLabels, getConverter().convertStatements(slice).statements))
                         pendingLabels = ArrayList()
                     }
                 }
@@ -291,5 +291,9 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
 
             return cases
         }
+    }
+
+    override fun visitEmptyStatement(statement: PsiEmptyStatement?) {
+        myResult = Statement.EMPTY_STATEMENT
     }
 }

@@ -139,7 +139,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                             val init = getDefaultInitializer(fo)
                             initializers.put(fo.identifier.toKotlin(), init)
                         }
-                        val newStatements = ArrayList<Element>()
+                        val newStatements = ArrayList<Statement>()
                         for (s in m.block!!.statements) {
                             var isRemoved: Boolean = false
                             if (s is AssignmentExpression) {
@@ -262,7 +262,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         for (parameter : PsiParameter? in method.getParameterList().getParameters()) {
             result.add(Parameter(Identifier(parameter?.getName()!!),
                                  convertType(parameter?.getType(),
-                                            isAnnotatedAsNotNull(parameter?.getModifierList())),
+                                             isAnnotatedAsNotNull(parameter?.getModifierList())),
                                  isReadOnly(parameter, method.getBody())))
         }
         return ParameterList(result)
@@ -272,28 +272,24 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         if (block == null)
             return Block.EMPTY_BLOCK
 
-        return Block(convertStatements(block.getChildren()), notEmpty)
+        return Block(convertStatements(block.getChildren().toList()), notEmpty)
     }
 
     public fun convertBlock(block: PsiCodeBlock?): Block {
         return convertBlock(block, true)
     }
 
-    public fun convertStatements(statements: Array<PsiElement>): List<Element> {
-        return statements.filterNot { it is PsiWhiteSpace }.map { convertStatement(it) }
+    public fun convertStatements(statements: List<PsiElement>): StatementList {
+        return StatementList(statements.map { if (it is PsiStatement) convertStatement(it) else convertElement(it) })
     }
 
-    public fun convertStatements(statements: List<PsiElement>): List<Element> {
-        return statements.filterNot { it is PsiWhiteSpace }.map { convertStatement(it) }
-    }
-
-    public fun convertStatement(s: PsiElement?): Element {
+    public fun convertStatement(s: PsiStatement?): Statement {
         if (s == null)
             return Statement.EMPTY_STATEMENT
 
         val statementVisitor: StatementVisitor = StatementVisitor(this)
         s.accept(statementVisitor)
-        return statementVisitor.getResult()
+        return statementVisitor.getResult() as Statement
     }
 
     public fun convertExpressions(expressions: Array<PsiExpression>): List<Expression> {
@@ -373,7 +369,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     public fun convertParameter(parameter: PsiParameter, forceNotNull: Boolean = false): Parameter {
         return Parameter(Identifier(parameter.getName()!!),
                          convertType(parameter.getType(),
-                                    forceNotNull || isAnnotatedAsNotNull(parameter.getModifierList())), true)
+                                     forceNotNull || isAnnotatedAsNotNull(parameter.getModifierList())), true)
     }
 
     public fun convertArguments(expression: PsiCallExpression): List<Expression> {
@@ -449,8 +445,8 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return fields.map { Parameter(Identifier("_" + it.identifier.name), it.`type`, true) }
     }
 
-    private fun createInitStatementsFromFields(fields: List<Field>): List<Element> {
-        val result = ArrayList<Element>()
+    private fun createInitStatementsFromFields(fields: List<Field>): List<Statement> {
+        val result = ArrayList<Statement>()
         for (f : Field in fields) {
             val identifierToKotlin: String? = f.identifier.toKotlin()
             result.add(DummyStringExpression(identifierToKotlin + " = " + "_" + identifierToKotlin))

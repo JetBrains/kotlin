@@ -7,8 +7,10 @@ open class Test() {
         var s3: String? = ""
         if (s1?.isEmpty()!! && s2?.isEmpty()!!)
             return "OK"
+
         if (s1?.isEmpty()!! && s2?.isEmpty()!! && s3?.isEmpty()!!)
             return "OOOK"
+
         return ""
     }
 }

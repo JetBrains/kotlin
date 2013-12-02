@@ -8,6 +8,7 @@ class Test() {
         System.out.println(true or false)
         System.out.println(true xor false)
         System.out.println(!true)
+
         System.out.println(true && false)
         System.out.println(true || false)
     }

@@ -13,6 +13,7 @@ public open class Test(str: String) {
         var test: String = "String2"
         sout(test)
         sout(dummy(test))
+
         Test(test)
     }
     {

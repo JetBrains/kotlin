@@ -61,7 +61,7 @@ public open class Class(val converter: Converter,
     private fun constructorToInit(f: Function): Function {
         val modifiers = HashSet<Modifier>(f.modifiers)
         modifiers.add(Modifier.STATIC)
-        val statements = ArrayList<Element>(f.block?.statements ?: listOf())
+        val statements = ArrayList(f.block?.statements ?: ArrayList())
         statements.add(ReturnStatement(Identifier("__")))
         val block = Block(statements)
         val constructorTypeParameters = ArrayList<TypeParameter>()

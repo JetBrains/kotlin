@@ -13,6 +13,7 @@ public class Test(str: String) {
         val test = "String2"
         sout(test)
         sout(dummy(test))
+
         Test(test)
     }
     {

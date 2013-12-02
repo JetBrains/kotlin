@@ -18,6 +18,7 @@ open class User() {
     open fun main() {
         var m: HashMap<Any?, Any?>? = HashMap(1)
         var m2: HashMap<Any?, Any?>? = HashMap(10)
+
         var t1: Test? = Test.init()
         var t2: Test? = Test.init("")
     }

@@ -10,6 +10,7 @@ class User() {
         val lib = Library()
         lib.call()
         lib.getString().isEmpty()
+
         Library().call()
         Library().getString().isEmpty()
     }

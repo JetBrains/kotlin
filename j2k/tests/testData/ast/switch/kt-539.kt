@@ -3,6 +3,7 @@ package switch_demo
 public open class SwitchDemo() {
     class object {
         public open fun main(args: Array<String?>?) {
+
             var month: Int = 8
             var monthString: String?
             when (month) {
