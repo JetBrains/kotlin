@@ -48,7 +48,9 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -108,7 +110,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 return getTypeInfoWhenOnlyOneBranchIsPresent(
                         thenBranch, thenScope, thenInfo, elseInfo, contextWithExpectedType, ifExpression, isStatement);
             }
-            return JetTypeInfo.create(null, context.dataFlowInfo);
+            return DataFlowUtils.checkImplicitCast(KotlinBuiltIns.getInstance().getUnitType(), ifExpression, contextWithExpectedType,
+                                                   isStatement, thenInfo.or(elseInfo));
         }
         if (thenBranch == null) {
             return getTypeInfoWhenOnlyOneBranchIsPresent(

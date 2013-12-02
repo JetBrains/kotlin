@@ -357,7 +357,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return genQualified(receiver, expression.getBaseExpression());
     }
 
-    private static boolean isEmptyExpression(JetElement expr) {
+    private static boolean isEmptyExpression(@Nullable JetElement expr) {
         if (expr == null) {
             return true;
         }
@@ -382,10 +382,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         JetExpression thenExpression = expression.getThen();
         JetExpression elseExpression = expression.getElse();
-
-        if (thenExpression == null && elseExpression == null) {
-            throw new CompilationException("Both brunches of if/else are null", null, expression);
-        }
 
         if (isEmptyExpression(thenExpression)) {
             if (isEmptyExpression(elseExpression)) {
