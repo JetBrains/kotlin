@@ -147,3 +147,8 @@ public open class DefaultSwitchLabelStatement() : Statement() {
 public open class SynchronizedStatement(val expression: Expression, val block: Block) : Statement() {
     public override fun toKotlin() = "synchronized (" + expression.toKotlin() + ") " + block.toKotlin()
 }
+
+public class StatementList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine) {
+    val statements: List<Statement>
+        get() = elements.filter { it is Statement }.map { it as Statement }
+}

@@ -97,8 +97,3 @@ open class WhiteSpaceSeparatedElementList(
         return result
     }
 }
-
-public class StatementList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine) {
-    val statements: List<Statement>
-        get() = elements.filter { it is Statement }.map { it as Statement }
-}
