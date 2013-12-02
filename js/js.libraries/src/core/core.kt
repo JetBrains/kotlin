@@ -11,6 +11,9 @@ public val noImpl : Nothing = throw Exception()
 /** Provides [] access to maps */
 native public fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit = noImpl
 
+library
+public fun Any.hashCode() : Int = js.noImpl
+
 library("println")
 public fun println() {}
 library("println")

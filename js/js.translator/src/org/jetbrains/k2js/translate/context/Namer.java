@@ -33,6 +33,10 @@ public final class Namer {
     public static final String KOTLIN_NAME = JetLanguage.NAME;
     public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
 
+    public static final String HASH_CODE = "hashCode";
+    public static final String TO_STRING = "toString";
+    public static final String EQUALS = "equals";
+
     public static final String CALLEE_NAME = "$fun";
     public static final String OUTER_CLASS_NAME = "$outer";
 
@@ -219,6 +223,11 @@ public final class Namer {
     @NotNull
     public JsExpression objectCreationMethodReference() {
         return kotlin(objectName);
+    }
+
+    @NotNull
+    public static JsInvocation kotlinLibraryCall(@NotNull String functionName, @NotNull JsExpression... arguments) {
+        return new JsInvocation(new JsNameRef(functionName, KOTLIN_NAME), arguments);
     }
 
     @NotNull

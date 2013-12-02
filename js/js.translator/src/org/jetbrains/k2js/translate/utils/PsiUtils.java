@@ -16,13 +16,17 @@
 
 package org.jetbrains.k2js.translate.utils;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -112,12 +116,25 @@ public final class PsiUtils {
         return expression.getLoopParameter();
     }
 
+    //TODO: getPrimaryConstructorParameters and getDataProperties should be shared with the JVM backend
+
     @NotNull
     public static List<JetParameter> getPrimaryConstructorParameters(@NotNull JetClassOrObject classDeclaration) {
         if (classDeclaration instanceof JetClass) {
             return ((JetClass) classDeclaration).getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
+    }
+
+    @NotNull
+    public static List<PropertyDescriptor> getDataProperties(@NotNull JetClass classDeclaration, @NotNull BindingContext bindingContext) {
+        ArrayList<PropertyDescriptor> result = Lists.newArrayList();
+        for (JetParameter parameter : getPrimaryConstructorParameters(classDeclaration)) {
+            if (parameter.getValOrVarNode() != null) {
+                result.add(bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter));
+            }
+        }
+        return result;
     }
 
     @NotNull
