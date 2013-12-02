@@ -3832,6 +3832,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inline/returns.kt");
             }
             
+            @TestMetadata("sam.kt")
+            public void testSam() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inline/sam.kt");
+            }
+            
             @TestMetadata("typed.kt")
             public void testTyped() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inline/typed.kt");
