@@ -3858,6 +3858,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inline/binaryExpressions"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("andOr.kt")
+                public void testAndOr() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/binaryExpressions/andOr.kt");
+                }
+                
                 @TestMetadata("arrayAccess.kt")
                 public void testArrayAccess() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inline/binaryExpressions/arrayAccess.kt");

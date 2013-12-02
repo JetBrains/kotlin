@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.HashSet;
@@ -118,7 +119,8 @@ public class InlineCallResolverExtension implements CallResolverExtension {
                     }
                 }
                 else if (parent instanceof JetBinaryExpression) {
-                    if (JetPsiUtil.getOperationToken((JetOperationExpression) parent) == JetTokens.EQ) {
+                    JetToken token = JetPsiUtil.getOperationToken((JetOperationExpression) parent);
+                    if (token == JetTokens.EQ || token == JetTokens.ANDAND || token == JetTokens.OROR) {
                         //assignment
                         return false;
                     }
