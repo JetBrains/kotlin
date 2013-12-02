@@ -34,7 +34,7 @@ public open class Identifier(val name: String,
     public override fun isNullable(): Boolean = myNullable
 
     class object {
-        public val EMPTY_IDENTIFIER: Identifier = Identifier("")
+        public val Empty: Identifier = Identifier("")
         private open fun quote(str: String): String {
             return "`" + str + "`"
         }

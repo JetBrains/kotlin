@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 public open class NewClassExpression(val name: Element,
                                      val arguments: List<Expression>,
-                                     val qualifier: Expression = Expression.EMPTY_EXPRESSION,
+                                     val qualifier: Expression = Expression.Empty,
                                      val anonymousClass: AnonymousClass? = null) : Expression() {
     public override fun toKotlin(): String {
         val callOperator: String? = (if (qualifier.isNullable())

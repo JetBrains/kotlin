@@ -31,7 +31,7 @@ import org.jetbrains.jet.j2k.ast.types.ArrayType
 
 public open class ExpressionVisitor(converter: Converter) : StatementVisitor(converter) {
     {
-        myResult = Expression.EMPTY_EXPRESSION
+        myResult = Expression.Empty
     }
 
     public override fun getResult(): Expression {
@@ -296,7 +296,7 @@ public open class ExpressionVisitor(converter: Converter) : StatementVisitor(con
         myResult = SuperExpression((if (qualifier != null)
             Identifier(qualifier.getQualifiedName()!!)
         else
-            Identifier.EMPTY_IDENTIFIER))
+            Identifier.Empty))
     }
 
     public override fun visitThisExpression(expression: PsiThisExpression?) {
@@ -304,7 +304,7 @@ public open class ExpressionVisitor(converter: Converter) : StatementVisitor(con
         myResult = ThisExpression((if (qualifier != null)
             Identifier(qualifier.getQualifiedName()!!)
         else
-            Identifier.EMPTY_IDENTIFIER))
+            Identifier.Empty))
     }
 
     public override fun visitTypeCastExpression(expression: PsiTypeCastExpression?) {

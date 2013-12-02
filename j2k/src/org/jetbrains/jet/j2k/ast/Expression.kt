@@ -23,7 +23,7 @@ public abstract class Expression() : Statement() {
     }
 
     class object {
-        public val EMPTY_EXPRESSION: Expression = object: Expression() {
+        public val Empty: Expression = object: Expression() {
             public override fun toKotlin() = ""
             public override fun isEmpty() = true
         }

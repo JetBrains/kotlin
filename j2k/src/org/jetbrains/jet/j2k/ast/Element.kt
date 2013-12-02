@@ -21,7 +21,7 @@ public trait Element : Node {
     public fun isEmpty(): Boolean = false
 
     class object {
-        public val EMPTY_ELEMENT: Element = object : Element {
+        public val Empty: Element = object : Element {
             override fun toKotlin() = ""
             override fun isEmpty() = true
         }

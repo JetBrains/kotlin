@@ -34,7 +34,7 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
 
     public override fun visitBreakStatement(statement: PsiBreakStatement?) {
         if (statement?.getLabelIdentifier() == null) {
-            myResult = BreakStatement(Identifier.EMPTY_IDENTIFIER)
+            myResult = BreakStatement(Identifier.Empty)
         }
         else
         {
@@ -45,7 +45,7 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
     public override fun visitContinueStatement(statement: PsiContinueStatement?) {
         if (statement?.getLabelIdentifier() == null)
         {
-            myResult = ContinueStatement(Identifier.EMPTY_IDENTIFIER)
+            myResult = ContinueStatement(Identifier.Empty)
         }
         else
         {
@@ -294,6 +294,6 @@ public open class StatementVisitor(converter: Converter) : ElementVisitor(conver
     }
 
     override fun visitEmptyStatement(statement: PsiEmptyStatement?) {
-        myResult = Statement.EMPTY_STATEMENT
+        myResult = Statement.Empty
     }
 }

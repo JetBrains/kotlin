@@ -167,7 +167,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     }
                 }
             }
-            members.add(Constructor(this, Identifier.EMPTY_IDENTIFIER, null, Collections.emptySet<Modifier>(),
+            members.add(Constructor(this, Identifier.Empty, null, Collections.emptySet<Modifier>(),
                                     ClassType(name, Collections.emptyList<Element>(), false, this),
                                     TypeParameterList.Empty,
                                     ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
@@ -270,7 +270,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     public fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean): Block {
         if (block == null)
-            return Block.EMPTY_BLOCK
+            return Block.Empty
 
         return Block(convertStatements(block.getChildren().toList()), notEmpty)
     }
@@ -285,7 +285,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     public fun convertStatement(s: PsiStatement?): Statement {
         if (s == null)
-            return Statement.EMPTY_STATEMENT
+            return Statement.Empty
 
         val statementVisitor: StatementVisitor = StatementVisitor(this)
         s.accept(statementVisitor)
@@ -301,7 +301,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     public fun convertExpression(e: PsiExpression?): Expression {
         if (e == null)
-            return Expression.EMPTY_EXPRESSION
+            return Expression.Empty
 
         val expressionVisitor: ExpressionVisitor = dispatcher.expressionVisitor
         e.accept(expressionVisitor)
@@ -310,7 +310,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     public fun convertElement(e: PsiElement?): Element {
         if (e == null)
-            return Element.EMPTY_ELEMENT
+            return Element.Empty
 
         val elementVisitor: ElementVisitor = ElementVisitor(this)
         e.accept(elementVisitor)
@@ -399,7 +399,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     public fun convertExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
         if (argument == null)
-            return Identifier.EMPTY_IDENTIFIER
+            return Identifier.Empty
 
         var expression: Expression = convertExpression(argument)
         val actualType: PsiType? = argument.getType()
@@ -458,17 +458,9 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return s + "(" + fields.map { initializers[it.identifier.toKotlin()] }.makeString(", ") + ")"
     }
 
-    private fun removeEmpty(statements: List<Element>): List<Element> {
-        return statements.filterNot {
-            it == Statement.EMPTY_STATEMENT ||
-            it == Expression.EMPTY_EXPRESSION ||
-            it == Element.EMPTY_ELEMENT
-        }
-    }
-
     public fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
         if (identifier == null)
-            return Identifier.EMPTY_IDENTIFIER
+            return Identifier.Empty
 
         return Identifier(identifier.getText()!!)
     }

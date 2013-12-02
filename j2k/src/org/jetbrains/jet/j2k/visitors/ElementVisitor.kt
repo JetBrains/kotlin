@@ -22,7 +22,7 @@ import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class ElementVisitor(val myConverter: Converter) : JavaElementVisitor() {
-    protected var myResult: Element = Element.EMPTY_ELEMENT
+    protected var myResult: Element = Element.Empty
 
     public fun getConverter(): Converter {
         return myConverter

@@ -19,7 +19,7 @@ package org.jetbrains.jet.j2k.ast
 
 public abstract class Statement() : Element {
     class object {
-        public val EMPTY_STATEMENT: Statement = object : Statement() {
+        public val Empty: Statement = object : Statement() {
             override fun toKotlin() = ""
             override fun isEmpty() = true
         }
@@ -57,7 +57,7 @@ public open class IfStatement(val condition: Expression,
                               val elseStatement: Element) : Expression() {
     public override fun toKotlin(): String {
         val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin()
-        if (elseStatement != Statement.EMPTY_STATEMENT) {
+        if (elseStatement != Statement.Empty) {
             return result + "\nelse\n" + elseStatement.toKotlin()
         }
 
@@ -90,11 +90,11 @@ public open class ForeachWithRangeStatement(val identifier: Identifier,
     start.toKotlin() + ".." + end.toKotlin() + ") " + body.toKotlin()
 }
 
-public open class BreakStatement(val label: Identifier = Identifier.EMPTY_IDENTIFIER) : Statement() {
+public open class BreakStatement(val label: Identifier = Identifier.Empty) : Statement() {
     public override fun toKotlin() = "break" + label.withPrefix("@")
 }
 
-public open class ContinueStatement(val label: Identifier = Identifier.EMPTY_IDENTIFIER) : Statement() {
+public open class ContinueStatement(val label: Identifier = Identifier.Empty) : Statement() {
     public override fun toKotlin() = "continue" + label.withPrefix("@")
 }
 

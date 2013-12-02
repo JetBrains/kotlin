@@ -43,6 +43,6 @@ public class Block(val statementList: StatementList, val notEmpty: Boolean = fal
     }
 
     class object {
-        public val EMPTY_BLOCK: Block = Block(StatementList(ArrayList()))
+        public val Empty: Block = Block(StatementList(ArrayList()))
     }
 }
