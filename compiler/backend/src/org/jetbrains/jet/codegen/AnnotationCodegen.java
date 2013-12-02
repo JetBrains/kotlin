@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetModifierList;
@@ -136,9 +137,9 @@ public abstract class AnnotationCodegen {
         return KotlinBuiltIns.getInstance().getVolatileAnnotationClass().equals(classDescriptor);
     }
 
-    public void generateAnnotationDefaultValue(CompileTimeConstant value) {
+    public void generateAnnotationDefaultValue(@NotNull CompileTimeConstant value, @NotNull JetType expectedType) {
         AnnotationVisitor visitor = visitAnnotation(null, false);  // Parameters are unimportant
-        genCompileTimeValue(null, value, visitor);
+        genCompileTimeValue(null, value, expectedType, visitor);
         visitor.visitEnd();
     }
 
@@ -164,13 +165,14 @@ public abstract class AnnotationCodegen {
         for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : annotationDescriptor.getAllValueArguments().entrySet()) {
             ValueParameterDescriptor descriptor = entry.getKey();
             String name = descriptor.getName().asString();
-            genCompileTimeValue(name, entry.getValue(), annotationVisitor);
+            genCompileTimeValue(name, entry.getValue(), descriptor.getType(), annotationVisitor);
         }
     }
 
     private void genCompileTimeValue(
             @Nullable final String name,
             @NotNull CompileTimeConstant<?> value,
+            @NotNull final JetType expectedType,
             @NotNull final AnnotationVisitor annotationVisitor
     ) {
         AnnotationArgumentVisitor argumentVisitor = new AnnotationArgumentVisitor<Void, Void>() {
@@ -230,7 +232,7 @@ public abstract class AnnotationCodegen {
             public Void visitArrayValue(ArrayValue value, Void data) {
                 AnnotationVisitor visitor = annotationVisitor.visitArray(name);
                 for (CompileTimeConstant<?> argument : value.getValue()) {
-                    genCompileTimeValue(null, argument, visitor);
+                    genCompileTimeValue(null, argument, value.getType(KotlinBuiltIns.getInstance()), visitor);
                 }
                 visitor.visitEnd();
                 return null;
@@ -248,6 +250,16 @@ public abstract class AnnotationCodegen {
             @Override
             public Void visitJavaClassValue(JavaClassValue value, Void data) {
                 annotationVisitor.visit(name, typeMapper.mapType(value.getValue()));
+                return null;
+            }
+
+            @Override
+            public Void visitNumberTypeValue(NumberValueTypeConstant value, Void data) {
+                NumberValueTypeConstructor typeConstructor = value.getValue();
+                Object numberType = EvaluatePackage.getValueForNumberType(typeConstructor, expectedType);
+                if (numberType != null) {
+                    annotationVisitor.visit(name, numberType);
+                }
                 return null;
             }
 

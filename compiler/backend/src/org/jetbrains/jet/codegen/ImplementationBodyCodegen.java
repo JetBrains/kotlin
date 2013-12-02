@@ -1726,7 +1726,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetExpression initializer = property.getDelegateExpressionOrInitializer();
         if (initializer == null) return false;
 
-        CompileTimeConstant<?> compileTimeValue = typeMapper.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, initializer);
+        CompileTimeConstant<?> compileTimeValue = ExpressionCodegen.getCompileTimeConstant(initializer, typeMapper.getBindingContext());
         if (compileTimeValue == null) return true;
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) typeMapper.getBindingContext().get(BindingContext.VARIABLE, property);
