@@ -94,9 +94,9 @@ public class MethodInliner {
             transformedNode.accept(visitor);
         }
         catch (Exception e) {
-            throw new RuntimeException(errorPrefix + ": couldn't inline method call " + transformedNode + "\ncause: " +
-                                       InlineCodegen.getNodeText(transformedNode), e);
+            throw wrapException(e, transformedNode, "couldn't inline method call");
         }
+
         visitor.visitLabel(end);
 
         return result;
@@ -277,8 +277,7 @@ public class MethodInliner {
             sources = analyzer.analyze("fake", node);
         }
         catch (AnalyzerException e) {
-            throw new RuntimeException("Couldn't inline method call " + node + "\ncause: " +
-                                       InlineCodegen.getNodeText(node), e);
+            throw wrapException(e, node, "couldn't inline method call");
         }
 
         AbstractInsnNode cur = node.instructions.getFirst();
@@ -481,5 +480,15 @@ public class MethodInliner {
             return type.substring(0, i);
         }
         return type;
+    }
+
+
+    public RuntimeException wrapException(@NotNull Exception originalException, @NotNull MethodNode node, @NotNull String errorSuffix) {
+        if (originalException instanceof InlineException) {
+            return new InlineException(errorPrefix + ": " + errorSuffix, originalException);
+        } else {
+            return new InlineException(errorPrefix + ": " + errorSuffix + "\ncause: " +
+                                       InlineCodegen.getNodeText(node), originalException);
+        }
     }
 }

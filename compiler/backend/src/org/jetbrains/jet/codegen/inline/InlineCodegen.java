@@ -132,13 +132,13 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
             throw e;
         }
         catch (Exception e) {
-            String text = getNodeText(node);
+            boolean generateNodeText = !(e instanceof InlineException);
             PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, this.codegen.getContext().getContextDescriptor());
             throw new CompilationException("Couldn't inline method call '" +
                                        functionDescriptor.getName() +
                                        "' into \n" + (element != null ? element.getText() : "null psi element " + this.codegen.getContext().getContextDescriptor()) +
-                                       "\ncause: " +
-                                       text, e, call.getCallElement());
+                                       (generateNodeText ? ("\ncause: " + getNodeText(node)) : ""),
+                                       e, call.getCallElement());
         }
 
 
@@ -213,7 +213,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
                                  codegen.getInlineNameGenerator().subGenerator(functionDescriptor.getName().asString()),
                                  codegen.getContext(), call, Collections.<String, String>emptyMap(), false, false);
 
-        MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule, "InlineCodegenRoot " + call.getCallElement()); //with captured
+        MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule, "Method inlining " + call.getCallElement().getText()); //with captured
 
         VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
 
