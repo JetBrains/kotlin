@@ -229,11 +229,12 @@ public inline fun <R, C: MutableCollection<in R>> LongArray.mapTo(result: C, tra
  * Returns the largest element or null if there are no elements
  */
 public fun LongArray.max() : Long? {
-    var max: Long? = null
-    for (e in this) {
-        if (max == null || max!! < e) {
-           max = e
-        }
+    if (isEmpty()) return null
+    
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
     }
     return max
 }
@@ -261,11 +262,12 @@ public inline fun <R: Comparable<R>> LongArray.maxBy(f: (Long) -> R) : Long? {
  * Returns the smallest element or null if there are no elements
  */
 public fun LongArray.min() : Long? {
-    var min: Long? = null
-    for (e in this) {
-        if (min == null || min!! > e) {
-           min = e
-        }
+    if (isEmpty()) return null
+    
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
     }
     return min
 }
