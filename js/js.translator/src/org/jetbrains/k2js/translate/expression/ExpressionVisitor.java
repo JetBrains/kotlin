@@ -24,11 +24,14 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
+import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -83,6 +86,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
 
         Object value = compileTimeValue.getValue();
+        if (value instanceof NumberValueTypeConstructor) {
+            JetType expectedType = context.bindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+            CompileTimeConstant<?> newConstant =
+                    EvaluatePackage.getCompileTimeConstantForNumberType((NumberValueTypeConstructor) value, expectedType);
+            assert newConstant != null: "NumberValueTypeConstant should always have notnull value " + compileTimeValue;
+            value = newConstant.getValue();
+        }
         if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
             return context.program().getNumberLiteral(((Number) value).intValue());
         }
@@ -101,7 +111,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return context.program().getStringLiteral(value.toString());
         }
 
-        throw new AssertionError(message(expression, "Unsupported constant expression"));
+        throw new AssertionError(message(expression, "Unsupported constant expression: " + expression.getText() + " "));
     }
 
     @Override
