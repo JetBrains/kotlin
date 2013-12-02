@@ -185,10 +185,9 @@ public class ResolveElementCache {
                 }
             }
 
-            Name name = packageNameExpression.getReferencedNameAsName();
-            if (Name.isValidIdentifier(name.asString())) {
+            if (Name.isValidIdentifier(packageNameExpression.getReferencedName())) {
                 if (trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, packageNameExpression) == null) {
-                    FqName fqName = header.getParentFqName(packageNameExpression).child(name);
+                    FqName fqName = header.getFqName(packageNameExpression);
                     PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(fqName);
                     assert packageDescriptor != null: "Package descriptor should be present in session for " + fqName;
                     trace.record(BindingContext.REFERENCE_TARGET, packageNameExpression, packageDescriptor);
@@ -405,7 +404,7 @@ public class ResolveElementCache {
             JetNamespaceHeader namespaceHeader = PsiTreeUtil.getParentOfType(expression, JetNamespaceHeader.class, false);
             if (namespaceHeader != null) {
                 PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(
-                        namespaceHeader.getParentFqName((JetSimpleNameExpression) expression));
+                        namespaceHeader.getFqName((JetSimpleNameExpression) expression).parent());
                 if (packageDescriptor != null) {
                     return packageDescriptor.getMemberScope();
                 }

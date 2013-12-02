@@ -903,12 +903,12 @@ public class JetPsiUtil {
             throw new IllegalArgumentException("Should be called only for files with namespace: " + file);
         }
 
-        List<JetSimpleNameExpression> names = header.getParentNamespaceNames();
-        if (!(0 <= partIndex && partIndex < names.size() + 1)) {
+        List<JetSimpleNameExpression> names = header.getNamespaceNames();
+        if (!(0 <= partIndex && partIndex < names.size())) {
             throw new IndexOutOfBoundsException(String.format("%s index for file with header %s is out of range", partIndex, header.getText()));
         }
 
-        return (names.size() > partIndex) ? names.get(partIndex) : header.getLastPartExpression();
+        return names.get(partIndex);
     }
 
     // Delete given element and all the elements separating it from the neighboring elements of the same class

@@ -17,22 +17,18 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Sets;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
@@ -61,18 +57,22 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     public MutablePackageFragmentDescriptor createPackageFragmentIfNeeded(@NotNull JetFile file) {
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
 
-        // TODO 2 make this code neater
-        List<JetSimpleNameExpression> allNamespaceNames = new ArrayList<JetSimpleNameExpression>(namespaceHeader.getParentNamespaceNames());
-        ContainerUtil.addIfNotNull(allNamespaceNames, namespaceHeader.getLastPartExpression());
-        for (JetSimpleNameExpression nameExpression : allNamespaceNames) {
-            FqName parentFqName = namespaceHeader.getParentFqName(nameExpression);
-            getOrCreatePackageFragment(parentFqName, nameExpression);
+        assert namespaceHeader != null : "scripts are not supported";
 
-            trace.record(RESOLUTION_SCOPE, nameExpression, module.getPackage(parentFqName).getMemberScope());
+        MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(namespaceHeader.getFqName());
+
+        for (JetSimpleNameExpression nameExpression : namespaceHeader.getNamespaceNames()) {
+            FqName fqName = namespaceHeader.getFqName(nameExpression);
+
+            PackageViewDescriptor packageView = module.getPackage(fqName);
+            assert packageView != null : "package not found: " + fqName;
+            trace.record(REFERENCE_TARGET, nameExpression, packageView);
+
+            PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
+            assert parentPackageView != null : "package has no parent: " + packageView;
+            trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
         }
 
-        MutablePackageFragmentDescriptor fragment = getOrCreatePackageFragment(
-                namespaceHeader.getFqName(), namespaceHeader.getLastPartExpression());
         storeBindingForFile(file, fragment);
         return fragment;
     }
@@ -81,19 +81,6 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     @NotNull
     public PackageFragmentDescriptor createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName) {
         return packageFragmentProvider.getOrCreateFragment(fqName);
-    }
-
-    @NotNull
-    private MutablePackageFragmentDescriptor getOrCreatePackageFragment(
-            @NotNull FqName fqName,
-            @Nullable JetReferenceExpression expression
-    ) {
-        MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(fqName);
-        if (expression != null) {
-            trace.record(REFERENCE_TARGET, expression, packageFragmentProvider.getModule().getPackage(fqName));
-        }
-
-        return fragment;
     }
 
     private void storeBindingForFile(@NotNull JetFile file, @NotNull PackageFragmentDescriptor fragment) {

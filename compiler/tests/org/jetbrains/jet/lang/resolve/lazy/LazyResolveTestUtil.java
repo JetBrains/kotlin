@@ -32,13 +32,13 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,14 +46,6 @@ import java.util.Set;
 
 public class LazyResolveTestUtil {
     private LazyResolveTestUtil() {
-    }
-
-    public static InjectorForTopDownAnalyzer getEagerInjectorForTopDownAnalyzer(JetCoreEnvironment environment) {
-        InjectorForTopDownAnalyzer tdaInjectorForLazy = createInjectorForTDA(environment);
-        // This line is required fro the 'jet' namespace to be filled in with functions
-        tdaInjectorForLazy.getTopDownAnalyzer().analyzeFiles(
-                Collections.singletonList(JetPsiFactory.createFile(environment.getProject(), "")), Collections.<AnalyzerScriptParameter>emptyList());
-        return tdaInjectorForLazy;
     }
 
     public static InjectorForTopDownAnalyzer createInjectorForTDA(JetCoreEnvironment environment) {
@@ -103,8 +95,8 @@ public class LazyResolveTestUtil {
         for (JetFile file : files) {
             JetNamespaceHeader header = file.getNamespaceHeader();
             if (header != null) {
-                List<JetSimpleNameExpression> names = header.getParentNamespaceNames();
-                Name name = names.isEmpty() ? header.getNameAsName() : names.get(0).getReferencedNameAsName();
+                List<JetSimpleNameExpression> names = header.getNamespaceNames();
+                Name name = names.isEmpty() ? SpecialNames.ROOT_NAMESPACE : names.get(0).getReferencedNameAsName();
                 shortNames.add(name);
             }
             else {
