@@ -97,6 +97,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         }
 
         checkVisibility(targetDescriptor, expression, context);
+        checkRecursion(targetDescriptor, expression, context);
     }
 
     private static boolean couldAccessVariable(JetExpression expression) {
@@ -196,6 +197,16 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         boolean inlinableCall = isInvokeOrInlineExtension(targetDescriptor);
         if (!inlinableCall || isVararg) {
             context.trace.report(Errors.USAGE_IS_NOT_INLINABLE.on(receiverExpresssion, receiverExpresssion, descriptor));
+        }
+    }
+
+    public void checkRecursion(
+            @NotNull CallableDescriptor targetDescriptor,
+            @NotNull JetElement expression,
+            @NotNull BasicCallResolutionContext context
+    ) {
+        if (targetDescriptor.getOriginal() == descriptor) {
+            context.trace.report(Errors.RECURSION_IN_INLINE.on(expression, expression, descriptor));
         }
     }
 

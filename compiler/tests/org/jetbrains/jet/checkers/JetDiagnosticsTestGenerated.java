@@ -3822,6 +3822,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inline/propagation.kt");
             }
             
+            @TestMetadata("recursion.kt")
+            public void testRecursion() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inline/recursion.kt");
+            }
+            
             @TestMetadata("returns.kt")
             public void testReturns() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inline/returns.kt");

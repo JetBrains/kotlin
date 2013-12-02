@@ -479,6 +479,7 @@ public class DefaultErrorMessages {
         MAP.put(NOTHING_TO_INLINE, "There are no parameters of Function types to be inlined in ''{0}''", TO_STRING);
         MAP.put(USAGE_IS_NOT_INLINABLE, "Illegal usage of inline-parameter ''{0}'' in ''{1}''. Annotate the parameter with [noinline]", ELEMENT_TEXT, TO_STRING);
         MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Annotate the parameter with [noinline] or make not nullable", ELEMENT_TEXT, TO_STRING);
+        MAP.put(RECURSION_IN_INLINE, "Inline-function ''{1}'' couldn't be recursive", ELEMENT_TEXT, TO_STRING);
 
         MAP.setImmutable();
 
