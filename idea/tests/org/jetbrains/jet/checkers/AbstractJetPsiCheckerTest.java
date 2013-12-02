@@ -18,6 +18,7 @@ package org.jetbrains.jet.checkers;
 
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
@@ -29,6 +30,7 @@ public abstract class AbstractJetPsiCheckerTest extends LightDaemonAnalyzerTestC
 
     public void doTestWithInfos(@NotNull String filePath) throws Exception {
         try {
+            enableInspectionTool(new SpellCheckingInspection());
             JetPsiChecker.setNamesHighlightingEnabled(false);
             doTest(filePath, true, true);
         }

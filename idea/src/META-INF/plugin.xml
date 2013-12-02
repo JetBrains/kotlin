@@ -219,6 +219,8 @@
                                id="KotlinFunction"
                                order="first"/>
 
+    <spellchecker.support implementationClass="org.jetbrains.jet.plugin.KotlinSpellcheckingStrategy" language="jet"/>
+
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Generic"/>
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Namespace"/>
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Statement"/>
