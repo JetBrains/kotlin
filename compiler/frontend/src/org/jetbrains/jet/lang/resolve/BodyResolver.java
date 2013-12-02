@@ -256,10 +256,13 @@ public class BodyResolver {
                 JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                 recordSupertype(typeReference, supertype);
                 if (supertype == null) return;
-                ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
-                if (classDescriptor == null) return;
-                if (descriptor.getKind() != ClassKind.TRAIT && !classDescriptor.getConstructors().isEmpty() &&
-                    !ErrorUtils.isError(classDescriptor) && classDescriptor.getKind() != ClassKind.TRAIT) {
+                ClassDescriptor superClass = TypeUtils.getClassDescriptor(supertype);
+                if (superClass == null) return;
+                if (superClass.getKind().isSingleton()) {
+                    // A "singleton in supertype" diagnostic will be reported later
+                    return;
+                }
+                if (descriptor.getKind() != ClassKind.TRAIT && !superClass.getConstructors().isEmpty() && !ErrorUtils.isError(superClass)) {
                     trace.report(SUPERTYPE_NOT_INITIALIZED.on(specifier));
                 }
             }
@@ -322,7 +325,10 @@ public class BodyResolver {
                 trace.report(SUPERTYPE_APPEARS_TWICE.on(typeReference));
             }
 
-            if (constructor.isFinal() && !allowedFinalSupertypes.contains(constructor)) {
+            if (DescriptorUtils.isSingleton(classDescriptor)) {
+                trace.report(SINGLETON_IN_SUPERTYPE.on(typeReference));
+            }
+            else if (constructor.isFinal() && !allowedFinalSupertypes.contains(constructor)) {
                 trace.report(FINAL_SUPERTYPE.on(typeReference));
             }
         }

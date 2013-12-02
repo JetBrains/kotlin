@@ -139,6 +139,7 @@ public interface Errors {
 
 
     DiagnosticFactory0<JetTypeReference> FINAL_SUPERTYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> SINGLETON_IN_SUPERTYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetNullableType> NULLABLE_SUPERTYPE = DiagnosticFactory0.create(ERROR, NULLABLE_TYPE);
 
     // Trait-specific

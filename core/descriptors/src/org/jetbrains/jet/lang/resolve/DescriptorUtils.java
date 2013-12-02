@@ -243,7 +243,7 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ENUM_ENTRY);
     }
 
-    public static boolean isSingleton(@NotNull DeclarationDescriptor classifier) {
+    public static boolean isSingleton(@Nullable DeclarationDescriptor classifier) {
         if (classifier instanceof ClassDescriptor) {
             ClassDescriptor clazz = (ClassDescriptor) classifier;
             return clazz.getKind().isSingleton();
