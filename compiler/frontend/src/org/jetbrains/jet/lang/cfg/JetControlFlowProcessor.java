@@ -32,10 +32,12 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastReceiver;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.*;
+import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.BooleanValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -284,6 +286,36 @@ public class JetControlFlowProcessor {
                     generateInstructions(right, false);
                 }
                 builder.bindLabel(afterElvis);
+            }
+            else if (operationType == JetTokens.EQEQ || operationType == JetTokens.EXCLEQ) {
+                // Equals is resolved on a fake argument, to ensure "Any?" in the signature, so we have to read the right argument manually
+                @SuppressWarnings("unchecked")
+                ResolvedCall<FunctionDescriptor> resolvedCall = (ResolvedCall<FunctionDescriptor>) getResolvedCall(operationReference);
+                if (resolvedCall != null && !resolvedCall.getValueArguments().isEmpty() && right != null) {
+                    ResolvedCallImpl<FunctionDescriptor> fakeCall = ResolvedCallImpl.create(
+                            ResolutionCandidate.create(
+                                    resolvedCall.getCandidateDescriptor(),
+                                    resolvedCall.getThisObject(),
+                                    resolvedCall.getReceiverArgument(),
+                                    resolvedCall.getExplicitReceiverKind(),
+                                    resolvedCall.isSafeCall()
+                            ),
+                            new DelegatingBindingTrace(BindingContext.EMPTY, "Fake call for =="),
+                            TracingStrategy.EMPTY,
+                            MutableDataFlowInfoForArguments.WITHOUT_ARGUMENTS_CHECK
+                    );
+
+                    ValueParameterDescriptor parameterDescriptor = resolvedCall.getValueArguments().keySet().iterator().next();
+                    fakeCall.recordValueArgument(
+                            parameterDescriptor,
+                            new ExpressionValueArgument(CallMaker.makeValueArgument(right))
+                    );
+                    fakeCall.setStatusToSuccess();
+                    generateCall(expression, fakeCall);
+                }
+                else {
+                    generateBothArguments(expression);
+                }
             }
             else {
                 if (!generateCall(operationReference)) {

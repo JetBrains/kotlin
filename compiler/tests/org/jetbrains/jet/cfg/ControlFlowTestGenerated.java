@@ -81,6 +81,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/EmptyFunction.kt");
     }
     
+    @TestMetadata("equals.kt")
+    public void testEquals() throws Exception {
+        doTest("compiler/testData/cfg/equals.kt");
+    }
+    
     @TestMetadata("FailFunction.kt")
     public void testFailFunction() throws Exception {
         doTest("compiler/testData/cfg/FailFunction.kt");
@@ -134,6 +139,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     @TestMetadata("multiDeclarationWithError.kt")
     public void testMultiDeclarationWithError() throws Exception {
         doTest("compiler/testData/cfg/multiDeclarationWithError.kt");
+    }
+    
+    @TestMetadata("notEqual.kt")
+    public void testNotEqual() throws Exception {
+        doTest("compiler/testData/cfg/notEqual.kt");
     }
     
     @TestMetadata("ObjectExpression.kt")

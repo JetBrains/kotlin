@@ -1,0 +1,28 @@
+== foo ==
+fun foo(a: Int, b: Int) {
+    if (a == b) {
+    }
+}
+---------------------
+L0:
+    <START>                 NEXT:[v(a: Int)]                   PREV:[]
+    v(a: Int)               NEXT:[w(a)]                        PREV:[<START>]
+    w(a)                    NEXT:[v(b: Int)]                   PREV:[v(a: Int)]
+    v(b: Int)               NEXT:[w(b)]                        PREV:[w(a)]
+    w(b)                    NEXT:[r(a)]                        PREV:[v(b: Int)]
+    r(a)                    NEXT:[r(b)]                        PREV:[w(b)]
+    r(b)                    NEXT:[call(a == b, equals)]        PREV:[r(a)]
+    call(a == b, equals)    NEXT:[jf(L2)]                      PREV:[r(b)]
+    jf(L2)                  NEXT:[read (Unit), read (Unit)]    PREV:[call(a == b, equals)]
+    read (Unit)             NEXT:[jmp(L3)]                     PREV:[jf(L2)]
+    jmp(L3)                 NEXT:[<END>]                       PREV:[read (Unit)]
+L2:
+    read (Unit)             NEXT:[<END>]                       PREV:[jf(L2)]
+L1:
+L3:
+    <END>                   NEXT:[<SINK>]                      PREV:[jmp(L3), read (Unit)]
+error:
+    <ERROR>                 NEXT:[<SINK>]                      PREV:[]
+sink:
+    <SINK>                  NEXT:[]                            PREV:[<ERROR>, <END>]
+=====================
