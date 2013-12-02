@@ -641,6 +641,7 @@ public class JetPsiUtil {
         return null;
     }
 
+
     private static int getPriority(@NotNull JetExpression expression) {
         int maxPriority = JetExpressionParsing.Precedence.values().length + 1;
 
@@ -1032,5 +1033,15 @@ public class JetPsiUtil {
 
     public static boolean isLocal(@NotNull JetNamedDeclaration declaration) {
         return getEnclosingBlockForLocalDeclaration(declaration) != null;
+    }
+
+    @Nullable
+    public static JetToken getOperationToken(@NotNull JetOperationExpression expression) {
+        JetSimpleNameExpression operationExpression = expression.getOperationReference();
+        IElementType elementType = operationExpression.getReferencedNameElementType();
+        assert elementType == null || elementType instanceof JetToken :
+                "JetOperationExpression should have operation token of type JetToken: " +
+                expression;
+        return (JetToken) elementType;
     }
 }

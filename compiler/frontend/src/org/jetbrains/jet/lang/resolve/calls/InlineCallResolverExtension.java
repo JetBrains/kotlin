@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -103,19 +104,29 @@ public class InlineCallResolverExtension implements CallResolverExtension {
         while (parent != null) {
             if (parent instanceof JetValueArgument ||
                 parent instanceof JetBinaryExpression ||
+                parent instanceof JetUnaryExpression ||
                 parent instanceof JetDotQualifiedExpression ||
-                parent instanceof JetCallExpression) {
+                parent instanceof JetCallExpression ||
+                parent instanceof JetArrayAccessExpression ||
+                parent instanceof JetMultiDeclaration) {
+
+                if (parent instanceof JetPrefixExpression) {
+                    if (JetPsiUtil.isLabeledExpression((JetPrefixExpression) parent)) {
+                        parent = parent.getParent();
+                        continue;
+                    }
+                }
+                else if (parent instanceof JetBinaryExpression) {
+                    if (JetPsiUtil.getOperationToken((JetOperationExpression) parent) == JetTokens.EQ) {
+                        //assignment
+                        return false;
+                    }
+                }
+
                 //check that it's in inlineable call would be in resolve call of parent
                 return true;
             }
             else if (parent instanceof JetParenthesizedExpression || parent instanceof JetBinaryExpressionWithTypeRHS) {
-                parent = parent.getParent();
-            }
-            else if (parent instanceof JetPrefixExpression) {
-                boolean isLabeled = JetPsiUtil.isLabeledExpression((JetPrefixExpression) parent);
-                if (!isLabeled) {
-                    return false;
-                }
                 parent = parent.getParent();
             }
             else {

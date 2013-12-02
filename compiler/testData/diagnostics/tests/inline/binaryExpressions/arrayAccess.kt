@@ -1,0 +1,27 @@
+// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE -NOTHING_TO_INLINE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
+inline fun <T, U> Function1<T, U>.get(index : Int) {
+
+}
+
+inline fun <T, U, V> ExtensionFunction1<T, U, V>.get(index : Int) {
+
+}
+
+inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {
+    s[1]
+    ext[1]
+}
+
+//noinline
+fun <T, U, V> Function2<T, U, V>.get(index : Int) {
+
+}
+
+fun <T, U, V, W> ExtensionFunction2<T, U, V, W>.get(index : Int) {
+
+}
+
+inline fun <T, U, V, W> inlineFunWithInvoke(s: (p: T, l: U) -> V, ext: T.(p: U, l: V) -> W) {
+    <!USAGE_IS_NOT_INLINABLE!>s<!>[1]
+    <!USAGE_IS_NOT_INLINABLE!>ext<!>[1]
+}
