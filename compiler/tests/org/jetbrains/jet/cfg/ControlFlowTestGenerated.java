@@ -166,4 +166,9 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/unresolved.kt");
     }
     
+    @TestMetadata("unusedFunctionLiteral.kt")
+    public void testUnusedFunctionLiteral() throws Exception {
+        doTest("compiler/testData/cfg/unusedFunctionLiteral.kt");
+    }
+    
 }

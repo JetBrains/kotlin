@@ -88,6 +88,7 @@ public interface JetControlFlowBuilder {
     void loadUnit(@NotNull JetExpression expression);
     void loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant);
     void createAnonymousObject(@NotNull JetObjectLiteralExpression expression);
+    void createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression);
     void loadStringTemplate(@NotNull JetStringTemplateExpression expression);
 
     void readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor);

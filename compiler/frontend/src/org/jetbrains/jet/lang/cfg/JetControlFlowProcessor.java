@@ -700,6 +700,7 @@ public class JetControlFlowProcessor {
         public void visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression) {
             JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
             processLocalDeclaration(functionLiteral);
+            builder.createFunctionLiteral(expression);
         }
 
         @Override

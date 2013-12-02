@@ -347,6 +347,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
+        public void createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
+            read(expression);
+        }
+
+        @Override
         public void loadStringTemplate(@NotNull JetStringTemplateExpression expression) {
             read(expression);
         }

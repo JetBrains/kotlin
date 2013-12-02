@@ -48,6 +48,11 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     }
 
     @Override
+    public void createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
+        getDelegateBuilder().createFunctionLiteral(expression);
+    }
+
+    @Override
     public void loadStringTemplate(@NotNull JetStringTemplateExpression expression) {
         getDelegateBuilder().loadStringTemplate(expression);
     }
