@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.cfg;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +79,7 @@ public class JetControlFlowProcessor {
 
     private Pseudocode generate(@NotNull JetElement subroutine) {
         builder.enterSubroutine(subroutine);
-        CFPVisitor cfpVisitor = new CFPVisitor(false);
+        CFPVisitor cfpVisitor = new CFPVisitor(builder, false);
         if (subroutine instanceof JetDeclarationWithBody) {
             JetDeclarationWithBody declarationWithBody = (JetDeclarationWithBody) subroutine;
             List<JetParameter> valueParameters = declarationWithBody.getValueParameters();
@@ -104,6 +105,8 @@ public class JetControlFlowProcessor {
 
     
     private class CFPVisitor extends JetVisitorVoid {
+        private final JetControlFlowBuilder builder;
+
         private final boolean inCondition;
         private final JetVisitorVoid conditionVisitor = new JetVisitorVoid() {
 
@@ -130,7 +133,8 @@ public class JetControlFlowProcessor {
             }
         };
 
-        private CFPVisitor(boolean inCondition) {
+        private CFPVisitor(@NotNull JetControlFlowBuilder builder, boolean inCondition) {
+            this.builder = builder;
             this.inCondition = inCondition;
         }
 
@@ -145,7 +149,7 @@ public class JetControlFlowProcessor {
                 visitor = this;
             }
             else {
-                visitor = new CFPVisitor(inCondition);
+                visitor = new CFPVisitor(builder, inCondition);
             }
             element.accept(visitor);
             checkNothingType(element);
@@ -702,7 +706,25 @@ public class JetControlFlowProcessor {
         public void visitQualifiedExpression(@NotNull JetQualifiedExpression expression) {
             JetExpression selectorExpression = expression.getSelectorExpression();
             if (selectorExpression != null) {
-                generateInstructions(selectorExpression, false);
+                final Ref<Boolean> error = new Ref<Boolean>(false);
+                JetControlFlowBuilderAdapter adapter = new JetControlFlowBuilderAdapter() {
+                    @NotNull
+                    @Override
+                    protected JetControlFlowBuilder getDelegateBuilder() {
+                        return builder;
+                    }
+
+                    @Override
+                    public void compilationError(@NotNull JetElement element, @NotNull String message) {
+                        error.set(true);
+                        super.compilationError(element, message);
+                    }
+                };
+                new CFPVisitor(adapter, inCondition).generateInstructions(selectorExpression, false);
+
+                if (error.get()) {
+                    generateInstructions(expression.getReceiverExpression(), false);
+                }
             }
         }
 

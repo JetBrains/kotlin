@@ -161,4 +161,9 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/ShortFunction.kt");
     }
     
+    @TestMetadata("unresolved.kt")
+    public void testUnresolved() throws Exception {
+        doTest("compiler/testData/cfg/unresolved.kt");
+    }
+    
 }

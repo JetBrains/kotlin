@@ -1,0 +1,19 @@
+== test ==
+fun test(a: Any) {
+    a.foo()
+}
+---------------------
+L0:
+    <START>                         NEXT:[v(a: Any)]                       PREV:[]
+    v(a: Any)                       NEXT:[w(a)]                            PREV:[<START>]
+    w(a)                            NEXT:[error(foo, No resolved call)]    PREV:[v(a: Any)]
+    error(foo, No resolved call)    NEXT:[error(foo, No resolved call)]    PREV:[w(a)]
+    error(foo, No resolved call)    NEXT:[r(a)]                            PREV:[error(foo, No resolved call)]
+    r(a)                            NEXT:[<END>]                           PREV:[error(foo, No resolved call)]
+L1:
+    <END>                           NEXT:[<SINK>]                          PREV:[r(a)]
+error:
+    <ERROR>                         NEXT:[<SINK>]                          PREV:[]
+sink:
+    <SINK>                          NEXT:[]                                PREV:[<ERROR>, <END>]
+=====================
