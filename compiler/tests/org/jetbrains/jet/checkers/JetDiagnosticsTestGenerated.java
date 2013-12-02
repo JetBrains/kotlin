@@ -5033,6 +5033,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/redeclarations/RedeclaredTypeParameters.kt");
             }
             
+            @TestMetadata("SingletonAndFunctionSameName.kt")
+            public void testSingletonAndFunctionSameName() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/redeclarations/SingletonAndFunctionSameName.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/regressions")

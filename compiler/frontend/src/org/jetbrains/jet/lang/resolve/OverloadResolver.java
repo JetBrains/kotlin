@@ -91,6 +91,10 @@ public class OverloadResolver {
         MultiMap<Key, ConstructorDescriptor> inNamespaces = MultiMap.create();
 
         for (MutableClassDescriptor klass : context.getClasses().values()) {
+            if (klass.getKind().isSingleton()) {
+                // Constructors of singletons aren't callable from the code, so they shouldn't participate in overload name checking
+                continue;
+            }
             DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();
             if (containingDeclaration instanceof NamespaceDescriptor) {
                 NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
