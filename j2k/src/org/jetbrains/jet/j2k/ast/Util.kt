@@ -52,8 +52,10 @@ open class WhiteSpaceSeparatedElementList(
 ) {
     val nonEmptyElements = elements.filterNot { it.isEmpty() }
 
+    fun isEmpty() = nonEmptyElements.all { it is WhiteSpace }
+
     fun toKotlin(): String {
-        if (nonEmptyElements.isEmpty()) {
+        if (isEmpty()) {
             return ""
         }
         return nonEmptyElements.surroundWithWhiteSpaces().insertAndMergeWhiteSpaces().map { it.toKotlin() }.makeString("")

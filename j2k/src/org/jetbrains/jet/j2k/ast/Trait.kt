@@ -27,8 +27,8 @@ public class Trait(converter: Converter,
                    extendsTypes: List<Type>,
                    baseClassParams: List<Expression>,
                    implementsTypes: List<Type>,
-                   members: List<Node>) : Class(converter, name, docComment, modifiers, typeParameterList,
-                                                extendsTypes, baseClassParams, implementsTypes, members) {
+                   members: List<Element>) : Class(converter, name, docComment, modifiers, typeParameterList,
+                                                   extendsTypes, baseClassParams, implementsTypes, members) {
 
     override val TYPE: String
         get() = "trait"

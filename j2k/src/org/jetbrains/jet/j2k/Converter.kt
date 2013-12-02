@@ -84,12 +84,15 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 
     public fun convertAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {
-        return AnonymousClass(this, getMembers(anonymousClass))
+        return AnonymousClass(this, convertMembers(anonymousClass))
     }
 
-    private fun getMembers(psiClass: PsiClass): List<Node> {
-        val members = ArrayList<Node>()
+    private fun convertMembers(psiClass: PsiClass): List<Element> {
+        val members = ArrayList<Element>()
         for (e in psiClass.getChildren()) {
+            if (psiClass is PsiAnonymousClass && psiClass.getBaseClassReference() == e) {
+               continue
+            }
             val converted = convertMember(e, psiClass)
             if (converted != null) members.add(converted)
         }
@@ -101,14 +104,13 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return if (psiDocComment != null) Comment(psiDocComment.getText()!!) else null
     }
 
-    private fun convertMember(e: PsiElement?, containingClass: PsiClass): Node? = when(e) {
+    private fun convertMember(e: PsiElement?, containingClass: PsiClass): Element? = when(e) {
         is PsiMethod -> convertMethod(e, true)
         is PsiField -> convertField(e, containingClass)
         is PsiClass -> convertClass(e)
         is PsiClassInitializer -> convertInitializer(e)
         is PsiDocComment -> null
-        is PsiComment -> Comment(e.getText()!!)
-        else -> null
+        else -> convertElement(e)
     }
 
     private fun convertClass(psiClass: PsiClass): Class {
@@ -119,7 +121,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
         val name: Identifier = Identifier(psiClass.getName()!!)
         val baseClassParams = ArrayList<Expression>()
-        val members = ArrayList(getMembers(psiClass))
+        val members = ArrayList(convertMembers(psiClass))
         val visitor = SuperVisitor()
         psiClass.accept(visitor)
         val resolvedSuperCallParameters = visitor.resolvedSuperCallParameters

@@ -20,7 +20,7 @@ import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.Collections
 
-public class AnonymousClass(converter: Converter, members: List<Node>)
+public class AnonymousClass(converter: Converter, members: List<Element>)
 : Class(converter,
         Identifier("anonClass"),
         null,
