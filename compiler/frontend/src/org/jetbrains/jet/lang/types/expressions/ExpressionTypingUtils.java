@@ -380,11 +380,11 @@ public class ExpressionTypingUtils {
         if (results.isSuccess()) {
             fakeTrace.commit(new TraceEntryFilter() {
                 @Override
-                public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
+                public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
                     // excluding all entries related to fake expression
                     return key != fake;
                 }
-            }, false);
+            }, true);
         }
         return Pair.create(call, results);
     }

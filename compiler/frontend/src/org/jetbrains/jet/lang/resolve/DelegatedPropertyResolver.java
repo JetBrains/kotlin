@@ -228,7 +228,7 @@ public class DelegatedPropertyResolver {
                                                                     dataFlowInfo, traceToResolveDelegatedProperty);
         traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
             @Override
-            public boolean accept(@NotNull WritableSlice<?, ?> slice, Object key) {
+            public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
                 return slice != CONSTRAINT_SYSTEM_COMPLETER;
             }
         }, true);

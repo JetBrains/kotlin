@@ -146,7 +146,9 @@ public class DelegatingBindingTrace implements BindingTrace {
         if (!commitDiagnostics) return;
 
         for (Diagnostic diagnostic : diagnostics) {
-            trace.report(diagnostic);
+            if (filter == null || filter.accept(null, diagnostic.getPsiElement())) {
+                trace.report(diagnostic);
+            }
         }
     }
 
