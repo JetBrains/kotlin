@@ -352,7 +352,8 @@ public class JetControlFlowProcessor {
             }
 
             if (left instanceof JetArrayAccessExpression) {
-                generateArrayAccess((JetArrayAccessExpression) left);
+                ResolvedCall<FunctionDescriptor> setResolvedCall = trace.get(BindingContext.INDEXED_LVALUE_SET, left);
+                generateArrayAccess((JetArrayAccessExpression) left, setResolvedCall);
                 recordWrite(left, parentExpression);
                 return;
             }
@@ -382,8 +383,8 @@ public class JetControlFlowProcessor {
             }
         }
 
-        private void generateArrayAccess(JetArrayAccessExpression arrayAccessExpression) {
-            if (!generateCall(arrayAccessExpression)) {
+        private void generateArrayAccess(JetArrayAccessExpression arrayAccessExpression, @Nullable ResolvedCall<?> setResolvedCall) {
+            if (!checkAndGenerateCall(arrayAccessExpression, setResolvedCall)) {
                 for (JetExpression index : arrayAccessExpression.getIndexExpressions()) {
                     generateInstructions(index, false);
                 }
@@ -859,7 +860,7 @@ public class JetControlFlowProcessor {
         @Override
         public void visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression) {
             if (!generateCall(expression)) {
-                generateArrayAccess(expression);
+                generateArrayAccess(expression, getResolvedCall(expression));
             }
         }
 
@@ -1017,7 +1018,10 @@ public class JetControlFlowProcessor {
         }
 
         private boolean generateCall(JetExpression calleeExpression) {
-            ResolvedCall<?> resolvedCall = getResolvedCall(calleeExpression);
+            return checkAndGenerateCall(calleeExpression, getResolvedCall(calleeExpression));
+        }
+
+        private boolean checkAndGenerateCall(JetExpression calleeExpression, @Nullable ResolvedCall<?> resolvedCall) {
             if (resolvedCall == null) {
                 builder.compilationError(calleeExpression, "No resolved call");
                 return false;

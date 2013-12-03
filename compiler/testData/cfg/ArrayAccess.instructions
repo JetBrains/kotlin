@@ -30,10 +30,11 @@ L0:
     r(1)                     NEXT:[call(+=, plus)]           PREV:[call(a[10], get)]
     call(+=, plus)           NEXT:[r(a)]                     PREV:[r(1)]
     r(a)                     NEXT:[r(10)]                    PREV:[call(+=, plus)]
-    r(10)                    NEXT:[call(a[10], set)]         PREV:[r(a)]
-    call(a[10], get)         NEXT:[<END>]                    PREV:[r(10)]
+    r(10)                    NEXT:[r(1)]                     PREV:[r(a)]
+    r(1)                     NEXT:[call(a[10], set)]         PREV:[r(10)]
+    call(a[10], set)         NEXT:[<END>]                    PREV:[r(1)]
 L1:
-    <END>                    NEXT:[<SINK>]                   PREV:[call(a[10], get)]
+    <END>                    NEXT:[<SINK>]                   PREV:[call(a[10], set)]
 error:
     <ERROR>                  NEXT:[<SINK>]                   PREV:[]
 sink:
