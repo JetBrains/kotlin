@@ -1,6 +1,7 @@
 open class Library() {
     open fun call() {
     }
+
     open fun getString(): String? {
         return ""
     }

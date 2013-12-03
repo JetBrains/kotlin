@@ -5,6 +5,7 @@ public class SwitchDemo() {
         public fun print(o: Any) {
             System.out.println(o)
         }
+
         public fun test(i: Int) {
             val monthString = "<empty>"
             when (i) {
@@ -81,6 +82,7 @@ public class SwitchDemo() {
             }
             System.out.println(monthString)
         }
+
         public fun main(args: Array<String>) {
             for (i in 1..12) test(i)
         }

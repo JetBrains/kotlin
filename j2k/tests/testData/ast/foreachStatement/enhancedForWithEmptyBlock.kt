@@ -1,3 +1,2 @@
 for (n in list)
-{
-}
+{}

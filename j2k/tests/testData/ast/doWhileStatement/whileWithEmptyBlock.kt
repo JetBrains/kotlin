@@ -1,4 +1,3 @@
 do
-{
-}
+{}
 while (true)

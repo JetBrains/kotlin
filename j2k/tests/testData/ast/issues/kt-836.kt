@@ -4,9 +4,11 @@ import java.io.Serializable
 
 public open class Language(code: String?) : Serializable {
     protected var code: String? = null
+
     override fun toString(): String? {
         return this.code
     }
+
     {
         this.code = code
     }

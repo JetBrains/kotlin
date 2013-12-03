@@ -1,6 +1,5 @@
 try
-{
-}
+{}
 catch (e : Exception) {
 println(1)
 }

@@ -2,6 +2,7 @@ class Library() {
     class object {
         fun call() {
         }
+
         fun getString(): String {
             return ""
         }

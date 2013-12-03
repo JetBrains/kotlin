@@ -8,6 +8,7 @@ open class Test() {
         var d2: Double = 10.0
         var f2: Float = 10.0.toFloat()
     }
+
     open fun testBoxed() {
         var l1: Long? = 10
         var d1: Double? = 10.0

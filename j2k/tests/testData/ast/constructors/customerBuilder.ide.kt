@@ -3,16 +3,20 @@ package org.test.customer
 class Customer(first: String, last: String) {
     public val _firstName: String
     public val _lastName: String
+
     public fun getFirstName(): String {
         return _firstName
     }
+
     public fun getLastName(): String {
         return _lastName
     }
+
     private fun doSmthBefore() {
     }
     private fun doSmthAfter() {
     }
+
     {
         doSmthBefore()
         _firstName = first
@@ -23,14 +27,17 @@ class Customer(first: String, last: String) {
 class CustomerBuilder() {
     public var _firstName: String = "Homer"
     public var _lastName: String = "Simpson"
+
     public fun WithFirstName(firstName: String): CustomerBuilder {
         _firstName = firstName
         return this
     }
+
     public fun WithLastName(lastName: String): CustomerBuilder {
         _lastName = lastName
         return this
     }
+
     public fun Build(): Customer {
         return Customer(_firstName, _lastName)
     }

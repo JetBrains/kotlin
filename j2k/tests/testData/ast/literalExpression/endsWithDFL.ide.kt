@@ -8,6 +8,7 @@ class Test() {
         val d2 = 10.0
         val f2 = 10.0.toFloat()
     }
+
     fun testBoxed() {
         val l1 = 10
         val d1 = 10.0

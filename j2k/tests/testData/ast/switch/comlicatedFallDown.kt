@@ -5,6 +5,7 @@ public open class SwitchDemo() {
         public open fun print(o: Any?) {
             System.out?.println(o)
         }
+
         public open fun test(i: Int) {
             var monthString: String? = "<empty>"
             when (i) {
@@ -81,6 +82,7 @@ public open class SwitchDemo() {
             }
             System.out?.println(monthString)
         }
+
         public open fun main(args: Array<String?>?) {
             for (i in 1..12) test(i)
         }

@@ -4,6 +4,7 @@ open class B(i: Int) {
     }
 }
 open class A() : B(10) {
+
     override fun call(): Int {
         return super.call()
     }
