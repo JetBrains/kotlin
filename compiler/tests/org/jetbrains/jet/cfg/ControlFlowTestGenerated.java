@@ -86,6 +86,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/equals.kt");
     }
     
+    @TestMetadata("expressionAsFunction.kt")
+    public void testExpressionAsFunction() throws Exception {
+        doTest("compiler/testData/cfg/expressionAsFunction.kt");
+    }
+    
     @TestMetadata("FailFunction.kt")
     public void testFailFunction() throws Exception {
         doTest("compiler/testData/cfg/FailFunction.kt");
@@ -174,6 +179,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     @TestMetadata("ShortFunction.kt")
     public void testShortFunction() throws Exception {
         doTest("compiler/testData/cfg/ShortFunction.kt");
+    }
+    
+    @TestMetadata("thisExpression.kt")
+    public void testThisExpression() throws Exception {
+        doTest("compiler/testData/cfg/thisExpression.kt");
     }
     
     @TestMetadata("typeParameter.kt")

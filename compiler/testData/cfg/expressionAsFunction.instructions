@@ -1,0 +1,18 @@
+== invoke ==
+fun invoke(f: () -> Unit) {
+    (f)()
+}
+---------------------
+L0:
+    <START>                            NEXT:[v(f: () -> Unit)]                   PREV:[]
+    v(f: () -> Unit)                   NEXT:[w(f)]                               PREV:[<START>]
+    w(f)                               NEXT:[r(f)]                               PREV:[v(f: () -> Unit)]
+    r(f)                               NEXT:[call((f), <for expression (f)>)]    PREV:[w(f)]
+    call((f), <for expression (f)>)    NEXT:[<END>]                              PREV:[r(f)]
+L1:
+    <END>                              NEXT:[<SINK>]                             PREV:[call((f), <for expression (f)>)]
+error:
+    <ERROR>                            NEXT:[<SINK>]                             PREV:[]
+sink:
+    <SINK>                             NEXT:[]                                   PREV:[<ERROR>, <END>]
+=====================

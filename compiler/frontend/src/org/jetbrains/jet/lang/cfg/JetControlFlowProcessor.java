@@ -190,7 +190,19 @@ public class JetControlFlowProcessor {
         @Override
         public void visitThisExpression(@NotNull JetThisExpression expression) {
             ResolvedCall<?> resolvedCall = getResolvedCall(expression);
-            builder.readThis(expression, resolvedCall == null ? null : (ReceiverParameterDescriptor) resolvedCall.getResultingDescriptor());
+            if (resolvedCall == null) {
+                builder.readThis(expression, null);
+                return;
+            }
+
+            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
+            if (resultingDescriptor instanceof ReceiverParameterDescriptor) {
+                builder.readThis(expression, (ReceiverParameterDescriptor) resultingDescriptor);
+            }
+            else if (resultingDescriptor instanceof ExpressionAsFunctionDescriptor) {
+                // TODO: no information about actual target
+                builder.readThis(expression, null);
+            }
         }
 
         @Override
