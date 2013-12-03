@@ -158,7 +158,8 @@ public final class TopLevelFIF extends CompositeFIF {
                 PrimitiveType.INT.getTypeName().toString(),
                 PrimitiveType.FLOAT.getTypeName().toString(),
                 PrimitiveType.LONG.getTypeName().toString(),
-                PrimitiveType.DOUBLE.getTypeName().toString()), HASH_CODE_NAME), NUMBER_HASH_CODE);
+                PrimitiveType.DOUBLE.getTypeName().toString(),
+                "Number"), HASH_CODE_NAME), NUMBER_HASH_CODE);
         add(pattern(new NamePredicate(PrimitiveType.CHAR.getTypeName().toString()), HASH_CODE_NAME), CHAR_HASH_CODE);
         add(pattern(NamePredicate.STRING, HASH_CODE_NAME), STRING_HASH_CODE);
 

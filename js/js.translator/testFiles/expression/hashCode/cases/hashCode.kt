@@ -31,7 +31,8 @@ fun box(): Boolean {
     testChar('a')
     testString("hello world")
     testInt(42)
-    //TODO: with the line below uncommented it'll fail
-    //testNumber(42)
+    testNumber(42)
+    testNumber(3.14159)
+    testNumber(0xdeadbeef)
     return true
 }
