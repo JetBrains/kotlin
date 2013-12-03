@@ -2572,6 +2572,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/enum/enumWithEmptyName.kt");
             }
             
+            @TestMetadata("extensionNamedAsEnumEntry.kt")
+            public void testExtensionNamedAsEnumEntry() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/extensionNamedAsEnumEntry.kt");
+            }
+            
             @TestMetadata("importEnumFromJava.kt")
             public void testImportEnumFromJava() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/enum/importEnumFromJava.kt");

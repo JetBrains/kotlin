@@ -246,7 +246,7 @@ public class CallExpressionResolver {
                 context.replaceTraceAndCache(temporaryForVariable),
                 call, CheckValueArgumentsMode.ENABLED);
         OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(contextForVariable);
-        if (!resolutionResult.isNothing()) {
+        if (resolutionResult.isSuccess()) {
             temporaryForVariable.commit();
             checkSuper(receiver, resolutionResult, context.trace, nameExpression);
             result[0] = true;
@@ -271,8 +271,8 @@ public class CallExpressionResolver {
             return jetType;
         }
         temporaryForVariable.commit();
-        result[0] = false;
-        return null;
+        result[0] = !resolutionResult.isNothing();
+        return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
     }
 
     @NotNull
