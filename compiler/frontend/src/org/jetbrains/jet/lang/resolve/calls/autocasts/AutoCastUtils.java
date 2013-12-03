@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
@@ -36,6 +38,24 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.EXPRESSION_TYPE;
 public class AutoCastUtils {
 
     private AutoCastUtils() {}
+
+    public static List<ReceiverValue> getAutoCastVariantsIncludingReceiver(
+            @NotNull ReceiverValue receiverToCast,
+            @NotNull ResolutionContext context
+    ) {
+        return getAutoCastVariantsIncludingReceiver(receiverToCast, context.trace.getBindingContext(), context.dataFlowInfo);
+    }
+
+    public static List<ReceiverValue> getAutoCastVariantsIncludingReceiver(
+            @NotNull ReceiverValue receiverToCast,
+            @NotNull BindingContext bindingContext,
+            @NotNull DataFlowInfo dataFlowInfo
+    ) {
+        List<ReceiverValue> variants = Lists.newArrayList();
+        variants.add(receiverToCast);
+        variants.addAll(getAutoCastVariants(bindingContext, dataFlowInfo, receiverToCast));
+        return variants;
+    }
 
     /**
      * @return variants @param receiverToCast may be cast to according to @param dataFlowInfo, @param receiverToCast itself is NOT included

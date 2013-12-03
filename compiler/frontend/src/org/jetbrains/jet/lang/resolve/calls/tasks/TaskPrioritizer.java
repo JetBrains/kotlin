@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -134,7 +134,7 @@ public class TaskPrioritizer {
             boolean resolveInvoke
     ) {
 
-        List<ReceiverValue> variantsForExplicitReceiver = c.autoCastService.getVariantsForReceiver(receiver);
+        List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariantsIncludingReceiver(receiver, c.context);
 
         //members
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
@@ -169,7 +169,7 @@ public class TaskPrioritizer {
     ) {
         Collection<? extends D> memberExtensions = callableDescriptorCollector.getNonMembersByName(
                 implicitReceiver.getType().getMemberScope(), c.name, c.context.trace);
-        List<ReceiverValue> variantsForImplicitReceiver = c.autoCastService.getVariantsForReceiver(implicitReceiver);
+        List<ReceiverValue> variantsForImplicitReceiver = AutoCastUtils.getAutoCastVariantsIncludingReceiver(implicitReceiver, c.context);
         c.result.addCandidates(convertWithReceivers(memberExtensions, variantsForImplicitReceiver,
                                                   variantsForExplicitReceiver, resolveInvoke));
     }
@@ -249,7 +249,7 @@ public class TaskPrioritizer {
             @NotNull ReceiverValue explicitReceiver,
             @NotNull TaskPrioritizerContext<D, F> c
     ) {
-        List<ReceiverValue> variantsForExplicitReceiver = c.autoCastService.getVariantsForReceiver(explicitReceiver);
+        List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariantsIncludingReceiver(explicitReceiver, c.context);
 
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
             addMemberExtensionCandidates(variableReceiver, variantsForExplicitReceiver, callableDescriptorCollector, c, /*resolveInvoke=*/true);
@@ -395,7 +395,6 @@ public class TaskPrioritizer {
         @NotNull public final BasicCallResolutionContext context;
         @NotNull public final JetScope scope;
         @NotNull public final List<CallableDescriptorCollector<? extends D>> callableDescriptorCollectors;
-        @NotNull AutoCastServiceImpl autoCastService;
 
         private TaskPrioritizerContext(
                 @NotNull Name name,
@@ -409,7 +408,6 @@ public class TaskPrioritizer {
             this.context = context;
             this.scope = scope;
             this.callableDescriptorCollectors = callableDescriptorCollectors;
-            autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.trace.getBindingContext());
         }
     }
 }

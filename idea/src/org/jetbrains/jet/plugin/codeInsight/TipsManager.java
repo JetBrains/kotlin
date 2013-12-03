@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
@@ -69,8 +69,8 @@ public final class TipsManager {
                         info = DataFlowInfo.EMPTY;
                     }
 
-                    AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(info, context);
-                    List<ReceiverValue> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(receiverValue);
+                    List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariantsIncludingReceiver(
+                            receiverValue, context, info);
 
                     for (ReceiverValue descriptor : variantsForExplicitReceiver) {
                         descriptors.addAll(includeExternalCallableExtensions(
