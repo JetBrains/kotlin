@@ -69,8 +69,7 @@ public final class TipsManager {
                         info = DataFlowInfo.EMPTY;
                     }
 
-                    List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariantsIncludingReceiver(
-                            receiverValue, context, info);
+                    List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiverValue, context, info);
 
                     for (ReceiverValue descriptor : variantsForExplicitReceiver) {
                         descriptors.addAll(includeExternalCallableExtensions(

@@ -134,7 +134,7 @@ public class TaskPrioritizer {
             boolean resolveInvoke
     ) {
 
-        List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariantsIncludingReceiver(receiver, c.context);
+        List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiver, c.context);
 
         //members
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
@@ -169,7 +169,7 @@ public class TaskPrioritizer {
     ) {
         Collection<? extends D> memberExtensions = callableDescriptorCollector.getNonMembersByName(
                 implicitReceiver.getType().getMemberScope(), c.name, c.context.trace);
-        List<ReceiverValue> variantsForImplicitReceiver = AutoCastUtils.getAutoCastVariantsIncludingReceiver(implicitReceiver, c.context);
+        List<ReceiverValue> variantsForImplicitReceiver = AutoCastUtils.getAutoCastVariants(implicitReceiver, c.context);
         c.result.addCandidates(convertWithReceivers(memberExtensions, variantsForImplicitReceiver,
                                                   variantsForExplicitReceiver, resolveInvoke));
     }
@@ -249,7 +249,7 @@ public class TaskPrioritizer {
             @NotNull ReceiverValue explicitReceiver,
             @NotNull TaskPrioritizerContext<D, F> c
     ) {
-        List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariantsIncludingReceiver(explicitReceiver, c.context);
+        List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(explicitReceiver, c.context);
 
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
             addMemberExtensionCandidates(variableReceiver, variantsForExplicitReceiver, callableDescriptorCollector, c, /*resolveInvoke=*/true);

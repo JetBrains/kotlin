@@ -828,7 +828,7 @@ public class CandidateResolver {
     ) {
         ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression, false), actualType);
         List<ReceiverValue> variants =
-                AutoCastUtils.getAutoCastVariants(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
+                AutoCastUtils.getAutoCastVariantsExcludingReceiver(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
         for (ReceiverValue receiverValue : variants) {
             JetType possibleType = receiverValue.getType();
             if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, expectedType)) {

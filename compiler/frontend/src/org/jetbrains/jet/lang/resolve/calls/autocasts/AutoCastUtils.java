@@ -39,21 +39,21 @@ public class AutoCastUtils {
 
     private AutoCastUtils() {}
 
-    public static List<ReceiverValue> getAutoCastVariantsIncludingReceiver(
+    public static List<ReceiverValue> getAutoCastVariants(
             @NotNull ReceiverValue receiverToCast,
             @NotNull ResolutionContext context
     ) {
-        return getAutoCastVariantsIncludingReceiver(receiverToCast, context.trace.getBindingContext(), context.dataFlowInfo);
+        return getAutoCastVariants(receiverToCast, context.trace.getBindingContext(), context.dataFlowInfo);
     }
 
-    public static List<ReceiverValue> getAutoCastVariantsIncludingReceiver(
+    public static List<ReceiverValue> getAutoCastVariants(
             @NotNull ReceiverValue receiverToCast,
             @NotNull BindingContext bindingContext,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         List<ReceiverValue> variants = Lists.newArrayList();
         variants.add(receiverToCast);
-        variants.addAll(getAutoCastVariants(bindingContext, dataFlowInfo, receiverToCast));
+        variants.addAll(getAutoCastVariantsExcludingReceiver(bindingContext, dataFlowInfo, receiverToCast));
         return variants;
     }
 
@@ -61,7 +61,7 @@ public class AutoCastUtils {
      * @return variants @param receiverToCast may be cast to according to @param dataFlowInfo, @param receiverToCast itself is NOT included
      */
     @NotNull
-    public static List<ReceiverValue> getAutoCastVariants(
+    public static List<ReceiverValue> getAutoCastVariantsExcludingReceiver(
             @NotNull BindingContext bindingContext,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ReceiverValue receiverToCast
@@ -79,7 +79,7 @@ public class AutoCastUtils {
             return collectAutoCastReceiverValues(dataFlowInfo, receiver, dataFlowValue);
         }
         else if (receiverToCast instanceof AutoCastReceiver) {
-            return getAutoCastVariants(bindingContext, dataFlowInfo, ((AutoCastReceiver) receiverToCast).getOriginal());
+            return getAutoCastVariantsExcludingReceiver(bindingContext, dataFlowInfo, ((AutoCastReceiver) receiverToCast).getOriginal());
         }
         return Collections.emptyList();
     }
