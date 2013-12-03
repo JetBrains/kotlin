@@ -137,16 +137,7 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final KotlinFunctionIntrinsic HASH_CHAR_IMPL = new KotlinFunctionIntrinsic("hashCharImpl");
 
     @NotNull
-    public static final KotlinFunctionIntrinsic HASH_INT_IMPL = new KotlinFunctionIntrinsic("hashIntImpl");
-
-    @NotNull
-    public static final KotlinFunctionIntrinsic HASH_FLOAT_IMPL = new KotlinFunctionIntrinsic("hashFloatImpl");
-
-    @NotNull
-    public static final KotlinFunctionIntrinsic HASH_LONG_IMPL = new KotlinFunctionIntrinsic("hashLongImpl");
-
-    @NotNull
-    public static final KotlinFunctionIntrinsic HASH_DOUBLE_IMPL = new KotlinFunctionIntrinsic("hashDoubleImpl");
+    public static final KotlinFunctionIntrinsic HASH_NUMBER_IMPL = new KotlinFunctionIntrinsic("hashNumberImpl");
 
     @NotNull
     public static final KotlinFunctionIntrinsic HASH_STRING_IMPL = new KotlinFunctionIntrinsic("hashStringImpl");
@@ -164,11 +155,11 @@ public final class TopLevelFIF extends CompositeFIF {
                 PrimitiveType.BOOLEAN.getTypeName().toString(),
                 PrimitiveType.BYTE.getTypeName().toString(),
                 PrimitiveType.SHORT.getTypeName().toString(),
-                PrimitiveType.INT.getTypeName().toString()), HASH_CODE_NAME), HASH_INT_IMPL);
+                PrimitiveType.INT.getTypeName().toString(),
+                PrimitiveType.FLOAT.getTypeName().toString(),
+                PrimitiveType.LONG.getTypeName().toString(),
+                PrimitiveType.DOUBLE.getTypeName().toString()), HASH_CODE_NAME), HASH_NUMBER_IMPL);
         add(pattern(new NamePredicate(PrimitiveType.CHAR.getTypeName().toString()), HASH_CODE_NAME), HASH_CHAR_IMPL);
-        add(pattern(new NamePredicate(PrimitiveType.FLOAT.getTypeName().toString()), HASH_CODE_NAME), HASH_FLOAT_IMPL);
-        add(pattern(new NamePredicate(PrimitiveType.DOUBLE.getTypeName().toString()), HASH_CODE_NAME), HASH_DOUBLE_IMPL);
-        add(pattern(new NamePredicate(PrimitiveType.LONG.getTypeName().toString()), HASH_CODE_NAME), HASH_LONG_IMPL);
         add(pattern(NamePredicate.STRING, HASH_CODE_NAME), HASH_STRING_IMPL);
 
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);

@@ -67,8 +67,8 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFu
  */
 public final class ClassTranslator extends AbstractTranslator {
 
+    private static final String HASH_NUMBER_IMPL = "hashNumberImpl";
     private static final String HASH_ARRAY_IMPL = "hashArrayImpl";
-    private static final String HASH_INT_IMPL = "hashIntImpl";
     private static final String HASH_NULLABLE_IMPL = "hashNullableImpl";
 
     @NotNull
@@ -240,24 +240,21 @@ public final class ClassTranslator extends AbstractTranslator {
             String hashCb = primitivePropertyHashCallbackName(retType);
             if (hashCb != null) {
                 if (retType.isNullable()) {
-                    JsNameRef jsHashCb = new JsNameRef(hashCb.isEmpty() ? HASH_INT_IMPL : hashCb, Namer.KOTLIN_NAME);
+                    JsNameRef jsHashCb = new JsNameRef(hashCb, Namer.KOTLIN_NAME);
                     hashImpl = Namer.kotlinLibraryCall(HASH_NULLABLE_IMPL, arg, jsHashCb);
                 } else {
-                    hashImpl = hashCb.isEmpty() ? arg : Namer.kotlinLibraryCall(hashCb, arg);
+                    hashImpl = Namer.kotlinLibraryCall(hashCb, arg);
                 }
             } else {
                 TypeConstructor typeCtor = retType.getConstructor();
                 if (typeCtor.toString().equals("Array")) {
                     List<TypeProjection> projections = propertyDescriptor.getReturnType().getArguments();
                     assert projections.size() >= 1;
-                    String elemHashCb = primitivePropertyHashCallbackName(projections.get(0).getType());
-                    if (elemHashCb != null) {
-                        JsNameRef jsElemHashCb = new JsNameRef(elemHashCb.isEmpty() ? HASH_INT_IMPL : elemHashCb);
-                        hashImpl = Namer.kotlinLibraryCall(HASH_ARRAY_IMPL, arg, jsElemHashCb);
-                    } else {
-                        JsNameRef jsElemHashCb = new JsNameRef(Namer.HASH_CODE, Namer.KOTLIN_NAME);
-                        hashImpl = Namer.kotlinLibraryCall(HASH_ARRAY_IMPL, arg, jsElemHashCb);
-                    }
+                    String primitiveHashCb = primitivePropertyHashCallbackName(projections.get(0).getType());
+                    JsNameRef jsElemHashCb = (primitiveHashCb != null)
+                                             ? new JsNameRef(primitiveHashCb)
+                                             : new JsNameRef(Namer.HASH_CODE, Namer.KOTLIN_NAME);
+                    hashImpl = Namer.kotlinLibraryCall(HASH_ARRAY_IMPL, arg, jsElemHashCb);
                 } else {
                     hashImpl = Namer.kotlinLibraryCall(Namer.HASH_CODE, arg);
                 }
@@ -379,16 +376,16 @@ public final class ClassTranslator extends AbstractTranslator {
             propTypeName = propTypeName.substring(0, propTypeName.length() - 1);
         }
         if (propTypeName.equals(PrimitiveType.CHAR.getTypeName().asString()) ||
-            propTypeName.equals(PrimitiveType.FLOAT.getTypeName().asString()) ||
-            propTypeName.equals(PrimitiveType.LONG.getTypeName().asString()) ||
-            propTypeName.equals(PrimitiveType.DOUBLE.getTypeName().asString()) ||
             propTypeName.equals("String")) {
             return "hash" + propTypeName + "Impl";
         } else if (propTypeName.equals(PrimitiveType.BOOLEAN.getTypeName().asString()) ||
                    propTypeName.equals(PrimitiveType.BYTE.getTypeName().asString()) ||
                    propTypeName.equals(PrimitiveType.SHORT.getTypeName().asString()) ||
-                   propTypeName.equals(PrimitiveType.INT.getTypeName().asString())) {
-            return "";
+                   propTypeName.equals(PrimitiveType.INT.getTypeName().asString()) ||
+                   propTypeName.equals(PrimitiveType.FLOAT.getTypeName().asString()) ||
+                   propTypeName.equals(PrimitiveType.LONG.getTypeName().asString()) ||
+                   propTypeName.equals(PrimitiveType.DOUBLE.getTypeName().asString())) {
+            return HASH_NUMBER_IMPL;
         }
         return null;
     }
@@ -435,7 +432,7 @@ public final class ClassTranslator extends AbstractTranslator {
         translatePropertiesAsConstructorParameters(declarationContext, properties);
         DeclarationBodyVisitor bodyVisitor = new DeclarationBodyVisitor(properties, staticProperties);
         bodyVisitor.traverseContainer(classDeclaration, declarationContext);
-        generateSyntheticParts(properties);
+        generateFunctionsForDataClasses(properties);
         mayBeAddEnumEntry(bodyVisitor.getEnumEntryList(), staticProperties, declarationContext);
 
         if (isTopLevelDeclaration) {
@@ -460,10 +457,6 @@ public final class ClassTranslator extends AbstractTranslator {
             invocationArguments.add(new JsObjectLiteral(staticProperties, true));
         }
         return invocationArguments;
-    }
-
-    private void generateSyntheticParts(@NotNull List<JsPropertyInitializer> jsProperties) {
-        generateFunctionsForDataClasses(jsProperties);
     }
 
     private void mayBeAddEnumEntry(@NotNull List<JsPropertyInitializer> enumEntryList,

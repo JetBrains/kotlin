@@ -66,8 +66,8 @@ String.prototype.contains = function (s) {
         if (typeof o == "object" && o.hashCode != undefined) {
             return o.hashCode();
         }
-        if (typeof o == "number") {
-            return Kotlin.hashLongImpl(o);
+        if (typeof o == "number" || typeof o == "boolean") {
+            return Kotlin.hashNumberImpl(o);
         }
         if (typeof o == "string") {
             return Kotlin.hashStringImpl(o);
@@ -75,40 +75,13 @@ String.prototype.contains = function (s) {
         return 0;
     }
 
-    Kotlin.floatToIntBits = function (f)
-    {
-        var buf = new ArrayBuffer(4);
-        (new Float32Array(buf))[0] = f;
-        return (new Uint32Array(buf))[0];
-    }
-
-    Kotlin.doubleToIntBits = function (f)
-    {
-        var buf = new ArrayBuffer(8);
-        (new Float64Array(buf))[0] = f;
-        return [ (new Uint32Array(buf))[0] ,(new Uint32Array(buf))[1] ];
-    }
-
     Kotlin.hashCharImpl = function(jvmChar) {
         return jvmChar.charCodeAt(0);
     }
 
-    Kotlin.hashIntImpl = function(jvmInt) {
-        return jvmInt;
-    };
-
-    Kotlin.hashFloatImpl = function(jvmFloat) {
-        return Kotlin.floatToIntBits(jvmFloat);
-    };
-
-    Kotlin.hashLongImpl = function(jvmLong) {
-        return jvmLong ^ (jvmLong >>> 31);
-    };
-
-    Kotlin.hashDoubleImpl = function(jvmDouble) {
-        var doubleBits = Kotlin.doubleToIntBits(jvmDouble);
-        return (doubleBits[0] ^ doubleBits[1]) | 0;
-    };
+    Kotlin.hashNumberImpl = function(jvmNumber) {
+        return jvmNumber | 0
+    }
 
     Kotlin.hashStringImpl = function(jvmString) {
         var result = 0;
