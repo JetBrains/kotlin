@@ -273,7 +273,6 @@ public class BindingContextUtils {
             type = TypeUtils.makeNullable(type);
         }
         trace.record(BindingContext.EXPRESSION_TYPE, expression, type);
-        trace.record(BindingContext.PROCESSED, expression);
         return type;
     }
 
