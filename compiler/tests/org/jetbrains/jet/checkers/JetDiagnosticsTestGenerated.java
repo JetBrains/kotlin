@@ -6173,6 +6173,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/smartCasts/noErrorCheckForPackageLevelVal.kt");
             }
             
+            @TestMetadata("noUnnecessarySmartCastForReceiver.kt")
+            public void testNoUnnecessarySmartCastForReceiver() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/noUnnecessarySmartCastForReceiver.kt");
+            }
+            
             @TestMetadata("thisWithLabel.kt")
             public void testThisWithLabel() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/smartCasts/thisWithLabel.kt");

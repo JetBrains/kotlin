@@ -35,8 +35,9 @@ public class AutoCastServiceImpl implements AutoCastService {
     @NotNull
     @Override
     public List<ReceiverValue> getVariantsForReceiver(@NotNull ReceiverValue receiverValue) {
-        List<ReceiverValue> variants = Lists.newArrayList(AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverValue));
+        List<ReceiverValue> variants = Lists.newArrayList();
         variants.add(receiverValue);
+        variants.addAll(AutoCastUtils.getAutoCastVariants(bindingContext, dataFlowInfo, receiverValue));
         return variants;
     }
 
