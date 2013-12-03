@@ -85,6 +85,8 @@ public interface JetControlFlowBuilder {
     void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel);
 
     // Reading values
+    void mark(@NotNull JetElement element);
+
     void loadUnit(@NotNull JetExpression expression);
     void loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant);
     void createAnonymousObject(@NotNull JetObjectLiteralExpression expression);

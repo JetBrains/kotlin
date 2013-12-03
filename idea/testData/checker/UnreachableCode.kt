@@ -136,9 +136,9 @@ fun tf() : Int {
 }
 
 fun failtest(<warning>a</warning> : Int) : Int {
-  if (fail() || <warning>true</warning>) {
+  if (fail() || <warning>true</warning>) <warning>{
 
-  }
+  }</warning>
   <warning>return 1</warning>
 }
 

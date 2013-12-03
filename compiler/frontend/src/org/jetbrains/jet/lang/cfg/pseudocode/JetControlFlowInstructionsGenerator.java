@@ -230,6 +230,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
+        public void mark(@NotNull JetElement element) {
+            add(new MarkInstruction(element));
+        }
+
+        @Override
         public void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine) {
             Label exitPoint = getExitPoint(subroutine);
             handleJumpInsideTryFinally(exitPoint);

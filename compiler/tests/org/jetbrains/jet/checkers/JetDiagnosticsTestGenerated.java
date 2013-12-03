@@ -1562,6 +1562,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/uninitializedInLocalDeclarations.kt");
             }
             
+            @TestMetadata("unreachableCode.kt")
+            public void testUnreachableCode() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unreachableCode.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/controlStructures")

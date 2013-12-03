@@ -95,4 +95,9 @@ public class InstructionVisitor {
     public void visitCompilationErrorInstruction(CompilationErrorInstruction instruction) {
         visitInstructionWithNext(instruction);
     }
+
+    public void visitMarkInstruction(MarkInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
 }

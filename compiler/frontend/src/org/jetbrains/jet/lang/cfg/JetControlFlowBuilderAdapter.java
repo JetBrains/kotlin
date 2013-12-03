@@ -234,4 +234,9 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
         getDelegateBuilder().repeatPseudocode(startLabel, finishLabel);
     }
+
+    @Override
+    public void mark(@NotNull JetElement element) {
+        getDelegateBuilder().mark(element);
+    }
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.cfg;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -53,17 +54,17 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.cfg.JetControlFlowBuilder.PredefinedOperation.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class JetControlFlowProcessor {
 
     private final JetControlFlowBuilder builder;
     private final BindingTrace trace;
+    private final Set<PsiElement> marked = new HashSet<PsiElement>();
 
     public JetControlFlowProcessor(BindingTrace trace) {
         this.builder = new JetControlFlowInstructionsGenerator();
@@ -140,6 +141,11 @@ public class JetControlFlowProcessor {
             this.inCondition = inCondition;
         }
 
+        private void mark(JetElement element) {
+            if (!marked.add(element)) return;
+            builder.mark(element);
+        }
+
         public void generateInstructions(@Nullable JetElement element) {
             generateInstructions(element, inCondition);
         }
@@ -173,6 +179,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression) {
+            mark(expression);
             JetExpression innerExpression = expression.getExpression();
             if (innerExpression != null) {
                 generateInstructions(innerExpression, inCondition);
@@ -243,8 +250,11 @@ public class JetControlFlowProcessor {
         public void visitBinaryExpression(@NotNull JetBinaryExpression expression) {
             JetSimpleNameExpression operationReference = expression.getOperationReference();
             IElementType operationType = operationReference.getReferencedNameElementType();
+            if (!ImmutableSet.of(ANDAND, OROR, EQ, ELVIS).contains(operationType)) {
+                mark(expression);
+            }
             JetExpression right = expression.getRight();
-            if (operationType == JetTokens.ANDAND) {
+            if (operationType == ANDAND) {
                 generateInstructions(expression.getLeft(), true);
                 Label resultLabel = builder.createUnboundLabel();
                 builder.jumpOnFalse(resultLabel);
@@ -256,7 +266,7 @@ public class JetControlFlowProcessor {
                     builder.predefinedOperation(expression, AND);
                 }
             }
-            else if (operationType == JetTokens.OROR) {
+            else if (operationType == OROR) {
                 generateInstructions(expression.getLeft(), true);
                 Label resultLabel = builder.createUnboundLabel();
                 builder.jumpOnTrue(resultLabel);
@@ -268,7 +278,7 @@ public class JetControlFlowProcessor {
                     builder.predefinedOperation(expression, OR);
                 }
             }
-            else if (operationType == JetTokens.EQ) {
+            else if (operationType == EQ) {
                 visitAssignment(expression.getLeft(), right, expression);
             }
             else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
@@ -286,7 +296,7 @@ public class JetControlFlowProcessor {
                     generateBothArguments(expression);
                 }
             }
-            else if (operationType == JetTokens.ELVIS) {
+            else if (operationType == ELVIS) {
                 generateInstructions(expression.getLeft(), false);
                 Label afterElvis = builder.createUnboundLabel();
                 builder.jumpOnTrue(afterElvis);
@@ -379,6 +389,7 @@ public class JetControlFlowProcessor {
         }
 
         private void generateArrayAccess(JetArrayAccessExpression arrayAccessExpression, @Nullable ResolvedCall<?> setResolvedCall) {
+            mark(arrayAccessExpression);
             if (!checkAndGenerateCall(arrayAccessExpression, setResolvedCall)) {
                 for (JetExpression index : arrayAccessExpression.getIndexExpressions()) {
                     generateInstructions(index, false);
@@ -390,6 +401,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitUnaryExpression(@NotNull JetUnaryExpression expression) {
+            mark(expression);
             JetSimpleNameExpression operationSign = expression.getOperationReference();
             IElementType operationType = operationSign.getReferencedNameElementType();
             JetExpression baseExpression = expression.getBaseExpression();
@@ -422,6 +434,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitIfExpression(@NotNull JetIfExpression expression) {
+            mark(expression);
             JetExpression condition = expression.getCondition();
             if (condition != null) {
                 generateInstructions(condition, true);
@@ -476,6 +489,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitTryExpression(@NotNull JetTryExpression expression) {
+            mark(expression);
             JetFinallySection finallyBlock = expression.getFinallyBlock();
             final FinallyBlockGenerator finallyBlockGenerator = new FinallyBlockGenerator(finallyBlock);
             if (finallyBlock != null) {
@@ -559,6 +573,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitWhileExpression(@NotNull JetWhileExpression expression) {
+            mark(expression);
             LoopInfo loopInfo = builder.enterLoop(expression, null, null);
 
             builder.bindLabel(loopInfo.getConditionEntryPoint());
@@ -589,6 +604,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitDoWhileExpression(@NotNull JetDoWhileExpression expression) {
+            mark(expression);
             LoopInfo loopInfo = builder.enterLoop(expression, null, null);
 
             builder.bindLabel(loopInfo.getBodyEntryPoint());
@@ -608,6 +624,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitForExpression(@NotNull JetForExpression expression) {
+            mark(expression);
             JetExpression loopRange = expression.getLoopRange();
             if (loopRange != null) {
                 generateInstructions(loopRange, false);
@@ -728,6 +745,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitBlockExpression(@NotNull JetBlockExpression expression) {
+            mark(expression);
             List<JetElement> statements = expression.getStatements();
             for (JetElement statement : statements) {
                 generateInstructions(statement, false);
@@ -744,6 +762,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression) {
+            mark(expression);
             JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
             processLocalDeclaration(functionLiteral);
             builder.createFunctionLiteral(expression);
@@ -751,6 +770,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitQualifiedExpression(@NotNull JetQualifiedExpression expression) {
+            mark(expression);
             JetExpression selectorExpression = expression.getSelectorExpression();
             if (selectorExpression != null) {
                 final Ref<Boolean> error = new Ref<Boolean>(false);
@@ -777,6 +797,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitCallExpression(@NotNull JetCallExpression expression) {
+            mark(expression);
             if (!generateCall(expression.getCalleeExpression())) {
                 for (ValueArgument argument : expression.getValueArguments()) {
                     JetExpression argumentExpression = argument.getArgumentExpression();
@@ -834,6 +855,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression) {
+            mark(expression);
             IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
             if (operationType == JetTokens.COLON || operationType == JetTokens.AS_KEYWORD || operationType == JetTokens.AS_SAFE) {
                 generateInstructions(expression.getLeft(), false);
@@ -845,6 +867,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitThrowExpression(@NotNull JetThrowExpression expression) {
+            mark(expression);
             JetExpression thrownExpression = expression.getThrownExpression();
             if (thrownExpression != null) {
                 generateInstructions(thrownExpression, false);
@@ -854,6 +877,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression) {
+            mark(expression);
             if (!generateCall(expression)) {
                 generateArrayAccess(expression, getResolvedCall(expression));
             }
@@ -861,11 +885,13 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitIsExpression(@NotNull JetIsExpression expression) {
+            mark(expression);
             generateInstructions(expression.getLeftHandSide(), inCondition);
         }
 
         @Override
         public void visitWhenExpression(@NotNull JetWhenExpression expression) {
+            mark(expression);
             JetExpression subjectExpression = expression.getSubjectExpression();
             if (subjectExpression != null) {
                 generateInstructions(subjectExpression, inCondition);
@@ -877,6 +903,7 @@ public class JetControlFlowProcessor {
             Label nextLabel = null;
             for (Iterator<JetWhenEntry> iterator = expression.getEntries().iterator(); iterator.hasNext(); ) {
                 JetWhenEntry whenEntry = iterator.next();
+                mark(whenEntry);
 
                 boolean isElse = whenEntry.isElse();
                 if (isElse) {
@@ -917,6 +944,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression) {
+            mark(expression);
             JetObjectDeclaration declaration = expression.getObjectDeclaration();
             generateInstructions(declaration, inCondition);
 
@@ -940,6 +968,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression) {
+            mark(expression);
             for (JetStringTemplateEntry entry : expression.getEntries()) {
                 if (entry instanceof JetStringTemplateEntryWithExpression) {
                     JetStringTemplateEntryWithExpression entryWithExpression = (JetStringTemplateEntryWithExpression) entry;

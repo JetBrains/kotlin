@@ -2,32 +2,28 @@
 fun illegalWhenBlock(a: Any): Any {
     when(a) {
         is Int -> return a
-        is String -> return a
     }
 }
 ---------------------
 L0:
-    <START>  
+    <START>
     v(a: Any)
-    w(a)     
-    r(a)     
-    jmp?(L4)     NEXT:[jmp?(L6), r(a)]
+    w(a)
+    mark({ when(a) { is Int -> return a } })
+    mark(when(a) { is Int -> return a })
+    r(a)
+    mark(is Int -> return a)
+    jmp?(L4)                                    NEXT:[<END>, r(a)]
 L3:
-    r(a)     
-    ret(*) L1    NEXT:[<END>]         
--   jmp(L2)      NEXT:[<END>]             PREV:[]
-L4:
-    jmp?(L6)     NEXT:[<END>, r(a)]       PREV:[jmp?(L4)]
-L5:
-    r(a)     
-    ret(*) L1    NEXT:[<END>]         
--   jmp(L2)      PREV:[]
+    r(a)
+    ret(*) L1                                   NEXT:[<END>]
+-   jmp(L2)                                     PREV:[]
 L1:
 L2:
-L6:
-    <END>        NEXT:[<SINK>]            PREV:[ret(*) L1, jmp?(L6), ret(*) L1]
+L4:
+    <END>                                       NEXT:[<SINK>]                                      PREV:[jmp?(L4), ret(*) L1]
 error:
-    <ERROR>      PREV:[]
+    <ERROR>                                     PREV:[]
 sink:
-    <SINK>       PREV:[<ERROR>, <END>]
+    <SINK>                                      PREV:[<ERROR>, <END>]
 =====================

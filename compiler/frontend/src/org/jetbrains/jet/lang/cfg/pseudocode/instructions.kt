@@ -47,3 +47,19 @@ class CompilationErrorInstruction(
 
     override fun toString() = "error(${render(element)}, $message)"
 }
+
+// This instruciton is used to let the dead code detector know the syntactic structure of unreachable code
+// otherwise only individual parts of expression would be reported as unreachable
+// e.g. for (i in foo) {} -- only i and foo would be marked unreachable
+class MarkInstruction(
+        element: JetElement
+) : InstructionWithNext(element) {
+
+    override fun accept(visitor: InstructionVisitor) {
+        visitor.visitMarkInstruction(this)
+    }
+
+    override fun createCopy() = MarkInstruction(element)
+
+    override fun toString() = "mark(${render(element)})"
+}

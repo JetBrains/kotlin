@@ -110,6 +110,11 @@ public class JetFlowInformationProvider {
                 }
 
                 @Override
+                public void visitMarkInstruction(MarkInstruction instruction) {
+                    redirectToPrevInstructions(instruction);
+                }
+
+                @Override
                 public void visitInstruction(Instruction instruction) {
                     if (instruction instanceof JetElementInstruction) {
                         JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
