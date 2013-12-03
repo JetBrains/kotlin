@@ -891,8 +891,7 @@ public class CandidateResolver {
 
         BindingContext bindingContext = trace.getBindingContext();
         boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
-        AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, bindingContext);
-        if (!safeAccess && !receiverParameter.getType().isNullable() && !autoCastService.isNotNull(receiverArgument)) {
+        if (!safeAccess && !receiverParameter.getType().isNullable() && receiverArgument.getType().isNullable()) {
 
             context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
             return UNSAFE_CALL_ERROR;

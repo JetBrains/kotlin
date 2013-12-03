@@ -6178,6 +6178,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/smartCasts/noUnnecessarySmartCastForReceiver.kt");
             }
             
+            @TestMetadata("publicVal.kt")
+            public void testPublicVal() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/publicVal.kt");
+            }
+
             @TestMetadata("thisWithLabel.kt")
             public void testThisWithLabel() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/smartCasts/thisWithLabel.kt");
