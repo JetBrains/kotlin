@@ -2986,6 +2986,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/generics/RecursiveUpperBoundWithTwoArguments.kt");
             }
             
+            @TestMetadata("resolveGenericBoundsBeforeSupertypes.kt")
+            public void testResolveGenericBoundsBeforeSupertypes() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/generics/resolveGenericBoundsBeforeSupertypes.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/generics/tpAsReified")
             public static class TpAsReified extends AbstractDiagnosticsTestWithEagerResolve {
                 public void testAllFilesPresentInTpAsReified() throws Exception {

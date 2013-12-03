@@ -209,13 +209,16 @@ public class TypeHierarchyResolver {
     private void resolveTypesInClassHeaders() {
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
             if (classOrObject instanceof JetClass) {
+                MutableClassDescriptor descriptor = entry.getValue();
                 //noinspection unchecked
                 descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor.getScopeForSupertypeResolution(),
                                                         (List) descriptor.getTypeConstructor().getParameters(), trace);
             }
-            descriptorResolver.resolveSupertypesForMutableClassDescriptor(classOrObject, descriptor, trace);
+        }
+
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            descriptorResolver.resolveSupertypesForMutableClassDescriptor(entry.getKey(), entry.getValue(), trace);
         }
     }
 
