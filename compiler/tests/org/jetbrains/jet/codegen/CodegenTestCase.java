@@ -224,14 +224,14 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {
         boolean noErrors = true;
         for (OutputFile file : factory.asList()) {
-            noErrors &= verifyWithAsm(file.asByteArray(), loader);
+            noErrors &= verifyWithAsm(file, loader);
         }
         return noErrors;
     }
 
-    private static boolean verifyWithAsm(@NotNull byte[] bytecode, ClassLoader loader) {
+    private static boolean verifyWithAsm(@NotNull OutputFile file, ClassLoader loader) {
         ClassNode classNode = new ClassNode();
-        new ClassReader(bytecode).accept(classNode, 0);
+        new ClassReader(file.asByteArray()).accept(classNode, 0);
 
         SimpleVerifier verifier = new SimpleVerifier();
         verifier.setClassLoader(loader);
@@ -243,6 +243,8 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 analyzer.analyze(classNode.name, method);
             }
             catch (AnalyzerException e) {
+                System.out.println(file.asText());
+
                 System.err.println(classNode.name + "::" + method.name + method.desc);
 
                 // Print the erroneous instruction
