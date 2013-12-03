@@ -358,21 +358,17 @@ public class JetControlFlowProcessor {
                 return;
             }
 
-            if (left instanceof JetSimpleNameExpression) {
-                // Do nothing, only record write below
+            if (left instanceof JetSimpleNameExpression || left instanceof JetProperty) {
+                generateInstructions(rhs, false);
             }
             else if (left instanceof JetQualifiedExpression) {
-                // read the receiver
+                generateInstructions(rhs, false);
                 generateInstructions(((JetQualifiedExpression) left).getReceiverExpression(), false);
-            }
-            else if (left instanceof JetProperty) {
-                // do nothing, just write below
             }
             else {
                 builder.unsupported(parentExpression); // TODO
             }
 
-            generateInstructions(rhs, false);
             recordWrite(left, parentExpression);
         }
 
