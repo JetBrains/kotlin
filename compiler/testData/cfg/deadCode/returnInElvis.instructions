@@ -1,0 +1,18 @@
+== foo ==
+fun foo() {
+    return ?: null
+}
+---------------------
+L0:
+    <START>    NEXT:[ret L1]            PREV:[]
+    ret L1     NEXT:[<END>]             PREV:[<START>]
+-   jt(L2)     NEXT:[r(null), <END>]    PREV:[]
+-   r(null)    NEXT:[<END>]             PREV:[]
+L1:
+L2:
+    <END>      NEXT:[<SINK>]            PREV:[ret L1]
+error:
+    <ERROR>    NEXT:[<SINK>]            PREV:[]
+sink:
+    <SINK>     NEXT:[]                  PREV:[<ERROR>, <END>]
+=====================

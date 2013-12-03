@@ -288,7 +288,6 @@ public class JetControlFlowProcessor {
             }
             else if (operationType == JetTokens.ELVIS) {
                 generateInstructions(expression.getLeft(), false);
-                generateInstructions(operationReference, false);
                 Label afterElvis = builder.createUnboundLabel();
                 builder.jumpOnTrue(afterElvis);
                 if (right != null) {
