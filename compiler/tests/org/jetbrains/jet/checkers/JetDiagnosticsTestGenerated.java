@@ -2764,6 +2764,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/evaluate/numberBinaryOperations.kt");
             }
             
+            @TestMetadata("numberBinaryOperationsCall.kt")
+            public void testNumberBinaryOperationsCall() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/numberBinaryOperationsCall.kt");
+            }
+            
             @TestMetadata("otherOverflow.kt")
             public void testOtherOverflow() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/evaluate/otherOverflow.kt");

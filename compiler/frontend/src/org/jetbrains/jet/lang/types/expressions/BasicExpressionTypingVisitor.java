@@ -705,7 +705,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private static JetTypeInfo createCompileTimeConstantTypeInfo(
+    public static JetTypeInfo createCompileTimeConstantTypeInfo(
             @NotNull CompileTimeConstant<?> value,
             @NotNull JetExpression expression,
             @NotNull ExpressionTypingContext context
