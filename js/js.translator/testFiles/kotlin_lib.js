@@ -67,41 +67,41 @@ String.prototype.contains = function (s) {
             return o.hashCode();
         }
         if (typeof o == "number" || typeof o == "boolean") {
-            return Kotlin.hashNumberImpl(o);
+            return Kotlin.numberHashCode(o);
         }
         if (typeof o == "string") {
-            return Kotlin.hashStringImpl(o);
+            return Kotlin.stringHashCode(o);
         }
         return 0;
     }
 
-    Kotlin.hashCharImpl = function(jvmChar) {
-        return jvmChar.charCodeAt(0);
+    Kotlin.charHashCode = function(ch) {
+        return ch.charCodeAt(0);
     }
 
-    Kotlin.hashNumberImpl = function(jvmNumber) {
-        return jvmNumber | 0
+    Kotlin.numberHashCode = function(num) {
+        return num | 0
     }
 
-    Kotlin.hashStringImpl = function(jvmString) {
+    Kotlin.stringHashCode = function(str) {
         var result = 0;
-        for (var i = 0; i < jvmString.length; ++i) {
-            result = (31 * result + jvmString.charCodeAt(i)) | 0;
+        for (var i = 0; i < str.length; ++i) {
+            result = (31 * result + str.charCodeAt(i)) | 0;
         }
         return result;
     };
 
-    Kotlin.hashNullableImpl = function(jvmVal, hashCB) {
-        if (jvmVal == null) {
+    Kotlin.nullableHashCode = function(val, hashCB) {
+        if (val == null) {
             return 0;
         }
-        return hashCB(jvmVal);
+        return hashCB(val);
     }
 
-    Kotlin.hashArrayImpl = function(jvmArray, hashCB) {
+    Kotlin.arrayHashCode = function(arr, hashCB) {
         var result = 1;
-        for (var i = 0; i < jvmArray.length; ++i) {
-            result = (31 * result + hashCB(jvmArray[i])) | 0;
+        for (var i = 0; i < arr.length; ++i) {
+            result = (31 * result + hashCB(arr[i])) | 0;
         }
         return result;
     };

@@ -14,40 +14,37 @@ native public fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit = noImpl
 library("hashCode")
 public fun Any.hashCode() : Int = js.noImpl
 
-library("hashNumberImpl")
-public fun Number.hashCode() : Int = js.noImpl
-
-library("hashStringImpl")
+library("stringHashCode")
 public fun String.hashCode() : Int = js.noImpl
 
-library("hashStringImpl")
+library("charHashCode")
 public fun Char.hashCode() : Int = js.noImpl
 
-library("hashArrayImpl")
+library("arrayHashCode")
 public fun <T> Array<T>.hashCode() : Int = js.noImpl
 
-library("hashArrayImpl")
+library("arrayHashCode")
 public fun ByteArray.hashCode() : Int = js.noImpl
 
-library("hashArrayImpl")
+library("arrayHashCode")
 public fun ShortArray.hashCode() : Int = js.noImpl
 
-library("hashArrayImpl")
+library("arrayHashCode")
 public fun IntArray.hashCode() : Int = js.noImpl
 
-library("hashArrayImpl")
+library("arrayHashCode")
 public fun LongArray.hashCode() : Int = js.noImpl
 
-library("hashArrayImpl")
+library("arrayHashCode")
 public fun FloatArray.hashCode() : Int = js.noImpl
 
-library("hashArrayImpl")
+library("arrayHashCode")
 public fun DoubleArray.hashCode() : Int = js.noImpl
 
-library("hashArrayImpl")
+library("arrayHashCode")
 public fun CharArray.hashCode() : Int = js.noImpl
 
-library("hashArrayImpl")
+library("arrayHashCode")
 public fun BooleanArray.hashCode() : Int = js.noImpl
 
 library("println")

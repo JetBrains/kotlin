@@ -134,13 +134,13 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final KotlinFunctionIntrinsic HASH_CODE = new KotlinFunctionIntrinsic(HASH_CODE_NAME);
 
     @NotNull
-    public static final KotlinFunctionIntrinsic HASH_CHAR_IMPL = new KotlinFunctionIntrinsic("hashCharImpl");
+    public static final KotlinFunctionIntrinsic CHAR_HASH_CODE = new KotlinFunctionIntrinsic("charHashCode");
 
     @NotNull
-    public static final KotlinFunctionIntrinsic HASH_NUMBER_IMPL = new KotlinFunctionIntrinsic("hashNumberImpl");
+    public static final KotlinFunctionIntrinsic NUMBER_HASH_CODE = new KotlinFunctionIntrinsic("numberHashCode");
 
     @NotNull
-    public static final KotlinFunctionIntrinsic HASH_STRING_IMPL = new KotlinFunctionIntrinsic("hashStringImpl");
+    public static final KotlinFunctionIntrinsic STRING_HASH_CODE = new KotlinFunctionIntrinsic("stringHashCode");
 
     @NotNull
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
@@ -158,9 +158,9 @@ public final class TopLevelFIF extends CompositeFIF {
                 PrimitiveType.INT.getTypeName().toString(),
                 PrimitiveType.FLOAT.getTypeName().toString(),
                 PrimitiveType.LONG.getTypeName().toString(),
-                PrimitiveType.DOUBLE.getTypeName().toString()), HASH_CODE_NAME), HASH_NUMBER_IMPL);
-        add(pattern(new NamePredicate(PrimitiveType.CHAR.getTypeName().toString()), HASH_CODE_NAME), HASH_CHAR_IMPL);
-        add(pattern(NamePredicate.STRING, HASH_CODE_NAME), HASH_STRING_IMPL);
+                PrimitiveType.DOUBLE.getTypeName().toString()), HASH_CODE_NAME), NUMBER_HASH_CODE);
+        add(pattern(new NamePredicate(PrimitiveType.CHAR.getTypeName().toString()), HASH_CODE_NAME), CHAR_HASH_CODE);
+        add(pattern(NamePredicate.STRING, HASH_CODE_NAME), STRING_HASH_CODE);
 
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);

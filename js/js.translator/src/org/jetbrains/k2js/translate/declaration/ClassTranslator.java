@@ -29,8 +29,6 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FunctionDescriptorUtil;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -67,9 +65,9 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFu
  */
 public final class ClassTranslator extends AbstractTranslator {
 
-    private static final String HASH_NUMBER_IMPL = "hashNumberImpl";
-    private static final String HASH_ARRAY_IMPL = "hashArrayImpl";
-    private static final String HASH_NULLABLE_IMPL = "hashNullableImpl";
+    private static final String NUMBER_HASH_CODE = "numberHashCode";
+    private static final String ARRAY_HASH_CODE = "arrayHashCode";
+    private static final String NULLABLE_HASH_CODE = "nullableHashCode";
 
     @NotNull
     private final JetClassOrObject classDeclaration;
@@ -241,7 +239,7 @@ public final class ClassTranslator extends AbstractTranslator {
             if (hashCb != null) {
                 if (retType.isNullable()) {
                     JsNameRef jsHashCb = new JsNameRef(hashCb, Namer.KOTLIN_NAME);
-                    hashImpl = Namer.kotlinLibraryCall(HASH_NULLABLE_IMPL, arg, jsHashCb);
+                    hashImpl = Namer.kotlinLibraryCall(NULLABLE_HASH_CODE, arg, jsHashCb);
                 } else {
                     hashImpl = Namer.kotlinLibraryCall(hashCb, arg);
                 }
@@ -254,7 +252,7 @@ public final class ClassTranslator extends AbstractTranslator {
                     JsNameRef jsElemHashCb = (primitiveHashCb != null)
                                              ? new JsNameRef(primitiveHashCb)
                                              : new JsNameRef(Namer.HASH_CODE, Namer.KOTLIN_NAME);
-                    hashImpl = Namer.kotlinLibraryCall(HASH_ARRAY_IMPL, arg, jsElemHashCb);
+                    hashImpl = Namer.kotlinLibraryCall(ARRAY_HASH_CODE, arg, jsElemHashCb);
                 } else {
                     hashImpl = Namer.kotlinLibraryCall(Namer.HASH_CODE, arg);
                 }
@@ -377,7 +375,7 @@ public final class ClassTranslator extends AbstractTranslator {
         }
         if (propTypeName.equals(PrimitiveType.CHAR.getTypeName().asString()) ||
             propTypeName.equals("String")) {
-            return "hash" + propTypeName + "Impl";
+            return propTypeName.toLowerCase() + "HashCode";
         } else if (propTypeName.equals(PrimitiveType.BOOLEAN.getTypeName().asString()) ||
                    propTypeName.equals(PrimitiveType.BYTE.getTypeName().asString()) ||
                    propTypeName.equals(PrimitiveType.SHORT.getTypeName().asString()) ||
@@ -385,7 +383,7 @@ public final class ClassTranslator extends AbstractTranslator {
                    propTypeName.equals(PrimitiveType.FLOAT.getTypeName().asString()) ||
                    propTypeName.equals(PrimitiveType.LONG.getTypeName().asString()) ||
                    propTypeName.equals(PrimitiveType.DOUBLE.getTypeName().asString())) {
-            return HASH_NUMBER_IMPL;
+            return NUMBER_HASH_CODE;
         }
         return null;
     }
