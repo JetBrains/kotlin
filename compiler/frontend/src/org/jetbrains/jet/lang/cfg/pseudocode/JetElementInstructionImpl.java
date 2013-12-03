@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElement;
 
@@ -31,5 +32,9 @@ public abstract class JetElementInstructionImpl extends InstructionImpl implemen
     @Override
     public JetElement getElement() {
         return element;
+    }
+
+    protected String render(PsiElement element) {
+        return element.getText().replaceAll("\\s+", " ");
     }
 }

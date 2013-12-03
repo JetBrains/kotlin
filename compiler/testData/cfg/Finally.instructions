@@ -82,35 +82,27 @@ fun t3() {
 }
 ---------------------
 L0:
-    <START>                                 NEXT:[jmp?(L2 [onExceptionToFinallyBlock])]                                PREV:[]
-    jmp?(L2 [onExceptionToFinallyBlock])    NEXT:[r(2), r(1)]                                                          PREV:[<START>]
-    r(1)                                    NEXT:[jmp?(L3)]                                                            PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
-    jmp?(L3)                                NEXT:[r({ () => if (2 > 3) { retur..), d({ () => if (2 > 3) { retur..)]    PREV:[r(1)]
-    d({ () =>
-            if (2 > 3) {
-              return@
-            }
-        })                                  NEXT:[<SINK>]                                                              PREV:[jmp?(L3)]
+    <START>                                 NEXT:[jmp?(L2 [onExceptionToFinallyBlock])]                                        PREV:[]
+    jmp?(L2 [onExceptionToFinallyBlock])    NEXT:[r(2), r(1)]                                                                  PREV:[<START>]
+    r(1)                                    NEXT:[jmp?(L3)]                                                                    PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+    jmp?(L3)                                NEXT:[r({ () => if (2 > 3) { return@ } }), d({ () => if (2 > 3) { return@ } })]    PREV:[r(1)]
+    d({ () => if (2 > 3) { return@ } })     NEXT:[<SINK>]                                                                      PREV:[jmp?(L3)]
 L3:
-    r({ () =>
-            if (2 > 3) {
-              return@
-            }
-        })                                  NEXT:[jmp(L8 [skipFinallyToErrorBlock])]                                   PREV:[jmp?(L3)]
-    jmp(L8 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                                                PREV:[r({ () => if (2 > 3) { retur..)]
+    r({ () => if (2 > 3) { return@ } })     NEXT:[jmp(L8 [skipFinallyToErrorBlock])]                                           PREV:[jmp?(L3)]
+    jmp(L8 [skipFinallyToErrorBlock])       NEXT:[r(2)]                                                                        PREV:[r({ () => if (2 > 3) { return@ } })]
 L2 [onExceptionToFinallyBlock]:
 L9 [start finally]:
-    r(2)                                    NEXT:[jmp(error)]                                                          PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+    r(2)                                    NEXT:[jmp(error)]                                                                  PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
 L10 [finish finally]:
-    jmp(error)                              NEXT:[<ERROR>]                                                             PREV:[r(2)]
+    jmp(error)                              NEXT:[<ERROR>]                                                                     PREV:[r(2)]
 L8 [skipFinallyToErrorBlock]:
-    r(2)                                    NEXT:[<END>]                                                               PREV:[jmp(L8 [skipFinallyToErrorBlock])]
+    r(2)                                    NEXT:[<END>]                                                                       PREV:[jmp(L8 [skipFinallyToErrorBlock])]
 L1:
-    <END>                                   NEXT:[<SINK>]                                                              PREV:[r(2)]
+    <END>                                   NEXT:[<SINK>]                                                                      PREV:[r(2)]
 error:
-    <ERROR>                                 NEXT:[<SINK>]                                                              PREV:[jmp(error)]
+    <ERROR>                                 NEXT:[<SINK>]                                                                      PREV:[jmp(error)]
 sink:
-    <SINK>                                  NEXT:[]                                                                    PREV:[<ERROR>, <END>, d({ () => if (2 > 3) { retur..)]
+    <SINK>                                  NEXT:[]                                                                            PREV:[<ERROR>, <END>, d({ () => if (2 > 3) { return@ } })]
 L4:
     <START>               NEXT:[r(2)]                   PREV:[]
     r(2)                  NEXT:[r(3)]                   PREV:[<START>]
@@ -169,35 +161,17 @@ fun t4() {
 }
 ---------------------
 L0:
-    <START>               NEXT:[jmp?(L2)]                                                            PREV:[]
-    jmp?(L2)              NEXT:[r({ () => try { 1 if (2 > 3)..), d({ () => try { 1 if (2 > 3)..)]    PREV:[<START>]
-    d({ () =>
-        try {
-          1
-          if (2 > 3) {
-            return@
-          }
-        } finally {
-          2
-        }
-      })                  NEXT:[<SINK>]                                                              PREV:[jmp?(L2)]
+    <START>                                                        NEXT:[jmp?(L2)]                                                                                                                    PREV:[]
+    jmp?(L2)                                                       NEXT:[r({ () => try { 1 if (2 > 3) { return@ } } finally { 2 } }), d({ () => try { 1 if (2 > 3) { return@ } } finally { 2 } })]    PREV:[<START>]
+    d({ () => try { 1 if (2 > 3) { return@ } } finally { 2 } })    NEXT:[<SINK>]                                                                                                                      PREV:[jmp?(L2)]
 L2:
-    r({ () =>
-        try {
-          1
-          if (2 > 3) {
-            return@
-          }
-        } finally {
-          2
-        }
-      })                  NEXT:[<END>]                                                               PREV:[jmp?(L2)]
+    r({ () => try { 1 if (2 > 3) { return@ } } finally { 2 } })    NEXT:[<END>]                                                                                                                       PREV:[jmp?(L2)]
 L1:
-    <END>                 NEXT:[<SINK>]                                                              PREV:[r({ () => try { 1 if (2 > 3)..)]
+    <END>                                                          NEXT:[<SINK>]                                                                                                                      PREV:[r({ () => try { 1 if (2 > 3) { return@ } } finally { 2 } })]
 error:
-    <ERROR>               NEXT:[<SINK>]                                                              PREV:[]
+    <ERROR>                                                        NEXT:[<SINK>]                                                                                                                      PREV:[]
 sink:
-    <SINK>                NEXT:[]                                                                    PREV:[<ERROR>, <END>, d({ () => try { 1 if (2 > 3)..)]
+    <SINK>                                                         NEXT:[]                                                                                                                            PREV:[<ERROR>, <END>, d({ () => try { 1 if (2 > 3) { return@ } } finally { 2 } })]
 L3:
     <START>                                 NEXT:[jmp?(L5 [onExceptionToFinallyBlock])]    PREV:[]
     jmp?(L5 [onExceptionToFinallyBlock])    NEXT:[r(2), r(1)]                              PREV:[<START>]

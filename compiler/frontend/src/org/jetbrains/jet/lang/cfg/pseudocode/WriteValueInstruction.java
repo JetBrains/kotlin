@@ -45,7 +45,7 @@ public class WriteValueInstruction extends InstructionWithNext {
             JetNamedDeclaration value = (JetNamedDeclaration) lValue;
             return "w(" + value.getName() + ")";
         }
-        return "w(" + lValue.getText() + ")";
+        return "w(" + render(lValue) + ")";
     }
 
     @NotNull

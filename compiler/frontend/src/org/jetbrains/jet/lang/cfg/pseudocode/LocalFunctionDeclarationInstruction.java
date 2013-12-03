@@ -59,7 +59,7 @@ public class LocalFunctionDeclarationInstruction extends InstructionWithNext {
 
     @Override
     public String toString() {
-        return "d" + "(" + element.getText() + ")";
+        return "d" + "(" + render(element) + ")";
     }
 
     @NotNull

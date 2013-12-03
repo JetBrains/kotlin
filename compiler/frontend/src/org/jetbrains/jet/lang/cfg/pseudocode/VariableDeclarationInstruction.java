@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetVariableDeclaration;
 
 public class VariableDeclarationInstruction extends InstructionWithNext {
@@ -42,7 +41,7 @@ public class VariableDeclarationInstruction extends InstructionWithNext {
 
     @Override
     public String toString() {
-        return "v(" + element.getText() + ")";
+        return "v(" + render(element) + ")";
     }
 
     @NotNull

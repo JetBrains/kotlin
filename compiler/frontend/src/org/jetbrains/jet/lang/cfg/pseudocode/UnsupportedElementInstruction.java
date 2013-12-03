@@ -32,7 +32,7 @@ public class UnsupportedElementInstruction extends InstructionWithNext {
 
     @Override
     public String toString() {
-        return "unsupported(" + element + " : " + element.getText() + ")";
+        return "unsupported(" + element + " : " + render(element) + ")";
     }
 
     @NotNull

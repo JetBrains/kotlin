@@ -31,7 +31,7 @@ class CallInstruction(
 
     override fun createCopy() = CallInstruction(element, resolvedCall)
 
-    override fun toString() = "call(${element.getText()}, ${resolvedCall.getResultingDescriptor()!!.getName()})"
+    override fun toString() = "call(${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()})"
 }
 
 class CompilationErrorInstruction(
@@ -45,5 +45,5 @@ class CompilationErrorInstruction(
 
     override fun createCopy() = CompilationErrorInstruction(element, message)
 
-    override fun toString() = "error(${element.getText()}, $message)"
+    override fun toString() = "error(${render(element)}, $message)"
 }

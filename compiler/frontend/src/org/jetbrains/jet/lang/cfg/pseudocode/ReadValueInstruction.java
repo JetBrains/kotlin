@@ -32,7 +32,7 @@ public class ReadValueInstruction extends InstructionWithNext {
 
     @Override
     public String toString() {
-        return "r(" + element.getText() + ")";
+        return "r(" + render(element) + ")";
     }
 
     @NotNull
