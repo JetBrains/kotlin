@@ -189,7 +189,7 @@ public class CodegenUtil {
             return true;
         }
         DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
-        return DescriptorUtils.isInSameModule(declarationDescriptor, contextDescriptor);
+        return DescriptorUtils.areInSameModule(declarationDescriptor, contextDescriptor);
     }
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {

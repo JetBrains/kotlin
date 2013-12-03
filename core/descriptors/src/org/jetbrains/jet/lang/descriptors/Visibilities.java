@@ -73,7 +73,8 @@ public class Visibilities {
     public static final Visibility INTERNAL = new Visibility("internal", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            return DescriptorUtils.isInSameModule(what, from);
+            DeclarationDescriptor fromOrModule = from instanceof PackageViewDescriptor ? ((PackageViewDescriptor) from).getModule() : from;
+            return DescriptorUtils.areInSameModule(what, fromOrModule);
         }
     };
 
@@ -120,9 +121,6 @@ public class Visibilities {
             @NotNull DeclarationDescriptorWithVisibility what,
             @NotNull DeclarationDescriptor from
     ) {
-        if (from instanceof PackageViewDescriptor) {
-            return null; // TODO 1 review: everything is visible from package view
-        }
         DeclarationDescriptorWithVisibility parent = what;
         while (parent != null && parent.getVisibility() != LOCAL) {
             if (!parent.getVisibility().isVisible(parent, from)) {

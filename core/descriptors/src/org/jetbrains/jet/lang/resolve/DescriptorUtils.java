@@ -136,9 +136,9 @@ public class DescriptorUtils {
         return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
-    public static boolean isInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        ModuleDescriptor parentModule = getParentOfType(first, ModuleDescriptorImpl.class, false);
-        ModuleDescriptor fromModule = getParentOfType(second, ModuleDescriptorImpl.class, false);
+    public static boolean areInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
+        ModuleDescriptor parentModule = getParentOfType(first, ModuleDescriptor.class, false);
+        ModuleDescriptor fromModule = getParentOfType(second, ModuleDescriptor.class, false);
         assert parentModule != null && fromModule != null;
         return parentModule.equals(fromModule);
     }
