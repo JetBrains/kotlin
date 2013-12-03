@@ -328,7 +328,7 @@ public class Int private () : Number, Comparable<Int> {
   public override fun equals(other : Any?) : Boolean
 }
 
-public class Char private () : Number, Comparable<Char> {
+public class Char private () : Hashable, Comparable<Char> {
   public fun compareTo(other : Double) : Int
   public fun compareTo(other : Float)  : Int
   public fun compareTo(other : Long)    : Int
@@ -384,13 +384,13 @@ public class Char private () : Number, Comparable<Char> {
   public fun plus() : Int
   public fun minus() : Int
 
-  public override fun toDouble() : Double
-  public override fun toFloat() : Float
-  public override fun toLong() : Long
-  public override fun toInt() : Int
-  public override fun toChar() : Char
-  public override fun toShort() : Short
-  public override fun toByte() : Byte
+  public fun toDouble() : Double
+  public fun toFloat() : Float
+  public fun toLong() : Long
+  public fun toInt() : Int
+  public fun toChar() : Char
+  public fun toShort() : Short
+  public fun toByte() : Byte
 
   public override fun hashCode() : Int
   public override fun equals(other : Any?) : Boolean

@@ -4620,6 +4620,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/numbers"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("characterIsNotANumber.kt")
+            public void testCharacterIsNotANumber() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/numbers/characterIsNotANumber.kt");
+            }
+            
             @TestMetadata("doublesInSimpleConstraints.kt")
             public void testDoublesInSimpleConstraints() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/numbers/doublesInSimpleConstraints.kt");

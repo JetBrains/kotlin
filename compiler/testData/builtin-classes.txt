@@ -166,7 +166,7 @@ public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
     }
 }
 
-public final class Char : jet.Number, jet.Comparable<jet.Char> {
+public final class Char : jet.Hashable, jet.Comparable<jet.Char> {
     /*primary*/ private constructor Char()
     public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public open override /*1*/ fun compareTo(/*0*/ other: jet.Char): jet.Int
@@ -213,13 +213,13 @@ public final class Char : jet.Number, jet.Comparable<jet.Char> {
     public final fun times(/*0*/ other: jet.Int): jet.Int
     public final fun times(/*0*/ other: jet.Long): jet.Long
     public final fun times(/*0*/ other: jet.Short): jet.Int
-    public open override /*1*/ fun toByte(): jet.Byte
-    public open override /*1*/ fun toChar(): jet.Char
-    public open override /*1*/ fun toDouble(): jet.Double
-    public open override /*1*/ fun toFloat(): jet.Float
-    public open override /*1*/ fun toInt(): jet.Int
-    public open override /*1*/ fun toLong(): jet.Long
-    public open override /*1*/ fun toShort(): jet.Short
+    public open fun toByte(): jet.Byte
+    public open fun toChar(): jet.Char
+    public open fun toDouble(): jet.Double
+    public open fun toFloat(): jet.Float
+    public open fun toInt(): jet.Int
+    public open fun toLong(): jet.Long
+    public open fun toShort(): jet.Short
 }
 
 public final class CharArray {
