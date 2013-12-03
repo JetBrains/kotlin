@@ -291,4 +291,10 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
             }
         }, " ");
     }
+
+    @Override
+    public void tearDown() throws Exception {
+        context = null;
+        super.tearDown();
+    }
 }
