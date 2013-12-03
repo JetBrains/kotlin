@@ -61,6 +61,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/arraySetPlusAssign.kt");
     }
     
+    @TestMetadata("assignmentToThis.kt")
+    public void testAssignmentToThis() throws Exception {
+        doTest("compiler/testData/cfg/assignmentToThis.kt");
+    }
+    
     @TestMetadata("Assignments.kt")
     public void testAssignments() throws Exception {
         doTest("compiler/testData/cfg/Assignments.kt");

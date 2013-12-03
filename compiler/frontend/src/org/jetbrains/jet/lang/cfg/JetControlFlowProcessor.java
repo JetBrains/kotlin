@@ -358,11 +358,11 @@ public class JetControlFlowProcessor {
                 return;
             }
 
+            generateInstructions(rhs, false);
             if (left instanceof JetSimpleNameExpression || left instanceof JetProperty) {
-                generateInstructions(rhs, false);
+                // Do nothing, just record write below
             }
             else if (left instanceof JetQualifiedExpression) {
-                generateInstructions(rhs, false);
                 generateInstructions(((JetQualifiedExpression) left).getReceiverExpression(), false);
             }
             else {
