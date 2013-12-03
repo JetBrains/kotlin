@@ -269,10 +269,7 @@ public class JetControlFlowProcessor {
                 }
             }
             else if (operationType == JetTokens.EQ) {
-                if (right != null) {
-                    generateInstructions(right, false);
-                }
-                visitAssignment(expression.getLeft(), expression);
+                visitAssignment(expression.getLeft(), right, expression);
             }
             else if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(operationType)) {
                 if (generateCall(operationReference)) {
@@ -282,7 +279,7 @@ public class JetControlFlowProcessor {
                     Name assignMethodName = OperatorConventions.getNameForOperationSymbol((JetToken) expression.getOperationToken());
                     if (!descriptor.getName().equals(assignMethodName)) {
                         // plus() called, assignment needed
-                        visitAssignment(expression.getLeft(), expression);
+                        visitAssignment(expression.getLeft(), null, expression);
                     }
                 }
                 else {
@@ -347,17 +344,21 @@ public class JetControlFlowProcessor {
             }
         }
 
-        private void visitAssignment(JetExpression lhs, JetExpression parentExpression) {
+        private void visitAssignment(JetExpression lhs, @Nullable JetExpression rhs, JetExpression parentExpression) {
             JetExpression left = JetPsiUtil.deparenthesize(lhs);
             if (left == null) {
                 builder.compilationError(lhs, "No lValue in assignment");
                 return;
             }
+
+            if (left instanceof JetArrayAccessExpression) {
+                generateArrayAccess((JetArrayAccessExpression) left);
+                recordWrite(left, parentExpression);
+                return;
+            }
+
             if (left instanceof JetSimpleNameExpression) {
                 // Do nothing, only record write below
-            }
-            else if (left instanceof JetArrayAccessExpression) {
-                generateArrayAccess((JetArrayAccessExpression) left);
             }
             else if (left instanceof JetQualifiedExpression) {
                 // read the receiver
@@ -370,6 +371,11 @@ public class JetControlFlowProcessor {
                 builder.unsupported(parentExpression); // TODO
             }
 
+            generateInstructions(rhs, false);
+            recordWrite(left, parentExpression);
+        }
+
+        private void recordWrite(JetExpression left, JetExpression parentExpression) {
             VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), left, false);
             if (descriptor != null) {
                 builder.write(parentExpression, left);
@@ -408,7 +414,7 @@ public class JetControlFlowProcessor {
                 boolean incrementOrDecrement = isIncrementOrDecrement(operationType);
                 if (incrementOrDecrement) {
                     // We skip dup's and other subtleties here
-                    visitAssignment(baseExpression, expression);
+                    visitAssignment(baseExpression, null, expression);
                 }
             }
         }
@@ -797,7 +803,7 @@ public class JetControlFlowProcessor {
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
                 generateInstructions(initializer, false);
-                visitAssignment(property, property);
+                visitAssignment(property, null, property);
             }
             JetExpression delegate = property.getDelegateExpression();
             if (delegate != null) {

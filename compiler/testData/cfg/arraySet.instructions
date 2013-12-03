@@ -1,0 +1,20 @@
+== foo ==
+fun foo(a: Array<Int>) {
+    a[1] = 2
+}
+---------------------
+L0:
+    <START>             NEXT:[v(a: Array<Int>)]    PREV:[]
+    v(a: Array<Int>)    NEXT:[w(a)]                PREV:[<START>]
+    w(a)                NEXT:[r(a)]                PREV:[v(a: Array<Int>)]
+    r(a)                NEXT:[r(1)]                PREV:[w(a)]
+    r(1)                NEXT:[r(2)]                PREV:[r(a)]
+    r(2)                NEXT:[call(a[1], set)]     PREV:[r(1)]
+    call(a[1], set)     NEXT:[<END>]               PREV:[r(2)]
+L1:
+    <END>               NEXT:[<SINK>]              PREV:[call(a[1], set)]
+error:
+    <ERROR>             NEXT:[<SINK>]              PREV:[]
+sink:
+    <SINK>              NEXT:[]                    PREV:[<ERROR>, <END>]
+=====================
