@@ -1,18 +1,31 @@
+== Delegate ==
+class Delegate {
+    fun get(_this: Any, p: PropertyMetadata): Int = 0
+}
+---------------------
+L0:
+    <START>    NEXT:[<END>]     PREV:[]
+L1:
+    <END>      NEXT:[<SINK>]    PREV:[<START>]
+error:
+    <ERROR>    NEXT:[<SINK>]    PREV:[]
+sink:
+    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+=====================
 == a ==
 val a = Delegate()
 ---------------------
 L0:
-    <START>                  NEXT:[v(val a = Delegate())]    PREV:[]
-    v(val a = Delegate())    NEXT:[r(Delegate)]              PREV:[<START>]
-    r(Delegate)              NEXT:[r(Delegate())]            PREV:[v(val a = Delegate())]
-    r(Delegate())            NEXT:[w(a)]                     PREV:[r(Delegate)]
-    w(a)                     NEXT:[<END>]                    PREV:[r(Delegate())]
+    <START>                   NEXT:[v(val a = Delegate())]     PREV:[]
+    v(val a = Delegate())     NEXT:[call(Delegate, <init>)]    PREV:[<START>]
+    call(Delegate, <init>)    NEXT:[w(a)]                      PREV:[v(val a = Delegate())]
+    w(a)                      NEXT:[<END>]                     PREV:[call(Delegate, <init>)]
 L1:
-    <END>                    NEXT:[<SINK>]                   PREV:[w(a)]
+    <END>                     NEXT:[<SINK>]                    PREV:[w(a)]
 error:
-    <ERROR>                  NEXT:[<SINK>]                   PREV:[]
+    <ERROR>                   NEXT:[<SINK>]                    PREV:[]
 sink:
-    <SINK>                   NEXT:[]                         PREV:[<ERROR>, <END>]
+    <SINK>                    NEXT:[]                          PREV:[<ERROR>, <END>]
 =====================
 == b ==
 val b by a

@@ -4,15 +4,15 @@ fun test(s: String?) {
 }
 ---------------------
 L0:
-    <START>                 NEXT:[v(s: String?)]           PREV:[]
-    v(s: String?)           NEXT:[w(s)]                    PREV:[<START>]
-    w(s)                    NEXT:[r(s)]                    PREV:[v(s: String?)]
-    r(s)                    NEXT:[call(length, length)]    PREV:[w(s)]
-    call(length, length)    NEXT:[<END>]                   PREV:[r(s)]
+    <START>          NEXT:[v(s: String?)]    PREV:[]
+    v(s: String?)    NEXT:[w(s)]             PREV:[<START>]
+    w(s)             NEXT:[r(s)]             PREV:[v(s: String?)]
+    r(s)             NEXT:[r(length)]        PREV:[w(s)]
+    r(length)        NEXT:[<END>]            PREV:[r(s)]
 L1:
-    <END>                   NEXT:[<SINK>]                  PREV:[call(length, length)]
+    <END>            NEXT:[<SINK>]           PREV:[r(length)]
 error:
-    <ERROR>                 NEXT:[<SINK>]                  PREV:[]
+    <ERROR>          NEXT:[<SINK>]           PREV:[]
 sink:
-    <SINK>                  NEXT:[]                        PREV:[<ERROR>, <END>]
+    <SINK>           NEXT:[]                 PREV:[<ERROR>, <END>]
 =====================

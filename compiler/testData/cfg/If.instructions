@@ -17,40 +17,38 @@ fun t1(b: Boolean) {
 }
 ---------------------
 L0:
-    <START>             NEXT:[v(b: Boolean)]          PREV:[]
-    v(b: Boolean)       NEXT:[w(b)]                   PREV:[<START>]
-    w(b)                NEXT:[v(var u: String)]       PREV:[v(b: Boolean)]
-    v(var u: String)    NEXT:[r(b)]                   PREV:[w(b)]
-    r(b)                NEXT:[jf(L2)]                 PREV:[v(var u: String)]
-    jf(L2)              NEXT:[read (Unit), r("s")]    PREV:[r(b)]
-    r("s")              NEXT:[w(u)]                   PREV:[jf(L2)]
-    w(u)                NEXT:[jmp(L3)]                PREV:[r("s")]
-    jmp(L3)             NEXT:[r(u)]                   PREV:[w(u)]
+    <START>                 NEXT:[v(b: Boolean)]           PREV:[]
+    v(b: Boolean)           NEXT:[w(b)]                    PREV:[<START>]
+    w(b)                    NEXT:[v(var u: String)]        PREV:[v(b: Boolean)]
+    v(var u: String)        NEXT:[r(b)]                    PREV:[w(b)]
+    r(b)                    NEXT:[jf(L2)]                  PREV:[v(var u: String)]
+    jf(L2)                  NEXT:[read (Unit), r("s")]     PREV:[r(b)]
+    r("s")                  NEXT:[w(u)]                    PREV:[jf(L2)]
+    w(u)                    NEXT:[jmp(L3)]                 PREV:[r("s")]
+    jmp(L3)                 NEXT:[r(u)]                    PREV:[w(u)]
 L2:
-    read (Unit)         NEXT:[r(u)]                   PREV:[jf(L2)]
+    read (Unit)             NEXT:[r(u)]                    PREV:[jf(L2)]
 L3:
-    r(u)                NEXT:[r(doSmth)]              PREV:[jmp(L3), read (Unit)]
-    r(doSmth)           NEXT:[r(doSmth(u))]           PREV:[r(u)]
-    r(doSmth(u))        NEXT:[v(var r: String)]       PREV:[r(doSmth)]
-    v(var r: String)    NEXT:[r(b)]                   PREV:[r(doSmth(u))]
-    r(b)                NEXT:[jf(L4)]                 PREV:[v(var r: String)]
-    jf(L4)              NEXT:[r("t"), r("s")]         PREV:[r(b)]
-    r("s")              NEXT:[w(r)]                   PREV:[jf(L4)]
-    w(r)                NEXT:[jmp(L5)]                PREV:[r("s")]
-    jmp(L5)             NEXT:[r(r)]                   PREV:[w(r)]
+    r(u)                    NEXT:[call(doSmth, doSmth)]    PREV:[jmp(L3), read (Unit)]
+    call(doSmth, doSmth)    NEXT:[v(var r: String)]        PREV:[r(u)]
+    v(var r: String)        NEXT:[r(b)]                    PREV:[call(doSmth, doSmth)]
+    r(b)                    NEXT:[jf(L4)]                  PREV:[v(var r: String)]
+    jf(L4)                  NEXT:[r("t"), r("s")]          PREV:[r(b)]
+    r("s")                  NEXT:[w(r)]                    PREV:[jf(L4)]
+    w(r)                    NEXT:[jmp(L5)]                 PREV:[r("s")]
+    jmp(L5)                 NEXT:[r(r)]                    PREV:[w(r)]
 L4:
-    r("t")              NEXT:[w(r)]                   PREV:[jf(L4)]
-    w(r)                NEXT:[r(r)]                   PREV:[r("t")]
+    r("t")                  NEXT:[w(r)]                    PREV:[jf(L4)]
+    w(r)                    NEXT:[r(r)]                    PREV:[r("t")]
 L5:
-    r(r)                NEXT:[r(doSmth)]              PREV:[jmp(L5), w(r)]
-    r(doSmth)           NEXT:[r(doSmth(r))]           PREV:[r(r)]
-    r(doSmth(r))        NEXT:[<END>]                  PREV:[r(doSmth)]
+    r(r)                    NEXT:[call(doSmth, doSmth)]    PREV:[jmp(L5), w(r)]
+    call(doSmth, doSmth)    NEXT:[<END>]                   PREV:[r(r)]
 L1:
-    <END>               NEXT:[<SINK>]                 PREV:[r(doSmth(r))]
+    <END>                   NEXT:[<SINK>]                  PREV:[call(doSmth, doSmth)]
 error:
-    <ERROR>             NEXT:[<SINK>]                 PREV:[]
+    <ERROR>                 NEXT:[<SINK>]                  PREV:[]
 sink:
-    <SINK>              NEXT:[]                       PREV:[<ERROR>, <END>]
+    <SINK>                  NEXT:[]                        PREV:[<ERROR>, <END>]
 =====================
 == t2 ==
 fun t2(b: Boolean) {
@@ -65,36 +63,34 @@ fun t2(b: Boolean) {
 }
 ---------------------
 L0:
-    <START>          NEXT:[v(b: Boolean)]          PREV:[]
-    v(b: Boolean)    NEXT:[w(b)]                   PREV:[<START>]
-    w(b)             NEXT:[v(val i = 3)]           PREV:[v(b: Boolean)]
-    v(val i = 3)     NEXT:[r(3)]                   PREV:[w(b)]
-    r(3)             NEXT:[w(i)]                   PREV:[v(val i = 3)]
-    w(i)             NEXT:[r(b)]                   PREV:[r(3)]
-    r(b)             NEXT:[jf(L2)]                 PREV:[w(i)]
-    jf(L2)           NEXT:[read (Unit), ret L1]    PREV:[r(b)]
-    ret L1           NEXT:[<END>]                  PREV:[jf(L2)]
--   jmp(L3)          NEXT:[r(i)]                   PREV:[]
+    <START>                 NEXT:[v(b: Boolean)]           PREV:[]
+    v(b: Boolean)           NEXT:[w(b)]                    PREV:[<START>]
+    w(b)                    NEXT:[v(val i = 3)]            PREV:[v(b: Boolean)]
+    v(val i = 3)            NEXT:[r(3)]                    PREV:[w(b)]
+    r(3)                    NEXT:[w(i)]                    PREV:[v(val i = 3)]
+    w(i)                    NEXT:[r(b)]                    PREV:[r(3)]
+    r(b)                    NEXT:[jf(L2)]                  PREV:[w(i)]
+    jf(L2)                  NEXT:[read (Unit), ret L1]     PREV:[r(b)]
+    ret L1                  NEXT:[<END>]                   PREV:[jf(L2)]
+-   jmp(L3)                 NEXT:[r(i)]                    PREV:[]
 L2:
-    read (Unit)      NEXT:[r(i)]                   PREV:[jf(L2)]
+    read (Unit)             NEXT:[r(i)]                    PREV:[jf(L2)]
 L3:
-    r(i)             NEXT:[r(doSmth)]              PREV:[read (Unit)]
-    r(doSmth)        NEXT:[r(doSmth(i))]           PREV:[r(i)]
-    r(doSmth(i))     NEXT:[r(i)]                   PREV:[r(doSmth)]
-    r(i)             NEXT:[r(i is Int)]            PREV:[r(doSmth(i))]
-    r(i is Int)      NEXT:[jf(L4)]                 PREV:[r(i)]
-    jf(L4)           NEXT:[read (Unit), ret L1]    PREV:[r(i is Int)]
-    ret L1           NEXT:[<END>]                  PREV:[jf(L4)]
--   jmp(L5)          NEXT:[<END>]                  PREV:[]
+    r(i)                    NEXT:[call(doSmth, doSmth)]    PREV:[read (Unit)]
+    call(doSmth, doSmth)    NEXT:[r(i)]                    PREV:[r(i)]
+    r(i)                    NEXT:[jf(L4)]                  PREV:[call(doSmth, doSmth)]
+    jf(L4)                  NEXT:[read (Unit), ret L1]     PREV:[r(i)]
+    ret L1                  NEXT:[<END>]                   PREV:[jf(L4)]
+-   jmp(L5)                 NEXT:[<END>]                   PREV:[]
 L4:
-    read (Unit)      NEXT:[<END>]                  PREV:[jf(L4)]
+    read (Unit)             NEXT:[<END>]                   PREV:[jf(L4)]
 L1:
 L5:
-    <END>            NEXT:[<SINK>]                 PREV:[ret L1, ret L1, read (Unit)]
+    <END>                   NEXT:[<SINK>]                  PREV:[ret L1, ret L1, read (Unit)]
 error:
-    <ERROR>          NEXT:[<SINK>]                 PREV:[]
+    <ERROR>                 NEXT:[<SINK>]                  PREV:[]
 sink:
-    <SINK>           NEXT:[]                       PREV:[<ERROR>, <END>]
+    <SINK>                  NEXT:[]                        PREV:[<ERROR>, <END>]
 =====================
 == doSmth ==
 fun doSmth(s: String) {}

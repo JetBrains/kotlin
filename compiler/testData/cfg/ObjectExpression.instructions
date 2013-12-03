@@ -41,11 +41,9 @@ L0:
     r(b)                             NEXT:[r(object : A by b {})]            PREV:[v(val o = object : A by b {})]
     r(object : A by b {})            NEXT:[w(o)]                             PREV:[r(b)]
     w(o)                             NEXT:[r(o)]                             PREV:[r(object : A by b {})]
-    r(o)                             NEXT:[r(foo)]                           PREV:[w(o)]
-    r(foo)                           NEXT:[r(foo())]                         PREV:[r(o)]
-    r(foo())                         NEXT:[r(o.foo())]                       PREV:[r(foo)]
-    r(o.foo())                       NEXT:[ret(*) L1]                        PREV:[r(foo())]
-    ret(*) L1                        NEXT:[<END>]                            PREV:[r(o.foo())]
+    r(o)                             NEXT:[call(foo, foo)]                   PREV:[w(o)]
+    call(foo, foo)                   NEXT:[ret(*) L1]                        PREV:[r(o)]
+    ret(*) L1                        NEXT:[<END>]                            PREV:[call(foo, foo)]
 L1:
     <END>                            NEXT:[<SINK>]                           PREV:[ret(*) L1]
 error:

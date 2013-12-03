@@ -20,21 +20,23 @@ fun test(c: C) {
 }
 ---------------------
 L0:
-    <START>         NEXT:[v(c: C)]         PREV:[]
-    v(c: C)         NEXT:[w(c)]            PREV:[<START>]
-    w(c)            NEXT:[r(c)]            PREV:[v(c: C)]
-    r(c)            NEXT:[v(a)]            PREV:[w(c)]
-    v(a)            NEXT:[w(a)]            PREV:[r(c)]
-    w(a)            NEXT:[v(b)]            PREV:[v(a)]
-    v(b)            NEXT:[w(b)]            PREV:[w(a)]
-    w(b)            NEXT:[v(val d = 1)]    PREV:[v(b)]
-    v(val d = 1)    NEXT:[r(1)]            PREV:[w(b)]
-    r(1)            NEXT:[w(d)]            PREV:[v(val d = 1)]
-    w(d)            NEXT:[<END>]           PREV:[r(1)]
+    <START>                NEXT:[v(c: C)]                PREV:[]
+    v(c: C)                NEXT:[w(c)]                   PREV:[<START>]
+    w(c)                   NEXT:[r(c)]                   PREV:[v(c: C)]
+    r(c)                   NEXT:[v(a)]                   PREV:[w(c)]
+    v(a)                   NEXT:[call(a, component1)]    PREV:[r(c)]
+    call(a, component1)    NEXT:[w(a)]                   PREV:[v(a)]
+    w(a)                   NEXT:[v(b)]                   PREV:[call(a, component1)]
+    v(b)                   NEXT:[call(b, component2)]    PREV:[w(a)]
+    call(b, component2)    NEXT:[w(b)]                   PREV:[v(b)]
+    w(b)                   NEXT:[v(val d = 1)]           PREV:[call(b, component2)]
+    v(val d = 1)           NEXT:[r(1)]                   PREV:[w(b)]
+    r(1)                   NEXT:[w(d)]                   PREV:[v(val d = 1)]
+    w(d)                   NEXT:[<END>]                  PREV:[r(1)]
 L1:
-    <END>           NEXT:[<SINK>]          PREV:[w(d)]
+    <END>                  NEXT:[<SINK>]                 PREV:[w(d)]
 error:
-    <ERROR>         NEXT:[<SINK>]          PREV:[]
+    <ERROR>                NEXT:[<SINK>]                 PREV:[]
 sink:
-    <SINK>          NEXT:[]                PREV:[<ERROR>, <END>]
+    <SINK>                 NEXT:[]                       PREV:[<ERROR>, <END>]
 =====================

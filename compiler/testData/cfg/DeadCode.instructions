@@ -5,12 +5,10 @@ fun test() {
 }
 ---------------------
 L0:
-    <START>                      NEXT:[r(Exception)]                 PREV:[]
-    r(Exception)                 NEXT:[r(Exception())]               PREV:[<START>]
-    r(Exception())               NEXT:[throw (throw Exception())]    PREV:[r(Exception)]
-    throw (throw Exception())    NEXT:[<ERROR>]                      PREV:[r(Exception())]
--   r(test)                      NEXT:[r(test())]                    PREV:[]
--   r(test())                    NEXT:[<END>]                        PREV:[]
+    <START>                      NEXT:[call(Exception, <init>)]      PREV:[]
+    call(Exception, <init>)      NEXT:[throw (throw Exception())]    PREV:[<START>]
+    throw (throw Exception())    NEXT:[<ERROR>]                      PREV:[call(Exception, <init>)]
+-   call(test, test)             NEXT:[<END>]                        PREV:[]
 L1:
     <END>                        NEXT:[<SINK>]                       PREV:[]
 error:

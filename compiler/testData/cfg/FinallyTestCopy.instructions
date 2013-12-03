@@ -1,3 +1,55 @@
+== doSmth ==
+fun doSmth() {}
+---------------------
+L0:
+    <START>        NEXT:[read (Unit)]    PREV:[]
+    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+L1:
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+error:
+    <ERROR>        NEXT:[<SINK>]         PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
+=====================
+== doSmth1 ==
+fun doSmth1() {}
+---------------------
+L0:
+    <START>        NEXT:[read (Unit)]    PREV:[]
+    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+L1:
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+error:
+    <ERROR>        NEXT:[<SINK>]         PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
+=====================
+== doSmth2 ==
+fun doSmth2() {}
+---------------------
+L0:
+    <START>        NEXT:[read (Unit)]    PREV:[]
+    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+L1:
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+error:
+    <ERROR>        NEXT:[<SINK>]         PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
+=====================
+== cond ==
+fun cond() {}
+---------------------
+L0:
+    <START>        NEXT:[read (Unit)]    PREV:[]
+    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+L1:
+    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+error:
+    <ERROR>        NEXT:[<SINK>]         PREV:[]
+sink:
+    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
+=====================
 == testCopy1 ==
 fun testCopy1() : Int {
     try {
@@ -15,54 +67,39 @@ fun testCopy1() : Int {
 }
 ---------------------
 L0:
-    <START>                                  NEXT:[r(try { doSmth() } catch (e:..)]                             PREV:[]
-    r(try {                              
-            doSmth()                     
-        }                                
-        catch (e: NullPointerException) {
-            doSmth1()                    
-        }                                
-        catch (e: Exception) {           
-            doSmth2()                    
-        }                                
-        finally {                        
-            return 1                     
-        })                                   NEXT:[jmp?(L2 [onException])]                                      PREV:[<START>]
-    jmp?(L2 [onException])                   NEXT:[jmp?(L5 [catch 0]), jmp?(L3 [onExceptionToFinallyBlock])]    PREV:[r(try { doSmth() } catch (e:..)]
-    jmp?(L3 [onExceptionToFinallyBlock])     NEXT:[r(1), r(doSmth)]                                             PREV:[jmp?(L2 [onException])]
-    r(doSmth)                                NEXT:[r(doSmth())]                                                 PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
-    r(doSmth())                              NEXT:[jmp(L4 [afterCatches])]                                      PREV:[r(doSmth)]
-    jmp(L4 [afterCatches])                   NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[r(doSmth())]
+    <START>                                 NEXT:[jmp?(L2 [onException])]                                      PREV:[]
+    jmp?(L2 [onException])                  NEXT:[jmp?(L5 [catch 0]), jmp?(L3 [onExceptionToFinallyBlock])]    PREV:[<START>]
+    jmp?(L3 [onExceptionToFinallyBlock])    NEXT:[r(1), call(doSmth, doSmth)]                                  PREV:[jmp?(L2 [onException])]
+    call(doSmth, doSmth)                    NEXT:[jmp(L4 [afterCatches])]                                      PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
+    jmp(L4 [afterCatches])                  NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[call(doSmth, doSmth)]
 L2 [onException]:
-    jmp?(L5 [catch 0])                       NEXT:[v(e: Exception), v(e: NullPointerException)]                 PREV:[jmp?(L2 [onException])]
-    v(e: NullPointerException)               NEXT:[w(e)]                                                        PREV:[jmp?(L5 [catch 0])]
-    w(e)                                     NEXT:[r(doSmth1)]                                                  PREV:[v(e: NullPointerException)]
-    r(doSmth1)                               NEXT:[r(doSmth1())]                                                PREV:[w(e)]
-    r(doSmth1())                             NEXT:[jmp(L4 [afterCatches])]                                      PREV:[r(doSmth1)]
-    jmp(L4 [afterCatches])                   NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[r(doSmth1())]
+    jmp?(L5 [catch 0])                      NEXT:[v(e: Exception), v(e: NullPointerException)]                 PREV:[jmp?(L2 [onException])]
+    v(e: NullPointerException)              NEXT:[w(e)]                                                        PREV:[jmp?(L5 [catch 0])]
+    w(e)                                    NEXT:[call(doSmth1, doSmth1)]                                      PREV:[v(e: NullPointerException)]
+    call(doSmth1, doSmth1)                  NEXT:[jmp(L4 [afterCatches])]                                      PREV:[w(e)]
+    jmp(L4 [afterCatches])                  NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[call(doSmth1, doSmth1)]
 L5 [catch 0]:
-    v(e: Exception)                          NEXT:[w(e)]                                                        PREV:[jmp?(L5 [catch 0])]
-    w(e)                                     NEXT:[r(doSmth2)]                                                  PREV:[v(e: Exception)]
-    r(doSmth2)                               NEXT:[r(doSmth2())]                                                PREV:[w(e)]
-    r(doSmth2())                             NEXT:[jmp(L4 [afterCatches])]                                      PREV:[r(doSmth2)]
-    jmp(L4 [afterCatches])                   NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[r(doSmth2())]
+    v(e: Exception)                         NEXT:[w(e)]                                                        PREV:[jmp?(L5 [catch 0])]
+    w(e)                                    NEXT:[call(doSmth2, doSmth2)]                                      PREV:[v(e: Exception)]
+    call(doSmth2, doSmth2)                  NEXT:[jmp(L4 [afterCatches])]                                      PREV:[w(e)]
+    jmp(L4 [afterCatches])                  NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[call(doSmth2, doSmth2)]
 L4 [afterCatches]:
-    jmp(L6 [skipFinallyToErrorBlock])        NEXT:[r(1)]                                                        PREV:[jmp(L4 [afterCatches]), jmp(L4 [afterCatches]), jmp(L4 [afterCatches])]
+    jmp(L6 [skipFinallyToErrorBlock])       NEXT:[r(1)]                                                        PREV:[jmp(L4 [afterCatches]), jmp(L4 [afterCatches]), jmp(L4 [afterCatches])]
 L3 [onExceptionToFinallyBlock]:
 L7 [start finally]:
-    r(1)                                     NEXT:[ret(*) L1]                                                   PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
-    ret(*) L1                                NEXT:[<END>]                                                       PREV:[r(1)]
+    r(1)                                    NEXT:[ret(*) L1]                                                   PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
+    ret(*) L1                               NEXT:[<END>]                                                       PREV:[r(1)]
 L8 [finish finally]:
--   jmp(error)                               NEXT:[<ERROR>]                                                     PREV:[]
+-   jmp(error)                              NEXT:[<ERROR>]                                                     PREV:[]
 L6 [skipFinallyToErrorBlock]:
-    r(1)                                     NEXT:[ret(*) L1]                                                   PREV:[jmp(L6 [skipFinallyToErrorBlock])]
-    ret(*) L1                                NEXT:[<END>]                                                       PREV:[r(1)]
+    r(1)                                    NEXT:[ret(*) L1]                                                   PREV:[jmp(L6 [skipFinallyToErrorBlock])]
+    ret(*) L1                               NEXT:[<END>]                                                       PREV:[r(1)]
 L1:
-    <END>                                    NEXT:[<SINK>]                                                      PREV:[ret(*) L1, ret(*) L1]
+    <END>                                   NEXT:[<SINK>]                                                      PREV:[ret(*) L1, ret(*) L1]
 error:
-    <ERROR>                                  NEXT:[<SINK>]                                                      PREV:[]
+    <ERROR>                                 NEXT:[<SINK>]                                                      PREV:[]
 sink:
-    <SINK>                                   NEXT:[]                                                            PREV:[<ERROR>, <END>]
+    <SINK>                                  NEXT:[]                                                            PREV:[<ERROR>, <END>]
 =====================
 == testCopy2 ==
 fun testCopy2() {
@@ -84,89 +121,55 @@ fun testCopy2() {
 }
 ---------------------
 L0:
-    <START>                                      NEXT:[r(while (cond()) { try { doS..)]                             PREV:[]
-    r(while (cond()) {                       
-            try {                            
-                doSmth()                     
-            }                                
-            catch (e: NullPointerException) {
-                doSmth1()                    
-            }                                
-            catch (e: Exception) {           
-                doSmth2()                    
-            }                                
-            finally {                        
-                if (cond()) return           
-                else continue                
-            }                                
-        })                                       NEXT:[r(cond)]                                                     PREV:[<START>]
+    <START>                                 NEXT:[call(cond, cond)]                                            PREV:[]
 L2 [loop entry point]:
 L5 [condition entry point]:
-    r(cond)                                      NEXT:[r(cond())]                                                   PREV:[r(while (cond()) { try { doS..), jmp(L2 [loop entry point]), jmp(L2 [loop entry point])]
-    r(cond())                                    NEXT:[jf(L3 [loop exit point])]                                    PREV:[r(cond)]
-    jf(L3 [loop exit point])                     NEXT:[read (Unit), r(try { doSmth() } catch (e:..)]                PREV:[r(cond())]
+    call(cond, cond)                        NEXT:[jf(L3 [loop exit point])]                                    PREV:[<START>, jmp(L2 [loop entry point]), jmp(L2 [loop entry point])]
+    jf(L3 [loop exit point])                NEXT:[read (Unit), jmp?(L6 [onException])]                         PREV:[call(cond, cond)]
 L4 [body entry point]:
-    r(try {                                  
-                doSmth()                     
-            }                                
-            catch (e: NullPointerException) {
-                doSmth1()                    
-            }                                
-            catch (e: Exception) {           
-                doSmth2()                    
-            }                                
-            finally {                        
-                if (cond()) return           
-                else continue                
-            })                                   NEXT:[jmp?(L6 [onException])]                                      PREV:[jf(L3 [loop exit point])]
-    jmp?(L6 [onException])                       NEXT:[jmp?(L9 [catch 0]), jmp?(L7 [onExceptionToFinallyBlock])]    PREV:[r(try { doSmth() } catch (e:..)]
-    jmp?(L7 [onExceptionToFinallyBlock])         NEXT:[r(cond), r(doSmth)]                                          PREV:[jmp?(L6 [onException])]
-    r(doSmth)                                    NEXT:[r(doSmth())]                                                 PREV:[jmp?(L7 [onExceptionToFinallyBlock])]
-    r(doSmth())                                  NEXT:[jmp(L8 [afterCatches])]                                      PREV:[r(doSmth)]
-    jmp(L8 [afterCatches])                       NEXT:[jmp(L10 [skipFinallyToErrorBlock])]                          PREV:[r(doSmth())]
+    jmp?(L6 [onException])                  NEXT:[jmp?(L9 [catch 0]), jmp?(L7 [onExceptionToFinallyBlock])]    PREV:[jf(L3 [loop exit point])]
+    jmp?(L7 [onExceptionToFinallyBlock])    NEXT:[call(cond, cond), call(doSmth, doSmth)]                      PREV:[jmp?(L6 [onException])]
+    call(doSmth, doSmth)                    NEXT:[jmp(L8 [afterCatches])]                                      PREV:[jmp?(L7 [onExceptionToFinallyBlock])]
+    jmp(L8 [afterCatches])                  NEXT:[jmp(L10 [skipFinallyToErrorBlock])]                          PREV:[call(doSmth, doSmth)]
 L6 [onException]:
-    jmp?(L9 [catch 0])                           NEXT:[v(e: Exception), v(e: NullPointerException)]                 PREV:[jmp?(L6 [onException])]
-    v(e: NullPointerException)                   NEXT:[w(e)]                                                        PREV:[jmp?(L9 [catch 0])]
-    w(e)                                         NEXT:[r(doSmth1)]                                                  PREV:[v(e: NullPointerException)]
-    r(doSmth1)                                   NEXT:[r(doSmth1())]                                                PREV:[w(e)]
-    r(doSmth1())                                 NEXT:[jmp(L8 [afterCatches])]                                      PREV:[r(doSmth1)]
-    jmp(L8 [afterCatches])                       NEXT:[jmp(L10 [skipFinallyToErrorBlock])]                          PREV:[r(doSmth1())]
+    jmp?(L9 [catch 0])                      NEXT:[v(e: Exception), v(e: NullPointerException)]                 PREV:[jmp?(L6 [onException])]
+    v(e: NullPointerException)              NEXT:[w(e)]                                                        PREV:[jmp?(L9 [catch 0])]
+    w(e)                                    NEXT:[call(doSmth1, doSmth1)]                                      PREV:[v(e: NullPointerException)]
+    call(doSmth1, doSmth1)                  NEXT:[jmp(L8 [afterCatches])]                                      PREV:[w(e)]
+    jmp(L8 [afterCatches])                  NEXT:[jmp(L10 [skipFinallyToErrorBlock])]                          PREV:[call(doSmth1, doSmth1)]
 L9 [catch 0]:
-    v(e: Exception)                              NEXT:[w(e)]                                                        PREV:[jmp?(L9 [catch 0])]
-    w(e)                                         NEXT:[r(doSmth2)]                                                  PREV:[v(e: Exception)]
-    r(doSmth2)                                   NEXT:[r(doSmth2())]                                                PREV:[w(e)]
-    r(doSmth2())                                 NEXT:[jmp(L8 [afterCatches])]                                      PREV:[r(doSmth2)]
-    jmp(L8 [afterCatches])                       NEXT:[jmp(L10 [skipFinallyToErrorBlock])]                          PREV:[r(doSmth2())]
+    v(e: Exception)                         NEXT:[w(e)]                                                        PREV:[jmp?(L9 [catch 0])]
+    w(e)                                    NEXT:[call(doSmth2, doSmth2)]                                      PREV:[v(e: Exception)]
+    call(doSmth2, doSmth2)                  NEXT:[jmp(L8 [afterCatches])]                                      PREV:[w(e)]
+    jmp(L8 [afterCatches])                  NEXT:[jmp(L10 [skipFinallyToErrorBlock])]                          PREV:[call(doSmth2, doSmth2)]
 L8 [afterCatches]:
-    jmp(L10 [skipFinallyToErrorBlock])           NEXT:[r(cond)]                                                     PREV:[jmp(L8 [afterCatches]), jmp(L8 [afterCatches]), jmp(L8 [afterCatches])]
+    jmp(L10 [skipFinallyToErrorBlock])      NEXT:[call(cond, cond)]                                            PREV:[jmp(L8 [afterCatches]), jmp(L8 [afterCatches]), jmp(L8 [afterCatches])]
 L7 [onExceptionToFinallyBlock]:
 L11 [start finally]:
-    r(cond)                                      NEXT:[r(cond())]                                                   PREV:[jmp?(L7 [onExceptionToFinallyBlock])]
-    r(cond())                                    NEXT:[jf(L12)]                                                     PREV:[r(cond)]
-    jf(L12)                                      NEXT:[jmp(L2 [loop entry point]), ret L1]                          PREV:[r(cond())]
-    ret L1                                       NEXT:[<END>]                                                       PREV:[jf(L12)]
--   jmp(L13)                                     NEXT:[jmp(error)]                                                  PREV:[]
+    call(cond, cond)                        NEXT:[jf(L12)]                                                     PREV:[jmp?(L7 [onExceptionToFinallyBlock])]
+    jf(L12)                                 NEXT:[jmp(L2 [loop entry point]), ret L1]                          PREV:[call(cond, cond)]
+    ret L1                                  NEXT:[<END>]                                                       PREV:[jf(L12)]
+-   jmp(L13)                                NEXT:[jmp(error)]                                                  PREV:[]
 L12:
-    jmp(L2 [loop entry point])                   NEXT:[r(cond)]                                                     PREV:[jf(L12)]
+    jmp(L2 [loop entry point])              NEXT:[call(cond, cond)]                                            PREV:[jf(L12)]
 L13:
 L14 [finish finally]:
--   jmp(error)                                   NEXT:[<ERROR>]                                                     PREV:[]
+-   jmp(error)                              NEXT:[<ERROR>]                                                     PREV:[]
 L10 [skipFinallyToErrorBlock]:
-    r(cond)                                      NEXT:[r(cond())]                                                   PREV:[jmp(L10 [skipFinallyToErrorBlock])]
-    r(cond())                                    NEXT:[jf(copy L12)]                                                PREV:[r(cond)]
-    jf(copy L12)                                 NEXT:[jmp(L2 [loop entry point]), ret L1]                          PREV:[r(cond())]
-    ret L1                                       NEXT:[<END>]                                                       PREV:[jf(copy L12)]
--   jmp(copy L13)                                NEXT:[jmp(L2 [loop entry point])]                                  PREV:[]
-    jmp(L2 [loop entry point])                   NEXT:[r(cond)]                                                     PREV:[jf(copy L12)]
--   jmp(L2 [loop entry point])                   NEXT:[r(cond)]                                                     PREV:[]
+    call(cond, cond)                        NEXT:[jf(copy L12)]                                                PREV:[jmp(L10 [skipFinallyToErrorBlock])]
+    jf(copy L12)                            NEXT:[jmp(L2 [loop entry point]), ret L1]                          PREV:[call(cond, cond)]
+    ret L1                                  NEXT:[<END>]                                                       PREV:[jf(copy L12)]
+-   jmp(copy L13)                           NEXT:[jmp(L2 [loop entry point])]                                  PREV:[]
+    jmp(L2 [loop entry point])              NEXT:[call(cond, cond)]                                            PREV:[jf(copy L12)]
+-   jmp(L2 [loop entry point])              NEXT:[call(cond, cond)]                                            PREV:[]
 L3 [loop exit point]:
-    read (Unit)                                  NEXT:[<END>]                                                       PREV:[jf(L3 [loop exit point])]
+    read (Unit)                             NEXT:[<END>]                                                       PREV:[jf(L3 [loop exit point])]
 L1:
-    <END>                                        NEXT:[<SINK>]                                                      PREV:[ret L1, ret L1, read (Unit)]
+    <END>                                   NEXT:[<SINK>]                                                      PREV:[ret L1, ret L1, read (Unit)]
 error:
-    <ERROR>                                      NEXT:[<SINK>]                                                      PREV:[]
+    <ERROR>                                 NEXT:[<SINK>]                                                      PREV:[]
 sink:
-    <SINK>                                       NEXT:[]                                                            PREV:[<ERROR>, <END>]
+    <SINK>                                  NEXT:[]                                                            PREV:[<ERROR>, <END>]
 =====================
 == testCopy3 ==
 fun testCopy3() {
@@ -185,69 +188,50 @@ fun testCopy3() {
 }
 ---------------------
 L0:
-    <START>                                  NEXT:[r(try { doSmth() } catch (e:..)]                             PREV:[]
-    r(try {                              
-            doSmth()                     
-        }                                
-        catch (e: NullPointerException) {
-            doSmth1()                    
-        }                                
-        catch (e: Exception) {           
-            doSmth2()                    
-        }                                
-        finally {                        
-            while (cond());              
-        })                                   NEXT:[jmp?(L2 [onException])]                                      PREV:[<START>]
-    jmp?(L2 [onException])                   NEXT:[jmp?(L5 [catch 0]), jmp?(L3 [onExceptionToFinallyBlock])]    PREV:[r(try { doSmth() } catch (e:..)]
-    jmp?(L3 [onExceptionToFinallyBlock])     NEXT:[r(while (cond())), r(doSmth)]                                PREV:[jmp?(L2 [onException])]
-    r(doSmth)                                NEXT:[r(doSmth())]                                                 PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
-    r(doSmth())                              NEXT:[jmp(L4 [afterCatches])]                                      PREV:[r(doSmth)]
-    jmp(L4 [afterCatches])                   NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[r(doSmth())]
+    <START>                                 NEXT:[jmp?(L2 [onException])]                                      PREV:[]
+    jmp?(L2 [onException])                  NEXT:[jmp?(L5 [catch 0]), jmp?(L3 [onExceptionToFinallyBlock])]    PREV:[<START>]
+    jmp?(L3 [onExceptionToFinallyBlock])    NEXT:[call(cond, cond), call(doSmth, doSmth)]                      PREV:[jmp?(L2 [onException])]
+    call(doSmth, doSmth)                    NEXT:[jmp(L4 [afterCatches])]                                      PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
+    jmp(L4 [afterCatches])                  NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[call(doSmth, doSmth)]
 L2 [onException]:
-    jmp?(L5 [catch 0])                       NEXT:[v(e: Exception), v(e: NullPointerException)]                 PREV:[jmp?(L2 [onException])]
-    v(e: NullPointerException)               NEXT:[w(e)]                                                        PREV:[jmp?(L5 [catch 0])]
-    w(e)                                     NEXT:[r(doSmth1)]                                                  PREV:[v(e: NullPointerException)]
-    r(doSmth1)                               NEXT:[r(doSmth1())]                                                PREV:[w(e)]
-    r(doSmth1())                             NEXT:[jmp(L4 [afterCatches])]                                      PREV:[r(doSmth1)]
-    jmp(L4 [afterCatches])                   NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[r(doSmth1())]
+    jmp?(L5 [catch 0])                      NEXT:[v(e: Exception), v(e: NullPointerException)]                 PREV:[jmp?(L2 [onException])]
+    v(e: NullPointerException)              NEXT:[w(e)]                                                        PREV:[jmp?(L5 [catch 0])]
+    w(e)                                    NEXT:[call(doSmth1, doSmth1)]                                      PREV:[v(e: NullPointerException)]
+    call(doSmth1, doSmth1)                  NEXT:[jmp(L4 [afterCatches])]                                      PREV:[w(e)]
+    jmp(L4 [afterCatches])                  NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[call(doSmth1, doSmth1)]
 L5 [catch 0]:
-    v(e: Exception)                          NEXT:[w(e)]                                                        PREV:[jmp?(L5 [catch 0])]
-    w(e)                                     NEXT:[r(doSmth2)]                                                  PREV:[v(e: Exception)]
-    r(doSmth2)                               NEXT:[r(doSmth2())]                                                PREV:[w(e)]
-    r(doSmth2())                             NEXT:[jmp(L4 [afterCatches])]                                      PREV:[r(doSmth2)]
-    jmp(L4 [afterCatches])                   NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[r(doSmth2())]
+    v(e: Exception)                         NEXT:[w(e)]                                                        PREV:[jmp?(L5 [catch 0])]
+    w(e)                                    NEXT:[call(doSmth2, doSmth2)]                                      PREV:[v(e: Exception)]
+    call(doSmth2, doSmth2)                  NEXT:[jmp(L4 [afterCatches])]                                      PREV:[w(e)]
+    jmp(L4 [afterCatches])                  NEXT:[jmp(L6 [skipFinallyToErrorBlock])]                           PREV:[call(doSmth2, doSmth2)]
 L4 [afterCatches]:
-    jmp(L6 [skipFinallyToErrorBlock])        NEXT:[r(while (cond()))]                                           PREV:[jmp(L4 [afterCatches]), jmp(L4 [afterCatches]), jmp(L4 [afterCatches])]
+    jmp(L6 [skipFinallyToErrorBlock])       NEXT:[call(cond, cond)]                                            PREV:[jmp(L4 [afterCatches]), jmp(L4 [afterCatches]), jmp(L4 [afterCatches])]
 L3 [onExceptionToFinallyBlock]:
 L7 [start finally]:
-    r(while (cond()))                        NEXT:[r(cond)]                                                     PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
 L8 [loop entry point]:
 L11 [condition entry point]:
-    r(cond)                                  NEXT:[r(cond())]                                                   PREV:[r(while (cond())), jmp(L8 [loop entry point])]
-    r(cond())                                NEXT:[jf(L9 [loop exit point])]                                    PREV:[r(cond)]
-    jf(L9 [loop exit point])                 NEXT:[read (Unit), jmp(L8 [loop entry point])]                     PREV:[r(cond())]
+    call(cond, cond)                        NEXT:[jf(L9 [loop exit point])]                                    PREV:[jmp?(L3 [onExceptionToFinallyBlock]), jmp(L8 [loop entry point])]
+    jf(L9 [loop exit point])                NEXT:[read (Unit), jmp(L8 [loop entry point])]                     PREV:[call(cond, cond)]
 L10 [body entry point]:
-    jmp(L8 [loop entry point])               NEXT:[r(cond)]                                                     PREV:[jf(L9 [loop exit point])]
+    jmp(L8 [loop entry point])              NEXT:[call(cond, cond)]                                            PREV:[jf(L9 [loop exit point])]
 L9 [loop exit point]:
-    read (Unit)                              NEXT:[jmp(error)]                                                  PREV:[jf(L9 [loop exit point])]
+    read (Unit)                             NEXT:[jmp(error)]                                                  PREV:[jf(L9 [loop exit point])]
 L12 [finish finally]:
-    jmp(error)                               NEXT:[<ERROR>]                                                     PREV:[read (Unit)]
+    jmp(error)                              NEXT:[<ERROR>]                                                     PREV:[read (Unit)]
 L6 [skipFinallyToErrorBlock]:
-    r(while (cond()))                        NEXT:[r(cond)]                                                     PREV:[jmp(L6 [skipFinallyToErrorBlock])]
-    r(cond)                                  NEXT:[r(cond())]                                                   PREV:[r(while (cond())), jmp(copy L8 [loop entry point])]
-    r(cond())                                NEXT:[jf(copy L9 [loop exit point])]                               PREV:[r(cond)]
-    jf(copy L9 [loop exit point])            NEXT:[read (Unit), jmp(copy L8 [loop entry point])]                PREV:[r(cond())]
-    jmp(copy L8 [loop entry point])          NEXT:[r(cond)]                                                     PREV:[jf(copy L9 [loop exit point])]
-    read (Unit)                              NEXT:[<END>]                                                       PREV:[jf(copy L9 [loop exit point])]
+    call(cond, cond)                        NEXT:[jf(copy L9 [loop exit point])]                               PREV:[jmp(L6 [skipFinallyToErrorBlock]), jmp(copy L8 [loop entry point])]
+    jf(copy L9 [loop exit point])           NEXT:[read (Unit), jmp(copy L8 [loop entry point])]                PREV:[call(cond, cond)]
+    jmp(copy L8 [loop entry point])         NEXT:[call(cond, cond)]                                            PREV:[jf(copy L9 [loop exit point])]
+    read (Unit)                             NEXT:[<END>]                                                       PREV:[jf(copy L9 [loop exit point])]
 L1:
-    <END>                                    NEXT:[<SINK>]                                                      PREV:[read (Unit)]
+    <END>                                   NEXT:[<SINK>]                                                      PREV:[read (Unit)]
 error:
-    <ERROR>                                  NEXT:[<SINK>]                                                      PREV:[jmp(error)]
+    <ERROR>                                 NEXT:[<SINK>]                                                      PREV:[jmp(error)]
 sink:
-    <SINK>                                   NEXT:[]                                                            PREV:[<ERROR>, <END>]
+    <SINK>                                  NEXT:[]                                                            PREV:[<ERROR>, <END>]
 =====================
 == doTestCopy4 ==
-fun doTestCopy4() : Int {
+fun doTestCopy4(list: List<String>?) : Int {
     try {
         doSmth()
     }
@@ -258,25 +242,18 @@ fun doTestCopy4() : Int {
 }
 ---------------------
 L0:
-    <START>                                 NEXT:[r(try { doSmth() } finally {..)]         PREV:[]
-    r(try {                             
-            doSmth()                    
-        }                               
-        finally {                       
-            if(list != null) {          
-            }                           
-        })                                  NEXT:[jmp?(L2 [onExceptionToFinallyBlock])]    PREV:[<START>]
-    jmp?(L2 [onExceptionToFinallyBlock])    NEXT:[r(list), r(doSmth)]                      PREV:[r(try { doSmth() } finally {..)]
-    r(doSmth)                               NEXT:[r(doSmth())]                             PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
-    r(doSmth())                             NEXT:[jmp(L3 [skipFinallyToErrorBlock])]       PREV:[r(doSmth)]
-    jmp(L3 [skipFinallyToErrorBlock])       NEXT:[r(list)]                                 PREV:[r(doSmth())]
+    <START>                                 NEXT:[v(list: List<String>?)]                  PREV:[]
+    v(list: List<String>?)                  NEXT:[w(list)]                                 PREV:[<START>]
+    w(list)                                 NEXT:[jmp?(L2 [onExceptionToFinallyBlock])]    PREV:[v(list: List<String>?)]
+    jmp?(L2 [onExceptionToFinallyBlock])    NEXT:[r(list), call(doSmth, doSmth)]           PREV:[w(list)]
+    call(doSmth, doSmth)                    NEXT:[jmp(L3 [skipFinallyToErrorBlock])]       PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+    jmp(L3 [skipFinallyToErrorBlock])       NEXT:[r(list)]                                 PREV:[call(doSmth, doSmth)]
 L2 [onExceptionToFinallyBlock]:
 L4 [start finally]:
     r(list)                                 NEXT:[r(null)]                                 PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
-    r(null)                                 NEXT:[r(!=)]                                   PREV:[r(list)]
-    r(!=)                                   NEXT:[r(list != null)]                         PREV:[r(null)]
-    r(list != null)                         NEXT:[jf(L5)]                                  PREV:[r(!=)]
-    jf(L5)                                  NEXT:[read (Unit), read (Unit)]                PREV:[r(list != null)]
+    r(null)                                 NEXT:[call(list != null, equals)]              PREV:[r(list)]
+    call(list != null, equals)              NEXT:[jf(L5)]                                  PREV:[r(null)]
+    jf(L5)                                  NEXT:[read (Unit), read (Unit)]                PREV:[call(list != null, equals)]
     read (Unit)                             NEXT:[jmp(L6)]                                 PREV:[jf(L5)]
     jmp(L6)                                 NEXT:[jmp(error)]                              PREV:[read (Unit)]
 L5:
@@ -286,10 +263,9 @@ L7 [finish finally]:
     jmp(error)                              NEXT:[<ERROR>]                                 PREV:[jmp(L6), read (Unit)]
 L3 [skipFinallyToErrorBlock]:
     r(list)                                 NEXT:[r(null)]                                 PREV:[jmp(L3 [skipFinallyToErrorBlock])]
-    r(null)                                 NEXT:[r(!=)]                                   PREV:[r(list)]
-    r(!=)                                   NEXT:[r(list != null)]                         PREV:[r(null)]
-    r(list != null)                         NEXT:[jf(copy L5)]                             PREV:[r(!=)]
-    jf(copy L5)                             NEXT:[read (Unit), read (Unit)]                PREV:[r(list != null)]
+    r(null)                                 NEXT:[call(list != null, equals)]              PREV:[r(list)]
+    call(list != null, equals)              NEXT:[jf(copy L5)]                             PREV:[r(null)]
+    jf(copy L5)                             NEXT:[read (Unit), read (Unit)]                PREV:[call(list != null, equals)]
     read (Unit)                             NEXT:[jmp(copy L6)]                            PREV:[jf(copy L5)]
     jmp(copy L6)                            NEXT:[<END>]                                   PREV:[read (Unit)]
     read (Unit)                             NEXT:[<END>]                                   PREV:[jf(copy L5)]

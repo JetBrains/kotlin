@@ -6,32 +6,27 @@ fun t1() {
 }
 ---------------------
 L0:
-    <START>                        NEXT:[r(for (i in 1..2) { doSmth(i..)]    PREV:[]
-    r(for (i in 1..2) {        
-            doSmth(i)          
-        })                         NEXT:[r(1)]                               PREV:[<START>]
-    r(1)                           NEXT:[r(2)]                               PREV:[r(for (i in 1..2) { doSmth(i..)]
-    r(2)                           NEXT:[r(..)]                              PREV:[r(1)]
-    r(..)                          NEXT:[r(1..2)]                            PREV:[r(2)]
-    r(1..2)                        NEXT:[v(i)]                               PREV:[r(..)]
-    v(i)                           NEXT:[w(i)]                               PREV:[r(1..2)]
-    w(i)                           NEXT:[jmp?(L2)]                           PREV:[v(i)]
+    <START>                        NEXT:[r(1)]                           PREV:[]
+    r(1)                           NEXT:[r(2)]                           PREV:[<START>]
+    r(2)                           NEXT:[call(.., rangeTo)]              PREV:[r(1)]
+    call(.., rangeTo)              NEXT:[v(i)]                           PREV:[r(2)]
+    v(i)                           NEXT:[w(i)]                           PREV:[call(.., rangeTo)]
+    w(i)                           NEXT:[jmp?(L2)]                       PREV:[v(i)]
 L3:
-    jmp?(L2)                       NEXT:[read (Unit), r(i)]                  PREV:[w(i)]
+    jmp?(L2)                       NEXT:[read (Unit), r(i)]              PREV:[w(i)]
 L4 [loop entry point]:
 L5 [body entry point]:
-    r(i)                           NEXT:[r(doSmth)]                          PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
-    r(doSmth)                      NEXT:[r(doSmth(i))]                       PREV:[r(i)]
-    r(doSmth(i))                   NEXT:[jmp?(L4 [loop entry point])]        PREV:[r(doSmth)]
-    jmp?(L4 [loop entry point])    NEXT:[r(i), read (Unit)]                  PREV:[r(doSmth(i))]
+    r(i)                           NEXT:[call(doSmth, doSmth)]           PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    call(doSmth, doSmth)           NEXT:[jmp?(L4 [loop entry point])]    PREV:[r(i)]
+    jmp?(L4 [loop entry point])    NEXT:[r(i), read (Unit)]              PREV:[call(doSmth, doSmth)]
 L2:
-    read (Unit)                    NEXT:[<END>]                              PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    read (Unit)                    NEXT:[<END>]                          PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
 L1:
-    <END>                          NEXT:[<SINK>]                             PREV:[read (Unit)]
+    <END>                          NEXT:[<SINK>]                         PREV:[read (Unit)]
 error:
-    <ERROR>                        NEXT:[<SINK>]                             PREV:[]
+    <ERROR>                        NEXT:[<SINK>]                         PREV:[]
 sink:
-    <SINK>                         NEXT:[]                                   PREV:[<ERROR>, <END>]
+    <SINK>                         NEXT:[]                               PREV:[<ERROR>, <END>]
 =====================
 == doSmth ==
 fun doSmth(i: Int) {}
