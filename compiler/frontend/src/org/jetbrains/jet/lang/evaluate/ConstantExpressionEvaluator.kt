@@ -190,7 +190,12 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             val argumentForParameter = createOperationArgumentForFirstParameter(argument, parameter)
             if (argumentForParameter == null) return null
 
+            if (isDivisionByZero(resultingDescriptorName.asString(), argumentForParameter.value)) {
+                return ErrorValue.create("Division by zero")
+            }
+
             val result = evaluateBinaryAndCheck(argumentForReceiver, argumentForParameter, resultingDescriptorName.asString(), callExpression)
+
             return when(resultingDescriptorName) {
                 OperatorConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression)
                 OperatorConventions.EQUALS -> createCompileTimeConstantForEquals(result, callExpression)
@@ -227,10 +232,6 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val functions = binaryOperations[BinaryOperationKey(receiver.ctcType, parameter.ctcType, name)]
         if (functions == null) return null
 
-        if (isDividingByZero(name, parameter.value)) {
-            return null
-        }
-
         val (function, checker) = functions
         val actualResult = function(receiver.value, parameter.value)
         if (checker == emptyBinaryFun) {
@@ -248,7 +249,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         return actualResult
     }
 
-    private fun isDividingByZero(name: String, parameter: Any?): Boolean  {
+    private fun isDivisionByZero(name: String, parameter: Any?): Boolean  {
         if (name == OperatorConventions.BINARY_OPERATION_NAMES[JetTokens.DIV]!!.asString()) {
             if (isIntegerType(parameter)) {
                 return (parameter as Number).toLong() == 0.toLong()
