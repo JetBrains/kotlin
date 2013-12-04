@@ -430,7 +430,10 @@ public abstract class StackValue {
             else {
                 v.aconst(value);
             }
-            coerceTo(type, v);
+
+            if (value != null) {
+                coerceTo(type, v);
+            }
         }
 
         @Override

@@ -2622,13 +2622,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression, StackValue unused) {
         JetExpression receiver = expression.getReceiverExpression();
         JetExpression selector = expression.getSelectorExpression();
+        Type type = boxType(expressionType(expression));
         Type receiverType = expressionType(receiver);
 
         gen(receiver, receiverType);
 
         if (isPrimitive(receiverType)) {
             StackValue propValue = genQualified(StackValue.onStack(receiverType), selector);
-            Type type = boxType(propValue.type);
             propValue.put(type, v);
 
             return StackValue.onStack(type);
@@ -2639,7 +2639,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         v.dup();
         v.ifnull(ifnull);
         StackValue propValue = genQualified(StackValue.onStack(receiverType), selector);
-        Type type = boxType(propValue.type);
         propValue.put(type, v);
         v.goTo(end);
 
