@@ -45,6 +45,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.isOrOverridesSynthesized;
+import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
 public class TaskPrioritizer {
@@ -121,7 +122,7 @@ public class TaskPrioritizer {
         }
         List<ReceiverValue> implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope);
         if (receiver.exists()) {
-            addCandidatesForExplicitReceiver(receiver, implicitReceivers, c, /*resolveInvoke=*/false);
+            addCandidatesForExplicitReceiver(receiver, implicitReceivers, c, /*isExplicit=*/true);
             return;
         }
         addCandidatesForNoReceiver(implicitReceivers, c);
@@ -131,7 +132,7 @@ public class TaskPrioritizer {
             @NotNull ReceiverValue receiver,
             @NotNull List<ReceiverValue> implicitReceivers,
             @NotNull TaskPrioritizerContext<D, F> c,
-            boolean resolveInvoke
+            boolean isExplicit
     ) {
 
         List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiver, c.context);
@@ -143,7 +144,7 @@ public class TaskPrioritizer {
                 Collection<? extends D> membersForThisVariant =
                         callableDescriptorCollector.getMembersByName(variant.getType(), c.name, c.context.trace);
                 convertWithReceivers(membersForThisVariant, Collections.singletonList(variant),
-                                     Collections.singletonList(NO_RECEIVER), members, resolveInvoke);
+                                     Collections.singletonList(NO_RECEIVER), members, createKind(THIS_OBJECT, isExplicit));
             }
             c.result.addCandidates(members);
         }
@@ -152,26 +153,32 @@ public class TaskPrioritizer {
             //member extensions
             for (ReceiverValue implicitReceiver : implicitReceivers) {
                 addMemberExtensionCandidates(implicitReceiver, variantsForExplicitReceiver,
-                                             callableDescriptorCollector, c, resolveInvoke);
+                                             callableDescriptorCollector, c, createKind(RECEIVER_ARGUMENT, isExplicit));
             }
             //extensions
             Collection<ResolutionCandidate<D>> extensions = convertWithImpliedThis(
-                    c.scope, variantsForExplicitReceiver, callableDescriptorCollector.getNonMembersByName(c.scope, c.name, c.context.trace));
+                    c.scope, variantsForExplicitReceiver, callableDescriptorCollector.getNonMembersByName(c.scope, c.name, c.context.trace),
+                    createKind(RECEIVER_ARGUMENT, isExplicit));
             c.result.addCandidates(extensions);
         }
     }
 
+    private static ExplicitReceiverKind createKind(ExplicitReceiverKind kind, boolean isExplicit) {
+        if (isExplicit) return kind;
+        return ExplicitReceiverKind.NO_EXPLICIT_RECEIVER;
+    }
+
     private static <D extends CallableDescriptor, F extends D> void addMemberExtensionCandidates(
-            @NotNull ReceiverValue implicitReceiver,
-            @NotNull List<ReceiverValue> variantsForExplicitReceiver,
+            @NotNull ReceiverValue thisObject,
+            @NotNull List<ReceiverValue> receiverParameters,
             @NotNull CallableDescriptorCollector<? extends D> callableDescriptorCollector, TaskPrioritizerContext<D, F> c,
-            boolean resolveInvoke
+            @NotNull ExplicitReceiverKind receiverKind
     ) {
         Collection<? extends D> memberExtensions = callableDescriptorCollector.getNonMembersByName(
-                implicitReceiver.getType().getMemberScope(), c.name, c.context.trace);
-        List<ReceiverValue> variantsForImplicitReceiver = AutoCastUtils.getAutoCastVariants(implicitReceiver, c.context);
-        c.result.addCandidates(convertWithReceivers(memberExtensions, variantsForImplicitReceiver,
-                                                  variantsForExplicitReceiver, resolveInvoke));
+                thisObject.getType().getMemberScope(), c.name, c.context.trace);
+        List<ReceiverValue> thisObjects = AutoCastUtils.getAutoCastVariants(thisObject, c.context);
+        c.result.addCandidates(convertWithReceivers(
+                memberExtensions, thisObjects, receiverParameters, receiverKind));
     }
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesForNoReceiver(
@@ -182,9 +189,8 @@ public class TaskPrioritizer {
         List<Collection<ResolutionCandidate<D>>> nonlocalsList = Lists.newArrayList();
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
 
-            Collection<ResolutionCandidate<D>> members =
-                    convertWithImpliedThis(c.scope, Collections.singletonList(NO_RECEIVER), callableDescriptorCollector
-                            .getNonExtensionsByName(c.scope, c.name, c.context.trace));
+            Collection<ResolutionCandidate<D>> members = convertWithImpliedThisAndNoReceiver(
+                    c.scope, callableDescriptorCollector.getNonExtensionsByName(c.scope, c.name, c.context.trace));
 
             List<ResolutionCandidate<D>> nonlocals = Lists.newArrayList();
             List<ResolutionCandidate<D>> locals = Lists.newArrayList();
@@ -200,9 +206,9 @@ public class TaskPrioritizer {
 
         //try all implicit receivers as explicit
         for (ReceiverValue implicitReceiver : implicitReceivers) {
-            addCandidatesForExplicitReceiver(implicitReceiver, implicitReceivers, c, /*resolveInvoke=*/false);
+            addCandidatesForExplicitReceiver(implicitReceiver, implicitReceivers, c, /*isExplicit=*/false);
         }
-        
+
         //nonlocals
         c.result.addCandidates(nonlocalsList);
     }
@@ -224,7 +230,7 @@ public class TaskPrioritizer {
 
         // (1) a.foo + foo.invoke()
         if (!explicitReceiver.exists()) {
-            addCandidatesForExplicitReceiver(variableReceiver, implicitReceivers, c, /*resolveInvoke=*/true);
+            addCandidatesForExplicitReceiver(variableReceiver, implicitReceivers, c, /*isExplicit=*/true);
         }
 
         // (2) foo + a.invoke()
@@ -235,24 +241,25 @@ public class TaskPrioritizer {
 
         if (explicitReceiver.exists()) {
             //a.foo()
-            addCandidatesWhenInvokeIsMemberExtensionToExplicitReceiver(variableReceiver, explicitReceiver, c);
+            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver, explicitReceiver, c, BOTH_RECEIVERS);
             return;
         }
         // with (a) { foo() }
         for (ReceiverValue implicitReceiver : implicitReceivers) {
-            addCandidatesWhenInvokeIsMemberExtensionToExplicitReceiver(variableReceiver, implicitReceiver, c);
+            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver, implicitReceiver, c, THIS_OBJECT);
         }
     }
 
-    private static <D extends CallableDescriptor, F extends D> void addCandidatesWhenInvokeIsMemberExtensionToExplicitReceiver(
-            @NotNull ReceiverValue variableReceiver,
-            @NotNull ReceiverValue explicitReceiver,
-            @NotNull TaskPrioritizerContext<D, F> c
+    private static <D extends CallableDescriptor, F extends D> void addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(
+            @NotNull ReceiverValue thisObject,
+            @NotNull ReceiverValue receiverParameter,
+            @NotNull TaskPrioritizerContext<D, F> c,
+            @NotNull ExplicitReceiverKind receiverKind
     ) {
-        List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(explicitReceiver, c.context);
+        List<ReceiverValue> receiverParameters = AutoCastUtils.getAutoCastVariants(receiverParameter, c.context);
 
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : c.callableDescriptorCollectors) {
-            addMemberExtensionCandidates(variableReceiver, variantsForExplicitReceiver, callableDescriptorCollector, c, /*resolveInvoke=*/true);
+            addMemberExtensionCandidates(thisObject, receiverParameters, callableDescriptorCollector, c, receiverKind);
         }
     }
 
@@ -260,10 +267,10 @@ public class TaskPrioritizer {
             @NotNull Collection<? extends D> descriptors,
             @NotNull Iterable<ReceiverValue> thisObjects,
             @NotNull Iterable<ReceiverValue> receiverParameters,
-            boolean hasExplicitThisObject
+            @NotNull ExplicitReceiverKind explicitReceiverKind
     ) {
         Collection<ResolutionCandidate<D>> result = Lists.newArrayList();
-        convertWithReceivers(descriptors, thisObjects, receiverParameters, result, hasExplicitThisObject);
+        convertWithReceivers(descriptors, thisObjects, receiverParameters, result, explicitReceiverKind);
         return result;
     }
 
@@ -272,7 +279,7 @@ public class TaskPrioritizer {
             @NotNull Iterable<ReceiverValue> thisObjects,
             @NotNull Iterable<ReceiverValue> receiverParameters,
             @NotNull Collection<ResolutionCandidate<D>> result,
-            boolean hasExplicitThisObject
+            @NotNull ExplicitReceiverKind explicitReceiverKind
     ) {
         for (ReceiverValue thisObject : thisObjects) {
             for (ReceiverValue receiverParameter : receiverParameters) {
@@ -284,26 +291,32 @@ public class TaskPrioritizer {
                     ResolutionCandidate<D> candidate = ResolutionCandidate.create(extension);
                     candidate.setThisObject(thisObject);
                     candidate.setReceiverArgument(receiverParameter);
-                    candidate.setExplicitReceiverKind(
-                            hasExplicitThisObject ? ExplicitReceiverKind.BOTH_RECEIVERS : ExplicitReceiverKind.THIS_OBJECT);
+                    candidate.setExplicitReceiverKind(explicitReceiverKind);
                     result.add(candidate);
                 }
             }
         }
     }
 
+    public static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithImpliedThisAndNoReceiver(
+            @NotNull JetScope scope,
+            @NotNull Collection<? extends D> descriptors
+    ) {
+        return convertWithImpliedThis(scope, Collections.singletonList(NO_RECEIVER), descriptors, NO_EXPLICIT_RECEIVER);
+    }
+
     public static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithImpliedThis(
             @NotNull JetScope scope,
             @NotNull Collection<ReceiverValue> receiverParameters,
-            @NotNull Collection<? extends D> descriptors
+            @NotNull Collection<? extends D> descriptors,
+            ExplicitReceiverKind receiverKind
     ) {
         Collection<ResolutionCandidate<D>> result = Lists.newArrayList();
         for (ReceiverValue receiverParameter : receiverParameters) {
             for (D descriptor : descriptors) {
                 ResolutionCandidate<D> candidate = ResolutionCandidate.create(descriptor);
                 candidate.setReceiverArgument(receiverParameter);
-                candidate.setExplicitReceiverKind(
-                        receiverParameter.exists() ? ExplicitReceiverKind.RECEIVER_ARGUMENT : ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
+                candidate.setExplicitReceiverKind(receiverKind);
                 if (setImpliedThis(scope, candidate)) {
                     result.add(candidate);
                 }

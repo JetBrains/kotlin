@@ -66,6 +66,7 @@ import org.jetbrains.jet.resolve.AbstractResolveBaseTest;
 import org.jetbrains.jet.resolve.AbstractResolveTest;
 import org.jetbrains.jet.resolve.AbstractResolveWithLibTest;
 import org.jetbrains.jet.resolve.annotation.AbstractAnnotationParameterTest;
+import org.jetbrains.jet.resolve.calls.AbstractResolvedCallsTest;
 import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest;
 
 import java.io.File;
@@ -106,6 +107,13 @@ public class GenerateTests {
                 "JetResolveTestGenerated",
                 AbstractResolveTest.class,
                 testModel("compiler/testData/resolve", true, "resolve", "doTest")
+        );
+
+        generateTest(
+                "compiler/tests",
+                "JetResolvedCallsTestGenerated",
+                AbstractResolvedCallsTest.class,
+                testModel("compiler/testData/resolvedCalls")
         );
 
         generateTest(

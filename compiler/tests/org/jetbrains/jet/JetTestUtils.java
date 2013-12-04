@@ -229,11 +229,13 @@ public class JetTestUtils {
         return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, Collections.<AnalyzerScriptParameter>emptyList());
     }
 
+    @NotNull
     public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable,
                                                                          ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
     }
 
+    @NotNull
     public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
         return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
     }
@@ -243,6 +245,7 @@ public class JetTestUtils {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
     }
 
+    @NotNull
     public static JetCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind,
@@ -445,6 +448,7 @@ public class JetTestUtils {
         return testFiles;
     }
 
+    @NotNull
     public static Map<String, String> parseDirectives(String expectedText) {
         Map<String, String> directives = Maps.newHashMap();
         Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
