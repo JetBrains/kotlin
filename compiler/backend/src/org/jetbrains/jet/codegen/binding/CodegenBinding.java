@@ -197,7 +197,9 @@ public class CodegenBinding {
             closure.setCaptureThis();
         }
 
-        if (enclosing != null) {
+        //TEMPORARY EAT INNER CLASS INFO FOR FUNCTION LITERALS
+        //TODO: we should understand that lambda/closure would be inlined and don't generate inner class record
+        if (enclosing != null && !(element instanceof JetFunctionLiteral)) {
             recordInnerClass(bindingTrace, enclosing, classDescriptor);
         }
     }
