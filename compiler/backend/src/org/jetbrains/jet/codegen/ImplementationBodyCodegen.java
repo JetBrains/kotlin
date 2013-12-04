@@ -1139,7 +1139,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         functionCodegen.generateMethod(null, constructorSignature, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
-
                        @NotNull
                        @Override
                        protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull MethodContext context) {

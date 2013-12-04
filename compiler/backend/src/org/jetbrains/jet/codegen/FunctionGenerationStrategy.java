@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -31,9 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public abstract class FunctionGenerationStrategy {
-
     private final Collection<String> localVariableNames = new ArrayList<String>();
-
     private FrameMap frameMap;
 
     public abstract void generateBody(
@@ -66,7 +63,6 @@ public abstract class FunctionGenerationStrategy {
     }
 
     public static class FunctionDefault extends CodegenBased<CallableDescriptor> {
-
         private final JetDeclarationWithBody declaration;
 
         public FunctionDefault(
@@ -85,18 +81,16 @@ public abstract class FunctionGenerationStrategy {
     }
 
     public abstract static class CodegenBased<T extends CallableDescriptor> extends FunctionGenerationStrategy {
-
         protected final GenerationState state;
-
         protected final T callableDescriptor;
 
-        public CodegenBased(@NotNull GenerationState state, T callableDescriptor) {
+        public CodegenBased(@NotNull GenerationState state, @NotNull T callableDescriptor) {
             this.state = state;
             this.callableDescriptor = callableDescriptor;
         }
 
         @Override
-        public void generateBody(
+        public final void generateBody(
                 @NotNull MethodVisitor mv,
                 @NotNull JvmMethodSignature signature,
                 @NotNull MethodContext context,
@@ -108,9 +102,9 @@ public abstract class FunctionGenerationStrategy {
             generateLocalVarNames(codegen);
         }
 
-        abstract public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature);
+        public abstract void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature);
 
-        public void generateLocalVarNames(@NotNull ExpressionCodegen codegen) {
+        private void generateLocalVarNames(@NotNull ExpressionCodegen codegen) {
             for (String name : codegen.getLocalVariableNamesForExpression()) {
                 addLocalVariableName(name);
             }

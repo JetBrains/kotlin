@@ -311,18 +311,12 @@ public class PropertyCodegen extends GenerationStateAware {
 
 
     private static class DefaultPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
-
-        public DefaultPropertyAccessorStrategy(
-                @NotNull GenerationState state,
-                @NotNull PropertyAccessorDescriptor callableDescriptor
-        ) {
-            super(state, callableDescriptor);
+        public DefaultPropertyAccessorStrategy(@NotNull GenerationState state, @NotNull PropertyAccessorDescriptor descriptor) {
+            super(state, descriptor);
         }
 
         @Override
-        public void doGenerateBody(
-                ExpressionCodegen codegen, JvmMethodSignature signature
-        ) {
+        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             generateDefaultAccessor(callableDescriptor, codegen.v, codegen);
         }
     }
@@ -371,9 +365,7 @@ public class PropertyCodegen extends GenerationStateAware {
         }
 
         @Override
-        public void doGenerateBody(
-                @NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature
-        ) {
+        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             JetTypeMapper typeMapper = codegen.typeMapper;
             OwnerKind kind = codegen.context.getContextKind();
             InstructionAdapter iv = codegen.v;
