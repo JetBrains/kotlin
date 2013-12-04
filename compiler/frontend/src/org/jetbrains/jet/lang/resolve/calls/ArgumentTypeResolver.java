@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
@@ -266,8 +266,8 @@ public class ArgumentTypeResolver {
     ) {
         JetType type = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
         if (type != null && !type.getConstructor().isDenotable()) {
-            if (type.getConstructor() instanceof NumberValueTypeConstructor) {
-                NumberValueTypeConstructor constructor = (NumberValueTypeConstructor) type.getConstructor();
+            if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
+                IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) type.getConstructor();
                 JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
                 updateNumberType(primitiveType, expression, context.trace);
                 return primitiveType;

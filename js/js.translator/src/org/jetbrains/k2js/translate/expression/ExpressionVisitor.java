@@ -29,8 +29,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
@@ -86,11 +86,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
 
         Object value = compileTimeValue.getValue();
-        if (value instanceof NumberValueTypeConstructor) {
+        if (value instanceof IntegerValueTypeConstructor) {
             JetType expectedType = context.bindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
             CompileTimeConstant<?> newConstant =
-                    EvaluatePackage.getCompileTimeConstantForNumberType((NumberValueTypeConstructor) value, expectedType);
-            assert newConstant != null: "NumberValueTypeConstant should always have notnull value " + compileTimeValue;
+                    EvaluatePackage.getCompileTimeConstantForNumberType((IntegerValueTypeConstructor) value, expectedType);
+            assert newConstant != null: "IntegerValueTypeConstant should always have notnull value " + compileTimeValue;
             value = newConstant.getValue();
         }
         if (value instanceof Integer || value instanceof Short || value instanceof Byte) {

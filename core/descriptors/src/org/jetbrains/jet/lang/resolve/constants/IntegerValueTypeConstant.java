@@ -27,7 +27,13 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 
-public abstract class NumberValueTypeConstant<T extends Number> implements CompileTimeConstant<NumberValueTypeConstructor<T>> {
+public class IntegerValueTypeConstant implements CompileTimeConstant<IntegerValueTypeConstructor> {
+
+    private final IntegerValueTypeConstructor value;
+
+    public IntegerValueTypeConstant(long value) {
+        this.value = new IntegerValueTypeConstructor(value);
+    }
 
     @NotNull
     @Override
@@ -43,6 +49,14 @@ public abstract class NumberValueTypeConstant<T extends Number> implements Compi
         return visitor.visitNumberTypeValue(this, data);
     }
 
+    @NotNull
     @Override
-    public abstract NumberValueTypeConstructor<T> getValue();
+    public IntegerValueTypeConstructor getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }

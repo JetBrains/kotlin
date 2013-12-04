@@ -18,12 +18,19 @@ package org.jetbrains.jet.lang.resolve.constants;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-public class IntegerValueTypeConstructor extends NumberValueTypeConstructor<Long> {
+public class IntegerValueTypeConstructor implements TypeConstructor {
     private final long value;
     private final Collection<JetType> supertypes = Lists.newArrayList();
 
@@ -44,15 +51,42 @@ public class IntegerValueTypeConstructor extends NumberValueTypeConstructor<Long
         }
     }
 
-    @Override
-    public Long getValue() {
-        return value;
-    }
-
     @NotNull
     @Override
     public Collection<JetType> getSupertypes() {
         return supertypes;
+    }
+
+    @NotNull
+    @Override
+    public List<TypeParameterDescriptor> getParameters() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isFinal() {
+        return false;
+    }
+
+    @Override
+    public boolean isDenotable() {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public ClassifierDescriptor getDeclarationDescriptor() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public List<AnnotationDescriptor> getAnnotations() {
+        return Collections.emptyList();
+    }
+
+    public Long getValue() {
+        return value;
     }
 
     @Override

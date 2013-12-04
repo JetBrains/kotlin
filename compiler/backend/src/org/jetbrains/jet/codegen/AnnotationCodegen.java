@@ -254,8 +254,8 @@ public abstract class AnnotationCodegen {
             }
 
             @Override
-            public Void visitNumberTypeValue(NumberValueTypeConstant value, Void data) {
-                NumberValueTypeConstructor typeConstructor = value.getValue();
+            public Void visitNumberTypeValue(IntegerValueTypeConstant value, Void data) {
+                IntegerValueTypeConstructor typeConstructor = value.getValue();
                 Object numberType = EvaluatePackage.getValueForNumberType(typeConstructor, expectedType);
                 if (numberType != null) {
                     annotationVisitor.visit(name, numberType);

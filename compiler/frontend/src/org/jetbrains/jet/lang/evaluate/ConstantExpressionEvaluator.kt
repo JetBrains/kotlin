@@ -389,7 +389,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val evaluationResult = evaluate(expression, expressionType)?.getValue()
         if (evaluationResult == null) return null
 
-        if (evaluationResult is NumberValueTypeConstructor<*>) {
+        if (evaluationResult is IntegerValueTypeConstructor) {
             val evaluationResultWithNewType = evaluationResult.getValueForNumberType(expressionType)
             if (evaluationResultWithNewType != null) {
                 return OperationArgument(evaluationResultWithNewType, compileTimeType, expression)
@@ -411,7 +411,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 }
 
-public fun NumberValueTypeConstructor<out Number?>.getValueForNumberType(expectedType: JetType): Any? {
+public fun IntegerValueTypeConstructor.getValueForNumberType(expectedType: JetType): Any? {
     val valueWithNewType = this.getCompileTimeConstantForNumberType(expectedType)
     if (valueWithNewType != null) {
         return valueWithNewType.getValue()
@@ -419,7 +419,7 @@ public fun NumberValueTypeConstructor<out Number?>.getValueForNumberType(expecte
     return null
 }
 
-public fun NumberValueTypeConstructor<out Number?>.getCompileTimeConstantForNumberType(expectedType: JetType): CompileTimeConstant<*>? {
+public fun IntegerValueTypeConstructor.getCompileTimeConstantForNumberType(expectedType: JetType): CompileTimeConstant<*>? {
     val defaultType = TypeUtils.getPrimitiveNumberType(this, expectedType)
     return createConvertibleCompileTimeConstant(this.getValue(), defaultType)
 }

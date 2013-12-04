@@ -49,7 +49,7 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -122,7 +122,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitConstantExpression(@NotNull JetConstantExpression expression, ExpressionTypingContext context) {
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
 
-        if (!(value instanceof NumberValueTypeConstant)) {
+        if (!(value instanceof IntegerValueTypeConstant)) {
             CompileTimeConstantChecker compileTimeConstantChecker = context.getCompileTimeConstantChecker();
             boolean hasError = compileTimeConstantChecker.checkConstantExpressionType(value, expression, context.expectedType);
             if (hasError) {
@@ -710,8 +710,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context
     ) {
         JetType expressionType = value.getType(KotlinBuiltIns.getInstance());
-        if (value instanceof NumberValueTypeConstant && context.contextDependency == INDEPENDENT) {
-            expressionType = getPrimitiveNumberType(((NumberValueTypeConstant) value).getValue(), context.expectedType);
+        if (value instanceof IntegerValueTypeConstant && context.contextDependency == INDEPENDENT) {
+            expressionType = getPrimitiveNumberType(((IntegerValueTypeConstant) value).getValue(), context.expectedType);
             ArgumentTypeResolver.updateNumberType(expressionType, expression, context.trace);
         }
 

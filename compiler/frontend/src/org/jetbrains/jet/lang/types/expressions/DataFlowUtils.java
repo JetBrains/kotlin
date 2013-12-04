@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -170,8 +170,8 @@ public class DataFlowUtils {
 
         if (expression instanceof JetConstantExpression) {
             CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, trace, expectedType);
-            if (value instanceof NumberValueTypeConstant) {
-                value = EvaluatePackage.getCompileTimeConstantForNumberType(((NumberValueTypeConstant) value).getValue(), expectedType);
+            if (value instanceof IntegerValueTypeConstant) {
+                value = EvaluatePackage.getCompileTimeConstantForNumberType(((IntegerValueTypeConstant) value).getValue(), expectedType);
             }
             new CompileTimeConstantChecker(trace, true).checkConstantExpressionType(value, (JetConstantExpression) expression, expectedType);
             return expressionType;

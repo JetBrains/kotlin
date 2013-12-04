@@ -35,8 +35,8 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstant;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -247,8 +247,8 @@ public class AnnotationResolver {
             JetExpression argumentExpression = argument.getArgumentExpression();
             if (argumentExpression != null) {
                 CompileTimeConstant<?> constant = resolveExpressionToCompileTimeValue(argumentExpression, expectedType, trace);
-                if (constant instanceof NumberValueTypeConstant) {
-                    NumberValueTypeConstructor typeConstructor = ((NumberValueTypeConstant) constant).getValue();
+                if (constant instanceof IntegerValueTypeConstant) {
+                    IntegerValueTypeConstructor typeConstructor = ((IntegerValueTypeConstant) constant).getValue();
                     JetType defaultType = getPrimitiveNumberType(typeConstructor, expectedType);
                     ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, trace);
                 }
