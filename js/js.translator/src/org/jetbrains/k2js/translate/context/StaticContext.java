@@ -37,6 +37,7 @@ import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -174,17 +175,6 @@ public final class StaticContext {
         return name;
     }
 
-    public static boolean methodIsExplicitlyDeclared(
-            @NotNull String name,
-            @NotNull ClassDescriptor descriptor,
-            @NotNull ClassifierDescriptor returnedClassifier,
-            @NotNull ClassifierDescriptor... valueParameterClassifiers
-    ) {
-        assert descriptor instanceof ClassDescriptor;
-        return FunctionDescriptorUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier(name), returnedClassifier,
-                                                                        valueParameterClassifiers) != null;
-    }
-
     private final class NameGenerator extends Generator<JsName> {
 
         public NameGenerator() {
@@ -225,16 +215,17 @@ public final class StaticContext {
                             classDescriptor.getDefaultType().getMemberScope().getFunctions(descriptor.getName());
                     String name = descriptor.getName().asString();
                     int counter = -1;
-                    {
-                        ClassDescriptor stringType = KotlinBuiltIns.getInstance().getString();
-                        ClassDescriptor intType = KotlinBuiltIns.getInstance().getInt();
-                        ClassDescriptor booleanType = KotlinBuiltIns.getInstance().getBoolean();
-                        ClassDescriptor anyType = KotlinBuiltIns.getInstance().getAny();
-                        if ((name.equals(Namer.TO_STRING) && !methodIsExplicitlyDeclared(Namer.TO_STRING, classDescriptor, stringType)) ||
-                            (name.equals(Namer.HASH_CODE) && !methodIsExplicitlyDeclared(Namer.HASH_CODE, classDescriptor, intType)) ||
-                            (name.equals(Namer.EQUALS) && !methodIsExplicitlyDeclared(Namer.EQUALS, classDescriptor, booleanType, anyType))) {
-                            counter = 0;
-                        }
+                    ClassDescriptor stringType = KotlinBuiltIns.getInstance().getString();
+                    ClassDescriptor intType = KotlinBuiltIns.getInstance().getInt();
+                    ClassDescriptor booleanType = KotlinBuiltIns.getInstance().getBoolean();
+                    ClassDescriptor anyType = KotlinBuiltIns.getInstance().getAny();
+                    if ((name.equals(Namer.TO_STRING) &&
+                         !JsDescriptorUtils.methodIsExplicitlyDeclared(Namer.TO_STRING, classDescriptor, stringType)) ||
+                        (name.equals(Namer.HASH_CODE) &&
+                         !JsDescriptorUtils.methodIsExplicitlyDeclared(Namer.HASH_CODE, classDescriptor, intType)) ||
+                        (name.equals(Namer.EQUALS) &&
+                         !JsDescriptorUtils.methodIsExplicitlyDeclared(Namer.EQUALS, classDescriptor, booleanType, anyType))) {
+                        counter = 0;
                     }
                     if (functions.size() > 1) {
                         // see testOverloadedFun

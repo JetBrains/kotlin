@@ -23,8 +23,7 @@ public final class HashCodeTest extends AbstractExpressionTest {
     }
 
     public void testHashCode() throws Exception {
-        // TODO uncomment this method to make the test case fail
-        fooBoxTest();
+        checkFooBoxIsOk();
     }
 
 }

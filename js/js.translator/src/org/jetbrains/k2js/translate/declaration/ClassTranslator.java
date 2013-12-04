@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -44,6 +45,7 @@ import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.PsiUtils;
 
 import java.util.*;
@@ -170,7 +172,7 @@ public final class ClassTranslator extends AbstractTranslator {
             @NotNull List<JsPropertyInitializer> jsProperties
     ) {
         ClassDescriptor stringType = KotlinBuiltIns.getInstance().getString();
-        if (StaticContext.methodIsExplicitlyDeclared(Namer.TO_STRING, descriptor, stringType)) {
+        if (JsDescriptorUtils.methodIsExplicitlyDeclared(Namer.TO_STRING, descriptor, stringType)) {
             return;
         }
         JsBlock body = generateDataClassToStringMethodBody(dataProperties);
@@ -182,7 +184,7 @@ public final class ClassTranslator extends AbstractTranslator {
             @NotNull List<JsPropertyInitializer> jsProperties
     ) {
         ClassDescriptor intType = KotlinBuiltIns.getInstance().getInt();
-        if (StaticContext.methodIsExplicitlyDeclared(Namer.HASH_CODE, descriptor, intType)) {
+        if (JsDescriptorUtils.methodIsExplicitlyDeclared(Namer.HASH_CODE, descriptor, intType)) {
             return;
         }
         JsBlock body = generateDataClassHashCodeMethodBody(dataProperties);
@@ -195,7 +197,7 @@ public final class ClassTranslator extends AbstractTranslator {
     ) {
         ClassDescriptor booleanType = KotlinBuiltIns.getInstance().getBoolean();
         ClassDescriptor anyType = KotlinBuiltIns.getInstance().getAny();
-        if (StaticContext.methodIsExplicitlyDeclared(Namer.EQUALS, descriptor, booleanType, anyType)) {
+        if (JsDescriptorUtils.methodIsExplicitlyDeclared(Namer.EQUALS, descriptor, booleanType, anyType)) {
             return;
         }
         JsBlock body = generateDataClassEqualsMethodBody(dataProperties);

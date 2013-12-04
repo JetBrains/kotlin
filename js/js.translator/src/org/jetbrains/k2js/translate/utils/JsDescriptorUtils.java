@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
@@ -125,6 +126,16 @@ public final class JsDescriptorUtils {
             return null;
         }
         return getDeclarationDescriptorForReceiver(receiverParameter.getValue());
+    }
+
+    public static boolean methodIsExplicitlyDeclared(
+            @NotNull String name,
+            @NotNull ClassDescriptor descriptor,
+            @NotNull ClassifierDescriptor returnedClassifier,
+            @NotNull ClassifierDescriptor... valueParameterClassifiers
+    ) {
+        return FunctionDescriptorUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier(name), returnedClassifier,
+                                                                        valueParameterClassifiers) != null;
     }
 
     //TODO: maybe we have similar routine
