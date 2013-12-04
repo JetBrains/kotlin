@@ -8,4 +8,4 @@ annotation class Ann(
 
 Ann(1 + 1, java.lang.Long.MAX_VALUE + 1 - 1, java.lang.Long.MAX_VALUE - 1) class MyClass
 
-// EXPECTED: Ann[l1 = 2.toLong(): jet.Long, l2 = 9223372036854775807.toLong(): jet.Long, l3 = 9223372036854775806.toLong(): jet.Long]
+// EXPECTED: Ann[l1 = IntegerValueType(2): IntegerValueType(2), l2 = IntegerValueType(9223372036854775807): IntegerValueType(9223372036854775807), l3 = IntegerValueType(9223372036854775806): IntegerValueType(9223372036854775806)]

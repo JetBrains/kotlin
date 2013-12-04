@@ -99,7 +99,12 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     override fun visitParenthesizedExpression(expression: JetParenthesizedExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val deparenthesizedExpression = JetPsiUtil.deparenthesize(expression)
         if (deparenthesizedExpression != null && deparenthesizedExpression != expression) {
-            return evaluate(deparenthesizedExpression, expectedType)
+            val compileTimeConstant = evaluate(deparenthesizedExpression, expectedType)
+            val isDeparentesizedPure = trace.get(BindingContext.IS_PURE_CONSTANT_EXPRESSION, deparenthesizedExpression)
+            if (isDeparentesizedPure != null && isDeparentesizedPure!!) {
+                trace.record(BindingContext.IS_PURE_CONSTANT_EXPRESSION, expression, true)
+            }
+            return compileTimeConstant
         }
         return null
     }

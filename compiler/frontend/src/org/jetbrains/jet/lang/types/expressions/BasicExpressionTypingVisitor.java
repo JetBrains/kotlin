@@ -855,6 +855,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(UNSUPPORTED.on(operationSign, "Unknown operation"));
             result = JetTypeInfo.create(null, context.dataFlowInfo);
         }
+        CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.
+                evaluate(expression, contextWithExpectedType.trace, contextWithExpectedType.expectedType);
+        if (value != null) {
+            return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType);
+        }
         return DataFlowUtils.checkType(result, expression, contextWithExpectedType);
     }
 

@@ -397,9 +397,79 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/codegen/boxWithStdlib/evaluate"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("char.kt")
+        public void testChar() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/char.kt");
+        }
+        
+        @TestMetadata("divide.kt")
+        public void testDivide() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/divide.kt");
+        }
+        
+        @TestMetadata("infixCallBinary.kt")
+        public void testInfixCallBinary() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/infixCallBinary.kt");
+        }
+        
+        @TestMetadata("intrincics.kt")
+        public void testIntrincics() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/intrincics.kt");
+        }
+        
+        @TestMetadata("maxValue.kt")
+        public void testMaxValue() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/maxValue.kt");
+        }
+        
+        @TestMetadata("maxValueByte.kt")
+        public void testMaxValueByte() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/maxValueByte.kt");
+        }
+        
+        @TestMetadata("maxValueInt.kt")
+        public void testMaxValueInt() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/maxValueInt.kt");
+        }
+        
+        @TestMetadata("miltiply.kt")
+        public void testMiltiply() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/miltiply.kt");
+        }
+        
+        @TestMetadata("minus.kt")
+        public void testMinus() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/minus.kt");
+        }
+        
+        @TestMetadata("mod.kt")
+        public void testMod() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/mod.kt");
+        }
+        
+        @TestMetadata("paranthesized.kt")
+        public void testParanthesized() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/paranthesized.kt");
+        }
+        
+        @TestMetadata("plus.kt")
+        public void testPlus() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/plus.kt");
+        }
+        
+        @TestMetadata("simpleCallBinary.kt")
+        public void testSimpleCallBinary() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/simpleCallBinary.kt");
+        }
+        
         @TestMetadata("unaryMinus.kt")
         public void testUnaryMinus() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/unaryMinus.kt");
+        }
+        
+        @TestMetadata("unaryPlus.kt")
+        public void testUnaryPlus() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/evaluate/unaryPlus.kt");
         }
         
     }

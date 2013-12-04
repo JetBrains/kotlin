@@ -3,22 +3,22 @@ import java.lang.annotation.RetentionPolicy
 
 Retention(RetentionPolicy.RUNTIME)
 annotation class Ann(
-        val p1: Byte,
+        val p1: Int,
         val p2: Short,
-        val p3: Int,
-        val p4: Long,
-        val p5: Double,
-        val p6: Float
+        val p3: Byte,
+        val p4: Int,
+        val p5: Int,
+        val p6: Int
 )
 
-val prop1: Byte = -1
-val prop2: Short = -1
-val prop3: Int = -1
-val prop4: Long = -1
-val prop5: Double = -1.0
-val prop6: Float = -1.0.toFloat()
+val prop1: Int = 1 or 1
+val prop2: Short = 1 and 1
+val prop3: Byte = 1 xor 1
+val prop4: Int = 1 shl 1
+val prop5: Int = 1 shr 1
+val prop6: Int = 1 ushr 1
 
-Ann(prop1, prop2, prop3, prop4, prop5, prop6) class MyClass
+Ann(1 or 1, 1 and 1, 1 xor 1, 1 shl 1, 1 shr 1, 1 ushr 1) class MyClass
 
 fun box(): String {
     val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!

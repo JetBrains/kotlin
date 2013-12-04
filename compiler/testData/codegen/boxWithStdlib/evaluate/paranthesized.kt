@@ -11,14 +11,14 @@ annotation class Ann(
         val p6: Float
 )
 
-val prop1: Byte = -1
-val prop2: Short = -1
-val prop3: Int = -1
-val prop4: Long = -1
-val prop5: Double = -1.0
-val prop6: Float = -1.0.toFloat()
+val prop1: Byte = (1 + 2) * 2
+val prop2: Short = (1 + 2) * 2
+val prop3: Int = (1 + 2) * 2
+val prop4: Long = (1 + 2) * 2
+val prop5: Double = (1.0 + 2) * 2
+val prop6: Float = (1.toFloat() + 2) * 2
 
-Ann(prop1, prop2, prop3, prop4, prop5, prop6) class MyClass
+Ann((1 + 2) * 2, (1 + 2) * 2, (1 + 2) * 2, (1 + 2) * 2, (1.0 + 2) * 2, (1.toFloat() + 2) * 2) class MyClass
 
 fun box(): String {
     val annotation = javaClass<MyClass>().getAnnotation(javaClass<Ann>())!!

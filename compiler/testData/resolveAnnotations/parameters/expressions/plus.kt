@@ -9,4 +9,4 @@ annotation class Ann(
 
 Ann(1 + 1, 1 + 1, 1 + 1, 1 + 1) class MyClass
 
-// EXPECTED: Ann[b = 2.toByte(): jet.Byte, i = 2.toInt(): jet.Int, l = 2.toLong(): jet.Long, s = 2.toShort(): jet.Short]
+// EXPECTED: Ann[b = IntegerValueType(2): IntegerValueType(2), i = IntegerValueType(2): IntegerValueType(2), l = IntegerValueType(2): IntegerValueType(2), s = IntegerValueType(2): IntegerValueType(2)]

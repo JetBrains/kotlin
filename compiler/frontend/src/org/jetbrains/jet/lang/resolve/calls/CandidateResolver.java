@@ -359,7 +359,7 @@ public class CandidateResolver {
             return;
         }
         if (storedContextForArgument == null) {
-            JetType type = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
+            JetType type = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
             checkResultArgumentType(type, argument, context);
             return;
         }
@@ -372,7 +372,13 @@ public class CandidateResolver {
         }
         else {
             completeNestedCallsInference(contextForArgument);
-            type = contextForArgument.candidateCall.getResultingDescriptor().getReturnType();
+            JetType recordedType = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
+            if (recordedType != null && !recordedType.getConstructor().isDenotable()) {
+                type = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
+            }
+            else {
+                type = contextForArgument.candidateCall.getResultingDescriptor().getReturnType();
+            }
             checkValueArgumentTypes(contextForArgument);
         }
         JetType result = BindingContextUtils.updateRecordedType(

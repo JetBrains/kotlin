@@ -2734,6 +2734,21 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/evaluate"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("binaryMinusDepOnExpType.kt")
+            public void testBinaryMinusDepOnExpType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/binaryMinusDepOnExpType.kt");
+            }
+            
+            @TestMetadata("binaryMinusIndepWoExpType.kt")
+            public void testBinaryMinusIndepWoExpType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/binaryMinusIndepWoExpType.kt");
+            }
+            
+            @TestMetadata("binaryMinusIndependentExpType.kt")
+            public void testBinaryMinusIndependentExpType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/binaryMinusIndependentExpType.kt");
+            }
+            
             @TestMetadata("intOverflow.kt")
             public void testIntOverflow() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/evaluate/intOverflow.kt");
@@ -2744,9 +2759,19 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/evaluate/longOverflow.kt");
             }
             
+            @TestMetadata("numberBinaryOperations.kt")
+            public void testNumberBinaryOperations() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/numberBinaryOperations.kt");
+            }
+            
             @TestMetadata("otherOverflow.kt")
             public void testOtherOverflow() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/evaluate/otherOverflow.kt");
+            }
+            
+            @TestMetadata("parentesized.kt")
+            public void testParentesized() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/parentesized.kt");
             }
             
             @TestMetadata("unaryMinusDepOnExpType.kt")
