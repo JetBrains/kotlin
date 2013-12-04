@@ -48,9 +48,8 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstant;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -73,7 +72,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver.ErrorCharValueWithDiagnostic;
+import static org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker.ErrorCharValueWithDiagnostic;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
@@ -124,8 +123,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
 
         if (!(value instanceof NumberValueTypeConstant)) {
-            CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
-            boolean hasError = compileTimeConstantResolver.checkConstantExpressionType(value, expression, context.expectedType);
+            CompileTimeConstantChecker compileTimeConstantChecker = context.getCompileTimeConstantChecker();
+            boolean hasError = compileTimeConstantChecker.checkConstantExpressionType(value, expression, context.expectedType);
             if (hasError) {
                 IElementType elementType = expression.getNode().getElementType();
                 return JetTypeInfo.create(getDefaultType(elementType), context.dataFlowInfo);
@@ -1189,7 +1188,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
                 @Override
                 public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
-                    CompileTimeConstant<?> compileTimeConstant = CompileTimeConstantResolver.escapedStringToCharValue(entry.getText(), entry);
+                    CompileTimeConstant<?> compileTimeConstant = CompileTimeConstantChecker.escapedStringToCharValue(entry.getText(), entry);
                     if (compileTimeConstant instanceof ErrorCharValueWithDiagnostic) {
                         context.trace.report(((ErrorCharValueWithDiagnostic) compileTimeConstant).getDiagnostic());
                     }

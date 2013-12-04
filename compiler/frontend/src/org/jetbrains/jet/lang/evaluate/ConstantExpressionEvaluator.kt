@@ -87,7 +87,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             JetNodeTypes.INTEGER_CONSTANT -> parseLong(text)
             JetNodeTypes.FLOAT_CONSTANT -> parseFloatingLiteral(text)
             JetNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
-            JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantResolver.parseChar(expression)
+            JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantChecker.parseChar(expression)
             JetNodeTypes.NULL -> null
             else -> throw IllegalArgumentException("Unsupported constant: " + expression)
         }
@@ -572,7 +572,7 @@ private fun getIntegerValue(value: Long, expectedType: JetType): CompileTimeCons
         else -> LongValue(value)
     }
 
-    if (CompileTimeConstantResolver.noExpectedTypeOrError(expectedType)) {
+    if (CompileTimeConstantChecker.noExpectedTypeOrError(expectedType)) {
         return IntegerValueTypeConstant(value)
     }
 

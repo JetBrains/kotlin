@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -75,7 +75,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
 
     public final ExpressionTypingServices expressionTypingServices;
     public final JetScope scopeForVisibility;
-    private CompileTimeConstantResolver compileTimeConstantResolver;
+    private CompileTimeConstantChecker compileTimeConstantChecker;
 
     private ExpressionTypingContext(
             @NotNull ExpressionTypingServices expressionTypingServices,
@@ -118,11 +118,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
 
 ///////////// LAZY ACCESSORS
 
-    public CompileTimeConstantResolver getCompileTimeConstantResolver() {
-        if (compileTimeConstantResolver == null) {
-            compileTimeConstantResolver = new CompileTimeConstantResolver(trace, false);
+    public CompileTimeConstantChecker getCompileTimeConstantChecker() {
+        if (compileTimeConstantChecker == null) {
+            compileTimeConstantChecker = new CompileTimeConstantChecker(trace, false);
         }
-        return compileTimeConstantResolver;
+        return compileTimeConstantChecker;
     }
 
 ////////// Call resolution utilities

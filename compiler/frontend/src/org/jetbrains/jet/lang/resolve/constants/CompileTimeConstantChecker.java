@@ -37,7 +37,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
-public class CompileTimeConstantResolver {
+public class CompileTimeConstantChecker {
     private static final Set<DiagnosticFactory> errorsThatDependOnExpectedType =
             Sets.<DiagnosticFactory>newHashSet(CONSTANT_EXPECTED_TYPE_MISMATCH, NULL_FOR_NONNULL_TYPE);
 
@@ -45,7 +45,7 @@ public class CompileTimeConstantResolver {
     private final BindingTrace trace;
     private final boolean checkOnlyErrorsThatDependOnExpectedType;
 
-    public CompileTimeConstantResolver(@NotNull BindingTrace trace, boolean checkOnlyErrorsThatDependOnExpectedType) {
+    public CompileTimeConstantChecker(@NotNull BindingTrace trace, boolean checkOnlyErrorsThatDependOnExpectedType) {
         this.checkOnlyErrorsThatDependOnExpectedType = checkOnlyErrorsThatDependOnExpectedType;
         this.builtIns = KotlinBuiltIns.getInstance();
         this.trace = trace;
