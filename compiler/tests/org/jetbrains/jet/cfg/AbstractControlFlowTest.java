@@ -55,11 +55,15 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
         List<JetDeclaration> declarations = jetFile.getDeclarations();
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (JetDeclaration declaration : declarations) {
-            Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
-            data.put(declaration, pseudocode);
-            for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
-                Pseudocode localPseudocode = instruction.getBody();
-                data.put(localPseudocode.getCorrespondingElement(), localPseudocode);
+            addDeclaration(data, bindingContext, declaration);
+
+            if (declaration instanceof JetDeclarationContainer) {
+                for (JetDeclaration member : ((JetDeclarationContainer) declaration).getDeclarations()) {
+                    // Properties and initializers are processed elsewhere
+                    if (member instanceof JetNamedFunction) {
+                        addDeclaration(data, bindingContext, member);
+                    }
+                }
             }
         }
 
@@ -73,6 +77,15 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
             if ("true".equals(System.getProperty("jet.control.flow.test.dump.graphs"))) {
                 dumpDot(file, data.values());
             }
+        }
+    }
+
+    private void addDeclaration(Map<JetElement, Pseudocode> data, BindingContext bindingContext, JetDeclaration declaration) {
+        Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
+        data.put(declaration, pseudocode);
+        for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
+            Pseudocode localPseudocode = instruction.getBody();
+            data.put(localPseudocode.getCorrespondingElement(), localPseudocode);
         }
     }
 
