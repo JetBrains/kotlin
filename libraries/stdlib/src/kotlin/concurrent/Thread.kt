@@ -5,25 +5,25 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.Callable
 
-inline val currentThread : Thread
+val currentThread : Thread
     get() = Thread.currentThread()
 
-inline var Thread.name : String
+var Thread.name : String
     get() = getName()
     set(name: String) { setName(name) }
 
-inline var Thread.daemon : Boolean
+var Thread.daemon : Boolean
     get() = isDaemon()
     set(on: Boolean) { setDaemon(on) }
 
-inline val Thread.alive : Boolean
+val Thread.alive : Boolean
     get() = isAlive()
 
-inline var Thread.priority : Int
+var Thread.priority : Int
     get() = getPriority()
     set(prio: Int) { setPriority(prio) }
 
-inline var Thread.contextClassLoader : ClassLoader?
+var Thread.contextClassLoader : ClassLoader?
     get() = getContextClassLoader()
     set(loader: ClassLoader?) { setContextClassLoader(loader) }
 

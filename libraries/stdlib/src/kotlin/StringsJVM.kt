@@ -166,10 +166,10 @@ public fun String.toRegex(flags: Int=0): java.util.regex.Pattern {
     return java.util.regex.Pattern.compile(this, flags)
 }
 
-inline val String.reader : StringReader
+val String.reader : StringReader
 get() = StringReader(this)
 
-inline val String.size : Int
+val String.size : Int
 get() = length()
 
 
