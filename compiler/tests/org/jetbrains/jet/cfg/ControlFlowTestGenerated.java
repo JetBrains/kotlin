@@ -228,6 +228,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest("compiler/testData/cfg/deadCode/returnInElvis.kt");
         }
         
+        @TestMetadata("stringTemplate.kt")
+        public void testStringTemplate() throws Exception {
+            doTest("compiler/testData/cfg/deadCode/stringTemplate.kt");
+        }
+        
     }
     
     public static Test suite() {
