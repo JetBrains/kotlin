@@ -4,37 +4,37 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START>     NEXT:[jmp?(L2)]        PREV:[]
-    jmp?(L2)    NEXT:[r({}), d({})]    PREV:[<START>]
-    d({})       NEXT:[<SINK>]          PREV:[jmp?(L2)]
+    <START> 
+    jmp?(L2)    NEXT:[r({}), d({})]
+    d({})       NEXT:[<SINK>]      
 L2:
-    r({})       NEXT:[<END>]           PREV:[jmp?(L2)]
+    r({})       PREV:[jmp?(L2)]
 L1:
-    <END>       NEXT:[<SINK>]          PREV:[r({})]
+    <END>       NEXT:[<SINK>]      
 error:
-    <ERROR>     NEXT:[<SINK>]          PREV:[]
+    <ERROR>     PREV:[]
 sink:
-    <SINK>      NEXT:[]                PREV:[<ERROR>, <END>, d({})]
+    <SINK>      PREV:[<ERROR>, <END>, d({})]
 L3:
-    <START>        NEXT:[read (Unit)]    PREV:[]
-    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+    <START>    
+    read (Unit)
 L4:
-    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]     
 error:
-    <ERROR>        NEXT:[<SINK>]         PREV:[]
+    <ERROR>        PREV:[]
 sink:
-    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<ERROR>, <END>]
 =====================
 == anonymous_0 ==
 {}
 ---------------------
 L3:
-    <START>        NEXT:[read (Unit)]    PREV:[]
-    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+    <START>    
+    read (Unit)
 L4:
-    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]     
 error:
-    <ERROR>        NEXT:[<SINK>]         PREV:[]
+    <ERROR>        PREV:[]
 sink:
-    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<ERROR>, <END>]
 =====================

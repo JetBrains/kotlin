@@ -10,33 +10,33 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START>                  NEXT:[v(val a = Array<Int>)]    PREV:[]
-    v(val a = Array<Int>)    NEXT:[call(Array, <init>)]      PREV:[<START>]
-    call(Array, <init>)      NEXT:[w(a)]                     PREV:[v(val a = Array<Int>)]
-    w(a)                     NEXT:[r(3)]                     PREV:[call(Array, <init>)]
-    r(3)                     NEXT:[r(a)]                     PREV:[w(a)]
-    r(a)                     NEXT:[r(10)]                    PREV:[r(3)]
-    r(10)                    NEXT:[r(4)]                     PREV:[r(a)]
-    r(4)                     NEXT:[call(a[10], set)]         PREV:[r(10)]
-    call(a[10], set)         NEXT:[r(2)]                     PREV:[r(4)]
-    r(2)                     NEXT:[r(a)]                     PREV:[call(a[10], set)]
-    r(a)                     NEXT:[r(10)]                    PREV:[r(2)]
-    r(10)                    NEXT:[call(a[10], get)]         PREV:[r(a)]
-    call(a[10], get)         NEXT:[r(100)]                   PREV:[r(10)]
-    r(100)                   NEXT:[r(a)]                     PREV:[call(a[10], get)]
-    r(a)                     NEXT:[r(10)]                    PREV:[r(100)]
-    r(10)                    NEXT:[call(a[10], get)]         PREV:[r(a)]
-    call(a[10], get)         NEXT:[r(1)]                     PREV:[r(10)]
-    r(1)                     NEXT:[call(+=, plus)]           PREV:[call(a[10], get)]
-    call(+=, plus)           NEXT:[r(a)]                     PREV:[r(1)]
-    r(a)                     NEXT:[r(10)]                    PREV:[call(+=, plus)]
-    r(10)                    NEXT:[r(1)]                     PREV:[r(a)]
-    r(1)                     NEXT:[call(a[10], set)]         PREV:[r(10)]
-    call(a[10], set)         NEXT:[<END>]                    PREV:[r(1)]
+    <START>              
+    v(val a = Array<Int>)
+    call(Array, <init>)  
+    w(a)                 
+    r(3)                 
+    r(a)                 
+    r(10)                
+    r(4)                 
+    call(a[10], set)     
+    r(2)                 
+    r(a)                 
+    r(10)                
+    call(a[10], get)     
+    r(100)               
+    r(a)                 
+    r(10)                
+    call(a[10], get)     
+    r(1)                 
+    call(+=, plus)       
+    r(a)                 
+    r(10)                
+    r(1)                 
+    call(a[10], set)     
 L1:
-    <END>                    NEXT:[<SINK>]                   PREV:[call(a[10], set)]
+    <END>                    NEXT:[<SINK>]               
 error:
-    <ERROR>                  NEXT:[<SINK>]                   PREV:[]
+    <ERROR>                  PREV:[]
 sink:
-    <SINK>                   NEXT:[]                         PREV:[<ERROR>, <END>]
+    <SINK>                   PREV:[<ERROR>, <END>]
 =====================

@@ -4,12 +4,12 @@ fun <T> foo() {
 }
 ---------------------
 L0:
-    <START>                       NEXT:[error(T, No resolved call)]    PREV:[]
-    error(T, No resolved call)    NEXT:[<END>]                         PREV:[<START>]
+    <START>                   
+    error(T, No resolved call)
 L1:
-    <END>                         NEXT:[<SINK>]                        PREV:[error(T, No resolved call)]
+    <END>                         NEXT:[<SINK>]                    
 error:
-    <ERROR>                       NEXT:[<SINK>]                        PREV:[]
+    <ERROR>                       PREV:[]
 sink:
-    <SINK>                        NEXT:[]                              PREV:[<ERROR>, <END>]
+    <SINK>                        PREV:[<ERROR>, <END>]
 =====================

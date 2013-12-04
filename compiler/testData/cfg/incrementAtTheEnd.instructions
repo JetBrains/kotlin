@@ -5,17 +5,17 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START>          NEXT:[v(var i = 1)]     PREV:[]
-    v(var i = 1)     NEXT:[r(1)]             PREV:[<START>]
-    r(1)             NEXT:[w(i)]             PREV:[v(var i = 1)]
-    w(i)             NEXT:[r(i)]             PREV:[r(1)]
-    r(i)             NEXT:[call(++, inc)]    PREV:[w(i)]
-    call(++, inc)    NEXT:[w(i)]             PREV:[r(i)]
-    w(i)             NEXT:[<END>]            PREV:[call(++, inc)]
+    <START>      
+    v(var i = 1) 
+    r(1)         
+    w(i)         
+    r(i)         
+    call(++, inc)
+    w(i)         
 L1:
-    <END>            NEXT:[<SINK>]           PREV:[w(i)]
+    <END>            NEXT:[<SINK>]       
 error:
-    <ERROR>          NEXT:[<SINK>]           PREV:[]
+    <ERROR>          PREV:[]
 sink:
-    <SINK>           NEXT:[]                 PREV:[<ERROR>, <END>]
+    <SINK>           PREV:[<ERROR>, <END>]
 =====================

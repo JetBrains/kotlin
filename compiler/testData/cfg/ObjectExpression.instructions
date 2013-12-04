@@ -4,13 +4,13 @@ trait A {
 }
 ---------------------
 L0:
-    <START>    NEXT:[<END>]     PREV:[]
+    <START>
 L1:
-    <END>      NEXT:[<SINK>]    PREV:[<START>]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == B ==
 class B : A {
@@ -18,14 +18,14 @@ class B : A {
 }
 ---------------------
 L0:
-    <START>                                   NEXT:[unsupported(DELEGATOR_SUPER_CLASS : A)]    PREV:[]
-    unsupported(DELEGATOR_SUPER_CLASS : A)    NEXT:[<END>]                                     PREV:[<START>]
+    <START>                               
+    unsupported(DELEGATOR_SUPER_CLASS : A)
 L1:
-    <END>                                     NEXT:[<SINK>]                                    PREV:[unsupported(DELEGATOR_SUPER_CLASS : A)]
+    <END>                                     NEXT:[<SINK>]                                
 error:
-    <ERROR>                                   NEXT:[<SINK>]                                    PREV:[]
+    <ERROR>                                   PREV:[]
 sink:
-    <SINK>                                    NEXT:[]                                          PREV:[<ERROR>, <END>]
+    <SINK>                                    PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo(b: B) : Int {
@@ -34,20 +34,20 @@ fun foo(b: B) : Int {
 }
 ---------------------
 L0:
-    <START>                          NEXT:[v(b: B)]                          PREV:[]
-    v(b: B)                          NEXT:[w(b)]                             PREV:[<START>]
-    w(b)                             NEXT:[v(val o = object : A by b {})]    PREV:[v(b: B)]
-    v(val o = object : A by b {})    NEXT:[r(b)]                             PREV:[w(b)]
-    r(b)                             NEXT:[r(object : A by b {})]            PREV:[v(val o = object : A by b {})]
-    r(object : A by b {})            NEXT:[w(o)]                             PREV:[r(b)]
-    w(o)                             NEXT:[r(o)]                             PREV:[r(object : A by b {})]
-    r(o)                             NEXT:[call(foo, foo)]                   PREV:[w(o)]
-    call(foo, foo)                   NEXT:[ret(*) L1]                        PREV:[r(o)]
-    ret(*) L1                        NEXT:[<END>]                            PREV:[call(foo, foo)]
+    <START>                      
+    v(b: B)                      
+    w(b)                         
+    v(val o = object : A by b {})
+    r(b)                         
+    r(object : A by b {})        
+    w(o)                         
+    r(o)                         
+    call(foo, foo)               
+    ret(*) L1                    
 L1:
-    <END>                            NEXT:[<SINK>]                           PREV:[ret(*) L1]
+    <END>                            NEXT:[<SINK>]                       
 error:
-    <ERROR>                          NEXT:[<SINK>]                           PREV:[]
+    <ERROR>                          PREV:[]
 sink:
-    <SINK>                           NEXT:[]                                 PREV:[<ERROR>, <END>]
+    <SINK>                           PREV:[<ERROR>, <END>]
 =====================

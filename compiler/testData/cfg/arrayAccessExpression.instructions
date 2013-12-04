@@ -4,13 +4,13 @@ abstract class Ab {
 }
 ---------------------
 L0:
-    <START>    NEXT:[<END>]     PREV:[]
+    <START>
 L1:
-    <END>      NEXT:[<SINK>]    PREV:[<START>]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == test ==
 fun test(ab: Ab) {
@@ -18,17 +18,17 @@ fun test(ab: Ab) {
 }
 ---------------------
 L0:
-    <START>                        NEXT:[v(ab: Ab)]                      PREV:[]
-    v(ab: Ab)                      NEXT:[w(ab)]                          PREV:[<START>]
-    w(ab)                          NEXT:[r(ab)]                          PREV:[v(ab: Ab)]
-    r(ab)                          NEXT:[call(getArray, getArray)]       PREV:[w(ab)]
-    call(getArray, getArray)       NEXT:[r(1)]                           PREV:[r(ab)]
-    r(1)                           NEXT:[call(ab.getArray()[1], get)]    PREV:[call(getArray, getArray)]
-    call(ab.getArray()[1], get)    NEXT:[<END>]                          PREV:[r(1)]
+    <START>                    
+    v(ab: Ab)                  
+    w(ab)                      
+    r(ab)                      
+    call(getArray, getArray)   
+    r(1)                       
+    call(ab.getArray()[1], get)
 L1:
-    <END>                          NEXT:[<SINK>]                         PREV:[call(ab.getArray()[1], get)]
+    <END>                          NEXT:[<SINK>]                     
 error:
-    <ERROR>                        NEXT:[<SINK>]                         PREV:[]
+    <ERROR>                        PREV:[]
 sink:
-    <SINK>                         NEXT:[]                               PREV:[<ERROR>, <END>]
+    <SINK>                         PREV:[<ERROR>, <END>]
 =====================

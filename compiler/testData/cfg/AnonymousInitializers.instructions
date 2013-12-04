@@ -16,45 +16,45 @@ class AnonymousInitializers() {
 }
 ---------------------
 L0:
-    <START>                     NEXT:[v(val k = 34)]               PREV:[]
-    v(val k = 34)               NEXT:[r(34)]                       PREV:[<START>]
-    r(34)                       NEXT:[w(k)]                        PREV:[v(val k = 34)]
-    w(k)                        NEXT:[v(val i: Int)]               PREV:[r(34)]
-    v(val i: Int)               NEXT:[r(12)]                       PREV:[w(k)]
-    r(12)                       NEXT:[w($i)]                       PREV:[v(val i: Int)]
-    w($i)                       NEXT:[v(val j: Int get() = 20)]    PREV:[r(12)]
-    v(val j: Int get() = 20)    NEXT:[jmp?(L2)]                    PREV:[w($i)]
-    jmp?(L2)                    NEXT:[r(13), d(get() = 20)]        PREV:[v(val j: Int get() = 20)]
-    d(get() = 20)               NEXT:[<SINK>]                      PREV:[jmp?(L2)]
+    <START>                 
+    v(val k = 34)           
+    r(34)                   
+    w(k)                    
+    v(val i: Int)           
+    r(12)                   
+    w($i)                   
+    v(val j: Int get() = 20)
+    jmp?(L2)                    NEXT:[r(13), d(get() = 20)]    
+    d(get() = 20)               NEXT:[<SINK>]                  
 L2:
-    r(13)                       NEXT:[w($i)]                       PREV:[jmp?(L2)]
-    w($i)                       NEXT:[<END>]                       PREV:[r(13)]
+    r(13)                       PREV:[jmp?(L2)]
+    w($i)                   
 L1:
-    <END>                       NEXT:[<SINK>]                      PREV:[w($i)]
+    <END>                       NEXT:[<SINK>]                  
 error:
-    <ERROR>                     NEXT:[<SINK>]                      PREV:[]
+    <ERROR>                     PREV:[]
 sink:
-    <SINK>                      NEXT:[]                            PREV:[<ERROR>, <END>, d(get() = 20)]
+    <SINK>                      PREV:[<ERROR>, <END>, d(get() = 20)]
 L3:
-    <START>    NEXT:[r(20)]     PREV:[]
-    r(20)      NEXT:[<END>]     PREV:[<START>]
+    <START>
+    r(20)  
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[r(20)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == get_j ==
 get() = 20
 ---------------------
 L3:
-    <START>    NEXT:[r(20)]     PREV:[]
-    r(20)      NEXT:[<END>]     PREV:[<START>]
+    <START>
+    r(20)  
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[r(20)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================

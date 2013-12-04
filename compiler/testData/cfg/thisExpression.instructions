@@ -4,13 +4,13 @@ fun Function0<Unit>.foo() {
 }
 ---------------------
 L0:
-    <START>                              NEXT:[r(this)]                              PREV:[]
-    r(this)                              NEXT:[call(this, <for expression this>)]    PREV:[<START>]
-    call(this, <for expression this>)    NEXT:[<END>]                                PREV:[r(this)]
+    <START>                          
+    r(this)                          
+    call(this, <for expression this>)
 L1:
-    <END>                                NEXT:[<SINK>]                               PREV:[call(this, <for expression this>)]
+    <END>                                NEXT:[<SINK>]                           
 error:
-    <ERROR>                              NEXT:[<SINK>]                               PREV:[]
+    <ERROR>                              PREV:[]
 sink:
-    <SINK>                               NEXT:[]                                     PREV:[<ERROR>, <END>]
+    <SINK>                               PREV:[<ERROR>, <END>]
 =====================

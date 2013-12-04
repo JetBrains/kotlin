@@ -7,27 +7,27 @@ fun illegalWhenBlock(a: Any): Any {
 }
 ---------------------
 L0:
-    <START>      NEXT:[v(a: Any)]         PREV:[]
-    v(a: Any)    NEXT:[w(a)]              PREV:[<START>]
-    w(a)         NEXT:[r(a)]              PREV:[v(a: Any)]
-    r(a)         NEXT:[jmp?(L4)]          PREV:[w(a)]
-    jmp?(L4)     NEXT:[jmp?(L6), r(a)]    PREV:[r(a)]
+    <START>  
+    v(a: Any)
+    w(a)     
+    r(a)     
+    jmp?(L4)     NEXT:[jmp?(L6), r(a)]
 L3:
-    r(a)         NEXT:[ret(*) L1]         PREV:[jmp?(L4)]
-    ret(*) L1    NEXT:[<END>]             PREV:[r(a)]
+    r(a)     
+    ret(*) L1    NEXT:[<END>]         
 -   jmp(L2)      NEXT:[<END>]             PREV:[]
 L4:
     jmp?(L6)     NEXT:[<END>, r(a)]       PREV:[jmp?(L4)]
 L5:
-    r(a)         NEXT:[ret(*) L1]         PREV:[jmp?(L6)]
-    ret(*) L1    NEXT:[<END>]             PREV:[r(a)]
--   jmp(L2)      NEXT:[<END>]             PREV:[]
+    r(a)     
+    ret(*) L1    NEXT:[<END>]         
+-   jmp(L2)      PREV:[]
 L1:
 L2:
 L6:
     <END>        NEXT:[<SINK>]            PREV:[ret(*) L1, jmp?(L6), ret(*) L1]
 error:
-    <ERROR>      NEXT:[<SINK>]            PREV:[]
+    <ERROR>      PREV:[]
 sink:
-    <SINK>       NEXT:[]                  PREV:[<ERROR>, <END>]
+    <SINK>       PREV:[<ERROR>, <END>]
 =====================

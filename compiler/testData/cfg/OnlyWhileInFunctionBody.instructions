@@ -6,24 +6,24 @@ fun main() {
 }
 ---------------------
 L0:
-    <START>                       NEXT:[r(1)]                          PREV:[]
+    <START>                   
 L2 [loop entry point]:
 L5 [condition entry point]:
-    r(1)                          NEXT:[r(0)]                          PREV:[<START>, jmp(L2 [loop entry point])]
-    r(0)                          NEXT:[call(>, compareTo)]            PREV:[r(1)]
-    call(>, compareTo)            NEXT:[jf(L3 [loop exit point])]      PREV:[r(0)]
-    jf(L3 [loop exit point])      NEXT:[read (Unit), r(2)]             PREV:[call(>, compareTo)]
+    r(1)                          PREV:[<START>, jmp(L2 [loop entry point])]
+    r(0)                      
+    call(>, compareTo)        
+    jf(L3 [loop exit point])      NEXT:[read (Unit), r(2)]         
 L4 [body entry point]:
-    r(2)                          NEXT:[jmp(L2 [loop entry point])]    PREV:[jf(L3 [loop exit point])]
-    jmp(L2 [loop entry point])    NEXT:[r(1)]                          PREV:[r(2)]
+    r(2)                      
+    jmp(L2 [loop entry point])    NEXT:[r(1)]                      
 L3 [loop exit point]:
-    read (Unit)                   NEXT:[<END>]                         PREV:[jf(L3 [loop exit point])]
+    read (Unit)                   PREV:[jf(L3 [loop exit point])]
 L1:
-    <END>                         NEXT:[<SINK>]                        PREV:[read (Unit)]
+    <END>                         NEXT:[<SINK>]                    
 error:
-    <ERROR>                       NEXT:[<SINK>]                        PREV:[]
+    <ERROR>                       PREV:[]
 sink:
-    <SINK>                        NEXT:[]                              PREV:[<ERROR>, <END>]
+    <SINK>                        PREV:[<ERROR>, <END>]
 =====================
 == dowhile ==
 fun dowhile() {
@@ -32,21 +32,21 @@ fun dowhile() {
 }
 ---------------------
 L0:
-    <START>                      NEXT:[ret L1]                       PREV:[]
+    <START>                  
 L2 [loop entry point]:
 L4 [body entry point]:
-    ret L1                       NEXT:[<END>]                        PREV:[<START>]
+    ret L1                       NEXT:[<END>]                    
 L5 [condition entry point]:
--   r(1)                         NEXT:[r(0)]                         PREV:[]
--   r(0)                         NEXT:[call(>, compareTo)]           PREV:[]
--   call(>, compareTo)           NEXT:[jt(L2 [loop entry point])]    PREV:[]
+-   r(1)                         PREV:[]
+-   r(0)                         PREV:[]
+-   call(>, compareTo)           PREV:[]
 -   jt(L2 [loop entry point])    NEXT:[read (Unit), ret L1]          PREV:[]
 L3 [loop exit point]:
--   read (Unit)                  NEXT:[<END>]                        PREV:[]
+-   read (Unit)                  PREV:[]
 L1:
     <END>                        NEXT:[<SINK>]                       PREV:[ret L1]
 error:
-    <ERROR>                      NEXT:[<SINK>]                       PREV:[]
+    <ERROR>                      PREV:[]
 sink:
-    <SINK>                       NEXT:[]                             PREV:[<ERROR>, <END>]
+    <SINK>                       PREV:[<ERROR>, <END>]
 =====================

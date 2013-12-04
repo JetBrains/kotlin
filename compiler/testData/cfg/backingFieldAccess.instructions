@@ -9,38 +9,38 @@ class C {
 }
 ---------------------
 L0:
-    <START>                    NEXT:[v(val a: Int get() = 1)]    PREV:[]
-    v(val a: Int get() = 1)    NEXT:[jmp?(L2)]                   PREV:[<START>]
-    jmp?(L2)                   NEXT:[r($a), d(get() = 1)]        PREV:[v(val a: Int get() = 1)]
-    d(get() = 1)               NEXT:[<SINK>]                     PREV:[jmp?(L2)]
+    <START>                
+    v(val a: Int get() = 1)
+    jmp?(L2)                   NEXT:[r($a), d(get() = 1)]    
+    d(get() = 1)               NEXT:[<SINK>]                 
 L2:
-    r($a)                      NEXT:[<END>]                      PREV:[jmp?(L2)]
+    r($a)                      PREV:[jmp?(L2)]
 L1:
-    <END>                      NEXT:[<SINK>]                     PREV:[r($a)]
+    <END>                      NEXT:[<SINK>]                 
 error:
-    <ERROR>                    NEXT:[<SINK>]                     PREV:[]
+    <ERROR>                    PREV:[]
 sink:
-    <SINK>                     NEXT:[]                           PREV:[<ERROR>, <END>, d(get() = 1)]
+    <SINK>                     PREV:[<ERROR>, <END>, d(get() = 1)]
 L3:
-    <START>    NEXT:[r(1)]      PREV:[]
-    r(1)       NEXT:[<END>]     PREV:[<START>]
+    <START>
+    r(1)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[r(1)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == get_a ==
 get() = 1
 ---------------------
 L3:
-    <START>    NEXT:[r(1)]      PREV:[]
-    r(1)       NEXT:[<END>]     PREV:[<START>]
+    <START>
+    r(1)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[r(1)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================

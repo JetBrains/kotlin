@@ -18,112 +18,112 @@ fun f(a : Boolean) : Unit {
 }
 ---------------------
 L0:
-    <START>                 NEXT:[v(a : Boolean)]             PREV:[]
-    v(a : Boolean)          NEXT:[w(a)]                       PREV:[<START>]
-    w(a)                    NEXT:[r(1)]                       PREV:[v(a : Boolean)]
-    r(1)                    NEXT:[r(a)]                       PREV:[w(a)]
-    r(a)                    NEXT:[r(2)]                       PREV:[r(1)]
-    r(2)                    NEXT:[call(toLong, toLong)]       PREV:[r(a)]
-    call(toLong, toLong)    NEXT:[r(a)]                       PREV:[r(2)]
-    r(a)                    NEXT:[r(3)]                       PREV:[call(toLong, toLong)]
-    r(3)                    NEXT:[call(foo, foo)]             PREV:[r(a)]
-    call(foo, foo)          NEXT:[call(genfun, genfun)]       PREV:[r(3)]
-    call(genfun, genfun)    NEXT:[jmp?(L2)]                   PREV:[call(foo, foo)]
-    jmp?(L2)                NEXT:[r({1}), d({1})]             PREV:[call(genfun, genfun)]
-    d({1})                  NEXT:[<SINK>]                     PREV:[jmp?(L2)]
+    <START>             
+    v(a : Boolean)      
+    w(a)                
+    r(1)                
+    r(a)                
+    r(2)                
+    call(toLong, toLong)
+    r(a)                
+    r(3)                
+    call(foo, foo)      
+    call(genfun, genfun)
+    jmp?(L2)                NEXT:[r({1}), d({1})]         
+    d({1})                  NEXT:[<SINK>]                 
 L2:
-    r({1})                  NEXT:[call(flfun, flfun)]         PREV:[jmp?(L2)]
-    call(flfun, flfun)      NEXT:[r(3)]                       PREV:[r({1})]
-    r(3)                    NEXT:[r(4)]                       PREV:[call(flfun, flfun)]
-    r(4)                    NEXT:[call(equals, equals)]       PREV:[r(3)]
-    call(equals, equals)    NEXT:[r(3)]                       PREV:[r(4)]
-    r(3)                    NEXT:[r(4)]                       PREV:[call(equals, equals)]
-    r(4)                    NEXT:[call(equals, equals)]       PREV:[r(3)]
-    call(equals, equals)    NEXT:[r(1)]                       PREV:[r(4)]
-    r(1)                    NEXT:[r(2)]                       PREV:[call(equals, equals)]
-    r(2)                    NEXT:[call(+, plus)]              PREV:[r(1)]
-    call(+, plus)           NEXT:[r(a)]                       PREV:[r(2)]
-    r(a)                    NEXT:[jf(L5)]                     PREV:[call(+, plus)]
-    jf(L5)                  NEXT:[r(a && true), r(true)]      PREV:[r(a)]
-    r(true)                 NEXT:[r(a && true)]               PREV:[jf(L5)]
+    r({1})                  PREV:[jmp?(L2)]
+    call(flfun, flfun)  
+    r(3)                
+    r(4)                
+    call(equals, equals)
+    r(3)                
+    r(4)                
+    call(equals, equals)
+    r(1)                
+    r(2)                
+    call(+, plus)       
+    r(a)                
+    jf(L5)                  NEXT:[r(a && true), r(true)]  
+    r(true)             
 L5:
-    r(a && true)            NEXT:[r(a)]                       PREV:[jf(L5), r(true)]
-    r(a)                    NEXT:[jt(L6)]                     PREV:[r(a && true)]
-    jt(L6)                  NEXT:[r(false), r(a || false)]    PREV:[r(a)]
-    r(false)                NEXT:[r(a || false)]              PREV:[jt(L6)]
+    r(a && true)            PREV:[jf(L5), r(true)]
+    r(a)                
+    jt(L6)                  NEXT:[r(false), r(a || false)]
+    r(false)            
 L6:
-    r(a || false)           NEXT:[<END>]                      PREV:[jt(L6), r(false)]
+    r(a || false)           PREV:[jt(L6), r(false)]
 L1:
-    <END>                   NEXT:[<SINK>]                     PREV:[r(a || false)]
+    <END>                   NEXT:[<SINK>]                 
 error:
-    <ERROR>                 NEXT:[<SINK>]                     PREV:[]
+    <ERROR>                 PREV:[]
 sink:
-    <SINK>                  NEXT:[]                           PREV:[<ERROR>, <END>, d({1})]
+    <SINK>                  PREV:[<ERROR>, <END>, d({1})]
 L3:
-    <START>    NEXT:[r(1)]      PREV:[]
-    r(1)       NEXT:[<END>]     PREV:[<START>]
+    <START>
+    r(1)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[r(1)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == anonymous_0 ==
 {1}
 ---------------------
 L3:
-    <START>    NEXT:[r(1)]      PREV:[]
-    r(1)       NEXT:[<END>]     PREV:[<START>]
+    <START>
+    r(1)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[r(1)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo(a : Boolean, b : Int) : Unit {}
 ---------------------
 L0:
-    <START>           NEXT:[v(a : Boolean)]    PREV:[]
-    v(a : Boolean)    NEXT:[w(a)]              PREV:[<START>]
-    w(a)              NEXT:[v(b : Int)]        PREV:[v(a : Boolean)]
-    v(b : Int)        NEXT:[w(b)]              PREV:[w(a)]
-    w(b)              NEXT:[read (Unit)]       PREV:[v(b : Int)]
-    read (Unit)       NEXT:[<END>]             PREV:[w(b)]
+    <START>       
+    v(a : Boolean)
+    w(a)          
+    v(b : Int)    
+    w(b)          
+    read (Unit)   
 L1:
-    <END>             NEXT:[<SINK>]            PREV:[read (Unit)]
+    <END>             NEXT:[<SINK>]        
 error:
-    <ERROR>           NEXT:[<SINK>]            PREV:[]
+    <ERROR>           PREV:[]
 sink:
-    <SINK>            NEXT:[]                  PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<ERROR>, <END>]
 =====================
 == genfun ==
 fun genfun<T>() : Unit {}
 ---------------------
 L0:
-    <START>        NEXT:[read (Unit)]    PREV:[]
-    read (Unit)    NEXT:[<END>]          PREV:[<START>]
+    <START>    
+    read (Unit)
 L1:
-    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]     
 error:
-    <ERROR>        NEXT:[<SINK>]         PREV:[]
+    <ERROR>        PREV:[]
 sink:
-    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<ERROR>, <END>]
 =====================
 == flfun ==
 fun flfun(f : () -> Any) : Unit {}
 ---------------------
 L0:
-    <START>             NEXT:[v(f : () -> Any)]    PREV:[]
-    v(f : () -> Any)    NEXT:[w(f)]                PREV:[<START>]
-    w(f)                NEXT:[read (Unit)]         PREV:[v(f : () -> Any)]
-    read (Unit)         NEXT:[<END>]               PREV:[w(f)]
+    <START>         
+    v(f : () -> Any)
+    w(f)            
+    read (Unit)     
 L1:
-    <END>               NEXT:[<SINK>]              PREV:[read (Unit)]
+    <END>               NEXT:[<SINK>]          
 error:
-    <ERROR>             NEXT:[<SINK>]              PREV:[]
+    <ERROR>             PREV:[]
 sink:
-    <SINK>              NEXT:[]                    PREV:[<ERROR>, <END>]
+    <SINK>              PREV:[<ERROR>, <END>]
 =====================

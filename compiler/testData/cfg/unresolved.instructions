@@ -4,16 +4,16 @@ fun test(a: Any) {
 }
 ---------------------
 L0:
-    <START>                         NEXT:[v(a: Any)]                       PREV:[]
-    v(a: Any)                       NEXT:[w(a)]                            PREV:[<START>]
-    w(a)                            NEXT:[error(foo, No resolved call)]    PREV:[v(a: Any)]
-    error(foo, No resolved call)    NEXT:[error(foo, No resolved call)]    PREV:[w(a)]
-    error(foo, No resolved call)    NEXT:[r(a)]                            PREV:[error(foo, No resolved call)]
-    r(a)                            NEXT:[<END>]                           PREV:[error(foo, No resolved call)]
+    <START>                     
+    v(a: Any)                   
+    w(a)                        
+    error(foo, No resolved call)
+    error(foo, No resolved call)
+    r(a)                        
 L1:
-    <END>                           NEXT:[<SINK>]                          PREV:[r(a)]
+    <END>                           NEXT:[<SINK>]                      
 error:
-    <ERROR>                         NEXT:[<SINK>]                          PREV:[]
+    <ERROR>                         PREV:[]
 sink:
-    <SINK>                          NEXT:[]                                PREV:[<ERROR>, <END>]
+    <SINK>                          PREV:[<ERROR>, <END>]
 =====================

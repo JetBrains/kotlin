@@ -4,17 +4,17 @@ fun blockAndAndMismatch() : Boolean {
 }
 ---------------------
 L0:
-    <START>                       NEXT:[r(false)]                                PREV:[]
-    r(false)                      NEXT:[jt(L2)]                                  PREV:[<START>]
-    jt(L2)                        NEXT:[r(false), r(false || (return false))]    PREV:[r(false)]
-    r(false)                      NEXT:[ret(*) L1]                               PREV:[jt(L2)]
-    ret(*) L1                     NEXT:[<END>]                                   PREV:[r(false)]
+    <START>                   
+    r(false)                  
+    jt(L2)                        NEXT:[r(false), r(false || (return false))]
+    r(false)                  
+    ret(*) L1                     NEXT:[<END>]                               
 L2:
-    r(false || (return false))    NEXT:[<END>]                                   PREV:[jt(L2)]
+    r(false || (return false))    PREV:[jt(L2)]
 L1:
     <END>                         NEXT:[<SINK>]                                  PREV:[ret(*) L1, r(false || (return false))]
 error:
-    <ERROR>                       NEXT:[<SINK>]                                  PREV:[]
+    <ERROR>                       PREV:[]
 sink:
-    <SINK>                        NEXT:[]                                        PREV:[<ERROR>, <END>]
+    <SINK>                        PREV:[<ERROR>, <END>]
 =====================

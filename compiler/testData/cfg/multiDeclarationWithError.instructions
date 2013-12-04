@@ -5,19 +5,19 @@ fun foo(x: Int) {
 }
 ---------------------
 L0:
-    <START>      NEXT:[v(x: Int)]    PREV:[]
-    v(x: Int)    NEXT:[w(x)]         PREV:[<START>]
-    w(x)         NEXT:[r(x)]         PREV:[v(x: Int)]
-    r(x)         NEXT:[v(a)]         PREV:[w(x)]
-    v(a)         NEXT:[w(a)]         PREV:[r(x)]
-    w(a)         NEXT:[v(b)]         PREV:[v(a)]
-    v(b)         NEXT:[w(b)]         PREV:[w(a)]
-    w(b)         NEXT:[r(a)]         PREV:[v(b)]
-    r(a)         NEXT:[<END>]        PREV:[w(b)]
+    <START>  
+    v(x: Int)
+    w(x)     
+    r(x)     
+    v(a)     
+    w(a)     
+    v(b)     
+    w(b)     
+    r(a)     
 L1:
-    <END>        NEXT:[<SINK>]       PREV:[r(a)]
+    <END>        NEXT:[<SINK>]   
 error:
-    <ERROR>      NEXT:[<SINK>]       PREV:[]
+    <ERROR>      PREV:[]
 sink:
-    <SINK>       NEXT:[]             PREV:[<ERROR>, <END>]
+    <SINK>       PREV:[<ERROR>, <END>]
 =====================

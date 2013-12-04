@@ -4,15 +4,15 @@ fun foo(f: () -> Unit) {
 }
 ---------------------
 L0:
-    <START>             NEXT:[v(f: () -> Unit)]    PREV:[]
-    v(f: () -> Unit)    NEXT:[w(f)]                PREV:[<START>]
-    w(f)                NEXT:[r(f)]                PREV:[v(f: () -> Unit)]
-    r(f)                NEXT:[call(f, invoke)]     PREV:[w(f)]
-    call(f, invoke)     NEXT:[<END>]               PREV:[r(f)]
+    <START>         
+    v(f: () -> Unit)
+    w(f)            
+    r(f)            
+    call(f, invoke) 
 L1:
-    <END>               NEXT:[<SINK>]              PREV:[call(f, invoke)]
+    <END>               NEXT:[<SINK>]          
 error:
-    <ERROR>             NEXT:[<SINK>]              PREV:[]
+    <ERROR>             PREV:[]
 sink:
-    <SINK>              NEXT:[]                    PREV:[<ERROR>, <END>]
+    <SINK>              PREV:[<ERROR>, <END>]
 =====================

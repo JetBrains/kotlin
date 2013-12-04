@@ -4,14 +4,14 @@ class Test {
 }
 ---------------------
 L0:
-    <START>            NEXT:[v(var x : Int;)]    PREV:[]
-    v(var x : Int;)    NEXT:[<END>]              PREV:[<START>]
+    <START>        
+    v(var x : Int;)
 L1:
-    <END>              NEXT:[<SINK>]             PREV:[v(var x : Int;)]
+    <END>              NEXT:[<SINK>]         
 error:
-    <ERROR>            NEXT:[<SINK>]             PREV:[]
+    <ERROR>            PREV:[]
 sink:
-    <SINK>             NEXT:[]                   PREV:[<ERROR>, <END>]
+    <SINK>             PREV:[<ERROR>, <END>]
 =====================
 == assignments ==
 fun assignments() : Unit {
@@ -29,48 +29,48 @@ fun assignments() : Unit {
 }
 ---------------------
 L0:
-    <START>                     NEXT:[v(var x = 1)]                  PREV:[]
-    v(var x = 1)                NEXT:[r(1)]                          PREV:[<START>]
-    r(1)                        NEXT:[w(x)]                          PREV:[v(var x = 1)]
-    w(x)                        NEXT:[r(2)]                          PREV:[r(1)]
-    r(2)                        NEXT:[w(x)]                          PREV:[w(x)]
-    w(x)                        NEXT:[r(x)]                          PREV:[r(2)]
-    r(x)                        NEXT:[r(2)]                          PREV:[w(x)]
-    r(2)                        NEXT:[call(+=, plus)]                PREV:[r(x)]
-    call(+=, plus)              NEXT:[w(x)]                          PREV:[r(2)]
-    w(x)                        NEXT:[r(true)]                       PREV:[call(+=, plus)]
-    r(true)                     NEXT:[jf(L2)]                        PREV:[w(x)]
-    jf(L2)                      NEXT:[r(2), r(1)]                    PREV:[r(true)]
-    r(1)                        NEXT:[jmp(L3)]                       PREV:[jf(L2)]
-    jmp(L3)                     NEXT:[w(x)]                          PREV:[r(1)]
+    <START>                 
+    v(var x = 1)            
+    r(1)                    
+    w(x)                    
+    r(2)                    
+    w(x)                    
+    r(x)                    
+    r(2)                    
+    call(+=, plus)          
+    w(x)                    
+    r(true)                 
+    jf(L2)                      NEXT:[r(2), r(1)]                
+    r(1)                    
+    jmp(L3)                     NEXT:[w(x)]                      
 L2:
-    r(2)                        NEXT:[w(x)]                          PREV:[jf(L2)]
+    r(2)                        PREV:[jf(L2)]
 L3:
-    w(x)                        NEXT:[v(val y = true && false)]      PREV:[jmp(L3), r(2)]
-    v(val y = true && false)    NEXT:[r(true)]                       PREV:[w(x)]
-    r(true)                     NEXT:[jf(L4)]                        PREV:[v(val y = true && false)]
-    jf(L4)                      NEXT:[r(true && false), r(false)]    PREV:[r(true)]
-    r(false)                    NEXT:[r(true && false)]              PREV:[jf(L4)]
+    w(x)                        PREV:[jmp(L3), r(2)]
+    v(val y = true && false)
+    r(true)                 
+    jf(L4)                      NEXT:[r(true && false), r(false)]
+    r(false)                
 L4:
-    r(true && false)            NEXT:[w(y)]                          PREV:[jf(L4), r(false)]
-    w(y)                        NEXT:[v(val z = false && true)]      PREV:[r(true && false)]
-    v(val z = false && true)    NEXT:[r(false)]                      PREV:[w(y)]
-    r(false)                    NEXT:[jf(L5)]                        PREV:[v(val z = false && true)]
-    jf(L5)                      NEXT:[r(false && true), r(true)]     PREV:[r(false)]
-    r(true)                     NEXT:[r(false && true)]              PREV:[jf(L5)]
+    r(true && false)            PREV:[jf(L4), r(false)]
+    w(y)                    
+    v(val z = false && true)
+    r(false)                
+    jf(L5)                      NEXT:[r(false && true), r(true)] 
+    r(true)                 
 L5:
-    r(false && true)            NEXT:[w(z)]                          PREV:[jf(L5), r(true)]
-    w(z)                        NEXT:[v(val t = Test())]             PREV:[r(false && true)]
-    v(val t = Test())           NEXT:[call(Test, <init>)]            PREV:[w(z)]
-    call(Test, <init>)          NEXT:[w(t)]                          PREV:[v(val t = Test())]
-    w(t)                        NEXT:[r(1)]                          PREV:[call(Test, <init>)]
-    r(1)                        NEXT:[r(t)]                          PREV:[w(t)]
-    r(t)                        NEXT:[w(t.x)]                        PREV:[r(1)]
-    w(t.x)                      NEXT:[<END>]                         PREV:[r(t)]
+    r(false && true)            PREV:[jf(L5), r(true)]
+    w(z)                    
+    v(val t = Test())       
+    call(Test, <init>)      
+    w(t)                    
+    r(1)                    
+    r(t)                    
+    w(t.x)                  
 L1:
-    <END>                       NEXT:[<SINK>]                        PREV:[w(t.x)]
+    <END>                       NEXT:[<SINK>]                    
 error:
-    <ERROR>                     NEXT:[<SINK>]                        PREV:[]
+    <ERROR>                     PREV:[]
 sink:
-    <SINK>                      NEXT:[]                              PREV:[<ERROR>, <END>]
+    <SINK>                      PREV:[<ERROR>, <END>]
 =====================

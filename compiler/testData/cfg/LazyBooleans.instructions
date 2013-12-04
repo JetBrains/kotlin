@@ -18,61 +18,61 @@ fun lazyBooleans(a : Boolean, b : Boolean) : Unit {
 }
 ---------------------
 L0:
-    <START>           NEXT:[v(a : Boolean)]        PREV:[]
-    v(a : Boolean)    NEXT:[w(a)]                  PREV:[<START>]
-    w(a)              NEXT:[v(b : Boolean)]        PREV:[v(a : Boolean)]
-    v(b : Boolean)    NEXT:[w(b)]                  PREV:[w(a)]
-    w(b)              NEXT:[r(a)]                  PREV:[v(b : Boolean)]
-    r(a)              NEXT:[jf(L2)]                PREV:[w(b)]
-    jf(L2)            NEXT:[r(2), r(1)]            PREV:[r(a)]
-    r(1)              NEXT:[jmp(L3)]               PREV:[jf(L2)]
-    jmp(L3)           NEXT:[r(3)]                  PREV:[r(1)]
+    <START>       
+    v(a : Boolean)
+    w(a)          
+    v(b : Boolean)
+    w(b)          
+    r(a)          
+    jf(L2)            NEXT:[r(2), r(1)]        
+    r(1)          
+    jmp(L3)           NEXT:[r(3)]              
 L2:
-    r(2)              NEXT:[r(3)]                  PREV:[jf(L2)]
+    r(2)              PREV:[jf(L2)]
 L3:
-    r(3)              NEXT:[r(a)]                  PREV:[jmp(L3), r(2)]
-    r(a)              NEXT:[jf(L4)]                PREV:[r(3)]
-    jf(L4)            NEXT:[jf(L5), r(b)]          PREV:[r(a)]
-    r(b)              NEXT:[jf(L5)]                PREV:[jf(L4)]
+    r(3)              PREV:[jmp(L3), r(2)]
+    r(a)          
+    jf(L4)            NEXT:[jf(L5), r(b)]      
+    r(b)          
 L4:
     jf(L5)            NEXT:[r(6), r(5)]            PREV:[jf(L4), r(b)]
-    r(5)              NEXT:[jmp(L6)]               PREV:[jf(L5)]
-    jmp(L6)           NEXT:[r(7)]                  PREV:[r(5)]
+    r(5)          
+    jmp(L6)           NEXT:[r(7)]              
 L5:
-    r(6)              NEXT:[r(7)]                  PREV:[jf(L5)]
+    r(6)              PREV:[jf(L5)]
 L6:
-    r(7)              NEXT:[r(a)]                  PREV:[jmp(L6), r(6)]
-    r(a)              NEXT:[jt(L7)]                PREV:[r(7)]
-    jt(L7)            NEXT:[r(b), jf(L8)]          PREV:[r(a)]
-    r(b)              NEXT:[jf(L8)]                PREV:[jt(L7)]
+    r(7)              PREV:[jmp(L6), r(6)]
+    r(a)          
+    jt(L7)            NEXT:[r(b), jf(L8)]      
+    r(b)          
 L7:
     jf(L8)            NEXT:[r(9), r(8)]            PREV:[jt(L7), r(b)]
-    r(8)              NEXT:[jmp(L9)]               PREV:[jf(L8)]
-    jmp(L9)           NEXT:[r(10)]                 PREV:[r(8)]
+    r(8)          
+    jmp(L9)           NEXT:[r(10)]             
 L8:
-    r(9)              NEXT:[r(10)]                 PREV:[jf(L8)]
+    r(9)              PREV:[jf(L8)]
 L9:
-    r(10)             NEXT:[r(a)]                  PREV:[jmp(L9), r(9)]
-    r(a)              NEXT:[jf(L10)]               PREV:[r(10)]
-    jf(L10)           NEXT:[read (Unit), r(11)]    PREV:[r(a)]
-    r(11)             NEXT:[jmp(L11)]              PREV:[jf(L10)]
-    jmp(L11)          NEXT:[r(12)]                 PREV:[r(11)]
+    r(10)             PREV:[jmp(L9), r(9)]
+    r(a)          
+    jf(L10)           NEXT:[read (Unit), r(11)]
+    r(11)         
+    jmp(L11)          NEXT:[r(12)]             
 L10:
-    read (Unit)       NEXT:[r(12)]                 PREV:[jf(L10)]
+    read (Unit)       PREV:[jf(L10)]
 L11:
-    r(12)             NEXT:[r(a)]                  PREV:[jmp(L11), read (Unit)]
-    r(a)              NEXT:[jf(L12)]               PREV:[r(12)]
-    jf(L12)           NEXT:[r(13), read (Unit)]    PREV:[r(a)]
-    read (Unit)       NEXT:[jmp(L13)]              PREV:[jf(L12)]
-    jmp(L13)          NEXT:[r(14)]                 PREV:[read (Unit)]
+    r(12)             PREV:[jmp(L11), read (Unit)]
+    r(a)          
+    jf(L12)           NEXT:[r(13), read (Unit)]
+    read (Unit)   
+    jmp(L13)          NEXT:[r(14)]             
 L12:
-    r(13)             NEXT:[r(14)]                 PREV:[jf(L12)]
+    r(13)             PREV:[jf(L12)]
 L13:
-    r(14)             NEXT:[<END>]                 PREV:[jmp(L13), r(13)]
+    r(14)             PREV:[jmp(L13), r(13)]
 L1:
-    <END>             NEXT:[<SINK>]                PREV:[r(14)]
+    <END>             NEXT:[<SINK>]            
 error:
-    <ERROR>           NEXT:[<SINK>]                PREV:[]
+    <ERROR>           PREV:[]
 sink:
-    <SINK>            NEXT:[]                      PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<ERROR>, <END>]
 =====================

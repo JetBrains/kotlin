@@ -4,22 +4,22 @@ fun foo(a: Array<Int>) {
 }
 ---------------------
 L0:
-    <START>             NEXT:[v(a: Array<Int>)]    PREV:[]
-    v(a: Array<Int>)    NEXT:[w(a)]                PREV:[<START>]
-    w(a)                NEXT:[r(a)]                PREV:[v(a: Array<Int>)]
-    r(a)                NEXT:[r(0)]                PREV:[w(a)]
-    r(0)                NEXT:[call(a[0], get)]     PREV:[r(a)]
-    call(a[0], get)     NEXT:[r(1)]                PREV:[r(0)]
-    r(1)                NEXT:[call(+=, plus)]      PREV:[call(a[0], get)]
-    call(+=, plus)      NEXT:[r(a)]                PREV:[r(1)]
-    r(a)                NEXT:[r(0)]                PREV:[call(+=, plus)]
-    r(0)                NEXT:[r(1)]                PREV:[r(a)]
-    r(1)                NEXT:[call(a[0], set)]     PREV:[r(0)]
-    call(a[0], set)     NEXT:[<END>]               PREV:[r(1)]
+    <START>         
+    v(a: Array<Int>)
+    w(a)            
+    r(a)            
+    r(0)            
+    call(a[0], get) 
+    r(1)            
+    call(+=, plus)  
+    r(a)            
+    r(0)            
+    r(1)            
+    call(a[0], set) 
 L1:
-    <END>               NEXT:[<SINK>]              PREV:[call(a[0], set)]
+    <END>               NEXT:[<SINK>]          
 error:
-    <ERROR>             NEXT:[<SINK>]              PREV:[]
+    <ERROR>             PREV:[]
 sink:
-    <SINK>              NEXT:[]                    PREV:[<ERROR>, <END>]
+    <SINK>              PREV:[<ERROR>, <END>]
 =====================

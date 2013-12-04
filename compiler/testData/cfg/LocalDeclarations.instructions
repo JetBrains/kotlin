@@ -18,31 +18,31 @@ class C() {
 }
 ---------------------
 L0:
-    <START>              NEXT:[v(val a: Int = 1)]    PREV:[]
-    v(val a: Int = 1)    NEXT:[r(1)]                 PREV:[<START>]
-    r(1)                 NEXT:[w(a)]                 PREV:[v(val a: Int = 1)]
-    w(a)                 NEXT:[<END>]                PREV:[r(1)]
+    <START>          
+    v(val a: Int = 1)
+    r(1)             
+    w(a)             
 L1:
-    <END>                NEXT:[<SINK>]               PREV:[w(a)]
+    <END>                NEXT:[<SINK>]           
 error:
-    <ERROR>              NEXT:[<SINK>]               PREV:[]
+    <ERROR>              PREV:[]
 sink:
-    <SINK>               NEXT:[]                     PREV:[<ERROR>, <END>]
+    <SINK>               PREV:[<ERROR>, <END>]
 =====================
 == doSmth ==
 fun doSmth(i: Int) {}
 ---------------------
 L0:
-    <START>        NEXT:[v(i: Int)]      PREV:[]
-    v(i: Int)      NEXT:[w(i)]           PREV:[<START>]
-    w(i)           NEXT:[read (Unit)]    PREV:[v(i: Int)]
-    read (Unit)    NEXT:[<END>]          PREV:[w(i)]
+    <START>    
+    v(i: Int)  
+    w(i)       
+    read (Unit)
 L1:
-    <END>          NEXT:[<SINK>]         PREV:[read (Unit)]
+    <END>          NEXT:[<SINK>]     
 error:
-    <ERROR>        NEXT:[<SINK>]         PREV:[]
+    <ERROR>        PREV:[]
 sink:
-    <SINK>         NEXT:[]               PREV:[<ERROR>, <END>]
+    <SINK>         PREV:[<ERROR>, <END>]
 =====================
 == test1 ==
 fun test1() {
@@ -55,19 +55,19 @@ fun test1() {
 }
 ---------------------
 L0:
-    <START>                                         NEXT:[v(val a = object { val x : Int { $x = 1 } })]    PREV:[]
-    v(val a = object { val x : Int { $x = 1 } })    NEXT:[v(val x : Int)]                                  PREV:[<START>]
-    v(val x : Int)                                  NEXT:[r(1)]                                            PREV:[v(val a = object { val x : Int { $x = 1 } })]
-    r(1)                                            NEXT:[w($x)]                                           PREV:[v(val x : Int)]
-    w($x)                                           NEXT:[r(object { val x : Int { $x = 1 } })]            PREV:[r(1)]
-    r(object { val x : Int { $x = 1 } })            NEXT:[w(a)]                                            PREV:[w($x)]
-    w(a)                                            NEXT:[<END>]                                           PREV:[r(object { val x : Int { $x = 1 } })]
+    <START>                                     
+    v(val a = object { val x : Int { $x = 1 } })
+    v(val x : Int)                              
+    r(1)                                        
+    w($x)                                       
+    r(object { val x : Int { $x = 1 } })        
+    w(a)                                        
 L1:
-    <END>                                           NEXT:[<SINK>]                                          PREV:[w(a)]
+    <END>                                           NEXT:[<SINK>]                                      
 error:
-    <ERROR>                                         NEXT:[<SINK>]                                          PREV:[]
+    <ERROR>                                         PREV:[]
 sink:
-    <SINK>                                          NEXT:[]                                                PREV:[<ERROR>, <END>]
+    <SINK>                                          PREV:[<ERROR>, <END>]
 =====================
 == O ==
 object O {
@@ -78,16 +78,16 @@ object O {
 }
 ---------------------
 L0:
-    <START>           NEXT:[v(val x : Int)]    PREV:[]
-    v(val x : Int)    NEXT:[r(1)]              PREV:[<START>]
-    r(1)              NEXT:[w($x)]             PREV:[v(val x : Int)]
-    w($x)             NEXT:[<END>]             PREV:[r(1)]
+    <START>       
+    v(val x : Int)
+    r(1)          
+    w($x)         
 L1:
-    <END>             NEXT:[<SINK>]            PREV:[w($x)]
+    <END>             NEXT:[<SINK>]        
 error:
-    <ERROR>           NEXT:[<SINK>]            PREV:[]
+    <ERROR>           PREV:[]
 sink:
-    <SINK>            NEXT:[]                  PREV:[<ERROR>, <END>]
+    <SINK>            PREV:[<ERROR>, <END>]
 =====================
 == test2 ==
 fun test2() {
@@ -98,22 +98,22 @@ fun test2() {
 }
 ---------------------
 L0:
-    <START>                            NEXT:[v(val b = 1)]                       PREV:[]
-    v(val b = 1)                       NEXT:[r(1)]                               PREV:[<START>]
-    r(1)                               NEXT:[w(b)]                               PREV:[v(val b = 1)]
-    w(b)                               NEXT:[v(val a = object { val x = b })]    PREV:[r(1)]
-    v(val a = object { val x = b })    NEXT:[v(val x = b)]                       PREV:[w(b)]
-    v(val x = b)                       NEXT:[r(b)]                               PREV:[v(val a = object { val x = b })]
-    r(b)                               NEXT:[w(x)]                               PREV:[v(val x = b)]
-    w(x)                               NEXT:[r(object { val x = b })]            PREV:[r(b)]
-    r(object { val x = b })            NEXT:[w(a)]                               PREV:[w(x)]
-    w(a)                               NEXT:[<END>]                              PREV:[r(object { val x = b })]
+    <START>                        
+    v(val b = 1)                   
+    r(1)                           
+    w(b)                           
+    v(val a = object { val x = b })
+    v(val x = b)                   
+    r(b)                           
+    w(x)                           
+    r(object { val x = b })        
+    w(a)                           
 L1:
-    <END>                              NEXT:[<SINK>]                             PREV:[w(a)]
+    <END>                              NEXT:[<SINK>]                         
 error:
-    <ERROR>                            NEXT:[<SINK>]                             PREV:[]
+    <ERROR>                            PREV:[]
 sink:
-    <SINK>                             NEXT:[]                                   PREV:[<ERROR>, <END>]
+    <SINK>                             PREV:[<ERROR>, <END>]
 =====================
 == test3 ==
 fun test3() {
@@ -126,30 +126,30 @@ fun test3() {
 }
 ---------------------
 L0:
-    <START>                                                         NEXT:[v(val a = object { val y : Int fun inner_bar() { y = 10 } })]                           PREV:[]
-    v(val a = object { val y : Int fun inner_bar() { y = 10 } })    NEXT:[v(val y : Int)]                                                                         PREV:[<START>]
-    v(val y : Int)                                                  NEXT:[jmp?(L2)]                                                                               PREV:[v(val a = object { val y : Int fun inner_bar() { y = 10 } })]
-    jmp?(L2)                                                        NEXT:[r(object { val y : Int fun inner_bar() { y = 10 } }), d(fun inner_bar() { y = 10 })]    PREV:[v(val y : Int)]
-    d(fun inner_bar() { y = 10 })                                   NEXT:[<SINK>]                                                                                 PREV:[jmp?(L2)]
+    <START>                                                     
+    v(val a = object { val y : Int fun inner_bar() { y = 10 } })
+    v(val y : Int)                                              
+    jmp?(L2)                                                        NEXT:[r(object { val y : Int fun inner_bar() { y = 10 } }), d(fun inner_bar() { y = 10 })]
+    d(fun inner_bar() { y = 10 })                                   NEXT:[<SINK>]                                                                             
 L2:
-    r(object { val y : Int fun inner_bar() { y = 10 } })            NEXT:[w(a)]                                                                                   PREV:[jmp?(L2)]
-    w(a)                                                            NEXT:[<END>]                                                                                  PREV:[r(object { val y : Int fun inner_bar() { y = 10 } })]
+    r(object { val y : Int fun inner_bar() { y = 10 } })            PREV:[jmp?(L2)]
+    w(a)                                                        
 L1:
-    <END>                                                           NEXT:[<SINK>]                                                                                 PREV:[w(a)]
+    <END>                                                           NEXT:[<SINK>]                                                                             
 error:
-    <ERROR>                                                         NEXT:[<SINK>]                                                                                 PREV:[]
+    <ERROR>                                                         PREV:[]
 sink:
-    <SINK>                                                          NEXT:[]                                                                                       PREV:[<ERROR>, <END>, d(fun inner_bar() { y = 10 })]
+    <SINK>                                                          PREV:[<ERROR>, <END>, d(fun inner_bar() { y = 10 })]
 L3:
-    <START>    NEXT:[r(10)]     PREV:[]
-    r(10)      NEXT:[w(y)]      PREV:[<START>]
-    w(y)       NEXT:[<END>]     PREV:[r(10)]
+    <START>
+    r(10)  
+    w(y)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[w(y)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == inner_bar ==
 fun inner_bar() {
@@ -157,15 +157,15 @@ fun inner_bar() {
         }
 ---------------------
 L3:
-    <START>    NEXT:[r(10)]     PREV:[]
-    r(10)      NEXT:[w(y)]      PREV:[<START>]
-    w(y)       NEXT:[<END>]     PREV:[r(10)]
+    <START>
+    r(10)  
+    w(y)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[w(y)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == test4 ==
 fun test4() {
@@ -182,33 +182,33 @@ fun test4() {
 }
 ---------------------
 L0:
-    <START>                                                                          NEXT:[v(val a = object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })]                     PREV:[]
-    v(val a = object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })    NEXT:[v(val x : Int)]                                                                                    PREV:[<START>]
-    v(val x : Int)                                                                   NEXT:[v(val y : Int)]                                                                                    PREV:[v(val a = object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })]
-    v(val y : Int)                                                                   NEXT:[r(1)]                                                                                              PREV:[v(val x : Int)]
-    r(1)                                                                             NEXT:[w($x)]                                                                                             PREV:[v(val y : Int)]
-    w($x)                                                                            NEXT:[jmp?(L2)]                                                                                          PREV:[r(1)]
-    jmp?(L2)                                                                         NEXT:[r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }), d(fun ggg() { y = 10 })]    PREV:[w($x)]
-    d(fun ggg() { y = 10 })                                                          NEXT:[<SINK>]                                                                                            PREV:[jmp?(L2)]
+    <START>                                                                      
+    v(val a = object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })
+    v(val x : Int)                                                               
+    v(val y : Int)                                                               
+    r(1)                                                                         
+    w($x)                                                                        
+    jmp?(L2)                                                                         NEXT:[r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }), d(fun ggg() { y = 10 })]
+    d(fun ggg() { y = 10 })                                                          NEXT:[<SINK>]                                                                                        
 L2:
-    r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })            NEXT:[w(a)]                                                                                              PREV:[jmp?(L2)]
-    w(a)                                                                             NEXT:[<END>]                                                                                             PREV:[r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })]
+    r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })            PREV:[jmp?(L2)]
+    w(a)                                                                         
 L1:
-    <END>                                                                            NEXT:[<SINK>]                                                                                            PREV:[w(a)]
+    <END>                                                                            NEXT:[<SINK>]                                                                                        
 error:
-    <ERROR>                                                                          NEXT:[<SINK>]                                                                                            PREV:[]
+    <ERROR>                                                                          PREV:[]
 sink:
-    <SINK>                                                                           NEXT:[]                                                                                                  PREV:[<ERROR>, <END>, d(fun ggg() { y = 10 })]
+    <SINK>                                                                           PREV:[<ERROR>, <END>, d(fun ggg() { y = 10 })]
 L3:
-    <START>    NEXT:[r(10)]     PREV:[]
-    r(10)      NEXT:[w(y)]      PREV:[<START>]
-    w(y)       NEXT:[<END>]     PREV:[r(10)]
+    <START>
+    r(10)  
+    w(y)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[w(y)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == ggg ==
 fun ggg() {
@@ -216,15 +216,15 @@ fun ggg() {
         }
 ---------------------
 L3:
-    <START>    NEXT:[r(10)]     PREV:[]
-    r(10)      NEXT:[w(y)]      PREV:[<START>]
-    w(y)       NEXT:[<END>]     PREV:[r(10)]
+    <START>
+    r(10)  
+    w(y)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[w(y)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == test5 ==
 fun test5() {
@@ -243,47 +243,47 @@ fun test5() {
 }
 ---------------------
 L0:
-    <START>                                                                               NEXT:[v(val a = object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })]                    PREV:[]
-    v(val a = object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })    NEXT:[v(var x = 1)]                                                                                          PREV:[<START>]
-    v(var x = 1)                                                                          NEXT:[r(1)]                                                                                                  PREV:[v(val a = object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })]
-    r(1)                                                                                  NEXT:[w(x)]                                                                                                  PREV:[v(var x = 1)]
-    w(x)                                                                                  NEXT:[r(2)]                                                                                                  PREV:[r(1)]
-    r(2)                                                                                  NEXT:[w($x)]                                                                                                 PREV:[w(x)]
-    w($x)                                                                                 NEXT:[jmp?(L2)]                                                                                              PREV:[r(2)]
-    jmp?(L2)                                                                              NEXT:[jmp?(L5), d(fun foo() { x = 3 })]                                                                      PREV:[w($x)]
-    d(fun foo() { x = 3 })                                                                NEXT:[<SINK>]                                                                                                PREV:[jmp?(L2)]
+    <START>                                                                           
+    v(val a = object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })
+    v(var x = 1)                                                                      
+    r(1)                                                                              
+    w(x)                                                                              
+    r(2)                                                                              
+    w($x)                                                                             
+    jmp?(L2)                                                                              NEXT:[jmp?(L5), d(fun foo() { x = 3 })]                                                                  
+    d(fun foo() { x = 3 })                                                                NEXT:[<SINK>]                                                                                            
 L2:
     jmp?(L5)                                                                              NEXT:[r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }), d(fun bar() { x = 4 })]    PREV:[jmp?(L2)]
-    d(fun bar() { x = 4 })                                                                NEXT:[<SINK>]                                                                                                PREV:[jmp?(L5)]
+    d(fun bar() { x = 4 })                                                                NEXT:[<SINK>]                                                                                            
 L5:
-    r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })            NEXT:[w(a)]                                                                                                  PREV:[jmp?(L5)]
-    w(a)                                                                                  NEXT:[<END>]                                                                                                 PREV:[r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })]
+    r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })            PREV:[jmp?(L5)]
+    w(a)                                                                              
 L1:
-    <END>                                                                                 NEXT:[<SINK>]                                                                                                PREV:[w(a)]
+    <END>                                                                                 NEXT:[<SINK>]                                                                                            
 error:
-    <ERROR>                                                                               NEXT:[<SINK>]                                                                                                PREV:[]
+    <ERROR>                                                                               PREV:[]
 sink:
-    <SINK>                                                                                NEXT:[]                                                                                                      PREV:[<ERROR>, <END>, d(fun foo() { x = 3 }), d(fun bar() { x = 4 })]
+    <SINK>                                                                                PREV:[<ERROR>, <END>, d(fun foo() { x = 3 }), d(fun bar() { x = 4 })]
 L3:
-    <START>    NEXT:[r(3)]      PREV:[]
-    r(3)       NEXT:[w(x)]      PREV:[<START>]
-    w(x)       NEXT:[<END>]     PREV:[r(3)]
+    <START>
+    r(3)   
+    w(x)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[w(x)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 L6:
-    <START>    NEXT:[r(4)]      PREV:[]
-    r(4)       NEXT:[w(x)]      PREV:[<START>]
-    w(x)       NEXT:[<END>]     PREV:[r(4)]
+    <START>
+    r(4)   
+    w(x)   
 L7:
-    <END>      NEXT:[<SINK>]    PREV:[w(x)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo() {
@@ -291,15 +291,15 @@ fun foo() {
         }
 ---------------------
 L3:
-    <START>    NEXT:[r(3)]      PREV:[]
-    r(3)       NEXT:[w(x)]      PREV:[<START>]
-    w(x)       NEXT:[<END>]     PREV:[r(3)]
+    <START>
+    r(3)   
+    w(x)   
 L4:
-    <END>      NEXT:[<SINK>]    PREV:[w(x)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == bar ==
 fun bar() {
@@ -307,13 +307,13 @@ fun bar() {
         }
 ---------------------
 L6:
-    <START>    NEXT:[r(4)]      PREV:[]
-    r(4)       NEXT:[w(x)]      PREV:[<START>]
-    w(x)       NEXT:[<END>]     PREV:[r(4)]
+    <START>
+    r(4)   
+    w(x)   
 L7:
-    <END>      NEXT:[<SINK>]    PREV:[w(x)]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
