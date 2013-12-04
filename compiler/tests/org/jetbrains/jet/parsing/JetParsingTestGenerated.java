@@ -162,6 +162,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         doParsingTest("compiler/testData/psi/FileStart_ERR.kt");
     }
     
+    @TestMetadata("FloatingPointLiteral.kt")
+    public void testFloatingPointLiteral() throws Exception {
+        doParsingTest("compiler/testData/psi/FloatingPointLiteral.kt");
+    }
+    
     @TestMetadata("ForWithMultiDecl.kt")
     public void testForWithMultiDecl() throws Exception {
         doParsingTest("compiler/testData/psi/ForWithMultiDecl.kt");

@@ -2749,6 +2749,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/evaluate/binaryMinusIndependentExpType.kt");
             }
             
+            @TestMetadata("float.kt")
+            public void testFloat() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/float.kt");
+            }
+            
             @TestMetadata("intOverflow.kt")
             public void testIntOverflow() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/evaluate/intOverflow.kt");

@@ -85,7 +85,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         if (text == null) return null
         val result: Any? = when (expression.getNode().getElementType()) {
             JetNodeTypes.INTEGER_CONSTANT -> parseLong(text)
-            JetNodeTypes.FLOAT_CONSTANT -> parseDouble(text)
+            JetNodeTypes.FLOAT_CONSTANT -> parseFloatingLiteral(text)
             JetNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
             JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantResolver.parseChar(expression)
             JetNodeTypes.NULL -> null
@@ -450,9 +450,25 @@ public fun parseLong(text: String): Long? {
     }
 }
 
+private fun parseFloatingLiteral(text: String): Any? {
+    if (text.toLowerCase().endsWith('f')) {
+        return parseFloat(text)
+    }
+    return parseDouble(text)
+}
+
 private fun parseDouble(text: String): Double? {
     try {
         return java.lang.Double.parseDouble(text)
+    }
+    catch (e: NumberFormatException) {
+        return null
+    }
+}
+
+private fun parseFloat(text: String): Float? {
+    try {
+        return java.lang.Float.parseFloat(text)
     }
     catch (e: NumberFormatException) {
         return null
