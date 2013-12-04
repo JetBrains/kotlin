@@ -12,11 +12,11 @@ public open class DeeplyNestedStatic : java.lang.Object {
     }
 }
 
-package DeeplyNestedStatic {
+package test.DeeplyNestedStatic {
     
-    package Foo {
+    package test.DeeplyNestedStatic.Foo {
         
-        package Bar {
+        package test.DeeplyNestedStatic.Foo.Bar {
             public open fun method(): jet.Unit
         }
     }

@@ -13,6 +13,6 @@ public trait AdapterDoesntOverrideDeclaration : java.lang.Object {
     }
 }
 
-package AdapterDoesntOverrideDeclaration {
+package test.AdapterDoesntOverrideDeclaration {
     public /*synthesized*/ fun Super(/*0*/ function: ((() -> jet.Unit)?) -> jet.Unit): test.AdapterDoesntOverrideDeclaration.Super
 }

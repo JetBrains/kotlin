@@ -5,6 +5,6 @@ public open class Simple : java.lang.Object {
     public open fun foo(): jet.Unit
 }
 
-package Simple {
+package test.Simple {
     public open fun bar(): jet.Unit
 }

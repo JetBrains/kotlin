@@ -128,6 +128,7 @@ public final class FqName extends FqNameBase {
         return path;
     }
 
+    @Override
     @NotNull
     public List<Name> pathSegments() {
         return fqName.pathSegments();

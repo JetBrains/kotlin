@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
@@ -158,7 +159,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     @NotNull
-    private String renderFqName(@NotNull FqNameUnsafe fqName) {
+    private String renderFqName(@NotNull FqNameBase fqName) {
         return renderFqName(fqName.pathSegments());
     }
 
@@ -287,6 +288,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     /* METHODS FOR ALL KINDS OF DESCRIPTORS */
     private void appendDefinedIn(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
+        if (descriptor instanceof PackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) {
+            return;
+        }
         if (descriptor instanceof ModuleDescriptor) {
             builder.append(" is a module");
             return;
@@ -684,7 +688,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderPackageView(@NotNull PackageViewDescriptor packageView, @NotNull StringBuilder builder) {
         builder.append(renderKeyword("package")).append(" ");
-        renderName(packageView, builder);
+        builder.append(renderFqName(packageView.getFqName()));
         if (debugMode) {
             builder.append(" in context of ");
             renderName(packageView.getModule(), builder);
@@ -693,9 +697,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderPackageFragment(@NotNull PackageFragmentDescriptor fragment, @NotNull StringBuilder builder) {
         builder.append(renderKeyword("package-fragment")).append(" ");
-        renderName(fragment, builder);
+        builder.append(renderFqName(fragment.getFqName()));
         if (debugMode) {
-            builder.append(" in context of ");
+            builder.append(" in ");
             renderName(fragment.getContainingDeclaration(), builder);
         }
     }

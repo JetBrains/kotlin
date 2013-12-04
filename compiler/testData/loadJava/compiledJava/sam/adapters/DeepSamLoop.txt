@@ -13,7 +13,7 @@ public trait DeepSamLoop : java.lang.Object {
     }
 }
 
-package DeepSamLoop {
+package test.DeepSamLoop {
     public /*synthesized*/ fun Bar(/*0*/ function: (test.DeepSamLoop.Foo?) -> jet.Unit): test.DeepSamLoop.Bar
     public /*synthesized*/ fun Foo(/*0*/ function: (test.DeepSamLoop.Bar?) -> jet.Unit): test.DeepSamLoop.Foo
 }

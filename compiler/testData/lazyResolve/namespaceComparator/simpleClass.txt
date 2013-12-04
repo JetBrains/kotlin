@@ -4,7 +4,7 @@ internal final class A {
     /*primary*/ public constructor A()
 }
 
-package p {
+package test.p {
     internal fun foo(): jet.Unit
     internal fun foo(/*0*/ a: test.p.C): jet.Unit
     

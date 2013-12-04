@@ -16,18 +16,18 @@ public trait SamInterface : java.lang.Object {
     public abstract fun instanceMethod(): jet.Unit
 }
 
-package JavaClass {
+package test.JavaClass {
     public open fun staticMethod(): jet.Unit
 }
 
-package sub {
+package test.sub {
     
     public open class JavaClassInSubpackage : java.lang.Object {
         public constructor JavaClassInSubpackage()
         public open fun instanceMethod(): jet.Unit
     }
     
-    package JavaClassInSubpackage {
+    package test.sub.JavaClassInSubpackage {
         public open fun staticMethod(): jet.Unit
     }
 }

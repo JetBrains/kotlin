@@ -15,7 +15,7 @@ public trait SamSubinterfaceOfTwo : java.lang.Object {
     }
 }
 
-package SamSubinterfaceOfTwo {
+package test.SamSubinterfaceOfTwo {
     public /*synthesized*/ fun Sub(/*0*/ function: () -> jet.String?): test.SamSubinterfaceOfTwo.Sub
     public /*synthesized*/ fun Super1(/*0*/ function: () -> jet.CharSequence?): test.SamSubinterfaceOfTwo.Super1
     public /*synthesized*/ fun </*0*/ T> Super2(/*0*/ function: () -> T?): test.SamSubinterfaceOfTwo.Super2<T>
