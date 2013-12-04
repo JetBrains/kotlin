@@ -102,23 +102,13 @@ public abstract class FunctionGenerationStrategy {
                 @NotNull MethodContext context,
                 @Nullable MemberCodegen parentCodegen
         ) {
-            ExpressionCodegen codegen = initializeExpressionCodegen(signature, context, mv, signature.getAsmMethod().getReturnType(), parentCodegen);
+            ExpressionCodegen codegen = new ExpressionCodegen(mv, getFrameMap(state.getTypeMapper(), context),
+                                                              signature.getAsmMethod().getReturnType(), context, state, parentCodegen);
             doGenerateBody(codegen, signature);
             generateLocalVarNames(codegen);
         }
 
         abstract public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature);
-
-        @NotNull
-        public ExpressionCodegen initializeExpressionCodegen(
-                JvmMethodSignature signature,
-                MethodContext context,
-                MethodVisitor mv,
-                Type returnType,
-                MemberCodegen parentCodegen
-        ) {
-            return new ExpressionCodegen(mv, getFrameMap(state.getTypeMapper(), context), returnType, context, state, parentCodegen);
-        }
 
         public void generateLocalVarNames(@NotNull ExpressionCodegen codegen) {
             for (String name : codegen.getLocalVariableNamesForExpression()) {

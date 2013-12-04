@@ -2486,22 +2486,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             this.resolvedCall = resolvedCall;
         }
 
-        @NotNull
-        @Override
-        public ExpressionCodegen initializeExpressionCodegen(
-                JvmMethodSignature signature,
-                MethodContext context,
-                MethodVisitor mv,
-                Type returnType,
-                MemberCodegen parentCodegen
-        ) {
-            FunctionDescriptor referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
-            JetType returnJetType = referencedFunction.getReturnType();
-            assert returnJetType != null : "Return type can't be null: " + referencedFunction;
-
-            return super.initializeExpressionCodegen(signature, context, mv, state.getTypeMapper().mapReturnType(returnJetType), parentCodegen);
-        }
-
         @Override
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             /*
