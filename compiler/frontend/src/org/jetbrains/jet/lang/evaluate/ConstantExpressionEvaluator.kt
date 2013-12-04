@@ -181,9 +181,9 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val argumentsEntrySet = resolvedCall.getValueArguments().entrySet()
         if (argumentsEntrySet.isEmpty()) {
             val result = evaluateUnaryAndCheck(argumentForReceiver, resultingDescriptorName.asString(), callExpression)
-            val isArgumentPure = trace.get(BindingContext.IS_PURE_CONSTANT_EXPRESSION, argumentForReceiver.expression)
-            val isNumberConventionMethod = resultingDescriptorName in OperatorConventions.NUMBER_CONVERSIONS
-            return createCompileTimeConstant(result, fullExpression, expectedType, !isNumberConventionMethod && isArgumentPure ?: false)
+            val isArgumentPure = trace.get(BindingContext.IS_PURE_CONSTANT_EXPRESSION, argumentForReceiver.expression) ?: false
+            val isNumberConversionMethod = resultingDescriptorName in OperatorConventions.NUMBER_CONVERSIONS
+            return createCompileTimeConstant(result, fullExpression, expectedType, !isNumberConversionMethod && isArgumentPure)
         }
         else if (argumentsEntrySet.size() == 1) {
             val (parameter, argument) = argumentsEntrySet.first()
@@ -300,13 +300,9 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             return evaluateCall(expression, calleeExpression, receiverExpression, expectedType)
         }
 
-        // Mynum.A
+        // MyEnum.A, Integer.MAX_VALUE
         if (selectorExpression != null) {
-            val compileTimeConstant = evaluate(selectorExpression, expectedType)
-            if (compileTimeConstant != null) {
-                trace.record(BindingContext.IS_PURE_CONSTANT_EXPRESSION, expression, true);
-            }
-            return compileTimeConstant
+            return evaluate(selectorExpression, expectedType)
         }
 
         return null
@@ -364,7 +360,6 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         return null
     }
 
-
     private class OperationArgument(val value: Any, val ctcType: CompileTimeType<*>, val expression: JetExpression)
 
     private fun createOperationArgumentForReceiver(resolvedCall: ResolvedCall<*>, expression: JetExpression): OperationArgument? {
@@ -374,17 +369,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val receiverCompileTimeType = getCompileTimeType(receiverExpressionType)
         if (receiverCompileTimeType == null) return null
 
-        val receiverValue = evaluate(expression, receiverExpressionType)?.getValue()
-        if (receiverValue == null) return null
-
-        if (receiverValue is NumberValueTypeConstructor<*>) {
-            val newValue = receiverValue.getValueForNumberType(receiverExpressionType)
-            if (newValue != null) {
-                return OperationArgument(newValue, receiverCompileTimeType, expression)
-            }
-        }
-
-        return OperationArgument(receiverValue, receiverCompileTimeType, expression)
+        return createOperationArgument(expression, receiverExpressionType, receiverCompileTimeType)
     }
 
     private fun createOperationArgumentForFirstParameter(argument: ResolvedValueArgument, parameter: ValueParameterDescriptor): OperationArgument? {
@@ -397,20 +382,21 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val argumentExpression = arguments.first().getArgumentExpression()
         if (argumentExpression == null) return null
 
-        val constant = evaluate(argumentExpression, parameter.getType())
-        if (constant == null) return null
+        return createOperationArgument(argumentExpression, parameter.getType(), argumentCompileTimeType)
+    }
 
-        val argumentValue = constant.getValue()
-        if (argumentValue == null) return null
+    private fun createOperationArgument(expression: JetExpression, expressionType: JetType, compileTimeType: CompileTimeType<*>): OperationArgument? {
+        val evaluationResult = evaluate(expression, expressionType)?.getValue()
+        if (evaluationResult == null) return null
 
-        if (argumentValue is NumberValueTypeConstructor<*>) {
-            val newValue = argumentValue.getValueForNumberType(parameter.getType())
-            if (newValue != null) {
-                return OperationArgument(newValue, argumentCompileTimeType, argumentExpression)
+        if (evaluationResult is NumberValueTypeConstructor<*>) {
+            val evaluationResultWithNewType = evaluationResult.getValueForNumberType(expressionType)
+            if (evaluationResultWithNewType != null) {
+                return OperationArgument(evaluationResultWithNewType, compileTimeType, expression)
             }
         }
 
-        return OperationArgument(argumentValue, argumentCompileTimeType, argumentExpression)
+        return OperationArgument(evaluationResult, compileTimeType, expression)
     }
 
     fun createCompileTimeConstant(value: Any?, expression: JetExpression, expectedType: JetType?, isPure: Boolean = true): CompileTimeConstant<*>? {

@@ -16,4 +16,4 @@ Ann(
     p5 = 1.toByte() + 1.toByte()
 ) class MyClass
 
-// EXPECTED: Ann[p1 = IntegerValueType(128): IntegerValueType(128), p2 = IntegerValueType(2): IntegerValueType(2), p3 = IntegerValueType(128): IntegerValueType(128), p4 = 2.toInt(): jet.Int, p5 = 2.toInt(): jet.Int]
+// EXPECTED: Ann[p1 = 128.toInt(): jet.Int, p2 = IntegerValueType(2): IntegerValueType(2), p3 = 128.toInt(): jet.Int, p4 = 2.toInt(): jet.Int, p5 = 2.toInt(): jet.Int]

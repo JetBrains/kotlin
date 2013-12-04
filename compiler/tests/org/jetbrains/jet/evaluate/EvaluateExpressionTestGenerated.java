@@ -106,6 +106,11 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
             doIsPureTest("compiler/testData/evaluate/isPure/innerToType.kt");
         }
         
+        @TestMetadata("namedConstants.kt")
+        public void testNamedConstants() throws Exception {
+            doIsPureTest("compiler/testData/evaluate/isPure/namedConstants.kt");
+        }
+        
         @TestMetadata("strings.kt")
         public void testStrings() throws Exception {
             doIsPureTest("compiler/testData/evaluate/isPure/strings.kt");
