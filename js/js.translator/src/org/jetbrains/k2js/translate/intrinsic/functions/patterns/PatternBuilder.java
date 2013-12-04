@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.intrinsic.functions.patterns;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -28,7 +27,6 @@ import org.jetbrains.k2js.translate.context.Namer;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 public final class PatternBuilder {
 
@@ -205,15 +203,7 @@ public final class PatternBuilder {
                 return false;
             }
 
-            DeclarationDescriptor descriptor;
-            if (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                assert functionDescriptor.getOverriddenDescriptors().size() > 0;
-                descriptor = functionDescriptor.getOverriddenDescriptors().iterator().next();
-            }
-            else {
-                descriptor = functionDescriptor;
-            }
-
+            DeclarationDescriptor descriptor = functionDescriptor;
             String[] list = names;
             while ((descriptor = descriptor.getContainingDeclaration()) != null) {
                 if (nameIndex == -1) {
@@ -242,20 +232,8 @@ public final class PatternBuilder {
         }
 
         private boolean checkOverridden(FunctionDescriptor functionDescriptor) {
-            Set<? extends FunctionDescriptor> overriddenDescriptors = functionDescriptor.getOverriddenDescriptors();
-            if (overriddenDescriptors.isEmpty()) {
-                return false;
-            }
-
-            for (FunctionDescriptor overridden : overriddenDescriptors) {
-                if (overridden.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                    for (FunctionDescriptor realOverridden : overridden.getOverriddenDescriptors()) {
-                        if (check(realOverridden) || checkOverridden(realOverridden)) {
-                            return true;
-                        }
-                    }
-                }
-                else if (check(overridden) || checkOverridden(overridden)) {
+            for (FunctionDescriptor overridden : functionDescriptor.getOverriddenDescriptors()) {
+                if (check(overridden) || checkOverridden(overridden)) {
                     return true;
                 }
             }

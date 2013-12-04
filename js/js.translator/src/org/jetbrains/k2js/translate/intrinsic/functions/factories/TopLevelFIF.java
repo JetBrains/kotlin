@@ -151,17 +151,8 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("jet", "equals").receiverExists(), EQUALS);
         add(pattern("jet", "identityEquals").receiverExists(), IDENTITY_EQUALS);
 
-        add(pattern(new NamePredicate(
-                PrimitiveType.BOOLEAN.getTypeName().toString(),
-                PrimitiveType.BYTE.getTypeName().toString(),
-                PrimitiveType.SHORT.getTypeName().toString(),
-                PrimitiveType.INT.getTypeName().toString(),
-                PrimitiveType.FLOAT.getTypeName().toString(),
-                PrimitiveType.LONG.getTypeName().toString(),
-                PrimitiveType.DOUBLE.getTypeName().toString(),
-                "Number"), HASH_CODE_NAME), NUMBER_HASH_CODE);
         add(pattern(new NamePredicate(PrimitiveType.CHAR.getTypeName().toString()), HASH_CODE_NAME), CHAR_HASH_CODE);
-        add(pattern(NamePredicate.STRING, HASH_CODE_NAME), STRING_HASH_CODE);
+        add(pattern("jet", "Number", HASH_CODE_NAME).checkOverridden(), NUMBER_HASH_CODE);
 
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
