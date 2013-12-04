@@ -213,13 +213,13 @@ public final class Char : jet.Hashable, jet.Comparable<jet.Char> {
     public final fun times(/*0*/ other: jet.Int): jet.Int
     public final fun times(/*0*/ other: jet.Long): jet.Long
     public final fun times(/*0*/ other: jet.Short): jet.Int
-    public open fun toByte(): jet.Byte
-    public open fun toChar(): jet.Char
-    public open fun toDouble(): jet.Double
-    public open fun toFloat(): jet.Float
-    public open fun toInt(): jet.Int
-    public open fun toLong(): jet.Long
-    public open fun toShort(): jet.Short
+    public final fun toByte(): jet.Byte
+    public final fun toChar(): jet.Char
+    public final fun toDouble(): jet.Double
+    public final fun toFloat(): jet.Float
+    public final fun toInt(): jet.Int
+    public final fun toLong(): jet.Long
+    public final fun toShort(): jet.Short
 }
 
 public final class CharArray {
