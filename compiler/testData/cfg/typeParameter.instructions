@@ -5,6 +5,7 @@ fun <T> foo() {
 ---------------------
 L0:
     <START>                   
+    mark({ T })               
     error(T, No resolved call)
 L1:
     <END>                         NEXT:[<SINK>]                    

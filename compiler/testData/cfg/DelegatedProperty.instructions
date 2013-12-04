@@ -18,6 +18,7 @@ val a = Delegate()
 L0:
     <START>               
     v(val a = Delegate()) 
+    mark(Delegate())      
     call(Delegate, <init>)
     w(a)                  
 L1:

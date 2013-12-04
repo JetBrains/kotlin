@@ -34,20 +34,24 @@ fun foo(b: B) : Int {
 }
 ---------------------
 L0:
-    <START>                      
-    v(b: B)                      
-    w(b)                         
-    v(val o = object : A by b {})
-    r(b)                         
-    r(object : A by b {})        
-    w(o)                         
-    r(o)                         
-    call(foo, foo)               
-    ret(*) L1                    
+    <START>                                            
+    v(b: B)                                            
+    w(b)                                               
+    mark({ val o = object : A by b {} return o.foo() })
+    v(val o = object : A by b {})                      
+    mark(object : A by b {})                           
+    r(b)                                               
+    r(object : A by b {})                              
+    w(o)                                               
+    mark(o.foo())                                      
+    mark(foo())                                        
+    r(o)                                               
+    call(foo, foo)                                     
+    ret(*) L1                                          
 L1:
-    <END>                            NEXT:[<SINK>]                       
+    <END>                                                  NEXT:[<SINK>]                                             
 error:
-    <ERROR>                          PREV:[]
+    <ERROR>                                                PREV:[]
 sink:
-    <SINK>                           PREV:[<ERROR>, <END>]
+    <SINK>                                                 PREV:[<ERROR>, <END>]
 =====================

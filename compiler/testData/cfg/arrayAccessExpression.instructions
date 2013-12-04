@@ -21,6 +21,10 @@ L0:
     <START>                    
     v(ab: Ab)                  
     w(ab)                      
+    mark({ ab.getArray()[1] }) 
+    mark(ab.getArray()[1])     
+    mark(ab.getArray())        
+    mark(getArray())           
     r(ab)                      
     call(getArray, getArray)   
     r(1)                       

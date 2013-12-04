@@ -20,23 +20,24 @@ fun test(c: C) {
 }
 ---------------------
 L0:
-    <START>            
-    v(c: C)            
-    w(c)               
-    r(c)               
-    v(a)               
-    call(a, component1)
-    w(a)               
-    v(b)               
-    call(b, component2)
-    w(b)               
-    v(val d = 1)       
-    r(1)               
-    w(d)               
+    <START>                           
+    v(c: C)                           
+    w(c)                              
+    mark({ val (a, b) = c val d = 1 })
+    r(c)                              
+    v(a)                              
+    call(a, component1)               
+    w(a)                              
+    v(b)                              
+    call(b, component2)               
+    w(b)                              
+    v(val d = 1)                      
+    r(1)                              
+    w(d)                              
 L1:
-    <END>                  NEXT:[<SINK>]             
+    <END>                                 NEXT:[<SINK>]                            
 error:
-    <ERROR>                PREV:[]
+    <ERROR>                               PREV:[]
 sink:
-    <SINK>                 PREV:[<ERROR>, <END>]
+    <SINK>                                PREV:[<ERROR>, <END>]
 =====================

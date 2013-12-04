@@ -36,6 +36,7 @@ L0:
     <START>    
     v(i: Int)  
     w(i)       
+    mark({})   
     read (Unit)
 L1:
     <END>          NEXT:[<SINK>]     
@@ -55,19 +56,22 @@ fun test1() {
 }
 ---------------------
 L0:
-    <START>                                     
-    v(val a = object { val x : Int { $x = 1 } })
-    v(val x : Int)                              
-    r(1)                                        
-    w($x)                                       
-    r(object { val x : Int { $x = 1 } })        
-    w(a)                                        
+    <START>                                            
+    mark({ val a = object { val x : Int { $x = 1 } } })
+    v(val a = object { val x : Int { $x = 1 } })       
+    mark(object { val x : Int { $x = 1 } })            
+    v(val x : Int)                                     
+    mark({ $x = 1 })                                   
+    r(1)                                               
+    w($x)                                              
+    r(object { val x : Int { $x = 1 } })               
+    w(a)                                               
 L1:
-    <END>                                           NEXT:[<SINK>]                                      
+    <END>                                                  NEXT:[<SINK>]                                             
 error:
-    <ERROR>                                         PREV:[]
+    <ERROR>                                                PREV:[]
 sink:
-    <SINK>                                          PREV:[<ERROR>, <END>]
+    <SINK>                                                 PREV:[<ERROR>, <END>]
 =====================
 == O ==
 object O {
@@ -78,16 +82,17 @@ object O {
 }
 ---------------------
 L0:
-    <START>       
-    v(val x : Int)
-    r(1)          
-    w($x)         
+    <START>         
+    v(val x : Int)  
+    mark({ $x = 1 })
+    r(1)            
+    w($x)           
 L1:
-    <END>             NEXT:[<SINK>]        
+    <END>               NEXT:[<SINK>]          
 error:
-    <ERROR>           PREV:[]
+    <ERROR>             PREV:[]
 sink:
-    <SINK>            PREV:[<ERROR>, <END>]
+    <SINK>              PREV:[<ERROR>, <END>]
 =====================
 == test2 ==
 fun test2() {
@@ -98,22 +103,24 @@ fun test2() {
 }
 ---------------------
 L0:
-    <START>                        
-    v(val b = 1)                   
-    r(1)                           
-    w(b)                           
-    v(val a = object { val x = b })
-    v(val x = b)                   
-    r(b)                           
-    w(x)                           
-    r(object { val x = b })        
-    w(a)                           
+    <START>                                         
+    mark({ val b = 1 val a = object { val x = b } })
+    v(val b = 1)                                    
+    r(1)                                            
+    w(b)                                            
+    v(val a = object { val x = b })                 
+    mark(object { val x = b })                      
+    v(val x = b)                                    
+    r(b)                                            
+    w(x)                                            
+    r(object { val x = b })                         
+    w(a)                                            
 L1:
-    <END>                              NEXT:[<SINK>]                         
+    <END>                                               NEXT:[<SINK>]                                          
 error:
-    <ERROR>                            PREV:[]
+    <ERROR>                                             PREV:[]
 sink:
-    <SINK>                             PREV:[<ERROR>, <END>]
+    <SINK>                                              PREV:[<ERROR>, <END>]
 =====================
 == test3 ==
 fun test3() {
@@ -126,30 +133,33 @@ fun test3() {
 }
 ---------------------
 L0:
-    <START>                                                     
-    v(val a = object { val y : Int fun inner_bar() { y = 10 } })
-    v(val y : Int)                                              
-    jmp?(L2)                                                        NEXT:[r(object { val y : Int fun inner_bar() { y = 10 } }), d(fun inner_bar() { y = 10 })]
-    d(fun inner_bar() { y = 10 })                                   NEXT:[<SINK>]                                                                             
+    <START>                                                            
+    mark({ val a = object { val y : Int fun inner_bar() { y = 10 } } })
+    v(val a = object { val y : Int fun inner_bar() { y = 10 } })       
+    mark(object { val y : Int fun inner_bar() { y = 10 } })            
+    v(val y : Int)                                                     
+    jmp?(L2)                                                               NEXT:[r(object { val y : Int fun inner_bar() { y = 10 } }), d(fun inner_bar() { y = 10 })]
+    d(fun inner_bar() { y = 10 })                                          NEXT:[<SINK>]                                                                             
 L2:
-    r(object { val y : Int fun inner_bar() { y = 10 } })            PREV:[jmp?(L2)]
-    w(a)                                                        
+    r(object { val y : Int fun inner_bar() { y = 10 } })                   PREV:[jmp?(L2)]
+    w(a)                                                               
 L1:
-    <END>                                                           NEXT:[<SINK>]                                                                             
+    <END>                                                                  NEXT:[<SINK>]                                                                             
 error:
-    <ERROR>                                                         PREV:[]
+    <ERROR>                                                                PREV:[]
 sink:
-    <SINK>                                                          PREV:[<ERROR>, <END>, d(fun inner_bar() { y = 10 })]
+    <SINK>                                                                 PREV:[<ERROR>, <END>, d(fun inner_bar() { y = 10 })]
 L3:
-    <START>
-    r(10)  
-    w(y)   
+    <START>         
+    mark({ y = 10 })
+    r(10)           
+    w(y)            
 L4:
-    <END>      NEXT:[<SINK>]
+    <END>               NEXT:[<SINK>]          
 error:
-    <ERROR>    PREV:[]
+    <ERROR>             PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>              PREV:[<ERROR>, <END>]
 =====================
 == inner_bar ==
 fun inner_bar() {
@@ -157,15 +167,16 @@ fun inner_bar() {
         }
 ---------------------
 L3:
-    <START>
-    r(10)  
-    w(y)   
+    <START>         
+    mark({ y = 10 })
+    r(10)           
+    w(y)            
 L4:
-    <END>      NEXT:[<SINK>]
+    <END>               NEXT:[<SINK>]          
 error:
-    <ERROR>    PREV:[]
+    <ERROR>             PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>              PREV:[<ERROR>, <END>]
 =====================
 == test4 ==
 fun test4() {
@@ -182,33 +193,37 @@ fun test4() {
 }
 ---------------------
 L0:
-    <START>                                                                      
-    v(val a = object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })
-    v(val x : Int)                                                               
-    v(val y : Int)                                                               
-    r(1)                                                                         
-    w($x)                                                                        
-    jmp?(L2)                                                                         NEXT:[r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }), d(fun ggg() { y = 10 })]
-    d(fun ggg() { y = 10 })                                                          NEXT:[<SINK>]                                                                                        
+    <START>                                                                             
+    mark({ val a = object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } } })
+    v(val a = object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })       
+    mark(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })            
+    v(val x : Int)                                                                      
+    v(val y : Int)                                                                      
+    mark({ $x = 1 })                                                                    
+    r(1)                                                                                
+    w($x)                                                                               
+    jmp?(L2)                                                                                NEXT:[r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }), d(fun ggg() { y = 10 })]
+    d(fun ggg() { y = 10 })                                                                 NEXT:[<SINK>]                                                                                        
 L2:
-    r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })            PREV:[jmp?(L2)]
-    w(a)                                                                         
+    r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })                   PREV:[jmp?(L2)]
+    w(a)                                                                                
 L1:
-    <END>                                                                            NEXT:[<SINK>]                                                                                        
+    <END>                                                                                   NEXT:[<SINK>]                                                                                        
 error:
-    <ERROR>                                                                          PREV:[]
+    <ERROR>                                                                                 PREV:[]
 sink:
-    <SINK>                                                                           PREV:[<ERROR>, <END>, d(fun ggg() { y = 10 })]
+    <SINK>                                                                                  PREV:[<ERROR>, <END>, d(fun ggg() { y = 10 })]
 L3:
-    <START>
-    r(10)  
-    w(y)   
+    <START>         
+    mark({ y = 10 })
+    r(10)           
+    w(y)            
 L4:
-    <END>      NEXT:[<SINK>]
+    <END>               NEXT:[<SINK>]          
 error:
-    <ERROR>    PREV:[]
+    <ERROR>             PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>              PREV:[<ERROR>, <END>]
 =====================
 == ggg ==
 fun ggg() {
@@ -216,15 +231,16 @@ fun ggg() {
         }
 ---------------------
 L3:
-    <START>
-    r(10)  
-    w(y)   
+    <START>         
+    mark({ y = 10 })
+    r(10)           
+    w(y)            
 L4:
-    <END>      NEXT:[<SINK>]
+    <END>               NEXT:[<SINK>]          
 error:
-    <ERROR>    PREV:[]
+    <ERROR>             PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>              PREV:[<ERROR>, <END>]
 =====================
 == test5 ==
 fun test5() {
@@ -243,47 +259,52 @@ fun test5() {
 }
 ---------------------
 L0:
-    <START>                                                                           
-    v(val a = object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })
-    v(var x = 1)                                                                      
-    r(1)                                                                              
-    w(x)                                                                              
-    r(2)                                                                              
-    w($x)                                                                             
-    jmp?(L2)                                                                              NEXT:[jmp?(L5), d(fun foo() { x = 3 })]                                                                  
-    d(fun foo() { x = 3 })                                                                NEXT:[<SINK>]                                                                                            
+    <START>                                                                                  
+    mark({ val a = object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } } })
+    v(val a = object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })       
+    mark(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })            
+    v(var x = 1)                                                                             
+    r(1)                                                                                     
+    w(x)                                                                                     
+    mark({ $x = 2 })                                                                         
+    r(2)                                                                                     
+    w($x)                                                                                    
+    jmp?(L2)                                                                                     NEXT:[jmp?(L5), d(fun foo() { x = 3 })]                                                                  
+    d(fun foo() { x = 3 })                                                                       NEXT:[<SINK>]                                                                                            
 L2:
-    jmp?(L5)                                                                              NEXT:[r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }), d(fun bar() { x = 4 })]    PREV:[jmp?(L2)]
-    d(fun bar() { x = 4 })                                                                NEXT:[<SINK>]                                                                                            
+    jmp?(L5)                                                                                     NEXT:[r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }), d(fun bar() { x = 4 })]    PREV:[jmp?(L2)]
+    d(fun bar() { x = 4 })                                                                       NEXT:[<SINK>]                                                                                            
 L5:
-    r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })            PREV:[jmp?(L5)]
-    w(a)                                                                              
+    r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })                   PREV:[jmp?(L5)]
+    w(a)                                                                                     
 L1:
-    <END>                                                                                 NEXT:[<SINK>]                                                                                            
+    <END>                                                                                        NEXT:[<SINK>]                                                                                            
 error:
-    <ERROR>                                                                               PREV:[]
+    <ERROR>                                                                                      PREV:[]
 sink:
-    <SINK>                                                                                PREV:[<ERROR>, <END>, d(fun foo() { x = 3 }), d(fun bar() { x = 4 })]
+    <SINK>                                                                                       PREV:[<ERROR>, <END>, d(fun foo() { x = 3 }), d(fun bar() { x = 4 })]
 L3:
-    <START>
-    r(3)   
-    w(x)   
+    <START>        
+    mark({ x = 3 })
+    r(3)           
+    w(x)           
 L4:
-    <END>      NEXT:[<SINK>]
+    <END>              NEXT:[<SINK>]         
 error:
-    <ERROR>    PREV:[]
+    <ERROR>            PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>             PREV:[<ERROR>, <END>]
 L6:
-    <START>
-    r(4)   
-    w(x)   
+    <START>        
+    mark({ x = 4 })
+    r(4)           
+    w(x)           
 L7:
-    <END>      NEXT:[<SINK>]
+    <END>              NEXT:[<SINK>]         
 error:
-    <ERROR>    PREV:[]
+    <ERROR>            PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>             PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo() {
@@ -291,15 +312,16 @@ fun foo() {
         }
 ---------------------
 L3:
-    <START>
-    r(3)   
-    w(x)   
+    <START>        
+    mark({ x = 3 })
+    r(3)           
+    w(x)           
 L4:
-    <END>      NEXT:[<SINK>]
+    <END>              NEXT:[<SINK>]         
 error:
-    <ERROR>    PREV:[]
+    <ERROR>            PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>             PREV:[<ERROR>, <END>]
 =====================
 == bar ==
 fun bar() {
@@ -307,13 +329,14 @@ fun bar() {
         }
 ---------------------
 L6:
-    <START>
-    r(4)   
-    w(x)   
+    <START>        
+    mark({ x = 4 })
+    r(4)           
+    w(x)           
 L7:
-    <END>      NEXT:[<SINK>]
+    <END>              NEXT:[<SINK>]         
 error:
-    <ERROR>    PREV:[]
+    <ERROR>            PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>             PREV:[<ERROR>, <END>]
 =====================

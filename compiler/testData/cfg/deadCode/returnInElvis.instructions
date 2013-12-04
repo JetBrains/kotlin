@@ -4,15 +4,16 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START>
-    ret L1     NEXT:[<END>]         
--   jt(L2)     NEXT:[r(null), <END>]    PREV:[]
--   r(null)    PREV:[]
+    <START>                 
+    mark({ return ?: null })
+    ret L1                      NEXT:[<END>]                   
+-   jt(L2)                      NEXT:[r(null), <END>]              PREV:[]
+-   r(null)                     PREV:[]
 L1:
 L2:
-    <END>      NEXT:[<SINK>]            PREV:[ret L1]
+    <END>                       NEXT:[<SINK>]                      PREV:[ret L1]
 error:
-    <ERROR>    PREV:[]
+    <ERROR>                     PREV:[]
 sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>                      PREV:[<ERROR>, <END>]
 =====================

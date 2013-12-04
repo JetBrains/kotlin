@@ -7,6 +7,9 @@ L0:
     <START>                        
     v(f: () -> Unit)               
     w(f)                           
+    mark({ (f)() })                
+    mark((f)())                    
+    mark((f))                      
     r(f)                           
     call((f), <for expression (f)>)
 L1:

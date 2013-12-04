@@ -21,16 +21,18 @@ L0:
     r(34)                   
     w(k)                    
     v(val i: Int)           
+    mark({ $i = 12 })       
     r(12)                   
     w($i)                   
     v(val j: Int get() = 20)
-    jmp?(L2)                    NEXT:[r(13), d(get() = 20)]    
-    d(get() = 20)               NEXT:[<SINK>]                  
+    jmp?(L2)                    NEXT:[mark({ $i = 13 }), d(get() = 20)]
+    d(get() = 20)               NEXT:[<SINK>]                          
 L2:
-    r(13)                       PREV:[jmp?(L2)]
+    mark({ $i = 13 })           PREV:[jmp?(L2)]
+    r(13)                   
     w($i)                   
 L1:
-    <END>                       NEXT:[<SINK>]                  
+    <END>                       NEXT:[<SINK>]                          
 error:
     <ERROR>                     PREV:[]
 sink:

@@ -7,6 +7,9 @@ L0:
     <START>                     
     v(a: Any)                   
     w(a)                        
+    mark({ a.foo() })           
+    mark(a.foo())               
+    mark(foo())                 
     error(foo, No resolved call)
     error(foo, No resolved call)
     r(a)                        

@@ -17,38 +17,49 @@ fun t1(b: Boolean) {
 }
 ---------------------
 L0:
-    <START>             
-    v(b: Boolean)       
-    w(b)                
-    v(var u: String)    
-    r(b)                
-    jf(L2)                  NEXT:[read (Unit), r("s")] 
-    r("s")              
-    w(u)                
-    jmp(L3)                 NEXT:[r(u)]                
+    <START>                                                                                                         
+    v(b: Boolean)                                                                                                   
+    w(b)                                                                                                            
+    mark({ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) })
+    v(var u: String)                                                                                                
+    mark(if (b) { u = "s" })                                                                                        
+    r(b)                                                                                                            
+    jf(L2)                                                                                                              NEXT:[read (Unit), mark({ u = "s" })]                                                                                  
+    mark({ u = "s" })                                                                                               
+    mark("s")                                                                                                       
+    r("s")                                                                                                          
+    w(u)                                                                                                            
+    jmp(L3)                                                                                                             NEXT:[mark(doSmth(u))]                                                                                                 
 L2:
-    read (Unit)             PREV:[jf(L2)]
+    read (Unit)                                                                                                         PREV:[jf(L2)]
 L3:
-    r(u)                    PREV:[jmp(L3), read (Unit)]
-    call(doSmth, doSmth)
-    v(var r: String)    
-    r(b)                
-    jf(L4)                  NEXT:[r("t"), r("s")]      
-    r("s")              
-    w(r)                
-    jmp(L5)                 NEXT:[r(r)]                
+    mark(doSmth(u))                                                                                                     PREV:[jmp(L3), read (Unit)]
+    r(u)                                                                                                            
+    call(doSmth, doSmth)                                                                                            
+    v(var r: String)                                                                                                
+    mark(if (b) { r = "s" } else { r = "t" })                                                                       
+    r(b)                                                                                                            
+    jf(L4)                                                                                                              NEXT:[mark({ r = "t" }), mark({ r = "s" })]                                                                            
+    mark({ r = "s" })                                                                                               
+    mark("s")                                                                                                       
+    r("s")                                                                                                          
+    w(r)                                                                                                            
+    jmp(L5)                                                                                                             NEXT:[mark(doSmth(r))]                                                                                                 
 L4:
-    r("t")                  PREV:[jf(L4)]
-    w(r)                
+    mark({ r = "t" })                                                                                                   PREV:[jf(L4)]
+    mark("t")                                                                                                       
+    r("t")                                                                                                          
+    w(r)                                                                                                            
 L5:
-    r(r)                    PREV:[jmp(L5), w(r)]
-    call(doSmth, doSmth)
+    mark(doSmth(r))                                                                                                     PREV:[jmp(L5), w(r)]
+    r(r)                                                                                                            
+    call(doSmth, doSmth)                                                                                            
 L1:
-    <END>                   NEXT:[<SINK>]              
+    <END>                                                                                                               NEXT:[<SINK>]                                                                                                          
 error:
-    <ERROR>                 PREV:[]
+    <ERROR>                                                                                                             PREV:[]
 sink:
-    <SINK>                  PREV:[<ERROR>, <END>]
+    <SINK>                                                                                                              PREV:[<ERROR>, <END>]
 =====================
 == t2 ==
 fun t2(b: Boolean) {
@@ -63,34 +74,41 @@ fun t2(b: Boolean) {
 }
 ---------------------
 L0:
-    <START>             
-    v(b: Boolean)       
-    w(b)                
-    v(val i = 3)        
-    r(3)                
-    w(i)                
-    r(b)                
-    jf(L2)                  NEXT:[read (Unit), ret L1] 
-    ret L1                  NEXT:[<END>]               
--   jmp(L3)                 NEXT:[r(i)]                    PREV:[]
+    <START>                                                                   
+    v(b: Boolean)                                                             
+    w(b)                                                                      
+    mark({ val i = 3 if (b) { return; } doSmth(i) if (i is Int) { return; } })
+    v(val i = 3)                                                              
+    r(3)                                                                      
+    w(i)                                                                      
+    mark(if (b) { return; })                                                  
+    r(b)                                                                      
+    jf(L2)                                                                        NEXT:[read (Unit), mark({ return; })]                                            
+    mark({ return; })                                                         
+    ret L1                                                                        NEXT:[<END>]                                                                     
+-   jmp(L3)                                                                       NEXT:[mark(doSmth(i))]                                                               PREV:[]
 L2:
-    read (Unit)             PREV:[jf(L2)]
+    read (Unit)                                                                   PREV:[jf(L2)]
 L3:
-    r(i)                
-    call(doSmth, doSmth)
-    r(i)                
-    jf(L4)                  NEXT:[read (Unit), ret L1] 
-    ret L1                  NEXT:[<END>]               
--   jmp(L5)                 NEXT:[<END>]                   PREV:[]
+    mark(doSmth(i))                                                           
+    r(i)                                                                      
+    call(doSmth, doSmth)                                                      
+    mark(if (i is Int) { return; })                                           
+    mark(i is Int)                                                            
+    r(i)                                                                      
+    jf(L4)                                                                        NEXT:[read (Unit), mark({ return; })]                                            
+    mark({ return; })                                                         
+    ret L1                                                                        NEXT:[<END>]                                                                     
+-   jmp(L5)                                                                       NEXT:[<END>]                                                                         PREV:[]
 L4:
-    read (Unit)             PREV:[jf(L4)]
+    read (Unit)                                                                   PREV:[jf(L4)]
 L1:
 L5:
-    <END>                   NEXT:[<SINK>]                  PREV:[ret L1, ret L1, read (Unit)]
+    <END>                                                                         NEXT:[<SINK>]                                                                        PREV:[ret L1, ret L1, read (Unit)]
 error:
-    <ERROR>                 PREV:[]
+    <ERROR>                                                                       PREV:[]
 sink:
-    <SINK>                  PREV:[<ERROR>, <END>]
+    <SINK>                                                                        PREV:[<ERROR>, <END>]
 =====================
 == doSmth ==
 fun doSmth(s: String) {}
@@ -99,6 +117,7 @@ L0:
     <START>     
     v(s: String)
     w(s)        
+    mark({})    
     read (Unit) 
 L1:
     <END>           NEXT:[<SINK>]      

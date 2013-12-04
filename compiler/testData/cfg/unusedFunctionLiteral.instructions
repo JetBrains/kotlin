@@ -4,19 +4,22 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START> 
-    jmp?(L2)    NEXT:[r({}), d({})]
-    d({})       NEXT:[<SINK>]      
+    <START>     
+    mark({ {} })
+    mark({})    
+    jmp?(L2)        NEXT:[r({}), d({})]
+    d({})           NEXT:[<SINK>]      
 L2:
-    r({})       PREV:[jmp?(L2)]
+    r({})           PREV:[jmp?(L2)]
 L1:
-    <END>       NEXT:[<SINK>]      
+    <END>           NEXT:[<SINK>]      
 error:
-    <ERROR>     PREV:[]
+    <ERROR>         PREV:[]
 sink:
-    <SINK>      PREV:[<ERROR>, <END>, d({})]
+    <SINK>          PREV:[<ERROR>, <END>, d({})]
 L3:
     <START>    
+    mark()     
     read (Unit)
 L4:
     <END>          NEXT:[<SINK>]     
@@ -30,6 +33,7 @@ sink:
 ---------------------
 L3:
     <START>    
+    mark()     
     read (Unit)
 L4:
     <END>          NEXT:[<SINK>]     

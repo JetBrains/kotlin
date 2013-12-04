@@ -3,6 +3,7 @@ fun empty() {}
 ---------------------
 L0:
     <START>    
+    mark({})   
     read (Unit)
 L1:
     <END>          NEXT:[<SINK>]     
