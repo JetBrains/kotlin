@@ -2619,36 +2619,38 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @Override
-    public StackValue visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression, StackValue receiver) {
-        JetExpression expr = expression.getReceiverExpression();
-        Type receiverType = expressionType(expr);
-        gen(expr, receiverType);
+    public StackValue visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression, StackValue unused) {
+        JetExpression receiver = expression.getReceiverExpression();
+        JetExpression selector = expression.getSelectorExpression();
+        Type receiverType = expressionType(receiver);
+
+        gen(receiver, receiverType);
+
         if (isPrimitive(receiverType)) {
-            StackValue propValue = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
+            StackValue propValue = genQualified(StackValue.onStack(receiverType), selector);
             Type type = boxType(propValue.type);
             propValue.put(type, v);
 
             return StackValue.onStack(type);
         }
-        else {
-            Label ifnull = new Label();
-            Label end = new Label();
-            v.dup();
-            v.ifnull(ifnull);
-            StackValue propValue = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
-            Type type = boxType(propValue.type);
-            propValue.put(type, v);
-            v.goTo(end);
 
-            v.mark(ifnull);
-            v.pop();
-            if (!type.equals(Type.VOID_TYPE)) {
-                v.aconst(null);
-            }
-            v.mark(end);
+        Label ifnull = new Label();
+        Label end = new Label();
+        v.dup();
+        v.ifnull(ifnull);
+        StackValue propValue = genQualified(StackValue.onStack(receiverType), selector);
+        Type type = boxType(propValue.type);
+        propValue.put(type, v);
+        v.goTo(end);
 
-            return StackValue.onStack(type);
+        v.mark(ifnull);
+        v.pop();
+        if (!type.equals(Type.VOID_TYPE)) {
+            v.aconst(null);
         }
+        v.mark(end);
+
+        return StackValue.onStack(type);
     }
 
     @Override
