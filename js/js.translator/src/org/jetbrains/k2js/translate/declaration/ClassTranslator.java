@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -37,7 +36,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.Namer;
-import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -234,39 +232,68 @@ public final class ClassTranslator extends AbstractTranslator {
         for (PropertyDescriptor propertyDescriptor : dataProperties) {
             assert propertyDescriptor != null;
             JsExpression arg = jsPropertyAccess(propertyDescriptor, JsLiteral.THIS);
-            JsExpression hashImpl;
             JetType retType = propertyDescriptor.getReturnType();
             assert retType != null;
-            String hashCb = primitivePropertyHashCallbackName(retType);
-            if (hashCb != null) {
-                if (retType.isNullable()) {
-                    JsNameRef jsHashCb = new JsNameRef(hashCb, Namer.KOTLIN_NAME);
-                    hashImpl = Namer.kotlinLibraryCall(NULLABLE_HASH_CODE, arg, jsHashCb);
-                } else {
-                    hashImpl = Namer.kotlinLibraryCall(hashCb, arg);
-                }
-            } else {
-                TypeConstructor typeCtor = retType.getConstructor();
-                if (typeCtor.toString().equals("Array")) {
-                    List<TypeProjection> projections = propertyDescriptor.getReturnType().getArguments();
-                    assert projections.size() >= 1;
-                    String primitiveHashCb = primitivePropertyHashCallbackName(projections.get(0).getType());
-                    JsNameRef jsElemHashCb = (primitiveHashCb != null)
-                                             ? new JsNameRef(primitiveHashCb)
-                                             : new JsNameRef(Namer.HASH_CODE, Namer.KOTLIN_NAME);
-                    hashImpl = Namer.kotlinLibraryCall(ARRAY_HASH_CODE, arg, jsElemHashCb);
-                } else {
-                    hashImpl = Namer.kotlinLibraryCall(Namer.HASH_CODE, arg);
-                }
-            }
-            bodyStatements.add(new JsExpressionStatement(new JsBinaryOperation(JsBinaryOperator.ASG_MUL,
-                                                                      resultRef,
-                                                                      context().program().getNumberLiteral(31))));
-            bodyStatements.add(new JsExpressionStatement(JsAstUtils.addAssign(resultRef, hashImpl)));
+            String scalarCbName = scalarHashCallbackName(retType);
+            JsInvocation hashCall = scalarCbName != null
+                                    ? new JsInvocation(jsHashCallbackExpression(scalarCbName, retType.isNullable()), arg)
+                                    : jsHashCallbackInvocation(arg, retType);
+            bodyStatements.add(new JsExpressionStatement(JsAstUtils.mulAssign(resultRef, context().program().getNumberLiteral(31))));
+            bodyStatements.add(new JsExpressionStatement(JsAstUtils.addAssign(resultRef, hashCall)));
             bodyStatements.add(new JsExpressionStatement(resultToInt32));
         }
         bodyStatements.add(new JsReturn(resultRef));
         return new JsBlock(bodyStatements);
+    }
+
+    @NotNull
+    private static JsInvocation jsHashCallbackInvocation(@NotNull JsExpression arg, @NotNull JetType argType) {
+        TypeConstructor typeCtor = argType.getConstructor();
+        if (typeCtor.toString().equals("Array")) {
+            List<TypeProjection> projections = argType.getArguments();
+            assert projections.size() >= 1;
+            JetType elemType = projections.get(0).getType();
+            String scalarElemCbName = scalarHashCallbackName(elemType);
+            if (scalarElemCbName == null) {
+                scalarElemCbName = Namer.HASH_CODE;
+            }
+            return new JsInvocation(jsHashCallbackExpression(ARRAY_HASH_CODE, argType.isNullable()), arg,
+                                    jsHashCallbackExpression(scalarElemCbName, elemType.isNullable()));
+        }
+        return new JsInvocation(jsHashCallbackExpression(Namer.HASH_CODE, argType.isNullable()), arg);
+    }
+
+    @NotNull
+    private static JsExpression jsHashCallbackExpression(@NotNull String callbackName, boolean needsNullableWrap) {
+        JsExpression callbackInvocation = new JsNameRef(callbackName, Namer.KOTLIN_NAME);
+        if (needsNullableWrap) {
+            callbackInvocation = Namer.kotlinLibraryCall(NULLABLE_HASH_CODE, callbackInvocation);
+        }
+        return callbackInvocation;
+    }
+
+    @Nullable
+    private static String scalarHashCallbackName(JetType type) {
+        assert type != null;
+        String typeName = type.toString();
+        if (type.isNullable()) {
+            assert typeName.length() > 1;
+            assert typeName.charAt(typeName.length() - 1) == '?';
+            typeName = typeName.substring(0, typeName.length() - 1);
+        }
+        if (typeName.equals(PrimitiveType.CHAR.getTypeName().asString()) ||
+            typeName.equals("String")) {
+            return typeName.toLowerCase() + "HashCode";
+        } else if (type.equals(PrimitiveType.BOOLEAN) ||
+                   typeName.equals(PrimitiveType.BYTE.getTypeName().asString()) ||
+                   typeName.equals(PrimitiveType.SHORT.getTypeName().asString()) ||
+                   typeName.equals(PrimitiveType.INT.getTypeName().asString()) ||
+                   typeName.equals(PrimitiveType.FLOAT.getTypeName().asString()) ||
+                   typeName.equals(PrimitiveType.LONG.getTypeName().asString()) ||
+                   typeName.equals(PrimitiveType.DOUBLE.getTypeName().asString())) {
+            return NUMBER_HASH_CODE;
+        }
+        return null;
     }
 
     @NotNull
@@ -364,30 +391,6 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsNameRef jsPropertyAccess(@NotNull PropertyDescriptor propertyDescriptor, @NotNull JsExpression base) {
         return new JsNameRef(context().getNameForDescriptor(propertyDescriptor), base);
-    }
-
-    @Nullable
-    private static String primitivePropertyHashCallbackName(JetType propertyType) {
-        assert propertyType != null;
-        String propTypeName = propertyType.toString();
-        if (propertyType.isNullable()) {
-            assert propTypeName.length() > 1;
-            assert propTypeName.charAt(propTypeName.length() - 1) == '?';
-            propTypeName = propTypeName.substring(0, propTypeName.length() - 1);
-        }
-        if (propTypeName.equals(PrimitiveType.CHAR.getTypeName().asString()) ||
-            propTypeName.equals("String")) {
-            return propTypeName.toLowerCase() + "HashCode";
-        } else if (propTypeName.equals(PrimitiveType.BOOLEAN.getTypeName().asString()) ||
-                   propTypeName.equals(PrimitiveType.BYTE.getTypeName().asString()) ||
-                   propTypeName.equals(PrimitiveType.SHORT.getTypeName().asString()) ||
-                   propTypeName.equals(PrimitiveType.INT.getTypeName().asString()) ||
-                   propTypeName.equals(PrimitiveType.FLOAT.getTypeName().asString()) ||
-                   propTypeName.equals(PrimitiveType.LONG.getTypeName().asString()) ||
-                   propTypeName.equals(PrimitiveType.DOUBLE.getTypeName().asString())) {
-            return NUMBER_HASH_CODE;
-        }
-        return null;
     }
 
     private List<JsExpression> getClassCreateInvocationArguments(@NotNull TranslationContext declarationContext) {

@@ -140,6 +140,11 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsBinaryOperation mulAssign(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.ASG_MUL, left, right);
+    }
+
+    @NotNull
     public static JsBinaryOperation subtract(@NotNull JsExpression left, @NotNull JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.SUB, left, right);
     }

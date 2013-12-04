@@ -60,8 +60,8 @@ String.prototype.contains = function (s) {
     };
     
     Kotlin.hashCode = function (o) {
-        if (o == null) {
-            return 0;
+        if (o === null) {
+            Kotlin.throwNPE();
         }
         if (typeof o == "object" && o.hashCode != undefined) {
             return o.hashCode();
@@ -72,18 +72,30 @@ String.prototype.contains = function (s) {
         if (typeof o == "string") {
             return Kotlin.stringHashCode(o);
         }
+        if (typeof o == "array") {
+            return Kotlin.arrayHashCode(o, Kotlin.nullableHashCode(Kotlin.hashCode));
+        }
         return 0;
     }
 
-    Kotlin.charHashCode = function(ch) {
+    Kotlin.charHashCode = function (ch) {
+        if (ch === null) {
+            Kotlin.throwNPE();
+        }
         return ch.charCodeAt(0);
     }
 
-    Kotlin.numberHashCode = function(num) {
+    Kotlin.numberHashCode = function (num) {
+        if (num === null) {
+            Kotlin.throwNPE();
+        }
         return num | 0
     }
 
-    Kotlin.stringHashCode = function(str) {
+    Kotlin.stringHashCode = function (str) {
+        if (str === null) {
+            Kotlin.throwNPE();
+        }
         var result = 0;
         for (var i = 0; i < str.length; ++i) {
             result = (31 * result + str.charCodeAt(i)) | 0;
@@ -91,14 +103,10 @@ String.prototype.contains = function (s) {
         return result;
     };
 
-    Kotlin.nullableHashCode = function(val, hashCB) {
-        if (val == null) {
-            return 0;
+    Kotlin.arrayHashCode = function (arr, hashCB) {
+        if (arr === null) {
+            Kotlin.throwNPE();
         }
-        return hashCB(val);
-    }
-
-    Kotlin.arrayHashCode = function(arr, hashCB) {
         var result = 1;
         for (var i = 0; i < arr.length; ++i) {
             result = (31 * result + hashCB(arr[i])) | 0;
@@ -106,7 +114,13 @@ String.prototype.contains = function (s) {
         return result;
     };
 
-    Kotlin.arrayJoin = function(a, sep) {
+    Kotlin.nullableHashCode = function (hashCB) {
+        return function (val) {
+            return val === null ? 0 : hashCB(val);
+        }
+    }
+
+    Kotlin.arrayJoin = function (a, sep) {
         var result = "";
         var first = true;
         for (var i = 0; i < a.length; ++i) {
@@ -120,7 +134,7 @@ String.prototype.contains = function (s) {
         return result;
     }
 
-    Kotlin.arrayToString = function(a) {
+    Kotlin.arrayToString = function (a) {
         return "[" + Kotlin.arrayJoin(a, ", ") + "]";
     };
 
