@@ -7,6 +7,7 @@ public annotation class atomic : Annotation
 public annotation class data : Annotation
 public annotation class deprecated(value: String) : Annotation
 public annotation class suppress(vararg names: String)
+public annotation class tailRecursive : Annotation
 
 public annotation class noinline
 public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)

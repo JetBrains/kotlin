@@ -402,6 +402,11 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getTailRecursiveAnnotationClass() {
+        return getBuiltInClassByName("tailRecursive");
+    }
+
+    @NotNull
     public ClassDescriptor getDeprecatedAnnotation() {
         return getBuiltInClassByName("deprecated");
     }
@@ -953,6 +958,10 @@ public class KotlinBuiltIns {
 
     public boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
         return containsAnnotation(declarationDescriptor, getDeprecatedAnnotation());
+    }
+
+    public boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
+        return containsAnnotation(declarationDescriptor, getTailRecursiveAnnotationClass());
     }
 
     static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
