@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
@@ -338,7 +338,7 @@ public final class DescriptorResolverUtils {
                 "java class " + javaClass + " is under non-java fragment: " + packageFragment;
 
         JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
-        return provider.getOrCreatePackage(getFQName(javaClass).toSafe());
+        return provider.getOrCreatePackage(getFqName(javaClass).toSafe());
     }
 
     public static boolean isJavaClassVisibleAsPackage(@NotNull JavaClass javaClass) {

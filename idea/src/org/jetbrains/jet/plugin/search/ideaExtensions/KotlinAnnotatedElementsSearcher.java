@@ -78,7 +78,7 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
 
                     ClassifierDescriptor descriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
                     if (descriptor == null) return;
-                    if (!(DescriptorUtils.getFQName(descriptor).asString().equals(annotationFQN))) return;
+                    if (!(DescriptorUtils.getFqName(descriptor).asString().equals(annotationFQN))) return;
 
                     if (parentOfType instanceof JetClass) {
                         PsiClass lightClass = LightClassUtil.getPsiClass((JetClass) parentOfType);

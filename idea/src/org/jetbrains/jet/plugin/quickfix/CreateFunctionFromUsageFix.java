@@ -57,7 +57,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -902,7 +901,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             assert returnTypeRef != null;
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, returnTypeRef.getText());
         }
-        properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFQName(ownerClassDescriptor).asString());
+        properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFqName(ownerClassDescriptor).asString());
         properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, ownerClassDescriptor.getName().asString());
         properties.setProperty(ATTRIBUTE_FUNCTION_NAME, functionName);
 
@@ -1060,7 +1059,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             String replacement = typeParameterNameMap.get(declarationDescriptor);
             return replacement == null ? declarationDescriptor.getName().asString() : replacement;
         } else {
-            return fq ? DescriptorUtils.getFQName(declarationDescriptor).asString() : declarationDescriptor.getName().asString();
+            return fq ? DescriptorUtils.getFqName(declarationDescriptor).asString() : declarationDescriptor.getName().asString();
         }
     }
 

@@ -76,7 +76,7 @@ public final class DescriptorLookupConverter {
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
             if (containingDeclaration != null && extensionFunction) {
                 tailText += " for " + DescriptorRenderer.TEXT.renderType(functionDescriptor.getReceiverParameter().getType());
-                tailText += " in " + DescriptorUtils.getFQName(containingDeclaration);
+                tailText += " in " + DescriptorUtils.getFqName(containingDeclaration);
             }
         }
         else if (descriptor instanceof VariableDescriptor) {
@@ -86,7 +86,7 @@ public final class DescriptorLookupConverter {
         else if (descriptor instanceof ClassDescriptor) {
             DeclarationDescriptor declaredIn = descriptor.getContainingDeclaration();
             assert declaredIn != null;
-            tailText = " (" + DescriptorUtils.getFQName(declaredIn) + ")";
+            tailText = " (" + DescriptorUtils.getFqName(declaredIn) + ")";
             tailTextGrayed = true;
         }
         else {

@@ -125,7 +125,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             @Override
             public FqName apply(@Nullable DeclarationDescriptor declarationDescriptor) {
                 assert declarationDescriptor != null;
-                return DescriptorUtils.getFQName(declarationDescriptor).toSafe();
+                return DescriptorUtils.getFqName(declarationDescriptor).toSafe();
             }
         }));
     }
@@ -152,7 +152,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             @Override
             public FqName apply(@Nullable DeclarationDescriptor declarationDescriptor) {
                 assert declarationDescriptor != null;
-                return DescriptorUtils.getFQName(declarationDescriptor).toSafe();
+                return DescriptorUtils.getFqName(declarationDescriptor).toSafe();
             }
         }));
     }
@@ -219,7 +219,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
         return Collections2.transform(descriptors, new Function<ClassDescriptor, FqName>() {
             @Override
             public FqName apply(ClassDescriptor descriptor) {
-                return DescriptorUtils.getFQName(descriptor).toSafe();
+                return DescriptorUtils.getFqName(descriptor).toSafe();
             }
         });
     }

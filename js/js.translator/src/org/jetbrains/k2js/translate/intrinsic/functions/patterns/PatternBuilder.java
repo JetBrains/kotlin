@@ -94,7 +94,7 @@ public final class PatternBuilder {
             }
 
             private boolean doApply(@NotNull FunctionDescriptor descriptor) {
-                List<Name> nameParts = DescriptorUtils.getFQName(descriptor).pathSegments();
+                List<Name> nameParts = DescriptorUtils.getFqName(descriptor).pathSegments();
                 if (nameParts.size() != checkersWithPrefixChecker.size()) {
                     return false;
                 }

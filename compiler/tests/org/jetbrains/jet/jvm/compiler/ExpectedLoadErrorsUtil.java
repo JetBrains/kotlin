@@ -85,7 +85,7 @@ public class ExpectedLoadErrorsUtil {
                     ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
                     assert annotationClass != null;
 
-                    if (DescriptorUtils.getFQName(annotationClass).asString().equals(ANNOTATION_CLASS_NAME)) {
+                    if (DescriptorUtils.getFqName(annotationClass).asString().equals(ANNOTATION_CLASS_NAME)) {
 
                         // we expect exactly one annotation argument
                         CompileTimeConstant<?> argument = annotation.getAllValueArguments().values().iterator().next();

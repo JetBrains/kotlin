@@ -353,7 +353,7 @@ public class JetSourceNavigationHelper {
             assert className != null : "Class from BuiltIns should have a name";
             ClassDescriptor classDescriptor = KotlinBuiltIns.getInstance().getBuiltInClassByName(className);
 
-            FqNameUnsafe fqName = DescriptorUtils.getFQName(classDescriptor);
+            FqNameUnsafe fqName = DescriptorUtils.getFqName(classDescriptor);
             if (fqName.isSafe()) {
                 FqName javaFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(fqName.toSafe());
                 if (javaFqName != null) {

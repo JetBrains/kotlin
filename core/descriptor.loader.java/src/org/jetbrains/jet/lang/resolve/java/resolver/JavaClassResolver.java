@@ -320,7 +320,7 @@ public final class JavaClassResolver {
         FqName containerFqName = methodContainer.getFqName();
         assert containerFqName != null : "qualified name is null for " + methodContainer;
 
-        if (DescriptorUtils.getFQName(samInterface).equalsTo(containerFqName)) {
+        if (DescriptorUtils.getFqName(samInterface).equalsTo(containerFqName)) {
             SimpleFunctionDescriptor abstractMethod = functionResolver.resolveFunctionMutely(samInterfaceMethod, samInterface);
             assert abstractMethod != null : "couldn't resolve method " + samInterfaceMethod;
             return abstractMethod;

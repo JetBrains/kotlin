@@ -402,7 +402,7 @@ public class QualifiedExpressionResolver {
             }
 
             if (packageView != null && classDescriptor != null) {
-                if (DescriptorUtils.getFQName(packageView).equalsTo(DescriptorUtils.getFQName(classDescriptor))) {
+                if (DescriptorUtils.getFqName(packageView).equalsTo(DescriptorUtils.getFqName(classDescriptor))) {
                     trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classDescriptor);
                     trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
                     checkVisibility(classDescriptor, trace, referenceExpression, scopeToCheckVisibility);

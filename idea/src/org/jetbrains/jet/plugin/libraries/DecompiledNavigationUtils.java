@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 public final class DecompiledNavigationUtils {
 
@@ -65,7 +65,7 @@ public final class DecompiledNavigationUtils {
             return jetDeclaration;
         }
         else {
-            LOG.warn("Could not find an element to navigate to for descriptor " + getFQName(effectiveReferencedDescriptor));
+            LOG.warn("Could not find an element to navigate to for descriptor " + getFqName(effectiveReferencedDescriptor));
         }
         return null;
     }
@@ -120,7 +120,7 @@ public final class DecompiledNavigationUtils {
             if (classKind == ClassKind.CLASS_OBJECT || classKind == ClassKind.ENUM_ENTRY) {
                 return getContainerFqName(containerDescriptor.getContainingDeclaration());
             }
-            return getFQName(containerDescriptor).toSafe();
+            return getFqName(containerDescriptor).toSafe();
         }
         return null;
     }

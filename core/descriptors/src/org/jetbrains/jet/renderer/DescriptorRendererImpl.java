@@ -197,7 +197,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             Collections.reverse(qualifiedNameElements);
             return renderFqName(qualifiedNameElements);
         }
-        return renderFqName(DescriptorUtils.getFQName(klass));
+        return renderFqName(DescriptorUtils.getFqName(klass));
     }
 
     /* TYPES RENDERING */
@@ -299,7 +299,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration != null) {
-            FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
+            FqNameUnsafe fqName = DescriptorUtils.getFqName(containingDeclaration);
             builder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : renderFqName(fqName));
         }
     }
@@ -310,7 +310,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
             assert annotationClass != null;
 
-            if (!excludedAnnotationClasses.contains(DescriptorUtils.getFQName(annotationClass).toSafe())) {
+            if (!excludedAnnotationClasses.contains(DescriptorUtils.getFqName(annotationClass).toSafe())) {
                 builder.append(renderType(annotation.getType()));
                 if (verbose) {
                     builder.append("(").append(StringUtil.join(DescriptorUtils.getSortedValueArguments(annotation, this), ", ")).append(")");

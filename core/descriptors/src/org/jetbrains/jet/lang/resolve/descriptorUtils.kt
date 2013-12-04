@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
 public fun ClassDescriptor.checkSuperTypeByFQName(qualifiedName: String, deep: Boolean): Boolean {
     fun checkDescriptor(descriptor: DeclarationDescriptor): Boolean {
-        return qualifiedName == DescriptorUtils.getFQName(descriptor).asString()
+        return qualifiedName == DescriptorUtils.getFqName(descriptor).asString()
     }
 
     if (deep && checkDescriptor(this)) return true

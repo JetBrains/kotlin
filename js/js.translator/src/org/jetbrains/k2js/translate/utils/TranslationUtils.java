@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.k2js.translate.context.Namer.getKotlinBackingFieldName;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
@@ -133,7 +133,7 @@ public final class TranslationUtils {
 
     @NotNull
     public static String getMangledName(@NotNull PropertyDescriptor descriptor, @NotNull String suggestedName) {
-        int absHashCode = Math.abs(getFQName(descriptor).asString().hashCode());
+        int absHashCode = Math.abs(getFqName(descriptor).asString().hashCode());
         return suggestedName + "_" + Integer.toString(absHashCode, Character.MAX_RADIX) + "$";
     }
 

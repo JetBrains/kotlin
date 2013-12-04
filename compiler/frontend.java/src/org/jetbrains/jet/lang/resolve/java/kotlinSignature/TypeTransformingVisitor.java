@@ -98,7 +98,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     private JetType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeElement type) {
-        return visitCommonType(DescriptorUtils.getFQName(classDescriptor).toSafe().asString(), type);
+        return visitCommonType(DescriptorUtils.getFqName(classDescriptor).toSafe().asString(), type);
     }
 
     @NotNull
@@ -109,7 +109,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         TypeConstructor originalTypeConstructor = originalType.getConstructor();
         ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
         assert declarationDescriptor != null;
-        FqName originalClassFqName = DescriptorUtils.getFQName(declarationDescriptor).toSafe();
+        FqName originalClassFqName = DescriptorUtils.getFqName(declarationDescriptor).toSafe();
         ClassDescriptor classFromLibrary = getAutoTypeAnalogWithinBuiltins(originalClassFqName, qualifiedName);
         if (!isSameName(qualifiedName, originalClassFqName.asString()) && classFromLibrary == null) {
             throw new AlternativeSignatureMismatchException("Alternative signature type mismatch, expected: %s, actual: %s",
@@ -191,7 +191,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
                 if (altProjectionKind == parameter.getVariance()) {
                     if (strictMode) {
                         throw new AlternativeSignatureMismatchException("Projection kind '%s' is redundant",
-                                altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
+                                altProjectionKind, DescriptorUtils.getFqName(typeConstructor.getDeclarationDescriptor()));
                     }
                     else {
                         altProjectionKind = projectionKind;
@@ -199,7 +199,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
                 }
                 else {
                     throw new AlternativeSignatureMismatchException("Projection kind '%s' is conflicting with variance of %s",
-                            altProjectionKind, DescriptorUtils.getFQName(typeConstructor.getDeclarationDescriptor()));
+                            altProjectionKind, DescriptorUtils.getFqName(typeConstructor.getDeclarationDescriptor()));
                 }
             }
         }
@@ -216,7 +216,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
         Collection<ClassDescriptor> descriptors = JavaToKotlinClassMap.getInstance().mapPlatformClass(javaFqName);
         for (ClassDescriptor descriptor : descriptors) {
-            String fqName = DescriptorUtils.getFQName(descriptor).asString();
+            String fqName = DescriptorUtils.getFqName(descriptor).asString();
             if (isSameName(qualifiedName, fqName)) {
                 return descriptor;
             }

@@ -346,7 +346,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
                 new Function0<Collection<JetType>>() {
                     @Override
                     public Collection<JetType> invoke() {
-                        if (resolveSession.isClassSpecial(DescriptorUtils.getFQName(LazyClassDescriptor.this))) {
+                        if (resolveSession.isClassSpecial(DescriptorUtils.getFqName(LazyClassDescriptor.this))) {
                             return Collections.emptyList();
                         }
 

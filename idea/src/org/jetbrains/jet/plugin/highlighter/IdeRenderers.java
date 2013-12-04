@@ -164,7 +164,7 @@ public class IdeRenderers {
                         stringBuilder.append(" <i>defined in</i> ");
                         DeclarationDescriptor containingDeclaration = funDescriptor.getContainingDeclaration();
                         if (containingDeclaration != null) {
-                            FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
+                            FqNameUnsafe fqName = DescriptorUtils.getFqName(containingDeclaration);
                             stringBuilder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : fqName.asString());
                         }
                         stringBuilder.append("</li>");

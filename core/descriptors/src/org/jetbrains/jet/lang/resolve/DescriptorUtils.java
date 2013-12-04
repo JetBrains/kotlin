@@ -109,7 +109,7 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static FqNameUnsafe getFQName(@NotNull DeclarationDescriptor descriptor) {
+    public static FqNameUnsafe getFqName(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         if (descriptor instanceof ModuleDescriptor || ErrorUtils.isError(descriptor)) {
@@ -126,10 +126,10 @@ public class DescriptorUtils {
         if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.CLASS_OBJECT) {
             DeclarationDescriptor classOfClassObject = containingDeclaration.getContainingDeclaration();
             assert classOfClassObject != null;
-            return getFQName(classOfClassObject).child(descriptor.getName());
+            return getFqName(classOfClassObject).child(descriptor.getName());
         }
 
-        return getFQName(containingDeclaration).child(descriptor.getName());
+        return getFqName(containingDeclaration).child(descriptor.getName());
     }
 
     public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {

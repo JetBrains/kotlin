@@ -282,7 +282,7 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
                     var builder = LookupElementBuilder.create(lookupElement.getObject(), classDescriptor.getName().asString() + "." + lookupElement.getLookupString())
                             .withIcon(presentation.getIcon())
                             .withStrikeoutness(presentation.isStrikeout())
-                            .withTailText(" (" + DescriptorUtils.getFQName(classDescriptor.getContainingDeclaration()) + ")")
+                            .withTailText(" (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")")
                             .withTypeText(if (!presentation.getTypeText().isNullOrEmpty())
                                               presentation.getTypeText()
                                           else

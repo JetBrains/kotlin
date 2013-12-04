@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
@@ -48,7 +47,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragm
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         // TODO: creating an FqName every time may be a performance problem
-        Name actualName = resolveSession.resolveClassifierAlias(DescriptorUtils.getFQName(thisDescriptor).toSafe(), name);
+        Name actualName = resolveSession.resolveClassifierAlias(DescriptorUtils.getFqName(thisDescriptor).toSafe(), name);
         return super.getClassifier(actualName);
     }
 

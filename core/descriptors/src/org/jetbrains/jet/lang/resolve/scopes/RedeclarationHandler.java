@@ -30,8 +30,8 @@ public interface RedeclarationHandler {
         @Override
         public void handleRedeclaration(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
             throw new IllegalStateException(
-                    String.format("Redeclaration: %s (%s) and %s (%s) (no line info available)", DescriptorUtils.getFQName(first), first,
-                                  DescriptorUtils.getFQName(second), second)
+                    String.format("Redeclaration: %s (%s) and %s (%s) (no line info available)", DescriptorUtils.getFqName(first), first,
+                                  DescriptorUtils.getFqName(second), second)
             );
         }
     };

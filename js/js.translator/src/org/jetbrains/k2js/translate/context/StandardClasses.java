@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 /**
  * Provides a mechanism to bind some of the kotlin/java declations with library implementations.
@@ -153,12 +153,12 @@ public final class StandardClasses {
     }
 
     public boolean isStandardObject(@NotNull DeclarationDescriptor descriptor) {
-        return standardObjects.containsKey(getFQName(descriptor));
+        return standardObjects.containsKey(getFqName(descriptor));
     }
 
     @NotNull
     public JsName getStandardObjectName(@NotNull DeclarationDescriptor descriptor) {
-        return standardObjects.get(getFQName(descriptor));
+        return standardObjects.get(getFqName(descriptor));
     }
 
     @NotNull

@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 public class OverloadResolver {
     private TopDownAnalysisContext context;
@@ -83,7 +83,7 @@ public class OverloadResolver {
                 inClasses.put(classDescriptor, klass.getConstructors());
             }
             else if (containingDeclaration instanceof PackageFragmentDescriptor) {
-                inPackages.put(getFQName(klass), klass.getConstructors());
+                inPackages.put(getFqName(klass), klass.getConstructors());
             }
             else if (!(containingDeclaration instanceof FunctionDescriptor)) {
                 throw new IllegalStateException();
@@ -97,13 +97,13 @@ public class OverloadResolver {
 
         for (SimpleFunctionDescriptor function : context.getFunctions().values()) {
             if (function.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
-                functionsByName.putValue(getFQName(function), function);
+                functionsByName.putValue(getFqName(function), function);
             }
         }
         
         for (PropertyDescriptor property : context.getProperties().values()) {
             if (property.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
-                functionsByName.putValue(getFQName(property), property);
+                functionsByName.putValue(getFqName(property), property);
             }
         }
         

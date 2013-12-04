@@ -233,7 +233,7 @@ public class JetTypeMapper extends BindingTraceAware {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
 
         if (descriptor instanceof ClassDescriptor) {
-            FqNameUnsafe className = DescriptorUtils.getFQName(descriptor);
+            FqNameUnsafe className = DescriptorUtils.getFqName(descriptor);
             if (className.isSafe()) {
                 known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(className.toSafe(), jetType.isNullable());
             }

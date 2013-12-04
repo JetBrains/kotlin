@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
@@ -136,6 +135,7 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
         FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(JetPsiUtil.getFQName(containingFile));
         String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageClassFqName).getInternalName();
         return packageInternalName + "$sam$" + samInterface.getName().asString() + "$" +
-               Integer.toHexString(CodegenUtil.getPathHashCode(containingFile.getVirtualFile()) * 31 + DescriptorUtils.getFQName(samInterface).hashCode());
+               Integer.toHexString(CodegenUtil.getPathHashCode(containingFile.getVirtualFile()) * 31 + DescriptorUtils.getFqName(
+                       samInterface).hashCode());
     }
 }
