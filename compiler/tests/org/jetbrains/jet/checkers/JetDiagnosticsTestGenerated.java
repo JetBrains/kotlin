@@ -2759,6 +2759,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/evaluate/intOverflow.kt");
             }
             
+            @TestMetadata("integer.kt")
+            public void testInteger() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/integer.kt");
+            }
+            
             @TestMetadata("longOverflow.kt")
             public void testLongOverflow() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/evaluate/longOverflow.kt");
@@ -2797,6 +2802,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("unaryMinusIndependentExpType.kt")
             public void testUnaryMinusIndependentExpType() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/evaluate/unaryMinusIndependentExpType.kt");
+            }
+            
+            @TestMetadata("wrongLongSuffix.kt")
+            public void testWrongLongSuffix() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/wrongLongSuffix.kt");
             }
             
         }

@@ -242,6 +242,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         doParsingTest("compiler/testData/psi/Inner.kt");
     }
     
+    @TestMetadata("IntegerLiteral.kt")
+    public void testIntegerLiteral() throws Exception {
+        doParsingTest("compiler/testData/psi/IntegerLiteral.kt");
+    }
+    
     @TestMetadata("Labels.kt")
     public void testLabels() throws Exception {
         doParsingTest("compiler/testData/psi/Labels.kt");

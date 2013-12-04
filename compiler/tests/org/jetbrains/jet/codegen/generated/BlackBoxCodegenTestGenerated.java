@@ -1389,6 +1389,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/constants/float.kt");
         }
         
+        @TestMetadata("long.kt")
+        public void testLong() throws Exception {
+            doTest("compiler/testData/codegen/box/constants/long.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/box/controlStructures")

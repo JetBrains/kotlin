@@ -63,6 +63,11 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
             doConstantTest("compiler/testData/evaluate/constant/floatsAndDoubles.kt");
         }
         
+        @TestMetadata("integer.kt")
+        public void testInteger() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/integer.kt");
+        }
+        
         @TestMetadata("integers.kt")
         public void testIntegers() throws Exception {
             doConstantTest("compiler/testData/evaluate/constant/integers.kt");

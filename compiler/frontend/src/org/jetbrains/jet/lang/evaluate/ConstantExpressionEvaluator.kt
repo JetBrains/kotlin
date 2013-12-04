@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.JetNodeTypes
-import java.lang.Long.parseLong as javaParseLong
 import java.math.BigInteger
 import org.jetbrains.jet.lang.diagnostics.Errors
 import com.intellij.psi.util.PsiTreeUtil
@@ -93,7 +92,9 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         }
         if (result == null && expression.getNode().getElementType() == JetNodeTypes.NULL) return NullValue.NULL
 
-        return createCompileTimeConstant(result, expression, expectedType)
+        fun isLongWithSuffix() = expression.getNode().getElementType() == JetNodeTypes.INTEGER_CONSTANT && hasLongSuffix(text)
+
+        return createCompileTimeConstant(result, expression, expectedType, !isLongWithSuffix())
     }
 
     override fun visitParenthesizedExpression(expression: JetParenthesizedExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -437,12 +438,17 @@ public fun NumberValueTypeConstructor<out Number?>.getCompileTimeConstantForNumb
     return createConvertibleCompileTimeConstant(this.getValue(), defaultType)
 }
 
+private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
+
 public fun parseLong(text: String): Long? {
     try {
+        fun substringLongSuffix(s: String) = if (hasLongSuffix(text)) s.substring(0, s.length - 1) else s
+        fun parseLong(text: String, radix: Int) = java.lang.Long.parseLong(substringLongSuffix(text), radix)
+
         return when {
-            text.startsWith("0x") || text.startsWith("0X") -> javaParseLong(text.substring(2), 16)
-            text.startsWith("0b") || text.startsWith("0B") -> javaParseLong(text.substring(2), 2)
-            else -> javaParseLong(text)
+            text.startsWith("0x") || text.startsWith("0X") -> parseLong(text.substring(2), 16)
+            text.startsWith("0b") || text.startsWith("0B") -> parseLong(text.substring(2), 2)
+            else -> parseLong(text, 10)
         }
     }
     catch (e: NumberFormatException) {

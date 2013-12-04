@@ -85,6 +85,11 @@ public class CompileTimeConstantChecker {
         if (value == null) {
             return reportError(INT_LITERAL_OUT_OF_RANGE.on(expression));
         }
+
+        if (expression.getText().endsWith("l")) {
+            return reportError(WRONG_LONG_SUFFIX.on(expression));
+        }
+
         if (!noExpectedTypeOrError(expectedType)) {
             JetType valueType = value.getType(KotlinBuiltIns.getInstance());
             if (!JetTypeChecker.INSTANCE.isSubtypeOf(valueType, expectedType)) {
