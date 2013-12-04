@@ -4,15 +4,15 @@ fun foo(f: () -> Unit) {
 }
 ---------------------
 L0:
-    <START>         
+    <START>
     v(f: () -> Unit)
-    w(f)            
-    mark({ f() })   
-    mark(f())       
-    r(f)            
-    call(f, invoke) 
+    w(f)
+    mark({ f() })
+    mark(f())
+    r(f)
+    call(f, invoke)
 L1:
-    <END>               NEXT:[<SINK>]          
+    <END>               NEXT:[<SINK>]
 error:
     <ERROR>             PREV:[]
 sink:

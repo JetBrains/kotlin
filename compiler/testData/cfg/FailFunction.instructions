@@ -4,13 +4,13 @@ fun fail() : Nothing {
 }
 ---------------------
 L0:
-    <START>                                     
+    <START>
     mark({ throw java.lang.RuntimeException() })
-    mark(throw java.lang.RuntimeException())    
-    mark(java.lang.RuntimeException())          
-    mark(RuntimeException())                    
-    call(RuntimeException, <init>)              
-    throw (throw java.lang.RuntimeException())      NEXT:[<ERROR>]                                     
+    mark(throw java.lang.RuntimeException())
+    mark(java.lang.RuntimeException())
+    mark(RuntimeException())
+    call(RuntimeException, <init>)
+    throw (throw java.lang.RuntimeException())      NEXT:[<ERROR>]
 L1:
     <END>                                           NEXT:[<SINK>]                                          PREV:[]
 error:

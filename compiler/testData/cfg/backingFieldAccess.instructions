@@ -9,22 +9,22 @@ class C {
 }
 ---------------------
 L0:
-    <START>                
+    <START>
     v(val a: Int get() = 1)
     jmp?(L2)                   NEXT:[mark({ $a }), d(get() = 1)]
-    d(get() = 1)               NEXT:[<SINK>]                    
+    d(get() = 1)               NEXT:[<SINK>]
 L2:
     mark({ $a })               PREV:[jmp?(L2)]
-    r($a)                  
+    r($a)
 L1:
-    <END>                      NEXT:[<SINK>]                    
+    <END>                      NEXT:[<SINK>]
 error:
     <ERROR>                    PREV:[]
 sink:
     <SINK>                     PREV:[<ERROR>, <END>, d(get() = 1)]
 L3:
     <START>
-    r(1)   
+    r(1)
 L4:
     <END>      NEXT:[<SINK>]
 error:
@@ -37,7 +37,7 @@ get() = 1
 ---------------------
 L3:
     <START>
-    r(1)   
+    r(1)
 L4:
     <END>      NEXT:[<SINK>]
 error:

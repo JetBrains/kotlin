@@ -4,13 +4,13 @@ fun blockAndAndMismatch() : Boolean {
 }
 ---------------------
 L0:
-    <START>                          
+    <START>
     mark({ false || (return false) })
-    r(false)                         
+    r(false)
     jt(L2)                               NEXT:[mark((return false)), r(false || (return false))]
-    mark((return false))             
-    r(false)                         
-    ret(*) L1                            NEXT:[<END>]                                           
+    mark((return false))
+    r(false)
+    ret(*) L1                            NEXT:[<END>]
 L2:
     r(false || (return false))           PREV:[jt(L2)]
 L1:

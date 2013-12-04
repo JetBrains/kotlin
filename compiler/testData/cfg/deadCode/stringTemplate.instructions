@@ -4,13 +4,13 @@ fun test() {
 }
 ---------------------
 L0:
-    <START>                              
+    <START>
     mark({ "${throw Exception()} ${1}" })
-    mark("${throw Exception()} ${1}")    
-    mark(throw Exception())              
-    mark(Exception())                    
-    call(Exception, <init>)              
-    throw (throw Exception())                NEXT:[<ERROR>]                              
+    mark("${throw Exception()} ${1}")
+    mark(throw Exception())
+    mark(Exception())
+    call(Exception, <init>)
+    throw (throw Exception())                NEXT:[<ERROR>]
 -   r(1)                                     PREV:[]
 -   r("${throw Exception()} ${1}")           PREV:[]
 L1:

@@ -5,17 +5,17 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START>                
+    <START>
     mark({ var i = 1 i++ })
-    v(var i = 1)           
-    r(1)                   
-    w(i)                   
-    mark(i++)              
-    r(i)                   
-    call(++, inc)          
-    w(i)                   
+    v(var i = 1)
+    r(1)
+    w(i)
+    mark(i++)
+    r(i)
+    call(++, inc)
+    w(i)
 L1:
-    <END>                      NEXT:[<SINK>]                 
+    <END>                      NEXT:[<SINK>]
 error:
     <ERROR>                    PREV:[]
 sink:

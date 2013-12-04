@@ -4,9 +4,9 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START>                 
+    <START>
     mark({ return ?: null })
-    ret L1                      NEXT:[<END>]                   
+    ret L1                      NEXT:[<END>]
 -   jt(L2)                      NEXT:[r(null), <END>]              PREV:[]
 -   r(null)                     PREV:[]
 L1:

@@ -6,24 +6,24 @@ fun main() {
 }
 ---------------------
 L0:
-    <START>                     
+    <START>
     mark({ while(1 > 0) { 2 } })
-    mark(while(1 > 0) { 2 })    
+    mark(while(1 > 0) { 2 })
 L2 [loop entry point]:
 L5 [condition entry point]:
     mark(1 > 0)                     PREV:[mark(while(1 > 0) { 2 }), jmp(L2 [loop entry point])]
-    r(1)                        
-    r(0)                        
-    call(>, compareTo)          
-    jf(L3 [loop exit point])        NEXT:[read (Unit), mark({ 2 })]    
+    r(1)
+    r(0)
+    call(>, compareTo)
+    jf(L3 [loop exit point])        NEXT:[read (Unit), mark({ 2 })]
 L4 [body entry point]:
-    mark({ 2 })                 
-    r(2)                        
-    jmp(L2 [loop entry point])      NEXT:[mark(1 > 0)]                 
+    mark({ 2 })
+    r(2)
+    jmp(L2 [loop entry point])      NEXT:[mark(1 > 0)]
 L3 [loop exit point]:
     read (Unit)                     PREV:[jf(L3 [loop exit point])]
 L1:
-    <END>                           NEXT:[<SINK>]                      
+    <END>                           NEXT:[<SINK>]
 error:
     <ERROR>                         PREV:[]
 sink:
@@ -36,13 +36,13 @@ fun dowhile() {
 }
 ---------------------
 L0:
-    <START>                           
+    <START>
     mark({ do {return} while(1 > 0) })
-    mark(do {return} while(1 > 0))    
+    mark(do {return} while(1 > 0))
 L2 [loop entry point]:
 L4 [body entry point]:
-    mark({return})                    
-    ret L1                                NEXT:[<END>]                             
+    mark({return})
+    ret L1                                NEXT:[<END>]
 L5 [condition entry point]:
 -   mark(1 > 0)                           PREV:[]
 -   r(1)                                  PREV:[]

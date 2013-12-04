@@ -3,7 +3,7 @@ fun short() = 1
 ---------------------
 L0:
     <START>
-    r(1)   
+    r(1)
 L1:
     <END>      NEXT:[<SINK>]
 error:

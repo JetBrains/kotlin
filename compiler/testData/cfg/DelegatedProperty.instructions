@@ -16,13 +16,13 @@ sink:
 val a = Delegate()
 ---------------------
 L0:
-    <START>               
-    v(val a = Delegate()) 
-    mark(Delegate())      
+    <START>
+    v(val a = Delegate())
+    mark(Delegate())
     call(Delegate, <init>)
-    w(a)                  
+    w(a)
 L1:
-    <END>                     NEXT:[<SINK>]                
+    <END>                     NEXT:[<SINK>]
 error:
     <ERROR>                   PREV:[]
 sink:
@@ -32,11 +32,11 @@ sink:
 val b by a
 ---------------------
 L0:
-    <START>      
+    <START>
     v(val b by a)
-    r(a)         
+    r(a)
 L1:
-    <END>            NEXT:[<SINK>]       
+    <END>            NEXT:[<SINK>]
 error:
     <ERROR>          PREV:[]
 sink:

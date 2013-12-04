@@ -4,14 +4,14 @@ fun Int.bar(c: C) {
 }
 ---------------------
 L0:
-    <START>                                  
-    v(c: C)                                  
-    w(c)                                     
-    mark({ this = c })                       
-    r(c)                                     
+    <START>
+    v(c: C)
+    w(c)
+    mark({ this = c })
+    r(c)
     unsupported(BINARY_EXPRESSION : this = c)
 L1:
-    <END>                                        NEXT:[<SINK>]                                   
+    <END>                                        NEXT:[<SINK>]
 error:
     <ERROR>                                      PREV:[]
 sink:

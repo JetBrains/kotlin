@@ -4,16 +4,16 @@ fun invoke(f: () -> Unit) {
 }
 ---------------------
 L0:
-    <START>                        
-    v(f: () -> Unit)               
-    w(f)                           
-    mark({ (f)() })                
-    mark((f)())                    
-    mark((f))                      
-    r(f)                           
+    <START>
+    v(f: () -> Unit)
+    w(f)
+    mark({ (f)() })
+    mark((f)())
+    mark((f))
+    r(f)
     call((f), <for expression (f)>)
 L1:
-    <END>                              NEXT:[<SINK>]                         
+    <END>                              NEXT:[<SINK>]
 error:
     <ERROR>                            PREV:[]
 sink:

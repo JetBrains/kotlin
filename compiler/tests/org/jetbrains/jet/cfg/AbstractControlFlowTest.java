@@ -18,6 +18,7 @@ package org.jetbrains.jet.cfg;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
@@ -234,20 +235,23 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
                 }
             }
 
-            out.append(formatInstruction(instruction, maxLength, remainedAfterPostProcessInstructions));
+            StringBuilder line = new StringBuilder();
+
+            line.append(formatInstruction(instruction, maxLength, remainedAfterPostProcessInstructions));
 
             // Only print NEXT and PREV if the values are non-trivial
             Instruction next = i == instructions.size() - 1 ? null : instructions.get(i + 1);
             Collection<Instruction> nextInstructions = instruction.getNextInstructions();
             if (!sameContents(next, nextInstructions)) {
-                out.append("    NEXT:").append(String.format("%1$-" + maxNextLength + "s", formatInstructionList(nextInstructions)));
+                line.append("    NEXT:").append(String.format("%1$-" + maxNextLength + "s", formatInstructionList(nextInstructions)));
             }
 
             Instruction prev = i == 0 ? null : instructions.get(i - 1);
             Collection<Instruction> previousInstructions = instruction.getPreviousInstructions();
             if (!sameContents(prev, previousInstructions)) {
-                out.append("    PREV:").append(formatInstructionList(previousInstructions));
+                line.append("    PREV:").append(formatInstructionList(previousInstructions));
             }
+            out.append(StringUtil.trimTrailing(line.toString()));
             out.append("\n");
         }
         for (PseudocodeImpl local : locals) {

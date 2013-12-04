@@ -4,21 +4,21 @@ fun neq(a: Int, b: Int) {
 }
 ---------------------
 L0:
-    <START>                 
-    v(a: Int)               
-    w(a)                    
-    v(b: Int)               
-    w(b)                    
+    <START>
+    v(a: Int)
+    w(a)
+    v(b: Int)
+    w(b)
     mark({ if (a != b) {} })
-    mark(if (a != b) {})    
-    mark(a != b)            
-    r(a)                    
-    r(b)                    
-    call(a != b, equals)    
-    jf(L2)                      NEXT:[read (Unit), mark({})]   
-    mark({})                
-    read (Unit)             
-    jmp(L3)                     NEXT:[<END>]                   
+    mark(if (a != b) {})
+    mark(a != b)
+    r(a)
+    r(b)
+    call(a != b, equals)
+    jf(L2)                      NEXT:[read (Unit), mark({})]
+    mark({})
+    read (Unit)
+    jmp(L3)                     NEXT:[<END>]
 L2:
     read (Unit)                 PREV:[jf(L2)]
 L1:

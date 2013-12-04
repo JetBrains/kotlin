@@ -4,17 +4,17 @@ fun foo(a: Array<Int>) {
 }
 ---------------------
 L0:
-    <START>           
-    v(a: Array<Int>)  
-    w(a)              
+    <START>
+    v(a: Array<Int>)
+    w(a)
     mark({ a[1] = 2 })
-    mark(a[1])        
-    r(a)              
-    r(1)              
-    r(2)              
-    call(a[1], set)   
+    mark(a[1])
+    r(a)
+    r(1)
+    r(2)
+    call(a[1], set)
 L1:
-    <END>                 NEXT:[<SINK>]            
+    <END>                 NEXT:[<SINK>]
 error:
     <ERROR>               PREV:[]
 sink:

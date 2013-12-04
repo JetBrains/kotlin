@@ -5,12 +5,12 @@ fun test() {
 }
 ---------------------
 L0:
-    <START>                           
+    <START>
     mark({ throw Exception() test() })
-    mark(throw Exception())           
-    mark(Exception())                 
-    call(Exception, <init>)           
-    throw (throw Exception())             NEXT:[<ERROR>]                           
+    mark(throw Exception())
+    mark(Exception())
+    call(Exception, <init>)
+    throw (throw Exception())             NEXT:[<ERROR>]
 -   mark(test())                          PREV:[]
 -   call(test, test)                      PREV:[]
 L1:

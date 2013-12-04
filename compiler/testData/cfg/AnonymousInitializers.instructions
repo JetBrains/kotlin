@@ -16,30 +16,30 @@ class AnonymousInitializers() {
 }
 ---------------------
 L0:
-    <START>                 
-    v(val k = 34)           
-    r(34)                   
-    w(k)                    
-    v(val i: Int)           
-    mark({ $i = 12 })       
-    r(12)                   
-    w($i)                   
+    <START>
+    v(val k = 34)
+    r(34)
+    w(k)
+    v(val i: Int)
+    mark({ $i = 12 })
+    r(12)
+    w($i)
     v(val j: Int get() = 20)
     jmp?(L2)                    NEXT:[mark({ $i = 13 }), d(get() = 20)]
-    d(get() = 20)               NEXT:[<SINK>]                          
+    d(get() = 20)               NEXT:[<SINK>]
 L2:
     mark({ $i = 13 })           PREV:[jmp?(L2)]
-    r(13)                   
-    w($i)                   
+    r(13)
+    w($i)
 L1:
-    <END>                       NEXT:[<SINK>]                          
+    <END>                       NEXT:[<SINK>]
 error:
     <ERROR>                     PREV:[]
 sink:
     <SINK>                      PREV:[<ERROR>, <END>, d(get() = 20)]
 L3:
     <START>
-    r(20)  
+    r(20)
 L4:
     <END>      NEXT:[<SINK>]
 error:
@@ -52,7 +52,7 @@ get() = 20
 ---------------------
 L3:
     <START>
-    r(20)  
+    r(20)
 L4:
     <END>      NEXT:[<SINK>]
 error:

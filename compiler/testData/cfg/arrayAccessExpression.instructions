@@ -18,19 +18,19 @@ fun test(ab: Ab) {
 }
 ---------------------
 L0:
-    <START>                    
-    v(ab: Ab)                  
-    w(ab)                      
-    mark({ ab.getArray()[1] }) 
-    mark(ab.getArray()[1])     
-    mark(ab.getArray())        
-    mark(getArray())           
-    r(ab)                      
-    call(getArray, getArray)   
-    r(1)                       
+    <START>
+    v(ab: Ab)
+    w(ab)
+    mark({ ab.getArray()[1] })
+    mark(ab.getArray()[1])
+    mark(ab.getArray())
+    mark(getArray())
+    r(ab)
+    call(getArray, getArray)
+    r(1)
     call(ab.getArray()[1], get)
 L1:
-    <END>                          NEXT:[<SINK>]                     
+    <END>                          NEXT:[<SINK>]
 error:
     <ERROR>                        PREV:[]
 sink:

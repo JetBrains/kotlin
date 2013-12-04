@@ -4,11 +4,11 @@ fun <T> foo() {
 }
 ---------------------
 L0:
-    <START>                   
-    mark({ T })               
+    <START>
+    mark({ T })
     error(T, No resolved call)
 L1:
-    <END>                         NEXT:[<SINK>]                    
+    <END>                         NEXT:[<SINK>]
 error:
     <ERROR>                       PREV:[]
 sink:

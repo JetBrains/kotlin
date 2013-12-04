@@ -4,13 +4,13 @@ fun Function0<Unit>.foo() {
 }
 ---------------------
 L0:
-    <START>                          
-    mark({ this() })                 
-    mark(this())                     
-    r(this)                          
+    <START>
+    mark({ this() })
+    mark(this())
+    r(this)
     call(this, <for expression this>)
 L1:
-    <END>                                NEXT:[<SINK>]                           
+    <END>                                NEXT:[<SINK>]
 error:
     <ERROR>                              PREV:[]
 sink:
