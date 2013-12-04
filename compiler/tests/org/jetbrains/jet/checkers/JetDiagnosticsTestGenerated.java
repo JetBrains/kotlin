@@ -653,6 +653,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/backingField/kt782namespaceLevel.kt");
             }
             
+            @TestMetadata("qualifiedWithThis.kt")
+            public void testQualifiedWithThis() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/backingField/qualifiedWithThis.kt");
+            }
+            
             @TestMetadata("ReadForwardInAnonymous.kt")
             public void testReadForwardInAnonymous() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/backingField/ReadForwardInAnonymous.kt");

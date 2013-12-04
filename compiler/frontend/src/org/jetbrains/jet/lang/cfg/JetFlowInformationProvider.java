@@ -373,7 +373,6 @@ public class JetFlowInformationProvider {
     private boolean checkBackingField(@NotNull VariableContext cxtx, @NotNull JetElement element) {
         VariableDescriptor variableDescriptor = cxtx.variableDescriptor;
         boolean[] error = new boolean[1];
-        if (isCorrectBackingFieldReference((JetElement) element.getParent(), cxtx, error, false)) return false; // this expression has been already checked
         if (!isCorrectBackingFieldReference(element, cxtx, error, true)) return false;
         if (error[0]) return true;
         if (!(variableDescriptor instanceof PropertyDescriptor)) {
