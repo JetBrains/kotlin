@@ -479,7 +479,7 @@ class CollectionTest {
         expect(14) { arrayListOf(2, 3, 9).sum() }
         expect(3.0) { arrayListOf(1.0, 2.0).sum() }
         expect(3000000000000) { arrayListOf<Long>(1000000000000, 2000000000000).sum() }
-        expect(3.0) { arrayListOf<Float>(1.0, 2.0).sum() }
+        expect(3.0.toFloat()) { arrayListOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
     }
 
     class IterableWrapper<T>(collection : Iterable<T>) : Iterable<T> {

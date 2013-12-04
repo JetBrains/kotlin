@@ -71,7 +71,7 @@ class ArraysJVMTest {
         assertTrue(charArray().isEmpty())
         assertFalse(charArray('a').isEmpty())
         assertTrue(floatArray().isEmpty())
-        assertFalse(floatArray(0.1).isEmpty())
+        assertFalse(floatArray(0.1.toFloat()).isEmpty())
         assertTrue(doubleArray().isEmpty())
         assertFalse(doubleArray(0.1).isEmpty())
         assertTrue(booleanArray().isEmpty())
