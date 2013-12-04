@@ -1607,11 +1607,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public void returnExpression(JetExpression expr) {
         StackValue lastValue = gen(expr);
 
-        if (lastValue.type != Type.VOID_TYPE) {
+        if (!endsWithReturn(expr)) {
             lastValue.put(returnType, v);
-            v.areturn(returnType);
-        }
-        else if (!endsWithReturn(expr)) {
             v.areturn(returnType);
         }
     }
