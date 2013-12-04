@@ -183,9 +183,7 @@ public class JetImportOptimizer implements ImportOptimizer {
             private void addResolvedCallFqName(@Nullable ResolvedCall resolvedCall) {
                 if (resolvedCall != null) {
                     CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-                    FqNameUnsafe name = DescriptorUtils.getFqName(resultingDescriptor);
-                    assert name.isSafe(): "FqName for resulting descriptor should be safe " + resultingDescriptor.getName();
-                    usedQualifiedNames.add(name.toSafe());
+                    usedQualifiedNames.add(DescriptorUtils.getFqNameSafe(resultingDescriptor));
                 }
             }
         });

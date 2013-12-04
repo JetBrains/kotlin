@@ -47,7 +47,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragm
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         // TODO: creating an FqName every time may be a performance problem
-        Name actualName = resolveSession.resolveClassifierAlias(DescriptorUtils.getFqName(thisDescriptor).toSafe(), name);
+        Name actualName = resolveSession.resolveClassifierAlias(DescriptorUtils.getFqNameSafe(thisDescriptor), name);
         return super.getClassifier(actualName);
     }
 

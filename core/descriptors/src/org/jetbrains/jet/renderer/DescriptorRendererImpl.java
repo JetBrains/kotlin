@@ -310,7 +310,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
             assert annotationClass != null;
 
-            if (!excludedAnnotationClasses.contains(DescriptorUtils.getFqName(annotationClass).toSafe())) {
+            if (!excludedAnnotationClasses.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
                 builder.append(renderType(annotation.getType()));
                 if (verbose) {
                     builder.append("(").append(StringUtil.join(DescriptorUtils.getSortedValueArguments(annotation, this), ", ")).append(")");

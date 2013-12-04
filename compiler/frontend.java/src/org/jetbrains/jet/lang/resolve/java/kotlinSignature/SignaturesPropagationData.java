@@ -282,7 +282,7 @@ public class SignaturesPropagationData {
         for (JetType supertype : TypeUtils.getAllSupertypes(containingClass.getDefaultType())) {
             ClassifierDescriptor klass = supertype.getConstructor().getDeclarationDescriptor();
             assert klass != null;
-            FqName fqName = DescriptorUtils.getFqName(klass).toSafe();
+            FqName fqName = DescriptorUtils.getFqNameSafe(klass);
 
             for (FunctionDescriptor fun : klass.getDefaultType().getMemberScope().getFunctions(functionName)) {
                 CallableMemberDescriptor.Kind kind = fun.getKind();

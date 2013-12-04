@@ -138,7 +138,7 @@ public class IntrinsicMethods {
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
-        registerStaticField(getFqName(KotlinBuiltIns.getInstance().getUnit()).toSafe(), Name.identifier("VALUE"));
+        registerStaticField(getFqNameSafe(KotlinBuiltIns.getInstance().getUnit()), Name.identifier("VALUE"));
 
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
             FqName rangeClassFqName = RangeCodegenUtil.getRangeClassFqName(type);

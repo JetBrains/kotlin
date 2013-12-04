@@ -98,7 +98,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     }
 
     private JetType visitCommonType(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeElement type) {
-        return visitCommonType(DescriptorUtils.getFqName(classDescriptor).toSafe().asString(), type);
+        return visitCommonType(DescriptorUtils.getFqNameSafe(classDescriptor).asString(), type);
     }
 
     @NotNull
@@ -109,7 +109,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
         TypeConstructor originalTypeConstructor = originalType.getConstructor();
         ClassifierDescriptor declarationDescriptor = originalTypeConstructor.getDeclarationDescriptor();
         assert declarationDescriptor != null;
-        FqName originalClassFqName = DescriptorUtils.getFqName(declarationDescriptor).toSafe();
+        FqName originalClassFqName = DescriptorUtils.getFqNameSafe(declarationDescriptor);
         ClassDescriptor classFromLibrary = getAutoTypeAnalogWithinBuiltins(originalClassFqName, qualifiedName);
         if (!isSameName(qualifiedName, originalClassFqName.asString()) && classFromLibrary == null) {
             throw new AlternativeSignatureMismatchException("Alternative signature type mismatch, expected: %s, actual: %s",

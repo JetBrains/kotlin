@@ -41,7 +41,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
     private static final Set<String> FAKE_CLASSES = ContainerUtil.immutableSet(
-            getFqName(KotlinBuiltIns.getInstance().getAny()).toSafe().asString(),
+            getFqNameSafe(KotlinBuiltIns.getInstance().getAny()).asString(),
             "jet.Iterable"
     );
 
@@ -82,7 +82,7 @@ public final class JsDescriptorUtils {
             @Override
             public boolean value(JetType type) {
                 ClassDescriptor classDescriptor = getClassDescriptorForType(type);
-                return !FAKE_CLASSES.contains(getFqName(classDescriptor).toSafe().asString());
+                return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString());
             }
         });
     }

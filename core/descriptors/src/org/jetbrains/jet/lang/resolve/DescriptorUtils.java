@@ -110,18 +110,36 @@ public class DescriptorUtils {
 
     @NotNull
     public static FqNameUnsafe getFqName(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        FqName safe = getFqNameSafeIfPossible(descriptor);
+        return safe != null ? safe.toUnsafe() : getFqNameUnsafe(descriptor);
+    }
 
+    @NotNull
+    public static FqName getFqNameSafe(@NotNull DeclarationDescriptor descriptor) {
+        FqName safe = getFqNameSafeIfPossible(descriptor);
+        return safe != null ? safe : getFqNameUnsafe(descriptor).toSafe();
+    }
+
+
+    @Nullable
+    private static FqName getFqNameSafeIfPossible(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ModuleDescriptor || ErrorUtils.isError(descriptor)) {
-            return FqName.ROOT.toUnsafe();
+            return FqName.ROOT;
         }
 
         if (descriptor instanceof PackageViewDescriptor) {
-            return ((PackageViewDescriptor) descriptor).getFqName().toUnsafe();
+            return ((PackageViewDescriptor) descriptor).getFqName();
         }
         else if (descriptor instanceof PackageFragmentDescriptor) {
-            return ((PackageFragmentDescriptor) descriptor).getFqName().toUnsafe();
+            return ((PackageFragmentDescriptor) descriptor).getFqName();
         }
+
+        return null;
+    }
+
+    @NotNull
+    private static FqNameUnsafe getFqNameUnsafe(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.CLASS_OBJECT) {
             DeclarationDescriptor classOfClassObject = containingDeclaration.getContainingDeclaration();

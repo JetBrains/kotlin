@@ -109,7 +109,7 @@ public class RangeCodegenUtil {
             // Must be a standard library class
             return null;
         }
-        return map.get(DescriptorUtils.getFqName(declarationDescriptor).toSafe());
+        return map.get(DescriptorUtils.getFqNameSafe(declarationDescriptor));
     }
 
     public static boolean isOptimizableRangeTo(CallableDescriptor rangeTo) {

@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameSafe;
 
 public final class DecompiledNavigationUtils {
 
@@ -120,7 +121,7 @@ public final class DecompiledNavigationUtils {
             if (classKind == ClassKind.CLASS_OBJECT || classKind == ClassKind.ENUM_ENTRY) {
                 return getContainerFqName(containerDescriptor.getContainingDeclaration());
             }
-            return getFqName(containerDescriptor).toSafe();
+            return getFqNameSafe(containerDescriptor);
         }
         return null;
     }
