@@ -1,2 +1,2 @@
 //class
-final class A { inner final class B {} }
+final class A { final class B {} }
