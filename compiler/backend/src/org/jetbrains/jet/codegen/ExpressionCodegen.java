@@ -112,7 +112,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
      */
     private final Map<JetElement, StackValue.Local> tempVariables = Maps.newHashMap();
     @NotNull
-    private final TailRecursionGeneratorUtil tailRecursionGeneratorUtil;
+    private final TailRecursionCodegen tailRecursionCodegen;
 
     public CalculatedClosure generateObjectLiteral(GenerationState state, JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
@@ -182,7 +182,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         this.bindingContext = state.getBindingContext();
         this.context = context;
         this.statementVisitor = new CodegenStatementVisitor(this);
-        this.tailRecursionGeneratorUtil = new TailRecursionGeneratorUtil(context, this, this.v, state);
+        this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
     }
 
     protected InstructionAdapter createInstructionAdapter(MethodVisitor mv) {
@@ -2146,8 +2146,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private void pushArgumentsAndInvoke(@NotNull ResolvedCall<?> resolvedCall, @NotNull CallableMethod callable) {
         int mask = pushMethodArguments(resolvedCall, callable.getValueParameterTypes());
 
-        if (tailRecursionGeneratorUtil.isTailRecursion(resolvedCall)) {
-            tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall);
+        if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {
+            tailRecursionCodegen.generateTailRecursion(resolvedCall);
             return;
         }
 

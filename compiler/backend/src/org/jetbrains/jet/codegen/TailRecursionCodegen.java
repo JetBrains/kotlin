@@ -36,7 +36,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TAIL_RECURSION_CALL;
 
-public class TailRecursionGeneratorUtil {
+public class TailRecursionCodegen {
 
     @NotNull
     private final MethodContext context;
@@ -47,7 +47,7 @@ public class TailRecursionGeneratorUtil {
     @NotNull
     private final GenerationState state;
 
-    public TailRecursionGeneratorUtil(
+    public TailRecursionCodegen(
             @NotNull MethodContext context,
             @NotNull ExpressionCodegen codegen,
             @NotNull InstructionAdapter v,
