@@ -60,42 +60,34 @@ String.prototype.contains = function (s) {
     };
     
     Kotlin.hashCode = function (o) {
-        if (o === null) {
+        if (o == null) {
             Kotlin.throwNPE();
         }
-        if (typeof o == "object" && o.hashCode != undefined) {
+        var typeName = typeof o;
+        if (typeName == "object" && o.hashCode != undefined) {
             return o.hashCode();
         }
-        if (typeof o == "number" || typeof o == "boolean") {
+        if (typeName == "number" || typeName == "boolean") {
             return Kotlin.numberHashCode(o);
         }
-        if (typeof o == "string") {
+        if (typeName == "string") {
             return Kotlin.stringHashCode(o);
         }
-        if (typeof o == "array") {
+        if (Array.isArray(o)) {
             return Kotlin.arrayHashCode(o, Kotlin.nullableHashCode(Kotlin.hashCode));
         }
         return 0;
     }
 
     Kotlin.charHashCode = function (ch) {
-        if (ch === null) {
-            Kotlin.throwNPE();
-        }
         return ch.charCodeAt(0);
     }
 
     Kotlin.numberHashCode = function (num) {
-        if (num === null) {
-            Kotlin.throwNPE();
-        }
         return num | 0
     }
 
     Kotlin.stringHashCode = function (str) {
-        if (str === null) {
-            Kotlin.throwNPE();
-        }
         var result = 0;
         for (var i = 0; i < str.length; ++i) {
             result = (31 * result + str.charCodeAt(i)) | 0;
@@ -104,9 +96,6 @@ String.prototype.contains = function (s) {
     };
 
     Kotlin.arrayHashCode = function (arr, hashCB) {
-        if (arr === null) {
-            Kotlin.throwNPE();
-        }
         var result = 1;
         for (var i = 0; i < arr.length; ++i) {
             result = (31 * result + hashCB(arr[i])) | 0;

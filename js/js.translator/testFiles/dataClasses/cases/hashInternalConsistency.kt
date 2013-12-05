@@ -1,27 +1,32 @@
 package foo
 
-data class TwoThings(val x: Long, val y: Boolean)
+data class TwoThings(val x: Long?, val y: Boolean)
 
 data class ManyThings(val x: Int,
                       val y: Short,
-                      val z: String,
+                      val z: String?,
                       val t: Char,
+                      val u: Any?,
                       val v: Array<TwoThings?>)
 
 fun box(): String {
-    var t1 = ManyThings(3, 42, "pi", 'a', array(TwoThings(0xdeadbeef, true),
-                                                null,
-                                                TwoThings(0xcafebabe, true)))
+    var t1 = ManyThings(3, 42, "pi", 'a', array(1, 2, 3),
+                        array(TwoThings(0xdeadbeef, true),
+                              null,
+                              TwoThings(0xcafebabe, true)))
     var t2 = t1.copy();
     var t3 = t1.copy(v = array(TwoThings(0xdeadbeef, true),
                                TwoThings(0xcafebabe, true),
                                null))
     var t4 = t1.copy(x = 4)
     var t5 = t1.copy(y = 98)
-    var t6 = t1.copy(z = "py")
-    var t7 = t1.copy(v = array(TwoThings(0xdeadbeef, true),
-                               null,
-                               TwoThings(0xcafebabe, false)))
+    var t6 = t1.copy(z = null)
+    var t7 = t1.copy(z = "py")
+    var t8 = t1.copy(t = 'b')
+    var t9 = t1.copy(u = null)
+    var t10 = t1.copy(v = array(TwoThings(0xdeadbeef, true),
+                                null,
+                                TwoThings(0xcafebabe, false)))
     if (t1.hashCode() != t2.hashCode()) {
         return "fail: t1 hash != t2 hash"
     }
@@ -39,6 +44,15 @@ fun box(): String {
     }
     if (t1.hashCode() == t7.hashCode()) {
         return "fail: t1 hash == t7 hash"
+    }
+    if (t1.hashCode() == t8.hashCode()) {
+        return "fail: t1 hash == t8 hash"
+    }
+    if (t1.hashCode() == t9.hashCode()) {
+        return "fail: t1 hash == t9 hash"
+    }
+    if (t1.hashCode() == t10.hashCode()) {
+        return "fail: t1 hash == t10 hash"
     }
     return "OK"
 }
