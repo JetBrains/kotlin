@@ -390,7 +390,7 @@ public class JetTestUtils {
             String expectedText = StringUtil.convertLineSeparators(expected.trim());
             String actualText = StringUtil.convertLineSeparators(actual.trim());
             if (!Comparing.equal(expectedText, actualText)) {
-                throw new FileComparisonFailure("Expected and actual namespaces differ from " + expectedFile.getName(),
+                throw new FileComparisonFailure("Actual data differs from file content: " + expectedFile.getName(),
                                                 expected, actual, expectedFile.getAbsolutePath());
             }
         }
