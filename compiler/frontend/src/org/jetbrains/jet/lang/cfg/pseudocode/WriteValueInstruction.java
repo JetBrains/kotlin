@@ -40,6 +40,11 @@ public class WriteValueInstruction extends InstructionWithNext {
     }
 
     @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitWriteValue(this);
+    }
+
+    @Override
     public String toString() {
         if (lValue instanceof JetNamedDeclaration) {
             JetNamedDeclaration value = (JetNamedDeclaration) lValue;

@@ -29,6 +29,10 @@ class CallInstruction(
         visitor.visitCallInstruction(this)
     }
 
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R? {
+        return visitor.visitCallInstruction(this)
+    }
+
     override fun createCopy() = CallInstruction(element, resolvedCall)
 
     override fun toString() = "call(${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()})"
@@ -41,6 +45,10 @@ class CompilationErrorInstruction(
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitCompilationErrorInstruction(this)
+    }
+
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R? {
+        return visitor.visitCompilationErrorInstruction(this)
     }
 
     override fun createCopy() = CompilationErrorInstruction(element, message)
@@ -57,6 +65,10 @@ class MarkInstruction(
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitMarkInstruction(this)
+    }
+
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R? {
+        return visitor.visitMarkInstruction(this)
     }
 
     override fun createCopy() = MarkInstruction(element)

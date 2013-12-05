@@ -31,6 +31,11 @@ public class LoadUnitValueInstruction extends InstructionWithNext {
     }
 
     @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitLoadUnitValue(this);
+    }
+
+    @Override
     public String toString() {
         return "read (Unit)";
     }

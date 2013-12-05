@@ -35,8 +35,13 @@ public class VariableDeclarationInstruction extends InstructionWithNext {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitVariableDeclarationInstruction(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitVariableDeclarationInstruction(this);
     }
 
     @Override

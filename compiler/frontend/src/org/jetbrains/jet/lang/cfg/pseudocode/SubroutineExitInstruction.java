@@ -48,8 +48,13 @@ public class SubroutineExitInstruction extends InstructionImpl {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitSubroutineExit(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitSubroutineExit(this);
     }
 
     @Override

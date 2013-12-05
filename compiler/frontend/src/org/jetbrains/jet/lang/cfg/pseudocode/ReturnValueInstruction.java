@@ -36,6 +36,11 @@ public class ReturnValueInstruction extends AbstractJumpInstruction implements R
     }
 
     @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitReturnValue(this);
+    }
+
+    @Override
     public String toString() {
         return "ret(*) " + getTargetLabel();
     }

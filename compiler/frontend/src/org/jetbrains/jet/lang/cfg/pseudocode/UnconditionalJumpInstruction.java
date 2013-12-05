@@ -27,8 +27,13 @@ public class UnconditionalJumpInstruction extends AbstractJumpInstruction {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitUnconditionalJump(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitUnconditionalJump(this);
     }
 
     @Override

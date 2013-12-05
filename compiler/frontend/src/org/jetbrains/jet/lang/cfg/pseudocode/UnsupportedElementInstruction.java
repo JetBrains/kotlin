@@ -26,8 +26,13 @@ public class UnsupportedElementInstruction extends InstructionWithNext {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitUnsupportedElementInstruction(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitUnsupportedElementInstruction(this);
     }
 
     @Override
