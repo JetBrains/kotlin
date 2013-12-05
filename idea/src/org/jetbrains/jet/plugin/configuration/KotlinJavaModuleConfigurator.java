@@ -106,12 +106,12 @@ public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator 
     @Override
     @NotNull
     public File getExistedJarFile() {
-        return assertFileExists(getKotlinPaths().getRuntimePath());
+        return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getRuntimePath());
     }
 
     @Override
     public File getExistedSourcesJarFile() {
-        return assertFileExists(getKotlinPaths().getRuntimeSourcesPath());
+        return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getRuntimeSourcesPath());
     }
 
     public void copySourcesToPathFromLibrary(@NotNull Library library) {

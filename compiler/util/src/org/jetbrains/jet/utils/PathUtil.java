@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.utils;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -43,7 +44,9 @@ public class PathUtil {
 
     @NotNull
     public static KotlinPaths getKotlinPathsForIdeaPlugin() {
-        return new KotlinPathsFromHomeDir(getCompilerPathForIdeaPlugin());
+        return ApplicationManager.getApplication().isUnitTestMode()
+            ? getKotlinPathsForDistDirectory()
+            : new KotlinPathsFromHomeDir(getCompilerPathForIdeaPlugin());
     }
 
     @NotNull

@@ -19,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.framework.ui.FileUIUtils;
-import org.jetbrains.jet.utils.KotlinPaths;
-import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 
@@ -415,12 +413,6 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         else {
             return FileState.COPY;
         }
-    }
-
-    protected static KotlinPaths getKotlinPaths() {
-        return ApplicationManager.getApplication().isUnitTestMode()
-               ? PathUtil.getKotlinPathsForDistDirectory()
-               : PathUtil.getKotlinPathsForIdeaPlugin();
     }
 
     @NotNull

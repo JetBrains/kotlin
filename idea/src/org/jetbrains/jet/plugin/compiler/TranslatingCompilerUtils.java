@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.compiler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.module.Module;
@@ -46,9 +45,7 @@ public final class TranslatingCompilerUtils {
         VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
         VirtualFile outputDirectoryForTests = compileContext.getModuleOutputDirectoryForTests(module);
         File outputDir = tests ? toNullableIoFile(outputDirectoryForTests) : toNullableIoFile(mainOutput);
-        KotlinPaths kotlinPaths = ApplicationManager.getApplication().isUnitTestMode()
-                                        ? PathUtil.getKotlinPathsForDistDirectory()
-                                        : PathUtil.getKotlinPathsForIdeaPlugin();
+        KotlinPaths kotlinPaths = PathUtil.getKotlinPathsForIdeaPlugin();
         return CompilerEnvironment.getEnvironmentFor(kotlinPaths, outputDir);
     }
 
