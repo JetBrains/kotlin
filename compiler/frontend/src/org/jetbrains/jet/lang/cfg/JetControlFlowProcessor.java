@@ -303,36 +303,6 @@ public class JetControlFlowProcessor {
                 }
                 builder.bindLabel(afterElvis);
             }
-            else if (operationType == JetTokens.EQEQ || operationType == JetTokens.EXCLEQ) {
-                // Equals is resolved on a fake argument, to ensure "Any?" in the signature, so we have to read the right argument manually
-                @SuppressWarnings("unchecked")
-                ResolvedCall<FunctionDescriptor> resolvedCall = (ResolvedCall<FunctionDescriptor>) getResolvedCall(operationReference);
-                if (resolvedCall != null && !resolvedCall.getValueArguments().isEmpty() && right != null) {
-                    ResolvedCallImpl<FunctionDescriptor> fakeCall = ResolvedCallImpl.create(
-                            ResolutionCandidate.create(
-                                    resolvedCall.getCandidateDescriptor(),
-                                    resolvedCall.getThisObject(),
-                                    resolvedCall.getReceiverArgument(),
-                                    resolvedCall.getExplicitReceiverKind(),
-                                    resolvedCall.isSafeCall()
-                            ),
-                            new DelegatingBindingTrace(BindingContext.EMPTY, "Fake call for =="),
-                            TracingStrategy.EMPTY,
-                            MutableDataFlowInfoForArguments.WITHOUT_ARGUMENTS_CHECK
-                    );
-
-                    ValueParameterDescriptor parameterDescriptor = resolvedCall.getValueArguments().keySet().iterator().next();
-                    fakeCall.recordValueArgument(
-                            parameterDescriptor,
-                            new ExpressionValueArgument(CallMaker.makeValueArgument(right))
-                    );
-                    fakeCall.setStatusToSuccess();
-                    generateCall(expression, fakeCall);
-                }
-                else {
-                    generateBothArguments(expression);
-                }
-            }
             else {
                 if (!generateCall(operationReference)) {
                     generateBothArguments(expression);

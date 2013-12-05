@@ -61,6 +61,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.jet.utils.ThrowingList;
 
 import java.util.Collection;
@@ -867,9 +868,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             ExpressionTypingContext context,
             JetSimpleNameExpression operationSign,
             JetExpression left,
-            JetExpression right
+            final JetExpression right
     ) {
-        JetTypeInfo result;DataFlowInfo dataFlowInfo = context.dataFlowInfo;
+        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (right != null && left != null) {
             ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context);
 
@@ -883,16 +884,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, KotlinBuiltIns.getInstance().getNullableAnyType());
             traceInterpretingRightAsNullableAny.record(PROCESSED, right);
 
+            Call call = CallMaker.makeCallWithExpressions(operationSign, receiver, null, operationSign, Collections.singletonList(right));
+            ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
             OverloadResolutionResults<FunctionDescriptor> resolutionResults =
-                    resolveFakeCall(receiver, context.replaceBindingTrace(traceInterpretingRightAsNullableAny),
-                                           Collections.singletonList(right), OperatorConventions.EQUALS);
+                    newContext.resolveCallWithGivenName(call, operationSign, OperatorConventions.EQUALS);
 
+            traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
+                @Override
+                public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
+                    return !(key == right && (slice == EXPRESSION_TYPE || slice == PROCESSED));
+                }
+            }, true);
             dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
 
             if (resolutionResults.isSuccess()) {
                 FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
-                context.trace.record(REFERENCE_TARGET, operationSign, equals);
-                context.trace.record(RESOLVED_CALL, operationSign, resolutionResults.getResultingCall());
                 if (ensureBooleanResult(operationSign, OperatorConventions.EQUALS, equals.getReturnType(), context)) {
                     ensureNonemptyIntersectionOfOperandTypes(expression, context);
                 }
@@ -906,8 +912,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
         }
-        result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), dataFlowInfo);
-        return result;
+        return JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), dataFlowInfo);
     }
 
     @NotNull
