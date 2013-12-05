@@ -15,6 +15,7 @@ L0:
     call(a[0], get)
     r(1)
     call(+=, plus)
+    mark(a[0])
     r(a)
     r(0)
     r(1)

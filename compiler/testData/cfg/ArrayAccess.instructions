@@ -35,6 +35,7 @@ L0:
     call(a[10], get)
     r(1)
     call(+=, plus)
+    mark(a[10])
     r(a)
     r(10)
     r(1)

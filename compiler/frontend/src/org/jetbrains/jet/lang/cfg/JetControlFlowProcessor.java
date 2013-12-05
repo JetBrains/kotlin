@@ -64,7 +64,6 @@ public class JetControlFlowProcessor {
 
     private final JetControlFlowBuilder builder;
     private final BindingTrace trace;
-    private final Set<PsiElement> marked = new HashSet<PsiElement>();
 
     public JetControlFlowProcessor(BindingTrace trace) {
         this.builder = new JetControlFlowInstructionsGenerator();
@@ -142,7 +141,6 @@ public class JetControlFlowProcessor {
         }
 
         private void mark(JetElement element) {
-            if (!marked.add(element)) return;
             builder.mark(element);
         }
 
