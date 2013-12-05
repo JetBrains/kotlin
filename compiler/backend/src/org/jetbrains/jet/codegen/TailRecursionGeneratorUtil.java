@@ -61,8 +61,8 @@ public class TailRecursionGeneratorUtil {
         this.state = state;
     }
 
-    public boolean isTailRecursion(@NotNull JetCallExpression expression) {
-        TailRecursionKind status = state.getBindingContext().get(TAIL_RECURSION_CALL, expression);
+    public boolean isTailRecursion(@NotNull ResolvedCall<?> resolvedCall) {
+        TailRecursionKind status = state.getBindingContext().get(TAIL_RECURSION_CALL, resolvedCall);
         return status != null && status.isDoGenerateTailRecursion();
     }
 

@@ -383,10 +383,10 @@ public class PositioningStrategies {
         }
     };
 
-    public static final PositioningStrategy<JetExpression> CALL_EXPRESSION = new PositioningStrategy<JetExpression>() {
+    public static final PositioningStrategy<PsiElement> CALL_EXPRESSION = new PositioningStrategy<PsiElement>() {
         @NotNull
         @Override
-        public List<TextRange> mark(@NotNull JetExpression element) {
+        public List<TextRange> mark(@NotNull PsiElement element) {
             if (element instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) element;
                 PsiElement endElement;

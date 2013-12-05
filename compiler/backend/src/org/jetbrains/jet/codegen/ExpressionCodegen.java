@@ -1595,9 +1595,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (returnedExpression != null) {
             if (returnedExpression instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) returnedExpression;
-                if (tailRecursionGeneratorUtil.isTailRecursion(callExpression) && callExpression.getCalleeExpression() != null) {
-                    ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
-                    if (resolvedCall != null) {
+                JetExpression calleeExpression = callExpression.getCalleeExpression();
+                if (calleeExpression != null) {
+                    ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, calleeExpression);
+                    if (resolvedCall != null && tailRecursionGeneratorUtil.isTailRecursion(resolvedCall)) {
                         return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, callExpression);
                     }
                 }
@@ -1932,7 +1933,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        if (tailRecursionGeneratorUtil.isTailRecursion(expression)) {
+        if (tailRecursionGeneratorUtil.isTailRecursion(resolvedCall)) {
             return tailRecursionGeneratorUtil.generateTailRecursion(resolvedCall, expression);
         }
 
