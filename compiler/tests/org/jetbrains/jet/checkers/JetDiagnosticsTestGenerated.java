@@ -6462,6 +6462,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/tailCalls"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("extensionTailCall.kt")
+            public void testExtensionTailCall() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailCalls/extensionTailCall.kt");
+            }
+            
             @TestMetadata("functionWithNoTails.kt")
             public void testFunctionWithNoTails() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/tailCalls/functionWithNoTails.kt");
@@ -6475,6 +6480,36 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("functionWithoutAnnotation.kt")
             public void testFunctionWithoutAnnotation() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/tailCalls/functionWithoutAnnotation.kt");
+            }
+            
+            @TestMetadata("infixRecursiveCall.kt")
+            public void testInfixRecursiveCall() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailCalls/infixRecursiveCall.kt");
+            }
+            
+            @TestMetadata("recursiveCallInLambda.kt")
+            public void testRecursiveCallInLambda() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailCalls/recursiveCallInLambda.kt");
+            }
+            
+            @TestMetadata("recursiveCallInLocalFunction.kt")
+            public void testRecursiveCallInLocalFunction() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailCalls/recursiveCallInLocalFunction.kt");
+            }
+            
+            @TestMetadata("returnInParentheses.kt")
+            public void testReturnInParentheses() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailCalls/returnInParentheses.kt");
+            }
+            
+            @TestMetadata("tailCallInBlockInParentheses.kt")
+            public void testTailCallInBlockInParentheses() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailCalls/tailCallInBlockInParentheses.kt");
+            }
+            
+            @TestMetadata("tailCallInParentheses.kt")
+            public void testTailCallInParentheses() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/tailCalls/tailCallInParentheses.kt");
             }
             
             @TestMetadata("tailRecursionInFinally.kt")

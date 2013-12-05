@@ -2634,6 +2634,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/defaultArgs.kt");
             }
             
+            @TestMetadata("infixCall.kt")
+            public void testInfixCall() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/infixCall.kt");
+            }
+            
             @TestMetadata("insideElvis.kt")
             public void testInsideElvis() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/insideElvis.kt");
@@ -2672,6 +2677,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("recursiveInnerFunction.kt")
             public void testRecursiveInnerFunction() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/recursiveInnerFunction.kt");
+            }
+            
+            @TestMetadata("returnIf.kt")
+            public void testReturnIf() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/returnIf.kt");
             }
             
             @TestMetadata("returnInCatch.kt")
