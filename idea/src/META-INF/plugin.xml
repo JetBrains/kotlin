@@ -43,6 +43,10 @@
    <component>
      <implementation-class>org.jetbrains.jet.plugin.PluginBundledRegistrar</implementation-class>
    </component>
+
+   <component>
+     <implementation-class>org.jetbrains.jet.plugin.versions.KotlinUpdatePluginComponent</implementation-class>
+   </component>
  </application-components>
 
   <module-components>
