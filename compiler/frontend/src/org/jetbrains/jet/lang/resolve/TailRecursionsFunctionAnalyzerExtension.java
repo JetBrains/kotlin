@@ -16,19 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
-
-import java.util.Collections;
-import java.util.List;
-
-import static com.google.common.base.Objects.firstNonNull;
 
 public class TailRecursionsFunctionAnalyzerExtension implements FunctionAnalyzerExtension.AnalyzerExtension {
 
@@ -36,21 +27,11 @@ public class TailRecursionsFunctionAnalyzerExtension implements FunctionAnalyzer
 
     @Override
     public void process(
-            @NotNull FunctionDescriptor descriptor, @NotNull JetNamedFunction function, @NotNull final BindingTrace trace
+            @NotNull FunctionDescriptor descriptor, @NotNull JetNamedFunction function, @NotNull BindingTrace trace
     ) {
-        List<JetCallExpression> callExpressions = firstNonNull(
-                trace.get(BindingContext.FUNCTION_RECURSIVE_CALL_EXPRESSIONS, descriptor),
-                Collections.<JetCallExpression>emptyList());
+        Boolean hasTailCalls = trace.get(BindingContext.HAS_TAIL_CALLS, descriptor);
 
-        boolean allNonTailRecursiveCalls = Iterables.all(callExpressions, new Predicate<JetCallExpression>() {
-            @Override
-            public boolean apply(JetCallExpression callExpression) {
-                TailRecursionKind recursionKind = trace.get(BindingContext.TAIL_RECURSION_CALL, callExpression);
-                return recursionKind == null || !recursionKind.isDoGenerateTailRecursion();
-            }
-        });
-
-        if (allNonTailRecursiveCalls) {
+        if (Boolean.FALSE.equals(hasTailCalls)) {
             trace.report(Errors.NO_TAIL_CALLS_FOUND.on(function));
         }
     }

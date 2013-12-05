@@ -16,18 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.lang.ref.WeakReference;
@@ -87,7 +79,6 @@ public class CallResolverExtensionProvider {
             }
         }
         if (isAnnotatedAsTailRecursive(declarationDescriptor)) {
-            extensions.add(RecursiveCallRecorderResolverExtension.INSTANCE);
             extensions.add(TailRecursionDetectorExtension.INSTANCE);
         }
         // add your extensions here

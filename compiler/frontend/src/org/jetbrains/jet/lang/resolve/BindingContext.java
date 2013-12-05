@@ -89,10 +89,8 @@ public interface BindingContext {
             new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
     WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL =
             new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
-    WritableSlice<JetCallExpression, TailRecursionKind> TAIL_RECURSION_CALL =
-            new BasicWritableSlice<JetCallExpression, TailRecursionKind>(DO_NOTHING, true);
-    WritableSlice<DeclarationDescriptor, List<JetCallExpression>> FUNCTION_RECURSIVE_CALL_EXPRESSIONS =
-            new BasicWritableSlice<DeclarationDescriptor, List<JetCallExpression>>(DO_NOTHING, false);
+    WritableSlice<JetCallExpression, TailRecursionKind> TAIL_RECURSION_CALL = new BasicWritableSlice<JetCallExpression, TailRecursionKind>(DO_NOTHING, true);
+    WritableSlice<FunctionDescriptor, Boolean> HAS_TAIL_CALLS = Slices.createSimpleSetSlice();
     WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
     WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);
 
