@@ -199,19 +199,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return state;
     }
 
-    StackValue castToRequiredTypeOfInterfaceIfNeeded(StackValue inner, DeclarationDescriptor provided, @Nullable ClassDescriptor required) {
-        if (required == null) {
-            return inner;
-        }
-
-        if (provided instanceof CallableDescriptor) {
-            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) provided).getReceiverParameter();
-            assert receiverParameter != null : receiverParameter;
-            provided = receiverParameter.getType().getConstructor().getDeclarationDescriptor();
-        }
-
-        assert provided instanceof ClassDescriptor;
-
+    @NotNull
+    private StackValue castToRequiredTypeOfInterfaceIfNeeded(
+            StackValue inner,
+            @NotNull ClassDescriptor provided,
+            @NotNull ClassDescriptor required
+    ) {
         if (!isInterface(provided) && isInterface(required)) {
             inner.put(OBJECT_TYPE, v);
             Type type = asmType(required.getDefaultType());
@@ -2217,12 +2210,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private StackValue generateReceiver(DeclarationDescriptor provided) {
         if (context.getCallableDescriptorWithReceiver() == provided) {
-            StackValue result = context.getReceiverExpression(typeMapper);
-            return castToRequiredTypeOfInterfaceIfNeeded(result, provided, null);
+            return context.getReceiverExpression(typeMapper);
         }
 
-        StackValue result = context.lookupInContext(provided, StackValue.local(0, OBJECT_TYPE), state, false);
-        return castToRequiredTypeOfInterfaceIfNeeded(result, provided, null);
+        return context.lookupInContext(provided, StackValue.local(0, OBJECT_TYPE), state, false);
     }
 
     private void generateScript(@NotNull ScriptReceiver receiver) {
