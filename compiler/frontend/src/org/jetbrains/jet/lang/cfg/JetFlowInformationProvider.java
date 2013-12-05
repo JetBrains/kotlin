@@ -39,8 +39,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
@@ -55,10 +55,9 @@ import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACK
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
-import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind.*;
+import static org.jetbrains.jet.lang.resolve.calls.TailRecursionKind.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class JetFlowInformationProvider {
@@ -680,7 +679,7 @@ public class JetFlowInformationProvider {
 
                         boolean sameThisObject = sameThisObject(resolvedCall);
 
-                        TailRecursionKind kind = isTail && sameThisObject ? MIGHT_BE : NON_TAIL;
+                        TailRecursionKind kind = isTail && sameThisObject ? TAIL_CALL : NON_TAIL;
 
                         KindAndCall kindAndCall = calls.get(element);
                         calls.put(element,
@@ -696,9 +695,8 @@ public class JetFlowInformationProvider {
             JetElement element = entry.getKey();
             KindAndCall kindAndCall = entry.getValue();
             switch (kindAndCall.kind) {
-                case MIGHT_BE:
-                case IN_RETURN:
-                    trace.record(TAIL_RECURSION_CALL, kindAndCall.call, TailRecursionKind.IN_RETURN);
+                case TAIL_CALL:
+                    trace.record(TAIL_RECURSION_CALL, kindAndCall.call, TailRecursionKind.TAIL_CALL);
                     trace.record(BindingContext.HAS_TAIL_CALLS, (FunctionDescriptor) subroutineDescriptor);
                     break;
                 case IN_TRY:
@@ -745,14 +743,14 @@ public class JetFlowInformationProvider {
             resultingKind = kind;
         }
         else {
-            if (check(kind, existingKind, IN_TRY, MIGHT_BE)) {
+            if (check(kind, existingKind, IN_TRY, TAIL_CALL)) {
                 resultingKind = IN_TRY;
             }
             else if (check(kind, existingKind, IN_TRY, NON_TAIL)) {
                 resultingKind = IN_TRY;
             }
             else {
-                // MIGHT_BE, NON_TAIL
+                // TAIL_CALL, NON_TAIL
                 resultingKind = NON_TAIL;
             }
         }

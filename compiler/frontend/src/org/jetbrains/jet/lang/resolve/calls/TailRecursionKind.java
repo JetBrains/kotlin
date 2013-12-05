@@ -17,8 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 public enum TailRecursionKind {
-    MIGHT_BE(true),
-    IN_RETURN(true),
+    TAIL_CALL(true),
     IN_TRY(false),
     NON_TAIL(false);
 
@@ -31,31 +30,4 @@ public enum TailRecursionKind {
     public boolean isDoGenerateTailRecursion() {
         return doGenerateTailRecursion;
     }
-
-    public boolean isReturn() {
-        return this == IN_RETURN;
-    }
-
-    public TailRecursionKind and(TailRecursionKind b) {
-        if (this == b) {
-            return this;
-        }
-        if (!this.isDoGenerateTailRecursion()) {
-            return this;
-        }
-        if (!b.isDoGenerateTailRecursion()) {
-            return this;
-        }
-
-        if (isOneOf(this, b, IN_RETURN)) {
-            return IN_RETURN;
-        }
-
-        return this;
-    }
-
-    private static boolean isOneOf(TailRecursionKind a, TailRecursionKind b, TailRecursionKind value) {
-        return a == value || b == value;
-    }
-
 }

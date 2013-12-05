@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -78,14 +77,7 @@ public class CallResolverExtensionProvider {
                 extensions.add(new InlineCallResolverExtension(descriptor));
             }
         }
-        if (isAnnotatedAsTailRecursive(declarationDescriptor)) {
-            extensions.add(TailRecursionDetectorExtension.INSTANCE);
-        }
         // add your extensions here
         extensions.add(DEFAULT);
-    }
-
-    private static boolean isAnnotatedAsTailRecursive(DeclarationDescriptor descriptor) {
-        return KotlinBuiltIns.getInstance().isTailRecursive(descriptor);
     }
 }

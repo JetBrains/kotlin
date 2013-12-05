@@ -1028,37 +1028,4 @@ public class JetPsiUtil {
                 expression;
         return (JetToken) elementType;
     }
-
-    @NotNull
-    public static <T> T visitUpwardToRoot(
-            @NotNull PsiElement element,
-            @NotNull JetVisitor<BacktraceVisitorStatus<T>, VisitorData<T>> visitor,
-            T def
-    ) {
-        List<PsiElement> track = new ArrayList<PsiElement>();
-        List<PsiElement> view = Collections.unmodifiableList(track);
-        @NotNull
-        BacktraceVisitorStatus<T> lastStatus = new BacktraceVisitorStatus<T>(def, true);
-        VisitorData<T> data = new VisitorData<T>(view);
-
-        do {
-            track.add(element);
-            PsiElement parent = element.getParent();
-            if (parent instanceof JetElement) {
-                JetElement jet = (JetElement) parent;
-                data.last = element;
-                data.data = lastStatus.getData();
-
-                BacktraceVisitorStatus<T> status = jet.accept(visitor, data);
-                if (status == null) {
-                    throw new IllegalStateException("visitor has returned null status");
-                }
-                lastStatus = status;
-            }
-
-            element = parent;
-        } while (element != null && !lastStatus.isAbortTrace());
-
-        return lastStatus.getData();
-    }
 }
