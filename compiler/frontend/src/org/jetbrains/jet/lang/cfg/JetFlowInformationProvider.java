@@ -691,13 +691,14 @@ public class JetFlowInformationProvider {
                     }
                 }
         );
+        boolean hasTailCalls = false;
         for (Map.Entry<JetElement, KindAndCall> entry : calls.entrySet()) {
             JetElement element = entry.getKey();
             KindAndCall kindAndCall = entry.getValue();
             switch (kindAndCall.kind) {
                 case TAIL_CALL:
                     trace.record(TAIL_RECURSION_CALL, kindAndCall.call, TailRecursionKind.TAIL_CALL);
-                    trace.record(BindingContext.HAS_TAIL_CALLS, (FunctionDescriptor) subroutineDescriptor);
+                    hasTailCalls = true;
                     break;
                 case IN_TRY:
                     trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(element));
@@ -706,7 +707,10 @@ public class JetFlowInformationProvider {
                     trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(element));
                     break;
             }
+        }
 
+        if (!hasTailCalls) {
+            trace.report(Errors.NO_TAIL_CALLS_FOUND.on((JetNamedFunction) subroutine));
         }
     }
 

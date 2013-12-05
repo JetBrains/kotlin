@@ -63,9 +63,6 @@ public class FunctionAnalyzerExtension {
                 ((SimpleFunctionDescriptor) functionDescriptor).isInline()) {
             list.add(InlineAnalyzerExtension.INSTANCE);
         }
-        if (KotlinBuiltIns.getInstance().isTailRecursive(functionDescriptor)) {
-            list.add(TailRecursionsFunctionAnalyzerExtension.INSTANCE);
-        }
         return list;
     }
 
