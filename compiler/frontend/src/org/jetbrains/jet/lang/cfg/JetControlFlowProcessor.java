@@ -389,9 +389,9 @@ public class JetControlFlowProcessor {
             }
         }
 
-        private void generateArrayAccess(JetArrayAccessExpression arrayAccessExpression, @Nullable ResolvedCall<?> setResolvedCall) {
+        private void generateArrayAccess(JetArrayAccessExpression arrayAccessExpression, @Nullable ResolvedCall<?> resolvedCall) {
             mark(arrayAccessExpression);
-            if (!checkAndGenerateCall(arrayAccessExpression, setResolvedCall)) {
+            if (!checkAndGenerateCall(arrayAccessExpression, resolvedCall)) {
                 for (JetExpression index : arrayAccessExpression.getIndexExpressions()) {
                     generateInstructions(index, false);
                 }
