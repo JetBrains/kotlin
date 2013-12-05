@@ -41,6 +41,9 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -55,9 +58,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind.IN_TRY;
-import static org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind.MIGHT_BE;
-import static org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind.NON_TAIL;
+import static org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class JetFlowInformationProvider {
@@ -653,7 +654,8 @@ public class JetFlowInformationProvider {
                         if (resolvedCall == null) return;
 
                         // is this a recursive call?
-                        if (!resolvedCall.getResultingDescriptor().getOriginal().equals(subroutineDescriptor)) return;
+                        CallableDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
+                        if (!functionDescriptor.getOriginal().equals(subroutineDescriptor)) return;
 
                         JetElement element = callInstruction.getElement();
                         //noinspection unchecked
@@ -676,7 +678,9 @@ public class JetFlowInformationProvider {
                                 new TailRecursionDetector(subroutine, callInstruction)
                         );
 
-                        TailRecursionKind kind = isTail ? MIGHT_BE : NON_TAIL;
+                        boolean sameThisObject = sameThisObject(resolvedCall);
+
+                        TailRecursionKind kind = isTail && sameThisObject ? MIGHT_BE : NON_TAIL;
 
                         KindAndCall kindAndCall = calls.get(element);
                         calls.put(element,
@@ -706,6 +710,33 @@ public class JetFlowInformationProvider {
             }
 
         }
+    }
+
+    private boolean sameThisObject(ResolvedCall<?> resolvedCall) {
+        // A tail call is not allowed to change dispatch receiver
+        //   class C {
+        //       fun foo(other: C) {
+        //           other.foo(this) // not a tail call
+        //       }
+        //   }
+        ReceiverParameterDescriptor thisObject = resolvedCall.getResultingDescriptor().getExpectedThisObject();
+        ReceiverValue thisObjectValue = resolvedCall.getThisObject();
+        if (thisObject == null || !thisObjectValue.exists()) return true;
+
+        DeclarationDescriptor classDescriptor = null;
+        if (thisObjectValue instanceof ThisReceiver) {
+            // foo() -- implicit receiver
+            classDescriptor = ((ThisReceiver) thisObjectValue).getDeclarationDescriptor();
+        }
+        else if (thisObjectValue instanceof ExpressionReceiver) {
+            JetExpression expression = JetPsiUtil.deparenthesize(((ExpressionReceiver) thisObjectValue).getExpression());
+            if (expression instanceof JetThisExpression) {
+                // this.foo() -- explicit receiver
+                JetThisExpression thisExpression = (JetThisExpression) expression;
+                classDescriptor = trace.get(BindingContext.REFERENCE_TARGET, thisExpression.getInstanceReference());
+            }
+        }
+        return thisObject.getContainingDeclaration() == classDescriptor;
     }
 
     private static TailRecursionKind combineKinds(TailRecursionKind kind, @Nullable TailRecursionKind existingKind) {
