@@ -727,12 +727,12 @@ public class CandidateResolver {
         ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(
                 context, context.candidateCall, trace, resolveFunctionArgumentBodies);
         ResolutionStatus resultStatus = checkingResult.status;
-        resultStatus = resultStatus.combine(checkReceiver(context, trace));
+        resultStatus = resultStatus.combine(checkReceivers(context, trace));
 
         return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
     }
 
-    private static <D extends CallableDescriptor> ResolutionStatus checkReceiver(
+    private static <D extends CallableDescriptor> ResolutionStatus checkReceivers(
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull BindingTrace trace
     ) {
