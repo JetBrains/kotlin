@@ -1,4 +1,3 @@
 OUT ERROR: [TestData]/hello.kt: (4, 5) Unresolved reference: a
-OUT WARNING: [TestData]/hello.kt: (4, 5) The expression is unused
 ERR exec() finished with COMPILATION_ERROR return code
 Return code: 1

@@ -1,0 +1,18 @@
+== main ==
+fun main(arg : Array<String>) {
+    a
+}
+---------------------
+L0:
+    <START>
+    v(arg : Array<String>)
+    w(arg)
+    mark({ a })
+    error(a, No resolved call)
+L1:
+    <END>                         NEXT:[<SINK>]
+error:
+    <ERROR>                       PREV:[]
+sink:
+    <SINK>                        PREV:[<ERROR>, <END>]
+=====================
