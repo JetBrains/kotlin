@@ -24,16 +24,20 @@ import java.util.Collections;
 
 public class SubroutineExitInstruction extends InstructionImpl {
     private final JetElement subroutine;
-    private final String debugLabel;
+    private final boolean isError;
     private SubroutineSinkInstruction sinkInstruction;
 
-    public SubroutineExitInstruction(@NotNull JetElement subroutine, @NotNull String debugLabel) {
+    public SubroutineExitInstruction(@NotNull JetElement subroutine, boolean isError) {
         this.subroutine = subroutine;
-        this.debugLabel = debugLabel;
+        this.isError = isError;
     }
 
     public JetElement getSubroutine() {
         return subroutine;
+    }
+
+    public boolean isError() {
+        return isError;
     }
 
     public void setSink(SubroutineSinkInstruction instruction) {
@@ -59,12 +63,12 @@ public class SubroutineExitInstruction extends InstructionImpl {
 
     @Override
     public String toString() {
-        return debugLabel;
+        return isError ? "<ERROR>" : "<END>";
     }
 
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new SubroutineExitInstruction(subroutine, debugLabel);
+        return new SubroutineExitInstruction(subroutine, isError);
     }
 }

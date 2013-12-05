@@ -219,9 +219,9 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
             bindLabel(getExitPoint(subroutine));
-            pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, "<END>"));
+            pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, false));
             bindLabel(error);
-            pseudocode.addErrorInstruction(new SubroutineExitInstruction(subroutine, "<ERROR>"));
+            pseudocode.addErrorInstruction(new SubroutineExitInstruction(subroutine, true));
             bindLabel(sink);
             pseudocode.addSinkInstruction(new SubroutineSinkInstruction(subroutine, "<SINK>"));
             elementToBlockInfo.remove(subroutine);
