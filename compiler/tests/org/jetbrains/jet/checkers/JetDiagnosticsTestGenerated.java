@@ -1572,6 +1572,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unreachableCode.kt");
             }
             
+            @TestMetadata("unusedElvis.kt")
+            public void testUnusedElvis() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unusedElvis.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/controlStructures")
