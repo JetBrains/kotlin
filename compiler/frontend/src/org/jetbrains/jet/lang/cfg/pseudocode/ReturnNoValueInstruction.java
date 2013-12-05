@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetElement;
 
-public class ReturnNoValueInstruction extends AbstractJumpInstruction implements  JetElementInstruction {
+public class ReturnNoValueInstruction extends AbstractJumpInstruction implements ReturnInstruction {
 
     private final JetElement element;
 
@@ -36,7 +36,7 @@ public class ReturnNoValueInstruction extends AbstractJumpInstruction implements
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitReturnNoValue(this);
     }
 
