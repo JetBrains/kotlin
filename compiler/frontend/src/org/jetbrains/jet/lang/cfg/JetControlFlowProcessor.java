@@ -248,7 +248,7 @@ public class JetControlFlowProcessor {
         public void visitBinaryExpression(@NotNull JetBinaryExpression expression) {
             JetSimpleNameExpression operationReference = expression.getOperationReference();
             IElementType operationType = operationReference.getReferencedNameElementType();
-            if (!ImmutableSet.of(ANDAND, OROR, EQ, JetTokens.ELVIS).contains(operationType)) {
+            if (!ImmutableSet.of(ANDAND, OROR, EQ, ELVIS).contains(operationType)) {
                 mark(expression);
             }
             JetExpression right = expression.getRight();
@@ -294,14 +294,13 @@ public class JetControlFlowProcessor {
                     generateBothArguments(expression);
                 }
             }
-            else if (operationType == JetTokens.ELVIS) {
+            else if (operationType == ELVIS) {
                 generateInstructions(expression.getLeft(), false);
                 Label afterElvis = builder.createUnboundLabel();
                 builder.jumpOnTrue(afterElvis);
                 if (right != null) {
                     generateInstructions(right, false);
                 }
-                builder.predefinedOperation(expression, JetControlFlowBuilder.PredefinedOperation.ELVIS);
                 builder.bindLabel(afterElvis);
             }
             else if (operationType == JetTokens.EQEQ || operationType == JetTokens.EXCLEQ) {

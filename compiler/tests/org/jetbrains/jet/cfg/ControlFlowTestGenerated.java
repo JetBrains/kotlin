@@ -142,11 +142,6 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/invoke.kt");
     }
     
-    @TestMetadata("lastElvis.kt")
-    public void testLastElvis() throws Exception {
-        doTest("compiler/testData/cfg/lastElvis.kt");
-    }
-    
     @TestMetadata("LazyBooleans.kt")
     public void testLazyBooleans() throws Exception {
         doTest("compiler/testData/cfg/LazyBooleans.kt");

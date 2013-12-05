@@ -101,7 +101,6 @@ public interface JetControlFlowBuilder {
     enum PredefinedOperation {
         AND,
         OR,
-        ELVIS,
         NOT_NULL_ASSERTION
     }
     void predefinedOperation(@NotNull JetExpression expression, @Nullable PredefinedOperation operation);
