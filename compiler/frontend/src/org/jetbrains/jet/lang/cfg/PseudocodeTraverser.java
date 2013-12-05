@@ -18,15 +18,13 @@ package org.jetbrains.jet.lang.cfg;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
 
@@ -236,4 +234,37 @@ public class PseudocodeTraverser {
             return result;
         }
     }
+
+    public interface InstructionHandler {
+        // true to continue traversal
+        boolean handle(@NotNull Instruction instruction);
+    }
+
+    // returns false when interrupted by handler
+    public static boolean traverseFollowingInstructions(
+            @NotNull Instruction rootInstruction,
+            @NotNull Set<Instruction> visited,
+            @NotNull TraversalOrder order,
+            @Nullable InstructionHandler handler
+    ) {
+        Deque<Instruction> stack = Queues.newArrayDeque();
+        stack.push(rootInstruction);
+
+        while (!stack.isEmpty()) {
+            Instruction instruction = stack.pop();
+            visited.add(instruction);
+
+            Collection<Instruction> followingInstructions =
+                    order == FORWARD ? instruction.getNextInstructions() : instruction.getPreviousInstructions();
+
+            for (Instruction followingInstruction : followingInstructions) {
+                if (followingInstruction != null && !visited.contains(followingInstruction)) {
+                    if (handler != null && !handler.handle(instruction)) return false;
+                    stack.push(followingInstruction);
+                }
+            }
+        }
+        return true;
+    }
+
 }
