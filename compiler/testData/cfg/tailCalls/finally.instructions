@@ -1,0 +1,35 @@
+== test ==
+tailRecursive fun test() : Int {
+    try {
+        // do nothing
+    } finally {
+        test()
+    }
+}
+---------------------
+L0:
+    <START>
+    mark({ try { // do nothing } finally { test() } })
+    mark(try { // do nothing } finally { test() })
+    jmp?(L2 [onExceptionToFinallyBlock])                  NEXT:[mark({ test() }), mark({ // do nothing })]
+    mark({ // do nothing })
+    read (Unit)
+    jmp(L3 [skipFinallyToErrorBlock])                     NEXT:[mark({ test() })]
+L2 [onExceptionToFinallyBlock]:
+L4 [start finally]:
+    mark({ test() })                                      PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+    mark(test())
+    call(test, test)
+L5 [finish finally]:
+    jmp(error)                                            NEXT:[<ERROR>]
+L3 [skipFinallyToErrorBlock]:
+    mark({ test() })                                      PREV:[jmp(L3 [skipFinallyToErrorBlock])]
+    mark(test())
+    call(test, test)
+L1:
+    <END>                                                 NEXT:[<SINK>]
+error:
+    <ERROR>                                               PREV:[jmp(error)]
+sink:
+    <SINK>                                                PREV:[<ERROR>, <END>]
+=====================

@@ -6883,6 +6883,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/codegen/box/functions/tailRecursion/simpleReturnWithElse.kt");
         }
         
+        @TestMetadata("sum.kt")
+        public void testSum() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/sum.kt");
+        }
+        
         @TestMetadata("thisReferences.kt")
         public void testThisReferences() throws Exception {
             doTest("compiler/testData/codegen/box/functions/tailRecursion/thisReferences.kt");

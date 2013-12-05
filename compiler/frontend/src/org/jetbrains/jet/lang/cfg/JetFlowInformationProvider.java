@@ -24,19 +24,23 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.pseudocode.*;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.*;
+import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.Edges;
+import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.InstructionAnalyzeStrategy;
+import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.InstructionDataAnalyzeStrategy;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitState;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState;
+import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -50,6 +54,10 @@ import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseStat
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind.IN_TRY;
+import static org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind.MIGHT_BE;
+import static org.jetbrains.jet.lang.resolve.calls.tail.TailRecursionKind.NON_TAIL;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public class JetFlowInformationProvider {
@@ -64,7 +72,7 @@ public class JetFlowInformationProvider {
             @NotNull BindingTrace trace,
             @NotNull Pseudocode pseudocode
     ) {
-        subroutine = declaration;
+        this.subroutine = declaration;
         this.trace = trace;
         this.pseudocode = pseudocode;
     }
@@ -94,7 +102,7 @@ public class JetFlowInformationProvider {
         }
 
         checkDefiniteReturn(expectedReturnType);
-        checkDefiniteReturnInLocalFunctions();
+        checkLocalFunctions();
 
         if (isLocalObject) return;
 
@@ -106,6 +114,8 @@ public class JetFlowInformationProvider {
         markUnusedVariables();
 
         markUnusedLiteralsInBlock();
+
+        markTailCalls();
     }
 
     private void collectReturnExpressions(@NotNull final Collection<JetElement> returnedExpressions) {
@@ -168,7 +178,7 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private void checkDefiniteReturnInLocalFunctions() {
+    private void checkLocalFunctions() {
         for (LocalFunctionDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
             JetElement element = localDeclarationInstruction.getElement();
             if (element instanceof JetNamedFunction) {
@@ -178,7 +188,9 @@ public class JetFlowInformationProvider {
 
                 JetFlowInformationProvider providerForLocalDeclaration =
                         new JetFlowInformationProvider(localFunction, trace, localDeclarationInstruction.getBody());
+
                 providerForLocalDeclaration.checkDefiniteReturn(expectedType != null ? expectedType : NO_EXPECTED_TYPE);
+                providerForLocalDeclaration.markTailCalls();
             }
         }
     }
@@ -610,6 +622,117 @@ public class JetFlowInformationProvider {
     }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Tail calls
+
+    public void markTailCalls() {
+        final DeclarationDescriptor subroutineDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, subroutine);
+        if (!(subroutineDescriptor instanceof FunctionDescriptor)) return;
+        if (!KotlinBuiltIns.getInstance().isTailRecursive(subroutineDescriptor)) return;
+
+        // finally blocks are copied which leads to multiple diagnostics reported on one instruction
+        class KindAndCall {
+            TailRecursionKind kind;
+            ResolvedCall<?> call;
+
+            KindAndCall(TailRecursionKind kind, ResolvedCall<?> call) {
+                this.kind = kind;
+                this.call = call;
+            }
+        }
+        final Map<JetElement, KindAndCall> calls = new HashMap<JetElement, KindAndCall>();
+        PseudocodeTraverser.traverse(
+                pseudocode,
+                FORWARD,
+                new InstructionAnalyzeStrategy() {
+                    @Override
+                    public void execute(@NotNull Instruction instruction) {
+                        if (!(instruction instanceof CallInstruction)) return;
+                        CallInstruction callInstruction = (CallInstruction) instruction;
+
+                        ResolvedCall<?> resolvedCall = trace.get(RESOLVED_CALL, callInstruction.getElement());
+                        if (resolvedCall == null) return;
+
+                        // is this a recursive call?
+                        if (!resolvedCall.getResultingDescriptor().getOriginal().equals(subroutineDescriptor)) return;
+
+                        JetElement element = callInstruction.getElement();
+                        //noinspection unchecked
+                        JetExpression parent = PsiTreeUtil.getParentOfType(
+                                element,
+                                JetTryExpression.class, JetFunction.class, JetClassInitializer.class
+                        );
+
+                        if (parent instanceof JetTryExpression) {
+                            // We do not support tail calls Collections.singletonMap() try-catch-finally, for simplicity of the mental model
+                            // very few cases there would be real tail-calls, and it's often not so easy for the user to see why
+                            calls.put(element, new KindAndCall(IN_TRY, resolvedCall));
+                            return;
+                        }
+
+                        boolean isTail = PseudocodeTraverser.traverseFollowingInstructions(
+                                callInstruction,
+                                new HashSet<Instruction>(),
+                                FORWARD,
+                                new TailRecursionDetector(subroutine, callInstruction)
+                        );
+
+                        TailRecursionKind kind = isTail ? MIGHT_BE : NON_TAIL;
+
+                        KindAndCall kindAndCall = calls.get(element);
+                        calls.put(element,
+                                  new KindAndCall(
+                                          combineKinds(kind, kindAndCall == null ? null : kindAndCall.kind),
+                                          resolvedCall
+                                  )
+                        );
+                    }
+                }
+        );
+        for (Map.Entry<JetElement, KindAndCall> entry : calls.entrySet()) {
+            JetElement element = entry.getKey();
+            KindAndCall kindAndCall = entry.getValue();
+            switch (kindAndCall.kind) {
+                case MIGHT_BE:
+                case IN_RETURN:
+                    trace.record(TAIL_RECURSION_CALL, kindAndCall.call, TailRecursionKind.IN_RETURN);
+                    trace.record(BindingContext.HAS_TAIL_CALLS, (FunctionDescriptor) subroutineDescriptor);
+                    break;
+                case IN_TRY:
+                    trace.report(Errors.TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED.on(element));
+                    break;
+                case NON_TAIL:
+                    trace.report(Errors.NON_TAIL_RECURSIVE_CALL.on(element));
+                    break;
+            }
+
+        }
+    }
+
+    private static TailRecursionKind combineKinds(TailRecursionKind kind, @Nullable TailRecursionKind existingKind) {
+        TailRecursionKind resultingKind;
+        if (existingKind == null || existingKind == kind) {
+            resultingKind = kind;
+        }
+        else {
+            if (check(kind, existingKind, IN_TRY, MIGHT_BE)) {
+                resultingKind = IN_TRY;
+            }
+            else if (check(kind, existingKind, IN_TRY, NON_TAIL)) {
+                resultingKind = IN_TRY;
+            }
+            else {
+                // MIGHT_BE, NON_TAIL
+                resultingKind = NON_TAIL;
+            }
+        }
+        return resultingKind;
+    }
+
+    private static boolean check(Object a, Object b, Object x, Object y) {
+        return (a == x && b == y) || (a == y && b == x);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
 // Utility classes and methods
 
     /**
