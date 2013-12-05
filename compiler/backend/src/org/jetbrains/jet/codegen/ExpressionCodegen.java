@@ -151,7 +151,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     static class FinallyBlockStackElement extends BlockStackElement {
-        List<Label> gaps = new ArrayList();
+        List<Label> gaps = new ArrayList<Label>();
 
         final JetTryExpression expression;
 
@@ -178,21 +178,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         this.returnType = returnType;
         this.state = state;
         this.methodVisitor = v;
-        this.v = createInstructionAdapter(methodVisitor);
-        this.bindingContext = state.getBindingContext();
-        this.context = context;
-        this.statementVisitor = new CodegenStatementVisitor(this);
-        this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
-    }
-
-    protected InstructionAdapter createInstructionAdapter(MethodVisitor mv) {
-        return new InstructionAdapter(methodVisitor) {
+        this.v = new InstructionAdapter(methodVisitor) {
             @Override
             public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
                 super.visitLocalVariable(name, desc, signature, start, end, index);
                 localVariableNames.add(name);
             }
         };
+        this.bindingContext = state.getBindingContext();
+        this.context = context;
+        this.statementVisitor = new CodegenStatementVisitor(this);
+        this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
     }
 
     public GenerationState getState() {
@@ -1150,16 +1146,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitBreakExpression(@NotNull JetBreakExpression expression, StackValue receiver) {
-        return visitBreakOrContinueExpression(expression, receiver, true);
+        return generateBreakOrContinueExpression(expression, true);
     }
 
     @Override
     public StackValue visitContinueExpression(@NotNull JetContinueExpression expression, StackValue receiver) {
-        return visitBreakOrContinueExpression(expression, receiver, false);
+        return generateBreakOrContinueExpression(expression, false);
     }
 
     @NotNull
-    private StackValue visitBreakOrContinueExpression(@NotNull JetLabelQualifiedExpression expression, StackValue receiver, boolean isBreak) {
+    private StackValue generateBreakOrContinueExpression(@NotNull JetLabelQualifiedExpression expression, boolean isBreak) {
         assert expression instanceof JetContinueExpression || expression instanceof JetBreakExpression;
 
         if (!blockStackElements.isEmpty()) {
@@ -1186,11 +1182,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
 
             blockStackElements.pop();
-            StackValue result = visitBreakOrContinueExpression(expression, receiver, isBreak);
+            StackValue result = generateBreakOrContinueExpression(expression, isBreak);
             blockStackElements.push(stackElement);
             return result;
-
-
         }
 
         throw new UnsupportedOperationException("Target label for break/continue not found");
@@ -1812,6 +1806,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
             skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || methodKind == MethodKind.SYNTHETIC_ACCESSOR || methodKind == MethodKind.INITIALIZER;
             if (!skipPropertyAccessors) {
+                //noinspection ConstantConditions
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor, true, delegateType);
             }
             isStatic = true;
@@ -1869,6 +1864,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         String name;
+        //noinspection ConstantConditions
         if (propertyDescriptor.getContainingDeclaration() == backingFieldContext.getContextDescriptor()) {
             assert backingFieldContext instanceof FieldOwnerContext : "Actual context is " + backingFieldContext + " but should be instance of FieldOwnerContext" ;
             name = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
@@ -1947,6 +1943,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.anew(asmType);
             v.dup();
 
+            @SuppressWarnings("ConstantConditions")
             Type functionType = typeMapper.mapType(samInterface.getFunctionTypeForSamInterface());
             expression.accept(visitor, StackValue.none()).put(functionType, v);
 
@@ -2097,7 +2094,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private boolean isCallAsFunctionObject(FunctionDescriptor fd) {
+    private static boolean isCallAsFunctionObject(FunctionDescriptor fd) {
         if (fd instanceof ExpressionAsFunctionDescriptor) {
             JetExpression deparenthesize = JetPsiUtil.deparenthesize(((ExpressionAsFunctionDescriptor) fd).getExpression());
             return !(deparenthesize instanceof JetCallableReferenceExpression || deparenthesize instanceof JetFunctionLiteralExpression);
@@ -2294,7 +2291,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private CodegenContext getNotNullParentContextForMethod(@NotNull CodegenContext cur) {
+    private static CodegenContext getNotNullParentContextForMethod(CodegenContext cur) {
         if (cur instanceof MethodContext) {
             cur = cur.getParentContext();
         }
@@ -3549,8 +3546,8 @@ The "returned" value of try expression with no finally is either the last expres
         }
     }
 
-
-    private List<Label> getCurrentCatchIntervals(
+    @NotNull
+    private static List<Label> getCurrentCatchIntervals(
             @Nullable FinallyBlockStackElement finallyBlockStackElement,
             @NotNull Label blockStart,
             @NotNull Label blockEnd

@@ -217,6 +217,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
+        //noinspection ConstantConditions
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(data.toBytes())) {
@@ -1068,7 +1069,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateClassObjectBackingFieldCopies() {
         if (classObjectPropertiesToCopy != null) {
             for (PropertyAndDefaultValue propertyInfo : classObjectPropertiesToCopy) {
-                PropertyDescriptor propertyDescriptor = propertyInfo.propertyDescriptor;
+                PropertyDescriptor propertyDescriptor = propertyInfo.descriptor;
 
                 FieldVisitor fv = v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(propertyDescriptor),
                                                   typeMapper.mapType(propertyDescriptor).getDescriptor(), null, propertyInfo.defaultValue);
@@ -1224,12 +1225,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
             //generate object$
             parentCodegen.genInitSingleton(descriptor, StackValue.singleton(descriptor, typeMapper));
-            parentCodegen.generateInitializers(parentCodegen.createOrGetClInitCodegen(),
-                                               myClass.getDeclarations(), bindingContext, state);
+            generateInitializers(parentCodegen.createOrGetClInitCodegen(), myClass.getDeclarations(), bindingContext, state);
         } else {
             generateInitializers(codegen, myClass.getDeclarations(), bindingContext, state);
         }
-
 
         iv.visitInsn(RETURN);
     }
@@ -1435,7 +1434,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
 
-    private void generateDelegationToTraitImpl(final @NotNull FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
+    private void generateDelegationToTraitImpl(@NotNull FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
         DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) {
             return;
@@ -1873,17 +1872,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         classObjectPropertiesToCopy.add(new PropertyAndDefaultValue(descriptor, defaultValue));
     }
 
-    static class PropertyAndDefaultValue {
+    private static class PropertyAndDefaultValue {
+        public final PropertyDescriptor descriptor;
+        public final Object defaultValue;
 
-        PropertyAndDefaultValue(PropertyDescriptor propertyDescriptor, Object defaultValue) {
-            this.propertyDescriptor = propertyDescriptor;
+        public PropertyAndDefaultValue(PropertyDescriptor descriptor, Object defaultValue) {
+            this.descriptor = descriptor;
             this.defaultValue = defaultValue;
         }
-
-        private PropertyDescriptor propertyDescriptor;
-
-        private Object defaultValue;
-
-
     }
 }

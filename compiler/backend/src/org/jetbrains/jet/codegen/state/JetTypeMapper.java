@@ -853,22 +853,18 @@ public class JetTypeMapper extends BindingTraceAware {
 
             JetDelegatorToSuperCall superCall = closure.getSuperCall();
             if (superCall != null) {
-                DeclarationDescriptor superDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET,
-                                                                                                    superCall
-                                                                                                            .getCalleeExpression()
-                                                                                                            .getConstructorReferenceExpression());
+                DeclarationDescriptor superDescriptor = bindingContext
+                        .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
 
-                if(superDescriptor instanceof ConstructorDescriptor) {
+                if (superDescriptor instanceof ConstructorDescriptor) {
                     ConstructorDescriptor superConstructor = (ConstructorDescriptor) superDescriptor;
 
                     if (isObjectLiteral(bindingContext, descriptor.getContainingDeclaration())) {
                         List<JvmMethodParameterSignature> types = mapConstructorSignature(superConstructor).getKotlinParameterTypes();
-                        if (types != null) {
-                            for (JvmMethodParameterSignature type : types) {
-                                signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
-                                signatureWriter.writeAsmType(type.getAsmType());
-                                signatureWriter.writeParameterTypeEnd();
-                            }
+                        for (JvmMethodParameterSignature type : types) {
+                            signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
+                            signatureWriter.writeAsmType(type.getAsmType());
+                            signatureWriter.writeParameterTypeEnd();
                         }
                     }
                 }
