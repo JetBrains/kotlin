@@ -21,13 +21,11 @@ import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.PsiElementProcessorAdapter;
-import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +36,9 @@ import org.jetbrains.jet.plugin.findUsages.FindUsagesPackage;
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindClassUsagesDialog;
+import org.jetbrains.jet.plugin.search.declarationsSearch.DeclarationsSearchPackage;
+import org.jetbrains.jet.plugin.search.declarationsSearch.HierarchySearchRequest;
+import org.jetbrains.jet.plugin.search.declarationsSearch.KotlinClassInheritorsSearch;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearch;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchRequest;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchTarget;
@@ -84,10 +85,7 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
                             processUsage(processor, ref);
                         }
 
-                        PsiClass lightClass = LightClassUtil.getPsiClass(classOrObject);
-                        if (lightClass == null) return true;
-
-                        if (!processInheritors(lightClass, processor, kotlinOptions)) return false;
+                        if (!processInheritors(classOrObject, processor, kotlinOptions)) return false;
 
                         return true;
                     }
@@ -95,31 +93,25 @@ public class KotlinFindClassUsagesHandler extends KotlinFindUsagesHandler<JetCla
         );
     }
 
-    private static final ClassInheritorsSearch.InheritanceChecker INHERITANCE_CHECKER = new ClassInheritorsSearch.InheritanceChecker() {
-        @Override
-        public boolean checkInheritance(@NotNull PsiClass subClass, @NotNull PsiClass parentClass) {
-            return true;
-        }
-    };
-
     private static boolean processInheritors(
-            @NotNull PsiClass klass,
+            @NotNull JetClassOrObject classOrObject,
             @NotNull final Processor<UsageInfo> processor,
             @NotNull final KotlinClassFindUsagesOptions options
     ) {
-        //noinspection unchecked
-        ClassInheritorsSearch.SearchParameters searchParameters = new ClassInheritorsSearch.SearchParameters(
-                klass, options.searchScope, options.isCheckDeepInheritance, true, true, Condition.TRUE, INHERITANCE_CHECKER
+        HierarchySearchRequest<PsiElement> request = new HierarchySearchRequest<PsiElement>(
+                classOrObject, options.searchScope, options.isCheckDeepInheritance
         );
-        return ClassInheritorsSearch.search(searchParameters).forEach(
-                new PsiElementProcessorAdapter<PsiClass>(
-                        new PsiElementProcessor<PsiClass>() {
+        return KotlinClassInheritorsSearch.instance$.search(request).forEach(
+                new PsiElementProcessorAdapter<PsiElement>(
+                        new PsiElementProcessor<PsiElement>() {
                             @Override
-                            public boolean execute(@NotNull PsiClass element) {
-                                if ((element.isInterface() && options.isDerivedInterfaces)
-                                    || (!element.isInterface() && options.isDerivedClasses)) {
+                            public boolean execute(@NotNull PsiElement element) {
+                                boolean traitOrInterface = DeclarationsSearchPackage.isTraitOrInterface(element);
+
+                                if ((traitOrInterface && options.isDerivedInterfaces) || (!traitOrInterface && options.isDerivedClasses)) {
                                     return processUsage(processor, element);
                                 }
+
                                 return true;
                             }
                         }
