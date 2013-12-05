@@ -23,16 +23,25 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
+import org.jetbrains.k2js.translate.reference.CallBuilder;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.*;
@@ -127,6 +136,74 @@ public final class ClassTranslator extends AbstractTranslator {
         return descriptor.getKind().equals(ClassKind.TRAIT);
     }
 
+    private void generateFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
+        if (!KotlinBuiltIns.getInstance().isData(descriptor)) return;
+
+        generateComponentFunctionsForDataClasses(properties);
+        generateCopyFunctionForDataClasses(properties);
+    }
+
+    private void generateComponentFunctionsForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
+        if (!classDeclaration.hasPrimaryConstructor()) return;
+
+        ConstructorDescriptor constructor = descriptor.getConstructors().iterator().next();
+
+        for (ValueParameterDescriptor parameterDescriptor : constructor.getValueParameters()) {
+            FunctionDescriptor function = context().bindingContext().get(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameterDescriptor);
+            if (function != null) {
+                JetParameter parameter = BindingUtils.getParameterForDescriptor(context().bindingContext(), parameterDescriptor);
+                PropertyDescriptor descriptor = getPropertyDescriptorForConstructorParameter(bindingContext(), parameter);
+                assert descriptor != null;
+                generateComponentFunction(function, descriptor, properties);
+            }
+        }
+    }
+
+    private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull List<JsPropertyInitializer> properties) {
+        JsNameRef propertyAccess = new JsNameRef(context().getNameForDescriptor(propertyDescriptor), JsLiteral.THIS);
+        JsFunction componentFunction = simpleReturnFunction(context().getScopeForDescriptor(function), propertyAccess);
+        JsName functionName = context().getNameForDescriptor(function);
+        properties.add(new JsPropertyInitializer(functionName.makeRef(), componentFunction));
+    }
+
+    private void generateCopyFunctionForDataClasses(@NotNull List<JsPropertyInitializer> properties) {
+        FunctionDescriptor copyFunction = context().bindingContext().get(BindingContext.DATA_CLASS_COPY_FUNCTION, descriptor);
+        if (copyFunction != null) {
+            generateCopyFunction(copyFunction, properties);
+        }
+    }
+
+    private void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<JsPropertyInitializer> properties) {
+        ConstructorDescriptor constructor = DescriptorUtils.getConstructorOfDataClass(descriptor);
+        assert function.getValueParameters().size() == constructor.getValueParameters().size() :
+                "Number of parameters of copy function and constructor are different. " +
+                "Copy: " + function.getValueParameters().size() + ", " +
+                "constructor: " + constructor.getValueParameters().size();
+
+        List<JsExpression> ctorArgs = new ArrayList<JsExpression>();
+        for (ValueParameterDescriptor parameterDescriptor : constructor.getValueParameters()) {
+            JsExpression useArg = new JsNameRef(context().getNameForDescriptor(parameterDescriptor));
+            JetParameter parameter = BindingUtils.getParameterForDescriptor(context().bindingContext(), parameterDescriptor);
+            PropertyDescriptor propertyDescriptor = getPropertyDescriptorForConstructorParameter(bindingContext(), parameter);
+            if (propertyDescriptor == null) {
+                ctorArgs.add(useArg);
+                continue;
+            }
+            JsExpression useProp = new JsNameRef(context().getNameForDescriptor(propertyDescriptor), JsLiteral.THIS);
+            JsExpression argIsUndef = new JsBinaryOperation(JsBinaryOperator.REF_EQ, useArg, context().namer().getUndefinedExpression());
+            JsExpression updateProp = new JsConditional(argIsUndef, useProp, useArg);
+            ctorArgs.add(updateProp);
+        }
+
+        JsExpression ctorCall = CallBuilder.build(context()).descriptor(constructor).args(ctorArgs).translate();
+        JsFunction copyFunction = simpleReturnFunction(context().getScopeForDescriptor(function), ctorCall);
+        FunctionTranslator.addParameters(copyFunction.getParameters(), function, context());
+
+        JsName functionName = context().getNameForDescriptor(function);
+        properties.add(new JsPropertyInitializer(functionName.makeRef(), copyFunction));
+    }
+
     private List<JsExpression> getClassCreateInvocationArguments(@NotNull TranslationContext declarationContext) {
         List<JsExpression> invocationArguments = new ArrayList<JsExpression>();
 
@@ -169,6 +246,7 @@ public final class ClassTranslator extends AbstractTranslator {
         translatePropertiesAsConstructorParameters(declarationContext, properties);
         DeclarationBodyVisitor bodyVisitor = new DeclarationBodyVisitor(properties, staticProperties);
         bodyVisitor.traverseContainer(classDeclaration, declarationContext);
+        generateFunctionsForDataClasses(properties);
         mayBeAddEnumEntry(bodyVisitor.getEnumEntryList(), staticProperties, declarationContext);
 
         if (isTopLevelDeclaration) {
