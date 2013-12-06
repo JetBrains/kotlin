@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.scopes;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 public interface RedeclarationHandler {
     RedeclarationHandler DO_NOTHING = new RedeclarationHandler() {
@@ -28,7 +29,10 @@ public interface RedeclarationHandler {
     RedeclarationHandler THROW_EXCEPTION = new RedeclarationHandler() {
         @Override
         public void handleRedeclaration(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-            throw new IllegalStateException("Redeclaration: " + first + " and " + second + "(no line info available)");
+            throw new IllegalStateException(
+                    String.format("Redeclaration: %s (%s) and %s (%s) (no line info available)", DescriptorUtils.getFQName(first), first,
+                                  DescriptorUtils.getFQName(second), second)
+            );
         }
     };
 
