@@ -57,18 +57,6 @@ import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.*;
     The generated test compares namespace descriptors loaded from kotlin sources and read from compiled java.
 */
 public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
-
-    protected void doTest(@NotNull String javaFileName) throws Exception {
-        Assert.assertTrue("A java file expected: " + javaFileName, javaFileName.endsWith(".java"));
-        File javaFile = new File(javaFileName);
-        File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
-        File txtFile = getTxtFile(javaFile.getPath());
-        PackageViewDescriptor kotlinPackage = analyzeKotlinAndLoadTestPackage(ktFile, myTestRootDisposable, ConfigurationKind.ALL);
-        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
-                Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.ALL);
-        checkLoadedPackages(txtFile, kotlinPackage, javaPackageAndContext.first, javaPackageAndContext.second);
-    }
-
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
         doTestCompiledJava(javaFileName, DONT_INCLUDE_METHODS_OF_OBJECT);
     }
@@ -88,54 +76,19 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         checkJavaPackage(expectedFile, binaryPackageAndContext.first, binaryPackageAndContext.second, DONT_INCLUDE_METHODS_OF_OBJECT);
     }
 
+    protected void doTestCompiledJavaCompareWithKotlin(@NotNull String javaFileName) throws Exception {
+        Assert.assertTrue("A java file expected: " + javaFileName, javaFileName.endsWith(".java"));
+        File javaFile = new File(javaFileName);
+        File ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
+        File txtFile = getTxtFile(javaFile.getPath());
+        PackageViewDescriptor kotlinPackage = analyzeKotlinAndLoadTestPackage(ktFile, myTestRootDisposable, ConfigurationKind.ALL);
+        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
+                Arrays.asList(javaFile), tmpdir, myTestRootDisposable, ConfigurationKind.ALL);
+        checkLoadedPackages(txtFile, kotlinPackage, javaPackageAndContext.first, javaPackageAndContext.second);
+    }
+
     protected void doTestCompiledJavaIncludeObjectMethods(@NotNull String javaFileName) throws Exception {
         doTestCompiledJava(javaFileName, RECURSIVE);
-    }
-
-    private void doTestCompiledJava(@NotNull String javaFileName, Configuration configuration) throws Exception {
-        final File srcDir = new File(tmpdir, "src");
-        File compiledDir = new File(tmpdir, "compiled");
-        assertTrue(srcDir.mkdir());
-        assertTrue(compiledDir.mkdir());
-
-        List<File> srcFiles = JetTestUtils.createTestFiles(
-                new File(javaFileName).getName(), FileUtil.loadFile(new File(javaFileName)),
-                new JetTestUtils.TestFileFactory<File>() {
-                    @Override
-                    public File create(String fileName, String text, Map<String, String> directives) {
-                        File targetFile = new File(srcDir, fileName);
-                        try {
-                            FileUtil.writeToFile(targetFile, text);
-                        }
-                        catch (IOException e) {
-                            throw new AssertionError(e);
-                        }
-                        return targetFile;
-                    }
-                });
-
-        JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
-
-        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
-                srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.ALL);
-
-        checkJavaPackage(getTxtFile(javaFileName), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
-    }
-
-    protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
-        File originalJavaFile = new File(javaFileName);
-        File expectedFile = getTxtFile(javaFileName);
-
-        File testPackageDir = new File(tmpdir, "test");
-        assertTrue(testPackageDir.mkdir());
-        FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
-
-        Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndContext = loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
-
-        checkJavaPackage(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second,
-                         DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(ALLOW_ERROR_TYPES));
     }
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
@@ -175,6 +128,52 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assert packageView != null : "Test namespace not found";
 
         checkJavaPackage(expectedFile, packageView, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
+    }
+
+    protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
+        File originalJavaFile = new File(javaFileName);
+        File expectedFile = getTxtFile(javaFileName);
+
+        File testPackageDir = new File(tmpdir, "test");
+        assertTrue(testPackageDir.mkdir());
+        FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
+
+        Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndContext = loadTestPackageAndBindingContextFromJavaRoot(
+                tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+
+        checkJavaPackage(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second,
+                         DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(ALLOW_ERROR_TYPES));
+    }
+
+    private void doTestCompiledJava(@NotNull String javaFileName, Configuration configuration) throws Exception {
+        final File srcDir = new File(tmpdir, "src");
+        File compiledDir = new File(tmpdir, "compiled");
+        assertTrue(srcDir.mkdir());
+        assertTrue(compiledDir.mkdir());
+
+        List<File> srcFiles = JetTestUtils.createTestFiles(
+                new File(javaFileName).getName(), FileUtil.loadFile(new File(javaFileName)),
+                new JetTestUtils.TestFileFactory<File>() {
+                    @Override
+                    public File create(String fileName, String text, Map<String, String> directives) {
+                        File targetFile = new File(srcDir, fileName);
+                        try {
+                            FileUtil.writeToFile(targetFile, text);
+                        }
+                        catch (IOException e) {
+                            throw new AssertionError(e);
+                        }
+                        return targetFile;
+                    }
+                });
+
+        JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
+
+        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
+                srcFiles, compiledDir, getTestRootDisposable(), ConfigurationKind.ALL);
+
+        checkJavaPackage(getTxtFile(javaFileName), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
     }
 
     private static void checkForLoadErrorsAndCompare(

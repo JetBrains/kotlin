@@ -191,22 +191,15 @@ public class GenerateTests {
 
         generateTest(
                 "compiler/tests/",
-                "LoadCompiledKotlinTestGenerated",
-                AbstractLoadCompiledKotlinTest.class,
-                testModel("compiler/testData/loadKotlin", "doTest")
-        );
-
-        generateTest(
-                "compiler/tests/",
                 "LoadJavaTestGenerated",
                 AbstractLoadJavaTest.class,
-                testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", true, "java", "doTest"),
+                testModel("compiler/testData/loadJava/compiledJava", true, "java", "doTestCompiledJava"),
+                testModel("compiler/testData/loadJava/compiledJavaAndKotlin", true, "txt", "doTestCompiledJavaAndKotlin"),
+                testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", true, "java", "doTestCompiledJavaCompareWithKotlin"),
                 testModel("compiler/testData/loadJava/compiledJavaIncludeObjectMethods", true, "java",
                           "doTestCompiledJavaIncludeObjectMethods"),
-                testModel("compiler/testData/loadJava/compiledJava", true, "java", "doTestCompiledJava"),
-                testModel("compiler/testData/loadJava/sourceJava", true, "java", "doTestSourceJava"),
                 testModel("compiler/testData/loadJava/javaAgainstKotlin", true, "txt", "doTestJavaAgainstKotlin"),
-                testModel("compiler/testData/loadJava/compiledJavaAndKotlin", true, "txt", "doTestCompiledJavaAndKotlin")
+                testModel("compiler/testData/loadJava/sourceJava", true, "java", "doTestSourceJava")
         );
 
         generateTest(
