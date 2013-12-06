@@ -875,8 +875,9 @@ public class JetControlFlowProcessor {
         @Override
         public void visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression) {
             mark(expression);
-            if (!generateCall(expression)) {
-                generateArrayAccess(expression, getResolvedCall(expression));
+            ResolvedCall<FunctionDescriptor> getMethodResolvedCall = trace.get(BindingContext.INDEXED_LVALUE_GET, expression);
+            if (!checkAndGenerateCall(expression, getMethodResolvedCall)) {
+                generateArrayAccess(expression, getMethodResolvedCall);
             }
         }
 
