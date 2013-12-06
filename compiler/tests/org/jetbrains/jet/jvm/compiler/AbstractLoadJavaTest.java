@@ -25,19 +25,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
 import java.io.File;
@@ -89,6 +90,34 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     protected void doTestCompiledJavaIncludeObjectMethods(@NotNull String javaFileName) throws Exception {
         doTestCompiledJava(javaFileName, RECURSIVE);
+    }
+
+    protected void doTestCompiledKotlin(@NotNull String ktFileName) throws Exception {
+        File ktFile = new File(ktFileName);
+        File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
+        AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(Collections.singletonList(ktFile), tmpdir, getTestRootDisposable(),
+                                                                        ConfigurationKind.JDK_ONLY);
+
+        PackageViewDescriptor packageFromSource = exhaust.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
+        assert packageFromSource != null;
+        junit.framework.Assert.assertEquals("test", packageFromSource.getName().asString());
+
+        PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
+                tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
+
+        checkUsageOfDeserializedScope(DescriptorUtils.getExactlyOnePackageFragment(packageFromBinary.getModule(), TEST_PACKAGE_FQNAME));
+
+        for (DeclarationDescriptor descriptor : packageFromBinary.getMemberScope().getAllDescriptors()) {
+            if (descriptor instanceof ClassDescriptor) {
+                assert descriptor instanceof DeserializedClassDescriptor : DescriptorUtils.getFqName(descriptor) + " is loaded as " + descriptor.getClass();
+            }
+        }
+
+        validateAndCompareDescriptors(packageFromSource, packageFromBinary,
+                                      RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
+                                              .checkPrimaryConstructors(true)
+                                              .checkPropertyAccessors(true),
+                                      txtFile);
     }
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
@@ -233,5 +262,22 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     private static File getTxtFile(String javaFileName) {
         return new File(javaFileName.replaceFirst("\\.java$", ".txt"));
+    }
+
+    private static void checkUsageOfDeserializedScope(@NotNull PackageFragmentDescriptor packageFromBinary) {
+        JetScope scope = packageFromBinary.getMemberScope();
+        boolean hasOwnMembers = false;
+        for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
+            if (declarationDescriptor instanceof CallableMemberDescriptor) {
+                hasOwnMembers = true;
+            }
+        }
+        if (hasOwnMembers) {
+            assert scope instanceof JavaFullPackageScope : "If namespace has members, members should be inside deserialized scope.";
+        }
+        else {
+            //NOTE: should probably change
+            assert !(scope instanceof JavaFullPackageScope) : "We don't use deserialized scopes for namespaces without members.";
+        }
     }
 }

@@ -198,6 +198,7 @@ public class GenerateTests {
                 testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", true, "java", "doTestCompiledJavaCompareWithKotlin"),
                 testModel("compiler/testData/loadJava/compiledJavaIncludeObjectMethods", true, "java",
                           "doTestCompiledJavaIncludeObjectMethods"),
+                testModel("compiler/testData/loadJava/compiledKotlin", true, "kt", "doTestCompiledKotlin"),
                 testModel("compiler/testData/loadJava/javaAgainstKotlin", true, "txt", "doTestJavaAgainstKotlin"),
                 testModel("compiler/testData/loadJava/sourceJava", true, "java", "doTestSourceJava")
         );
@@ -232,7 +233,7 @@ public class GenerateTests {
                 "compiler/tests/",
                 "LazyResolveNamespaceComparingTestGenerated",
                 AbstractLazyResolveNamespaceComparingTest.class,
-                testModel("compiler/testData/loadKotlin", "doTestCheckingPrimaryConstructorsAndAccessors"),
+                testModel("compiler/testData/loadJava/compiledKotlin", "doTestCheckingPrimaryConstructorsAndAccessors"),
                 testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", "doTestNotCheckingPrimaryConstructors"),
                 testModel("compiler/testData/lazyResolve/namespaceComparator", "doTestCheckingPrimaryConstructors")
         );
@@ -248,14 +249,14 @@ public class GenerateTests {
                 "compiler/tests/",
                 "DescriptorSerializationTestGenerated",
                 AbstractDescriptorSerializationTest.class,
-                testModel("compiler/testData/loadKotlin/class"),
-                testModel("compiler/testData/loadKotlin/classFun"),
-                testModel("compiler/testData/loadKotlin/classObject"),
-                testModel("compiler/testData/loadKotlin/constructor"),
-                testModel("compiler/testData/loadKotlin/fun"),
-                testModel("compiler/testData/loadKotlin/prop"),
-                testModel("compiler/testData/loadKotlin/type"),
-                testModel("compiler/testData/loadKotlin/visibility")
+                testModel("compiler/testData/loadJava/compiledKotlin/class"),
+                testModel("compiler/testData/loadJava/compiledKotlin/classFun"),
+                testModel("compiler/testData/loadJava/compiledKotlin/classObject"),
+                testModel("compiler/testData/loadJava/compiledKotlin/constructor"),
+                testModel("compiler/testData/loadJava/compiledKotlin/fun"),
+                testModel("compiler/testData/loadJava/compiledKotlin/prop"),
+                testModel("compiler/testData/loadJava/compiledKotlin/type"),
+                testModel("compiler/testData/loadJava/compiledKotlin/visibility")
         );
 
         generateTest(
