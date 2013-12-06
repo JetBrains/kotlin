@@ -17,19 +17,19 @@
 package org.jetbrains.jet.generators.tests.generator;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.utils.Printer;
-import org.junit.Assert;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class SingleClassTestModel implements TestClassModel {
@@ -69,6 +69,13 @@ public class SingleClassTestModel implements TestClassModel {
                     }
 
                     return true;
+                }
+            });
+
+            ContainerUtil.sort(result, new Comparator<TestMethodModel>() {
+                @Override
+                public int compare(@NotNull TestMethodModel o1, @NotNull TestMethodModel o2) {
+                    return StringUtil.compare(o1.getName(), o2.getName(), true);
                 }
             });
 
