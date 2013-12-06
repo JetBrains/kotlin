@@ -230,11 +230,12 @@ public inline fun <T, R, C: MutableCollection<in R>> Array<out T>.mapTo(result: 
  * Returns the largest element or null if there are no elements
  */
 public fun <T: Comparable<T>> Array<out T>.max() : T? {
-    var max: T? = null
-    for (e in this) {
-        if (max == null || max!! < e) {
-           max = e
-        }
+    if (isEmpty()) return null
+    
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
     }
     return max
 }
@@ -262,11 +263,12 @@ public inline fun <R: Comparable<R>, T: Any> Array<out T>.maxBy(f: (T) -> R) : T
  * Returns the smallest element or null if there are no elements
  */
 public fun <T: Comparable<T>> Array<out T>.min() : T? {
-    var min: T? = null
-    for (e in this) {
-        if (min == null || min!! > e) {
-           min = e
-        }
+    if (isEmpty()) return null
+    
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
     }
     return min
 }
