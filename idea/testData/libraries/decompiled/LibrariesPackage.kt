@@ -33,4 +33,4 @@ package testData.libraries
 
 [public fun processDouble(d: testData.libraries.Double): jet.Unit { /* compiled code */ }]
 
-[public fun <T> T.filter(predicate: (T) -> jet.Boolean): T? { /* compiled code */ }]
+[jet.inline public fun <T> T.filter(predicate: (T) -> jet.Boolean): T? { /* compiled code */ }]

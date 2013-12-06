@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.editor.quickDoc;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.navigation.CtrlMouseHandler;
 import com.intellij.openapi.util.io.FileUtil;

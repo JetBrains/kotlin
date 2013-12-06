@@ -42,8 +42,13 @@ public class SubroutineSinkInstruction extends InstructionImpl {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitSubroutineSink(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitSubroutineSink(this);
     }
 
     @Override
@@ -51,6 +56,7 @@ public class SubroutineSinkInstruction extends InstructionImpl {
         return debugLabel;
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new SubroutineSinkInstruction(subroutine, debugLabel);

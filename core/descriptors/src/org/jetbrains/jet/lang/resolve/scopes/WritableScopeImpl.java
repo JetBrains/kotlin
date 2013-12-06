@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -35,8 +34,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private final Collection<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
     private final Multimap<Name, DeclarationDescriptor> declaredDescriptorsAccessibleBySimpleName = HashMultimap.create();
     private boolean allDescriptorsDone = false;
-
-    private Set<ClassDescriptor> allObjectDescriptors = null;
 
     @NotNull
     private final DeclarationDescriptor ownerDeclarationDescriptor;
@@ -55,9 +52,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @Nullable
     private Map<LabelName, List<DeclarationDescriptor>> labelsToDescriptors;
-    
-    @Nullable
-    private Map<Name, ClassDescriptor> objectDescriptors;
 
     @Nullable
     private ReceiverParameterDescriptor implicitReceiver;
@@ -145,14 +139,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             labelsToDescriptors = new HashMap<LabelName, List<DeclarationDescriptor>>();
         }
         return labelsToDescriptors;
-    }
-
-    @NotNull
-    private Map<Name, ClassDescriptor> getObjectDescriptorsMap() {
-        if (objectDescriptors == null) {
-            objectDescriptors = Maps.newHashMap();
-        }
-        return objectDescriptors;
     }
 
     @NotNull
@@ -310,22 +296,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void addClassifierDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
         checkMayWrite();
 
-        if (DescriptorUtils.isSingleton(classDescriptor)) {
-            throw new IllegalStateException("must not be object: " + classDescriptor);
-        }
-
         addClassifierAlias(classDescriptor.getName(), classDescriptor);
-    }
-
-    @Override
-    public void addObjectDescriptor(@NotNull ClassDescriptor objectDescriptor) {
-        checkMayWrite();
-
-        if (!objectDescriptor.getKind().isSingleton()) {
-            throw new IllegalStateException("must be object: " + objectDescriptor);
-        }
-        
-        getObjectDescriptorsMap().put(objectDescriptor.getName(), objectDescriptor);
     }
 
     @Override
@@ -398,30 +369,6 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         if (classifierDescriptor != null) return classifierDescriptor;
 
         return super.getClassifier(name);
-    }
-
-    @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        ClassDescriptor descriptor = getObjectDescriptorsMap().get(name);
-        if (descriptor != null) return descriptor;
-
-        ClassDescriptor fromWorker = getWorkerScope().getObjectDescriptor(name);
-        if (fromWorker != null) return fromWorker;
-
-        return super.getObjectDescriptor(name);
-    }
-
-    @NotNull
-    @Override
-    public Set<ClassDescriptor> getObjectDescriptors() {
-        if (allObjectDescriptors == null) {
-            allObjectDescriptors = Sets.newHashSet(getObjectDescriptorsMap().values());
-            allObjectDescriptors.addAll(getWorkerScope().getObjectDescriptors());
-            for (JetScope imported : getImports()) {
-                allObjectDescriptors.addAll(imported.getObjectDescriptors());
-            }
-        }
-        return allObjectDescriptors;
     }
 
     @Override

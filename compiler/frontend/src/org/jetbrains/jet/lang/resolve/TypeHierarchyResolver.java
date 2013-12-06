@@ -21,13 +21,13 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -45,6 +45,8 @@ import java.util.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
@@ -149,7 +151,7 @@ public class TypeHierarchyResolver {
         checkTypesInClassHeaders(); // Check bounds in the types used in generic bounds and supertype lists
     }
 
-    @Nullable
+    @NotNull
     private Collection<JetDeclarationContainer> collectNamespacesAndClassifiers(
             @NotNull JetScope outerScope,
             @NotNull NamespaceLikeBuilder owner,
@@ -176,42 +178,56 @@ public class TypeHierarchyResolver {
     }
 
     private void createTypeConstructors() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            JetClass jetClass = entry.getKey();
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveMutableClassDescriptor(jetClass, descriptor, trace);
+            if (classOrObject instanceof JetClass) {
+                descriptorResolver.resolveMutableClassDescriptor((JetClass) classOrObject, descriptor, trace);
+            }
+            else if (classOrObject instanceof JetObjectDeclaration) {
+                descriptor.setModality(Modality.FINAL);
+                descriptor.setVisibility(resolveVisibilityFromModifiers(classOrObject, getDefaultClassVisibility(descriptor)));
+                descriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+            }
+
             descriptor.createTypeConstructor();
-        }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            JetObjectDeclaration objectDeclaration = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
-            descriptor.setModality(Modality.FINAL);
-            descriptor.setVisibility(resolveVisibilityFromModifiers(objectDeclaration, getDefaultClassVisibility(descriptor)));
-            descriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
-            descriptor.createTypeConstructor();
+
+            if (classOrObject instanceof JetEnumEntry ||
+                classOrObject instanceof JetObjectDeclaration && classOrObject.getNameIdentifier() != null) {
+                MutableClassDescriptorLite classObject = descriptor.getClassObjectDescriptor();
+                assert classObject != null : "Enum entries and named objects should have class objects: " + classOrObject.getText();
+
+                // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.
+                // We make this class object inherit from the singleton here, thus allowing to use the singleton's class object where
+                // the instance of the singleton is applicable. Effectively all members of the singleton would be present in its class
+                // object as fake overrides, so you can access them via standard class object notation: ObjectName.memberName()
+                classObject.addSupertype(descriptor.getDefaultType());
+            }
         }
     }
 
     private void resolveTypesInClassHeaders() {
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            JetClass jetClass = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(),
-                                                    (List) descriptor.getTypeConstructor().getParameters(), trace);
-            descriptorResolver.resolveSupertypesForMutableClassDescriptor(jetClass, descriptor, trace);
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            JetClassOrObject classOrObject = entry.getKey();
+            if (classOrObject instanceof JetClass) {
+                MutableClassDescriptor descriptor = entry.getValue();
+                //noinspection unchecked
+                descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor.getScopeForSupertypeResolution(),
+                                                        (List) descriptor.getTypeConstructor().getParameters(), trace);
+            }
         }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
-            JetClassOrObject jetClass = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveSupertypesForMutableClassDescriptor(jetClass, descriptor, trace);
+
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+            descriptorResolver.resolveSupertypesForMutableClassDescriptor(entry.getKey(), entry.getValue(), trace);
         }
     }
 
     private List<MutableClassDescriptorLite> topologicallySortClassesAndObjects() {
         // A topsort is needed only for better diagnostics:
         //    edges that get removed to disconnect loops are more reasonable in this case
+        //noinspection unchecked
         return DFS.topologicalOrder(
-                ContainerUtil.<MutableClassDescriptorLite>concat(context.getClasses().values(), context.getObjects().values()),
+                (Iterable) context.getClasses().values(),
                 new DFS.Neighbors<MutableClassDescriptorLite>() {
                     @NotNull
                     @Override
@@ -395,10 +411,13 @@ public class TypeHierarchyResolver {
     }
 
     private void checkTypesInClassHeaders() {
-        for (JetClass jetClass : context.getClasses().keySet()) {
-            for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
+        for (JetClassOrObject classOrObject : context.getClasses().keySet()) {
+            for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
                 checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
             }
+
+            if (!(classOrObject instanceof JetClass)) continue;
+            JetClass jetClass = (JetClass) classOrObject;
 
             for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
                 checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
@@ -406,12 +425,6 @@ public class TypeHierarchyResolver {
 
             for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
                 checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
-            }
-        }
-
-        for (JetObjectDeclaration object : context.getObjects().keySet()) {
-            for (JetDelegationSpecifier delegationSpecifier : object.getDelegationSpecifiers()) {
-                checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
             }
         }
     }
@@ -466,21 +479,28 @@ public class TypeHierarchyResolver {
 
         @Override
         public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-            MutableClassDescriptor objectDescriptor =
-                    createClassDescriptorForObject(declaration, owner, outerScope, JetPsiUtil.safeName(declaration.getName()),
-                                                   ClassKind.OBJECT);
-            owner.addObjectDescriptor(objectDescriptor);
-            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
+            if (declaration.isObjectLiteral()) {
+                createClassDescriptorForSingleton(declaration, SpecialNames.NO_NAME_PROVIDED, ClassKind.CLASS);
+                return;
+            }
+
+            MutableClassDescriptor descriptor =
+                    createClassDescriptorForSingleton(declaration, JetPsiUtil.safeName(declaration.getName()), ClassKind.OBJECT);
+
+            owner.addClassifierDescriptor(descriptor);
+            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), descriptor);
+
+            descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObject(descriptor));
         }
 
         @Override
-        public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
-            // TODO: Bad casting
-            MutableClassDescriptorLite ownerClassDescriptor = (MutableClassDescriptorLite) owner.getOwnerForChildren();
-            MutableClassDescriptorLite classObjectDescriptor = ownerClassDescriptor.getClassObjectDescriptor();
+        public void visitEnumEntry(@NotNull JetEnumEntry declaration) {
+            MutableClassDescriptor descriptor =
+                    createClassDescriptorForSingleton(declaration, JetPsiUtil.safeName(declaration.getName()), ClassKind.ENUM_ENTRY);
 
-            assert classObjectDescriptor != null : enumEntry.getParent().getText();
-            createClassDescriptorForEnumEntry(enumEntry, classObjectDescriptor);
+            owner.addClassifierDescriptor(descriptor);
+
+            descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObject(descriptor));
         }
 
         @Override
@@ -491,25 +511,28 @@ public class TypeHierarchyResolver {
         @Override
         public void visitClassObject(@NotNull JetClassObject classObject) {
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
-            if (objectDeclaration != null) {
-                Name classObjectName = getClassObjectName(owner.getOwnerForChildren().getName());
+            if (objectDeclaration == null) return;
 
-                MutableClassDescriptor classObjectDescriptor = createClassDescriptorForObject(
-                        objectDeclaration, owner, outerScope,
-                        classObjectName, ClassKind.CLASS_OBJECT);
+            DeclarationDescriptor container = owner.getOwnerForChildren();
 
-                NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(classObjectDescriptor);
-                switch (status) {
-                    case DUPLICATE:
-                        trace.report(MANY_CLASS_OBJECTS.on(classObject));
-                        break;
-                    case NOT_ALLOWED:
-                        trace.report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
-                        break;
-                    case OK:
-                        // Everything is OK so no errors to trace.
-                        break;
-                }
+            MutableClassDescriptor classObjectDescriptor =
+                    createClassDescriptorForSingleton(objectDeclaration, getClassObjectName(container.getName()), ClassKind.CLASS_OBJECT);
+
+            NamespaceLikeBuilder.ClassObjectStatus status =
+                    isEnumEntry(container) || isObject(container) ?
+                    NamespaceLikeBuilder.ClassObjectStatus.NOT_ALLOWED :
+                    owner.setClassObjectDescriptor(classObjectDescriptor);
+
+            switch (status) {
+                case DUPLICATE:
+                    trace.report(MANY_CLASS_OBJECTS.on(classObject));
+                    break;
+                case NOT_ALLOWED:
+                    trace.report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
+                    break;
+                case OK:
+                    // Everything is OK so no errors to trace.
+                    break;
             }
         }
 
@@ -558,48 +581,27 @@ public class TypeHierarchyResolver {
         }
 
         @NotNull
-        private MutableClassDescriptor createClassDescriptorForObject(
-                @NotNull JetObjectDeclaration declaration, @NotNull NamespaceLikeBuilder owner,
-                @NotNull JetScope scope, @NotNull Name name, @NotNull ClassKind kind
+        private MutableClassDescriptor createClassDescriptorForSingleton(
+                @NotNull JetClassOrObject declaration,
+                @NotNull Name name,
+                @NotNull ClassKind kind
         ) {
-            MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                    owner.getOwnerForChildren(), scope, kind, false, name);
+            MutableClassDescriptor descriptor = new MutableClassDescriptor(owner.getOwnerForChildren(), outerScope, kind, false, name);
 
-            context.getObjects().put(declaration, mutableClassDescriptor);
+            prepareForDeferredCall(descriptor.getScopeForMemberResolution(), descriptor, declaration);
 
-            JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
+            createPrimaryConstructorForObject(declaration, descriptor);
+            trace.record(BindingContext.CLASS, declaration, descriptor);
 
-            prepareForDeferredCall(classScope, mutableClassDescriptor, declaration);
+            context.getClasses().put(declaration, descriptor);
 
-            createPrimaryConstructorForObject(declaration, mutableClassDescriptor);
-            trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
-            return mutableClassDescriptor;
+            return descriptor;
         }
 
-        private MutableClassDescriptor createClassDescriptorForEnumEntry(
-                @NotNull JetEnumEntry declaration,
-                @NotNull MutableClassDescriptorLite classObjectDescriptor
-        ) {
-            NamespaceLikeBuilder owner = classObjectDescriptor.getBuilder();
-            MutableClassDescriptor mutableClassObjectDescriptor = (MutableClassDescriptor) classObjectDescriptor;
-
-            MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
-                    owner.getOwnerForChildren(), mutableClassObjectDescriptor.getScopeForMemberResolution(), ClassKind.ENUM_ENTRY,
-                    false, JetPsiUtil.safeName(declaration.getName()));
-            context.getClasses().put(declaration, mutableClassDescriptor);
-
-            prepareForDeferredCall(mutableClassDescriptor.getScopeForMemberResolution(), mutableClassDescriptor, declaration);
-
-            // ??? - is enum entry object?
-            createPrimaryConstructorForObject(declaration, mutableClassDescriptor);
-            owner.addObjectDescriptor(mutableClassDescriptor);
-            trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
-            return mutableClassDescriptor;
-        }
-
+        @NotNull
         private ConstructorDescriptorImpl createPrimaryConstructorForObject(
                 @Nullable PsiElement object,
-                MutableClassDescriptor mutableClassDescriptor
+                @NotNull MutableClassDescriptor mutableClassDescriptor
         ) {
             ConstructorDescriptorImpl constructorDescriptor = DescriptorResolver
                     .createAndRecordPrimaryConstructorForObject(object, mutableClassDescriptor, trace);

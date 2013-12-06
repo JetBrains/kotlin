@@ -383,10 +383,10 @@ public class PositioningStrategies {
         }
     };
 
-    public static final PositioningStrategy<JetExpression> CALL_EXPRESSION = new PositioningStrategy<JetExpression>() {
+    public static final PositioningStrategy<PsiElement> CALL_EXPRESSION = new PositioningStrategy<PsiElement>() {
         @NotNull
         @Override
-        public List<TextRange> mark(@NotNull JetExpression element) {
+        public List<TextRange> mark(@NotNull PsiElement element) {
             if (element instanceof JetCallExpression) {
                 JetCallExpression callExpression = (JetCallExpression) element;
                 PsiElement endElement;
@@ -443,6 +443,20 @@ public class PositioningStrategies {
                     TextRange elementTextRange = element.getTextRange();
                     return Collections.singletonList(
                             TextRange.create(elementTextRange.getStartOffset() + 1, elementTextRange.getEndOffset() - 1));
+                }
+            }
+            return super.mark(element);
+        }
+    };
+
+    public static final PositioningStrategy<JetElement> LONG_LITERAL_SUFFIX = new PositioningStrategy<JetElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetElement element) {
+            if (element instanceof JetConstantExpression) {
+                if (element.getNode().getElementType() == JetNodeTypes.INTEGER_CONSTANT) {
+                    int endOffset = element.getTextRange().getEndOffset();
+                    return Collections.singletonList(TextRange.create(endOffset - 1, endOffset));
                 }
             }
             return super.mark(element);

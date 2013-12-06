@@ -19,6 +19,10 @@ package org.jetbrains.jet.completion;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.util.text.StringUtil;
@@ -29,11 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 /**
  * Extract a number of statements about completion from the given text. Those statements
@@ -44,52 +44,57 @@ public class ExpectedCompletionUtils {
     }
 
     public static class CompletionProposal {
-        public static final Pattern PATTERN = Pattern.compile("([^~@]*)(@([^~]*))?(~(.*))?");
-        public static final int LOOKUP_STRING_GROUP_INDEX = 1;
-        public static final int PRESENTABLE_STRING_GROUP_INDEX = 3;
-        public static final int TAIL_TEXT_STRING_GROUP_INDEX = 5;
+        public static final String LOOKUP_STRING = "lookupString";
+        public static final String PRESENTATION_ITEM_TEXT = "itemText";
+        public static final String PRESENTATION_TYPE_TEXT = "typeText";
+        public static final String PRESENTATION_TAIL_TEXT = "tailText";
+        public static final Set<String> validKeys = new HashSet<String>(
+                Arrays.asList(LOOKUP_STRING, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT, PRESENTATION_TAIL_TEXT)
+        );
 
-        public static final String TAIL_FLAG = "~";
-        public static final String PRESENTABLE_FLAG = "@";
+        private final Map<String, String> map;
 
-        private final String lookupString;
-        private final String presenterText;
-        private final String tailString;
-
-        public CompletionProposal(@NotNull String lookupString, @Nullable String presenterText, @Nullable String tailString) {
-            this.lookupString = lookupString;
-            this.presenterText = presenterText != null ? presenterText.trim() : null;
-            this.tailString = tailString != null ? tailString.trim() : null;
+        public CompletionProposal(@NotNull String lookupString) {
+            map = new HashMap<String, String>();
+            map.put(LOOKUP_STRING, lookupString);
         }
 
-        public boolean isSuitable(CompletionProposal proposal) {
-            if (proposal.tailString != null) {
-                if (!proposal.tailString.equals(tailString)) {
+        public CompletionProposal(@NotNull Map<String, String> map) {
+            this.map = map;
+            for (String key : map.keySet()) {
+                if (!validKeys.contains(key)){
+                    throw new RuntimeException("Invalid key '" + key + "'");
+                }
+            }
+        }
+
+        public CompletionProposal(@NotNull JsonObject json) {
+            map = new HashMap<String, String>();
+            for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+                String key = entry.getKey();
+                if (!validKeys.contains(key)) {
+                    throw new RuntimeException("Invalid json property '" + key + "'");
+                }
+                map.put(key, entry.getValue().getAsString());
+            }
+        }
+
+        public boolean matches(CompletionProposal expectedProposal) {
+            for (Map.Entry<String, String> entry : expectedProposal.map.entrySet()) {
+                if (!entry.getValue().equals(map.get(entry.getKey()))) {
                     return false;
                 }
             }
-
-            if (proposal.presenterText != null) {
-                if (!proposal.presenterText.equals(presenterText)) {
-                    return false;
-                }
-            }
-
-            return lookupString.equals(proposal.lookupString);
+            return true;
         }
 
         @Override
         public String toString() {
-            StringBuilder result = new StringBuilder(lookupString);
-            if (presenterText != null) {
-                result.append(PRESENTABLE_FLAG).append(presenterText);
+            JsonObject jsonObject = new JsonObject();
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                jsonObject.addProperty(entry.getKey(), entry.getValue());
             }
-
-            if (tailString != null) {
-                result.append(TAIL_FLAG).append(tailString);
-            }
-
-            return result.toString();
+            return jsonObject.toString();
         }
     }
 
@@ -168,12 +173,17 @@ public class ExpectedCompletionUtils {
 
     public static CompletionProposal[] processProposalAssertions(String fileText, String... prefixes) {
         Collection<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
-        for (String proposalStr : InTextDirectivesUtils.findListWithPrefixes(fileText, prefixes)) {
-            Matcher matcher = CompletionProposal.PATTERN.matcher(proposalStr);
-            matcher.find();
-            proposals.add(new CompletionProposal(matcher.group(CompletionProposal.LOOKUP_STRING_GROUP_INDEX),
-                                                 matcher.group(CompletionProposal.PRESENTABLE_STRING_GROUP_INDEX),
-                                                 matcher.group(CompletionProposal.TAIL_TEXT_STRING_GROUP_INDEX)));
+        for (String proposalStr : InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, prefixes)) {
+            if (proposalStr.startsWith("{")){
+                JsonParser parser = new JsonParser();
+                JsonElement json = parser.parse(proposalStr);
+                proposals.add(new CompletionProposal((JsonObject) json));
+            }
+            else{
+                for(String item : proposalStr.split(",")){
+                    proposals.add(new CompletionProposal(item.trim()));
+                }
+            }
         }
 
         return ArrayUtil.toObjectArray(proposals, CompletionProposal.class);
@@ -225,7 +235,7 @@ public class ExpectedCompletionUtils {
             for (int index = 0; index < itemsInformation.size(); index++) {
                 CompletionProposal proposal = itemsInformation.get(index);
 
-                if (proposal.isSuitable(expectedProposal)) {
+                if (proposal.matches(expectedProposal)) {
                     isFound = true;
 
                     Assert.assertTrue("Invalid order of existent elements in " + allItemsString,
@@ -236,7 +246,14 @@ public class ExpectedCompletionUtils {
                 }
             }
 
-            Assert.assertTrue("Expected '" + expectedProposal + "' not found in " + allItemsString, isFound);
+            if (!isFound) {
+                if (allItemsString.isEmpty()) {
+                    Assert.fail("Completion is empty but " + expectedProposal + " is expected");
+                }
+                else {
+                    Assert.fail("Expected " + expectedProposal + " not found in:\n" + allItemsString);
+                }
+            }
         }
     }
 
@@ -259,7 +276,7 @@ public class ExpectedCompletionUtils {
         for (CompletionProposal unexpectedProposal : unexpected) {
             for (CompletionProposal proposal : itemsInformation) {
                 Assert.assertFalse("Unexpected '" + unexpectedProposal + "' presented in " + allItemsString,
-                                   proposal.isSuitable(unexpectedProposal));
+                                   proposal.matches(unexpectedProposal));
             }
         }
     }
@@ -271,8 +288,18 @@ public class ExpectedCompletionUtils {
         if (items != null) {
             for (LookupElement item : items) {
                 item.renderElement(presentation);
-                result.add(new ExpectedCompletionUtils.CompletionProposal(item.getLookupString(), presentation.getItemText(),
-                                                                          presentation.getTailText()));
+                Map<String, String> map = new HashMap<String, String>();
+                map.put(CompletionProposal.LOOKUP_STRING, item.getLookupString());
+                if (presentation.getItemText() != null){
+                    map.put(CompletionProposal.PRESENTATION_ITEM_TEXT, presentation.getItemText());
+                }
+                if (presentation.getTypeText() != null){
+                    map.put(CompletionProposal.PRESENTATION_TYPE_TEXT, presentation.getTypeText());
+                }
+                if (presentation.getTailText() != null){
+                    map.put(CompletionProposal.PRESENTATION_TAIL_TEXT, presentation.getTailText());
+                }
+                result.add(new ExpectedCompletionUtils.CompletionProposal(map));
             }
         }
 

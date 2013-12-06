@@ -17,7 +17,10 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -68,11 +71,6 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl {
                 @Override
                 public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
                     getMemberScope().addClassifierDescriptor(classDescriptor);
-                }
-
-                @Override
-                public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-                    getMemberScope().addObjectDescriptor(objectDescriptor);
                 }
 
                 @Override

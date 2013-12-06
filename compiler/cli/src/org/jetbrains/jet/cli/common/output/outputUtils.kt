@@ -37,11 +37,11 @@ public fun OutputFileCollection.writeAll(outputDirector: OutputDirector, report:
 
 private val REPORT_NOTHING = { (sources: List<File>, output: File) -> }
 
-public inline fun OutputFileCollection.writeAllTo(outputDir: File) {
+public fun OutputFileCollection.writeAllTo(outputDir: File) {
     writeAll(SingleDirectoryDirector(outputDir), REPORT_NOTHING)
 }
 
-public inline fun OutputFileCollection.writeAll(outputDirector: OutputDirector, messageCollector: MessageCollector) {
+public fun OutputFileCollection.writeAll(outputDirector: OutputDirector, messageCollector: MessageCollector) {
     writeAll(outputDirector) { sources, output ->
         messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output), CompilerMessageLocation.NO_LOCATION)
     }

@@ -41,8 +41,13 @@ public class ThrowExceptionInstruction extends AbstractJumpInstruction implement
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitThrowExceptionInstruction(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitThrowExceptionInstruction(this);
     }
 
     @Override

@@ -15,7 +15,7 @@ class Test {
         val vbyte: Byte = 11
         val vlong: Long = 12
         val vdouble: Double = 1.2
-        val vfloat: Float = 1.3
+        val vfloat: Float = 1.3.toFloat()
     }
 
 }

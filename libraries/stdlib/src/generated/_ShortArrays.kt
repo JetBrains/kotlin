@@ -28,7 +28,7 @@ public inline fun ShortArray.any(predicate: (Short) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun ShortArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+public fun ShortArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -54,7 +54,7 @@ public inline fun ShortArray.count(predicate: (Short) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-public inline fun ShortArray.drop(n: Int) : List<Short> {
+public fun ShortArray.drop(n: Int) : List<Short> {
     return dropWhile(countTo(n))
 }
 
@@ -184,11 +184,25 @@ public inline fun <K> ShortArray.groupByTo(result: MutableMap<K, MutableList<Sho
 }
 
 /**
+ * Returns true if the array is empty
+ */
+public fun ShortArray.isEmpty() : Boolean {
+    return size == 0
+}
+
+/**
+ * Returns true if the array is empty
+ */
+public fun ShortArray.isNotEmpty() : Boolean {
+    return !isEmpty()
+}
+
+/**
  * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun ShortArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+public fun ShortArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -212,6 +226,70 @@ public inline fun <R, C: MutableCollection<in R>> ShortArray.mapTo(result: C, tr
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun ShortArray.max() : Short? {
+    var max: Short? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> ShortArray.maxBy(f: (Short) -> R) : Short? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun ShortArray.min() : Short? {
+    var min: Short? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> ShortArray.minBy(f: (Short) -> R) : Short? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun ShortArray.partition(predicate: (Short) -> Boolean) : Pair<List<Short>, List<Short>> {
@@ -230,14 +308,14 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean) : Pair<Lis
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-public inline fun ShortArray.plus(collection: Iterable<Short>) : List<Short> {
+public fun ShortArray.plus(collection: Iterable<Short>) : List<Short> {
     return plus(collection.iterator())
 }
 
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-public inline fun ShortArray.plus(element: Short) : List<Short> {
+public fun ShortArray.plus(element: Short) : List<Short> {
     val answer = ArrayList<Short>()
     toCollection(answer)
     answer.add(element)
@@ -247,7 +325,7 @@ public inline fun ShortArray.plus(element: Short) : List<Short> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-public inline fun ShortArray.plus(iterator: Iterator<Short>) : List<Short> {
+public fun ShortArray.plus(iterator: Iterator<Short>) : List<Short> {
     val answer = ArrayList<Short>()
     toCollection(answer)
     for (element in iterator) {
@@ -295,7 +373,7 @@ public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short) : S
 /**
  * Reverses the order the elements into a list
  */
-public inline fun ShortArray.reverse() : List<Short> {
+public fun ShortArray.reverse() : List<Short> {
     val list = toCollection(ArrayList<Short>())
     Collections.reverse(list)
     return list
@@ -319,7 +397,7 @@ public inline fun <R: Comparable<R>> ShortArray.sortBy(f: (Short) -> R) : List<S
 /**
  * Returns a list containing the first *n* elements
  */
-public inline fun ShortArray.take(n: Int) : List<Short> {
+public fun ShortArray.take(n: Int) : List<Short> {
     return takeWhile(countTo(n))
 }
 
@@ -341,7 +419,7 @@ public inline fun <C: MutableCollection<in Short>> ShortArray.takeWhileTo(result
 /**
  * Copies all elements into the given collection
  */
-public inline fun <C: MutableCollection<in Short>> ShortArray.toCollection(result: C) : C {
+public fun <C: MutableCollection<in Short>> ShortArray.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -349,35 +427,42 @@ public inline fun <C: MutableCollection<in Short>> ShortArray.toCollection(resul
 /**
  * Copies all elements into a [[LinkedList]]
  */
-public inline fun ShortArray.toLinkedList() : LinkedList<Short> {
+public fun ShortArray.toLinkedList() : LinkedList<Short> {
     return toCollection(LinkedList<Short>())
 }
 
 /**
  * Copies all elements into a [[List]]
  */
-public inline fun ShortArray.toList() : List<Short> {
+public fun ShortArray.toList() : List<Short> {
     return toCollection(ArrayList<Short>())
 }
 
 /**
  * Copies all elements into a [[Set]]
  */
-public inline fun ShortArray.toSet() : Set<Short> {
+public fun ShortArray.toSet() : Set<Short> {
     return toCollection(LinkedHashSet<Short>())
 }
 
 /**
  * Copies all elements into a [[SortedSet]]
  */
-public inline fun ShortArray.toSortedSet() : SortedSet<Short> {
+public fun ShortArray.toSortedSet() : SortedSet<Short> {
     return toCollection(TreeSet<Short>())
 }
 
 /**
  * Returns an iterator of Pairs(index, data)
  */
-public inline fun ShortArray.withIndices() : Iterator<Pair<Int, Short>> {
+public fun ShortArray.withIndices() : Iterator<Pair<Int, Short>> {
     return IndexIterator(iterator())
+}
+
+/**
+ * Sums up the elements
+ */
+public fun ShortArray.sum() : Int {
+    return fold(0, {a,b -> a+b})
 }
 

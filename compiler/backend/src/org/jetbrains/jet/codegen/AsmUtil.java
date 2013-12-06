@@ -244,14 +244,18 @@ public class AsmUtil {
         if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
         }
+        if (isEnumEntry(memberDescriptor)) {
+            return NO_FLAG_PACKAGE_PRIVATE;
+        }
         if (memberVisibility != Visibilities.PRIVATE) {
             return null;
         }
         // the following code is only for PRIVATE visibility of member
-        if (isEnumEntry(memberDescriptor)) {
-            return NO_FLAG_PACKAGE_PRIVATE;
-        }
         if (memberDescriptor instanceof ConstructorDescriptor) {
+            if (isAnonymousObject(containingDeclaration)) {
+                return NO_FLAG_PACKAGE_PRIVATE;
+            }
+
             ClassKind kind = ((ClassDescriptor) containingDeclaration).getKind();
             if (kind == ClassKind.OBJECT) {
                 return NO_FLAG_PACKAGE_PRIVATE;

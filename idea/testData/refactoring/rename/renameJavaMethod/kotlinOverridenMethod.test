@@ -1,0 +1,2 @@
+// RENAME: KOTLIN_FUNCTION->testing.kotlin.KotlinClass.foo->bar
+// FILE: MethodUsages.kt

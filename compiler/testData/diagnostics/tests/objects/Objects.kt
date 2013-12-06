@@ -14,7 +14,7 @@ package toplevelObjectDeclarations
     }
   }
 
-  object B : <!SUPERTYPE_NOT_INITIALIZED, FINAL_SUPERTYPE!>A<!> {}
+  object B : <!SINGLETON_IN_SUPERTYPE!>A<!> {}
 
   val x = A.foo()
 

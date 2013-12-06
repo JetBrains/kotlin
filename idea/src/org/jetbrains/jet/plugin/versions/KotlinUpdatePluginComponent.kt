@@ -1,0 +1,78 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.jet.plugin.versions
+
+import com.intellij.openapi.components.ApplicationComponent
+import org.jetbrains.jet.utils.PathUtil
+import com.intellij.openapi.vfs.JarFileSystem
+import com.intellij.ide.util.PropertiesComponent
+import org.jetbrains.jet.plugin.JetPluginUtil
+import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.openapi.vfs.LocalFileSystem
+import java.io.File
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.openapi.vfs.newvfs.NewVirtualFile
+import com.intellij.openapi.vfs.VfsUtilCore
+import org.jetbrains.jet.plugin.vfilefinder.KotlinClassFileIndex
+
+private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
+
+class KotlinUpdatePluginComponent : ApplicationComponent {
+    override fun initComponent() {
+        val installedKotlinVersion = PropertiesComponent.getInstance()?.getValue(INSTALLED_KOTLIN_VERSION)
+
+        if (installedKotlinVersion == null || JetPluginUtil.getPluginVersion() != installedKotlinVersion) {
+            val ideaPluginPaths = PathUtil.getKotlinPathsForIdeaPlugin()
+
+            // Force refresh jar handlers
+            requestFullJarUpdate(ideaPluginPaths.getRuntimePath())
+            requestFullJarUpdate(ideaPluginPaths.getRuntimeSourcesPath())
+
+            requestFullJarUpdate(ideaPluginPaths.getJsLibJarPath())
+
+            requestFullJarUpdate(ideaPluginPaths.getJdkAnnotationsPath())
+            requestFullJarUpdate(ideaPluginPaths.getAndroidSdkAnnotationsPath())
+
+            // Force update indices for files under config directory
+            val fileBasedIndex = FileBasedIndex.getInstance()!!
+            fileBasedIndex.requestRebuild(KotlinAbiVersionIndex.INSTANCE.getName())
+            fileBasedIndex.requestRebuild(KotlinClassFileIndex.KEY)
+
+            PropertiesComponent.getInstance()?.setValue(INSTALLED_KOTLIN_VERSION, JetPluginUtil.getPluginVersion())
+        }
+    }
+
+    override fun getComponentName(): String {
+        return "ReindexBundledRuntimeComponent"
+    }
+
+    override fun disposeComponent() {
+    }
+
+    private fun requestFullJarUpdate(jarFilePath: File) {
+        val localVirtualFile = LocalFileSystem.getInstance()!!.refreshAndFindFileByIoFile(jarFilePath)
+
+        // Build and update JarHandler
+        val jarFile = JarFileSystem.getInstance()!!.getJarRootForLocalFile(localVirtualFile!!)
+        VfsUtilCore.visitChildrenRecursively(jarFile!!, object : VirtualFileVisitor<Any?>() {})
+        ((jarFile as NewVirtualFile)).markDirtyRecursively()
+
+        jarFile.refresh(false, true)
+        VfsUtil.markDirtyAndRefresh(false, false, true, localVirtualFile)
+    }
+}

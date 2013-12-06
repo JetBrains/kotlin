@@ -54,6 +54,7 @@ public abstract class AbstractJumpInstruction extends InstructionImpl {
         return updateCopyInfo(createCopy(newLabel));
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return createCopy(targetLabel);

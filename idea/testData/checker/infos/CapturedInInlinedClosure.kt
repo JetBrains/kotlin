@@ -1,4 +1,4 @@
-<info>inline</info> fun <T> run(f: () -> T) = f()
+inline fun <T> run(f: () -> T) = f()
 fun run2(f: () -> Unit) = f()
 
 fun inline() {

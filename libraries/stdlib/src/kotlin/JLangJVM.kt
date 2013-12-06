@@ -15,7 +15,7 @@ import jet.runtime.Intrinsic
  * A helper method for calling hashCode() on Kotlin objects
  * TODO remove when Any supports equals() and hashCode()
  */
-[Intrinsic("kotlin.hashCode")] public inline fun Any.hashCode(): Int = (this as java.lang.Object).hashCode()
+[Intrinsic("kotlin.hashCode")] public fun Any.hashCode(): Int = (this as java.lang.Object).hashCode()
 
 /**
  * A helper method for calling toString() on Kotlin primitives

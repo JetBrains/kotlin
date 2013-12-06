@@ -1,16 +1,34 @@
+/*
+ * Copyright 2010-2013 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.StorageManager;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class DeserializedPackageMemberScope extends DeserializedMemberScope {
@@ -46,46 +64,19 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
 
     @Nullable
     @Override
-    protected ClassifierDescriptor getClassDescriptor(@NotNull Name name) {
-        return findClassDescriptor(name, false);
-    }
-
-    @Nullable
-    @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return findClassDescriptor(name, true);
-    }
-
-    @Nullable
-    private ClassDescriptor findClassDescriptor(Name name, boolean object) {
-        ClassDescriptor classDescriptor = descriptorFinder.findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
-        if (classDescriptor == null) {
-            return null;
-        }
-        return classDescriptor.getKind().isSingleton() == object ? classDescriptor : null;
+    protected ClassDescriptor getClassDescriptor(@NotNull Name name) {
+        return descriptorFinder.findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
     }
 
     @Override
     protected void addAllClassDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
-        findClassifiers(result, false);
-    }
-
-    @NotNull
-    @Override
-    protected Collection<ClassDescriptor> computeAllObjectDescriptors() {
-        return findClassifiers(new ArrayList<ClassDescriptor>(), true);
-    }
-
-    private <T extends Collection<? super ClassDescriptor>> T findClassifiers(T result, boolean object) {
         for (Name className : descriptorFinder.getClassNames(packageFqName)) {
-            ClassDescriptor classDescriptor = findClassDescriptor(className, object);
+            ClassDescriptor classDescriptor = getClassDescriptor(className);
 
             if (classDescriptor != null) {
-                assert classDescriptor.getKind().isSingleton() == object;
                 result.add(classDescriptor);
             }
         }
-        return result;
     }
 
     @Override

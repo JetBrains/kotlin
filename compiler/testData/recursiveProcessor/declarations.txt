@@ -8,6 +8,12 @@
 <class-object-for-NestedClass>.nestedClassObjFunc:SimpleFunctionDescriptor
 <class-object-for-NestedClass>.this:ReceiverParameterDescriptor
 <class-object-for-NestedClass>:ClassDescriptor
+<class-object-for-NestedObject>.<init>():ConstructorDescriptor
+<class-object-for-NestedObject>.this:ReceiverParameterDescriptor
+<class-object-for-NestedObject>:ClassDescriptor
+<class-object-for-Object>.<init>():ConstructorDescriptor
+<class-object-for-Object>.this:ReceiverParameterDescriptor
+<class-object-for-Object>:ClassDescriptor
 <set-?>:ValueParameterDescriptor
 Class.<get-classProp>:PropertyGetterDescriptor
 Class.<init>():ConstructorDescriptor
@@ -18,14 +24,19 @@ Class:ClassDescriptor
 NestedClass.<init>():ConstructorDescriptor
 NestedClass.this:ReceiverParameterDescriptor
 NestedClass:ClassDescriptor
+NestedObject.<init>():ConstructorDescriptor
+NestedObject.nestedFunc:SimpleFunctionDescriptor
+NestedObject.this:ReceiverParameterDescriptor
+NestedObject:ClassDescriptor
 NestedTrait.nestedTraitFun:SimpleFunctionDescriptor
 NestedTrait.this:ReceiverParameterDescriptor
 NestedTrait:ClassDescriptor
+Object.<get-objProp>:PropertyGetterDescriptor
 Object.<init>():ConstructorDescriptor
-Object.nestedFunc:SimpleFunctionDescriptor
+Object.objFunc:SimpleFunctionDescriptor
+Object.objProp:PropertyDescriptor
 Object.this:ReceiverParameterDescriptor
 Object:ClassDescriptor
-Outer.Object:VariableDescriptorForObject
 Outer.this:ReceiverParameterDescriptor
 Outer:ClassDescriptor
 T1:TypeParameterDescriptor
@@ -39,6 +50,10 @@ Trait.traitFunc:SimpleFunctionDescriptor
 Trait.traitProp:PropertyDescriptor
 Trait:ClassDescriptor
 a:ValueParameterDescriptor
+fake <class-object-for-NestedObject>.nestedFunc:SimpleFunctionDescriptor
+fake <class-object-for-Object>.<get-objProp>:PropertyGetterDescriptor
+fake <class-object-for-Object>.objFunc:SimpleFunctionDescriptor
+fake <class-object-for-Object>.objProp:PropertyDescriptor
 fake Class.<get-traitProp>:PropertyGetterDescriptor
 fake Class.traitFunc:SimpleFunctionDescriptor
 fake Class.traitProp:PropertyDescriptor
@@ -46,7 +61,6 @@ func.this:ReceiverParameterDescriptor
 innerTest.<get-prop>:PropertyGetterDescriptor
 innerTest.<get-propVar>:PropertyGetterDescriptor
 innerTest.<set-propVar>:PropertySetterDescriptor
-innerTest.Object:VariableDescriptorForObject
 innerTest.func:SimpleFunctionDescriptor
 innerTest.prop:PropertyDescriptor
 innerTest.propVar:PropertyDescriptor

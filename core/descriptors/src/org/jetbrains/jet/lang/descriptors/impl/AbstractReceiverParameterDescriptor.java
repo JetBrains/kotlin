@@ -18,8 +18,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
@@ -28,6 +27,8 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractReceiverParameterDescriptor extends DeclarationDescriptorImpl implements ReceiverParameterDescriptor {
     private static final Name RECEIVER_PARAMETER_NAME = Name.special("<this>");
@@ -49,5 +50,53 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitReceiverParameterDescriptor(this, data);
+    }
+
+    @Nullable
+    @Override
+    public ReceiverParameterDescriptor getReceiverParameter() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public ReceiverParameterDescriptor getExpectedThisObject() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public List<TypeParameterDescriptor> getTypeParameters() {
+        return Collections.emptyList();
+    }
+
+    @Nullable
+    @Override
+    public JetType getReturnType() {
+        return getType();
+    }
+
+    @NotNull
+    @Override
+    public List<ValueParameterDescriptor> getValueParameters() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public Set<? extends CallableDescriptor> getOverriddenDescriptors() {
+        return Collections.emptySet();
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return Visibilities.LOCAL;
+    }
+
+    @NotNull
+    @Override
+    public CallableDescriptor getOriginal() {
+        return this;
     }
 }

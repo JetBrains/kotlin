@@ -84,7 +84,7 @@ public fun File.relativePath(descendant: File): String {
 /**
  * Creates a new [[FileReader]] for this file
  */
-public inline fun File.reader(): FileReader = FileReader(this)
+public fun File.reader(): FileReader = FileReader(this)
 
 /**
  * Reads the entire content of the file as bytes

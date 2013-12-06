@@ -14,6 +14,11 @@ import org.jetbrains.jet.plugin.completion.handlers.*
 import com.google.common.collect.SetMultimap
 import java.util.*
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
+import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration
+import org.jetbrains.jet.lang.resolve.name.Name
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -43,6 +48,7 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
 
     if (receiver == null) {
         typeInstantiationItems(expectedType, resolveSession, bindingContext).toCollection(additionalElements)
+        thisItems(expressionWithType, expectedType, bindingContext).toCollection(additionalElements)
     }
 
     val dataFlowInfo = bindingContext.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expressionWithType)
@@ -51,6 +57,9 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
     fun typesOf(descriptor: DeclarationDescriptor): Iterable<JetType> {
         if (descriptor is CallableDescriptor) {
             var returnType = descriptor.getReturnType()
+            if (returnType != null && KotlinBuiltIns.getInstance().isNothing(returnType!!)) { //TODO: maybe we should include them on the second press?
+                return listOf()
+            }
             if (descriptor is VariableDescriptor) {
                 if (notNullVariables.contains(descriptor) && returnType != null) {
                     returnType = TypeUtils.makeNotNullable(returnType!!)
@@ -136,6 +145,44 @@ private fun typeInstantiationItems(expectedType: JetType, resolveSession: Cancel
     }
 
     return listOf()
+}
+
+private fun thisItems(context: JetExpression, expectedType: JetType, bindingContext: BindingContext): Iterable<LookupElement> {
+    val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, context)
+    if (scope == null) return listOf()
+
+    val receivers: List<ReceiverParameterDescriptor> = scope.getImplicitReceiversHierarchy()
+    val result = ArrayList<LookupElement>()
+    for (i in 0..receivers.size - 1) {
+        val receiver = receivers[i]
+        val thisType = receiver.getType()
+        if (JetTypeChecker.INSTANCE.isSubtypeOf(thisType, expectedType)) {
+            //TODO: use this code when KT-4258 fixed
+            //val expressionText = if (i == 0) "this" else "this@" + (thisQualifierName(receiver, bindingContext) ?: continue)
+            val qualifier = if (i == 0) null else thisQualifierName(receiver, bindingContext) ?: continue
+            val expressionText = if (qualifier == null) "this" else "this@" + qualifier
+            result.add(LookupElementBuilder.create(expressionText).withTypeText(DescriptorRenderer.TEXT.renderType(thisType)))
+        }
+    }
+    return result
+}
+
+private fun thisQualifierName(receiver: ReceiverParameterDescriptor, bindingContext: BindingContext): String? {
+    val descriptor: DeclarationDescriptor = receiver.getContainingDeclaration()
+    val name: Name = descriptor.getName()
+    if (!name.isSpecial()) return name.asString()
+
+    val psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor)
+    val expression: JetExpression? = when (psiElement) {
+        is JetFunctionLiteral -> psiElement.getParent() as? JetFunctionLiteralExpression
+        is JetObjectDeclaration -> psiElement.getParent() as? JetObjectLiteralExpression
+        else -> null
+    }
+    return ((((expression?.getParent() as? JetValueArgument)
+                ?.getParent() as? JetValueArgumentList)
+                    ?.getParent() as? JetCallExpression)
+                        ?.getCalleeExpression() as? JetSimpleNameExpression)
+                            ?.getReferencedName()
 }
 
 private data class ProcessDataFlowInfoResult(

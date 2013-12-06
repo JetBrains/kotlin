@@ -101,7 +101,7 @@ public final class JavaFunctionResolver {
             @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
             boolean record
     ) {
-        if (!DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, method)) {
+        if (!DescriptorResolverUtils.isCorrectOwnerForEnumMethod(ownerDescriptor, method)) {
             return null;
         }
 
@@ -169,8 +169,8 @@ public final class JavaFunctionResolver {
                 effectiveSignature.getValueParameters(),
                 effectiveSignature.getReturnType(),
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
-                method.getVisibility(),
-                /*isInline = */ false
+                method.getVisibility()
+                /*TODO what if user annotate it with inline?*/
         );
 
         if (record) {

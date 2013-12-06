@@ -48,24 +48,20 @@ public class DeclarationsChecker {
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
-        Map<JetClass, MutableClassDescriptor> classes = bodiesResolveContext.getClasses();
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : classes.entrySet()) {
-            JetClass aClass = entry.getKey();
+        Map<JetClassOrObject, MutableClassDescriptor> classes = bodiesResolveContext.getClasses();
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : classes.entrySet()) {
+            JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor classDescriptor = entry.getValue();
-            if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
+            if (!bodiesResolveContext.completeAnalysisNeeded(classOrObject)) continue;
 
-            checkClass(aClass, classDescriptor);
-            modifiersChecker.checkModifiersForDeclaration(aClass, classDescriptor);
-        }
+            if (classOrObject instanceof JetClass) {
+                checkClass((JetClass) classOrObject, classDescriptor);
+            }
+            else if (classOrObject instanceof JetObjectDeclaration) {
+                checkObject((JetObjectDeclaration) classOrObject);
+            }
 
-        Map<JetObjectDeclaration, MutableClassDescriptor> objects = bodiesResolveContext.getObjects();
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : objects.entrySet()) {
-            JetObjectDeclaration objectDeclaration = entry.getKey();
-            MutableClassDescriptor objectDescriptor = entry.getValue();
-
-            if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
-            checkObject(objectDeclaration);
-            modifiersChecker.checkModifiersForDeclaration(objectDeclaration, objectDescriptor);
+            modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
         }
 
         Map<JetNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
@@ -108,11 +104,11 @@ public class DeclarationsChecker {
         if (aClass.isTrait()) {
             checkTraitModifiers(aClass);
         }
-        else if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+        else if (aClass.isEnum()) {
             checkEnumModifiers(aClass);
         }
-        else if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            checkEnumEntry(aClass, classDescriptor);
+        else if (aClass instanceof JetEnumEntry) {
+            checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
         }
     }
 
@@ -336,17 +332,16 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkEnumEntry(JetClass aClass, ClassDescriptor classDescriptor) {
-        DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration().getContainingDeclaration();
-        assert declaration instanceof ClassDescriptor;
+    private void checkEnumEntry(@NotNull JetEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
+        DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
+        assert DescriptorUtils.isEnumClass(declaration) : "Enum entry should be declared in enum class: " + classDescriptor;
         ClassDescriptor enumClass = (ClassDescriptor) declaration;
-        assert enumClass.getKind() == ClassKind.ENUM_CLASS;
 
-        List<JetDelegationSpecifier> delegationSpecifiers = aClass.getDelegationSpecifiers();
+        List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
         ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
         assert constructor != null;
         if (!constructor.getValueParameters().isEmpty() && delegationSpecifiers.isEmpty()) {
-            trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(aClass, enumClass));
+            trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry, enumClass));
         }
 
         for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {

@@ -71,6 +71,7 @@ public abstract class InstructionImpl implements Instruction {
         return updateCopyInfo(createCopy());
     }
 
+    @NotNull
     protected abstract Instruction createCopy();
 
     @NotNull

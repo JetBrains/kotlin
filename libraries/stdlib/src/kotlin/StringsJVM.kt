@@ -35,7 +35,7 @@ public inline fun String.getBytes() : ByteArray = (this as java.lang.String).get
 
 public inline fun String.toCharArray() : CharArray = (this as java.lang.String).toCharArray()
 
-public inline fun String.toCharList(): List<Char> = toCharArray().toList()
+public fun String.toCharList(): List<Char> = toCharArray().toList()
 
 public inline fun String.format(vararg args : Any?) : String = java.lang.String.format(this, *args)
 
@@ -136,18 +136,18 @@ public inline fun String.toUpperCase(locale : java.util.Locale) : String = (this
 
 public inline fun CharSequence.charAt(index : Int) : Char = (this as java.lang.CharSequence).charAt(index)
 
-public inline fun CharSequence.get(index : Int) : Char = charAt(index)
+public fun CharSequence.get(index : Int) : Char = charAt(index)
 
 public inline fun CharSequence.subSequence(start : Int, end : Int) : CharSequence? = (this as java.lang.CharSequence).subSequence(start, end)
 
-public inline fun CharSequence.get(start : Int, end : Int) : CharSequence? = subSequence(start, end)
+public fun CharSequence.get(start : Int, end : Int) : CharSequence? = subSequence(start, end)
 
 public inline fun CharSequence.toString() : String? = (this as java.lang.CharSequence).toString()
 
 public inline fun CharSequence.length() : Int = (this as java.lang.CharSequence).length()
 
 
-public inline fun String.toByteArray(encoding: String = Charset.defaultCharset().name()): ByteArray = (this as java.lang.String).getBytes(encoding)
+public fun String.toByteArray(encoding: String = Charset.defaultCharset().name()): ByteArray = (this as java.lang.String).getBytes(encoding)
 public inline fun String.toByteArray(encoding: Charset): ByteArray =  (this as java.lang.String).getBytes(encoding)
 
 public inline fun String.toBoolean() : Boolean = java.lang.Boolean.parseBoolean(this)
@@ -162,7 +162,7 @@ public inline fun String.toDouble() : Double = java.lang.Double.parseDouble(this
  * with the specified flags from [[Pattern]] or'd together
  * so that strings can be split or matched on.
  */
-public inline fun String.toRegex(flags: Int=0): java.util.regex.Pattern {
+public fun String.toRegex(flags: Int=0): java.util.regex.Pattern {
     return java.util.regex.Pattern.compile(this, flags)
 }
 
@@ -178,7 +178,7 @@ get() = length()
  *
  * @includeFunctionBody ../../test/StringTest.kt capitalize
  */
-public inline fun String.capitalize(): String {
+public fun String.capitalize(): String {
     return if (isNotEmpty() && charAt(0).isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
@@ -187,7 +187,7 @@ public inline fun String.capitalize(): String {
  *
  * @includeFunctionBody ../../test/StringTest.kt decapitalize
  */
-public inline fun String.decapitalize(): String {
+public fun String.decapitalize(): String {
     return if (isNotEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
@@ -196,7 +196,7 @@ public inline fun String.decapitalize(): String {
  * When n < 0, IllegalArgumentException is thrown.
  * @includeFunctionBody ../../test/StringTest.kt repeat
  */
-public inline fun String.repeat(n: Int): String {
+public fun String.repeat(n: Int): String {
     require(n >= 0, { "Cannot repeat string $n times" })
 
     var sb = StringBuilder()
@@ -246,7 +246,7 @@ public inline fun <T: Appendable> String.filterNotTo(result: T, predicate: (Char
   *
   * @includeFunctionBody ../../test/StringTest.kt reverse
   */
-public inline fun String.reverse(): String = StringBuilder(this).reverse().toString()
+public fun String.reverse(): String = StringBuilder(this).reverse().toString()
 
 /**
  * Performs the given *operation* on each character
@@ -283,7 +283,7 @@ public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
  *
  * @includeFunctionBody ../../test/StringTest.kt appendString
  */
-public inline fun String.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): Unit {
+public fun String.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): Unit {
     buffer.append(prefix)
     var count = 0
     for (c in this) {
@@ -441,7 +441,7 @@ public inline fun <K> String.groupByTo(result: MutableMap<K, String>, toKey: (Ch
  *
  * @includeFunctionBody ../../test/StringTest.kt makeString
  */
-public inline fun String.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
+public fun String.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -477,7 +477,7 @@ public inline fun String.dropWhile(predicate: (Char) -> Boolean): String = dropW
  *
  * @includeFunctionBody ../../test/StringTest.kt drop
  */
-public inline fun String.drop(n: Int): String = dropWhile(countTo(n))
+public fun String.drop(n: Int): String = dropWhile(countTo(n))
 
 /**
  * Returns an Appendable containing the first characters that satisfy the given *predicate*
@@ -501,28 +501,28 @@ public inline fun String.takeWhile(predicate: (Char) -> Boolean): String = takeW
  *
  * @includeFunctionBody ../../test/StringTest.kt take
  */
-public inline fun String.take(n: Int): String = takeWhile(countTo(n))
+public fun String.take(n: Int): String = takeWhile(countTo(n))
 
 /** Copies all characters into the given collection */
-public inline fun <C: MutableCollection<in Char>> String.toCollection(result: C): C {
+public fun <C: MutableCollection<in Char>> String.toCollection(result: C): C {
     for (c in this) result.add(c)
     return result
 }
 
 /** Copies all characters into a [[LinkedList]]  */
-public inline fun String.toLinkedList(): LinkedList<Char> = toCollection(LinkedList<Char>())
+public fun String.toLinkedList(): LinkedList<Char> = toCollection(LinkedList<Char>())
 
 /** Copies all characters into a [[List]] */
-public inline fun String.toList(): List<Char> = toCollection(ArrayList<Char>(this.length()))
+public fun String.toList(): List<Char> = toCollection(ArrayList<Char>(this.length()))
 
 /** Copies all characters into a [[Collection] */
-public inline fun String.toCollection(): Collection<Char> = toCollection(ArrayList<Char>(this.length()))
+public fun String.toCollection(): Collection<Char> = toCollection(ArrayList<Char>(this.length()))
 
 /** Copies all characters into a [[Set]] */
-public inline fun String.toSet(): Set<Char> = toCollection(HashSet<Char>())
+public fun String.toSet(): Set<Char> = toCollection(HashSet<Char>())
 
 /** Returns a new String containing the everything but the leading whitespace characters */
-public inline fun String.trimLeading(): String {
+public fun String.trimLeading(): String {
     var count = 0
 
     while ((count < this.length) && (this[count] <= ' ')) {
@@ -532,7 +532,7 @@ public inline fun String.trimLeading(): String {
 }
 
 /** Returns a new String containing the everything but the trailing whitespace characters */
-public inline fun String.trimTrailing(): String {
+public fun String.trimTrailing(): String {
     var count = this.length
 
     while (count > 0 && this[count - 1] <= ' ') {

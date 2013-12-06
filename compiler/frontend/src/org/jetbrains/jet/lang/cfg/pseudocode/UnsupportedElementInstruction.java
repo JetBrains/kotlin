@@ -26,15 +26,21 @@ public class UnsupportedElementInstruction extends InstructionWithNext {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitUnsupportedElementInstruction(this);
     }
 
     @Override
-    public String toString() {
-        return "unsupported(" + element + " : " + element.getText() + ")";
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitUnsupportedElementInstruction(this);
     }
 
+    @Override
+    public String toString() {
+        return "unsupported(" + element + " : " + render(element) + ")";
+    }
+
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new UnsupportedElementInstruction(element);

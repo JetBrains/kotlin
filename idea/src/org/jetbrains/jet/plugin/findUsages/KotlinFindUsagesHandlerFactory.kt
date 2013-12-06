@@ -20,19 +20,17 @@ import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesHandlerFactory
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinFindMemberUsagesHandler
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil
 import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.find.findUsages.FindUsagesOptions
 import org.jetbrains.jet.lang.psi.JetTypeParameter
 import org.jetbrains.jet.plugin.findUsages.handlers.KotlinTypeParameterFindUsagesHandler
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.jet.lang.psi.JetClassOrObject
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
     val findFunctionOptions = KotlinFunctionFindUsagesOptions(project)
@@ -41,11 +39,15 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
     val defaultOptions = FindUsagesOptions(project)
 
     public override fun canFindUsages(element: PsiElement): Boolean =
-            element is JetClass || element is JetNamedFunction || element is JetProperty || element is JetParameter || element is JetTypeParameter
+            element is JetClassOrObject ||
+            element is JetNamedFunction ||
+            element is JetProperty ||
+            element is JetParameter ||
+            element is JetTypeParameter
 
     public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
         when(element) {
-            is JetClass ->
+            is JetClassOrObject ->
                 return KotlinFindClassUsagesHandler(element, this)
 
             is JetNamedFunction, is JetProperty, is JetParameter -> {

@@ -24,11 +24,14 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -51,7 +54,6 @@ import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.transla
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.getObjectDeclarationName;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
@@ -84,6 +86,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
 
         Object value = compileTimeValue.getValue();
+        if (value instanceof IntegerValueTypeConstructor) {
+            JetType expectedType = context.bindingContext().get(BindingContext.EXPRESSION_TYPE, expression);
+            CompileTimeConstant<?> newConstant =
+                    EvaluatePackage.getCompileTimeConstantForNumberType((IntegerValueTypeConstructor) value, expectedType);
+            assert newConstant != null: "IntegerValueTypeConstant should always have notnull value " + compileTimeValue;
+            value = newConstant.getValue();
+        }
         if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
             return context.program().getNumberLiteral(((Number) value).intValue());
         }
@@ -102,7 +111,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return context.program().getStringLiteral(value.toString());
         }
 
-        throw new AssertionError(message(expression, "Unsupported constant expression"));
+        throw new AssertionError(message(expression, "Unsupported constant expression: " + expression.getText() + " "));
     }
 
     @Override
@@ -473,10 +482,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitObjectDeclaration(@NotNull JetObjectDeclaration expression,
             @NotNull TranslationContext context) {
-        JetObjectDeclarationName objectDeclarationName = getObjectDeclarationName(expression);
-        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(), objectDeclarationName);
-        JsName propertyName = context.getNameForDescriptor(descriptor);
+        DeclarationDescriptor descriptor = getDescriptorForElement(context.bindingContext(), expression);
+        JsName name = context.getNameForDescriptor(descriptor);
         JsExpression value = ClassTranslator.generateClassCreation(expression, context);
-        return newVar(propertyName, value).source(expression);
+        return newVar(name, value).source(expression);
     }
 }

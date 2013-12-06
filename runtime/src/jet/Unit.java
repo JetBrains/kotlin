@@ -22,6 +22,8 @@ import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 public class Unit {
     public static final Unit VALUE = new Unit();
 
+    public static final object object$ = new object();
+
     private Unit() {
     }
 
@@ -38,5 +40,10 @@ public class Unit {
     @Override
     public int hashCode() {
         return 239;
+    }
+
+    public static class object {
+        private object() {
+        }
     }
 }

@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -339,8 +340,6 @@ public class DescriptorResolver {
         boolean hasBody = function.getBodyExpression() != null;
         Modality modality = resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, hasBody));
         Visibility visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor));
-        JetModifierList modifierList = function.getModifierList();
-        boolean isInline = (modifierList != null) && modifierList.hasModifier(JetTokens.INLINE_KEYWORD);
         functionDescriptor.initialize(
                 receiverType,
                 getExpectedThisObjectIfNeeded(containingDescriptor),
@@ -348,8 +347,8 @@ public class DescriptorResolver {
                 valueParameterDescriptors,
                 returnType,
                 modality,
-                visibility,
-                isInline);
+                visibility
+        );
 
         BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor);
         return functionDescriptor;
@@ -380,8 +379,7 @@ public class DescriptorResolver {
                 Collections.<ValueParameterDescriptor>emptyList(),
                 returnType,
                 Modality.FINAL,
-                property.getVisibility(),
-                true
+                property.getVisibility()
         );
 
         trace.record(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter, functionDescriptor);
@@ -428,8 +426,7 @@ public class DescriptorResolver {
                 parameterDescriptors,
                 returnType,
                 Modality.FINAL,
-                classDescriptor.getVisibility(),
-                true
+                classDescriptor.getVisibility()
         );
 
         trace.record(BindingContext.DATA_CLASS_COPY_FUNCTION, classDescriptor, functionDescriptor);
@@ -820,77 +817,6 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public VariableDescriptor resolveObjectDeclaration(
-            @NotNull JetScope scope,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject objectDeclaration,
-            @NotNull ClassDescriptor classDescriptor, BindingTrace trace
-    ) {
-        boolean isProperty = (containingDeclaration instanceof NamespaceDescriptor) || (containingDeclaration instanceof ClassDescriptor);
-        if (isProperty) {
-            return resolveObjectDeclarationAsPropertyDescriptor(scope, containingDeclaration, objectDeclaration, classDescriptor, trace);
-        }
-        else {
-            return resolveObjectDeclarationAsLocalVariable(containingDeclaration, objectDeclaration, classDescriptor, trace);
-        }
-    }
-
-    @NotNull
-    public PropertyDescriptor resolveObjectDeclarationAsPropertyDescriptor(
-            @NotNull JetScope scope,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject objectDeclaration,
-            @NotNull ClassDescriptor classDescriptor, BindingTrace trace
-    ) {
-        JetModifierList modifierList = objectDeclaration.getModifierList();
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorForObjectImpl(
-                containingDeclaration,
-                annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace),
-                resolveVisibilityFromModifiers(objectDeclaration, getDefaultVisibilityForObjectPropertyDescriptor(classDescriptor)),
-                JetPsiUtil.safeName(objectDeclaration.getName()),
-                classDescriptor
-        );
-        propertyDescriptor.setType(getTypeForObjectDeclaration(classDescriptor), Collections.<TypeParameterDescriptor>emptyList(),
-                                   getExpectedThisObjectIfNeeded(containingDeclaration), NO_RECEIVER_PARAMETER);
-        propertyDescriptor.initialize(null, null);
-        JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
-        if (nameAsDeclaration != null) {
-            trace.record(BindingContext.OBJECT_DECLARATION, nameAsDeclaration, propertyDescriptor);
-        }
-        return propertyDescriptor;
-    }
-
-    @NotNull
-    private static JetType getTypeForObjectDeclaration(@NotNull ClassDescriptor objectClassDescriptor) {
-        if (objectClassDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            DeclarationDescriptor containingDeclaration = objectClassDescriptor.getContainingDeclaration().getContainingDeclaration();
-            assert containingDeclaration instanceof ClassDescriptor;
-            ClassDescriptor enumClass = (ClassDescriptor) containingDeclaration;
-            assert enumClass.getKind() == ClassKind.ENUM_CLASS;
-            return enumClass.getDefaultType();
-        }
-        return objectClassDescriptor.getDefaultType();
-    }
-
-    @NotNull
-    private VariableDescriptor resolveObjectDeclarationAsLocalVariable(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject objectDeclaration,
-            @NotNull ClassDescriptor classDescriptor, BindingTrace trace
-    ) {
-        VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptorForObject(
-                containingDeclaration,
-                annotationResolver.getResolvedAnnotations(objectDeclaration.getModifierList(), trace),
-                JetPsiUtil.safeName(objectDeclaration.getName()),
-                classDescriptor);
-        JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
-        if (nameAsDeclaration != null) {
-            trace.record(BindingContext.VARIABLE, nameAsDeclaration, variableDescriptor);
-        }
-        return variableDescriptor;
-    }
-
-    @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull JetScope scope,
@@ -898,7 +824,6 @@ public class DescriptorResolver {
             @NotNull BindingTrace trace,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-
         JetModifierList modifierList = property.getModifierList();
         boolean isVar = property.isVar();
 

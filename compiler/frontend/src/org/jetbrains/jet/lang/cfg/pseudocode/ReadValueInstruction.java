@@ -26,15 +26,21 @@ public class ReadValueInstruction extends InstructionWithNext {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitReadValue(this);
     }
 
     @Override
-    public String toString() {
-        return "r(" + element.getText() + ")";
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitReadValue(this);
     }
 
+    @Override
+    public String toString() {
+        return "r(" + render(element) + ")";
+    }
+
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new ReadValueInstruction(element);

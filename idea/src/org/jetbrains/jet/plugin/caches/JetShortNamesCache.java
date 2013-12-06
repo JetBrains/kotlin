@@ -411,7 +411,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull GlobalSearchScope scope,
             @NotNull Processor<PsiMethod> processor
     ) {
-        return false;
+        return ContainerUtil.process(getMethodsByName(name, scope), processor);
     }
 
     @NotNull

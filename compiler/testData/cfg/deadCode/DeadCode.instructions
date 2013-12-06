@@ -1,0 +1,22 @@
+== test ==
+fun test() {
+    throw Exception()
+    test()
+}
+---------------------
+L0:
+    <START>
+    mark({ throw Exception() test() })
+    mark(throw Exception())
+    mark(Exception())
+    call(Exception, <init>)
+    throw (throw Exception())             NEXT:[<ERROR>]
+-   mark(test())                          PREV:[]
+-   call(test, test)                      PREV:[]
+L1:
+    <END>                                 NEXT:[<SINK>]                                PREV:[]
+error:
+    <ERROR>                               PREV:[throw (throw Exception())]
+sink:
+    <SINK>                                PREV:[<ERROR>, <END>]
+=====================

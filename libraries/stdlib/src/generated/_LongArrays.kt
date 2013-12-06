@@ -28,7 +28,7 @@ public inline fun LongArray.any(predicate: (Long) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun LongArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+public fun LongArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -54,7 +54,7 @@ public inline fun LongArray.count(predicate: (Long) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-public inline fun LongArray.drop(n: Int) : List<Long> {
+public fun LongArray.drop(n: Int) : List<Long> {
     return dropWhile(countTo(n))
 }
 
@@ -184,11 +184,25 @@ public inline fun <K> LongArray.groupByTo(result: MutableMap<K, MutableList<Long
 }
 
 /**
+ * Returns true if the array is empty
+ */
+public fun LongArray.isEmpty() : Boolean {
+    return size == 0
+}
+
+/**
+ * Returns true if the array is empty
+ */
+public fun LongArray.isNotEmpty() : Boolean {
+    return !isEmpty()
+}
+
+/**
  * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun LongArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+public fun LongArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -212,6 +226,70 @@ public inline fun <R, C: MutableCollection<in R>> LongArray.mapTo(result: C, tra
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun LongArray.max() : Long? {
+    var max: Long? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> LongArray.maxBy(f: (Long) -> R) : Long? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun LongArray.min() : Long? {
+    var min: Long? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> LongArray.minBy(f: (Long) -> R) : Long? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun LongArray.partition(predicate: (Long) -> Boolean) : Pair<List<Long>, List<Long>> {
@@ -230,14 +308,14 @@ public inline fun LongArray.partition(predicate: (Long) -> Boolean) : Pair<List<
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-public inline fun LongArray.plus(collection: Iterable<Long>) : List<Long> {
+public fun LongArray.plus(collection: Iterable<Long>) : List<Long> {
     return plus(collection.iterator())
 }
 
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-public inline fun LongArray.plus(element: Long) : List<Long> {
+public fun LongArray.plus(element: Long) : List<Long> {
     val answer = ArrayList<Long>()
     toCollection(answer)
     answer.add(element)
@@ -247,7 +325,7 @@ public inline fun LongArray.plus(element: Long) : List<Long> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-public inline fun LongArray.plus(iterator: Iterator<Long>) : List<Long> {
+public fun LongArray.plus(iterator: Iterator<Long>) : List<Long> {
     val answer = ArrayList<Long>()
     toCollection(answer)
     for (element in iterator) {
@@ -295,7 +373,7 @@ public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long) : Long 
 /**
  * Reverses the order the elements into a list
  */
-public inline fun LongArray.reverse() : List<Long> {
+public fun LongArray.reverse() : List<Long> {
     val list = toCollection(ArrayList<Long>())
     Collections.reverse(list)
     return list
@@ -319,7 +397,7 @@ public inline fun <R: Comparable<R>> LongArray.sortBy(f: (Long) -> R) : List<Lon
 /**
  * Returns a list containing the first *n* elements
  */
-public inline fun LongArray.take(n: Int) : List<Long> {
+public fun LongArray.take(n: Int) : List<Long> {
     return takeWhile(countTo(n))
 }
 
@@ -341,7 +419,7 @@ public inline fun <C: MutableCollection<in Long>> LongArray.takeWhileTo(result: 
 /**
  * Copies all elements into the given collection
  */
-public inline fun <C: MutableCollection<in Long>> LongArray.toCollection(result: C) : C {
+public fun <C: MutableCollection<in Long>> LongArray.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -349,35 +427,42 @@ public inline fun <C: MutableCollection<in Long>> LongArray.toCollection(result:
 /**
  * Copies all elements into a [[LinkedList]]
  */
-public inline fun LongArray.toLinkedList() : LinkedList<Long> {
+public fun LongArray.toLinkedList() : LinkedList<Long> {
     return toCollection(LinkedList<Long>())
 }
 
 /**
  * Copies all elements into a [[List]]
  */
-public inline fun LongArray.toList() : List<Long> {
+public fun LongArray.toList() : List<Long> {
     return toCollection(ArrayList<Long>())
 }
 
 /**
  * Copies all elements into a [[Set]]
  */
-public inline fun LongArray.toSet() : Set<Long> {
+public fun LongArray.toSet() : Set<Long> {
     return toCollection(LinkedHashSet<Long>())
 }
 
 /**
  * Copies all elements into a [[SortedSet]]
  */
-public inline fun LongArray.toSortedSet() : SortedSet<Long> {
+public fun LongArray.toSortedSet() : SortedSet<Long> {
     return toCollection(TreeSet<Long>())
 }
 
 /**
  * Returns an iterator of Pairs(index, data)
  */
-public inline fun LongArray.withIndices() : Iterator<Pair<Int, Long>> {
+public fun LongArray.withIndices() : Iterator<Pair<Int, Long>> {
     return IndexIterator(iterator())
+}
+
+/**
+ * Sums up the elements
+ */
+public fun LongArray.sum() : Long {
+    return fold(0.toLong(), {a,b -> a+b})
 }
 

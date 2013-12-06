@@ -9,7 +9,7 @@ public class User(val firstName: String,
     fun toString() = "$firstName $lastName, age $age"
 }
 
-public fun <T: Comparable<T>> Collection<T>.min(): T? {
+public fun <T: Comparable<T>> Collection<T>.testMin(): T? {
     var minValue: T? = null
     for(value in this) {
         if (minValue == null || value.compareTo(minValue!!) < 0) {
@@ -26,6 +26,6 @@ fun box() : String {
 
     val ages = users.map { it.age }
 
-    val minAge = ages.min()
+    val minAge = ages.testMin()
     return if (minAge == 27) "OK" else "fail"
 }

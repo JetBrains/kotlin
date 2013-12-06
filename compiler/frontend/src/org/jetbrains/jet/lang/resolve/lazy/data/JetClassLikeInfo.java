@@ -30,12 +30,6 @@ public interface JetClassLikeInfo extends JetDeclarationContainer {
     @NotNull
     FqName getContainingPackageFqName();
 
-    @NotNull
-    List<JetDelegationSpecifier> getDelegationSpecifiers();
-
-    //@Nullable
-    //Name getNameAsName();
-
     @Nullable
     JetModifierList getModifierList();
 

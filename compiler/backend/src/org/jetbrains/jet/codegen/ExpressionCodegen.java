@@ -42,6 +42,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -50,6 +51,8 @@ import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
@@ -108,6 +111,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
      * we put it into this map to emit access to that variable instead of evaluating the whole expression
      */
     private final Map<JetElement, StackValue.Local> tempVariables = Maps.newHashMap();
+    @NotNull
+    private final TailRecursionCodegen tailRecursionCodegen;
 
     public CalculatedClosure generateObjectLiteral(GenerationState state, JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
@@ -177,6 +182,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         this.bindingContext = state.getBindingContext();
         this.context = context;
         this.statementVisitor = new CodegenStatementVisitor(this);
+        this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
     }
 
     protected InstructionAdapter createInstructionAdapter(MethodVisitor mv) {
@@ -244,10 +250,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         try {
             if (selector instanceof JetExpression) {
                 JetExpression expression = (JetExpression) selector;
-                CompileTimeConstant<?> constant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
-                if (constant != null) {
-                    return StackValue.constant(constant.getValue(), expressionType(expression));
-                }
                 JavaClassDescriptor samInterface = bindingContext.get(CodegenBinding.SAM_VALUE, expression);
                 if (samInterface != null) {
                     return genSamInterfaceValue(expression, samInterface, visitor);
@@ -357,7 +359,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return genQualified(receiver, expression.getBaseExpression());
     }
 
-    private static boolean isEmptyExpression(JetElement expr) {
+    private static boolean isEmptyExpression(@Nullable JetElement expr) {
         if (expr == null) {
             return true;
         }
@@ -382,10 +384,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         JetExpression thenExpression = expression.getThen();
         JetExpression elseExpression = expression.getElse();
-
-        if (thenExpression == null && elseExpression == null) {
-            throw new CompilationException("Both brunches of if/else are null", null, expression);
-        }
 
         if (isEmptyExpression(thenExpression)) {
             if (isEmptyExpression(elseExpression)) {
@@ -429,7 +427,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         StackValue conditionValue = gen(expression.getCondition());
         conditionValue.condJump(end, true, v);
 
-        gen(expression.getBody(), Type.VOID_TYPE);
+        JetExpression body = expression.getBody();
+        if (body != null) {
+            gen(body, Type.VOID_TYPE);
+        }
+
         v.goTo(condition);
 
         v.mark(end);
@@ -465,7 +467,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             conditionValue = generateBlock(statements, true);
         }
         else {
-            gen(body, Type.VOID_TYPE);
+            if (body != null) {
+                gen(body, Type.VOID_TYPE);
+            }
+
             conditionValue = gen(condition);
         }
 
@@ -649,7 +654,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         protected abstract void increment(@NotNull Label loopExit);
 
         public void body() {
-            gen(forExpression.getBody(), Type.VOID_TYPE);
+            JetExpression body = forExpression.getBody();
+            if (body != null) {
+                gen(body, Type.VOID_TYPE);
+            }
         }
 
         private void scheduleLeaveVariable(Runnable runnable) {
@@ -1230,9 +1238,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitConstantExpression(@NotNull JetConstantExpression expression, StackValue receiver) {
-        CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
+        CompileTimeConstant<?> compileTimeValue = getCompileTimeConstant(expression, bindingContext);
         assert compileTimeValue != null;
         return StackValue.constant(compileTimeValue.getValue(), expressionType(expression));
+    }
+
+    @Nullable
+    public static CompileTimeConstant getCompileTimeConstant(@NotNull JetExpression expression, @NotNull BindingContext bindingContext) {
+        CompileTimeConstant<?> compileTimeValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression);
+        if (compileTimeValue instanceof IntegerValueTypeConstant) {
+            JetType expectedType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
+            return EvaluatePackage.getCompileTimeConstantForNumberType((IntegerValueTypeConstructor) compileTimeValue.getValue(), expectedType);
+        }
+        return compileTimeValue;
     }
 
     @Override
@@ -1642,12 +1660,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        if (descriptor instanceof VariableDescriptorForObject) {
-            VariableDescriptorForObject variableDescriptor = (VariableDescriptorForObject) descriptor;
-            ClassDescriptor objectClassDescriptor = variableDescriptor.getObjectClass();
-            return genObjectClassInstance(variableDescriptor, objectClassDescriptor);
-        }
-
         int index = lookupLocalIndex(descriptor);
         if (index >= 0) {
             return stackValueForLocal(descriptor, index);
@@ -1674,7 +1686,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            ClassDescriptor classObjectDescriptor = ((ClassDescriptor) descriptor).getClassObjectDescriptor();
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            if (classDescriptor.getKind() == ClassKind.OBJECT) {
+                return StackValue.singleton(classDescriptor, typeMapper);
+            }
+            if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+                DeclarationDescriptor enumClass = classDescriptor.getContainingDeclaration();
+                assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
+                Type type = typeMapper.mapType((ClassDescriptor) enumClass);
+                return StackValue.field(type, type, descriptor.getName().asString(), true);
+            }
+            ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
             assert classObjectDescriptor != null : "Class object is not found for " + descriptor;
             return StackValue.singleton(classObjectDescriptor, typeMapper);
         }
@@ -1721,19 +1743,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
-    }
-
-    private StackValue genObjectClassInstance(VariableDescriptor variableDescriptor, ClassDescriptor objectClassDescriptor) {
-        boolean isEnumEntry = DescriptorUtils.isEnumClassObject(variableDescriptor.getContainingDeclaration());
-        if (isEnumEntry) {
-            ClassDescriptor containing = (ClassDescriptor) variableDescriptor.getContainingDeclaration().getContainingDeclaration();
-            assert containing != null;
-            Type type = typeMapper.mapType(containing);
-            return StackValue.field(type, type, variableDescriptor.getName().asString(), true);
-        }
-        else {
-            return StackValue.singleton(objectClassDescriptor, typeMapper);
-        }
     }
 
     private StackValue stackValueForLocal(DeclarationDescriptor descriptor, int index) {
@@ -1906,12 +1915,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         Call call = bindingContext.get(CALL, expression.getCalleeExpression());
-        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
-            ResolvedCallWithTrace<FunctionDescriptor> functionCall = variableAsFunctionResolvedCall.getFunctionCall();
-            return invokeFunction(call, receiver, functionCall);
-        }
-
         if (funDescriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptor original = ((SimpleFunctionDescriptor) funDescriptor).getOriginal();
             if (original instanceof SamConstructorDescriptor) {
@@ -1993,6 +1996,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
+            ResolvedCallWithTrace<FunctionDescriptor> functionCall = variableAsFunctionResolvedCall.getFunctionCall();
+            return invokeFunction(call, receiver, functionCall);
+        }
+
         FunctionDescriptor fd = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
         boolean superCall = isSuperCall(call);
 
@@ -2136,6 +2145,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private void pushArgumentsAndInvoke(@NotNull ResolvedCall<?> resolvedCall, @NotNull CallableMethod callable) {
         int mask = pushMethodArguments(resolvedCall, callable.getValueParameterTypes());
+
+        if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {
+            tailRecursionCodegen.generateTailRecursion(resolvedCall);
+            return;
+        }
+
         if (mask == 0) {
             callable.invokeWithNotNullAssertion(v, state, resolvedCall);
         }
@@ -2254,10 +2269,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
-        boolean isSingleton = CodegenBinding.isSingleton(bindingContext, calleeContainingClass);
+        boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
-            assert !isSuper;
-
             if (context.hasThisDescriptor() && context.getThisDescriptor().equals(calleeContainingClass)) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
@@ -2640,7 +2653,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitBinaryExpression(@NotNull JetBinaryExpression expression, StackValue receiver) {
-        IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
+        JetSimpleNameExpression reference = expression.getOperationReference();
+        IElementType opToken = reference.getReferencedNameElementType();
         if (opToken == JetTokens.EQ) {
             return generateAssignmentExpression(expression);
         }
@@ -2659,7 +2673,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else if (opToken == JetTokens.LT || opToken == JetTokens.LTEQ ||
                  opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
-            return generateComparison(expression);
+            return generateComparison(expression, receiver);
         }
         else if (opToken == JetTokens.ELVIS) {
             return generateElvis(expression);
@@ -2668,7 +2682,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return generateIn(expression);
         }
         else {
-            DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, reference);
+            Call call = bindingContext.get(BindingContext.CALL, reference);
+
+            DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, reference);
             assert op instanceof FunctionDescriptor : String.valueOf(op);
             Callable callable = resolveToCallable((FunctionDescriptor) op, false);
             if (callable instanceof IntrinsicMethod) {
@@ -2677,7 +2694,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                                           Arrays.asList(expression.getLeft(), expression.getRight()), receiver, state);
             }
             else {
-                return invokeOperation(expression, (FunctionDescriptor) op, (CallableMethod) callable);
+                return invokeFunction(call, receiver, resolvedCall);
             }
         }
     }
@@ -2798,7 +2815,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private boolean isIntZero(JetExpression expr, Type exprType) {
-        CompileTimeConstant<?> exprValue = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expr);
+        CompileTimeConstant<?> exprValue = getCompileTimeConstant(expr, bindingContext);
         return isIntPrimitive(exprType) && exprValue != null && exprValue.getValue().equals(0);
     }
 
@@ -2858,7 +2875,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.onStack(exprType);
     }
 
-    private StackValue generateComparison(JetBinaryExpression expression) {
+    private StackValue generateComparison(JetBinaryExpression expression, StackValue receiver) {
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         assert target instanceof FunctionDescriptor : "compareTo target should be a function: " + target;
         FunctionDescriptor descriptor = (FunctionDescriptor) target;
@@ -2871,13 +2888,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (callable instanceof IntrinsicMethod) {
             // Compare two primitive values
             type = comparisonOperandType(expressionType(left), expressionType(right));
-            StackValue receiver = gen(left);
-            receiver.put(type, v);
+            StackValue recv = gen(left);
+            recv.put(type, v);
             gen(right, type);
         }
         else {
+            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                    bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+            Call call = bindingContext.get(BindingContext.CALL, expression.getOperationReference());
+            StackValue result = invokeFunction(call, receiver, resolvedCall);
             type = Type.INT_TYPE;
-            StackValue result = invokeOperation(expression, descriptor, (CallableMethod) callable);
             result.put(type, v);
             v.iconst(0);
         }
@@ -3011,14 +3031,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else {
             DeclarationDescriptor cls = op.getContainingDeclaration();
-            CallableMethod callableMethod = (CallableMethod) callable;
+            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                    bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+            assert resolvedCall != null;
+
             if (isPrimitiveNumberClassDescriptor(cls) || !(op.getName().asString().equals("inc") || op.getName().asString().equals("dec"))) {
-                return invokeOperation(expression, (FunctionDescriptor) op, callableMethod);
+                Call call = bindingContext.get(BindingContext.CALL, expression.getOperationReference());
+                return invokeFunction(call, receiver, resolvedCall);
             }
             else {
-                ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                        bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
-                assert resolvedCall != null;
+                CallableMethod callableMethod = (CallableMethod) callable;
 
                 StackValue value = gen(expression.getBaseExpression());
                 value.dupReceiver(v);
@@ -3033,27 +3055,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 return StackValue.onStack(type);
             }
         }
-    }
-
-    private StackValue invokeOperation(JetOperationExpression expression, FunctionDescriptor op, CallableMethod callable) {
-        //TODO: similar logic exists in visitSimpleNameExpression - extract common logic
-        int functionLocalIndex = lookupLocalIndex(op);
-        if (functionLocalIndex >= 0) {
-            stackValueForLocal(op, functionLocalIndex).put(callable.getOwner(), v);
-        } else {
-            StackValue stackValue = context.lookupInContext(op, StackValue.local(0, OBJECT_TYPE), state, true);
-            if (stackValue != null) {
-                stackValue.put(callable.getOwner(), v);
-            }
-        }
-
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
-        assert resolvedCall != null;
-        genThisAndReceiverFromResolvedCall(StackValue.none(), resolvedCall, callable);
-        pushArgumentsAndInvoke(resolvedCall, callable);
-
-        return returnValueAsStackValue(op, callable.getSignature().getAsmMethod().getReturnType());
     }
 
     @Override

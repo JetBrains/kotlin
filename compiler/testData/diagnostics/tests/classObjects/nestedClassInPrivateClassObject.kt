@@ -10,6 +10,6 @@ class A {
     }
 }
 
-fun f1() = <!INVISIBLE_MEMBER!>A<!>.B.C
+fun f1() = <!INVISIBLE_MEMBER!>A<!>.B.<!INVISIBLE_MEMBER!>C<!>
 
-fun f2() = <!INVISIBLE_MEMBER!>A<!>.B.C.<!INVISIBLE_MEMBER!>foo<!>()
+fun f2() = <!INVISIBLE_MEMBER!>A<!>.B.<!INVISIBLE_MEMBER!>C<!>.<!INVISIBLE_MEMBER!>foo<!>()

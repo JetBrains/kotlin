@@ -36,6 +36,8 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.plugin.libraries.JetDecompiledData.descriptorToKey;
 
@@ -85,12 +87,10 @@ public final class DecompiledDataFactory {
             NamespaceDescriptor nd = javaDescriptorResolver.resolveNamespace(packageFqName, INCLUDE_KOTLIN_SOURCES);
             if (nd != null) {
                 for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
-                    if (member instanceof ClassDescriptor || member instanceof NamespaceDescriptor
-                        || isNamedObjectProperty(member)) {
-                        continue;
+                    if (!(member instanceof ClassOrNamespaceDescriptor)) {
+                        appendDescriptor(member, "");
+                        builder.append("\n");
                     }
-                    appendDescriptor(member, "");
-                    builder.append("\n");
                 }
             }
         }
@@ -124,11 +124,11 @@ public final class DecompiledDataFactory {
     }
 
     private void appendDescriptor(@NotNull DeclarationDescriptor descriptor, String indent) {
-        // Don't render property for object declaration
         int startOffset = builder.length();
-        String renderedDescriptor = DESCRIPTOR_RENDERER.render(descriptor);
-        renderedDescriptor = renderedDescriptor.replace("= ...", "= " + DECOMPILED_COMMENT);
-        builder.append(renderedDescriptor);
+        String header = isEnumEntry(descriptor)
+                        ? descriptor.getName().asString()
+                        : DESCRIPTOR_RENDERER.render(descriptor).replace("= ...", "= " + DECOMPILED_COMMENT);
+        builder.append(header);
         int endOffset = builder.length();
 
         if (descriptor instanceof FunctionDescriptor || descriptor instanceof PropertyDescriptor) {
@@ -138,31 +138,26 @@ public final class DecompiledDataFactory {
                     endOffset = builder.length();
                 }
                 else { // descriptor instanceof PropertyDescriptor
-                    if (((PropertyDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
-                        builder.append(" ").append(DECOMPILED_COMMENT);
-                    }
+                    builder.append(" ").append(DECOMPILED_COMMENT);
                 }
             }
         }
-        else if (descriptor instanceof ClassDescriptor) {
+        else if (descriptor instanceof ClassDescriptor && !isEnumEntry(descriptor)) {
             builder.append(" {\n");
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             boolean firstPassed = false;
             String subindent = indent + "    ";
-            ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
-            if (classObjectDescriptor != null) {
+            ClassDescriptor classObject = classDescriptor.getClassObjectDescriptor();
+            if (classObject != null && !isSyntheticClassObject(classObject)) {
                 firstPassed = true;
                 builder.append(subindent);
-                appendDescriptor(classObjectDescriptor, subindent);
+                appendDescriptor(classObject, subindent);
             }
             for (DeclarationDescriptor member : sortDeclarations(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
                 if (member.getContainingDeclaration() != descriptor) {
                     continue;
                 }
                 if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-                    continue;
-                }
-                if (isNamedObjectProperty(member)) {
                     continue;
                 }
 
@@ -192,15 +187,5 @@ public final class DecompiledDataFactory {
 
     private void saveDescriptorToRange(DeclarationDescriptor descriptor, int startOffset, int endOffset) {
         renderedDescriptorsToRange.put(descriptorToKey(descriptor), new TextRange(startOffset, endOffset));
-    }
-
-    private static boolean isNamedObjectProperty(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof PropertyDescriptor && descriptor instanceof VariableDescriptorForObject) {
-            ClassDescriptor objectClass = ((VariableDescriptorForObject) descriptor).getObjectClass();
-            if (objectClass.getKind() == ClassKind.OBJECT) {
-                return true;
-            }
-        }
-        return false;
     }
 }

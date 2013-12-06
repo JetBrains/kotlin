@@ -1,0 +1,3 @@
+// RENAME: JAVA_METHOD->testing.rename.C->int first()->second
+
+// KT-3256 Can't rename a Kotlin function from Java code

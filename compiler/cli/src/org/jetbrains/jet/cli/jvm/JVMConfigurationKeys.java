@@ -35,4 +35,7 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("generate not-null assertions");
     public static final CompilerConfigurationKey<Boolean> GENERATE_NOT_NULL_PARAMETER_ASSERTIONS =
             CompilerConfigurationKey.create("generate not-null parameter assertions");
+
+    public static final CompilerConfigurationKey<Boolean> ENABLE_INLINE =
+            CompilerConfigurationKey.create("enable inline");
 }

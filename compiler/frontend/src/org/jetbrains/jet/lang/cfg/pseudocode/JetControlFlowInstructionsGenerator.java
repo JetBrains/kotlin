@@ -20,7 +20,11 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.*;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
+
+    private JetControlFlowBuilder builder = null;
 
     private final Stack<BreakableBlockInfo> loopInfo = new Stack<BreakableBlockInfo>();
     private final Map<JetElement, BreakableBlockInfo> elementToBlockInfo = new HashMap<JetElement, BreakableBlockInfo>();
@@ -37,6 +43,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     private final Stack<JetControlFlowInstructionsGeneratorWorker> builders = new Stack<JetControlFlowInstructionsGeneratorWorker>();
 
     private final Stack<BlockInfo> allBlocks = new Stack<BlockInfo>();
+
+    @NotNull
+    @Override
+    protected JetControlFlowBuilder getDelegateBuilder() {
+        return builder;
+    }
 
     private void pushBuilder(JetElement scopingElement, JetElement subroutine) {
         JetControlFlowInstructionsGeneratorWorker worker = new JetControlFlowInstructionsGeneratorWorker(scopingElement, subroutine);
@@ -67,14 +79,14 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         builder.enterSubroutine(subroutine);
     }
 
+    @NotNull
     @Override
     public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
         super.exitSubroutine(subroutine);
         JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
         if (!builders.empty()) {
             JetControlFlowInstructionsGeneratorWorker builder = builders.peek();
-            LocalDeclarationInstruction instruction = new LocalDeclarationInstruction(subroutine, worker.getPseudocode());
-            builder.add(instruction);
+            builder.declareFunction(subroutine, worker.getPseudocode());
         }
         return worker.getPseudocode();
     }
@@ -165,11 +177,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             return returnSubroutine;// subroutineInfo.empty() ? null : subroutineInfo.peek().getElement();
         }
 
+        @NotNull
         @Override
         public Label getEntryPoint(@NotNull JetElement labelElement) {
             return elementToBlockInfo.get(labelElement).getEntryPoint();
         }
 
+        @NotNull
         @Override
         public Label getExitPoint(@NotNull JetElement labelElement) {
             BreakableBlockInfo blockInfo = elementToBlockInfo.get(labelElement);
@@ -201,17 +215,23 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             }
         }
 
+        @NotNull
         @Override
         public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
             bindLabel(getExitPoint(subroutine));
-            pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, "<END>"));
+            pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, false));
             bindLabel(error);
-            pseudocode.addErrorInstruction(new SubroutineExitInstruction(subroutine, "<ERROR>"));
+            pseudocode.addErrorInstruction(new SubroutineExitInstruction(subroutine, true));
             bindLabel(sink);
             pseudocode.addSinkInstruction(new SubroutineSinkInstruction(subroutine, "<SINK>"));
             elementToBlockInfo.remove(subroutine);
             allBlocks.pop();
-            return null;
+            return pseudocode;
+        }
+
+        @Override
+        public void mark(@NotNull JetElement element) {
+            add(new MarkInstruction(element));
         }
 
         @Override
@@ -234,23 +254,23 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void declare(@NotNull JetParameter parameter) {
+        public void declareParameter(@NotNull JetParameter parameter) {
             add(new VariableDeclarationInstruction(parameter));
         }
 
         @Override
-        public void declare(@NotNull JetVariableDeclaration property) {
+        public void declareVariable(@NotNull JetVariableDeclaration property) {
             add(new VariableDeclarationInstruction(property));
         }
 
         @Override
-        public void read(@NotNull JetElement element) {
-            add(new ReadValueInstruction(element));
+        public void declareFunction(@NotNull JetElement subroutine, @NotNull Pseudocode pseudocode) {
+            add(new LocalFunctionDeclarationInstruction(subroutine, pseudocode));
         }
 
         @Override
-        public void readUnit(@NotNull JetExpression expression) {
-            add(new ReadUnitValueInstruction(expression));
+        public void loadUnit(@NotNull JetExpression expression) {
+            add(new LoadUnitValueInstruction(expression));
         }
 
         @Override
@@ -277,13 +297,13 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void nondeterministicJump(Label label) {
+        public void nondeterministicJump(@NotNull Label label) {
             handleJumpInsideTryFinally(label);
             add(new NondeterministicJumpInstruction(label));
         }
 
         @Override
-        public void nondeterministicJump(List<Label> labels) {
+        public void nondeterministicJump(@NotNull List<Label> labels) {
             //todo
             //handleJumpInsideTryFinally(label);
             add(new NondeterministicJumpInstruction(labels));
@@ -305,7 +325,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             handleJumpInsideTryFinally(error);
             add(new ThrowExceptionInstruction(expression, error));
         }
-        
+
         public void exitTryFinally() {
             BlockInfo pop = allBlocks.pop();
             assert pop instanceof TryFinallyBlockInfo;
@@ -319,6 +339,55 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public void repeatPseudocode(@NotNull Label startLabel, @NotNull Label finishLabel) {
             pseudocode.repeatPart(startLabel, finishLabel);
+        }
+
+        @Override
+        public void loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
+            read(expression);
+        }
+
+        @Override
+        public void createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
+            read(expression);
+        }
+
+        @Override
+        public void createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
+            read(expression);
+        }
+
+        @Override
+        public void loadStringTemplate(@NotNull JetStringTemplateExpression expression) {
+            read(expression);
+        }
+
+        @Override
+        public void readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
+            read(expression);
+        }
+
+        @Override
+        public void readVariable(@NotNull JetExpression expression, @Nullable VariableDescriptor variableDescriptor) {
+            read(expression);
+        }
+
+        @Override
+        public void call(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
+            add(new CallInstruction(expression, resolvedCall));
+        }
+
+        @Override
+        public void predefinedOperation(@NotNull JetExpression expression, @Nullable PredefinedOperation operation) {
+            read(expression);
+        }
+
+        @Override
+        public void compilationError(@NotNull JetElement element, @NotNull String message) {
+            add(new CompilationErrorInstruction(element, message));
+        }
+
+        private void read(@NotNull JetElement element) {
+            add(new ReadValueInstruction(element));
         }
     }
 

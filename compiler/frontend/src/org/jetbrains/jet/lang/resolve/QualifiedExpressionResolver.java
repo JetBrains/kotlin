@@ -35,6 +35,13 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
 public class QualifiedExpressionResolver {
+    private static final Predicate<DeclarationDescriptor> CLASSIFIERS_AND_NAMESPACES = new Predicate<DeclarationDescriptor>() {
+        @Override
+        public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+            return descriptor instanceof ClassifierDescriptor || descriptor instanceof NamespaceDescriptor;
+        }
+    };
+
     public enum LookupMode {
         // Only classifier and packages are resolved
         ONLY_CLASSES,
@@ -104,9 +111,7 @@ public class QualifiedExpressionResolver {
         }
 
         for (DeclarationDescriptor descriptor : descriptors) {
-            if (!DescriptorUtils.isSingleton(descriptor)) {
-                importer.addAliasImport(descriptor, aliasName);
-            }
+            importer.addAliasImport(descriptor, aliasName);
         }
 
         return descriptors;
@@ -261,13 +266,7 @@ public class QualifiedExpressionResolver {
             descriptors.add(classifierDescriptor);
         }
 
-        if (lookupMode == LookupMode.ONLY_CLASSES) {
-            ClassDescriptor objectDescriptor = outerScope.getObjectDescriptor(referencedName);
-            if (objectDescriptor != null) {
-                descriptors.add(objectDescriptor);
-            }
-        }
-        else {
+        if (lookupMode == LookupMode.EVERYTHING) {
             descriptors.addAll(outerScope.getFunctions(referencedName));
             descriptors.addAll(outerScope.getProperties(referencedName));
 
@@ -306,13 +305,7 @@ public class QualifiedExpressionResolver {
 
         Collection<DeclarationDescriptor> filteredDescriptors;
         if (lookupMode == LookupMode.ONLY_CLASSES) {
-            filteredDescriptors = Collections2.filter(descriptors, new Predicate<DeclarationDescriptor>() {
-                @Override
-                public boolean apply(@Nullable DeclarationDescriptor descriptor) {
-                    return (descriptor instanceof ClassifierDescriptor) ||
-                           (descriptor instanceof NamespaceDescriptor);
-                }
-            });
+            filteredDescriptors = Collections2.filter(descriptors, CLASSIFIERS_AND_NAMESPACES);
         }
         else {
             filteredDescriptors = Sets.newLinkedHashSet();
@@ -322,14 +315,7 @@ public class QualifiedExpressionResolver {
                     filteredDescriptors.addAll(lookupResult.descriptors);
                     continue;
                 }
-                filteredDescriptors.addAll(Collections2.filter(lookupResult.descriptors, new Predicate<DeclarationDescriptor>() {
-                    @Override
-                    public boolean apply(@Nullable DeclarationDescriptor descriptor) {
-                        return (descriptor instanceof NamespaceDescriptor) ||
-                               (descriptor instanceof ClassifierDescriptor) ||
-                               (descriptor instanceof VariableDescriptorForObject);
-                    }
-                }));
+                filteredDescriptors.addAll(Collections2.filter(lookupResult.descriptors, CLASSIFIERS_AND_NAMESPACES));
             }
         }
         if (storeResult) {

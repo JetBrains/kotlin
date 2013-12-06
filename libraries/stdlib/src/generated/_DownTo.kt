@@ -6,198 +6,198 @@ package kotlin
 //
 
 
-public inline fun Byte.downTo(to: Byte): ByteProgression {
+public fun Byte.downTo(to: Byte): ByteProgression {
     return ByteProgression(this, to, -1)
 }
 
-public inline fun Byte.downTo(to: Char): CharProgression {
+public fun Byte.downTo(to: Char): CharProgression {
     return CharProgression(this.toChar(), to, -1)
 }
 
-public inline fun Byte.downTo(to: Short): ShortProgression {
+public fun Byte.downTo(to: Short): ShortProgression {
     return ShortProgression(this.toShort(), to, -1)
 }
 
-public inline fun Byte.downTo(to: Int): IntProgression {
+public fun Byte.downTo(to: Int): IntProgression {
     return IntProgression(this.toInt(), to, -1)
 }
 
-public inline fun Byte.downTo(to: Long): LongProgression {
+public fun Byte.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1.toLong())
 }
 
-public inline fun Byte.downTo(to: Float): FloatProgression {
+public fun Byte.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Byte.downTo(to: Double): DoubleProgression {
+public fun Byte.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
-public inline fun Char.downTo(to: Byte): CharProgression {
+public fun Char.downTo(to: Byte): CharProgression {
     return CharProgression(this, to.toChar(), -1)
 }
 
-public inline fun Char.downTo(to: Char): CharProgression {
+public fun Char.downTo(to: Char): CharProgression {
     return CharProgression(this, to, -1)
 }
 
-public inline fun Char.downTo(to: Short): ShortProgression {
+public fun Char.downTo(to: Short): ShortProgression {
     return ShortProgression(this.toShort(), to, -1)
 }
 
-public inline fun Char.downTo(to: Int): IntProgression {
+public fun Char.downTo(to: Int): IntProgression {
     return IntProgression(this.toInt(), to, -1)
 }
 
-public inline fun Char.downTo(to: Long): LongProgression {
+public fun Char.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1.toLong())
 }
 
-public inline fun Char.downTo(to: Float): FloatProgression {
+public fun Char.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Char.downTo(to: Double): DoubleProgression {
+public fun Char.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
-public inline fun Short.downTo(to: Byte): ShortProgression {
+public fun Short.downTo(to: Byte): ShortProgression {
     return ShortProgression(this, to.toShort(), -1)
 }
 
-public inline fun Short.downTo(to: Char): ShortProgression {
+public fun Short.downTo(to: Char): ShortProgression {
     return ShortProgression(this, to.toShort(), -1)
 }
 
-public inline fun Short.downTo(to: Short): ShortProgression {
+public fun Short.downTo(to: Short): ShortProgression {
     return ShortProgression(this, to, -1)
 }
 
-public inline fun Short.downTo(to: Int): IntProgression {
+public fun Short.downTo(to: Int): IntProgression {
     return IntProgression(this.toInt(), to, -1)
 }
 
-public inline fun Short.downTo(to: Long): LongProgression {
+public fun Short.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1.toLong())
 }
 
-public inline fun Short.downTo(to: Float): FloatProgression {
+public fun Short.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Short.downTo(to: Double): DoubleProgression {
+public fun Short.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
-public inline fun Int.downTo(to: Byte): IntProgression {
+public fun Int.downTo(to: Byte): IntProgression {
     return IntProgression(this, to.toInt(), -1)
 }
 
-public inline fun Int.downTo(to: Char): IntProgression {
+public fun Int.downTo(to: Char): IntProgression {
     return IntProgression(this, to.toInt(), -1)
 }
 
-public inline fun Int.downTo(to: Short): IntProgression {
+public fun Int.downTo(to: Short): IntProgression {
     return IntProgression(this, to.toInt(), -1)
 }
 
-public inline fun Int.downTo(to: Int): IntProgression {
+public fun Int.downTo(to: Int): IntProgression {
     return IntProgression(this, to, -1)
 }
 
-public inline fun Int.downTo(to: Long): LongProgression {
+public fun Int.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1.toLong())
 }
 
-public inline fun Int.downTo(to: Float): FloatProgression {
+public fun Int.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Int.downTo(to: Double): DoubleProgression {
+public fun Int.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
-public inline fun Long.downTo(to: Byte): LongProgression {
+public fun Long.downTo(to: Byte): LongProgression {
     return LongProgression(this, to.toLong(), -1.toLong())
 }
 
-public inline fun Long.downTo(to: Char): LongProgression {
+public fun Long.downTo(to: Char): LongProgression {
     return LongProgression(this, to.toLong(), -1.toLong())
 }
 
-public inline fun Long.downTo(to: Short): LongProgression {
+public fun Long.downTo(to: Short): LongProgression {
     return LongProgression(this, to.toLong(), -1.toLong())
 }
 
-public inline fun Long.downTo(to: Int): LongProgression {
+public fun Long.downTo(to: Int): LongProgression {
     return LongProgression(this, to.toLong(), -1.toLong())
 }
 
-public inline fun Long.downTo(to: Long): LongProgression {
+public fun Long.downTo(to: Long): LongProgression {
     return LongProgression(this, to, -1.toLong())
 }
 
-public inline fun Long.downTo(to: Float): FloatProgression {
+public fun Long.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
 
-public inline fun Long.downTo(to: Double): DoubleProgression {
+public fun Long.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
-public inline fun Float.downTo(to: Byte): FloatProgression {
+public fun Float.downTo(to: Byte): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Char): FloatProgression {
+public fun Float.downTo(to: Char): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Short): FloatProgression {
+public fun Float.downTo(to: Short): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Int): FloatProgression {
+public fun Float.downTo(to: Int): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Long): FloatProgression {
+public fun Float.downTo(to: Long): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Float): FloatProgression {
+public fun Float.downTo(to: Float): FloatProgression {
     return FloatProgression(this, to, -1.toFloat())
 }
 
-public inline fun Float.downTo(to: Double): DoubleProgression {
+public fun Float.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
 
-public inline fun Double.downTo(to: Byte): DoubleProgression {
+public fun Double.downTo(to: Byte): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Char): DoubleProgression {
+public fun Double.downTo(to: Char): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Short): DoubleProgression {
+public fun Double.downTo(to: Short): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Int): DoubleProgression {
+public fun Double.downTo(to: Int): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Long): DoubleProgression {
+public fun Double.downTo(to: Long): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Float): DoubleProgression {
+public fun Double.downTo(to: Float): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
 
-public inline fun Double.downTo(to: Double): DoubleProgression {
+public fun Double.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this, to, -1.0)
 }

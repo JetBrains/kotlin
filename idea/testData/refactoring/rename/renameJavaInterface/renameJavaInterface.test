@@ -1,0 +1,3 @@
+// RENAME: JAVA_CLASS->testing.SomeInterface->NewInterfaceName
+
+// For KT-4100 Imports doesn't change after java interface name refactoring

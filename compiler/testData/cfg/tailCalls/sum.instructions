@@ -1,0 +1,46 @@
+== sum ==
+tailRecursive fun sum(x: Long, sum: Long): Long {
+    if (x == 0.toLong()) return sum
+    return sum(x - 1, sum + x)
+}
+---------------------
+L0:
+    <START>
+    v(x: Long)
+    w(x)
+    v(sum: Long)
+    w(sum)
+    mark({ if (x == 0.toLong()) return sum return sum(x - 1, sum + x) })
+    mark(if (x == 0.toLong()) return sum)
+    mark(x == 0.toLong())
+    r(x)
+    mark(0.toLong())
+    mark(toLong())
+    r(0)
+    call(toLong, toLong)
+    call(x == 0.toLong(), equals)
+    jf(L2)                                                                  NEXT:[read (Unit), r(sum)]
+    r(sum)
+    ret(*) L1                                                               NEXT:[<END>]
+-   jmp(L3)                                                                 NEXT:[mark(sum(x - 1, sum + x))]                                               PREV:[]
+L2:
+    read (Unit)                                                             PREV:[jf(L2)]
+L3:
+    mark(sum(x - 1, sum + x))
+    mark(x - 1)
+    r(x)
+    r(1)
+    call(-, minus)
+    mark(sum + x)
+    r(sum)
+    r(x)
+    call(+, plus)
+    call(sum, sum)
+    ret(*) L1
+L1:
+    <END>                                                                   NEXT:[<SINK>]                                                                  PREV:[ret(*) L1, ret(*) L1]
+error:
+    <ERROR>                                                                 PREV:[]
+sink:
+    <SINK>                                                                  PREV:[<ERROR>, <END>]
+=====================

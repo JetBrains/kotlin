@@ -31,12 +31,12 @@ public fun <T,U: Collection<in T>> Iterator<T>.toCollection(container: U) : U {
 /**
 Add iterated elements to java.util.ArrayList
 */
-public inline fun <T> Iterator<T>.toArrayList() : ArrayList<T> = toCollection(ArrayList<T>())
+public fun <T> Iterator<T>.toArrayList() : ArrayList<T> = toCollection(ArrayList<T>())
 
 /**
 Add iterated elements to java.util.HashSet
 */
-public inline fun <T> Iterator<T>.toHashSet() : HashSet<T> = toCollection(HashSet<T>())
+public fun <T> Iterator<T>.toHashSet() : HashSet<T> = toCollection(HashSet<T>())
 
 
 /**
@@ -45,7 +45,7 @@ public inline fun <T> Iterator<T>.toHashSet() : HashSet<T> = toCollection(HashSe
 
  * @includeFunctionBody ../../test/MapTest.kt createUsingTo
  */
-public inline fun <A,B> A.to(that: B): Pair<A, B> = Pair(this, that)
+public fun <A,B> A.to(that: B): Pair<A, B> = Pair(this, that)
 
 /**
 Run function f

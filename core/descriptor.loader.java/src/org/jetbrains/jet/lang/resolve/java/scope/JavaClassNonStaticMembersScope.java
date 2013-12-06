@@ -16,17 +16,26 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
+import jet.Function0;
+import jet.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.NotNullLazyValue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope {
@@ -58,6 +67,43 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
         for (JavaClass innerClass : innerClasses) {
             result.add(resolveInnerClass(innerClass));
         }
+
+        if (isEnumClass(descriptor)) {
+            result.addAll(computeEnumEntries());
+        }
+
+        return result;
+    }
+
+    private Collection<ClassDescriptor> computeEnumEntries() {
+        List<ClassDescriptor> result = new ArrayList<ClassDescriptor>();
+
+        final Collection<NamedMembers> enumNonStaticMembers = MembersProvider.forClass(javaClass, true).allMembers();
+
+        NotNullLazyValue<Collection<Name>> enumMemberNames =
+                LockBasedStorageManager.NO_LOCKS.createLazyValue(new Function0<Collection<Name>>() {
+                    @Override
+                    public Collection<Name> invoke() {
+                        return KotlinPackage.map(enumNonStaticMembers, new Function1<NamedMembers, Name>() {
+                            @Override
+                            public Name invoke(@NotNull NamedMembers members) {
+                                return members.getName();
+                            }
+                        });
+                    }
+                });
+
+        for (NamedMembers members : enumNonStaticMembers) {
+            for (JavaField field : members.getFields()) {
+                if (field.isEnumEntry()) {
+                    EnumEntrySyntheticClassDescriptor enumEntry = EnumEntrySyntheticClassDescriptor
+                            .create(LockBasedStorageManager.NO_LOCKS, descriptor, members.getName(), enumMemberNames);
+                    result.add(enumEntry);
+                    break;
+                }
+            }
+        }
+
         return result;
     }
 

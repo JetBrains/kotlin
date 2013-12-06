@@ -166,7 +166,7 @@ public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
     }
 }
 
-public final class Char : jet.Number, jet.Comparable<jet.Char> {
+public final class Char : jet.Hashable, jet.Comparable<jet.Char> {
     /*primary*/ private constructor Char()
     public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public open override /*1*/ fun compareTo(/*0*/ other: jet.Char): jet.Int
@@ -213,13 +213,13 @@ public final class Char : jet.Number, jet.Comparable<jet.Char> {
     public final fun times(/*0*/ other: jet.Int): jet.Int
     public final fun times(/*0*/ other: jet.Long): jet.Long
     public final fun times(/*0*/ other: jet.Short): jet.Int
-    public open override /*1*/ fun toByte(): jet.Byte
-    public open override /*1*/ fun toChar(): jet.Char
-    public open override /*1*/ fun toDouble(): jet.Double
-    public open override /*1*/ fun toFloat(): jet.Float
-    public open override /*1*/ fun toInt(): jet.Int
-    public open override /*1*/ fun toLong(): jet.Long
-    public open override /*1*/ fun toShort(): jet.Short
+    public final fun toByte(): jet.Byte
+    public final fun toChar(): jet.Char
+    public final fun toDouble(): jet.Double
+    public final fun toFloat(): jet.Float
+    public final fun toInt(): jet.Int
+    public final fun toLong(): jet.Long
+    public final fun toShort(): jet.Short
 }
 
 public final class CharArray {
@@ -708,6 +708,42 @@ public trait Function9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/
 public trait Hashable {
     public abstract fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public abstract fun hashCode(): jet.Int
+}
+
+public final enum class InlineStrategy : jet.Enum<jet.InlineStrategy> {
+    /*primary*/ private constructor InlineStrategy()
+    public final override /*1*/ /*fake_override*/ fun name(): jet.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+    
+    public class object <class-object-for-InlineStrategy> {
+        /*primary*/ private constructor <class-object-for-InlineStrategy>()
+        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): jet.InlineStrategy
+        public final /*synthesized*/ fun values(): jet.Array<jet.InlineStrategy>
+    }
+    
+    public enum entry AS_FUNCTION : jet.InlineStrategy {
+        /*primary*/ private constructor AS_FUNCTION()
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        
+        public class object <class-object-for-AS_FUNCTION> : jet.InlineStrategy.AS_FUNCTION {
+            /*primary*/ private constructor <class-object-for-AS_FUNCTION>()
+            public final override /*1*/ /*fake_override*/ fun name(): jet.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        }
+    }
+    
+    public enum entry IN_PLACE : jet.InlineStrategy {
+        /*primary*/ private constructor IN_PLACE()
+        public final override /*1*/ /*fake_override*/ fun name(): jet.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        
+        public class object <class-object-for-IN_PLACE> : jet.InlineStrategy.IN_PLACE {
+            /*primary*/ private constructor <class-object-for-IN_PLACE>()
+            public final override /*1*/ /*fake_override*/ fun name(): jet.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        }
+    }
 }
 
 public final class Int : jet.Number, jet.Comparable<jet.Int> {
@@ -1590,8 +1626,22 @@ public final annotation class deprecated : jet.Annotation {
     /*primary*/ public constructor deprecated(/*0*/ value: jet.String)
 }
 
+public final annotation class inline : jet.Annotation {
+    /*primary*/ public constructor inline(/*0*/ strategy: jet.InlineStrategy = ...)
+    public final val strategy: jet.InlineStrategy
+        public final fun <get-strategy>(): jet.InlineStrategy
+}
+
+public final annotation class noinline : jet.Annotation {
+    /*primary*/ public constructor noinline()
+}
+
 public final annotation class suppress : jet.Annotation {
     /*primary*/ public constructor suppress(/*0*/ vararg names: jet.String /*jet.Array<jet.String>*/)
+}
+
+public final annotation class tailRecursive : jet.Annotation {
+    /*primary*/ public constructor tailRecursive()
 }
 
 public final annotation class volatile : jet.Annotation {

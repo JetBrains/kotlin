@@ -65,17 +65,6 @@ public class FilteringScope implements JetScope {
         return filterDescriptor(workerScope.getClassifier(name));
     }
 
-    @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        return filterDescriptor(workerScope.getObjectDescriptor(name));
-    }
-
-    @NotNull
-    @Override
-    public Collection<ClassDescriptor> getObjectDescriptors() {
-        return Collections2.filter(workerScope.getObjectDescriptors(), predicate);
-    }
-
     @NotNull
     @Override
     public Collection<VariableDescriptor> getProperties(@NotNull Name name) {

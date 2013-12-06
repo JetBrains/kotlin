@@ -35,7 +35,7 @@ class Foo {
     class object {
         val i: Int = 2
         val s: Short = 2
-        val f: Float = 2.0
+        val f: Float = 2.0.toFloat()
         val d: Double = 2.0
         val l: Long = 2
         val b: Byte = 2

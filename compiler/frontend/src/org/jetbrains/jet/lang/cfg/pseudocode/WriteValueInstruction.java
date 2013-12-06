@@ -35,8 +35,13 @@ public class WriteValueInstruction extends InstructionWithNext {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitWriteValue(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitWriteValue(this);
     }
 
     @Override
@@ -45,9 +50,10 @@ public class WriteValueInstruction extends InstructionWithNext {
             JetNamedDeclaration value = (JetNamedDeclaration) lValue;
             return "w(" + value.getName() + ")";
         }
-        return "w(" + lValue.getText() + ")";
+        return "w(" + render(lValue) + ")";
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new WriteValueInstruction(element, lValue);

@@ -53,17 +53,6 @@ public class JetSimpleNameReference extends JetPsiReference {
         return new TextRange(0, getElement().getTextLength());
     }
 
-    @NotNull
-    @Override
-    public Object[] getVariants() {
-        CancelableResolveSession resolveSession =
-                AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) getExpression().getContainingFile());
-        BindingContext bindingContext = resolveSession.resolveToElement(getExpression());
-
-        return DescriptorLookupConverter.collectLookupElements(
-                resolveSession, bindingContext, TipsManager.getReferenceVariants(myExpression, bindingContext));
-    }
-
     @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
         IElementType type = myExpression.getReferencedNameElementType();

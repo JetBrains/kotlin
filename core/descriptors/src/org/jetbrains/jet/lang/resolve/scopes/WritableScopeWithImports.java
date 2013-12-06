@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
 
@@ -177,19 +176,6 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        checkMayRead();
-
-        for (JetScope imported : getImports()) {
-            ClassDescriptor objectDescriptor = imported.getObjectDescriptor(name);
-            if (objectDescriptor != null) {
-                return objectDescriptor;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
         checkMayRead();
 
@@ -216,14 +202,9 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     public void importClassifierAlias(@NotNull Name importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor) {
         checkMayWrite();
 
-        if (DescriptorUtils.isSingleton(classifierDescriptor)) {
-            throw new IllegalStateException("must not be object: " + classifierDescriptor);
-        }
-
         getCurrentIndividualImportScope().addClassifierAlias(importedClassifierName, classifierDescriptor);
     }
-    
-    
+
     @Override
     public void importNamespaceAlias(@NotNull Name aliasName, @NotNull NamespaceDescriptor namespaceDescriptor) {
         checkMayWrite();

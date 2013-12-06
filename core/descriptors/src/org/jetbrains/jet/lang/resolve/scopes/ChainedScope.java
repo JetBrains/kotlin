@@ -58,25 +58,6 @@ public class ChainedScope implements JetScope {
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        for (JetScope scope : scopeChain) {
-            ClassDescriptor objectDescriptor = scope.getObjectDescriptor(name);
-            if (objectDescriptor != null) return objectDescriptor;
-        }
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public Set<ClassDescriptor> getObjectDescriptors() {
-        Set<ClassDescriptor> objectDescriptors = Sets.newHashSet();
-        for (JetScope scope : scopeChain) {
-            objectDescriptors.addAll(scope.getObjectDescriptors());
-        }
-        return objectDescriptors;
-    }
-
-    @Override
     public NamespaceDescriptor getNamespace(@NotNull Name name) {
         for (JetScope jetScope : scopeChain) {
             NamespaceDescriptor namespace = jetScope.getNamespace(name);

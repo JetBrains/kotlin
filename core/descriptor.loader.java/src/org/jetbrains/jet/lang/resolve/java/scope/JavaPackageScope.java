@@ -55,20 +55,7 @@ public final class JavaPackageScope extends JavaBaseScope {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        ClassDescriptor classDescriptor = memberResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
-        if (classDescriptor == null || classDescriptor.getKind().isSingleton()) {
-            return null;
-        }
-        return classDescriptor;
-    }
-
-    @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
-        ClassDescriptor classDescriptor = memberResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
-        if (classDescriptor != null && classDescriptor.getKind().isSingleton()) {
-            return classDescriptor;
-        }
-        return null;
+        return memberResolver.resolveClass(packageFQN.child(name), IGNORE_KOTLIN_SOURCES);
     }
 
     @Override

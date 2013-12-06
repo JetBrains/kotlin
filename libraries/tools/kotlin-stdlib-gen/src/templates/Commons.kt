@@ -84,6 +84,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("filterNotNullTo(result: C)") {
+        isInline = false
         absentFor(PrimitiveArrays) // Those are inherently non-nulls
         doc = "Filters all non-*null* elements into the given list"
         typeParam("T:Any")
@@ -273,6 +274,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("drop(n: Int)") {
+        isInline = false
         doc = "Returns a list containing everything but the first *n* elements"
         returns("List<T>")
         body {
@@ -324,6 +326,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("toCollection(result: C)") {
+        isInline = false
         doc = "Copies all elements into the given collection"
         typeParam("C: MutableCollection<in T>")
         returns("C")
@@ -337,6 +340,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("reverse()") {
+        isInline = false
         doc = "Reverses the order the elements into a list"
         returns("List<T>")
         body {
@@ -349,6 +353,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("toLinkedList()") {
+        isInline = false
         doc = "Copies all elements into a [[LinkedList]]"
         returns("LinkedList<T>")
 
@@ -356,6 +361,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("toList()") {
+        isInline = false
         doc = "Copies all elements into a [[List]]"
         returns("List<T>")
 
@@ -363,6 +369,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("toSet()") {
+        isInline = false
         doc = "Copies all elements into a [[Set]]"
         returns("Set<T>")
 
@@ -370,6 +377,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("toSortedSet()") {
+        isInline = false
         doc = "Copies all elements into a [[SortedSet]]"
         returns("SortedSet<T>")
 
@@ -377,6 +385,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("withIndices()") {
+        isInline = false
         doc = "Returns an iterator of Pairs(index, data)"
         returns("Iterator<Pair<Int, T>>")
 
@@ -407,7 +416,46 @@ fun commons(): ArrayList<GenericFunction> {
         }
     }
 
+    templates add f("min()") {
+        doc = "Returns the smallest element or null if there are no elements"
+        returns("T?")
+        absentFor(PrimitiveType.Boolean, PrimitiveType.Char)//currently there are no sane way to compare Char? with something (KT-4251)
+        typeParam("T: Comparable<T>")
+        isInline = false
+        body {
+            """
+                var min: T? = null
+                for (e in this) {
+                    if (min == null || min!! > e) {
+                       min = e
+                    }
+                }
+                return min
+            """
+        }
+    }
+
+    templates add f("max()") {
+        doc = "Returns the largest element or null if there are no elements"
+        returns("T?")
+        absentFor(PrimitiveType.Boolean, PrimitiveType.Char)//currently there are no sane way to compare Char? with something (KT-4251)
+        typeParam("T: Comparable<T>")
+        isInline = false
+        body {
+            """
+                var max: T? = null
+                for (e in this) {
+                    if (max == null || max!! < e) {
+                       max = e
+                    }
+                }
+                return max
+            """
+        }
+    }
+
     templates add f("appendString(buffer: Appendable, separator: String = \", \", prefix: String =\"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
+        isInline = false
         doc =
         """
               Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
@@ -435,6 +483,7 @@ fun commons(): ArrayList<GenericFunction> {
     }
 
     templates add f("makeString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
+        isInline = false
         doc = """
           Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
 

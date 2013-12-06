@@ -383,7 +383,7 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     }
     
     public R visitObjectDeclarationName(@NotNull JetObjectDeclarationName declarationName, D data) {
-        return visitNamedDeclaration(declarationName, data);
+        return visitExpression(declarationName, data);
     }
 
     public R visitStringTemplateEntry(@NotNull JetStringTemplateEntry entry, D data) {

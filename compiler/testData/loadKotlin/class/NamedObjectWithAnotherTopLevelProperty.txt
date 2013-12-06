@@ -1,6 +1,5 @@
 package test
 
-public val Obj: test.Obj
 internal val x: jet.Int
     internal fun <get-x>(): jet.Int
 
@@ -9,4 +8,11 @@ public object Obj {
     public final val v: jet.String
         public final fun <get-v>(): jet.String
     public final fun f(): jet.String
+    
+    public class object <class-object-for-Obj> : test.Obj {
+        /*primary*/ private constructor <class-object-for-Obj>()
+        public final override /*1*/ /*fake_override*/ val v: jet.String
+            public final override /*1*/ /*fake_override*/ fun <get-v>(): jet.String
+        public final override /*1*/ /*fake_override*/ fun f(): jet.String
+    }
 }

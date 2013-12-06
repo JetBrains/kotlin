@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -152,7 +153,8 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<PsiJavaFi
                     context.getBindingContext(),
                     Lists.newArrayList(files),
                     /*not-null assertions*/false, false,
-                    /*generateDeclaredClasses=*/stubGenerationStrategy.generateDeclaredClasses());
+                    /*generateDeclaredClasses=*/stubGenerationStrategy.generateDeclaredClasses(),
+                    InlineUtil.DEFAULT_INLINE_FLAG_FOR_STUB);
             state.beforeCompile();
 
             stubGenerationStrategy.generate(state, files);

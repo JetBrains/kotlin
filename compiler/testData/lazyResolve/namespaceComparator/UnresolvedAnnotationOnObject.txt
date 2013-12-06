@@ -1,8 +1,11 @@
 package test
 
-[ERROR : Unresolved annotation type: BadAnnotation]() internal val SomeObject: test.SomeObject
 internal val some: test.SomeObject
 
 [ERROR : Unresolved annotation type: BadAnnotation]() internal object SomeObject {
     /*primary*/ private constructor SomeObject()
+    
+    public class object <class-object-for-SomeObject> : test.SomeObject {
+        /*primary*/ private constructor <class-object-for-SomeObject>()
+    }
 }

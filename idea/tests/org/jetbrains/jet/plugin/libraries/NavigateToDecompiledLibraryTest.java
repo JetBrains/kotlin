@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.beust.jcommander.internal.Maps;
+import com.google.common.collect.Maps;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.roots.LibraryOrderEntry;

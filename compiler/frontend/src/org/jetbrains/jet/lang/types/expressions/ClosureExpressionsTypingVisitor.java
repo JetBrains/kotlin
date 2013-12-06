@@ -198,8 +198,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                                       valueParameterDescriptors,
                                       /*unsubstitutedReturnType = */ null,
                                       Modality.FINAL,
-                                      Visibilities.LOCAL,
-                                      /*isInline = */ false
+                                      Visibilities.LOCAL
         );
         BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor);
         return functionDescriptor;

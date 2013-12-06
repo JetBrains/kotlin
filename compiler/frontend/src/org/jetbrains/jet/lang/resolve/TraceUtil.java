@@ -28,6 +28,7 @@ import java.util.Collection;
 public class TraceUtil {
     public final static BindingTrace TRACE_STUB = new BindingTrace() {
 
+        @NotNull
         @Override
         public BindingContext getBindingContext() {
             return BINDING_CONTEXT_STUB;

@@ -1034,6 +1034,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("EnumMembers.java")
+        public void testEnumMembers() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/EnumMembers.java");
+        }
+        
         @TestMetadata("JavaEnum.java")
         public void testJavaEnum() throws Exception {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/JavaEnum.java");

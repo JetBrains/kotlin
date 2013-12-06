@@ -1,0 +1,114 @@
+JetFile: FloatingPointLiteral.kt
+  NAMESPACE_HEADER
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('array')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('array')
+      TYPE_ARGUMENT_LIST
+        PsiElement(LT)('<')
+        TYPE_PROJECTION
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Any')
+        PsiElement(GT)('>')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1.0')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1e1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1.0e1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1e-1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1.0e-1')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1F')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1.0F')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1e1F')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1.0e1F')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1e-1F')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1.0e-1F')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1.0f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1e1f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1.0e1f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1e-1f')
+        PsiElement(COMMA)(',')
+        PsiWhiteSpace('\n        ')
+        VALUE_ARGUMENT
+          FLOAT_CONSTANT
+            PsiElement(FLOAT_CONSTANT)('1.0e-1f')
+        PsiWhiteSpace('\n')
+        PsiElement(RPAR)(')')

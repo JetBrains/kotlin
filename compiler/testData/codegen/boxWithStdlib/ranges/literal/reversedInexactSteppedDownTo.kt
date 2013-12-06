@@ -58,12 +58,12 @@ fun box(): String {
     }
 
     val list7 = ArrayList<Float>()
-    for (i in (5.8.toFloat() downTo 4.0.toFloat() step 0.5).reversed()) {
+    for (i in (5.8.toFloat() downTo 4.0.toFloat() step 0.5.toFloat()).reversed()) {
         list7.add(i)
         if (list7.size() > 23) break
     }
-    if (list7 != listOf<Float>(4.0, 4.5, 5.0, 5.5)) {
-        return "Wrong elements for (5.8.toFloat() downTo 4.0.toFloat() step 0.5).reversed(): $list7"
+    if (list7 != listOf<Float>(4.0.toFloat(), 4.5.toFloat(), 5.0.toFloat(), 5.5.toFloat())) {
+        return "Wrong elements for (5.8.toFloat() downTo 4.0.toFloat() step 0.5.toFloat()).reversed(): $list7"
     }
 
     return "OK"

@@ -6,6 +6,6 @@ fun firstFun() {
 }
 
 // INVOCATION_COUNT: 1
-// EXIST: PropertyMetadata@PropertyMetadata~(jet)
-// EXIST: PropertyMetadataImpl@PropertyMetadataImpl~(jet)
+// EXIST: { lookupString:"PropertyMetadata", itemText:"PropertyMetadata", tailText:" (jet)" }
+// EXIST: { lookupString:"PropertyMetadataImpl", itemText:"PropertyMetadataImpl", tailText:" (jet)" }
 // NUMBER: 2

@@ -23,7 +23,7 @@ public fun <T> Iterable<T>.count() : Int {
   return number
 }
 
-private fun <T> countTo(n: Int): (T) -> Boolean {
+public fun <T> countTo(n: Int): (T) -> Boolean {
   var count = 0
   return { ++count; count <= n }
 }
@@ -34,7 +34,7 @@ private fun <T> countTo(n: Int): (T) -> Boolean {
  *
  * Will throw an exception if there are no elements
  */
-public inline fun <T> Iterable<T>.first() : T {
+public fun <T> Iterable<T>.first() : T {
   if (this is List<T>) {
     return this.first()
   }
@@ -64,13 +64,13 @@ public fun <T> Iterable<T>.containsItem(item : T) : Boolean {
 }
 
 
-public inline fun <T: Comparable<T>> Iterable<T>.sort() : List<T> {
+public fun <T: Comparable<T>> Iterable<T>.sort() : List<T> {
     val list = toCollection(ArrayList<T>())
     java.util.Collections.sort(list)
     return list
 }
 
-public inline fun <T> Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
+public fun <T> Iterable<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
     val list = toCollection(ArrayList<T>())
     java.util.Collections.sort(list, comparator)
     return list

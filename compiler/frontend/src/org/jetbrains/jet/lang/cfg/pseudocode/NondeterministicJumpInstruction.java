@@ -58,8 +58,13 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitNondeterministicJump(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitNondeterministicJump(this);
     }
 
     @NotNull
@@ -85,6 +90,7 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
         return sb.toString();
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return createCopy(getTargetLabels());

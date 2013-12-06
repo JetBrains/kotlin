@@ -288,7 +288,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
         ClassDescriptorWithState state = peekFromStack(classStack);
-        assert state != null : "Class descriptor should be recorded before " + call + " processing";
+        // working around a problem with shallow analysis
+        if (state == null) return;
         state.setDelegationToSuperCall(true);
         super.visitDelegationToSuperCallSpecifier(call);
         state.setDelegationToSuperCall(false);

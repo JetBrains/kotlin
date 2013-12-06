@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
@@ -33,7 +33,9 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.diagnostics.Errors.DECLARATION_CANT_BE_INLINED;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
+import static org.jetbrains.jet.renderer.DescriptorRenderer.SHORT_NAMES_IN_TYPES;
 
 public class DefaultErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
@@ -295,7 +297,9 @@ public class DefaultErrorMessages {
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", DescriptorRenderer.TEXT);
 
         MAP.put(CONSTANT_EXPECTED_TYPE_MISMATCH, "An {0} literal does not conform to the expected type {1}", TO_STRING, RENDER_TYPE);
+        MAP.put(INTEGER_OVERFLOW, "This operation has led to an overflow");
         MAP.put(INT_LITERAL_OUT_OF_RANGE, "The value is out of range");
+        MAP.put(WRONG_LONG_SUFFIX, "Use 'L' instead of 'l'");
         MAP.put(FLOAT_LITERAL_OUT_OF_RANGE, "The value is out of range");
         MAP.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal");
         MAP.put(EMPTY_CHARACTER_LITERAL, "Empty character literal");
@@ -316,9 +320,11 @@ public class DefaultErrorMessages {
         MAP.put(CONSTRUCTOR_IN_TRAIT, "A trait may not have a constructor");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
+        MAP.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton");
 
         MAP.put(ILLEGAL_SELECTOR, "Expression ''{0}'' cannot be a selector (occur after a dot)", TO_STRING);
 
+        MAP.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found");
         MAP.put(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION, "A type annotation is required on a value parameter");
         MAP.put(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP, "'break' and 'continue' are only allowed inside a loop");
         MAP.put(NOT_A_LOOP_LABEL, "The label ''{0}'' does not denote a loop", TO_STRING);
@@ -409,7 +415,8 @@ public class DefaultErrorMessages {
                 return hasValueParameters ? "..." : "";
             }
         });
-
+        MAP.put(NON_TAIL_RECURSIVE_CALL, "Recursive call is not a tail call");
+        MAP.put(TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED, "Tail recursion optimization inside try/catch/finally is not supported");
 
         MAP.put(RESULT_TYPE_MISMATCH, "{0} must return {1} but returns {2}", TO_STRING, RENDER_TYPE, RENDER_TYPE);
         MAP.put(UNSAFE_INFIX_CALL,
@@ -470,6 +477,15 @@ public class DefaultErrorMessages {
         MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
                 "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", TO_STRING);
         MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Callable reference left-hand side cannot be a type parameter");
+
+        //Inline
+        MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-api ''{0}'' member from effectively public-api ''{1}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "''{0}'' construction not yet supported in inline functions", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(DECLARATION_CANT_BE_INLINED, "Inline annotation could be present only on nonvirtual members (private or final)");
+        MAP.put(NOTHING_TO_INLINE, "There are no parameters of Function types to be inlined in ''{0}''", SHORT_NAMES_IN_TYPES);
+        MAP.put(USAGE_IS_NOT_INLINABLE, "Illegal usage of inline-parameter ''{0}'' in ''{1}''. Annotate the parameter with [noinline]", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Annotate the parameter with [noinline] or make not nullable", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
+        MAP.put(RECURSION_IN_INLINE, "Inline-function ''{1}'' can't be recursive", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
 
         MAP.setImmutable();
 

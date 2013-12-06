@@ -428,12 +428,7 @@ public class ResolveElementCache {
         }
 
         @Override
-        public Map<JetClass, MutableClassDescriptor> getClasses() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public Map<JetObjectDeclaration, MutableClassDescriptor> getObjects() {
+        public Map<JetClassOrObject, MutableClassDescriptor> getClasses() {
             return Collections.emptyMap();
         }
 

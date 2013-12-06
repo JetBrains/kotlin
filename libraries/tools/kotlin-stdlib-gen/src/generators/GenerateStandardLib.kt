@@ -29,27 +29,27 @@ fun main(args: Array<String>) {
     generateDomEventsAPI(File(jsCoreDir, "domEvents.kt"))
 
     iterators().writeTo(File(outDir, "_Iterators.kt")) {
-        buildFor(Iterators, "")
+        buildFor(Iterators, null)
     }
 
-    val iterables = iterables()
-    iterables.writeTo(File(outDir, "_Arrays.kt")) {
-        buildFor(Arrays, "")
+    val arrays = arrays()
+    val sumFunctions = PrimitiveType.values().map(::sumFunction).filterNotNull()
+    (arrays + sumFunctions).writeTo(File(outDir, "_Arrays.kt")) {
+        buildFor(Arrays, null)
     }
 
-    val otherArrayNames = arrayListOf("Boolean", "Byte", "Char", "Short", "Int", "Long", "Float", "Double")
-    for (a in otherArrayNames) {
-        iterables.writeTo(File(outDir, "_${a}Arrays.kt")) {
-            buildFor(PrimitiveArrays, a)
+    for (primitive in PrimitiveType.values()) {
+        (arrays + sumFunction(primitive)).filterNotNull().writeTo(File(outDir, "_${primitive.name}Arrays.kt")) {
+            buildFor(PrimitiveArrays, primitive)
         }
     }
 
-    iterables.writeTo(File(outDir, "_Iterables.kt")) {
-        buildFor(Iterables, "")
+    (iterables().sort() + sumFunctions).writeTo(File(outDir, "_Iterables.kt")) {
+        buildFor(Iterables, null)
     }
 
     collections().writeTo(File(outDir, "_Collections.kt")) {
-        buildFor(Collections, "")
+        buildFor(Collections, null)
     }
 
     generateDownTos(File(outDir, "_DownTo.kt"), "package kotlin")

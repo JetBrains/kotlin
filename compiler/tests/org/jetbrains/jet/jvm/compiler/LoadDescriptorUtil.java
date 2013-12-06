@@ -58,18 +58,6 @@ public final class LoadDescriptorUtil {
     }
 
     @NotNull
-    public static NamespaceDescriptor compileKotlinAndLoadTestNamespaceDescriptorFromBinary(
-            @NotNull File kotlinFile,
-            @NotNull File outDir,
-            @NotNull Disposable disposable,
-            @NotNull ConfigurationKind configurationKind
-    )
-            throws IOException {
-        compileKotlinToDirAndGetAnalyzeExhaust(kotlinFile, outDir, disposable, configurationKind);
-        return loadTestNamespaceAndBindingContextFromJavaRoot(outDir, disposable, ConfigurationKind.JDK_ONLY).first;
-    }
-
-    @NotNull
     public static AnalyzeExhaust compileKotlinToDirAndGetAnalyzeExhaust(
             @NotNull File kotlinFile,
             @NotNull File outDir,

@@ -119,8 +119,7 @@ public class ControlStructureTypingUtils {
                 valueParameters,
                 type,
                 Modality.FINAL,
-                Visibilities.PUBLIC,
-                /*isInline = */ false
+                Visibilities.PUBLIC
         );
         return function;
     }

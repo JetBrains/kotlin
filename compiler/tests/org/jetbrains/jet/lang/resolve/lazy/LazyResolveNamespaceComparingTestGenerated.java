@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparing
 @InnerTestClasses({LazyResolveNamespaceComparingTestGenerated.LoadKotlin.class, LazyResolveNamespaceComparingTestGenerated.CompiledJavaCompareWithKotlin.class, LazyResolveNamespaceComparingTestGenerated.NamespaceComparator.class})
 public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyResolveNamespaceComparingTest {
     @TestMetadata("compiler/testData/loadKotlin")
-    @InnerTestClasses({LoadKotlin.Annotations.class, LoadKotlin.Class.class, LoadKotlin.ClassFun.class, LoadKotlin.ClassObject.class, LoadKotlin.Constructor.class, LoadKotlin.DataClass.class, LoadKotlin.Fun.class, LoadKotlin.Prop.class, LoadKotlin.Type.class, LoadKotlin.Visibility.class})
+    @InnerTestClasses({LoadKotlin.Annotations.class, LoadKotlin.Class.class, LoadKotlin.ClassFun.class, LoadKotlin.ClassObject.class, LoadKotlin.Constructor.class, LoadKotlin.DataClass.class, LoadKotlin.Enum.class, LoadKotlin.Fun.class, LoadKotlin.Inline.class, LoadKotlin.Prop.class, LoadKotlin.Type.class, LoadKotlin.Visibility.class})
     public static class LoadKotlin extends AbstractLazyResolveNamespaceComparingTest {
         public void testAllFilesPresentInLoadKotlin() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -728,6 +728,34 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             
         }
         
+        @TestMetadata("compiler/testData/loadKotlin/enum")
+        public static class Enum extends AbstractLazyResolveNamespaceComparingTest {
+            public void testAllFilesPresentInEnum() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("enumVisibility.kt")
+            public void testEnumVisibility() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/enum/enumVisibility.kt");
+            }
+            
+            @TestMetadata("innerEnum.kt")
+            public void testInnerEnum() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/enum/innerEnum.kt");
+            }
+            
+            @TestMetadata("innerEnumExistingClassObject.kt")
+            public void testInnerEnumExistingClassObject() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/enum/innerEnumExistingClassObject.kt");
+            }
+            
+            @TestMetadata("simpleEnum.kt")
+            public void testSimpleEnum() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/enum/simpleEnum.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/loadKotlin/fun")
         @InnerTestClasses({Fun.GenericWithTypeVariables.class, Fun.GenericWithoutTypeVariables.class, Fun.NonGeneric.class, Fun.Vararg.class})
         public static class Fun extends AbstractLazyResolveNamespaceComparingTest {
@@ -981,6 +1009,19 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                 suite.addTestSuite(Vararg.class);
                 return suite;
             }
+        }
+        
+        @TestMetadata("compiler/testData/loadKotlin/inline")
+        public static class Inline extends AbstractLazyResolveNamespaceComparingTest {
+            public void testAllFilesPresentInInline() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/loadKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("inlineFunction.kt")
+            public void testInlineFunction() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadKotlin/inline/inlineFunction.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/loadKotlin/prop")
@@ -1436,7 +1477,9 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
             suite.addTestSuite(ClassObject.class);
             suite.addTest(Constructor.innerSuite());
             suite.addTestSuite(DataClass.class);
+            suite.addTestSuite(Enum.class);
             suite.addTest(Fun.innerSuite());
+            suite.addTestSuite(Inline.class);
             suite.addTest(Prop.innerSuite());
             suite.addTestSuite(Type.class);
             suite.addTestSuite(Visibility.class);

@@ -42,8 +42,6 @@ public class ClassSerializationUtil {
 
         serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors(), serializer, sink);
 
-        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getObjectDescriptors(), serializer, sink);
-
         ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
         if (classObjectDescriptor != null) {
             serializeClass(classObjectDescriptor, serializer, sink);

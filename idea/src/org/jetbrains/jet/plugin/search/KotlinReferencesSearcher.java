@@ -27,7 +27,9 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
@@ -54,8 +56,8 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         if (!JetPluginUtil.isInSource(element) || JetPluginUtil.isKtFileInGradleProjectInWrongFolder(element)) {
             return;
         }
-        if (element instanceof JetClass) {
-            processJetClassOrObject((JetClass) element, queryParameters);
+        if (element instanceof JetClassOrObject) {
+            processJetClassOrObject((JetClassOrObject) element, queryParameters);
         }
         else if (element instanceof JetNamedFunction) {
             final JetNamedFunction function = (JetNamedFunction) element;
@@ -82,12 +84,6 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
 
             searchMethod(queryParameters, propertyMethods.getGetter());
             searchMethod(queryParameters, propertyMethods.getSetter());
-        }
-        else if (element instanceof JetObjectDeclarationName) {
-            PsiElement parent = element.getParent();
-            if (parent instanceof JetObjectDeclaration) {
-                processJetClassOrObject((JetObjectDeclaration)parent, queryParameters);
-            }
         }
     }
 

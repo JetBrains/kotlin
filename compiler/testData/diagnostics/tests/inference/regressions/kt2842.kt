@@ -14,7 +14,7 @@ fun test(nullabilityInfoMap: Map<Int, Any>?) {
 }
 
 //resolves to
-public inline fun <K,V> Map<K,V>.iterator(): Iterator<Map.Entry<K,V>> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+public fun <K,V> Map<K,V>.iterator(): Iterator<Map.Entry<K,V>> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 
 //-------------

@@ -30,13 +30,13 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.util.NamespaceComparator;
 
 import java.util.Arrays;
@@ -108,15 +108,13 @@ public class BuiltinsDeserializationTest extends KotlinTestWithEnvironment {
                     case TRAIT:
                     case ENUM_CLASS:
                     case ANNOTATION_CLASS:
-                        actualNamespace.getMemberScope().addClassifierDescriptor(classDescriptor);
-                        break;
                     case OBJECT:
-                        actualNamespace.getMemberScope().addObjectDescriptor(classDescriptor);
+                        actualNamespace.getMemberScope().addClassifierDescriptor(classDescriptor);
                         break;
                     case ENUM_ENTRY:
                         assert false : "Enum entry appears to be a top-level declaration: " + classDescriptor;
                     case CLASS_OBJECT:
-                        assert false : "Call object appears to be a top-level declaration: " + classDescriptor;
+                        assert false : "Class object appears to be a top-level declaration: " + classDescriptor;
                 }
             }
         };

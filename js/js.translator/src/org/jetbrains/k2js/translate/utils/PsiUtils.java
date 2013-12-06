@@ -121,18 +121,9 @@ public final class PsiUtils {
     }
 
     @NotNull
-    public static JetObjectDeclarationName getObjectDeclarationName(@NotNull JetObjectDeclaration objectDeclaration) {
-        //TODO: util
-        JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
-        assert nameAsDeclaration != null;
-        return nameAsDeclaration;
-    }
-
-    @NotNull
     public static JetExpression getLoopRange(@NotNull JetForExpression expression) {
         JetExpression rangeExpression = expression.getLoopRange();
         assert rangeExpression != null;
         return rangeExpression;
     }
-
 }

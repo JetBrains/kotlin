@@ -114,7 +114,7 @@ public class AnnotationUtils {
         return false;
     }
 
-    public static boolean isPropertyAcceptableAsAnnotationParameter(@NotNull PropertyDescriptor descriptor) {
+    public static boolean isPropertyCompileTimeConstant(@NotNull PropertyDescriptor descriptor) {
         if (descriptor.isVar()) {
             return false;
         }

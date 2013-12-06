@@ -2,12 +2,18 @@ package test
 
 public final class Outer {
     /*primary*/ public constructor Outer()
-    public final val Obj: test.Outer.Obj
     
     public object Obj {
         /*primary*/ private constructor Obj()
         public final val v: jet.String
             public final fun <get-v>(): jet.String
         public final fun f(): jet.String
+        
+        public class object <class-object-for-Obj> : test.Outer.Obj {
+            /*primary*/ private constructor <class-object-for-Obj>()
+            public final override /*1*/ /*fake_override*/ val v: jet.String
+                public final override /*1*/ /*fake_override*/ fun <get-v>(): jet.String
+            public final override /*1*/ /*fake_override*/ fun f(): jet.String
+        }
     }
 }

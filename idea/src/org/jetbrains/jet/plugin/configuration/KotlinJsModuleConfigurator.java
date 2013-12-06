@@ -81,7 +81,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @NotNull
     @Override
     public File getExistedJarFile() {
-        return assertFileExists(getKotlinPaths().getJsLibJarPath());
+        return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJarPath());
     }
 
     @Override
@@ -125,7 +125,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
 
     @NotNull
     public File getJsFile() {
-        return assertFileExists(getKotlinPaths().getJsLibJsPath());
+        return assertFileExists(PathUtil.getKotlinPathsForIdeaPlugin().getJsLibJsPath());
     }
 
     private static boolean needToChooseJsFilePath(@NotNull Project project) {

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetModifierList;
@@ -136,16 +137,17 @@ public abstract class AnnotationCodegen {
         return KotlinBuiltIns.getInstance().getVolatileAnnotationClass().equals(classDescriptor);
     }
 
-    public void generateAnnotationDefaultValue(CompileTimeConstant value) {
+    public void generateAnnotationDefaultValue(@NotNull CompileTimeConstant value, @NotNull JetType expectedType) {
         AnnotationVisitor visitor = visitAnnotation(null, false);  // Parameters are unimportant
-        genCompileTimeValue(null, value, visitor);
+        genCompileTimeValue(null, value, expectedType, visitor);
         visitor.visitEnd();
     }
 
     @Nullable
-    private String genAnnotation(AnnotationDescriptor annotationDescriptor) {
+    private String genAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
         ClassifierDescriptor classifierDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        RetentionPolicy rp = getRetentionPolicy(classifierDescriptor, typeMapper);
+        assert classifierDescriptor != null : "Annotation descriptor has no class: " + annotationDescriptor;
+        RetentionPolicy rp = getRetentionPolicy(classifierDescriptor);
         if (rp == RetentionPolicy.SOURCE) {
             return null;
         }
@@ -163,13 +165,14 @@ public abstract class AnnotationCodegen {
         for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : annotationDescriptor.getAllValueArguments().entrySet()) {
             ValueParameterDescriptor descriptor = entry.getKey();
             String name = descriptor.getName().asString();
-            genCompileTimeValue(name, entry.getValue(), annotationVisitor);
+            genCompileTimeValue(name, entry.getValue(), descriptor.getType(), annotationVisitor);
         }
     }
 
     private void genCompileTimeValue(
             @Nullable final String name,
             @NotNull CompileTimeConstant<?> value,
+            @NotNull final JetType expectedType,
             @NotNull final AnnotationVisitor annotationVisitor
     ) {
         AnnotationArgumentVisitor argumentVisitor = new AnnotationArgumentVisitor<Void, Void>() {
@@ -229,7 +232,7 @@ public abstract class AnnotationCodegen {
             public Void visitArrayValue(ArrayValue value, Void data) {
                 AnnotationVisitor visitor = annotationVisitor.visitArray(name);
                 for (CompileTimeConstant<?> argument : value.getValue()) {
-                    genCompileTimeValue(null, argument, visitor);
+                    genCompileTimeValue(null, argument, value.getType(KotlinBuiltIns.getInstance()), visitor);
                 }
                 visitor.visitEnd();
                 return null;
@@ -247,6 +250,16 @@ public abstract class AnnotationCodegen {
             @Override
             public Void visitJavaClassValue(JavaClassValue value, Void data) {
                 annotationVisitor.visit(name, typeMapper.mapType(value.getValue()));
+                return null;
+            }
+
+            @Override
+            public Void visitNumberTypeValue(IntegerValueTypeConstant value, Void data) {
+                IntegerValueTypeConstructor typeConstructor = value.getValue();
+                Object numberType = EvaluatePackage.getValueForNumberType(typeConstructor, expectedType);
+                if (numberType != null) {
+                    annotationVisitor.visit(name, numberType);
+                }
                 return null;
             }
 
@@ -273,17 +286,21 @@ public abstract class AnnotationCodegen {
         value.accept(argumentVisitor, null);
     }
 
-    private static RetentionPolicy getRetentionPolicy(ClassifierDescriptor descriptor, JetTypeMapper typeMapper) {
+    @NotNull
+    private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
         for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
             String internalName = typeMapper.mapType(annotationDescriptor.getType()).getInternalName();
-            if("java/lang/annotation/Retention".equals(internalName)) {
-                CompileTimeConstant<?> compileTimeConstant = annotationDescriptor.getAllValueArguments().values().iterator().next();
-                assert compileTimeConstant instanceof EnumValue : "Retention argument should be Enum value " + compileTimeConstant;
-                PropertyDescriptor propertyDescriptor = ((EnumValue) compileTimeConstant).getValue();
-                assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(propertyDescriptor.getType()).getInternalName()) :
-                                                                        "Retention argument should be of type RetentionPolicy";
-                String propertyDescriptorName = propertyDescriptor.getName().asString();
-                return RetentionPolicy.valueOf(propertyDescriptorName);
+            if ("java/lang/annotation/Retention".equals(internalName)) {
+                Collection<CompileTimeConstant<?>> valueArguments = annotationDescriptor.getAllValueArguments().values();
+                assert valueArguments.size() == 1 : "Retention should have an argument: " + annotationDescriptor;
+                CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
+                assert compileTimeConstant instanceof EnumValue : "Retention argument should be enum value: " + compileTimeConstant;
+                ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
+                JetType classObjectType = enumEntry.getClassObjectType();
+                assert classObjectType != null : "Enum entry should have a class object: " + enumEntry;
+                assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName()) :
+                        "Retention argument should be of type RetentionPolicy: " + enumEntry;
+                return RetentionPolicy.valueOf(enumEntry.getName().asString());
             }
         }
 

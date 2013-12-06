@@ -17,88 +17,88 @@ public val defaultCharset: Charset = Charset.forName("UTF-8")!!
 
 
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : Any?) {
+public fun print(message : Any?) {
     System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : Int) {
+public fun print(message : Int) {
     System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : Long) {
+public fun print(message : Long) {
     System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : Byte) {
+public fun print(message : Byte) {
     System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : Short) {
+public fun print(message : Short) {
     System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : Char) {
+public fun print(message : Char) {
     System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : Boolean) {
+public fun print(message : Boolean) {
     System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : Float) {
+public fun print(message : Float) {
     System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : Double) {
+public fun print(message : Double) {
     System.out.print(message)
 }
 /** Prints the given message to [[System.out]] */
-public inline fun print(message : CharArray) {
+public fun print(message : CharArray) {
     System.out.print(message)
 }
 
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : Any?) {
+public fun println(message : Any?) {
     System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : Int) {
+public fun println(message : Int) {
     System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : Long) {
+public fun println(message : Long) {
     System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : Byte) {
+public fun println(message : Byte) {
     System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : Short) {
+public fun println(message : Short) {
     System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : Char) {
+public fun println(message : Char) {
     System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : Boolean) {
+public fun println(message : Boolean) {
     System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : Float) {
+public fun println(message : Float) {
     System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : Double) {
+public fun println(message : Double) {
     System.out.println(message)
 }
 /** Prints the given message and newline to [[System.out]] */
-public inline fun println(message : CharArray) {
+public fun println(message : CharArray) {
     System.out.println(message)
 }
 /** Prints a newline t[[System.out]] */
-public inline fun println() {
+public fun println() {
     System.out.println()
 }
 
@@ -141,7 +141,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
 }))
 
 /** Reads a line of input from [[System.in]] */
-public inline fun readLine() : String? = stdin.readLine()
+public fun readLine() : String? = stdin.readLine()
 
 /** Uses the given resource then closes it down correctly whether an exception is thrown or not */
 public inline fun <T: Closeable, R> T.use(block: (T)-> R) : R {
@@ -178,33 +178,33 @@ object: ByteIterator() {
 }
 
 /** Creates a buffered input stream */
-public inline fun InputStream.buffered(bufferSize: Int = defaultBufferSize) : InputStream
+public fun InputStream.buffered(bufferSize: Int = defaultBufferSize) : InputStream
 = if (this is BufferedInputStream)
     this
 else
     BufferedInputStream(this, bufferSize)
 
-public inline fun InputStream.reader(encoding: Charset = defaultCharset) : InputStreamReader = InputStreamReader(this, encoding)
+public fun InputStream.reader(encoding: Charset = defaultCharset) : InputStreamReader = InputStreamReader(this, encoding)
 
-public inline fun InputStream.reader(encoding: String) : InputStreamReader = InputStreamReader(this, encoding)
+public fun InputStream.reader(encoding: String) : InputStreamReader = InputStreamReader(this, encoding)
 
-public inline fun InputStream.reader(encoding: CharsetDecoder) : InputStreamReader = InputStreamReader(this, encoding)
+public fun InputStream.reader(encoding: CharsetDecoder) : InputStreamReader = InputStreamReader(this, encoding)
 
 
-public inline fun OutputStream.buffered(bufferSize: Int = defaultBufferSize) : BufferedOutputStream
+public fun OutputStream.buffered(bufferSize: Int = defaultBufferSize) : BufferedOutputStream
 = if (this is BufferedOutputStream) this else BufferedOutputStream(this, bufferSize)
 
-public inline fun OutputStream.writer(encoding: Charset = defaultCharset) : OutputStreamWriter = OutputStreamWriter(this, encoding)
+public fun OutputStream.writer(encoding: Charset = defaultCharset) : OutputStreamWriter = OutputStreamWriter(this, encoding)
 
-public inline fun OutputStream.writer(encoding: String) : OutputStreamWriter = OutputStreamWriter(this, encoding)
+public fun OutputStream.writer(encoding: String) : OutputStreamWriter = OutputStreamWriter(this, encoding)
 
-public inline fun OutputStream.writer(encoding: CharsetEncoder) : OutputStreamWriter = OutputStreamWriter(this, encoding)
+public fun OutputStream.writer(encoding: CharsetEncoder) : OutputStreamWriter = OutputStreamWriter(this, encoding)
 
 
-public inline fun Reader.buffered(bufferSize: Int = defaultBufferSize): BufferedReader
+public fun Reader.buffered(bufferSize: Int = defaultBufferSize): BufferedReader
 = if(this is BufferedReader) this else BufferedReader(this, bufferSize)
 
-public inline fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
+public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
 = if(this is BufferedWriter) this else BufferedWriter(this, bufferSize)
 
 
@@ -231,7 +231,7 @@ public inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T = this.
  * <br>
  * We suggest you try the method useLines() instead which closes the stream when the processing is complete.
  */
-public inline fun BufferedReader.lineIterator() : Iterator<String> = LineIterator(this)
+public fun BufferedReader.lineIterator() : Iterator<String> = LineIterator(this)
 
 class LineIterator(val reader: BufferedReader) : Iterator<String> {
     private var nextValue: String? = null

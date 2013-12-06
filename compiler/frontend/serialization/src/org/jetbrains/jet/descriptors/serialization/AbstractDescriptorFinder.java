@@ -26,7 +26,6 @@ import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.StorageManager;
 
 public abstract class AbstractDescriptorFinder implements DescriptorFinder {
-
     private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> findClass;
     private final AnnotationDeserializer annotationDeserializer;
 
@@ -46,7 +45,8 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
 
                 AbstractDescriptorFinder _this = AbstractDescriptorFinder.this;
                 ClassDescriptor classDescriptor =
-                        new DeserializedClassDescriptor(storageManager, _this.annotationDeserializer, _this, classData);
+                        new DeserializedClassDescriptor(storageManager, _this.annotationDeserializer, _this, classData.getNameResolver(),
+                                                        classData.getClassProto());
                 classDescriptorCreated(classDescriptor);
                 return classDescriptor;
             }

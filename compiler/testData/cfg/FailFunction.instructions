@@ -4,18 +4,17 @@ fun fail() : Nothing {
 }
 ---------------------
 L0:
-    <START>                                       NEXT:[r(java)]                                       PREV:[]
-    r(java)                                       NEXT:[r(lang)]                                       PREV:[<START>]
-    r(lang)                                       NEXT:[r(java.lang)]                                  PREV:[r(java)]
-    r(java.lang)                                  NEXT:[r(RuntimeException)]                           PREV:[r(lang)]
-    r(RuntimeException)                           NEXT:[r(RuntimeException())]                         PREV:[r(java.lang)]
-    r(RuntimeException())                         NEXT:[r(java.lang.RuntimeException())]               PREV:[r(RuntimeException)]
-    r(java.lang.RuntimeException())               NEXT:[throw (throw java.lang.RuntimeException())]    PREV:[r(RuntimeException())]
-    throw (throw java.lang.RuntimeException())    NEXT:[<ERROR>]                                       PREV:[r(java.lang.RuntimeException())]
+    <START>
+    mark({ throw java.lang.RuntimeException() })
+    mark(throw java.lang.RuntimeException())
+    mark(java.lang.RuntimeException())
+    mark(RuntimeException())
+    call(RuntimeException, <init>)
+    throw (throw java.lang.RuntimeException())      NEXT:[<ERROR>]
 L1:
-    <END>                                         NEXT:[<SINK>]                                        PREV:[]
+    <END>                                           NEXT:[<SINK>]                                          PREV:[]
 error:
-    <ERROR>                                       NEXT:[<SINK>]                                        PREV:[throw (throw java.lang.RuntimeException())]
+    <ERROR>                                         PREV:[throw (throw java.lang.RuntimeException())]
 sink:
-    <SINK>                                        NEXT:[]                                              PREV:[<ERROR>, <END>]
+    <SINK>                                          PREV:[<ERROR>, <END>]
 =====================

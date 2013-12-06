@@ -5,7 +5,7 @@ fun <T> id(t: T): T = t
 fun <T> either(t1: T, <!UNUSED_PARAMETER!>t2<!>: T): T = t1
 
 fun test() {
-    val <!UNUSED_VARIABLE!>a<!>: Float = id(2.0)
+    val <!UNUSED_VARIABLE!>a<!>: Float = id(2.0.toFloat())
 
     val b = id(2.0)
     b: Double

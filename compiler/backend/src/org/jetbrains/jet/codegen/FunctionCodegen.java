@@ -28,6 +28,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.asm4.util.TraceMethodVisitor;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
@@ -43,6 +44,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -281,6 +284,9 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                 frameMap.enter(parameter, typeMapper.mapType(parameter));
             }
 
+            Label methodEntry = new Label();
+            mv.visitLabel(methodEntry);
+            context.setMethodStartLabel(methodEntry);
             labelsForSharedVars.putAll(createSharedVarsForParameters(mv, functionDescriptor, frameMap));
 
             if (!JetTypeMapper.isAccessor(functionDescriptor)) {
@@ -437,15 +443,30 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             throw e;
         }
         catch (Throwable t) {
+            String bytecode = renderByteCodeIfAvailable(mv);
             throw new CompilationException(
                     "wrong code generated" +
                     (description != null ? " for " + description : "") +
                     t.getClass().getName() +
                     " " +
-                    t.getMessage(),
+                    t.getMessage() +
+                    (bytecode != null ? "\nbytecode:\n" + bytecode : ""),
                     t, method);
         }
         mv.visitEnd();
+    }
+
+    private static String renderByteCodeIfAvailable(MethodVisitor mv) {
+        String bytecode = null;
+        if (mv instanceof TraceMethodVisitor) {
+            TraceMethodVisitor traceMethodVisitor = (TraceMethodVisitor) mv;
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            traceMethodVisitor.p.print(pw);
+            pw.close();
+            bytecode = sw.toString();
+        }
+        return bytecode;
     }
 
     static void generateBridgeIfNeeded(

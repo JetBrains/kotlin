@@ -32,9 +32,13 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.Function;
+import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
@@ -96,6 +100,7 @@ public class JetTestUtils {
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
 
 
+        @NotNull
         @Override
         public BindingContext getBindingContext() {
             return new BindingContext() {
@@ -156,6 +161,7 @@ public class JetTestUtils {
     };
 
     public static BindingTrace DUMMY_EXCEPTION_ON_ERROR_TRACE = new BindingTrace() {
+        @NotNull
         @Override
         public BindingContext getBindingContext() {
             return new BindingContext() {
@@ -548,14 +554,8 @@ public class JetTestUtils {
         String rootPath = testClassMetadata.value();
         File rootFile = new File(rootPath);
 
+        Set<String> filePaths = collectPathsMetadata(testCaseClass);
 
-        Set<String> filePaths = Sets.newHashSet();
-        for (Method method : testCaseClass.getDeclaredMethods()) {
-            TestMetadata testMetadata = method.getAnnotation(TestMetadata.class);
-            if (testMetadata != null) {
-                filePaths.add(testMetadata.value());
-            }
-        }
         File[] files = testDataDir.listFiles();
         if (files != null) {
             for (File file : files) {
@@ -564,18 +564,68 @@ public class JetTestUtils {
                         assertTestClassPresentByMetadata(testCaseClass, generatorClassFqName, file);
                     }
                 }
-                else {
-                    if (filenamePattern.matcher(file.getName()).matches()) {
-                        String relativePath = FileUtil.getRelativePath(rootFile, file);
-                        if (!filePaths.contains(relativePath)) {
-                            Assert.fail("Test data file missing from the generated test class: " +
-                                        file +
-                                        pleaseReRunGenerator(generatorClassFqName));
-                        }
-                    }
+                else if (filenamePattern.matcher(file.getName()).matches()) {
+                    assertFilePathPresent(file, rootFile, filePaths, generatorClassFqName);
                 }
             }
         }
+    }
+
+    public static void assertAllTestsPresentInSingleGeneratedClass(
+            @NotNull Class<?> testCaseClass,
+            @NotNull final String generatorClassFqName,
+            @NotNull File testDataDir,
+            @NotNull final Pattern filenamePattern) {
+        TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
+        Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
+        String rootPath = testClassMetadata.value();
+        final File rootFile = new File(rootPath);
+
+        final Set<String> filePaths = collectPathsMetadata(testCaseClass);
+
+        FileUtil.processFilesRecursively(testDataDir, new Processor<File>() {
+            @Override
+            public boolean process(File file) {
+                if (file.isFile() && filenamePattern.matcher(file.getName()).matches()) {
+                    assertFilePathPresent(file, rootFile, filePaths, generatorClassFqName);
+                }
+
+                return true;
+            }
+        });
+    }
+
+    private static void assertFilePathPresent(File file, File rootFile, Set<String> filePaths, String generatorClassFqName) {
+        String path = FileUtil.getRelativePath(rootFile, file);
+        if (path != null) {
+            String relativePath = FileUtil.nameToCompare(path);
+            if (!filePaths.contains(relativePath)) {
+                Assert.fail("Test data file missing from the generated test class: " +
+                            file +
+                            pleaseReRunGenerator(generatorClassFqName));
+            }
+        }
+    }
+
+    private static Set<String> collectPathsMetadata(Class<?> testCaseClass) {
+        return ContainerUtil.newHashSet(
+                ContainerUtil.map(collectMethodsMetadata(testCaseClass), new Function<String, String>() {
+                    @Override
+                    public String fun(String pathData) {
+                        return FileUtil.nameToCompare(pathData);
+                    }
+                }));
+    }
+
+    private static Set<String> collectMethodsMetadata(Class<?> testCaseClass) {
+        Set<String> filePaths = Sets.newHashSet();
+        for (Method method : testCaseClass.getDeclaredMethods()) {
+            TestMetadata testMetadata = method.getAnnotation(TestMetadata.class);
+            if (testMetadata != null) {
+                filePaths.add(testMetadata.value());
+            }
+        }
+        return filePaths;
     }
 
     private static boolean containsTestData(File dir, Pattern filenamePattern) {
@@ -665,5 +715,10 @@ public class JetTestUtils {
         NamespaceDescriptorImpl test = new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), testPackageName);
         test.initialize(new WritableScopeImpl(JetScope.EMPTY, test, RedeclarationHandler.DO_NOTHING, "members of test namespace"));
         return test;
+    }
+
+    @NotNull
+    public static File replaceExtension(@NotNull File file, @Nullable String newExtension) {
+        return new File(file.getParentFile(), FileUtil.getNameWithoutExtension(file) + (newExtension == null ? "" : "." + newExtension));
     }
 }

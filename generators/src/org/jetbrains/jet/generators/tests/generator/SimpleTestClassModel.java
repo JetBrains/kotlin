@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 public class SimpleTestClassModel implements TestClassModel {
     private static final Comparator<TestEntityModel> BY_NAME = new Comparator<TestEntityModel>() {
         @Override
-        public int compare(TestEntityModel o1, TestEntityModel o2) {
+        public int compare(@NotNull TestEntityModel o1, @NotNull TestEntityModel o2) {
             return o1.getName().compareTo(o2.getName());
         }
     };
@@ -59,13 +59,14 @@ public class SimpleTestClassModel implements TestClassModel {
         if (!rootFile.isDirectory() || !recursive) {
             return Collections.emptyList();
         }
+
         if (innerTestClasses == null) {
             List<TestClassModel> children = Lists.newArrayList();
             File[] files = rootFile.listFiles();
             if (files != null) {
                 for (File file : files) {
                     if (file.isDirectory()) {
-                        children.add(new SimpleTestClassModel(file, recursive, filenamePattern, doTestMethodName));
+                        children.add(new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName));
                     }
                 }
             }

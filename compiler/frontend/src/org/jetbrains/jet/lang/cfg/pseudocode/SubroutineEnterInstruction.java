@@ -32,8 +32,13 @@ public class SubroutineEnterInstruction extends InstructionWithNext {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitSubroutineEnter(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitSubroutineEnter(this);
     }
 
     @Override
@@ -41,6 +46,7 @@ public class SubroutineEnterInstruction extends InstructionWithNext {
         return "<START>";
     }
 
+    @NotNull
     @Override
     protected Instruction createCopy() {
         return new SubroutineEnterInstruction(subroutine);

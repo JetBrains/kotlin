@@ -50,6 +50,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("objectLiteral.kt")
+            public void testObjectLiteral() throws Exception {
+                doTest("compiler/testData/writeFlags/class/accessFlags/objectLiteral.kt");
+            }
+            
             @TestMetadata("publicFinalClass.kt")
             public void testPublicFinalClass() throws Exception {
                 doTest("compiler/testData/writeFlags/class/accessFlags/publicFinalClass.kt");

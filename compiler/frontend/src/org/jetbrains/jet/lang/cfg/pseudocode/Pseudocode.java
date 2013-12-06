@@ -27,7 +27,7 @@ public interface Pseudocode {
     JetElement getCorrespondingElement();
 
     @NotNull
-    Set<LocalDeclarationInstruction> getLocalDeclarations();
+    Set<LocalFunctionDeclarationInstruction> getLocalDeclarations();
 
     @NotNull
     List<Instruction> getInstructions();

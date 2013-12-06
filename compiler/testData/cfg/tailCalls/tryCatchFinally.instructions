@@ -1,0 +1,48 @@
+== test ==
+fun test() : Unit {
+    try {
+        test()
+    } catch (any : Exception) {
+        test()
+    } finally {
+        test()
+    }
+}
+---------------------
+L0:
+    <START>
+    mark({ try { test() } catch (any : Exception) { test() } finally { test() } })
+    mark(try { test() } catch (any : Exception) { test() } finally { test() })
+    jmp?(L2 [onException])                                                            NEXT:[v(any : Exception), jmp?(L3 [onExceptionToFinallyBlock])]
+    jmp?(L3 [onExceptionToFinallyBlock])                                              NEXT:[mark({ test() }), mark({ test() })]
+    mark({ test() })
+    mark(test())
+    call(test, test)
+    jmp(L4 [afterCatches])                                                            NEXT:[jmp(L5 [skipFinallyToErrorBlock])]
+L2 [onException]:
+    v(any : Exception)                                                                PREV:[jmp?(L2 [onException])]
+    w(any)
+    mark({ test() })
+    mark(test())
+    call(test, test)
+    jmp(L4 [afterCatches])
+L4 [afterCatches]:
+    jmp(L5 [skipFinallyToErrorBlock])                                                 NEXT:[mark({ test() })]                                                                  PREV:[jmp(L4 [afterCatches]), jmp(L4 [afterCatches])]
+L3 [onExceptionToFinallyBlock]:
+L6 [start finally]:
+    mark({ test() })                                                                  PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
+    mark(test())
+    call(test, test)
+L7 [finish finally]:
+    jmp(error)                                                                        NEXT:[<ERROR>]
+L5 [skipFinallyToErrorBlock]:
+    mark({ test() })                                                                  PREV:[jmp(L5 [skipFinallyToErrorBlock])]
+    mark(test())
+    call(test, test)
+L1:
+    <END>                                                                             NEXT:[<SINK>]
+error:
+    <ERROR>                                                                           PREV:[jmp(error)]
+sink:
+    <SINK>                                                                            PREV:[<ERROR>, <END>]
+=====================

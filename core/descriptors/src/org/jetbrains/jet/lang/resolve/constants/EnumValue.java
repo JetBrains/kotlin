@@ -17,29 +17,30 @@
 package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public  class EnumValue implements CompileTimeConstant<PropertyDescriptor> {
-    
-    private final PropertyDescriptor value;
+public class EnumValue implements CompileTimeConstant<ClassDescriptor> {
+    private final ClassDescriptor value;
 
-    public EnumValue(@NotNull PropertyDescriptor value) {
+    public EnumValue(@NotNull ClassDescriptor value) {
         this.value = value;
     }
 
     @Override
     @NotNull
-    public PropertyDescriptor getValue() {
+    public ClassDescriptor getValue() {
         return value;
     }
 
     @NotNull
     @Override
     public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return value.getType();
+        JetType type = value.getClassObjectType();
+        assert type != null : "Enum entry should have a class object: " + value;
+        return type;
     }
 
     @Override
@@ -49,7 +50,7 @@ public  class EnumValue implements CompileTimeConstant<PropertyDescriptor> {
 
     @Override
     public String toString() {
-        return value.getType() + "." + value.getName();
+        return getType(KotlinBuiltIns.getInstance()) + "." + value.getName();
     }
 
     @Override
@@ -57,9 +58,7 @@ public  class EnumValue implements CompileTimeConstant<PropertyDescriptor> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EnumValue enumValue = (EnumValue) o;
-
-        return  value.equals(enumValue.value);
+        return value.equals(((EnumValue) o).value);
     }
 
     @Override

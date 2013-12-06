@@ -21,7 +21,7 @@ public fun <T: Throwable> failsWith(exceptionClass: Class<T>, block: ()-> Any): 
  * to implement in your unit test output
  */
 public inline fun todo(block: ()-> Any) {
-    println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1) + " for " + block)
+    println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1))
 }
 
 private var _asserter: Asserter? = null

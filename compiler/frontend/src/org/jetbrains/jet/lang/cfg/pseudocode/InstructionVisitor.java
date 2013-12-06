@@ -21,7 +21,7 @@ public class InstructionVisitor {
         visitInstructionWithNext(instruction);
     }
 
-    public void visitLocalDeclarationInstruction(LocalDeclarationInstruction instruction) {
+    public void visitLocalFunctionDeclarationInstruction(LocalFunctionDeclarationInstruction instruction) {
         visitInstructionWithNext(instruction);
     }
 
@@ -80,11 +80,24 @@ public class InstructionVisitor {
         visitInstructionWithNext(instruction);
     }
 
-    public void visitWriteValue(WriteValueInstruction writeValueInstruction) {
-        visitInstructionWithNext(writeValueInstruction);
-    }
-
-    public void visitReadUnitValue(ReadUnitValueInstruction instruction) {
+    public void visitWriteValue(WriteValueInstruction instruction) {
         visitInstructionWithNext(instruction);
     }
+
+    public void visitLoadUnitValue(LoadUnitValueInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
+    public void visitCallInstruction(CallInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
+    public void visitCompilationErrorInstruction(CompilationErrorInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
+    public void visitMarkInstruction(MarkInstruction instruction) {
+        visitInstructionWithNext(instruction);
+    }
+
 }

@@ -71,7 +71,7 @@ class ArraysTest {
     test fun floatArray() {
         val arr = FloatArray(2)
 
-        val expected: Float = 0.0
+        val expected: Float = 0.0.toFloat()
         assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
@@ -101,6 +101,62 @@ class ArraysTest {
         assertEquals(false, arr[1])
     }
 
+    test fun min() {
+        expect(null, { array<Int>().min() })
+        expect(1, { array(1).min() })
+        expect(2, { array(2, 3).min() })
+        expect(2000000000000, { array(3000000000000, 2000000000000).min() })
+        expect('a', { array('a', 'b').min() })
+        expect("a", { array("a", "b").min() })
+    }
+
+    test fun max() {
+        expect(null, { array<Int>().max() })
+        expect(1, { array(1).max() })
+        expect(3, { array(2, 3).max() })
+        expect(3000000000000, { array(3000000000000, 2000000000000).max() })
+        expect('b', { array('a', 'b').max() })
+        expect("b", { array("a", "b").max() })
+    }
+
+    test fun minBy() {
+        expect(null, { array<Int>().minBy { it } })
+        expect(1, { array(1).minBy { it } })
+        expect(3, { array(2, 3).minBy { -it } })
+        expect('a', { array('a', 'b').minBy { "x$it" } })
+        expect("b", { array("b", "abc").minBy { it.length } })
+    }
+
+    test fun maxBy() {
+        expect(null, { array<Int>().maxBy { it } })
+        expect(1, { array(1).maxBy { it } })
+        expect(2, { array(2, 3).maxBy { -it } })
+        expect('b', { array('a', 'b').maxBy { "x$it" } })
+        expect("abc", { array("b", "abc").maxBy { it.length } })
+    }
+
+    test fun minByEvaluateOnce() {
+        var c = 0
+        expect(1, { array(5, 4, 3, 2, 1).minBy { c++; it * it } })
+        assertEquals(5, c)
+    }
+
+    test fun maxByEvaluateOnce() {
+        var c = 0
+        expect(5, { array(5, 4, 3, 2, 1).maxBy { c++; it * it } })
+        assertEquals(5, c)
+    }
+
+    test fun sum() {
+        expect(0) { array<Int>().sum() }
+        expect(14) { array(2, 3, 9).sum() }
+        expect(3.0) { array(1.0, 2.0).sum() }
+        expect(200) { array<Byte>(100, 100).sum() }
+        expect(50000) { array<Short>(20000, 30000).sum() }
+        //TODO: uncomment when toLong() will be supported
+        //expect(3000000000000) { array<Long>(1000000000000, 2000000000000).sum() }
+        expect(3.0.toFloat()) { array<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
+    }
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers

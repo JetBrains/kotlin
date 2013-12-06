@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
@@ -60,10 +59,7 @@ public class OverloadResolver {
         MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = pair.first;
         MultiMap<Key, ConstructorDescriptor> inNamespaces = pair.second;
 
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
-        }
-        for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
+        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
         }
         checkOverloadsInANamespace(inNamespaces);
@@ -94,8 +90,11 @@ public class OverloadResolver {
         MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = MultiMap.create();
         MultiMap<Key, ConstructorDescriptor> inNamespaces = MultiMap.create();
 
-        for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            MutableClassDescriptor klass = entry.getValue();
+        for (MutableClassDescriptor klass : context.getClasses().values()) {
+            if (klass.getKind().isSingleton()) {
+                // Constructors of singletons aren't callable from the code, so they shouldn't participate in overload name checking
+                continue;
+            }
             DeclarationDescriptor containingDeclaration = klass.getContainingDeclaration();
             if (containingDeclaration instanceof NamespaceDescriptor) {
                 NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;

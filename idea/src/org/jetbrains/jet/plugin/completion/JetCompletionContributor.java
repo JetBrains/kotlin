@@ -71,9 +71,6 @@ public class JetCompletionContributor extends CompletionContributor {
                 else {
                     session.completeSmart();
                 }
-
-                // Prevent from adding reference variants from standard reference contributor
-                result.stopHere();
             }
             catch (ProcessCanceledException e) {
                 throw CompletionProgressIndicatorUtil.rethrowWithCancelIndicator(e);

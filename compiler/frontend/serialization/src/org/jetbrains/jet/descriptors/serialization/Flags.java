@@ -28,8 +28,7 @@ public class Flags {
 
     public static final FlagField<ProtoBuf.Callable.MemberKind> MEMBER_KIND = FlagField.after(CALLABLE_KIND,
                                                                                               ProtoBuf.Callable.MemberKind.values());
-    public static final FlagField<Boolean> INLINE = FlagField.booleanAfter(MEMBER_KIND);
-    public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(INLINE);
+    public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(MEMBER_KIND);
     public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
 
     // Parameters
@@ -93,7 +92,6 @@ public class Flags {
             @NotNull Modality modality,
             @NotNull CallableMemberDescriptor.Kind memberKind,
             @NotNull ProtoBuf.Callable.CallableKind callableKind,
-            boolean inline,
             boolean hasGetter,
             boolean hasSetter
     ) {
@@ -102,7 +100,6 @@ public class Flags {
                | VISIBILITY.toFlags(visibility(visibility))
                | MEMBER_KIND.toFlags(memberKind(memberKind))
                | CALLABLE_KIND.toFlags(callableKind)
-               | INLINE.toFlags(inline)
                | HAS_GETTER.toFlags(hasGetter)
                | HAS_SETTER.toFlags(hasSetter)
                ;

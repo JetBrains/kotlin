@@ -238,14 +238,20 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         }
         
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : valueArguments.entrySet()) {
-            if (arguments.set(entry.getKey().getIndex(), entry.getValue()) != null) {
-                throw new IllegalStateException();
+            ValueParameterDescriptor parameterDescriptor = entry.getKey();
+            ResolvedValueArgument value = entry.getValue();
+            ResolvedValueArgument oldValue = arguments.set(parameterDescriptor.getIndex(), value);
+            if (oldValue != null) {
+                throw new IllegalStateException("Argument set twice for " + parameterDescriptor + "\n" +
+                                                "old value: " + oldValue + "\n" +
+                                                "new value: " + value);
             }
         }
 
-        for (Object o : arguments) {
+        for (int i = 0; i < arguments.size(); i++) {
+            Object o = arguments.get(i);
             if (o == null) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("No argument for " + getCandidateDescriptor().getValueParameters().get(i));
             }
         }
         

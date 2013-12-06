@@ -35,7 +35,7 @@ trait Outer {
         }
     }
 
-    object Object {
+    object NestedObject {
         fun nestedFunc(): Unit {}
     }
 }

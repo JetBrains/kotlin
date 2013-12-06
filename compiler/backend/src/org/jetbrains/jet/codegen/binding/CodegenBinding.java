@@ -150,8 +150,8 @@ public class CodegenBinding {
         bindingTrace.record(CLASS_FOR_SCRIPT, scriptDescriptor, classDescriptor);
     }
 
-    public static boolean canHaveOuter(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
-        if (isSingleton(bindingContext, classDescriptor)) {
+    public static boolean canHaveOuter(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
+        if (classDescriptor.getKind() != ClassKind.CLASS) {
             return false;
         }
 
@@ -160,28 +160,7 @@ public class CodegenBinding {
             return false;
         }
 
-        ClassKind kind = classDescriptor.getKind();
-        if (kind == ClassKind.CLASS) {
-            return classDescriptor.isInner() || !(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor);
-        }
-        else if (kind == ClassKind.OBJECT) {
-            return !isSingleton(bindingContext, enclosing);
-        }
-        else {
-            return false;
-        }
-    }
-
-    public static boolean isSingleton(BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
-        if (isObjectDeclaration(bindingContext, classDescriptor)) {
-            return true;
-        }
-
-        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            return true;
-        }
-
-        return false;
+        return classDescriptor.isInner() || !(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor);
     }
 
     static void recordClosure(

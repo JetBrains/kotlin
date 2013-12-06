@@ -139,6 +139,7 @@ public interface Errors {
 
 
     DiagnosticFactory0<JetTypeReference> FINAL_SUPERTYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> SINGLETON_IN_SUPERTYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetNullableType> NULLABLE_SUPERTYPE = DiagnosticFactory0.create(ERROR, NULLABLE_TYPE);
 
     // Trait-specific
@@ -279,6 +280,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<JetNamedFunction> NO_TAIL_CALLS_FOUND = DiagnosticFactory0.create(WARNING, NAMED_ELEMENT);
+
     // Named parameters
 
     DiagnosticFactory0<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
@@ -332,6 +335,9 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetType> CALLEE_NOT_A_FUNCTION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetReferenceExpression, JetExpression, JetType> FUNCTION_EXPECTED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetExpression, JetExpression, Boolean> FUNCTION_CALL_EXPECTED = DiagnosticFactory2.create(ERROR, CALL_EXPRESSION);
+
+    DiagnosticFactory0<PsiElement> NON_TAIL_RECURSIVE_CALL = DiagnosticFactory0.create(WARNING, CALL_EXPRESSION);
+    DiagnosticFactory0<PsiElement> TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED = DiagnosticFactory0.create(WARNING, CALL_EXPRESSION);
 
     DiagnosticFactory0<PsiElement> NO_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS = DiagnosticFactory0.create(ERROR);
@@ -424,7 +430,7 @@ public interface Errors {
 
     // Control flow / Data flow
 
-    DiagnosticFactory0<JetElement> UNREACHABLE_CODE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetElement> UNREACHABLE_CODE = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<JetVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, NAME_IDENTIFIER);
 
@@ -464,6 +470,8 @@ public interface Errors {
 
     // Compile-time values
 
+    DiagnosticFactory0<JetExpression> INTEGER_OVERFLOW = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetConstantExpression> WRONG_LONG_SUFFIX = DiagnosticFactory0.create(ERROR, LONG_LITERAL_SUFFIX);
     DiagnosticFactory0<JetConstantExpression> INT_LITERAL_OUT_OF_RANGE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetConstantExpression> FLOAT_LITERAL_OUT_OF_RANGE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<JetConstantExpression, String, JetType> CONSTANT_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
@@ -560,6 +568,14 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, ClassDescriptor> INACCESSIBLE_OUTER_CLASS_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> NESTED_CLASS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
 
+    //Inline and inlinable parameters
+    DiagnosticFactory2<JetElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
+    DiagnosticFactory2<JetElement, JetNamedDeclaration, DeclarationDescriptor> NOT_YET_SUPPORTED_IN_INLINE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory1<JetElement, DeclarationDescriptor> NOTHING_TO_INLINE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory2<JetElement, JetExpression, DeclarationDescriptor> USAGE_IS_NOT_INLINABLE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> NULLABLE_INLINE_PARAMETER = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> RECURSION_IN_INLINE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory0<JetElement> DECLARATION_CANT_BE_INLINED = DiagnosticFactory0.create(ERROR);
 
     // Error sets
     ImmutableSet<? extends DiagnosticFactory> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(

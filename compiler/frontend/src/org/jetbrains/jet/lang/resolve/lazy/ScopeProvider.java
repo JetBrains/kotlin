@@ -137,20 +137,11 @@ public class ScopeProvider {
             return getFileScope((JetFile) elementOfDeclaration.getContainingFile());
         }
 
-        assert jetDeclaration != null : "Can't happen because of getParentOfType(null, ?) == null";
-
         if (parentDeclaration instanceof JetClassOrObject) {
             JetClassOrObject classOrObject = (JetClassOrObject) parentDeclaration;
             LazyClassDescriptor classDescriptor = (LazyClassDescriptor) resolveSession.getClassDescriptor(classOrObject);
             if (jetDeclaration instanceof JetClassInitializer || jetDeclaration instanceof JetProperty) {
                 return classDescriptor.getScopeForPropertyInitializerResolution();
-            }
-            if (jetDeclaration instanceof JetEnumEntry) {
-                LazyClassDescriptor descriptor = (LazyClassDescriptor) classDescriptor.getClassObjectDescriptor();
-                assert descriptor != null : "There should be class object descriptor for enum class " + parentDeclaration.getText() +
-                                            " on entry " + jetDeclaration.getText();
-
-                return descriptor.getScopeForMemberDeclarationResolution();
             }
             return classDescriptor.getScopeForMemberDeclarationResolution();
         }

@@ -19,6 +19,7 @@ package org.jetbrains.jet.descriptors.serialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
+import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -28,17 +29,14 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getEnumEntriesScope;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTopLevelOrInnerClass;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 
 public class DescriptorSerializer {
 
     private static final DescriptorRenderer RENDERER = DescriptorRenderer.STARTS_FROM_NAME;
     private static final Comparator<DeclarationDescriptor> DESCRIPTOR_COMPARATOR = new Comparator<DeclarationDescriptor>() {
         @Override
-        public int compare(
-                DeclarationDescriptor o1, DeclarationDescriptor o2
-        ) {
+        public int compare(@NotNull DeclarationDescriptor o1, @NotNull DeclarationDescriptor o2) {
             int names = o1.getName().compareTo(o2.getName());
             if (names != 0) return names;
 
@@ -101,8 +99,16 @@ public class DescriptorSerializer {
 
         ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
         if (primaryConstructor != null) {
-            builder.setPrimaryConstructor(local.callableProto(primaryConstructor));
+            if (DescriptorFactory.isDefaultPrimaryConstructor(primaryConstructor)) {
+                builder.setPrimaryConstructor(ProtoBuf.Class.PrimaryConstructor.getDefaultInstance());
+            }
+            else {
+                ProtoBuf.Class.PrimaryConstructor.Builder constructorBuilder = ProtoBuf.Class.PrimaryConstructor.newBuilder();
+                constructorBuilder.setData(local.callableProto(primaryConstructor));
+                builder.setPrimaryConstructor(constructorBuilder);
+            }
         }
+
         // TODO: other constructors
 
         for (DeclarationDescriptor descriptor : sort(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
@@ -115,30 +121,35 @@ public class DescriptorSerializer {
 
         Collection<DeclarationDescriptor> nestedClasses = classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors();
         for (DeclarationDescriptor descriptor : sort(nestedClasses)) {
-            ClassDescriptor nestedClass = (ClassDescriptor) descriptor;
-            int nameIndex = nameTable.getSimpleNameIndex(nestedClass.getName());
-            builder.addNestedClassName(nameIndex);
+            if (!isEnumEntry(descriptor)) {
+                builder.addNestedClassName(nameTable.getSimpleNameIndex(descriptor.getName()));
+            }
         }
 
-        for (ClassDescriptor descriptor : sort(classDescriptor.getUnsubstitutedInnerClassesScope().getObjectDescriptors())) {
-            int nameIndex = nameTable.getSimpleNameIndex(descriptor.getName());
-            builder.addNestedObjectName(nameIndex);
-        }
-
-        if (classDescriptor.getClassObjectDescriptor() != null) {
-            // false is default
-            builder.setClassObjectPresent(true);
+        ClassDescriptor classObject = classDescriptor.getClassObjectDescriptor();
+        if (classObject != null) {
+            builder.setClassObject(classObjectProto(classObject));
         }
 
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-            for (ClassDescriptor descriptor : getEnumEntriesScope(classDescriptor).getObjectDescriptors()) {
-                if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            // Not calling sort() here, because the order of enum entries matters
+            for (DeclarationDescriptor descriptor : nestedClasses) {
+                if (isEnumEntry(descriptor)) {
                     builder.addEnumEntry(nameTable.getSimpleNameIndex(descriptor.getName()));
                 }
             }
         }
 
         return builder;
+    }
+
+    @NotNull
+    private ProtoBuf.Class.ClassObject classObjectProto(@NotNull ClassDescriptor classObject) {
+        if (isObject(classObject.getContainingDeclaration())) {
+            return ProtoBuf.Class.ClassObject.newBuilder().setData(classProto(classObject)).build();
+        }
+
+        return ProtoBuf.Class.ClassObject.getDefaultInstance();
     }
 
     @NotNull
@@ -190,8 +201,6 @@ public class DescriptorSerializer {
                 descriptor.getModality(),
                 descriptor.getKind(),
                 callableKind(descriptor),
-                descriptor instanceof SimpleFunctionDescriptor &&
-                ((SimpleFunctionDescriptor) descriptor).isInline(),
                 hasGetter,
                 hasSetter
         ));
@@ -257,13 +266,10 @@ public class DescriptorSerializer {
         );
     }
 
-    private static ProtoBuf.Callable.CallableKind callableKind(CallableMemberDescriptor descriptor) {
-        if (descriptor instanceof VariableDescriptorForObject) {
-            return ProtoBuf.Callable.CallableKind.OBJECT_PROPERTY;
-        }
-        else if (descriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-            return propertyDescriptor.isVar() ? ProtoBuf.Callable.CallableKind.VAR : ProtoBuf.Callable.CallableKind.VAL;
+    @NotNull
+    private static ProtoBuf.Callable.CallableKind callableKind(@NotNull CallableMemberDescriptor descriptor) {
+        if (descriptor instanceof PropertyDescriptor) {
+            return ((PropertyDescriptor) descriptor).isVar() ? ProtoBuf.Callable.CallableKind.VAR : ProtoBuf.Callable.CallableKind.VAL;
         }
         if (descriptor instanceof ConstructorDescriptor) {
             return ProtoBuf.Callable.CallableKind.CONSTRUCTOR;

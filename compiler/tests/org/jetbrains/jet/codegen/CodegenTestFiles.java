@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.checkers.CheckerTestUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -99,7 +100,8 @@ public class CodegenTestFiles {
     }
 
     @NotNull
-    public static CodegenTestFiles create(@NotNull String fileName, @NotNull String content, @NotNull Project project) {
+    public static CodegenTestFiles create(@NotNull String fileName, @NotNull String contentWithDiagnosticMarkup, @NotNull Project project) {
+        String content = CheckerTestUtil.parseDiagnosedRanges(contentWithDiagnosticMarkup, new ArrayList<CheckerTestUtil.DiagnosedRange>());
         JetFile file = JetTestUtils.createFile(fileName, content, project);
 
         List<Pair<String, String>> expectedValues = Lists.newArrayList();

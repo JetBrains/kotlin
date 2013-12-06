@@ -4,13 +4,25 @@ trait A {
 }
 ---------------------
 L0:
-    <START>    NEXT:[<END>]     PREV:[]
+    <START>
 L1:
-    <END>      NEXT:[<SINK>]    PREV:[<START>]
+    <END>      NEXT:[<SINK>]
 error:
-    <ERROR>    NEXT:[<SINK>]    PREV:[]
+    <ERROR>    PREV:[]
 sink:
-    <SINK>     NEXT:[]          PREV:[<ERROR>, <END>]
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo() : Int
+---------------------
+L0:
+    <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == B ==
 class B : A {
@@ -18,14 +30,27 @@ class B : A {
 }
 ---------------------
 L0:
-    <START>                                   NEXT:[unsupported(DELEGATOR_SUPER_CLASS : A)]    PREV:[]
-    unsupported(DELEGATOR_SUPER_CLASS : A)    NEXT:[<END>]                                     PREV:[<START>]
+    <START>
+    unsupported(DELEGATOR_SUPER_CLASS : A)
 L1:
-    <END>                                     NEXT:[<SINK>]                                    PREV:[unsupported(DELEGATOR_SUPER_CLASS : A)]
+    <END>                                     NEXT:[<SINK>]
 error:
-    <ERROR>                                   NEXT:[<SINK>]                                    PREV:[]
+    <ERROR>                                   PREV:[]
 sink:
-    <SINK>                                    NEXT:[]                                          PREV:[<ERROR>, <END>]
+    <SINK>                                    PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+override fun foo() = 10
+---------------------
+L0:
+    <START>
+    r(10)
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo(b: B) : Int {
@@ -34,22 +59,24 @@ fun foo(b: B) : Int {
 }
 ---------------------
 L0:
-    <START>                          NEXT:[v(b: B)]                          PREV:[]
-    v(b: B)                          NEXT:[w(b)]                             PREV:[<START>]
-    w(b)                             NEXT:[v(val o = object : A by b {})]    PREV:[v(b: B)]
-    v(val o = object : A by b {})    NEXT:[r(b)]                             PREV:[w(b)]
-    r(b)                             NEXT:[r(object : A by b {})]            PREV:[v(val o = object : A by b {})]
-    r(object : A by b {})            NEXT:[w(o)]                             PREV:[r(b)]
-    w(o)                             NEXT:[r(o)]                             PREV:[r(object : A by b {})]
-    r(o)                             NEXT:[r(foo)]                           PREV:[w(o)]
-    r(foo)                           NEXT:[r(foo())]                         PREV:[r(o)]
-    r(foo())                         NEXT:[r(o.foo())]                       PREV:[r(foo)]
-    r(o.foo())                       NEXT:[ret(*) L1]                        PREV:[r(foo())]
-    ret(*) L1                        NEXT:[<END>]                            PREV:[r(o.foo())]
+    <START>
+    v(b: B)
+    w(b)
+    mark({ val o = object : A by b {} return o.foo() })
+    v(val o = object : A by b {})
+    mark(object : A by b {})
+    r(b)
+    r(object : A by b {})
+    w(o)
+    mark(o.foo())
+    mark(foo())
+    r(o)
+    call(foo, foo)
+    ret(*) L1
 L1:
-    <END>                            NEXT:[<SINK>]                           PREV:[ret(*) L1]
+    <END>                                                  NEXT:[<SINK>]
 error:
-    <ERROR>                          NEXT:[<SINK>]                           PREV:[]
+    <ERROR>                                                PREV:[]
 sink:
-    <SINK>                           NEXT:[]                                 PREV:[<ERROR>, <END>]
+    <SINK>                                                 PREV:[<ERROR>, <END>]
 =====================

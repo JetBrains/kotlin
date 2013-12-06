@@ -1,3 +1,8 @@
+fun doSmth() {}
+fun doSmth1() {}
+fun doSmth2() {}
+fun cond() {}
+
 fun testCopy1() : Int {
     try {
         doSmth()
@@ -46,7 +51,7 @@ fun testCopy3() {
     }
 }
 
-fun doTestCopy4() : Int {
+fun doTestCopy4(list: List<String>?) : Int {
     try {
         doSmth()
     }

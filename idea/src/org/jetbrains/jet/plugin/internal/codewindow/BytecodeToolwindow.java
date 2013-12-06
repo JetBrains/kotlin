@@ -40,6 +40,8 @@ import org.jetbrains.jet.codegen.KotlinCodegenFacade;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
+import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.internal.Location;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
@@ -64,7 +66,12 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         @Override
         protected Location prepareRequestInfo() {
             Location location = Location.fromEditor(FileEditorManager.getInstance(myProject).getSelectedTextEditor(), myProject);
-            if (location.getEditor() == null || location.getJetFile() == null) {
+            if (location.getEditor() == null) {
+                return null;
+            }
+
+            JetFile file = location.getJetFile();
+            if (file == null || !JetPluginUtil.isInSource(file, false)) {
                 return null;
             }
 
@@ -97,7 +104,8 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
                     return printStackTraceToString(exhaust.getError());
                 }
                 state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEXT, Progress.DEAF, exhaust.getBindingContext(),
-                                            Collections.singletonList(jetFile), true, true, true);
+                                            Collections.singletonList(jetFile), true, true, true,
+                                            InlineUtil.DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW /*TODO add checkbox or extract it from option*/);
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }
             catch (ProcessCanceledException e) {

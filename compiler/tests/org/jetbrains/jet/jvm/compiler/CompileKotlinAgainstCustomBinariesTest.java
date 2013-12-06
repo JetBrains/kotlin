@@ -25,13 +25,12 @@ import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptorForObject;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.NamespaceComparator;
@@ -46,6 +45,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipOutputStream;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaceWithFile;
 
 public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
@@ -140,22 +140,16 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(compileLibrary("library"));
         assertEquals(allDescriptors.size(), 2);
         for (DeclarationDescriptor descriptor : allDescriptors) {
-            assertTrue(descriptor.getName().asString().equals("Lol"));
-            assertTrue(descriptor instanceof VariableDescriptorForObject);
-            assertFalse("Object property should have valid class",
-                        ErrorUtils.isError(((VariableDescriptorForObject) descriptor).getObjectClass()));
+            assertTrue("Wrong name: " + descriptor, descriptor.getName().asString().equals("Lol"));
+            assertTrue("Should be an object: " + descriptor, isObject(descriptor));
+            assertNotNull("Object should have a class object: " + descriptor, ((ClassDescriptor) descriptor).getClassObjectDescriptor());
         }
     }
 
-    public void testBrokenJarWithNoClassForObjectProperty() throws Exception {
+    public void testBrokenJarWithNoClassForObject() throws Exception {
         File brokenJar = copyJarFileWithoutEntry(compileLibrary("library"), "test/Lol.class");
         Collection<DeclarationDescriptor> allDescriptors = analyzeAndGetAllDescriptors(brokenJar);
-        assertEquals(allDescriptors.size(), 1);
-        DeclarationDescriptor descriptor = allDescriptors.iterator().next();
-        assertTrue(descriptor.getName().asString().equals("Lol"));
-        assertTrue(descriptor instanceof VariableDescriptorForObject);
-        assertTrue("Object property should have an error class",
-                   ErrorUtils.isError(((VariableDescriptorForObject) descriptor).getObjectClass()));
+        assertEmpty("No descriptors should be found: " + allDescriptors, allDescriptors);
     }
 
     public void testDuplicateLibraries() throws Exception {

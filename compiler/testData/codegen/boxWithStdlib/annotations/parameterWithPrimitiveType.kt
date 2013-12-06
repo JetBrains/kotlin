@@ -27,4 +27,4 @@ fun box(): String {
     return "OK"
 }
 
-Ann(1, 1, 1, 1.0, 1.0, 1, 'c', true) class MyClass
+Ann(1, 1, 1, 1.0.toFloat(), 1.0, 1, 'c', true) class MyClass

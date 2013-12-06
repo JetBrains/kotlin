@@ -34,6 +34,7 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
 
     public abstract PsiT createPsiFromAst(@NotNull ASTNode node);
 
+    @NotNull
     @Override
     public String getExternalId() {
         return "jet." + toString();

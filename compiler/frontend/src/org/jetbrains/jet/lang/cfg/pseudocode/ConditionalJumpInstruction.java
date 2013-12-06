@@ -59,8 +59,13 @@ public class ConditionalJumpInstruction extends AbstractJumpInstruction {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitConditionalJump(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitConditionalJump(this);
     }
 
     @Override

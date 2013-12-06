@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.CallKey;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
@@ -48,7 +48,7 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
     }
 
     private final DelegatingBindingTrace trace = new DelegatingBindingTrace(
-            new BindingTraceContext().getBindingContext(), "Internal binding context in resolution results cache");
+            BindingContext.EMPTY, "Internal binding context in resolution results cache");
 
     @NotNull
     private static <D extends CallableDescriptor> WritableSlice<CallKey, OverloadResolutionResultsImpl<D>> getSliceByMemberType(@NotNull MemberType<D> memberType) {

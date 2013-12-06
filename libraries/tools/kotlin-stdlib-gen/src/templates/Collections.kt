@@ -8,6 +8,7 @@ fun collections(): List<GenericFunction> {
     val templates = ArrayList<GenericFunction>()
 
     templates add f("requireNoNulls()") {
+        isInline = false
         absentFor(PrimitiveArrays) // Those are inherently non-nulls
         doc = "Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements"
         typeParam("T:Any")

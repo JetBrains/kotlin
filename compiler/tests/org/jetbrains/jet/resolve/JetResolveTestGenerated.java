@@ -117,6 +117,11 @@ public class JetResolveTestGenerated extends AbstractResolveTest {
         doTest("compiler/testData/resolve/Projections.resolve");
     }
     
+    @TestMetadata("PropertyAndFunctionNameClash.resolve")
+    public void testPropertyAndFunctionNameClash() throws Exception {
+        doTest("compiler/testData/resolve/PropertyAndFunctionNameClash.resolve");
+    }
+    
     @TestMetadata("ResolveOfInfixExpressions.resolve")
     public void testResolveOfInfixExpressions() throws Exception {
         doTest("compiler/testData/resolve/ResolveOfInfixExpressions.resolve");

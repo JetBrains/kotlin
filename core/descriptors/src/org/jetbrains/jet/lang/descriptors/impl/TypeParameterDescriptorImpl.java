@@ -100,7 +100,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
 
     private void checkInitialized() {
         if (!initialized) {
-            throw new IllegalStateException("Type parameter descriptor in not initialized: " + nameForAssertions());
+            throw new IllegalStateException("Type parameter descriptor is not initialized: " + nameForAssertions());
         }
     }
 

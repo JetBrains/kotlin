@@ -63,6 +63,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     protected boolean parseArguments(@NotNull PrintStream errStream, @NotNull A arguments, @NotNull String[] args) {
         try {
             arguments.freeArgs = Args.parse(arguments, args);
+            checkArguments(arguments);
             return true;
         }
         catch (IllegalArgumentException e) {
@@ -74,6 +75,10 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             errStream.println(MessageRenderer.TAGS.renderException(t));
         }
         return false;
+    }
+
+    protected void checkArguments(@NotNull A argument) {
+
     }
 
     /**

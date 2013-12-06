@@ -1,7 +1,5 @@
 package test
 
-test.A(a = 12.toInt(): jet.Int, c = "Hello": jet.String) internal val SomeObject: test.SomeObject
-
 internal final annotation class A : jet.Annotation {
     /*primary*/ public constructor A(/*0*/ a: jet.Int = ..., /*1*/ b: jet.String = ..., /*2*/ c: jet.String)
     internal final val a: jet.Int
@@ -9,6 +7,10 @@ internal final annotation class A : jet.Annotation {
     internal final val c: jet.String
 }
 
-test.A(a = 12.toInt(): jet.Int, c = "Hello": jet.String) internal object SomeObject {
+test.A(a = IntegerValueType(12): IntegerValueType(12), c = "Hello": jet.String) internal object SomeObject {
     /*primary*/ private constructor SomeObject()
+    
+    public class object <class-object-for-SomeObject> : test.SomeObject {
+        /*primary*/ private constructor <class-object-for-SomeObject>()
+    }
 }

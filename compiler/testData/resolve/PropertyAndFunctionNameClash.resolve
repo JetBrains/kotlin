@@ -1,0 +1,26 @@
+open class HtmlTag
+
+trait NavigationBuilder {
+    public var text: ((String) -> String)?
+    ~in_NB~var inNavigationBuilder: Int
+}
+
+fun HtmlTag.navigation(body: NavigationBuilder.() -> Unit) {
+}
+fun HtmlTag.a(contents: A.() -> Unit) {
+}
+
+trait A : HtmlTag {
+    ~text_in_A~var text: String
+    ~in_A~var inA: Int
+}
+
+fun HtmlTag.test(a: String) {
+    navigation {
+        a {
+            `text_in_A`text = "1"
+            `in_NB`inNavigationBuilder = 1
+            `in_A`inA = 2
+        }
+    }
+}

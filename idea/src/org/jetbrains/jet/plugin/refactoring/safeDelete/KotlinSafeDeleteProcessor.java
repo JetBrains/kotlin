@@ -57,7 +57,6 @@ import java.util.*;
 public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     public static boolean canDeleteElement(@NotNull PsiElement element) {
         return element instanceof JetClassOrObject
-               || element instanceof JetObjectDeclarationName
                || element instanceof JetNamedFunction
                || element instanceof PsiMethod
                || element instanceof JetProperty
@@ -100,10 +99,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         if (element instanceof JetClassOrObject) {
             return findClassOrObjectUsages(element, (JetClassOrObject) element, allElementsToDelete, result);
         }
-        if (element instanceof JetObjectDeclarationName) {
-            PsiElement parent = getObjectDeclarationOrFail(element);
-            return findClassOrObjectUsages(element, (JetObjectDeclaration) parent, allElementsToDelete, result);
-        }
         if (element instanceof JetNamedFunction) {
             return findFunctionUsages((JetNamedFunction) element, allElementsToDelete, result);
         }
@@ -133,13 +128,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
 
         return getSearchInfo(element, allElementsToDelete);
-    }
-
-    @NotNull
-    private static PsiElement getObjectDeclarationOrFail(@NotNull PsiElement element) {
-        PsiElement parent = element.getParent();
-        assert parent instanceof JetObjectDeclaration;
-        return parent;
     }
 
     @SuppressWarnings("MethodOverridesPrivateMethodOfSuperclass")
@@ -858,16 +846,5 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         else {
             result.add(method.getParameterList().getParameters()[parameterIndex]);
         }
-    }
-
-    @Nullable
-    @Override
-    public Collection<PsiElement> getAdditionalElementsToDelete(
-            @NotNull PsiElement element, @NotNull Collection<PsiElement> allElementsToDelete, boolean askUser
-    ) {
-        if (element instanceof JetObjectDeclarationName) {
-            return Arrays.asList(getObjectDeclarationOrFail(element));
-        }
-        return super.getAdditionalElementsToDelete(element, allElementsToDelete, askUser);
     }
 }

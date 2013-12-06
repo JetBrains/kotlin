@@ -1,0 +1,17 @@
+<root>
+  <item
+      name='com.intellij.refactoring.rename.RenamePsiElementProcessor void prepareRenaming(com.intellij.psi.PsiElement, java.lang.String, java.util.Map&lt;com.intellij.psi.PsiElement,java.lang.String&gt;, com.intellij.psi.search.SearchScope)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap&lt;PsiElement, String&gt;, scope: SearchScope): Unit&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.rename.RenamePsiElementProcessor void prepareRenaming(com.intellij.psi.PsiElement, java.lang.String, java.util.Map&lt;com.intellij.psi.PsiElement,java.lang.String&gt;, com.intellij.psi.search.SearchScope) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.rename.RenamePsiElementProcessor void prepareRenaming(com.intellij.psi.PsiElement, java.lang.String, java.util.Map&lt;com.intellij.psi.PsiElement,java.lang.String&gt;, com.intellij.psi.search.SearchScope) 3'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

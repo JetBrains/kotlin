@@ -28,7 +28,7 @@ public inline fun DoubleArray.any(predicate: (Double) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun DoubleArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+public fun DoubleArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -54,7 +54,7 @@ public inline fun DoubleArray.count(predicate: (Double) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-public inline fun DoubleArray.drop(n: Int) : List<Double> {
+public fun DoubleArray.drop(n: Int) : List<Double> {
     return dropWhile(countTo(n))
 }
 
@@ -184,11 +184,25 @@ public inline fun <K> DoubleArray.groupByTo(result: MutableMap<K, MutableList<Do
 }
 
 /**
+ * Returns true if the array is empty
+ */
+public fun DoubleArray.isEmpty() : Boolean {
+    return size == 0
+}
+
+/**
+ * Returns true if the array is empty
+ */
+public fun DoubleArray.isNotEmpty() : Boolean {
+    return !isEmpty()
+}
+
+/**
  * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun DoubleArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+public fun DoubleArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -212,6 +226,70 @@ public inline fun <R, C: MutableCollection<in R>> DoubleArray.mapTo(result: C, t
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun DoubleArray.max() : Double? {
+    var max: Double? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> DoubleArray.maxBy(f: (Double) -> R) : Double? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun DoubleArray.min() : Double? {
+    var min: Double? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> DoubleArray.minBy(f: (Double) -> R) : Double? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun DoubleArray.partition(predicate: (Double) -> Boolean) : Pair<List<Double>, List<Double>> {
@@ -230,14 +308,14 @@ public inline fun DoubleArray.partition(predicate: (Double) -> Boolean) : Pair<L
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-public inline fun DoubleArray.plus(collection: Iterable<Double>) : List<Double> {
+public fun DoubleArray.plus(collection: Iterable<Double>) : List<Double> {
     return plus(collection.iterator())
 }
 
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-public inline fun DoubleArray.plus(element: Double) : List<Double> {
+public fun DoubleArray.plus(element: Double) : List<Double> {
     val answer = ArrayList<Double>()
     toCollection(answer)
     answer.add(element)
@@ -247,7 +325,7 @@ public inline fun DoubleArray.plus(element: Double) : List<Double> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-public inline fun DoubleArray.plus(iterator: Iterator<Double>) : List<Double> {
+public fun DoubleArray.plus(iterator: Iterator<Double>) : List<Double> {
     val answer = ArrayList<Double>()
     toCollection(answer)
     for (element in iterator) {
@@ -295,7 +373,7 @@ public inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double)
 /**
  * Reverses the order the elements into a list
  */
-public inline fun DoubleArray.reverse() : List<Double> {
+public fun DoubleArray.reverse() : List<Double> {
     val list = toCollection(ArrayList<Double>())
     Collections.reverse(list)
     return list
@@ -319,7 +397,7 @@ public inline fun <R: Comparable<R>> DoubleArray.sortBy(f: (Double) -> R) : List
 /**
  * Returns a list containing the first *n* elements
  */
-public inline fun DoubleArray.take(n: Int) : List<Double> {
+public fun DoubleArray.take(n: Int) : List<Double> {
     return takeWhile(countTo(n))
 }
 
@@ -341,7 +419,7 @@ public inline fun <C: MutableCollection<in Double>> DoubleArray.takeWhileTo(resu
 /**
  * Copies all elements into the given collection
  */
-public inline fun <C: MutableCollection<in Double>> DoubleArray.toCollection(result: C) : C {
+public fun <C: MutableCollection<in Double>> DoubleArray.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -349,35 +427,42 @@ public inline fun <C: MutableCollection<in Double>> DoubleArray.toCollection(res
 /**
  * Copies all elements into a [[LinkedList]]
  */
-public inline fun DoubleArray.toLinkedList() : LinkedList<Double> {
+public fun DoubleArray.toLinkedList() : LinkedList<Double> {
     return toCollection(LinkedList<Double>())
 }
 
 /**
  * Copies all elements into a [[List]]
  */
-public inline fun DoubleArray.toList() : List<Double> {
+public fun DoubleArray.toList() : List<Double> {
     return toCollection(ArrayList<Double>())
 }
 
 /**
  * Copies all elements into a [[Set]]
  */
-public inline fun DoubleArray.toSet() : Set<Double> {
+public fun DoubleArray.toSet() : Set<Double> {
     return toCollection(LinkedHashSet<Double>())
 }
 
 /**
  * Copies all elements into a [[SortedSet]]
  */
-public inline fun DoubleArray.toSortedSet() : SortedSet<Double> {
+public fun DoubleArray.toSortedSet() : SortedSet<Double> {
     return toCollection(TreeSet<Double>())
 }
 
 /**
  * Returns an iterator of Pairs(index, data)
  */
-public inline fun DoubleArray.withIndices() : Iterator<Pair<Int, Double>> {
+public fun DoubleArray.withIndices() : Iterator<Pair<Int, Double>> {
     return IndexIterator(iterator())
+}
+
+/**
+ * Sums up the elements
+ */
+public fun DoubleArray.sum() : Double {
+    return fold(0.0, {a,b -> a+b})
 }
 

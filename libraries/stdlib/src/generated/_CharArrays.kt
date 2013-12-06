@@ -28,7 +28,7 @@ public inline fun CharArray.any(predicate: (Char) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun CharArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+public fun CharArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -54,7 +54,7 @@ public inline fun CharArray.count(predicate: (Char) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-public inline fun CharArray.drop(n: Int) : List<Char> {
+public fun CharArray.drop(n: Int) : List<Char> {
     return dropWhile(countTo(n))
 }
 
@@ -184,11 +184,25 @@ public inline fun <K> CharArray.groupByTo(result: MutableMap<K, MutableList<Char
 }
 
 /**
+ * Returns true if the array is empty
+ */
+public fun CharArray.isEmpty() : Boolean {
+    return size == 0
+}
+
+/**
+ * Returns true if the array is empty
+ */
+public fun CharArray.isNotEmpty() : Boolean {
+    return !isEmpty()
+}
+
+/**
  * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun CharArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+public fun CharArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -212,6 +226,44 @@ public inline fun <R, C: MutableCollection<in R>> CharArray.mapTo(result: C, tra
 }
 
 /**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> CharArray.maxBy(f: (Char) -> R) : Char? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> CharArray.minBy(f: (Char) -> R) : Char? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun CharArray.partition(predicate: (Char) -> Boolean) : Pair<List<Char>, List<Char>> {
@@ -230,14 +282,14 @@ public inline fun CharArray.partition(predicate: (Char) -> Boolean) : Pair<List<
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-public inline fun CharArray.plus(collection: Iterable<Char>) : List<Char> {
+public fun CharArray.plus(collection: Iterable<Char>) : List<Char> {
     return plus(collection.iterator())
 }
 
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-public inline fun CharArray.plus(element: Char) : List<Char> {
+public fun CharArray.plus(element: Char) : List<Char> {
     val answer = ArrayList<Char>()
     toCollection(answer)
     answer.add(element)
@@ -247,7 +299,7 @@ public inline fun CharArray.plus(element: Char) : List<Char> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-public inline fun CharArray.plus(iterator: Iterator<Char>) : List<Char> {
+public fun CharArray.plus(iterator: Iterator<Char>) : List<Char> {
     val answer = ArrayList<Char>()
     toCollection(answer)
     for (element in iterator) {
@@ -295,7 +347,7 @@ public inline fun CharArray.reduceRight(operation: (Char, Char) -> Char) : Char 
 /**
  * Reverses the order the elements into a list
  */
-public inline fun CharArray.reverse() : List<Char> {
+public fun CharArray.reverse() : List<Char> {
     val list = toCollection(ArrayList<Char>())
     Collections.reverse(list)
     return list
@@ -319,7 +371,7 @@ public inline fun <R: Comparable<R>> CharArray.sortBy(f: (Char) -> R) : List<Cha
 /**
  * Returns a list containing the first *n* elements
  */
-public inline fun CharArray.take(n: Int) : List<Char> {
+public fun CharArray.take(n: Int) : List<Char> {
     return takeWhile(countTo(n))
 }
 
@@ -341,7 +393,7 @@ public inline fun <C: MutableCollection<in Char>> CharArray.takeWhileTo(result: 
 /**
  * Copies all elements into the given collection
  */
-public inline fun <C: MutableCollection<in Char>> CharArray.toCollection(result: C) : C {
+public fun <C: MutableCollection<in Char>> CharArray.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -349,35 +401,35 @@ public inline fun <C: MutableCollection<in Char>> CharArray.toCollection(result:
 /**
  * Copies all elements into a [[LinkedList]]
  */
-public inline fun CharArray.toLinkedList() : LinkedList<Char> {
+public fun CharArray.toLinkedList() : LinkedList<Char> {
     return toCollection(LinkedList<Char>())
 }
 
 /**
  * Copies all elements into a [[List]]
  */
-public inline fun CharArray.toList() : List<Char> {
+public fun CharArray.toList() : List<Char> {
     return toCollection(ArrayList<Char>())
 }
 
 /**
  * Copies all elements into a [[Set]]
  */
-public inline fun CharArray.toSet() : Set<Char> {
+public fun CharArray.toSet() : Set<Char> {
     return toCollection(LinkedHashSet<Char>())
 }
 
 /**
  * Copies all elements into a [[SortedSet]]
  */
-public inline fun CharArray.toSortedSet() : SortedSet<Char> {
+public fun CharArray.toSortedSet() : SortedSet<Char> {
     return toCollection(TreeSet<Char>())
 }
 
 /**
  * Returns an iterator of Pairs(index, data)
  */
-public inline fun CharArray.withIndices() : Iterator<Pair<Int, Char>> {
+public fun CharArray.withIndices() : Iterator<Pair<Int, Char>> {
     return IndexIterator(iterator())
 }
 

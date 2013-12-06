@@ -34,11 +34,6 @@ public class NamespaceLikeBuilderDummy implements NamespaceLikeBuilder {
     }
 
     @Override
-    public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-        throw new IllegalStateException();
-    }
-
-    @Override
     public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
         throw new IllegalStateException();
     }

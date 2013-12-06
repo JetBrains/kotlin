@@ -75,15 +75,6 @@ public class JetScopeSelectorUtil {
                 }
             };
 
-    public static final ScopeByNameSelector<ClassDescriptor> NAMED_OBJECT_SCOPE_SELECTOR =
-            new ScopeByNameSelector<ClassDescriptor>() {
-                @Nullable
-                @Override
-                public ClassDescriptor get(@NotNull JetScope scope, @NotNull Name name) {
-                    return scope.getObjectDescriptor(name);
-                }
-            };
-
     public static final ScopeByNameSelector<NamespaceDescriptor> NAMESPACE_SCOPE_SELECTOR =
             new ScopeByNameSelector<NamespaceDescriptor>() {
                 @Nullable
@@ -108,15 +99,6 @@ public class JetScopeSelectorUtil {
                 @Override
                 public Collection<VariableDescriptor> get(@NotNull JetScope scope, @NotNull Name name) {
                     return scope.getProperties(name);
-                }
-            };
-
-    public static final ScopeDescriptorSelector<ClassDescriptor> OBJECTS_SCOPE_SELECTOR =
-            new ScopeDescriptorSelector<ClassDescriptor>() {
-                @NotNull
-                @Override
-                public Collection<ClassDescriptor> get(@NotNull JetScope scope) {
-                    return scope.getObjectDescriptors();
                 }
             };
 

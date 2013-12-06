@@ -110,22 +110,35 @@ message Class {
 
   required int32 fq_name = 3;
 
+  message ClassObject {
+    // If this field is present, it contains serialized data for a synthetic class object, for which there's no class file.
+    // Otherwise class object was compiled to a separate class file and serialized data can be found in the annotation on that class
+    optional Class data = 1;
+  }
+
+  // This field is present if and only if the class has a class object. Its proto should be found either here or in the separate file
+  optional ClassObject class_object = 4;
+
   repeated TypeParameter type_parameter = 5;
   repeated Type supertype = 6;
 
   // we store only names, because the actual information must reside in the corresponding .class files,
   // to be obtainable through reflection at runtime
   repeated int32 nested_class_name = 7;
-  repeated int32 nested_object_name = 8;
-
-  optional bool class_object_present = 9 [default = false];
-
-  optional Callable primary_constructor = 10;
-  // todo: other constructors?
 
   repeated Callable member = 11;
 
   repeated int32 enum_entry = 12;
+
+  message PrimaryConstructor {
+    // If this field is present, it contains serialized data for the primary constructor.
+    // Otherwise it's default and can be created manually upon deserialization
+    optional Callable data = 1;
+  }
+
+  // This field is present if and only if the class has a primary constructor
+  optional PrimaryConstructor primary_constructor = 13;
+  // todo: other constructors?
 }
 
 message Package {
@@ -142,12 +155,11 @@ message Callable {
   }
 
   enum CallableKind {
-    // 3 bits
+    // 2 bits
     FUN = 0;
     VAL = 1;
     VAR = 2;
     CONSTRUCTOR = 3;
-    OBJECT_PROPERTY = 4;
   }
 
   /*
@@ -156,7 +168,6 @@ message Callable {
      has_annotations
      CallableKind
      MemberKind
-     inline
      hasGetter
      hasSetter
    */

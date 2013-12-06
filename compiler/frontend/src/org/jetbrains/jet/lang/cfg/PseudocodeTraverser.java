@@ -18,15 +18,13 @@ package org.jetbrains.jet.lang.cfg;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
 
@@ -68,7 +66,7 @@ public class PseudocodeTraverser {
     }
 
     private static boolean shouldLookInside(Instruction instruction, LookInsideStrategy lookInside) {
-        return lookInside == LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS && instruction instanceof LocalDeclarationInstruction;
+        return lookInside == LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS && instruction instanceof LocalFunctionDeclarationInstruction;
     }
 
     public static <D> Map<Instruction, Edges<D>> collectData(
@@ -99,7 +97,7 @@ public class PseudocodeTraverser {
         for (Instruction instruction : instructions) {
             edgesMap.put(instruction, initialEdge);
             if (shouldLookInside(instruction, lookInside)) {
-                initializeEdgesMap(((LocalDeclarationInstruction) instruction).getBody(), lookInside, edgesMap, initialDataValue);
+                initializeEdgesMap(((LocalFunctionDeclarationInstruction) instruction).getBody(), lookInside, edgesMap, initialDataValue);
             }
         }
     }
@@ -131,7 +129,7 @@ public class PseudocodeTraverser {
             }
 
             if (shouldLookInside(instruction, lookInside)) {
-                Pseudocode subroutinePseudocode = ((LocalDeclarationInstruction) instruction).getBody();
+                Pseudocode subroutinePseudocode = ((LocalFunctionDeclarationInstruction) instruction).getBody();
                 collectDataFromSubgraph(subroutinePseudocode, traversalOrder, lookInside, edgesMap, instructionDataMergeStrategy,
                                         previousInstructions,
                                         changed, true);
@@ -168,8 +166,8 @@ public class PseudocodeTraverser {
 
         List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
         for (Instruction instruction : instructions) {
-            if (instruction instanceof LocalDeclarationInstruction) {
-                traverse(((LocalDeclarationInstruction) instruction).getBody(), traversalOrder, instructionAnalyzeStrategy);
+            if (instruction instanceof LocalFunctionDeclarationInstruction) {
+                traverse(((LocalFunctionDeclarationInstruction) instruction).getBody(), traversalOrder, instructionAnalyzeStrategy);
             }
             instructionAnalyzeStrategy.execute(instruction);
         }
@@ -182,8 +180,8 @@ public class PseudocodeTraverser {
 
         List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
         for (Instruction instruction : instructions) {
-            if (instruction instanceof LocalDeclarationInstruction) {
-                traverse(((LocalDeclarationInstruction) instruction).getBody(), traversalOrder, edgesMap,
+            if (instruction instanceof LocalFunctionDeclarationInstruction) {
+                traverse(((LocalFunctionDeclarationInstruction) instruction).getBody(), traversalOrder, edgesMap,
                          instructionDataAnalyzeStrategy);
             }
             Edges<D> edges = edgesMap.get(instruction);
@@ -236,4 +234,37 @@ public class PseudocodeTraverser {
             return result;
         }
     }
+
+    public interface InstructionHandler {
+        // true to continue traversal
+        boolean handle(@NotNull Instruction instruction);
+    }
+
+    // returns false when interrupted by handler
+    public static boolean traverseFollowingInstructions(
+            @NotNull Instruction rootInstruction,
+            @NotNull Set<Instruction> visited,
+            @NotNull TraversalOrder order,
+            @Nullable InstructionHandler handler
+    ) {
+        Deque<Instruction> stack = Queues.newArrayDeque();
+        stack.push(rootInstruction);
+
+        while (!stack.isEmpty()) {
+            Instruction instruction = stack.pop();
+            visited.add(instruction);
+
+            Collection<Instruction> followingInstructions =
+                    order == FORWARD ? instruction.getNextInstructions() : instruction.getPreviousInstructions();
+
+            for (Instruction followingInstruction : followingInstructions) {
+                if (followingInstruction != null && !visited.contains(followingInstruction)) {
+                    if (handler != null && !handler.handle(instruction)) return false;
+                    stack.push(followingInstruction);
+                }
+            }
+        }
+        return true;
+    }
+
 }

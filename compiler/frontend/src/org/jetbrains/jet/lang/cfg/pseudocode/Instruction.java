@@ -32,7 +32,8 @@ public interface Instruction {
     @NotNull
     Collection<Instruction> getNextInstructions();
 
-    void accept(InstructionVisitor visitor);
+    void accept(@NotNull InstructionVisitor visitor);
+    <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor);
 
     @NotNull
     Collection<Instruction> getCopies();

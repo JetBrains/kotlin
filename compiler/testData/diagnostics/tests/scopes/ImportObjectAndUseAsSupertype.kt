@@ -12,7 +12,7 @@ package baz
 
 import foo.Bar
 
-class C: <!UNRESOLVED_REFERENCE!>Bar<!>
+class C: <!SINGLETON_IN_SUPERTYPE!>Bar<!>
 
 fun test() {
     Bar.bar()

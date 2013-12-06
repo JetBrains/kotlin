@@ -72,9 +72,13 @@ public class CallableDescriptorCollectors {
 
         private static void addConstructors(JetScope scope, Name name, Collection<FunctionDescriptor> functions) {
             ClassifierDescriptor classifier = scope.getClassifier(name);
-            if (classifier instanceof ClassDescriptor && !ErrorUtils.isError(classifier)) {
-                functions.addAll(((ClassDescriptor) classifier).getConstructors());
+            if (!(classifier instanceof ClassDescriptor) || ErrorUtils.isError(classifier)) return;
+            ClassDescriptor classDescriptor = (ClassDescriptor) classifier;
+            if (classDescriptor.getKind().isSingleton()) {
+                // Constructors of singletons shouldn't be callable from the code
+                return;
             }
+            functions.addAll(classDescriptor.getConstructors());
         }
 
         @Override

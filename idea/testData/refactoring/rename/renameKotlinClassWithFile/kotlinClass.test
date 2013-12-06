@@ -1,0 +1,2 @@
+// RENAME: KOTLIN_CLASS->testing.ClassBefore->ClassAfter
+// FILE: ClassBefore.kt

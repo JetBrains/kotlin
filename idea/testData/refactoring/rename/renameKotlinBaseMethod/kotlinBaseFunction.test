@@ -1,0 +1,3 @@
+// RENAME: KOTLIN_FUNCTION->testing.rename.A.first->second
+
+// KT-2836 Rename method with all its implementations

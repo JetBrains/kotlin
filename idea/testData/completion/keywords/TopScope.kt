@@ -21,7 +21,6 @@
 // ABSENT: if
 // EXIST:  import
 // ABSENT: in
-// EXIST:  inline
 // EXIST:  internal
 // ABSENT: is
 // ABSENT: null

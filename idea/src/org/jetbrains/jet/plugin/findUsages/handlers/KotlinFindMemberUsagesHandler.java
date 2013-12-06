@@ -141,41 +141,48 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
 
     @Override
     protected boolean searchReferences(
-            @NotNull final PsiElement element, @NotNull final Processor<UsageInfo> processor, @NotNull FindUsagesOptions options
+            @NotNull final PsiElement element, @NotNull final Processor<UsageInfo> processor, @NotNull final FindUsagesOptions options
     ) {
-        KotlinCallableFindUsagesOptions kotlinOptions = (KotlinCallableFindUsagesOptions) options;
+        return ApplicationManager.getApplication().runReadAction(
+                new Computable<Boolean>() {
+                    @Override
+                    public Boolean compute() {
+                        KotlinCallableFindUsagesOptions kotlinOptions = (KotlinCallableFindUsagesOptions) options;
 
-        @SuppressWarnings("unchecked")
-        UsagesSearchRequest request =
-                getSearchHelper(kotlinOptions).newRequest(FindUsagesPackage.toSearchTarget(options, (T) element, true));
+                        @SuppressWarnings("unchecked")
+                        UsagesSearchRequest request =
+                                getSearchHelper(kotlinOptions).newRequest(FindUsagesPackage.toSearchTarget(options, (T) element, true));
 
-        for (PsiReference ref : UsagesSearch.instance$.search(request)) {
-            processUsage(processor, ref);
-        }
+                        for (PsiReference ref : UsagesSearch.instance$.search(request)) {
+                            processUsage(processor, ref);
+                        }
 
-        Iterator<PsiMethod> lightMethods = ApplicationManager.getApplication().runReadAction(new Computable<Iterator<PsiMethod>>() {
-            @Override
-            public Iterator<PsiMethod> compute() {
-                return getLightMethods((JetNamedDeclaration) element).iterator();
-            }
-        });
+                        Iterator<PsiMethod> lightMethods = ApplicationManager.getApplication().runReadAction(new Computable<Iterator<PsiMethod>>() {
+                            @Override
+                            public Iterator<PsiMethod> compute() {
+                                return getLightMethods((JetNamedDeclaration) element).iterator();
+                            }
+                        });
 
-        if (kotlinOptions.getSearchOverrides()) {
-            while (lightMethods.hasNext()) {
-                OverridingMethodsSearch.search(lightMethods.next(), options.searchScope, true).forEach(
-                        new PsiElementProcessorAdapter<PsiMethod>(
-                                new PsiElementProcessor<PsiMethod>() {
-                                    @Override
-                                    public boolean execute(@NotNull PsiMethod element) {
-                                        return processUsage(processor, element.getNavigationElement());
-                                    }
-                                }
-                        )
-                );
-            }
-        }
+                        if (kotlinOptions.getSearchOverrides()) {
+                            while (lightMethods.hasNext()) {
+                                OverridingMethodsSearch.search(lightMethods.next(), options.searchScope, true).forEach(
+                                        new PsiElementProcessorAdapter<PsiMethod>(
+                                                new PsiElementProcessor<PsiMethod>() {
+                                                    @Override
+                                                    public boolean execute(@NotNull PsiMethod element) {
+                                                        return processUsage(processor, element.getNavigationElement());
+                                                    }
+                                                }
+                                        )
+                                );
+                            }
+                        }
 
-        return true;
+                        return true;
+                    }
+                }
+        );
     }
 
     @Override

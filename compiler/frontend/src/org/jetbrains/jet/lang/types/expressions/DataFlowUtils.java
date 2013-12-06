@@ -20,7 +20,8 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -28,7 +29,9 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantResolver;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -160,17 +163,17 @@ public class DataFlowUtils {
         JetExpression expression = JetPsiUtil.safeDeparenthesize(expressionToCheck, false);
         recordExpectedType(trace, expression, expectedType);
 
-        if (expressionType == null || noExpectedType(expectedType) ||
+        if (expressionType == null || noExpectedType(expectedType) || !expectedType.getConstructor().isDenotable() ||
             JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, expectedType)) {
             return expressionType;
         }
 
         if (expression instanceof JetConstantExpression) {
-            Diagnostic diagnostic =
-                    new CompileTimeConstantResolver().checkConstantExpressionType((JetConstantExpression) expression, expectedType);
-            if (diagnostic != null) {
-                trace.report(diagnostic);
+            CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, trace, expectedType);
+            if (value instanceof IntegerValueTypeConstant) {
+                value = EvaluatePackage.getCompileTimeConstantForNumberType(((IntegerValueTypeConstant) value).getValue(), expectedType);
             }
+            new CompileTimeConstantChecker(trace, true).checkConstantExpressionType(value, (JetConstantExpression) expression, expectedType);
             return expressionType;
         }
 

@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetVariableDeclaration;
 
 public class VariableDeclarationInstruction extends InstructionWithNext {
@@ -36,15 +35,21 @@ public class VariableDeclarationInstruction extends InstructionWithNext {
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitVariableDeclarationInstruction(this);
     }
 
     @Override
-    public String toString() {
-        return "v(" + element.getText() + ")";
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitVariableDeclarationInstruction(this);
     }
 
+    @Override
+    public String toString() {
+        return "v(" + render(element) + ")";
+    }
+
+    @NotNull
     @Override
     protected Instruction createCopy() {
         if (element instanceof JetParameter) {

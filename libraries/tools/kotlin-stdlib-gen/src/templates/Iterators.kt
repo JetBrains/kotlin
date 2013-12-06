@@ -7,8 +7,9 @@ fun iterators(): List<GenericFunction> {
     val templates = commons()
 
     templates add f("filter(predicate: (T) -> Boolean)") {
+        isInline = false
         doc = "Returns an iterator over elements which match the given *predicate*"
-
+        
         returns("Iterator<T>")
         body {
             "return FilterIterator<T>(this, predicate)"
@@ -25,6 +26,7 @@ fun iterators(): List<GenericFunction> {
     }
 
     templates add f("filterNotNull()") {
+        isInline = false
         doc = "Returns an iterator over non-*null* elements"
         typeParam("T:Any")
         toNullableT = true
@@ -36,6 +38,7 @@ fun iterators(): List<GenericFunction> {
     }
 
     templates add f("map(transform : (T) -> R)") {
+        isInline = false
         doc = "Returns an iterator obtained by applying *transform*, a function transforming an object of type *T* into an object of type *R*"
         typeParam("R")
         returns("Iterator<R>")
@@ -46,6 +49,7 @@ fun iterators(): List<GenericFunction> {
     }
 
     templates add f("flatMap(transform: (T) -> Iterator<R>)") {
+        isInline = false
         doc = "Returns an iterator over the concatenated results of transforming each element to one or more values"
         typeParam("R")
         returns("Iterator<R>")
@@ -56,6 +60,7 @@ fun iterators(): List<GenericFunction> {
     }
 
     templates add f("requireNoNulls()") {
+        isInline = false
         doc = "Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements"
         typeParam("T:Any")
         toNullableT = true
@@ -73,6 +78,7 @@ fun iterators(): List<GenericFunction> {
 
 
     templates add f("take(n: Int)") {
+        isInline = false
         doc = "Returns an iterator restricted to the first *n* elements"
         returns("Iterator<T>")
         body {
@@ -84,6 +90,7 @@ fun iterators(): List<GenericFunction> {
     }
 
     templates add f("takeWhile(predicate: (T) -> Boolean)") {
+        isInline = false
         doc = "Returns an iterator restricted to the first elements that match the given *predicate*"
         returns("Iterator<T>")
 
@@ -95,6 +102,7 @@ fun iterators(): List<GenericFunction> {
     // TODO: drop(n), dropWhile
 
     templates add f("plus(element: T)") {
+        isInline = false
         doc = "Creates an [[Iterator]] which iterates over this iterator then the given element at the end"
         returns("Iterator<T>")
 
@@ -105,6 +113,7 @@ fun iterators(): List<GenericFunction> {
     }
 
     templates add f("plus(iterator: Iterator<T>)") {
+        isInline = false
         doc = "Creates an [[Iterator]] which iterates over this iterator then the following iterator"
         returns("Iterator<T>")
 
@@ -114,11 +123,60 @@ fun iterators(): List<GenericFunction> {
     }
 
     templates add f("plus(collection: Iterable<T>)") {
+        isInline = false
         doc = "Creates an [[Iterator]] which iterates over this iterator then the following collection"
         returns("Iterator<T>")
 
         body {
             "return plus(collection.iterator())"
+        }
+    }
+
+    templates add f("minBy(f: (T) -> R)") {
+        doc = "Returns the first element yielding the smallest value of the given function or null if there are no elements"
+        typeParam("R: Comparable<R>")
+        typeParam("T: Any")
+        returns("T?")
+        body {
+            """
+                if (!hasNext()) return null
+
+                var minElem = next()
+                var minValue = f(minElem)
+                while (hasNext()) {
+                    val e = next()
+                    val v = f(e)
+                    if (minValue > v) {
+                       minElem = e
+                       minValue = v
+                    }
+                }
+                return minElem
+            """
+        }
+    }
+
+    templates add f("maxBy(f: (T) -> R)") {
+        doc = "Returns the first element yielding the largest value of the given function or null if there are no elements"
+        typeParam("R: Comparable<R>")
+        typeParam("T: Any")
+        returns("T?")
+        body {
+            """
+                if (!hasNext()) return null
+
+                var maxElem = next()
+                var maxValue = f(maxElem)
+                while (hasNext()) {
+                    val e = next()
+                    val v = f(e)
+                    if (maxValue < v) {
+                       maxElem = e
+                       maxValue = v
+                    }
+                }
+                return maxElem
+            """
         }
     }
 

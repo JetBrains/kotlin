@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -73,6 +74,7 @@ public interface BindingContext {
     WritableSlice<JetAnnotationEntry, AnnotationDescriptorImpl> ANNOTATION =
             Slices.<JetAnnotationEntry, AnnotationDescriptorImpl>sliceBuilder().setOpposite(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT).build();
 
+    WritableSlice<JetExpression, Boolean> IS_PURE_CONSTANT_EXPRESSION = Slices.createSimpleSlice();
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
     WritableSlice<PropertyDescriptor, CompileTimeConstant<?>> COMPILE_TIME_INITIALIZER = Slices.createSimpleSlice();
 
@@ -86,6 +88,7 @@ public interface BindingContext {
             new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
     WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL =
             new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
+    WritableSlice<ResolvedCall<?>, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();
     WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
     WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);
 
@@ -224,19 +227,14 @@ public interface BindingContext {
     WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER =
             Slices.<PsiElement, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION)
                     .build();
-    WritableSlice<JetObjectDeclarationName, PropertyDescriptor> OBJECT_DECLARATION =
-            Slices.<JetObjectDeclarationName, PropertyDescriptor>sliceBuilder()
-                    .setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
             NAMESPACE, CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
-            PRIMARY_CONSTRUCTOR_PARAMETER, OBJECT_DECLARATION
+            PRIMARY_CONSTRUCTOR_PARAMETER
     };
 
     ReadOnlySlice<PsiElement, DeclarationDescriptor> DECLARATION_TO_DESCRIPTOR = Slices.<PsiElement, DeclarationDescriptor>sliceBuilder()
             .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS).build();
-
-    WritableSlice<PsiElement, FunctionDescriptor> CALLABLE_REFERENCE = Slices.createSimpleSlice();
 
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
     WritableSlice<JetReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET =

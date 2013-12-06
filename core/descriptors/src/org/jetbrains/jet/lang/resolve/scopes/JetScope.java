@@ -52,13 +52,6 @@ public interface JetScope {
      */
     @Nullable
     ClassifierDescriptor getClassifier(@NotNull Name name);
-    
-    @Nullable
-    ClassDescriptor getObjectDescriptor(@NotNull Name name);
-
-    @NotNull
-    @ReadOnly
-    Collection<ClassDescriptor> getObjectDescriptors();
 
     @Nullable
     NamespaceDescriptor getNamespace(@NotNull Name name);

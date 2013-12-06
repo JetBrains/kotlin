@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
@@ -61,6 +60,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults.Code.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -323,6 +323,7 @@ public class CallResolver {
                 results.getResultingCall().markCallAsCompleted();
             }
             else {
+                argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(context);
                 candidateResolver.completeNestedCallsForNotResolvedInvocation(context);
             }
         }
@@ -339,14 +340,14 @@ public class CallResolver {
             @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
+        if (context.call.getCallType() == Call.CallType.INVOKE) return;
         if (!results.isSingleResult()) {
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
                 argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
             }
             return;
         }
-        //call for 'invoke' was completed earlier
-        if (results.getResultingCall() instanceof VariableAsFunctionResolvedCall) return;
+
         CallCandidateResolutionContext<D> candidateContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                 results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
         candidateResolver.completeTypeInferenceDependentOnFunctionLiteralsForCall(candidateContext);
@@ -357,32 +358,35 @@ public class CallResolver {
             @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
+        if (context.call.getCallType() == Call.CallType.INVOKE) return results;
+
         if (results.isSingleResult()) {
             Set<ValueArgument> unmappedArguments = results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments();
             argumentTypeResolver.checkUnmappedArgumentTypes(context, unmappedArguments);
-            candidateResolver.completeNestedCallsForNotResolvedInvocation(context, unmappedArguments);
+            candidateResolver.completeUnmappedArguments(context, unmappedArguments);
         }
 
         if (!results.isSingleResult()) return results;
 
-        ResolvedCallImpl<D> resolvedCall = results.getResultingCall().getCallToCompleteTypeArgumentInference();
+        ResolvedCallWithTrace<D> resolvedCall = results.getResultingCall();
+        ResolvedCallImpl<D> callToCompleteInference = resolvedCall.getCallToCompleteTypeArgumentInference();
 
-        if (!resolvedCall.hasIncompleteTypeParameters()) {
+        if (!callToCompleteInference.hasIncompleteTypeParameters()) {
             CallCandidateResolutionContext<D> callCandidateResolutionContext =
-                    CallCandidateResolutionContext.createForCallBeingAnalyzed(resolvedCall, context, tracing);
+                    CallCandidateResolutionContext.createForCallBeingAnalyzed(callToCompleteInference, context, tracing);
             candidateResolver.completeNestedCallsInference(callCandidateResolutionContext);
             candidateResolver.checkValueArgumentTypes(callCandidateResolutionContext);
             return results;
         }
-        ResolvedCallImpl<D> copy = CallResolverUtil.copy(resolvedCall, context);
+
         CallCandidateResolutionContext<D> callCandidateResolutionContext =
-                CallCandidateResolutionContext.createForCallBeingAnalyzed(copy, context, tracing);
+                CallCandidateResolutionContext.createForCallBeingAnalyzed(callToCompleteInference, context, tracing);
         candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
 
-        if (copy.getStatus().isSuccess()) {
-            return OverloadResolutionResultsImpl.success(copy);
+        if (callToCompleteInference.getStatus().isSuccess()) {
+            return OverloadResolutionResultsImpl.success(resolvedCall);
         }
-        return OverloadResolutionResultsImpl.incompleteTypeInference(copy);
+        return OverloadResolutionResultsImpl.incompleteTypeInference(resolvedCall);
     }
 
     private static <F extends CallableDescriptor> void cacheResults(
@@ -396,7 +400,7 @@ public class CallResolver {
         if (callKey == null) return;
 
         DelegatingBindingTrace deltasTraceToCacheResolve = new DelegatingBindingTrace(
-                new BindingTraceContext().getBindingContext(), "delta trace for caching resolve of", context.call);
+                BindingContext.EMPTY, "delta trace for caching resolve of", context.call);
         traceToResolveCall.addAllMyDataTo(deltasTraceToCacheResolve);
 
         context.resolutionResultsCache.recordResolutionResults(callKey, memberType, results);
@@ -448,8 +452,6 @@ public class CallResolver {
                 if (results.isSuccess()) {
                     debugInfo.set(ResolutionDebugInfo.RESULT, results.getResultingCall());
                 }
-
-                resolveFunctionArguments(context, results);
                 return results;
             }
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
@@ -470,29 +472,15 @@ public class CallResolver {
 
                 debugInfo.set(ResolutionDebugInfo.RESULT, resultsForFirstNonemptyCandidateSet.getResultingCall());
             }
-            resolveFunctionArguments(context, resultsForFirstNonemptyCandidateSet);
         }
         else {
             context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
-            argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
+            argumentTypeResolver.checkTypesWithNoCallee(context, SHAPE_FUNCTION_ARGUMENTS);
         }
         return resultsForFirstNonemptyCandidateSet != null ? resultsForFirstNonemptyCandidateSet : OverloadResolutionResultsImpl.<F>nameNotFound();
     }
 
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> resolveFunctionArguments(
-            @NotNull BasicCallResolutionContext context,
-            @NotNull OverloadResolutionResultsImpl<D> results
-    ) {
-        if (results.isSingleResult()) {
-            argumentTypeResolver.checkTypesForFunctionArguments(context, results.getResultingCall().getCallToCompleteTypeArgumentInference());
-        }
-        else {
-            argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(context);
-        }
-        return results;
-    }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> performResolutionGuardedForExtraFunctionLiteralArguments(

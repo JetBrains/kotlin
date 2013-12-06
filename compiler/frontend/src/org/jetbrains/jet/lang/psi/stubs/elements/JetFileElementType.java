@@ -36,7 +36,7 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import java.io.IOException;
 
 public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
-    public static final int STUB_VERSION = 24;
+    public static final int STUB_VERSION = 25;
 
     public JetFileElementType() {
         super("jet.FILE", JetLanguage.INSTANCE);
@@ -56,20 +56,22 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
         return STUB_VERSION;
     }
 
+    @NotNull
     @Override
     public String getExternalId() {
         return "jet.FILE";
     }
 
     @Override
-    public void serialize(PsiJetFileStub stub, StubOutputStream dataStream)
+    public void serialize(@NotNull PsiJetFileStub stub, @NotNull StubOutputStream dataStream)
             throws IOException {
         dataStream.writeName(stub.getPackageName());
         dataStream.writeBoolean(stub.isScript());
     }
 
+    @NotNull
     @Override
-    public PsiJetFileStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public PsiJetFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef packName = dataStream.readName();
         boolean isScript = dataStream.readBoolean();
         return new PsiJetFileStubImpl(null, packName, isScript);
@@ -85,7 +87,7 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
     }
 
     @Override
-    public void indexStub(PsiJetFileStub stub, IndexSink sink) {
+    public void indexStub(@NotNull PsiJetFileStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexFile(stub, sink);
     }
 }

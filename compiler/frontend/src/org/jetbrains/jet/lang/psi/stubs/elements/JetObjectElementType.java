@@ -69,7 +69,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
     }
 
     @Override
-    public void serialize(PsiJetObjectStub stub, StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull PsiJetObjectStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.toString() : null);
@@ -77,8 +77,9 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         dataStream.writeBoolean(stub.isClassObject());
     }
 
+    @NotNull
     @Override
-    public PsiJetObjectStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public PsiJetObjectStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         StringRef fqNameStr = dataStream.readName();
         FqName fqName = fqNameStr != null ? new FqName(fqNameStr.toString()) : null;
@@ -89,7 +90,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
     }
 
     @Override
-    public void indexStub(PsiJetObjectStub stub, IndexSink sink) {
+    public void indexStub(@NotNull PsiJetObjectStub stub, @NotNull IndexSink sink) {
         StubIndexServiceFactory.getInstance().indexObject(stub, sink);
     }
 

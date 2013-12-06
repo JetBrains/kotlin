@@ -28,7 +28,7 @@ public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun <T> Array<out T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+public fun <T> Array<out T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -54,7 +54,7 @@ public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-public inline fun <T> Array<out T>.drop(n: Int) : List<T> {
+public fun <T> Array<out T>.drop(n: Int) : List<T> {
     return dropWhile(countTo(n))
 }
 
@@ -98,14 +98,14 @@ public inline fun <T> Array<out T>.filterNot(predicate: (T) -> Boolean) : List<T
 /**
  * Returns a list containing all the non-*null* elements
  */
-public inline fun <T:Any> Array<out T?>.filterNotNull() : List<T> {
+public fun <T:Any> Array<out T?>.filterNotNull() : List<T> {
     return filterNotNullTo<T, ArrayList<T>>(ArrayList<T>())
 }
 
 /**
  * Filters all non-*null* elements into the given list
  */
-public inline fun <T:Any, C: MutableCollection<in T>> Array<out T?>.filterNotNullTo(result: C) : C {
+public fun <T:Any, C: MutableCollection<in T>> Array<out T?>.filterNotNullTo(result: C) : C {
     for (element in this) if (element != null) result.add(element)
     return result
 }
@@ -203,7 +203,7 @@ public inline fun <T, K> Array<out T>.groupByTo(result: MutableMap<K, MutableLis
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun <T> Array<out T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+public fun <T> Array<out T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -227,6 +227,70 @@ public inline fun <T, R, C: MutableCollection<in R>> Array<out T>.mapTo(result: 
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun <T: Comparable<T>> Array<out T>.max() : T? {
+    var max: T? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>, T: Any> Array<out T>.maxBy(f: (T) -> R) : T? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun <T: Comparable<T>> Array<out T>.min() : T? {
+    var min: T? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>, T: Any> Array<out T>.minBy(f: (T) -> R) : T? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean) : Pair<List<T>, List<T>> {
@@ -245,14 +309,14 @@ public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean) : Pair<L
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-public inline fun <T> Array<out T>.plus(collection: Iterable<T>) : List<T> {
+public fun <T> Array<out T>.plus(collection: Iterable<T>) : List<T> {
     return plus(collection.iterator())
 }
 
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-public inline fun <T> Array<out T>.plus(element: T) : List<T> {
+public fun <T> Array<out T>.plus(element: T) : List<T> {
     val answer = ArrayList<T>()
     toCollection(answer)
     answer.add(element)
@@ -262,7 +326,7 @@ public inline fun <T> Array<out T>.plus(element: T) : List<T> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-public inline fun <T> Array<out T>.plus(iterator: Iterator<T>) : List<T> {
+public fun <T> Array<out T>.plus(iterator: Iterator<T>) : List<T> {
     val answer = ArrayList<T>()
     toCollection(answer)
     for (element in iterator) {
@@ -310,7 +374,7 @@ public inline fun <T> Array<out T>.reduceRight(operation: (T, T) -> T) : T {
 /**
  * Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
-public inline fun <T:Any> Array<out T?>.requireNoNulls() : Array<out T> {
+public fun <T:Any> Array<out T?>.requireNoNulls() : Array<out T> {
     for (element in this) {
         if (element == null) {
             throw IllegalArgumentException("null element found in $this")
@@ -322,7 +386,7 @@ public inline fun <T:Any> Array<out T?>.requireNoNulls() : Array<out T> {
 /**
  * Reverses the order the elements into a list
  */
-public inline fun <T> Array<out T>.reverse() : List<T> {
+public fun <T> Array<out T>.reverse() : List<T> {
     val list = toCollection(ArrayList<T>())
     Collections.reverse(list)
     return list
@@ -346,7 +410,7 @@ public inline fun <T, R: Comparable<R>> Array<out T>.sortBy(f: (T) -> R) : List<
 /**
  * Returns a list containing the first *n* elements
  */
-public inline fun <T> Array<out T>.take(n: Int) : List<T> {
+public fun <T> Array<out T>.take(n: Int) : List<T> {
     return takeWhile(countTo(n))
 }
 
@@ -368,7 +432,7 @@ public inline fun <T, C: MutableCollection<in T>> Array<out T>.takeWhileTo(resul
 /**
  * Copies all elements into the given collection
  */
-public inline fun <T, C: MutableCollection<in T>> Array<out T>.toCollection(result: C) : C {
+public fun <T, C: MutableCollection<in T>> Array<out T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -376,35 +440,77 @@ public inline fun <T, C: MutableCollection<in T>> Array<out T>.toCollection(resu
 /**
  * Copies all elements into a [[LinkedList]]
  */
-public inline fun <T> Array<out T>.toLinkedList() : LinkedList<T> {
+public fun <T> Array<out T>.toLinkedList() : LinkedList<T> {
     return toCollection(LinkedList<T>())
 }
 
 /**
  * Copies all elements into a [[List]]
  */
-public inline fun <T> Array<out T>.toList() : List<T> {
+public fun <T> Array<out T>.toList() : List<T> {
     return toCollection(ArrayList<T>())
 }
 
 /**
  * Copies all elements into a [[Set]]
  */
-public inline fun <T> Array<out T>.toSet() : Set<T> {
+public fun <T> Array<out T>.toSet() : Set<T> {
     return toCollection(LinkedHashSet<T>())
 }
 
 /**
  * Copies all elements into a [[SortedSet]]
  */
-public inline fun <T> Array<out T>.toSortedSet() : SortedSet<T> {
+public fun <T> Array<out T>.toSortedSet() : SortedSet<T> {
     return toCollection(TreeSet<T>())
 }
 
 /**
  * Returns an iterator of Pairs(index, data)
  */
-public inline fun <T> Array<out T>.withIndices() : Iterator<Pair<Int, T>> {
+public fun <T> Array<out T>.withIndices() : Iterator<Pair<Int, T>> {
     return IndexIterator(iterator())
+}
+
+/**
+ * Sums up the elements
+ */
+public fun Array<Byte>.sum() : Int {
+    return fold(0, {a,b -> a+b})
+}
+
+/**
+ * Sums up the elements
+ */
+public fun Array<Short>.sum() : Int {
+    return fold(0, {a,b -> a+b})
+}
+
+/**
+ * Sums up the elements
+ */
+public fun Array<Int>.sum() : Int {
+    return fold(0, {a,b -> a+b})
+}
+
+/**
+ * Sums up the elements
+ */
+public fun Array<Long>.sum() : Long {
+    return fold(0.toLong(), {a,b -> a+b})
+}
+
+/**
+ * Sums up the elements
+ */
+public fun Array<Float>.sum() : Float {
+    return fold(0.toFloat(), {a,b -> a+b})
+}
+
+/**
+ * Sums up the elements
+ */
+public fun Array<Double>.sum() : Double {
+    return fold(0.0, {a,b -> a+b})
 }
 

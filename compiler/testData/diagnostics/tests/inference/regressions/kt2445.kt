@@ -7,4 +7,4 @@ fun main(args: Array<String>) {
     }
 }
 
-fun test<R>(callback: (R) -> Unit):Unit = callback(null!!)
+fun test<R>(callback: (R) -> Unit):Unit = <!UNREACHABLE_CODE!>callback<!>(null!!)

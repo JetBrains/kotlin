@@ -24,4 +24,4 @@ fun f3() : String{}
 // EXIST: f1
 // EXIST: f2
 // ABSENT: f3
-// EXIST: Foo@Foo()
+// EXIST: { lookupString:"Foo", itemText:"Foo()" }

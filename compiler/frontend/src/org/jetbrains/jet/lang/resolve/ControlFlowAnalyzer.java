@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -49,13 +48,9 @@ public class ControlFlowAnalyzer {
             if (!bodiesResolveContext.completeAnalysisNeeded(file)) continue;
             checkDeclarationContainer(file);
         }
-        for (JetClass aClass : bodiesResolveContext.getClasses().keySet()) {
+        for (JetClassOrObject aClass : bodiesResolveContext.getClasses().keySet()) {
             if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
             checkDeclarationContainer(aClass);
-        }
-        for (JetObjectDeclaration objectDeclaration : bodiesResolveContext.getObjects().keySet()) {
-            if (!bodiesResolveContext.completeAnalysisNeeded(objectDeclaration)) continue;
-            checkDeclarationContainer(objectDeclaration);
         }
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : bodiesResolveContext.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
@@ -64,6 +59,8 @@ public class ControlFlowAnalyzer {
             JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
+            assert expectedReturnType != null
+                    : "functionDescriptor is not yet fully initialized or broken so return type is null " + functionDescriptor;
             checkFunction(function, expectedReturnType);
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
@@ -90,34 +87,17 @@ public class ControlFlowAnalyzer {
             PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
-            assert accessorDescriptor != null;
-            checkFunction(accessor, accessorDescriptor.getReturnType());
+            assert accessorDescriptor != null : "no property accessor descriptor " + accessor.getText();
+            JetType returnType = accessorDescriptor.getReturnType();
+            assert returnType != null : "property accessor has no return type " + accessorDescriptor;
+            checkFunction(accessor, returnType);
         }
     }
 
-    private void checkFunction(JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
-        assert function instanceof JetDeclaration;
-
+    private void checkFunction(@NotNull JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, trace);
-
-        boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
-        if (!isPropertyAccessor) {
-            flowInformationProvider.recordInitializedVariables();
-        }
-
-        if (topDownAnalysisParameters.isDeclaredLocally()) return;
-
-        flowInformationProvider.checkDefiniteReturn(expectedReturnType);
-
-        if (!isPropertyAccessor) {
-            // Property accessor is checked through initialization of a class/object or package properties (at 'checkDeclarationContainer')
-            flowInformationProvider.markUninitializedVariables();
-        }
-
-        flowInformationProvider.markUnusedVariables();
-
-        flowInformationProvider.markUnusedLiteralsInBlock();
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
+        flowInformationProvider.checkFunction(function, expectedReturnType, topDownAnalysisParameters.isDeclaredLocally());
     }
 }

@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.utils.KotlinPaths;
 
@@ -293,7 +294,8 @@ public class KotlinToJVMBytecodeCompiler {
                 project, ClassBuilderFactories.BINARIES, Progress.DEAF, exhaust.getBindingContext(), environment.getSourceFiles(),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false),
-                /*generateDeclaredClasses = */true
+                /*generateDeclaredClasses = */true,
+                configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineUtil.DEFAULT_INLINE_FLAG)
         );
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 

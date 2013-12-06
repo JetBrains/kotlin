@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
-import org.jetbrains.jet.lang.resolve.constants.NumberValueTypeConstructor;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -594,7 +594,7 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static JetType getDefaultPrimitiveNumberType(@NotNull NumberValueTypeConstructor numberValueTypeConstructor) {
+    public static JetType getDefaultPrimitiveNumberType(@NotNull IntegerValueTypeConstructor numberValueTypeConstructor) {
         JetType type = getDefaultPrimitiveNumberType(numberValueTypeConstructor.getSupertypes());
         assert type != null : "Strange number value type constructor: " + numberValueTypeConstructor + ". " +
                               "Super types doesn't contain double, int or long: " + numberValueTypeConstructor.getSupertypes();
@@ -620,7 +620,7 @@ public class TypeUtils {
 
     @NotNull
     public static JetType getPrimitiveNumberType(
-            @NotNull NumberValueTypeConstructor numberValueTypeConstructor,
+            @NotNull IntegerValueTypeConstructor numberValueTypeConstructor,
             @NotNull JetType expectedType
     ) {
         if (noExpectedType(expectedType) || expectedType.isError()) {
@@ -639,7 +639,7 @@ public class TypeUtils {
         Collection<JetType> numberTypes = Sets.newLinkedHashSet();
         Collection<JetType> otherTypes = Sets.newLinkedHashSet();
         for (JetType type : types) {
-            if (type.getConstructor() instanceof NumberValueTypeConstructor) {
+            if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
                 numberTypes.add(type);
             }
             else {

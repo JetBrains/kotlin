@@ -58,15 +58,16 @@ public class JetTypeParameterElementType extends JetStubElementType<PsiJetTypePa
     }
 
     @Override
-    public void serialize(PsiJetTypeParameterStub stub, StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull PsiJetTypeParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeName(stub.getExtendBoundTypeText());
         dataStream.writeBoolean(stub.isInVariance());
         dataStream.writeBoolean(stub.isOutVariance());
     }
 
+    @NotNull
     @Override
-    public PsiJetTypeParameterStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public PsiJetTypeParameterStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         StringRef extendBoundTypeText = dataStream.readName();
         boolean isInVariance = dataStream.readBoolean();
@@ -77,7 +78,7 @@ public class JetTypeParameterElementType extends JetStubElementType<PsiJetTypePa
     }
 
     @Override
-    public void indexStub(PsiJetTypeParameterStub stub, IndexSink sink) {
+    public void indexStub(@NotNull PsiJetTypeParameterStub stub, @NotNull IndexSink sink) {
         // No index
     }
 }

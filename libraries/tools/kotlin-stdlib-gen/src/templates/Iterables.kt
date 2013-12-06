@@ -3,7 +3,7 @@ package templates
 import java.util.ArrayList
 import templates.Family.*
 
-fun iterables(): List<GenericFunction> {
+fun iterables(): ArrayList<GenericFunction> {
 
     val templates = commons()
 
@@ -31,6 +31,7 @@ fun iterables(): List<GenericFunction> {
     }
 
     templates add f("filterNotNull()") {
+        isInline = false
         absentFor(PrimitiveArrays) // Those are inherently non-nulls
         doc = "Returns a list containing all the non-*null* elements"
         typeParam("T:Any")
@@ -63,6 +64,7 @@ fun iterables(): List<GenericFunction> {
     }
 
     templates add f("take(n: Int)") {
+        isInline = false
         doc = "Returns a list containing the first *n* elements"
         returns("List<T>")
         body {
@@ -80,6 +82,7 @@ fun iterables(): List<GenericFunction> {
     }
 
     templates add f("requireNoNulls()") {
+        isInline = false
         absentFor(PrimitiveArrays) // Those are inherently non-nulls
         doc = "Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements"
         typeParam("T:Any")
@@ -101,6 +104,7 @@ fun iterables(): List<GenericFunction> {
     }
 
     templates add f("plus(element: T)") {
+        isInline = false
         doc = "Creates an [[Iterator]] which iterates over this iterator then the given element at the end"
         returns("List<T>")
 
@@ -116,6 +120,7 @@ fun iterables(): List<GenericFunction> {
     }
 
     templates add f("plus(iterator: Iterator<T>)") {
+        isInline = false
         doc = "Creates an [[Iterator]] which iterates over this iterator then the following iterator"
         returns("List<T>")
 
@@ -132,6 +137,7 @@ fun iterables(): List<GenericFunction> {
     }
 
     templates add f("plus(collection: Iterable<T>)") {
+        isInline = false
         doc = "Creates an [[Iterator]] which iterates over this iterator then the following collection"
         returns("List<T>")
 
@@ -140,5 +146,93 @@ fun iterables(): List<GenericFunction> {
         }
     }
 
-    return templates.sort()
+    templates add f("minBy(f: (T) -> R)") {
+        doc = "Returns the first element yielding the smallest value of the given function or null if there are no elements"
+        typeParam("R: Comparable<R>")
+        typeParam("T: Any")
+        returns("T?")
+        Iterables.body {
+            """
+                val iterator = iterator()
+                if (!iterator.hasNext()) return null
+
+                var minElem = iterator.next()
+                var minValue = f(minElem)
+                while (iterator.hasNext()) {
+                    val e = iterator.next()
+                    val v = f(e)
+                    if (minValue > v) {
+                       minElem = e
+                       minValue = v
+                    }
+                }
+                return minElem
+            """
+        }
+        listOf(Arrays, PrimitiveArrays).forEach {
+            it.body {
+                """
+                    if (size == 0) return null
+
+                    var minElem = this[0]
+                    var minValue = f(minElem)
+                    for (i in 1..lastIndex) {
+                        val e = this[i]
+                        val v = f(e)
+                        if (minValue > v) {
+                           minElem = e
+                           minValue = v
+                        }
+                    }
+                    return minElem
+                """
+            }
+        }
+    }
+
+    templates add f("maxBy(f: (T) -> R)") {
+        doc = "Returns the first element yielding the largest value of the given function or null if there are no elements"
+        typeParam("R: Comparable<R>")
+        typeParam("T: Any")
+        returns("T?")
+        Iterables.body {
+            """
+                val iterator = iterator()
+                if (!iterator.hasNext()) return null
+
+                var maxElem = iterator.next()
+                var maxValue = f(maxElem)
+                while (iterator.hasNext()) {
+                    val e = iterator.next()
+                    val v = f(e)
+                    if (maxValue < v) {
+                       maxElem = e
+                       maxValue = v
+                    }
+                }
+                return maxElem
+            """
+        }
+        listOf(Arrays, PrimitiveArrays).forEach {
+            it.body {
+                """
+                if (isEmpty()) return null
+                
+                var maxElem = this[0]
+                var maxValue = f(maxElem)
+                for (i in 1..lastIndex) {
+                    val e = this[i]
+                    val v = f(e)
+                    if (maxValue < v) {
+                       maxElem = e
+                       maxValue = v
+                    }
+                }
+                return maxElem
+            """
+            }
+        }
+    }
+
+    return templates
 }

@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 /**
  * Returns an iterator which invokes the function to calculate the next value on each iteration until the function returns *null*
  */
-public inline fun <T:Any> iterate(nextFunction: () -> T?) : Iterator<T> {
+public fun <T:Any> iterate(nextFunction: () -> T?) : Iterator<T> {
     return FunctionIterator(nextFunction)
 }
 
@@ -15,18 +15,18 @@ public inline fun <T:Any> iterate(nextFunction: () -> T?) : Iterator<T> {
  * Returns an iterator which invokes the function to calculate the next value based on the previous one on each iteration
  * until the function returns *null*
  */
-public inline fun <T: Any> iterate(initialValue: T, nextFunction: (T) -> T?): Iterator<T> =
+public /*inline*/ fun <T: Any> iterate(initialValue: T, nextFunction: (T) -> T?): Iterator<T> =
         iterate(nextFunction.toGenerator(initialValue))
 
 /**
  * Returns an iterator whose values are pairs composed of values produced by given pair of iterators
  */
-public inline fun <T, S> Iterator<T>.zip(iterator: Iterator<S>): Iterator<Pair<T, S>> = PairIterator(this, iterator)
+public fun <T, S> Iterator<T>.zip(iterator: Iterator<S>): Iterator<Pair<T, S>> = PairIterator(this, iterator)
 
 /**
  * Returns an iterator shifted to right by the given number of elements
  */
-public inline fun <T> Iterator<T>.skip(n: Int): Iterator<T> = SkippingIterator(this, n)
+public fun <T> Iterator<T>.skip(n: Int): Iterator<T> = SkippingIterator(this, n)
 
 class FilterIterator<T>(val iterator : Iterator<T>, val predicate: (T)-> Boolean) : AbstractIterator<T>() {
     override protected fun computeNext(): Unit {
@@ -203,7 +203,7 @@ class SkippingIterator<T>(val iterator: Iterator<T>, val n: Int): Iterator<T> {
     }
 }
 
-fun <T: Any> Function1<T, T?>.toGenerator(initialValue: T): Function0<T?> {
+public fun <T: Any> Function1<T, T?>.toGenerator(initialValue: T): Function0<T?> {
     var nextValue: T? = initialValue
     return {
         nextValue?.let { result ->

@@ -18,8 +18,10 @@ enum class Family {
 class GenericFunction(val signature : String): Comparable<GenericFunction> {
     var doc : String = ""
     var toNullableT : Boolean = false
-    val isInline : Boolean = true;
+    var isInline : Boolean = true;
+    private val customReceivers = HashMap<Family, String>()
     val blockedFor = HashSet<Family>()
+    private val blockedForPrimitive = HashSet<PrimitiveType>()
     val bodies = HashMap<Family, String>()
     val returnTypes = HashMap<Family, String>()
     val typeParams = ArrayList<String>()
@@ -44,6 +46,10 @@ class GenericFunction(val signature : String): Comparable<GenericFunction> {
         returnTypes[this] = r
     }
 
+    fun Family.customReceiver(r: String) {
+        customReceivers[this] = r
+    }
+
     fun typeParam(t:String) {
         typeParams.add(t)
     }
@@ -52,9 +58,13 @@ class GenericFunction(val signature : String): Comparable<GenericFunction> {
         blockedFor.addAll(f.toList())
     }
 
+    fun absentFor(vararg p: PrimitiveType) {
+        blockedForPrimitive.addAll(p.toList())
+    }
+
     private fun effectiveTypeParams(f : Family) : List<String> {
         val types = ArrayList(typeParams)
-        if (typeParams.find { it.startsWith("T") } == null) {
+        if (typeParams.find { it.startsWith("T") } == null && !customReceivers.containsKey(f)) {
             types.add(0, "T")
         }
 
@@ -67,8 +77,9 @@ class GenericFunction(val signature : String): Comparable<GenericFunction> {
 
 
 
-    fun buildFor(f: Family, arrName : String = "") : String {
+    fun buildFor(f: Family, primitiveType: PrimitiveType?) : String {
         if (blockedFor.contains(f)) return ""
+        if (primitiveType != null && blockedForPrimitive.contains(primitiveType)) return ""
 
         if (returnTypes[f] == null) throw RuntimeException("No return type specified for $signature")
         val retType = returnTypes[f]!!
@@ -78,7 +89,7 @@ class GenericFunction(val signature : String): Comparable<GenericFunction> {
             Collections -> "Collection<T>"
             Iterators -> "Iterator<T>"
             Arrays -> "Array<out T>"
-            PrimitiveArrays -> "${arrName}Array"
+            PrimitiveArrays -> "${primitiveType!!.name}Array"
         }
 
         fun String.renderType() : String {
@@ -89,7 +100,7 @@ class GenericFunction(val signature : String): Comparable<GenericFunction> {
                 val token = t.nextToken()
                 answer.append(when (token) {
                     "SELF" -> selftype
-                    "T" -> if (f == Family.PrimitiveArrays) arrName else token
+                    "T" -> if (f == Family.PrimitiveArrays) primitiveType!!.name else token
                     else -> token
                 })
             }
@@ -120,7 +131,7 @@ class GenericFunction(val signature : String): Comparable<GenericFunction> {
             builder.append(types.makeString(separator = ", ", prefix = "<", postfix = "> ").renderType())
         }
 
-        builder.append((
+        builder.append((customReceivers[f] ?:
         if (toNullableT) {
             selftype.replace("T>", "T?>")
         }
@@ -160,6 +171,6 @@ fun f(signature : String, init : GenericFunction.() -> Unit): GenericFunction {
 fun main(args : Array<String>) {
     val templates = collections()
     for (t in templates) {
-        print(t.buildFor(PrimitiveArrays, "Byte"))
+        print(t.buildFor(PrimitiveArrays, PrimitiveType.Byte))
     }
 }

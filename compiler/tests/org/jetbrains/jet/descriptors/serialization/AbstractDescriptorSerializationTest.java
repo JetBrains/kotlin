@@ -98,12 +98,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             ClassId classId = getClassId(classDescriptor);
             ClassDescriptor descriptor = descriptorFinder.findClass(classId);
             assert descriptor != null : "Class not loaded: " + classId;
-            if (descriptor.getKind().isSingleton()) {
-                namespace.getMemberScope().addObjectDescriptor(descriptor);
-            }
-            else {
-                namespace.getMemberScope().addClassifierDescriptor(descriptor);
-            }
+            namespace.getMemberScope().addClassifierDescriptor(descriptor);
         }
 
         PackageData data = PackageData.read(serializedPackage, JavaProtoBufUtil.getExtensionRegistry());
@@ -134,9 +129,6 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
             if (descriptor instanceof ClassDescriptor) {
                 classes.add((ClassDescriptor) descriptor);
             }
-        }
-        for (ClassDescriptor descriptor : scope.getObjectDescriptors()) {
-            classes.add(descriptor);
         }
         return classes;
     }

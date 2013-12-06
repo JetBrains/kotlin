@@ -17,14 +17,45 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetObjectDeclarationName extends JetNamedDeclarationNotStubbed {
-
+public class JetObjectDeclarationName extends JetExpressionImpl {
     public JetObjectDeclarationName(@NotNull ASTNode node) {
         super(node);
+    }
+
+    @Override
+    @Nullable
+    public String getName() {
+        PsiElement identifier = getNameIdentifier();
+        if (identifier != null) {
+            String text = identifier.getText();
+            return text != null ? JetPsiUtil.unquoteIdentifier(text) : null;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public PsiElement getNameIdentifier() {
+        return findChildByType(JetTokens.IDENTIFIER);
+    }
+
+    public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
+        return getNameIdentifier().replace(JetPsiFactory.createNameIdentifier(getProject(), name));
+    }
+
+    @Override
+    public int getTextOffset() {
+        PsiElement identifier = getNameIdentifier();
+        return identifier != null ? identifier.getTextRange().getStartOffset() : getTextRange().getStartOffset();
     }
 
     @Override

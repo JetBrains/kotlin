@@ -37,6 +37,6 @@ public class JavaEnumClassObjectScope extends JavaClassMembersScope {
     @NotNull
     @Override
     protected Collection<ClassDescriptor> computeInnerClasses() {
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 }

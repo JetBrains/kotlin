@@ -28,7 +28,7 @@ public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun BooleanArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+public fun BooleanArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -54,7 +54,7 @@ public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-public inline fun BooleanArray.drop(n: Int) : List<Boolean> {
+public fun BooleanArray.drop(n: Int) : List<Boolean> {
     return dropWhile(countTo(n))
 }
 
@@ -184,11 +184,25 @@ public inline fun <K> BooleanArray.groupByTo(result: MutableMap<K, MutableList<B
 }
 
 /**
+ * Returns true if the array is empty
+ */
+public fun BooleanArray.isEmpty() : Boolean {
+    return size == 0
+}
+
+/**
+ * Returns true if the array is empty
+ */
+public fun BooleanArray.isNotEmpty() : Boolean {
+    return !isEmpty()
+}
+
+/**
  * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun BooleanArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+public fun BooleanArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -212,6 +226,44 @@ public inline fun <R, C: MutableCollection<in R>> BooleanArray.mapTo(result: C, 
 }
 
 /**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> BooleanArray.maxBy(f: (Boolean) -> R) : Boolean? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R) : Boolean? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean) : Pair<List<Boolean>, List<Boolean>> {
@@ -230,14 +282,14 @@ public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean) : Pair
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-public inline fun BooleanArray.plus(collection: Iterable<Boolean>) : List<Boolean> {
+public fun BooleanArray.plus(collection: Iterable<Boolean>) : List<Boolean> {
     return plus(collection.iterator())
 }
 
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-public inline fun BooleanArray.plus(element: Boolean) : List<Boolean> {
+public fun BooleanArray.plus(element: Boolean) : List<Boolean> {
     val answer = ArrayList<Boolean>()
     toCollection(answer)
     answer.add(element)
@@ -247,7 +299,7 @@ public inline fun BooleanArray.plus(element: Boolean) : List<Boolean> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-public inline fun BooleanArray.plus(iterator: Iterator<Boolean>) : List<Boolean> {
+public fun BooleanArray.plus(iterator: Iterator<Boolean>) : List<Boolean> {
     val answer = ArrayList<Boolean>()
     toCollection(answer)
     for (element in iterator) {
@@ -295,7 +347,7 @@ public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Bool
 /**
  * Reverses the order the elements into a list
  */
-public inline fun BooleanArray.reverse() : List<Boolean> {
+public fun BooleanArray.reverse() : List<Boolean> {
     val list = toCollection(ArrayList<Boolean>())
     Collections.reverse(list)
     return list
@@ -319,7 +371,7 @@ public inline fun <R: Comparable<R>> BooleanArray.sortBy(f: (Boolean) -> R) : Li
 /**
  * Returns a list containing the first *n* elements
  */
-public inline fun BooleanArray.take(n: Int) : List<Boolean> {
+public fun BooleanArray.take(n: Int) : List<Boolean> {
     return takeWhile(countTo(n))
 }
 
@@ -341,7 +393,7 @@ public inline fun <C: MutableCollection<in Boolean>> BooleanArray.takeWhileTo(re
 /**
  * Copies all elements into the given collection
  */
-public inline fun <C: MutableCollection<in Boolean>> BooleanArray.toCollection(result: C) : C {
+public fun <C: MutableCollection<in Boolean>> BooleanArray.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -349,35 +401,35 @@ public inline fun <C: MutableCollection<in Boolean>> BooleanArray.toCollection(r
 /**
  * Copies all elements into a [[LinkedList]]
  */
-public inline fun BooleanArray.toLinkedList() : LinkedList<Boolean> {
+public fun BooleanArray.toLinkedList() : LinkedList<Boolean> {
     return toCollection(LinkedList<Boolean>())
 }
 
 /**
  * Copies all elements into a [[List]]
  */
-public inline fun BooleanArray.toList() : List<Boolean> {
+public fun BooleanArray.toList() : List<Boolean> {
     return toCollection(ArrayList<Boolean>())
 }
 
 /**
  * Copies all elements into a [[Set]]
  */
-public inline fun BooleanArray.toSet() : Set<Boolean> {
+public fun BooleanArray.toSet() : Set<Boolean> {
     return toCollection(LinkedHashSet<Boolean>())
 }
 
 /**
  * Copies all elements into a [[SortedSet]]
  */
-public inline fun BooleanArray.toSortedSet() : SortedSet<Boolean> {
+public fun BooleanArray.toSortedSet() : SortedSet<Boolean> {
     return toCollection(TreeSet<Boolean>())
 }
 
 /**
  * Returns an iterator of Pairs(index, data)
  */
-public inline fun BooleanArray.withIndices() : Iterator<Pair<Int, Boolean>> {
+public fun BooleanArray.withIndices() : Iterator<Pair<Int, Boolean>> {
     return IndexIterator(iterator())
 }
 

@@ -19,7 +19,9 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Function;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -31,8 +33,7 @@ import java.util.Map;
 
 public interface BodiesResolveContext {
     Collection<JetFile> getFiles();
-    Map<JetClass, MutableClassDescriptor> getClasses();
-    Map<JetObjectDeclaration, MutableClassDescriptor> getObjects();
+    Map<JetClassOrObject, MutableClassDescriptor> getClasses();
     Map<JetProperty, PropertyDescriptor> getProperties();
     Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions();
     Function<JetDeclaration, JetScope> getDeclaringScopes();

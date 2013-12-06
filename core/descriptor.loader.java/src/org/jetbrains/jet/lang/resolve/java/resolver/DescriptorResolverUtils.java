@@ -115,23 +115,20 @@ public final class DescriptorResolverUtils {
     }
 
     /**
-     * @return true if {@code member} is a static member of enum class, which is to be put into its class object (and not into the
-     *         corresponding package). This applies to enum entries, values() and valueOf(String) methods
+     * @return true if {@code method} is a static method of enum class, which is to be put into its class object (and not into the
+     *         corresponding package). This applies to values() and valueOf(String) methods
      */
-    public static boolean shouldBeInEnumClassObject(@NotNull JavaMember member) {
-        if (!member.getContainingClass().isEnum()) return false;
+    public static boolean shouldBeInEnumClassObject(@NotNull JavaMethod method) {
+        if (!method.getContainingClass().isEnum()) return false;
 
-        if (member instanceof JavaField && ((JavaField) member).isEnumEntry()) return true;
-
-        if (!(member instanceof JavaMethod)) return false;
-        String signature = JavaSignatureFormatter.getInstance().formatMethod((JavaMethod) member);
+        String signature = JavaSignatureFormatter.getInstance().formatMethod(method);
 
         return "values()".equals(signature) ||
                "valueOf(java.lang.String)".equals(signature);
     }
 
-    public static boolean isCorrectOwnerForEnumMember(@NotNull ClassOrNamespaceDescriptor ownerDescriptor, @NotNull JavaMember member) {
-        return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(member);
+    public static boolean isCorrectOwnerForEnumMethod(@NotNull ClassOrNamespaceDescriptor ownerDescriptor, @NotNull JavaMethod method) {
+        return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(method);
     }
 
     public static boolean isObjectMethodInInterface(@NotNull JavaMember member) {

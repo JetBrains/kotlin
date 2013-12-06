@@ -38,18 +38,6 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
     }
 
     @Override
-    @NotNull
-    public List<JetDelegationSpecifier> getDelegationSpecifiers() {
-        return element.getDelegationSpecifiers();
-    }
-
-    //@Override
-    //@Nullable
-    //public Name getNameAsName() {
-    //    return element.getNameAsName();
-    //}
-
-    @Override
     @Nullable
     public JetModifierList getModifierList() {
         return element.getModifierList();

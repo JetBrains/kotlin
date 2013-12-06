@@ -1,79 +1,79 @@
 fun t1() : Int{
   return 0
-  <error>1</error>
+  <warning>1</warning>
 }
 
 fun t1a() : Int {
   <error>return</error>
-  <error>return 1</error>
-  <error>1</error>
+  <warning>return 1</warning>
+  <warning>1</warning>
 }
 
 fun t1b() : Int {
   return 1
-  <error>return 1</error>
-  <error>1</error>
+  <warning>return 1</warning>
+  <warning>1</warning>
 }
 
 fun t1c() : Int {
   return 1
   <error>return</error>
-  <error>1</error>
+  <warning>1</warning>
 }
 
 fun t2() : Int {
   if (1 > 2)
     return 1
   else return 1
-  <error>1</error>
+  <warning>1</warning>
 }
 
 fun t2a() : Int {
   if (1 > 2) {
     return 1
-    <error>1</error>
+    <warning>1</warning>
   } else { return 1
-    <error>2</error>
+    <warning>2</warning>
   }
-  <error>1</error>
+  <warning>1</warning>
 }
 
 fun t3() : Any {
   if (1 > 2)
     return 2
   else return ""
-  <error>1</error>
+  <warning>1</warning>
 }
 
 fun t4(<warning>a</warning> : Boolean) : Int {
   do {
     return 1
   }
-  while (<error>a</error>)
-  <error>1</error>
+  while (<warning>a</warning>)
+  <warning>1</warning>
 }
 
 fun t4break(<warning>a</warning> : Boolean) : Int {
   do {
     break
   }
-  while (<error>a</error>)
+  while (<warning>a</warning>)
   return 1
 }
 
 fun t5() : Int {
   do {
     return 1
-    <error>2</error>
+    <warning>2</warning>
   }
-  while (<error>1 > 2</error>)
-  <error>return 1</error>
+  while (<warning>1 > 2</warning>)
+  <warning>return 1</warning>
 }
 
 fun t6() : Int {
   while (1 > 2) {
     return 1
-    <error>2</error>
+    <warning>2</warning>
   }
   return 1
 }
@@ -81,7 +81,7 @@ fun t6() : Int {
 fun t6break() : Int {
   while (1 > 2) {
     break
-    <error>2</error>
+    <warning>2</warning>
   }
   return 1
 }
@@ -89,7 +89,7 @@ fun t6break() : Int {
 fun t7(b : Int) : Int {
   for (i in 1..b) {
     return 1
-    <error>2</error>
+    <warning>2</warning>
   }
   return 1
 }
@@ -97,7 +97,7 @@ fun t7(b : Int) : Int {
 fun t7break(b : Int) : Int {
   for (i in 1..b) {
     return 1
-    <error>2</error>
+    <warning>2</warning>
   }
   return 1
 }
@@ -105,7 +105,7 @@ fun t7break(b : Int) : Int {
 fun t7() : Int {
   try {
     return 1
-    <error>2</error>
+    <warning>2</warning>
   }
   catch (<error>e : Any</error>) {
     <warning>2</warning>
@@ -116,36 +116,36 @@ fun t7() : Int {
 fun t8() : Int {
   try {
     return 1
-    <error>2</error>
+    <warning>2</warning>
   }
   catch (<error>e : Any</error>) {
     return 1
-    <error>2</error>
+    <warning>2</warning>
   }
-  <error>return 1</error>
+  <warning>return 1</warning>
 }
 
 fun blockAndAndMismatch() : Boolean {
-  <error>(return true) || (return false)</error>
-  <error>return true</error>
+  <warning>(return true) || (return false)</warning>
+  <warning>return true</warning>
 }
 
 fun tf() : Int {
-  try {<error>return 1</error>} finally{return 1}
-  <error>return 1</error>
+  try {<warning>return 1</warning>} finally{return 1}
+  <warning>return 1</warning>
 }
 
 fun failtest(<warning>a</warning> : Int) : Int {
-  if (fail() || <error>true</error>) {
+  if (fail() || <warning>true</warning>) <warning>{
 
-  }
-  <error>return 1</error>
+  }</warning>
+  <warning>return 1</warning>
 }
 
 fun foo(a : Nothing) : Unit {
   <warning>1</warning>
   <warning>a</warning>
-  <error>2</error>
+  <warning>2</warning>
 }
 
 fun fail() : Nothing {

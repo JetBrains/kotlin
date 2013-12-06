@@ -8,7 +8,7 @@ import java.beans.*
 /**
  * Creates a [[PropertyChangeListener]] for the given function for processing each [[PropertyChangeEvent]]
  */
-inline fun propertyChangeListener(fn: (PropertyChangeEvent) -> Unit): PropertyChangeListener = FunctionPropertyChangeListener(fn)
+fun propertyChangeListener(fn: (PropertyChangeEvent) -> Unit): PropertyChangeListener = FunctionPropertyChangeListener(fn)
 
 private class FunctionPropertyChangeListener(val fn: (PropertyChangeEvent) -> Unit) : PropertyChangeListener {
     public override fun propertyChange(e: PropertyChangeEvent) {

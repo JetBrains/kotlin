@@ -59,6 +59,30 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         paremeterless();
     }
 
+    public void testSout_BeforeCall() {
+        paremeterless();
+    }
+
+    public void testSout_BeforeCallSpace() {
+        paremeterless();
+    }
+
+    public void testSout_BeforeBinary() {
+        paremeterless();
+    }
+
+    public void testSout_InCallArguments() {
+        paremeterless();
+    }
+
+    public void testSout_BeforeQualifiedCall() {
+        paremeterless();
+    }
+
+    public void testSout_AfterSemicolon() {
+        paremeterless();
+    }
+
     public void testSerr() {
         paremeterless();
     }

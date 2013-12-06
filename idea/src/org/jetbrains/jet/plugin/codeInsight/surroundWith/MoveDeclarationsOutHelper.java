@@ -142,14 +142,6 @@ public class MoveDeclarationsOutHelper {
             element instanceof JetClassOrObject ||
             element instanceof JetFunction) {
 
-            // Descriptor for local object is linked with JetObjectNameDeclaration
-            if (element instanceof JetObjectDeclaration) {
-                JetObjectDeclarationName declarationName = ((JetObjectDeclaration) element).getNameAsDeclaration();
-                if (declarationName != null) {
-                    element = declarationName;
-                }
-            }
-
             PsiReference[] refs = ReferencesSearch.search(element, scope, false).toArray(PsiReference.EMPTY_ARRAY);
             if (refs.length > 0) {
                 PsiReference lastRef = refs[refs.length - 1];

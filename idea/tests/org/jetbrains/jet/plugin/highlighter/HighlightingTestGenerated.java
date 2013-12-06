@@ -52,6 +52,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         doTest("idea/testData/highlighter/JavaTypes.kt");
     }
     
+    @TestMetadata("Object.kt")
+    public void testObject() throws Exception {
+        doTest("idea/testData/highlighter/Object.kt");
+    }
+    
     @TestMetadata("TypesAndAnnotations.kt")
     public void testTypesAndAnnotations() throws Exception {
         doTest("idea/testData/highlighter/TypesAndAnnotations.kt");

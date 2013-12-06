@@ -257,8 +257,4 @@ public final class BindingUtils {
             @NotNull JetNamedFunction function) {
         return bindingContext.get(BindingContext.FUNCTION, function);
     }
-
-    public static boolean isObjectDeclaration(@NotNull PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor instanceof VariableDescriptorForObject;
-    }
 }

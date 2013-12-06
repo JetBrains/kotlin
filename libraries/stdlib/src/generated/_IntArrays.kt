@@ -28,7 +28,7 @@ public inline fun IntArray.any(predicate: (Int) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun IntArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
+public fun IntArray.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -54,7 +54,7 @@ public inline fun IntArray.count(predicate: (Int) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-public inline fun IntArray.drop(n: Int) : List<Int> {
+public fun IntArray.drop(n: Int) : List<Int> {
     return dropWhile(countTo(n))
 }
 
@@ -184,11 +184,25 @@ public inline fun <K> IntArray.groupByTo(result: MutableMap<K, MutableList<Int>>
 }
 
 /**
+ * Returns true if the array is empty
+ */
+public fun IntArray.isEmpty() : Boolean {
+    return size == 0
+}
+
+/**
+ * Returns true if the array is empty
+ */
+public fun IntArray.isNotEmpty() : Boolean {
+    return !isEmpty()
+}
+
+/**
  * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-public inline fun IntArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
+public fun IntArray.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString()
@@ -212,6 +226,70 @@ public inline fun <R, C: MutableCollection<in R>> IntArray.mapTo(result: C, tran
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun IntArray.max() : Int? {
+    var max: Int? = null
+    for (e in this) {
+        if (max == null || max!! < e) {
+           max = e
+        }
+    }
+    return max
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> IntArray.maxBy(f: (Int) -> R) : Int? {
+    if (isEmpty()) return null
+    
+    var maxElem = this[0]
+    var maxValue = f(maxElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun IntArray.min() : Int? {
+    var min: Int? = null
+    for (e in this) {
+        if (min == null || min!! > e) {
+           min = e
+        }
+    }
+    return min
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
+public inline fun <R: Comparable<R>> IntArray.minBy(f: (Int) -> R) : Int? {
+    if (size == 0) return null
+    
+    var minElem = this[0]
+    var minValue = f(minElem)
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
+}
+
+/**
  * Partitions this collection into a pair of collections
  */
 public inline fun IntArray.partition(predicate: (Int) -> Boolean) : Pair<List<Int>, List<Int>> {
@@ -230,14 +308,14 @@ public inline fun IntArray.partition(predicate: (Int) -> Boolean) : Pair<List<In
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-public inline fun IntArray.plus(collection: Iterable<Int>) : List<Int> {
+public fun IntArray.plus(collection: Iterable<Int>) : List<Int> {
     return plus(collection.iterator())
 }
 
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-public inline fun IntArray.plus(element: Int) : List<Int> {
+public fun IntArray.plus(element: Int) : List<Int> {
     val answer = ArrayList<Int>()
     toCollection(answer)
     answer.add(element)
@@ -247,7 +325,7 @@ public inline fun IntArray.plus(element: Int) : List<Int> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-public inline fun IntArray.plus(iterator: Iterator<Int>) : List<Int> {
+public fun IntArray.plus(iterator: Iterator<Int>) : List<Int> {
     val answer = ArrayList<Int>()
     toCollection(answer)
     for (element in iterator) {
@@ -295,7 +373,7 @@ public inline fun IntArray.reduceRight(operation: (Int, Int) -> Int) : Int {
 /**
  * Reverses the order the elements into a list
  */
-public inline fun IntArray.reverse() : List<Int> {
+public fun IntArray.reverse() : List<Int> {
     val list = toCollection(ArrayList<Int>())
     Collections.reverse(list)
     return list
@@ -319,7 +397,7 @@ public inline fun <R: Comparable<R>> IntArray.sortBy(f: (Int) -> R) : List<Int> 
 /**
  * Returns a list containing the first *n* elements
  */
-public inline fun IntArray.take(n: Int) : List<Int> {
+public fun IntArray.take(n: Int) : List<Int> {
     return takeWhile(countTo(n))
 }
 
@@ -341,7 +419,7 @@ public inline fun <C: MutableCollection<in Int>> IntArray.takeWhileTo(result: C,
 /**
  * Copies all elements into the given collection
  */
-public inline fun <C: MutableCollection<in Int>> IntArray.toCollection(result: C) : C {
+public fun <C: MutableCollection<in Int>> IntArray.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
@@ -349,35 +427,42 @@ public inline fun <C: MutableCollection<in Int>> IntArray.toCollection(result: C
 /**
  * Copies all elements into a [[LinkedList]]
  */
-public inline fun IntArray.toLinkedList() : LinkedList<Int> {
+public fun IntArray.toLinkedList() : LinkedList<Int> {
     return toCollection(LinkedList<Int>())
 }
 
 /**
  * Copies all elements into a [[List]]
  */
-public inline fun IntArray.toList() : List<Int> {
+public fun IntArray.toList() : List<Int> {
     return toCollection(ArrayList<Int>())
 }
 
 /**
  * Copies all elements into a [[Set]]
  */
-public inline fun IntArray.toSet() : Set<Int> {
+public fun IntArray.toSet() : Set<Int> {
     return toCollection(LinkedHashSet<Int>())
 }
 
 /**
  * Copies all elements into a [[SortedSet]]
  */
-public inline fun IntArray.toSortedSet() : SortedSet<Int> {
+public fun IntArray.toSortedSet() : SortedSet<Int> {
     return toCollection(TreeSet<Int>())
 }
 
 /**
  * Returns an iterator of Pairs(index, data)
  */
-public inline fun IntArray.withIndices() : Iterator<Pair<Int, Int>> {
+public fun IntArray.withIndices() : Iterator<Pair<Int, Int>> {
     return IndexIterator(iterator())
+}
+
+/**
+ * Sums up the elements
+ */
+public fun IntArray.sum() : Int {
+    return fold(0, {a,b -> a+b})
 }
 

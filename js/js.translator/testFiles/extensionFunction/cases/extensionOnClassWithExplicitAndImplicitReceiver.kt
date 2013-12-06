@@ -1,8 +1,8 @@
 package foo
 
-class Foo {
+public class Foo {
 
-  fun blah(): Int {
+  public fun blah(): Int {
     return 5
   }
 

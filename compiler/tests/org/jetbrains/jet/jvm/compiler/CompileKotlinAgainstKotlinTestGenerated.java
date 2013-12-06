@@ -56,6 +56,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/DefaultConstructor.A.kt");
     }
     
+    @TestMetadata("Enum.A.kt")
+    public void testEnum() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/Enum.A.kt");
+    }
+    
     @TestMetadata("ImportObject.A.kt")
     public void testImportObject() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/ImportObject.A.kt");
@@ -89,6 +94,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("Simple.A.kt")
     public void testSimple() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");
+    }
+    
+    @TestMetadata("StarImportEnum.A.kt")
+    public void testStarImportEnum() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/StarImportEnum.A.kt");
     }
     
 }

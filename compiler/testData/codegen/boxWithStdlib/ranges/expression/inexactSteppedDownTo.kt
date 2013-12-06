@@ -69,7 +69,7 @@ fun box(): String {
         list7.add(i)
         if (list7.size() > 23) break
     }
-    if (list7 != listOf<Float>(5.5, 5.0, 4.5, 4.0)) {
+    if (list7 != listOf<Float>(5.5.toFloat(), 5.0.toFloat(), 4.5.toFloat(), 4.0.toFloat())) {
         return "Wrong elements for 5.5.toFloat() downTo 3.7.toFloat() step 0.5.toFloat(): $list7"
     }
 

@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
-public class ReturnValueInstruction extends AbstractJumpInstruction implements JetElementInstruction {
+public class ReturnValueInstruction extends AbstractJumpInstruction implements ReturnInstruction {
 
     private final JetElement element;
 
@@ -33,6 +33,11 @@ public class ReturnValueInstruction extends AbstractJumpInstruction implements J
     @Override
     public void accept(InstructionVisitor visitor) {
         visitor.visitReturnValue(this);
+    }
+
+    @Override
+    public <R> R accept(@NotNull InstructionVisitorWithResult<R> visitor) {
+        return visitor.visitReturnValue(this);
     }
 
     @Override

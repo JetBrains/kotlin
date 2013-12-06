@@ -1,8 +1,8 @@
 // "Move else branch to the end" "false"
 // ERROR: 'else' entry must be the last one in a when-expression
 // ERROR: 'else' entry must be the last one in a when-expression
-// ERROR: Unreachable code
-// ERROR: Unreachable code
+// WARNING: Unreachable code
+// WARNING: Unreachable code
 // ACTION: Disable 'Eliminate Argument of 'when''
 // ACTION: Disable 'Replace 'when' with 'if''
 // ACTION: Edit intention settings
