@@ -46,11 +46,8 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
                 }
 
                 AbstractDescriptorFinder _this = AbstractDescriptorFinder.this;
-                ClassDescriptor classDescriptor =
-                        new DeserializedClassDescriptor(storageManager, _this.annotationDeserializer, _this, packageFragmentProvider,
-                                                        classData.getNameResolver(), classData.getClassProto());
-                classDescriptorCreated(classDescriptor);
-                return classDescriptor;
+                return new DeserializedClassDescriptor(storageManager, _this.annotationDeserializer, _this, packageFragmentProvider,
+                                                classData.getNameResolver(), classData.getClassProto());
             }
         });
     }
@@ -63,7 +60,4 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
 
     @Nullable
     protected abstract ClassData getClassData(@NotNull ClassId classId);
-
-    protected void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor) {
-    }
 }
