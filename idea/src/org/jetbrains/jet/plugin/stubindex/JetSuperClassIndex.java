@@ -30,6 +30,7 @@ public class JetSuperClassIndex extends StringStubIndexExtension<JetClassOrObjec
 
     private static final JetSuperClassIndex ourInstance = new JetSuperClassIndex();
 
+    @NotNull
     public static JetSuperClassIndex getInstance() {
         return ourInstance;
     }
@@ -42,8 +43,9 @@ public class JetSuperClassIndex extends StringStubIndexExtension<JetClassOrObjec
         return KEY;
     }
 
+    @NotNull
     @Override
-    public Collection<JetClassOrObject> get(String s, Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<JetClassOrObject> get(String s, Project project, GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope));
     }
 }
