@@ -1,24 +1,24 @@
 fun ifThen(x: Int?) {
     if (x!! == 0) {
-        x : Int
+        <!DEBUG_INFO_AUTOCAST!>x<!> : Int
     }
-    x : Int
+    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
 }
 
 fun ifElse(x: Int?) {
     if (x!! == 0) else {
-        x : Int
+        <!DEBUG_INFO_AUTOCAST!>x<!> : Int
     }
-    x : Int
+    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
 }
 
 fun ifThenElse(x: Int?) {
     if (x!! == 0) {
-        x : Int
+        <!DEBUG_INFO_AUTOCAST!>x<!> : Int
     } else {
-        x : Int
+        <!DEBUG_INFO_AUTOCAST!>x<!> : Int
     }
-    x : Int
+    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
 }
 
 fun ifIs(x: Int?, cond: Boolean) {

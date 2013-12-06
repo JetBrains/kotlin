@@ -2,6 +2,6 @@ class C(val f : () -> Unit)
 
 fun test(e : Any) {
     if (e is C) {
-        (e.f)()
+        (<!DEBUG_INFO_AUTOCAST!>e<!>.f)()
     }
 }

@@ -4,13 +4,13 @@ trait B : A
 fun B.plus(b: B) = if (this == b) b else this
 
 fun foo(a: A): B {
-    val result = (a as B) + a
-    a : B
+    val result = (a as B) + <!DEBUG_INFO_AUTOCAST!>a<!>
+    <!DEBUG_INFO_AUTOCAST!>a<!> : B
     return result
 }
 
 fun bar(a: A, b: B): B {
     val result = b + (a as B)
-    a : B
+    <!DEBUG_INFO_AUTOCAST!>a<!> : B
     return result
 }

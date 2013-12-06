@@ -5,13 +5,13 @@ trait B : A {
 
 fun bar1(a: A) {
     var b: B = a as B
-    a.foo()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
     b.foo()
 }
 
 fun id(b: B) = b
 fun bar2(a: A) {
     var b: B = id(a as B)
-    a.foo()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
     b.foo()
 }

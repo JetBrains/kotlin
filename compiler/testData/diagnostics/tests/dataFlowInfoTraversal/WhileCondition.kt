@@ -1,19 +1,19 @@
 fun simpleWhile(x: Int?, y0: Int) {
     var y = y0
     while (x!! == y) {
-        x : Int
+        <!DEBUG_INFO_AUTOCAST!>x<!> : Int
         y++
     }
-    x : Int
+    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
 }
 
 fun whileWithBreak(x: Int?, y0: Int) {
     var y = y0
     while (x!! == y) {
-        x : Int
+        <!DEBUG_INFO_AUTOCAST!>x<!> : Int
         break
     }
-    x : Int
+    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
 }
 
 fun whileWithNoCondition(x: Int?) {

@@ -11,8 +11,8 @@ fun f9(init : A?) {
   a?.foo()
   a?.<!UNRESOLVED_REFERENCE!>bar<!>()
   if (a is B) {
-    a.bar()
-    a.foo()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
   }
   a?.foo()
   a?.<!UNRESOLVED_REFERENCE!>bar<!>()
@@ -20,14 +20,14 @@ fun f9(init : A?) {
     a?.<!UNRESOLVED_REFERENCE!>bar<!>()
     a?.foo()
   }
-  if (!(a is B) || a.bar() == Unit.VALUE) {
+  if (!(a is B) || <!DEBUG_INFO_AUTOCAST!>a<!>.bar() == Unit.VALUE) {
       a?.<!UNRESOLVED_REFERENCE!>bar<!>()
   }
   if (!(a is B)) {
     return;
   }
-  a.bar()
-  a.foo()
+  <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
+  <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
 }
 
 fun f10(init : A?) {
@@ -48,15 +48,15 @@ class C() : A() {
 
 fun f101(a : A?) {
     if (a is C) {
-      a.bar();
+      <!DEBUG_INFO_AUTOCAST!>a<!>.bar();
     }
 }
 
 fun f11(a : A?) {
   when (a) {
-    is B -> a.bar()
-    is A -> a.foo()
-    is Any -> a.foo()
+    is B -> <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
+    is A -> <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
+    is Any -> <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
     is Any? -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
     else -> a?.foo()
   }
@@ -64,11 +64,11 @@ fun f11(a : A?) {
 
 fun f12(a : A?) {
   when (a) {
-    is B -> a.bar()
-    is A -> a.foo()
-    is Any -> a.foo();
+    is B -> <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
+    is A -> <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
+    is Any -> <!DEBUG_INFO_AUTOCAST!>a<!>.foo();
     is Any? -> a.<!UNRESOLVED_REFERENCE!>bar<!>()
-    is C -> a.bar()
+    is C -> <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
     else -> a?.foo()
   }
 
@@ -76,15 +76,15 @@ fun f12(a : A?) {
     a?.<!UNRESOLVED_REFERENCE!>bar<!>()
   }
   if (a is B) {
-    a.foo()
-    a.bar()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
   }
 }
 
 fun f13(a : A?) {
   if (a is B) {
-    a.foo()
-    a.bar()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
   }
   else {
     a?.foo()
@@ -97,14 +97,14 @@ fun f13(a : A?) {
     <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
   else {
-    a.foo()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
     <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
   }
 
   a?.foo()
-  if (a is B && a.foo() == Unit.VALUE) {
-    a.foo()
-    a.bar()
+  if (a is B && <!DEBUG_INFO_AUTOCAST!>a<!>.foo() == Unit.VALUE) {
+    <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
   }
   else {
     a?.foo()
@@ -120,70 +120,70 @@ fun f13(a : A?) {
   }
 
   if (!(a is B)) return
-  a.bar()
+  <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
 }
 
 fun f14(a : A?) {
   while (!(a is B)) {
   }
-  a.bar()
+  <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
 }
 fun f15(a : A?) {
   do {
   } while (!(a is B))
-  a.bar()
+  <!DEBUG_INFO_AUTOCAST!>a<!>.bar()
 }
 
 fun getStringLength(obj : Any) : Char? {
   if (obj !is String)
     return null
-  return obj.get(0) // no cast to String is needed
+  return <!DEBUG_INFO_AUTOCAST!>obj<!>.get(0) // no cast to String is needed
 }
 
-fun toInt(i: Int?): Int = if (i != null) i else 0
+fun toInt(i: Int?): Int = if (i != null) <!DEBUG_INFO_AUTOCAST!>i<!> else 0
 fun illegalWhenBody(a: Any): Int = <!NO_ELSE_IN_WHEN!>when<!>(a) {
-    is Int -> a
+    is Int -> <!DEBUG_INFO_AUTOCAST!>a<!>
     is String -> <!TYPE_MISMATCH!>a<!>
 }
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
-        is Int -> return a
+        is Int -> return <!DEBUG_INFO_AUTOCAST!>a<!>
         is String -> return <!TYPE_MISMATCH!>a<!>
     }
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun declarations(a: Any?) {
     if (a is String) {
-       val <!UNUSED_VARIABLE!>p4<!>: String = a
+       val <!UNUSED_VARIABLE!>p4<!>: String = <!DEBUG_INFO_AUTOCAST!>a<!>
     }
     if (a is String?) {
         if (a != null) {
-            val <!UNUSED_VARIABLE!>s<!>: String = a
+            val <!UNUSED_VARIABLE!>s<!>: String = <!DEBUG_INFO_AUTOCAST!>a<!>
         }
     }
     if (a != null) {
         if (a is String?) {
-            val <!UNUSED_VARIABLE!>s<!>: String = a
+            val <!UNUSED_VARIABLE!>s<!>: String = <!DEBUG_INFO_AUTOCAST!>a<!>
         }
     }
 }
 fun vars(a: Any?) {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!>: Int = 0
     if (a is Int) {
-        b = <!UNUSED_VALUE!>a<!>
+        b = <!UNUSED_VALUE, DEBUG_INFO_AUTOCAST!>a<!>
     }
 }
 fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
-    if (a is Int) return { a }
+    if (a is Int) return { <!DEBUG_INFO_AUTOCAST!>a<!> }
     else return { 1 }
 }
 fun returnFunctionLiteral(a: Any?): Function0<Int> =
-    if (a is Int) { (): Int -> a }
+    if (a is Int) { (): Int -> <!DEBUG_INFO_AUTOCAST!>a<!> }
     else { () -> 1 }
 
 fun mergeAutocasts(a: Any?) {
   if (a is String || a is Int) {
     a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
-    a.toString()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.toString()
   }
   if (a is Int || a is String) {
     a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
@@ -192,9 +192,9 @@ fun mergeAutocasts(a: Any?) {
     is String, is Any -> a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
   }
   if (a is String && a is Any) {
-    val <!UNUSED_VARIABLE!>i<!>: Int = a.compareTo("")
+    val <!UNUSED_VARIABLE!>i<!>: Int = <!DEBUG_INFO_AUTOCAST!>a<!>.compareTo("")
   }
-  if (a is String && a.compareTo("") == 0) {}
+  if (a is String && <!DEBUG_INFO_AUTOCAST!>a<!>.compareTo("") == 0) {}
   if (a is String || a.<!UNRESOLVED_REFERENCE!>compareTo<!>("") <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>==<!> 0) {}
 }
 

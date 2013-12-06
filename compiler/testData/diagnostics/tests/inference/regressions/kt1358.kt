@@ -3,8 +3,8 @@ package d
 
 fun bar(a: Any?) {
     if (a != null) {
-        a.foo() //overload resolution ambiguity
-        a.sure() //overload resolution ambiguity
+        <!DEBUG_INFO_AUTOCAST!>a<!>.foo() //overload resolution ambiguity
+        <!DEBUG_INFO_AUTOCAST!>a<!>.sure() //overload resolution ambiguity
     }
 }
 

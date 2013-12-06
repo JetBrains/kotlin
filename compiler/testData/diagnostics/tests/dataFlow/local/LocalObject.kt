@@ -1,7 +1,7 @@
 fun foo(x: Any?) {
     if (x is String) {
-        object : Base(x) {
-            fun bar() = x.length
+        object : Base(<!DEBUG_INFO_AUTOCAST!>x<!>) {
+            fun bar() = <!DEBUG_INFO_AUTOCAST!>x<!>.length
         }
     }
 }

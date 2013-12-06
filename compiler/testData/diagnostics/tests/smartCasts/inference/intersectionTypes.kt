@@ -45,7 +45,7 @@ fun testErrorMessages(a: A, ml: MutableList<String>) {
 
 fun rr(s: String?) {
     if (s != null) {
-        val l = arrayListOf("", s)
+        val l = arrayListOf("", <!DEBUG_INFO_AUTOCAST!>s<!>)
         l: MutableList<String>
         <!TYPE_MISMATCH!>l<!>: MutableList<String?>
     }

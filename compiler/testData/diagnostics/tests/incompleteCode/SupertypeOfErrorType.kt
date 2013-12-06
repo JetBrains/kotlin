@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DEBUG_INFO_AUTOCAST
 package a
 
 import java.util.Date

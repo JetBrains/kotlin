@@ -6,10 +6,10 @@ fun foo() {
     bar(<!TYPE_MISMATCH!>x<!>)
     if (x == null) return
     try {
-        bar(x)
+        bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
     }
     catch (e: Exception) {
-        bar(x)
+        bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
     }
-    bar(x)
+    bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
 }

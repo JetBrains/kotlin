@@ -28,9 +28,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -104,6 +106,13 @@ public class CheckerTestUtil {
                 debugAnnotations.add(new DebugInfoDiagnostic(expression, factory));
             }
         });
+        // this code is used in tests and in internal action 'copy current file as diagnostic test'
+        //noinspection TestOnlyProblems
+        for (JetExpression expression : bindingContext.getSliceContents(BindingContext.AUTOCAST).keySet()) {
+            if (PsiTreeUtil.isAncestor(root, expression, false)) {
+                debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.AUTOCAST));
+            }
+        }
         return debugAnnotations;
     }
 
@@ -389,14 +398,19 @@ public class CheckerTestUtil {
     }
 
     public static class DebugInfoDiagnosticFactory extends DiagnosticFactory {
+        public static final DebugInfoDiagnosticFactory AUTOCAST = new DebugInfoDiagnosticFactory("AUTOCAST");
         public static final DebugInfoDiagnosticFactory ELEMENT_WITH_ERROR_TYPE = new DebugInfoDiagnosticFactory("ELEMENT_WITH_ERROR_TYPE");
         public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");
         public static final DebugInfoDiagnosticFactory MISSING_UNRESOLVED = new DebugInfoDiagnosticFactory("MISSING_UNRESOLVED");
 
         private final String name;
-        private DebugInfoDiagnosticFactory(String name) {
-            super(Severity.ERROR);
+        private DebugInfoDiagnosticFactory(String name, Severity severity) {
+            super(severity);
             this.name = name;
+        }
+
+        private DebugInfoDiagnosticFactory(String name) {
+            this(name, Severity.ERROR);
         }
 
         @NotNull
@@ -407,7 +421,7 @@ public class CheckerTestUtil {
     }
 
     public static class DebugInfoDiagnostic extends AbstractDiagnosticForTests {
-        public DebugInfoDiagnostic(@NotNull JetReferenceExpression reference, @NotNull DebugInfoDiagnosticFactory factory) {
+        public DebugInfoDiagnostic(@NotNull JetExpression reference, @NotNull DebugInfoDiagnosticFactory factory) {
             super(reference, factory);
         }
     }
