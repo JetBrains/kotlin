@@ -149,7 +149,7 @@ fun iterables(): ArrayList<GenericFunction> {
     templates add f("min()") {
         doc = "Returns the smallest element or null if there are no elements"
         returns("T?")
-        absentFor(PrimitiveType.Boolean, PrimitiveType.Char)//currently there are no sane way to compare Char? with something (KT-4251)
+        absentFor(PrimitiveType.Boolean)
         typeParam("T: Comparable<T>")
         isInline = false
         Iterables.body {
@@ -184,7 +184,7 @@ fun iterables(): ArrayList<GenericFunction> {
     templates add f("max()") {
         doc = "Returns the largest element or null if there are no elements"
         returns("T?")
-        absentFor(PrimitiveType.Boolean, PrimitiveType.Char)//currently there are no sane way to compare Char? with something (KT-4251)
+        absentFor(PrimitiveType.Boolean)
         typeParam("T: Comparable<T>")
         isInline = false
         Iterables.body {
