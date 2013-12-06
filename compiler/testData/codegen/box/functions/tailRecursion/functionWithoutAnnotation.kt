@@ -4,3 +4,9 @@ fun withoutAnnotation(x : Int) : Int {
     }
     return 0
 }
+
+fun box(): String {
+    val r = withoutAnnotation(10)
+    if (r == 10) return "OK"
+    return "Fail $r"
+}

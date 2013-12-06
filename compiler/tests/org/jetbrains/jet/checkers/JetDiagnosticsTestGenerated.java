@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class, JetDiagnosticsTestGenerated.TailRecursion.class})
 public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEagerResolve {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.TailCalls.class, Tests.ThisAndSuper.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Varargs.class, Tests.When.class})
     public static class Tests extends AbstractDiagnosticsTestWithEagerResolve {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -6456,69 +6456,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             }
         }
         
-        @TestMetadata("compiler/testData/diagnostics/tests/tailCalls")
-        public static class TailCalls extends AbstractDiagnosticsTestWithEagerResolve {
-            public void testAllFilesPresentInTailCalls() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/tailCalls"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-            
-            @TestMetadata("extensionTailCall.kt")
-            public void testExtensionTailCall() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/extensionTailCall.kt");
-            }
-            
-            @TestMetadata("functionWithNoTails.kt")
-            public void testFunctionWithNoTails() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/functionWithNoTails.kt");
-            }
-            
-            @TestMetadata("functionWithNonTailRecursions.kt")
-            public void testFunctionWithNonTailRecursions() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/functionWithNonTailRecursions.kt");
-            }
-            
-            @TestMetadata("functionWithoutAnnotation.kt")
-            public void testFunctionWithoutAnnotation() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/functionWithoutAnnotation.kt");
-            }
-            
-            @TestMetadata("infixRecursiveCall.kt")
-            public void testInfixRecursiveCall() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/infixRecursiveCall.kt");
-            }
-            
-            @TestMetadata("recursiveCallInLambda.kt")
-            public void testRecursiveCallInLambda() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/recursiveCallInLambda.kt");
-            }
-            
-            @TestMetadata("recursiveCallInLocalFunction.kt")
-            public void testRecursiveCallInLocalFunction() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/recursiveCallInLocalFunction.kt");
-            }
-            
-            @TestMetadata("returnInParentheses.kt")
-            public void testReturnInParentheses() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/returnInParentheses.kt");
-            }
-            
-            @TestMetadata("tailCallInBlockInParentheses.kt")
-            public void testTailCallInBlockInParentheses() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/tailCallInBlockInParentheses.kt");
-            }
-            
-            @TestMetadata("tailCallInParentheses.kt")
-            public void testTailCallInParentheses() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/tailCallInParentheses.kt");
-            }
-            
-            @TestMetadata("tailRecursionInFinally.kt")
-            public void testTailRecursionInFinally() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/tailCalls/tailRecursionInFinally.kt");
-            }
-            
-        }
-        
         @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
         public static class ThisAndSuper extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInThisAndSuper() throws Exception {
@@ -6751,7 +6688,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(Substitutions.class);
             suite.addTestSuite(Subtyping.class);
             suite.addTest(Suppress.innerSuite());
-            suite.addTestSuite(TailCalls.class);
             suite.addTestSuite(ThisAndSuper.class);
             suite.addTestSuite(Varargs.class);
             suite.addTestSuite(When.class);
@@ -6798,9 +6734,34 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/codegen/box/functions/tailRecursion/defaultArgs.kt");
         }
         
+        @TestMetadata("extensionTailCall.kt")
+        public void testExtensionTailCall() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/extensionTailCall.kt");
+        }
+        
+        @TestMetadata("functionWithNoTails.kt")
+        public void testFunctionWithNoTails() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/functionWithNoTails.kt");
+        }
+        
+        @TestMetadata("functionWithNonTailRecursions.kt")
+        public void testFunctionWithNonTailRecursions() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/functionWithNonTailRecursions.kt");
+        }
+        
+        @TestMetadata("functionWithoutAnnotation.kt")
+        public void testFunctionWithoutAnnotation() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/functionWithoutAnnotation.kt");
+        }
+        
         @TestMetadata("infixCall.kt")
         public void testInfixCall() throws Exception {
             doTest("compiler/testData/codegen/box/functions/tailRecursion/infixCall.kt");
+        }
+        
+        @TestMetadata("infixRecursiveCall.kt")
+        public void testInfixRecursiveCall() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/infixRecursiveCall.kt");
         }
         
         @TestMetadata("insideElvis.kt")
@@ -6838,6 +6799,16 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/codegen/box/functions/tailRecursion/realStringRepeat.kt");
         }
         
+        @TestMetadata("recursiveCallInLambda.kt")
+        public void testRecursiveCallInLambda() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/recursiveCallInLambda.kt");
+        }
+        
+        @TestMetadata("recursiveCallInLocalFunction.kt")
+        public void testRecursiveCallInLocalFunction() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/recursiveCallInLocalFunction.kt");
+        }
+        
         @TestMetadata("recursiveInnerFunction.kt")
         public void testRecursiveInnerFunction() throws Exception {
             doTest("compiler/testData/codegen/box/functions/tailRecursion/recursiveInnerFunction.kt");
@@ -6863,6 +6834,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInIfInFinally.kt");
         }
         
+        @TestMetadata("returnInParentheses.kt")
+        public void testReturnInParentheses() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInParentheses.kt");
+        }
+        
         @TestMetadata("returnInTry.kt")
         public void testReturnInTry() throws Exception {
             doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInTry.kt");
@@ -6886,6 +6862,21 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         @TestMetadata("sum.kt")
         public void testSum() throws Exception {
             doTest("compiler/testData/codegen/box/functions/tailRecursion/sum.kt");
+        }
+        
+        @TestMetadata("tailCallInBlockInParentheses.kt")
+        public void testTailCallInBlockInParentheses() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/tailCallInBlockInParentheses.kt");
+        }
+        
+        @TestMetadata("tailCallInParentheses.kt")
+        public void testTailCallInParentheses() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/tailCallInParentheses.kt");
+        }
+        
+        @TestMetadata("tailRecursionInFinally.kt")
+        public void testTailRecursionInFinally() throws Exception {
+            doTest("compiler/testData/codegen/box/functions/tailRecursion/tailRecursionInFinally.kt");
         }
         
         @TestMetadata("thisReferences.kt")

@@ -3,3 +3,8 @@
         <!NON_TAIL_RECURSIVE_CALL!>foo<!>()
     }
 }
+
+fun box(): String {
+    foo()
+    return "OK"
+}

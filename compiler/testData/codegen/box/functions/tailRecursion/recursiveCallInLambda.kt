@@ -6,3 +6,8 @@
 }
 
 fun run(a: Any) {}
+
+fun box(): String {
+    foo()
+    return "OK"
+}

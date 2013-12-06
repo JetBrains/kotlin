@@ -2634,9 +2634,34 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/defaultArgs.kt");
             }
             
+            @TestMetadata("extensionTailCall.kt")
+            public void testExtensionTailCall() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/extensionTailCall.kt");
+            }
+            
+            @TestMetadata("functionWithNoTails.kt")
+            public void testFunctionWithNoTails() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/functionWithNoTails.kt");
+            }
+            
+            @TestMetadata("functionWithNonTailRecursions.kt")
+            public void testFunctionWithNonTailRecursions() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/functionWithNonTailRecursions.kt");
+            }
+            
+            @TestMetadata("functionWithoutAnnotation.kt")
+            public void testFunctionWithoutAnnotation() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/functionWithoutAnnotation.kt");
+            }
+            
             @TestMetadata("infixCall.kt")
             public void testInfixCall() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/infixCall.kt");
+            }
+            
+            @TestMetadata("infixRecursiveCall.kt")
+            public void testInfixRecursiveCall() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/infixRecursiveCall.kt");
             }
             
             @TestMetadata("insideElvis.kt")
@@ -2674,6 +2699,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/realStringRepeat.kt");
             }
             
+            @TestMetadata("recursiveCallInLambda.kt")
+            public void testRecursiveCallInLambda() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/recursiveCallInLambda.kt");
+            }
+            
+            @TestMetadata("recursiveCallInLocalFunction.kt")
+            public void testRecursiveCallInLocalFunction() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/recursiveCallInLocalFunction.kt");
+            }
+            
             @TestMetadata("recursiveInnerFunction.kt")
             public void testRecursiveInnerFunction() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/recursiveInnerFunction.kt");
@@ -2699,6 +2734,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInIfInFinally.kt");
             }
             
+            @TestMetadata("returnInParentheses.kt")
+            public void testReturnInParentheses() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInParentheses.kt");
+            }
+            
             @TestMetadata("returnInTry.kt")
             public void testReturnInTry() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/returnInTry.kt");
@@ -2722,6 +2762,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("sum.kt")
             public void testSum() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/tailRecursion/sum.kt");
+            }
+            
+            @TestMetadata("tailCallInBlockInParentheses.kt")
+            public void testTailCallInBlockInParentheses() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/tailCallInBlockInParentheses.kt");
+            }
+            
+            @TestMetadata("tailCallInParentheses.kt")
+            public void testTailCallInParentheses() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/tailCallInParentheses.kt");
+            }
+            
+            @TestMetadata("tailRecursionInFinally.kt")
+            public void testTailRecursionInFinally() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/tailRecursion/tailRecursionInFinally.kt");
             }
             
             @TestMetadata("thisReferences.kt")
