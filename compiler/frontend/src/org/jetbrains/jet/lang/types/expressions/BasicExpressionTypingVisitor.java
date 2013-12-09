@@ -867,7 +867,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetBinaryExpression expression,
             ExpressionTypingContext context,
             JetSimpleNameExpression operationSign,
-            JetExpression left,
+            final JetExpression left,
             final JetExpression right
     ) {
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
@@ -892,7 +892,16 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
                 @Override
                 public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
-                    return !(key == right && (slice == EXPRESSION_TYPE || slice == PROCESSED));
+
+                    // the type of the right expression isn't 'Any?' actually
+                    if (key == right && (slice == EXPRESSION_TYPE || slice == PROCESSED)) return false;
+
+                    // a hack due to KT-678
+                    // without this line an autocast is reported on the receiver (if it was previously checked for not-null)
+                    // with not-null check the resolution result changes from 'fun Any?.equals' to 'equals' member
+                    if (key == left && slice == AUTOCAST) return false;
+
+                    return true;
                 }
             }, true);
             dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
