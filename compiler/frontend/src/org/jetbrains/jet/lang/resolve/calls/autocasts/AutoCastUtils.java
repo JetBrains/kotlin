@@ -105,14 +105,8 @@ public class AutoCastUtils {
             AutoCastReceiver autoCastReceiver = (AutoCastReceiver) receiver;
             ReceiverValue original = autoCastReceiver.getOriginal();
             if (original instanceof ExpressionReceiver) {
-                ExpressionReceiver expressionReceiver = (ExpressionReceiver) original;
-                if (autoCastReceiver.canCast()) {
-                    trace.record(AUTOCAST, expressionReceiver.getExpression(), autoCastReceiver.getType());
-                    trace.record(EXPRESSION_TYPE, expressionReceiver.getExpression(), autoCastReceiver.getType());
-                }
-                else {
-                    trace.report(AUTOCAST_IMPOSSIBLE.on(expressionReceiver.getExpression(), autoCastReceiver.getType(), expressionReceiver.getExpression().getText()));
-                }
+                JetExpression expression = ((ExpressionReceiver) original).getExpression();
+                recordCastOrError(expression, autoCastReceiver.getType(), trace, autoCastReceiver.canCast(), true);
             }
             else {
                 assert autoCastReceiver.canCast() : "A non-expression receiver must always be autocastabe: " + original;
@@ -129,12 +123,26 @@ public class AutoCastUtils {
 
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, trace.getBindingContext());
         JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
-        if (dataFlowValue.isStableIdentifier()) {
-            trace.record(AUTOCAST, expression, notNullableType);
-            trace.record(EXPRESSION_TYPE, expression, notNullableType);
+        recordCastOrError(expression, notNullableType, trace, dataFlowValue.isStableIdentifier(), true);
+    }
+
+    public static void recordCastOrError(
+            @NotNull JetExpression expression,
+            @NotNull JetType type,
+            @NotNull BindingTrace trace,
+            boolean canBeCasted,
+            boolean recordExpressionType
+    ) {
+        if (canBeCasted) {
+            trace.record(AUTOCAST, expression, type);
+            if (recordExpressionType) {
+                //TODO
+                //Why the expression type is rewritten for receivers and is not rewritten for arguments? Is it necessary?
+                trace.record(EXPRESSION_TYPE, expression, type);
+            }
         }
         else {
-            trace.report(AUTOCAST_IMPOSSIBLE.on(expression, notNullableType, expression.getText()));
+            trace.report(AUTOCAST_IMPOSSIBLE.on(expression, type, expression.getText()));
         }
     }
 
