@@ -24,13 +24,13 @@ import java.util.ArrayList
 
 public open class Class(val converter: Converter,
                         val name: Identifier,
-                        docComment: Comment?,
+                        comments: MemberComments,
                         modifiers: Set<Modifier>,
                         val typeParameterList: TypeParameterList,
                         val extendsTypes: List<Type>,
                         val baseClassParams: List<Expression>,
                         val implementsTypes: List<Type>,
-                        val members: List<Element>) : Member(docComment, modifiers) {
+                        val members: List<Element>) : Member(comments, modifiers) {
     open val TYPE: String
         get() = "class"
 
@@ -49,7 +49,7 @@ public open class Class(val converter: Converter,
         return ""
     }
 
-    fun secondaryConstructorsAsStaticInitFunction(): MemberList {
+    fun secondaryConstructorsAsStaticInitFunctions(): MemberList {
         return MemberList(classMembers.secondaryConstructors.elements.map { if (it is Constructor) constructorToInit(it) else it })
     }
 
@@ -62,7 +62,7 @@ public open class Class(val converter: Converter,
         val constructorTypeParameters = ArrayList<TypeParameter>()
         constructorTypeParameters.addAll(typeParameterList.parameters)
         constructorTypeParameters.addAll(f.typeParameterList.parameters)
-        return Function(converter, Identifier("init"), null, modifiers,
+        return Function(converter, Identifier("init"), MemberComments.Empty, modifiers,
                         ClassType(name, constructorTypeParameters, false, converter),
                         TypeParameterList(constructorTypeParameters), f.params, block)
     }
@@ -109,16 +109,16 @@ public open class Class(val converter: Converter,
     }
 
     fun classObjectToKotlin(): String {
-        val secondaryConstructorsAsStaticInitFunction = secondaryConstructorsAsStaticInitFunction()
+        val secondaryConstructorsAsStaticInitFunctions = secondaryConstructorsAsStaticInitFunctions()
         val staticMembers = classMembers.staticMembers
-        if (secondaryConstructorsAsStaticInitFunction.isEmpty() && staticMembers.isEmpty()) {
+        if (secondaryConstructorsAsStaticInitFunctions.isEmpty() && staticMembers.isEmpty()) {
             return ""
         }
-        return "\nclass object {${secondaryConstructorsAsStaticInitFunction.toKotlin()}${staticMembers.toKotlin()}}"
+        return "\nclass object {${secondaryConstructorsAsStaticInitFunctions.toKotlin()}${staticMembers.toKotlin()}}"
     }
 
     override fun toKotlin(): String =
-            docCommentToKotlin() +
+            commentsToKotlin() +
             modifiersToKotlin() +
             TYPE + " " + name.toKotlin() +
             typeParameterList.toKotlin() +
@@ -126,13 +126,4 @@ public open class Class(val converter: Converter,
             implementTypesToKotlin() +
             typeParameterList.whereToKotlin().withPrefix(" ") +
             bodyToKotlin()
-
-
-    private fun getStatic(members: List<Node>): List<Node> {
-        return members.filter { it is Member && it.isStatic() }
-    }
-
-    private fun getNonStatic(members: List<Node>): List<Node> {
-        return members.filterNot { it is Member && it.isStatic() }
-    }
 }

@@ -16,4 +16,44 @@ open class C() {
     public open fun foo() {
         /* This is a function comment */
     }
+
+    //simple one line comment for function
+    open fun f1() {
+    }
+
+    //simple one line comment for field
+    var j: Int = 0
+
+    //double c style
+    //comment before function
+    open fun f2() {
+    }
+
+    //double c style
+    //comment before field
+    var k: Int = 0
+
+    //combination
+    /** of
+     */
+    //
+    /**
+     * different
+     */
+    //comments
+    open fun f3() {
+    }
+
+    //combination
+    /** of
+     */
+    //
+    /**
+     * different
+     */
+    //comments
+    var l: Int = 0
+
+    /*two*/ /*comments*//*line*/
+    var z: Int = 0
 }

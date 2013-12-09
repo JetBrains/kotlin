@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 
 //TODO: is a member?
-public class Initializer(val block: Block, modifiers: Set<Modifier>) : Member(null, modifiers) {
+public class Initializer(val block: Block, modifiers: Set<Modifier>) : Member(MemberComments.Empty, modifiers) {
     public override fun toKotlin(): String {
         return block.toKotlin()
     }

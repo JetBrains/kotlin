@@ -18,14 +18,20 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
 
-public abstract class Member(val docComment: Comment?, val modifiers: Set<Modifier>) : Element {
+public class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NoSpace) {
+    class object {
+        public val Empty: MemberComments = MemberComments(ArrayList())
+    }
+}
+
+public abstract class Member(val comments: MemberComments, val modifiers: Set<Modifier>) : Element {
     fun accessModifier(): Modifier? {
         return modifiers.find { m -> m == Modifier.PUBLIC || m == Modifier.PROTECTED || m == Modifier.PRIVATE }
     }
 
     public fun isAbstract(): Boolean = modifiers.contains(Modifier.ABSTRACT)
     public fun isStatic(): Boolean = modifiers.contains(Modifier.STATIC)
-    public fun docCommentToKotlin(): String = if (docComment != null) docComment.toKotlin() + "\n" else ""
+    public fun commentsToKotlin(): String = comments.toKotlin()
 }
 
 //member itself and all the elements before it in the code (comments, whitespaces)

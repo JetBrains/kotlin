@@ -21,14 +21,14 @@ import org.jetbrains.jet.j2k.ast.types.Type
 
 public class Enum(converter: Converter,
                   name: Identifier,
-                  docComments: Comment?,
+                  comments: MemberComments,
                   modifiers: Set<Modifier>,
                   typeParameterList: TypeParameterList,
                   extendsTypes: List<Type>,
                   baseClassParams: List<Expression>,
                   implementsTypes: List<Type>,
-                  members: List<Element>) : Class(converter, name, docComments, modifiers, typeParameterList,
-                                               extendsTypes, baseClassParams, implementsTypes, members) {
+                  members: List<Element>) : Class(converter, name, comments, modifiers, typeParameterList,
+                                                  extendsTypes, baseClassParams, implementsTypes, members) {
 
     override fun primaryConstructorSignatureToKotlin(): String {
         val s: String = super.primaryConstructorSignatureToKotlin()

@@ -20,15 +20,15 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.j2k.Converter
 
 public class Constructor(converter: Converter,
-                              identifier: Identifier,
-                              docComment: Comment?,
-                              modifiers: Set<Modifier>,
-                              `type`: Type,
-                              typeParameters: TypeParameterList,
-                              params: Element,
-                              block: Block,
-                              val isPrimary: Boolean) : Function(converter, identifier, docComment, modifiers,
-                                                                 `type`, typeParameters, params, block) {
+                         identifier: Identifier,
+                         comments: MemberComments,
+                         modifiers: Set<Modifier>,
+                         `type`: Type,
+                         typeParameters: TypeParameterList,
+                         params: Element,
+                         block: Block,
+                         val isPrimary: Boolean) : Function(converter, identifier, comments, modifiers,
+                                                            `type`, typeParameters, params, block) {
 
     public fun primarySignatureToKotlin(): String {
         return "(" + params.toKotlin() + ")"

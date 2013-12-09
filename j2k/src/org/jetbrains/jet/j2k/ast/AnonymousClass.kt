@@ -23,7 +23,7 @@ import java.util.Collections
 public class AnonymousClass(converter: Converter, members: List<Element>)
 : Class(converter,
         Identifier("anonClass"),
-        null,
+        MemberComments.Empty,
         Collections.emptySet<Modifier>(),
         TypeParameterList.Empty,
         Collections.emptyList<Type>(),

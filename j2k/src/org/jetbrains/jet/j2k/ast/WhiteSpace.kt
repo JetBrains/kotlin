@@ -37,6 +37,7 @@ public class WhiteSpace(val text: String) : Element {
 
     class object {
         public val NewLine: WhiteSpace = WhiteSpace("\n")
+        public val NoSpace: WhiteSpace = WhiteSpace("")
     }
 }
 

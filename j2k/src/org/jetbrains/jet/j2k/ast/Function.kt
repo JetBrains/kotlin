@@ -23,12 +23,12 @@ import org.jetbrains.jet.j2k.Converter
 
 public open class Function(val converter: Converter,
                            val name: Identifier,
-                           docComment: Comment?,
+                           comments: MemberComments,
                            modifiers: Set<Modifier>,
                            val `type`: Type,
                            val typeParameterList: TypeParameterList,
                            val params: Element,
-                           var block: Block?) : Member(docComment, modifiers) {
+                           var block: Block?) : Member(comments, modifiers) {
 
     private fun modifiersToKotlin(): String {
         val resultingModifiers = ArrayList<Modifier>()
@@ -64,7 +64,7 @@ public open class Function(val converter: Converter,
     private fun returnTypeToKotlin() = if (!`type`.isUnit()) " : " + `type`.toKotlin() + " " else " "
 
     public override fun toKotlin(): String {
-        return docCommentToKotlin() +
+        return commentsToKotlin() +
         modifiersToKotlin() +
         "fun ${typeParameterList.toKotlin().withSuffix(" ")}${name.toKotlin()}" +
         "(${params.toKotlin()})" +
