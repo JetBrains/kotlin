@@ -446,7 +446,7 @@ public class JetTypeMapper extends BindingTraceAware {
     ) {
         DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
 
-        functionDescriptor = unwrapFakeOverride(functionDescriptor);
+        functionDescriptor = unwrapFakeOverride(functionDescriptor.getOriginal());
 
         JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), true, kind);
         Type owner;
