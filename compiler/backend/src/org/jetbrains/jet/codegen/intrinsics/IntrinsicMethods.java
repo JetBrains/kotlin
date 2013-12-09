@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.*;
@@ -123,9 +122,6 @@ public class IntrinsicMethods {
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("get"), 1, new StringGetChar());
 
         FqName builtInsPackageFqName = KotlinBuiltIns.getInstance().getBuiltInsPackageFqName();
-        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("name"), 0, new EnumName());
-        intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("ordinal"), 0, new EnumOrdinal());
-
         intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("toString"), 0, TO_STRING);
         intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("equals"), 1, EQUALS);
         intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
@@ -134,21 +130,11 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("synchronized"), 2, new StupidSync());
         intrinsicsMap.registerIntrinsic(builtInsPackageFqName, Name.identifier("iterator"), 0, new IteratorIterator());
 
-
-        declareIntrinsicFunction(Name.identifier("ByteIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
-        declareIntrinsicFunction(Name.identifier("ShortIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
-        declareIntrinsicFunction(Name.identifier("IntIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
-        declareIntrinsicFunction(Name.identifier("LongIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
-        declareIntrinsicFunction(Name.identifier("CharIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
-        declareIntrinsicFunction(Name.identifier("BooleanIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
-        declareIntrinsicFunction(Name.identifier("FloatIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
-        declareIntrinsicFunction(Name.identifier("DoubleIterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
-
         for (PrimitiveType type : PrimitiveType.values()) {
             declareIntrinsicFunction(type.getTypeName(), Name.identifier("compareTo"), 1, new CompareTo());
+            declareIntrinsicFunction(Name.identifier(type.getTypeName() + "Iterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
         }
-        //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
-        //
+
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
@@ -242,20 +228,16 @@ public class IntrinsicMethods {
             }
         }
 
-        List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
-        if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
-                ClassifierDescriptor classifierDescriptor = annotation.getType().getConstructor().getDeclarationDescriptor();
-                assert classifierDescriptor != null;
-                if ("Intrinsic".equals(classifierDescriptor.getName().asString())) {
-                    String value = (String) annotation.getAllValueArguments().values().iterator().next().getValue();
-                    intrinsicMethod = namedMethods.get(value);
-                    if (intrinsicMethod != null) {
-                        break;
-                    }
-                }
+        for (AnnotationDescriptor annotation : descriptor.getAnnotations()) {
+            ClassifierDescriptor classifierDescriptor = annotation.getType().getConstructor().getDeclarationDescriptor();
+            assert classifierDescriptor != null;
+            if ("Intrinsic".equals(classifierDescriptor.getName().asString())) {
+                String value = (String) annotation.getAllValueArguments().values().iterator().next().getValue();
+                IntrinsicMethod result = namedMethods.get(value);
+                if (result != null) return result;
             }
         }
-        return intrinsicMethod;
+
+        return null;
     }
 }
