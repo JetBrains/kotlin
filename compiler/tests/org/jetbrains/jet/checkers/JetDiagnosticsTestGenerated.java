@@ -4577,6 +4577,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/AssertNotNull.kt");
             }
             
+            @TestMetadata("dataFlowInfoAfterExclExcl.kt")
+            public void testDataFlowInfoAfterExclExcl() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/dataFlowInfoAfterExclExcl.kt");
+            }
+            
             @TestMetadata("equalityUnderNotNullCheck.kt")
             public void testEqualityUnderNotNullCheck() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/equalityUnderNotNullCheck.kt");
