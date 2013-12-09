@@ -37,5 +37,5 @@ fun f(): Unit {
   val y : Boolean? = true
   false || <!TYPE_MISMATCH!>y<!>
   <!TYPE_MISMATCH!>y<!> && true
-  <!TYPE_MISMATCH!>y<!> && <!TYPE_MISMATCH!>1<!>
+  <!TYPE_MISMATCH!>y<!> && <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }

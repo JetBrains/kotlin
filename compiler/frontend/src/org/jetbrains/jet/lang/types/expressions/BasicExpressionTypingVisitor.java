@@ -956,9 +956,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context
     ) {
         JetType booleanType = KotlinBuiltIns.getInstance().getBooleanType();
-        JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
-
-        JetType leftType = leftTypeInfo.getType();
+        JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context.replaceExpectedType(booleanType), facade);
         DataFlowInfo dataFlowInfo = leftTypeInfo.getDataFlowInfo();
 
         WritableScopeImpl leftScope = newWritableScopeImpl(context, "Left scope of && or ||");
@@ -967,13 +965,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, isAnd, context).and(dataFlowInfo);
         WritableScopeImpl rightScope = isAnd ? leftScope : newWritableScopeImpl(context, "Right scope of && or ||");
 
-        ExpressionTypingContext contextForRightExpr = context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope);
-        JetType rightType = right != null ? facade.getTypeInfo(right, contextForRightExpr).getType() : null;
-        if (left != null && leftType != null && !isBoolean(leftType)) {
-            context.trace.report(TYPE_MISMATCH.on(left, booleanType, leftType));
-        }
-        if (rightType != null && !isBoolean(rightType)) {
-            context.trace.report(TYPE_MISMATCH.on(right, booleanType, rightType));
+        ExpressionTypingContext contextForRightExpr =
+                context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope).replaceExpectedType(booleanType);
+        if (right != null) {
+            facade.getTypeInfo(right, contextForRightExpr);
         }
         return JetTypeInfo.create(booleanType, dataFlowInfo);
     }

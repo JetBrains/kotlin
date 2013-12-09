@@ -1331,6 +1331,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/checkArguments"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("booleanExpressions.kt")
+            public void testBooleanExpressions() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/checkArguments/booleanExpressions.kt");
+            }
+            
             @TestMetadata("kt1897_diagnostic_part.kt")
             public void testKt1897_diagnostic_part() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/checkArguments/kt1897_diagnostic_part.kt");
@@ -4715,6 +4720,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("smartCastedReceiverWithGenerics.kt")
             public void testSmartCastedReceiverWithGenerics() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/smartCastedReceiverWithGenerics.kt");
+            }
+            
+            @TestMetadata("smartCastsAndBooleanExpressions.kt")
+            public void testSmartCastsAndBooleanExpressions() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/smartCastsAndBooleanExpressions.kt");
             }
             
         }
