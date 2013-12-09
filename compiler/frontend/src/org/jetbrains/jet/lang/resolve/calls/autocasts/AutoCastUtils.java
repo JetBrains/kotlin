@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
@@ -25,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,5 +118,37 @@ public class AutoCastUtils {
                 assert autoCastReceiver.canCast() : "A non-expression receiver must always be autocastabe: " + original;
             }
         }
+    }
+
+    public static void recordAutoCastToNotNullableType(@NotNull ReceiverValue receiver, @NotNull BindingTrace trace) {
+        if (!(receiver instanceof ExpressionReceiver)) return;
+
+        JetType receiverType = receiver.getType();
+        if (!receiverType.isNullable()) return;
+        JetType notNullableType = TypeUtils.makeNotNullable(receiverType);
+
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, trace.getBindingContext());
+        JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
+        if (dataFlowValue.isStableIdentifier()) {
+            trace.record(AUTOCAST, expression, notNullableType);
+            trace.record(EXPRESSION_TYPE, expression, notNullableType);
+        }
+        else {
+            trace.report(AUTOCAST_IMPOSSIBLE.on(expression, notNullableType, expression.getText()));
+        }
+    }
+
+    public static boolean isNotNull(
+            @NotNull ReceiverValue receiver,
+            @NotNull BindingContext bindingContext,
+            @NotNull DataFlowInfo dataFlowInfo
+    ) {
+        if (!receiver.getType().isNullable()) return true;
+
+        List<ReceiverValue> autoCastVariants = getAutoCastVariants(receiver, bindingContext, dataFlowInfo);
+        for (ReceiverValue autoCastVariant : autoCastVariants) {
+            if (!autoCastVariant.getType().isNullable()) return true;
+        }
+        return false;
     }
 }

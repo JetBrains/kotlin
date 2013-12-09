@@ -892,9 +892,14 @@ public class CandidateResolver {
         BindingContext bindingContext = trace.getBindingContext();
         boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
         if (!safeAccess && !receiverParameter.getType().isNullable() && receiverArgument.getType().isNullable()) {
+            if (!AutoCastUtils.isNotNull(receiverArgument, bindingContext, context.dataFlowInfo)) {
 
-            context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
-            return UNSAFE_CALL_ERROR;
+                context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
+                return UNSAFE_CALL_ERROR;
+            }
+            if (isExplicitReceiver) {
+                AutoCastUtils.recordAutoCastToNotNullableType(receiverArgument, context.trace);
+            }
         }
         DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext);
         if (safeAccess && !context.dataFlowInfo.getNullability(receiverValue).canBeNull()) {

@@ -4702,6 +4702,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/senslessComparisonWithNullOnTypeParameters.kt");
             }
             
+            @TestMetadata("smartCastedReceiverWithGenerics.kt")
+            public void testSmartCastedReceiverWithGenerics() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts/smartCastedReceiverWithGenerics.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/nullableTypes")
@@ -6182,7 +6187,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             public void testPublicVal() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/smartCasts/publicVal.kt");
             }
-
+            
             @TestMetadata("thisWithLabel.kt")
             public void testThisWithLabel() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/smartCasts/thisWithLabel.kt");
