@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
+import static org.jetbrains.jet.codegen.AsmUtil.numberFunctionOperandType;
 import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
 public class Inv implements IntrinsicMethod {
@@ -41,10 +42,9 @@ public class Inv implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if (nullable) {
-            expectedType = unboxType(expectedType);
-        }
-        receiver.put(expectedType, v);
+        assert !nullable : "Return type of Inv intrinsic should be of primitive type : " + expectedType;
+
+        receiver.put(numberFunctionOperandType(expectedType), v);
         if (expectedType == Type.LONG_TYPE) {
             v.lconst(-1L);
         }

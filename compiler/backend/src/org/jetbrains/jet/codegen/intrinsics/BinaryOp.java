@@ -29,6 +29,7 @@ import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.numberFunctionOperandType;
 import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
 public class BinaryOp implements IntrinsicMethod {
@@ -48,26 +49,25 @@ public class BinaryOp implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
+
         boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if (nullable) {
-            expectedType = unboxType(expectedType);
-        }
+        assert !nullable : "Return type of BinaryOp intrinsic should be of primitive type : " + expectedType;
+
+        Type operandType = numberFunctionOperandType(expectedType);
+
         if (arguments.size() == 1) {
             // Intrinsic is called as an ordinary function
             if (receiver != null) {
-                receiver.put(expectedType, v);
+                receiver.put(operandType, v);
             }
-            codegen.gen(arguments.get(0), shift() ? Type.INT_TYPE : expectedType);
+            codegen.gen(arguments.get(0), shift() ? Type.INT_TYPE : operandType);
         }
         else {
-            codegen.gen(arguments.get(0), expectedType);
-            codegen.gen(arguments.get(1), shift() ? Type.INT_TYPE : expectedType);
+            codegen.gen(arguments.get(0), operandType);
+            codegen.gen(arguments.get(1), shift() ? Type.INT_TYPE : operandType);
         }
         v.visitInsn(expectedType.getOpcode(opcode));
 
-        if (nullable) {
-            StackValue.onStack(expectedType).put(expectedType = boxType(expectedType), v);
-        }
         return StackValue.onStack(expectedType);
     }
 

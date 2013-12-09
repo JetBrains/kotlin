@@ -50,9 +50,8 @@ public class Increment implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if (nullable) {
-            expectedType = unboxType(expectedType);
-        }
+        assert !nullable : "Return type of Increment intrinsic should be of primitive type : " + expectedType;
+
         if (arguments.size() > 0) {
             JetExpression operand = arguments.get(0);
             while (operand instanceof JetParenthesizedExpression) {

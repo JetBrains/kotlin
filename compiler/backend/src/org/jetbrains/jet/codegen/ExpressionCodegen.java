@@ -36,7 +36,7 @@ import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.context.*;
-import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
+import org.jetbrains.jet.codegen.intrinsics.*;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -1652,8 +1652,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
             if (intrinsic != null) {
-                Type expectedType = expressionType(expression);
-                return intrinsic.generate(this, v, expectedType, expression, Collections.<JetExpression>emptyList(), receiver, state);
+                Type returnType = typeMapper.mapType(memberDescriptor.getReturnType());
+                return intrinsic.generate(this, v, returnType, expression, Collections.<JetExpression>emptyList(), receiver, state);
             }
         }
 
@@ -2030,14 +2030,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             for (ValueArgument argument : call.getValueArguments()) {
                 args.add(argument.getArgumentExpression());
             }
-            JetType type = resolvedCall.getResultingDescriptor().getReturnType();
-            assert type != null;
-            Type callType = typeMapper.mapType(type);
 
-            Type exprType = asmTypeOrVoid(type);
-            StackValue stackValue = intrinsic.generate(this, v, callType, call.getCallElement(), args, receiver, state);
-            stackValue.put(exprType, v);
-            return StackValue.onStack(exprType);
+            Type returnType = typeMapper.mapType(resolvedCall.getResultingDescriptor().getReturnType());
+
+            StackValue stackValue = intrinsic.generate(this, v, returnType, call.getCallElement(), args, receiver, state);
+            stackValue.put(returnType, v);
+            return StackValue.onStack(returnType);
         }
     }
 
@@ -2682,7 +2680,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Callable callable = resolveToCallable((FunctionDescriptor) op, false);
             if (callable instanceof IntrinsicMethod) {
                 IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
-                return intrinsic.generate(this, v, expressionType(expression), expression,
+                Type returnType = typeMapper.mapType(resolvedCall.getResultingDescriptor().getReturnType());
+                return intrinsic.generate(this, v, returnType, expression,
                                           Arrays.asList(expression.getLeft(), expression.getRight()), receiver, state);
             }
             else {
@@ -2929,10 +2928,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 //noinspection NullableProblems
                 JetExpression right = expression.getRight();
                 assert right != null;
-                StackValue stackValue = intrinsic.generate(this, v, lhsType, expression,
+                Type returnType = typeMapper.mapType(((FunctionDescriptor) op).getReturnType());
+                StackValue stackValue = intrinsic.generate(this, v, returnType, expression,
                                                            Arrays.asList(right),
                                                            StackValue.onStack(lhsType), state);
-                value.store(stackValue.type, v);
+                value.store(lhsType, v);
             }
             else {
                 callAugAssignMethod(expression, (CallableMethod) callable, lhsType, true);
@@ -3018,7 +3018,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (callable instanceof IntrinsicMethod) {
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
             //noinspection ConstantConditions
-            return intrinsic.generate(this, v, expressionType(expression), expression,
+            Type returnType = typeMapper.mapType(((FunctionDescriptor) op).getReturnType());
+            return intrinsic.generate(this, v, returnType, expression,
                                       Arrays.asList(expression.getBaseExpression()), receiver, state);
         }
         else {
@@ -3589,7 +3590,7 @@ The "returned" value of try expression with no finally is either the last expres
             DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
                 StackValue value = genQualified(receiver, left);
-                value.put(boxType(value.type), v);
+                value.put(boxType(rightTypeAsm), v);
 
                 if (opToken != JetTokens.AS_SAFE) {
                     if (!CodegenUtil.isNullableType(rightType)) {

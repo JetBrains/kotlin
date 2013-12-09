@@ -631,6 +631,14 @@ public class AsmUtil {
         return Type.INT_TYPE;
     }
 
+    @NotNull
+    public static Type numberFunctionOperandType(@NotNull Type expectedType) {
+        if (expectedType == Type.SHORT_TYPE || expectedType == Type.BYTE_TYPE) {
+            return Type.INT_TYPE;
+        }
+        return expectedType;
+    }
+
     public static void pop(@NotNull InstructionAdapter v, @NotNull Type type) {
         if (type.getSize() == 2) {
             v.pop2();

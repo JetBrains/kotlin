@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.genNegate;
+import static org.jetbrains.jet.codegen.AsmUtil.numberFunctionOperandType;
 import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
 public class UnaryMinus implements IntrinsicMethod {
@@ -42,16 +43,16 @@ public class UnaryMinus implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if (nullable) {
-            expectedType = unboxType(expectedType);
-        }
+        assert !nullable : "Return type of UnaryMinus intrinsic should be of primitive type : " + expectedType;
+
+        Type operandType = numberFunctionOperandType(expectedType);
+
         if (arguments.size() == 1) {
-            codegen.gen(arguments.get(0), expectedType);
+            codegen.gen(arguments.get(0), operandType);
         }
         else {
-            receiver.put(expectedType, v);
+            receiver.put(operandType, v);
         }
-        StackValue.coerce(genNegate(expectedType, v), expectedType, v);
-        return StackValue.onStack(expectedType);
+        return StackValue.onStack(genNegate(expectedType, v));
     }
 }

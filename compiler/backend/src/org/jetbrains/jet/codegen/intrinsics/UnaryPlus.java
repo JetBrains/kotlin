@@ -42,9 +42,8 @@ public class UnaryPlus implements IntrinsicMethod {
             @NotNull GenerationState state
     ) {
         boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if (nullable) {
-            expectedType = unboxType(expectedType);
-        }
+        assert !nullable : "Return type of UnaryPlus intrinsic should be of primitive type : " + expectedType;
+
         if (receiver != null && receiver != StackValue.none()) {
             receiver.put(expectedType, v);
         }
