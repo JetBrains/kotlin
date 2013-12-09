@@ -12,15 +12,16 @@ trait C: A
 
 fun test(a: A, b: B, c: C) {
     if (a is B && a is C) {
-        val d: C = id(a)
+        val d: C = id(<!DEBUG_INFO_AUTOCAST!>a<!>)
         val e: Any = id(a)
         val f = id(a)
         f: A
-        val g = two(a, b)
+        val g = two(<!DEBUG_INFO_AUTOCAST!>a<!>, b)
         g: B
         g: A
 
-        val h: Any = two(a, b)
+        // auto cast isn't needed, but is reported due to KT-4294
+        val h: Any = two(<!DEBUG_INFO_AUTOCAST!>a<!>, b)
 
         val k = three(a, b, c)
         k: A
