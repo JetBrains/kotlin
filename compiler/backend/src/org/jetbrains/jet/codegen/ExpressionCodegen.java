@@ -1971,17 +1971,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
-            ResolvedCallWithTrace<FunctionDescriptor> functionCall = variableAsFunctionResolvedCall.getFunctionCall();
-            return invokeFunction(call, receiver, functionCall);
+            return invokeFunction(call, receiver, ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall());
         }
 
         FunctionDescriptor fd = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
-        boolean superCall = isSuperCall(call);
+        JetSuperExpression superCallExpression = getSuperCallExpression(call);
+        boolean superCall = superCallExpression != null;
 
         if (superCall && !isInterface(fd.getContainingDeclaration())) {
-            JetSuperExpression expression = getSuperCallExpression(call);
-            ClassDescriptor owner = getSuperCallLabelTarget(expression);
+            ClassDescriptor owner = getSuperCallLabelTarget(superCallExpression);
             CodegenContext c = context.findParentContextWithDescriptor(owner);
             assert c != null : "Couldn't find a context for a super-call: " + fd;
             if (c != context.getParentContext()) {
@@ -1994,15 +1992,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Callable callable = resolveToCallable(fd, superCall);
         if (callable instanceof CallableMethod) {
             CallableMethod callableMethod = (CallableMethod) callable;
-            invokeMethodWithArguments(callableMethod, resolvedCall, call, receiver);
+            Type calleeType = callableMethod.getGenerateCalleeType();
+            if (calleeType != null) {
+                assert !callableMethod.isNeedsThis() : "Method should have a receiver: " + resolvedCall.getResultingDescriptor();
+                gen(call.getCalleeExpression(), calleeType);
+            }
+
+            invokeMethodWithArguments(callableMethod, resolvedCall, receiver);
 
             Type callReturnType = callableMethod.getSignature().getAsmMethod().getReturnType();
-            return returnValueAsStackValue(fd, callReturnType);
+            if (callReturnType == Type.VOID_TYPE) return StackValue.none();
+
+            JetType type = fd.getReturnType();
+            assert type != null;
+            Type retType = typeMapper.mapReturnType(type);
+            StackValue.coerce(callReturnType, retType, v);
+            return StackValue.onStack(retType);
         }
         else {
             receiver = StackValue.receiver(resolvedCall, receiver, this, null);
 
-            IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
             List<JetExpression> args = new ArrayList<JetExpression>();
             for (ValueArgument argument : call.getValueArguments()) {
                 args.add(argument.getArgumentExpression());
@@ -2010,7 +2019,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             Type returnType = typeMapper.mapType(resolvedCall.getResultingDescriptor());
 
-            intrinsic.generate(this, v, returnType, call.getCallElement(), args, receiver);
+            ((IntrinsicMethod) callable).generate(this, v, returnType, call.getCallElement(), args, receiver);
             return StackValue.onStack(returnType);
         }
     }
@@ -2027,10 +2036,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return null;
     }
 
-    private static boolean isSuperCall(@NotNull Call call) {
-        return getSuperCallExpression(call) != null;
-    }
-
     // Find the first parent of the current context which corresponds to a subclass of a given class
     @NotNull
     private static CodegenContext getParentContextSubclassOf(ClassDescriptor descriptor, CodegenContext context) {
@@ -2042,18 +2047,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             c = c.getParentContext();
             assert c != null;
         }
-    }
-
-    @NotNull
-    private StackValue returnValueAsStackValue(FunctionDescriptor fd, Type callReturnType) {
-        if (callReturnType != Type.VOID_TYPE) {
-            JetType type = fd.getReturnType();
-            assert type != null;
-            Type retType = typeMapper.mapReturnType(type);
-            StackValue.coerce(callReturnType, retType, v);
-            return StackValue.onStack(retType);
-        }
-        return StackValue.none();
     }
 
     @NotNull
@@ -2092,16 +2085,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public void invokeMethodWithArguments(
             @NotNull CallableMethod callableMethod,
             @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
-            @Nullable Call callToGenerateCallee,
             @NotNull StackValue receiver
     ) {
-        Type calleeType = callableMethod.getGenerateCalleeType();
-        if (calleeType != null) {
-            assert !callableMethod.isNeedsThis();
-            assert callToGenerateCallee != null : "Call can't be null when generating callee: " + resolvedCall.getResultingDescriptor();
-            gen(callToGenerateCallee.getCalleeExpression(), calleeType);
-        }
-
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
         }
@@ -3254,7 +3239,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(constructorDescriptor);
         CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructorDescriptor : originalOfSamAdapter);
-        invokeMethodWithArguments(method, resolvedCall, null, StackValue.none());
+        invokeMethodWithArguments(method, resolvedCall, StackValue.none());
 
         return StackValue.onStack(type);
     }
