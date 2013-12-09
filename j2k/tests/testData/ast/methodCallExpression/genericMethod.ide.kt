@@ -4,6 +4,7 @@ class Map() {
     fun <K, V> put(k: K, v: V) {
     }
 }
+
 class U() {
     fun test() {
         val m = Map()

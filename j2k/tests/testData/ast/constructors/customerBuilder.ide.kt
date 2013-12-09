@@ -24,6 +24,7 @@ class Customer(first: String, last: String) {
         doSmthAfter()
     }
 }
+
 class CustomerBuilder() {
     public var _firstName: String = "Homer"
     public var _lastName: String = "Simpson"
@@ -42,6 +43,7 @@ class CustomerBuilder() {
         return Customer(_firstName, _lastName)
     }
 }
+
 public class User() {
     class object {
         public fun main() {

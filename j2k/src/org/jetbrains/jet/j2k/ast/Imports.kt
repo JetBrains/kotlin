@@ -24,7 +24,7 @@ import org.jetbrains.jet.util.QualifiedNamesUtil
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 
 
-public class Import(val name: String) : Node {
+public class Import(val name: String) : Element {
     public override fun toKotlin() = "import " + name
 }
 

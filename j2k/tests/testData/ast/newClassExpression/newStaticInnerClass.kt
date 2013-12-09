@@ -6,6 +6,7 @@ open class Foo() {
         }
     }
 }
+
 open class User() {
     open fun main() {
         var boo: Foo.Bar? = Foo.Bar()

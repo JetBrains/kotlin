@@ -3,11 +3,13 @@ package demo
 class Container() {
     var myBoolean: Boolean = true
 }
+
 class One() {
     class object {
         var myContainer: Container = Container()
     }
 }
+
 class Test() {
     fun test() {
         if (One.myContainer.myBoolean)

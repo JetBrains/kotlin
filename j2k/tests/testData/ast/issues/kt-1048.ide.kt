@@ -2,6 +2,7 @@ import java.util.HashMap
 
 class G<T : String>(t: T) {
 }
+
 public class Java() {
     fun test() {
         val m = HashMap()

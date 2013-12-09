@@ -37,6 +37,7 @@ public open class Test(_myName: String?, _a: Boolean, _b: Double, _c: Float, _d:
         }
     }
 }
+
 public open class User() {
     class object {
         public open fun main() {

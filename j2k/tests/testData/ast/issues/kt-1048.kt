@@ -2,6 +2,7 @@ import java.util.HashMap
 
 open class G<T : String?>(t: T?) {
 }
+
 public open class Java() {
     open fun test() {
         var m: HashMap<Any?, Any?>? = HashMap()

@@ -8,6 +8,7 @@ open class Library() {
         }
     }
 }
+
 open class User() {
     open fun main() {
         Library.call()

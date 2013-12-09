@@ -14,6 +14,7 @@ class Test() {
         }
     }
 }
+
 class User() {
     fun main() {
         val m = HashMap(1)

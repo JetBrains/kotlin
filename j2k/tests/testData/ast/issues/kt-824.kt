@@ -3,11 +3,13 @@ package demo
 open class Container() {
     var myBoolean: Boolean = true
 }
+
 open class One() {
     class object {
         var myContainer: Container? = Container()
     }
 }
+
 open class Test() {
     open fun test() {
         if (One.myContainer?.myBoolean!!)

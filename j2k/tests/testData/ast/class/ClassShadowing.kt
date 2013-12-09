@@ -7,6 +7,7 @@ public open class Short() {
         }
     }
 }
+
 open class Test() {
     class object {
         public open fun test() {

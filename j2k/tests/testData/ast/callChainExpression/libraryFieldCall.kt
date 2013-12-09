@@ -3,6 +3,7 @@ open class Library() {
         val ourOut: java.io.PrintStream? = null
     }
 }
+
 open class User() {
     open fun main() {
         Library.ourOut?.print()

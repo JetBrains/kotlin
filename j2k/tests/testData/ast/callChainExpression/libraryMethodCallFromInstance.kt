@@ -6,6 +6,7 @@ open class Library() {
         return ""
     }
 }
+
 open class User() {
     open fun main() {
         var lib: Library? = Library()

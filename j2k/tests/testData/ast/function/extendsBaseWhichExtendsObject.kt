@@ -21,6 +21,7 @@ open class Test() : Base() {
         super.finalize()
     }
 }
+
 open class Base() {
     public open fun hashCode(): Int {
         return System.identityHashCode(this)

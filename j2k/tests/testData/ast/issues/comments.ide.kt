@@ -1,7 +1,14 @@
 // This is an end-of-line comment
+
 /*
 This is a block comment
 */
+
+
+/*doc comment of class*/
+//one line comment of class
+//another one
+/*another doc*/
 class C() {
     // This is a class comment
 

@@ -13,6 +13,7 @@ class Base() {
         return getJavaClass<Base>.getName() + '@' + Integer.toHexString(hashCode())
     }
 }
+
 class Child() : Base() {
     override fun hashCode(): Int {
         return super.hashCode()

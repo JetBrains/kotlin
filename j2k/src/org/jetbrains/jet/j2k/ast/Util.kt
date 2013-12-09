@@ -48,7 +48,8 @@ public fun Expression.withPrefix(prefix: String): String = if (isEmpty()) "" els
 
 open class WhiteSpaceSeparatedElementList(
         val elements: List<Element>,
-        val minimalWhiteSpace: WhiteSpace
+        val minimalWhiteSpace: WhiteSpace,
+        val ensureSurroundedByWhiteSpace: Boolean = true
 ) {
     val nonEmptyElements = elements.filterNot { it.isEmpty() }
 
@@ -62,6 +63,9 @@ open class WhiteSpaceSeparatedElementList(
     }
 
     private fun List<Element>.surroundWithWhiteSpaces(): List<Element> {
+        if (!ensureSurroundedByWhiteSpace) {
+            return this
+        }
         val result = ArrayList<Element>()
         result.add(minimalWhiteSpace)
         result.addAll(this)

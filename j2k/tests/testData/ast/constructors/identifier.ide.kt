@@ -32,6 +32,7 @@ public class Identifier(_myName: String, _myHasDollar: Boolean) {
         }
     }
 }
+
 public class User() {
     class object {
         public fun main() {

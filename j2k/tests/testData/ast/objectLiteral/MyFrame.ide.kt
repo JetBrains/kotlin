@@ -4,6 +4,7 @@ class WindowAdapter() {
     public fun windowClosing() {
     }
 }
+
 public class Client() : Frame() {
     {
         val a = object : WindowAdapter() {

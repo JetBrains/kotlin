@@ -6,6 +6,7 @@ class Library() {
         return ""
     }
 }
+
 class User() {
     fun main() {
         val lib = Library()

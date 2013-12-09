@@ -4,6 +4,7 @@ open class OuterClass() {
     open class InnerClass() {
     }
 }
+
 open class User() {
     open fun main() {
         var outerObject: OuterClass? = OuterClass()

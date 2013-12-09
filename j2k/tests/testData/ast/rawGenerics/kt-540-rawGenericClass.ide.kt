@@ -5,6 +5,7 @@ class Collection<E>(e: E) {
         System.out.println(e)
     }
 }
+
 class Test() {
     fun main() {
         val raw1 = Collection(1)

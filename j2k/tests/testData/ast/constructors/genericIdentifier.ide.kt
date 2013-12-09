@@ -32,6 +32,7 @@ public class Identifier<T>(_myName: T, _myHasDollar: Boolean) {
         }
     }
 }
+
 public class User() {
     class object {
         public fun main() {

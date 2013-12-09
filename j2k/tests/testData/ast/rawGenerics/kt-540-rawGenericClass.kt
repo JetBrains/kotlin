@@ -5,6 +5,7 @@ open class Collection<E>(e: E?) {
         System.out?.println(e)
     }
 }
+
 open class Test() {
     open fun main() {
         var raw1: Collection<*>? = Collection(1)

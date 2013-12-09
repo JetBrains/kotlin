@@ -26,6 +26,7 @@ open class C(arg1: Int) {
         }
     }
 }
+
 public open class User() {
     class object {
         public open fun main() {

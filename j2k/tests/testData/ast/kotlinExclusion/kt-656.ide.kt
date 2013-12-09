@@ -10,6 +10,7 @@ class Test() : java.lang.Iterable<String> {
         return j
     }
 }
+
 class FullTest() : java.lang.Iterable<String> {
     override fun iterator(): java.util.Iterator<String> {
         return null

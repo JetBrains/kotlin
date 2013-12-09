@@ -13,6 +13,8 @@ public open class Language(code: String?) : Serializable {
         this.code = code
     }
 }
+
+
 open class Base() {
     open fun test() {
     }
@@ -20,6 +22,7 @@ open class Base() {
         return "BASE"
     }
 }
+
 open class Child() : Base() {
     override fun test() {
     }

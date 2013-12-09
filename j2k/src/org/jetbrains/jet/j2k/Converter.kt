@@ -58,7 +58,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return kElement?.toKotlin() ?: ""
     }
 
-    public fun convertTopElement(element: PsiElement?): Node? = when(element) {
+    public fun convertTopElement(element: PsiElement?): Element? = when(element) {
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
         is PsiMethod -> convertMethod(element)
@@ -68,18 +68,14 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         is PsiComment -> Comment(element.getText()!!)
         is PsiImportList -> convertImportList(element)
         is PsiImportStatementBase -> convertImport(element)
+        is PsiPackageStatement -> PackageStatement(quoteKeywords(element.getPackageName() ?: ""))
+        is PsiWhiteSpace -> WhiteSpace(element.getText()!!)
         else -> null
     }
 
     public fun convertFile(javaFile: PsiJavaFile): File {
-        val body = ArrayList<Node>()
-        for (element in javaFile.getChildren()) {
-            val node = convertTopElement(element)
-            if (node != null) {
-                body.add(node)
-            }
-        }
-        return File(quoteKeywords(javaFile.getPackageName()), body, createMainFunction(javaFile))
+        val fileMembers = FileMemberList(javaFile.getChildren() .map { convertTopElement(it) } .filterNotNull())
+        return File(fileMembers, createMainFunction(javaFile))
     }
 
     public fun convertAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {

@@ -12,6 +12,7 @@ open class C(arg1: Int, arg2: Int, arg3: Int) {
         }
     }
 }
+
 public open class User() {
     class object {
         public open fun main() {

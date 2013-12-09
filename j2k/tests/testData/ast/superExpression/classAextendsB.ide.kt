@@ -3,6 +3,7 @@ class B(i: Int) {
         return 1
     }
 }
+
 class A() : B(10) {
 
     override fun call(): Int {

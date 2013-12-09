@@ -14,6 +14,7 @@ open class Test() {
         }
     }
 }
+
 open class User() {
     open fun main() {
         var m: HashMap<Any?, Any?>? = HashMap(1)
