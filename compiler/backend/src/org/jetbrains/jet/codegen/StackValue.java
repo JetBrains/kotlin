@@ -234,8 +234,10 @@ public abstract class StackValue {
             }
         }
         else if (toType.equals(JET_UNIT_TYPE)) {
-            pop(v, fromType);
-            putUnitInstance(v);
+            if (!fromType.equals(getType(Void.class))) {
+                pop(v, fromType);
+                putUnitInstance(v);
+            }
         }
         else if (toType.getSort() == Type.ARRAY) {
             v.checkcast(toType);
@@ -431,9 +433,7 @@ public abstract class StackValue {
                 v.aconst(value);
             }
 
-            if (value != null) {
-                coerceTo(type, v);
-            }
+            coerceTo(type, v);
         }
 
         @Override

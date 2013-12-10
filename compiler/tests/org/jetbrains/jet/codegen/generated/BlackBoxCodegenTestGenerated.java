@@ -4812,6 +4812,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/unit/nullableUnit.kt");
         }
         
+        @TestMetadata("nullableUnitInWhen1.kt")
+        public void testNullableUnitInWhen1() throws Exception {
+            doTest("compiler/testData/codegen/box/unit/nullableUnitInWhen1.kt");
+        }
+        
+        @TestMetadata("nullableUnitInWhen2.kt")
+        public void testNullableUnitInWhen2() throws Exception {
+            doTest("compiler/testData/codegen/box/unit/nullableUnitInWhen2.kt");
+        }
+        
         @TestMetadata("unitClassObject.kt")
         public void testUnitClassObject() throws Exception {
             doTest("compiler/testData/codegen/box/unit/unitClassObject.kt");
