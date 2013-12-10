@@ -75,8 +75,6 @@ import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplType;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
-import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.RECEIVER_ARGUMENT;
-import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.THIS_OBJECT;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
@@ -2487,20 +2485,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             JetCallExpression fakeExpression = constructFakeFunctionCall(referencedFunction);
             final List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
 
-            final ReceiverValue receiverValue = computeAndSaveReceiver(signature, codegen);
+            final ReceiverValue thisObject = computeAndSaveReceiver(signature, codegen, referencedFunction.getExpectedThisObject());
+            final ReceiverValue extensionReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getReceiverParameter());
             computeAndSaveArguments(codegen.myFrameMap, fakeArguments, codegen);
 
             ResolvedCall<CallableDescriptor> fakeResolvedCall = new DelegatingResolvedCall<CallableDescriptor>(resolvedCall) {
                 @NotNull
                 @Override
                 public ReceiverValue getReceiverArgument() {
-                    return resolvedCall.getExplicitReceiverKind() == RECEIVER_ARGUMENT ? receiverValue : NO_RECEIVER;
+                    return extensionReceiver;
                 }
 
                 @NotNull
                 @Override
                 public ReceiverValue getThisObject() {
-                    return resolvedCall.getExplicitReceiverKind() == THIS_OBJECT ? receiverValue : NO_RECEIVER;
+                    return thisObject;
                 }
 
                 @NotNull
@@ -2565,19 +2564,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @NotNull
-        private ReceiverValue computeAndSaveReceiver(@NotNull JvmMethodSignature signature, @NotNull ExpressionCodegen codegen) {
-            CallableDescriptor referencedFunction = resolvedCall.getCandidateDescriptor();
-
-            ReceiverParameterDescriptor receiverParameter = referencedFunction.getReceiverParameter();
-            ReceiverParameterDescriptor expectedThisObject = referencedFunction.getExpectedThisObject();
-            assert receiverParameter == null || expectedThisObject == null :
-                    "Extensions in classes can't be referenced via callable reference expressions: " + referencedFunction;
-
-            ReceiverParameterDescriptor receiver = receiverParameter != null ? receiverParameter : expectedThisObject;
-
-            if (receiver == null) {
-                return NO_RECEIVER;
-            }
+        private ReceiverValue computeAndSaveReceiver(
+                @NotNull JvmMethodSignature signature, 
+                @NotNull ExpressionCodegen codegen,
+                @Nullable ReceiverParameterDescriptor receiver
+        ) {
+            if (receiver == null) return NO_RECEIVER;
 
             JetExpression receiverExpression = JetPsiFactory.createExpression(state.getProject(), "callableReferenceFakeReceiver");
 
