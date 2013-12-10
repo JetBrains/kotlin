@@ -40,6 +40,7 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
@@ -68,13 +69,14 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
         }
     }
 
-    public JsExpression translate(@NotNull JetDeclarationWithBody declaration, @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext outerContext) {
-        JsFunction fun = createFunction();
-        TranslationContext funContext;
-        boolean asInner;
-        ClassDescriptor outerClass;
-        AliasingContext aliasingContext;
+    @NotNull
+    public JsExpression translate(@NotNull JetDeclarationWithBody declaration, @NotNull TranslationContext outerContext) {
+        FunctionDescriptor descriptor = getFunctionDescriptor(outerContext.bindingContext(), declaration);
+
         DeclarationDescriptor receiverDescriptor = getExpectedReceiverDescriptor(descriptor);
+        JsFunction fun = createFunction();
+
+        AliasingContext aliasingContext;
         JsName receiverName;
         if (receiverDescriptor == null) {
             receiverName = null;
@@ -85,6 +87,8 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
             aliasingContext = outerContext.aliasingContext().inner(receiverDescriptor, receiverName.makeRef());
         }
 
+        boolean asInner;
+        ClassDescriptor outerClass;
         if (descriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
             // KT-2388
             asInner = true;
@@ -101,15 +105,10 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
             asInner = DescriptorUtils.isTopLevelDeclaration(descriptor);
         }
 
-        funContext = outerContext.newFunctionBody(fun, aliasingContext,
-                                                  new UsageTracker(descriptor, outerContext.usageTracker(), outerClass));
+        UsageTracker funTracker = new UsageTracker(descriptor, outerContext.usageTracker(), outerClass);
+        TranslationContext funContext = outerContext.newFunctionBody(fun, aliasingContext, funTracker);
 
         fun.getBody().getStatements().addAll(translateFunctionBody(descriptor, declaration, funContext).getStatements());
-
-        InnerFunctionTranslator translator = null;
-        if (!asInner) {
-            translator = new InnerFunctionTranslator(descriptor, funContext, fun);
-        }
 
         if (asInner) {
             addRegularParameters(descriptor, fun, funContext, receiverName);
@@ -126,6 +125,8 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
 
             return fun;
         }
+
+        InnerFunctionTranslator translator = new InnerFunctionTranslator(descriptor, funContext, fun);
 
         JsExpression result = translator.translate(createReference(fun), outerContext);
         addRegularParameters(descriptor, fun, funContext, receiverName);

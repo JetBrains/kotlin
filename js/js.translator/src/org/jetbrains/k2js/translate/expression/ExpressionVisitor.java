@@ -403,15 +403,14 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, @NotNull TranslationContext context) {
-        FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression.getFunctionLiteral());
-        return context.literalFunctionTranslator().translate(expression.getFunctionLiteral(), descriptor, context);
+        return context.literalFunctionTranslator().translate(expression.getFunctionLiteral(), context);
     }
 
     @Override
     @NotNull
     public JsNode visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
+        JsExpression alias = context.literalFunctionTranslator().translate(expression, context);
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
-        JsExpression alias = context.literalFunctionTranslator().translate(expression, descriptor, context);
         JsName name = context.scope().declareFreshName(descriptor.getName().asString());
         context.aliasingContext().registerAlias(descriptor, name.makeRef());
         return new JsVars(new JsVars.JsVar(name, alias)).source(expression);
