@@ -242,7 +242,10 @@ public abstract class StackValue {
             }
         }
         else if (toType.equals(JET_UNIT_TYPE)) {
-            if (!fromType.equals(getType(Void.class))) {
+            if (fromType.equals(getType(Object.class))) {
+                v.checkcast(JET_UNIT_TYPE);
+            }
+            else if (!fromType.equals(getType(Void.class))) {
                 pop(v, fromType);
                 putUnitInstance(v);
             }
