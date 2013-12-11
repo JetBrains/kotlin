@@ -426,7 +426,7 @@ public class CallExpressionResolver {
 
         //TODO move further
         if (!(receiverType instanceof NamespaceType) && expression.getOperationSign() == JetTokens.SAFE_ACCESS) {
-            if (selectorReturnType != null && !selectorReturnType.isNullable() && !KotlinBuiltIns.getInstance().isUnit(selectorReturnType)) {
+            if (selectorReturnType != null && !KotlinBuiltIns.getInstance().isUnit(selectorReturnType)) {
                 if (receiverType.isNullable()) {
                     selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
                 }
