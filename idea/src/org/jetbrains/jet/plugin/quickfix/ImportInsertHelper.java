@@ -26,17 +26,10 @@ import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -46,26 +39,6 @@ import java.util.List;
 
 public class ImportInsertHelper {
     private ImportInsertHelper() {
-    }
-
-    /**
-     * Add import directive corresponding to a type to file when it is needed.
-     *
-     * @param type type to import
-     * @param file file where import directive should be added
-     */
-    public static void addImportDirectivesIfNeeded(@NotNull JetType type, @NotNull JetFile file) {
-        if (JetPluginUtil.checkTypeIsStandard(type, file.getProject()) || type.isError()) {
-            return;
-        }
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
-        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, type.getMemberScope().getContainingDeclaration());
-        if (element != null && element.getContainingFile() == file) { //declaration is in the same file, so no import is needed
-            return;
-        }
-        for (ClassDescriptor clazz : TypeUtils.getAllClassDescriptors(type)) {
-            addImportDirectiveIfNeeded(DescriptorUtils.getFQName(getTopLevelClass(clazz)).toSafe(), file);
-        }
     }
 
     /**

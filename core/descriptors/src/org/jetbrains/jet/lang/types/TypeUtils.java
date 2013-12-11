@@ -486,23 +486,6 @@ public class TypeUtils {
         return TypeSubstitutor.create(substitutions).substitute(clazz.getDefaultType(), Variance.INVARIANT);
     }
 
-    private static void addAllClassDescriptors(@NotNull JetType type, @NotNull Set<ClassDescriptor> set) {
-        ClassDescriptor cd = getClassDescriptor(type);
-        if (cd != null) {
-            set.add(cd);
-        }
-        for (TypeProjection projection : type.getArguments()) {
-            addAllClassDescriptors(projection.getType(), set);
-        }
-    }
-
-    @NotNull
-    public static List<ClassDescriptor> getAllClassDescriptors(@NotNull JetType type) {
-        Set<ClassDescriptor> classDescriptors = new HashSet<ClassDescriptor>();
-        addAllClassDescriptors(type, classDescriptors);
-        return new ArrayList<ClassDescriptor>(classDescriptors);
-    }
-
     public static boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
         return JetTypeChecker.INSTANCE.isSubtypeOf(a, b) && JetTypeChecker.INSTANCE.isSubtypeOf(b, a);
     }
