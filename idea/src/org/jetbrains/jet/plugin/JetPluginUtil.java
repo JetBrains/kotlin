@@ -65,7 +65,7 @@ public class JetPluginUtil {
     }
 
     public static boolean checkTypeIsStandard(JetType type, Project project) {
-        if (KotlinBuiltIns.getInstance().isAny(type) || KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type) || KotlinBuiltIns.getInstance().isUnit(type) ||
+        if (KotlinBuiltIns.getInstance().isAnyOrNullableAny(type) || KotlinBuiltIns.getInstance().isNothingOrNullableNothing(type) || KotlinBuiltIns.getInstance().isUnit(type) ||
              KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(type)) {
             return true;
         }

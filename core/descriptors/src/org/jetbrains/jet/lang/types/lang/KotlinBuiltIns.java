@@ -939,7 +939,7 @@ public class KotlinBuiltIns {
                && type.getConstructor() == getNothing().getTypeConstructor();
     }
 
-    public boolean isAny(@NotNull JetType type) {
+    public boolean isAnyOrNullableAny(@NotNull JetType type) {
         return !(type instanceof NamespaceType) &&
                type.getConstructor() == getAny().getTypeConstructor();
     }

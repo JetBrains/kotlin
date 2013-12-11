@@ -64,7 +64,7 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
         ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
         // TODO: filter out impossible supertypes (for example when argument's type isn't visible in a superclass).
         for (ClassDescriptor supertypeDescriptor : getSupertypes(classDescriptor)) {
-            if (KotlinBuiltIns.getInstance().isAny(supertypeDescriptor.getDefaultType())) continue;
+            if (KotlinBuiltIns.getInstance().isAnyOrNullableAny(supertypeDescriptor.getDefaultType())) continue;
             functions.add(generateFunctionSignatureForType(functionDescriptor, supertypeDescriptor));
         }
         return functions;

@@ -636,7 +636,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         if (!klass.equals(KotlinBuiltIns.getInstance().getNothing())) {
             Collection<JetType> supertypes = klass.getTypeConstructor().getSupertypes();
-            if (supertypes.isEmpty() || !alwaysRenderAny && supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAny(supertypes.iterator().next())) {
+            if (supertypes.isEmpty() || !alwaysRenderAny && supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAnyOrNullableAny(
+                    supertypes.iterator().next())) {
             }
             else {
                 builder.append(" : ");
