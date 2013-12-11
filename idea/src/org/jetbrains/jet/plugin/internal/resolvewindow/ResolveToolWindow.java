@@ -58,7 +58,7 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo.*;
 
-public class ResolveToolwindow extends JPanel implements Disposable {
+public class ResolveToolWindow extends JPanel implements Disposable {
 
     public static final String BAR = "\n\n===\n\n";
 
@@ -155,7 +155,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
 
     private final Project myProject;
 
-    public ResolveToolwindow(Project project) {
+    public ResolveToolWindow(Project project) {
         super(new BorderLayout());
         myProject = project;
         myEditor = EditorFactory.getInstance()
