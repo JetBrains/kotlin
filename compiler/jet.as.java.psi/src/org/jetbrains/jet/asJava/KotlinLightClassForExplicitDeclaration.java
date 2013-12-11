@@ -313,6 +313,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         Collection<String> psiModifiers = Sets.newHashSet();
 
         // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
+        //noinspection unchecked
         List<Pair<JetKeywordToken, String>> jetTokenToPsiModifier = Lists.newArrayList(
                 Pair.create(PUBLIC_KEYWORD, PsiModifier.PUBLIC),
                 Pair.create(INTERNAL_KEYWORD, PsiModifier.PUBLIC),

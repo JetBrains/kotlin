@@ -59,7 +59,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         private boolean isDelegationToSuperCall;
 
-        private ClassDescriptor descriptor;
+        private final ClassDescriptor descriptor;
 
         public ClassDescriptorWithState(ClassDescriptor descriptor) {
             this.descriptor = descriptor;
