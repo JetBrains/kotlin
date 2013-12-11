@@ -43,7 +43,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.isOrOverridesSynthesized;
 import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
@@ -319,22 +318,6 @@ public class TaskPrioritizer {
                 candidate.setExplicitReceiverKind(receiverKind);
                 if (setImpliedThis(scope, candidate)) {
                     result.add(candidate);
-                }
-            }
-        }
-        if (receiverParameters.size() == 1 && !receiverParameters.iterator().next().exists()) {
-            for (D descriptor : descriptors) {
-                if (descriptor.getExpectedThisObject() != null && descriptor.getReceiverParameter() == null) {
-                    DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-                    if (descriptor instanceof ConstructorDescriptor) {
-                        containingDeclaration = containingDeclaration.getContainingDeclaration();
-                    }
-                    if (containingDeclaration != null && isClassObject(containingDeclaration)) {
-                        ResolutionCandidate<D> candidate = ResolutionCandidate.create(descriptor);
-                        candidate.setThisObject(((ClassDescriptor) containingDeclaration).getThisAsReceiverParameter().getValue());
-                        candidate.setExplicitReceiverKind(ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
-                        result.add(candidate);
-                    }
                 }
             }
         }

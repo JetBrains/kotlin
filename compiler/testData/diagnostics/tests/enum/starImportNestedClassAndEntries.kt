@@ -21,4 +21,4 @@ fun f1() = ENTRY
 fun f2() = ANOTHER
 fun f3() = Nested()
 fun f4() = Nested.foo()
-fun f5() = values()
+fun f5() = <!UNRESOLVED_REFERENCE!>values<!>()

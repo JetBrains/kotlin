@@ -432,8 +432,7 @@ public class DescriptorUtils {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         return descriptor instanceof ClassDescriptor &&
                containing instanceof ClassDescriptor &&
-               !((ClassDescriptor) descriptor).isInner() &&
-               !((ClassDescriptor) containing).getKind().isSingleton();
+               !((ClassDescriptor) descriptor).isInner();
     }
 
     @Nullable
