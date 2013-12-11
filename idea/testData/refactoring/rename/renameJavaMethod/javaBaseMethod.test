@@ -1,1 +1,6 @@
-// RENAME: JAVA_METHOD->testing.JavaClass->String foo()->bar
+{
+  "type": "JAVA_METHOD",
+  "classFQN": "testing.JavaClass",
+  "methodSignature": "String foo()",
+  "newName": "bar"
+}

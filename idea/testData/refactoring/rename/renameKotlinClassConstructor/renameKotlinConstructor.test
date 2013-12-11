@@ -1,1 +1,5 @@
-// RENAME: KOTLIN_CLASS->X->TestX
+{
+  "type": "KOTLIN_CLASS",
+  "classFQN": "X",
+  "newName": "TestX"
+}

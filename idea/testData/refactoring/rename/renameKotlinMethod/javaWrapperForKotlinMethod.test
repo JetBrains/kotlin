@@ -1,3 +1,7 @@
-// RENAME: JAVA_METHOD->testing.rename.C->int first()->second
-
-// KT-3256 Can't rename a Kotlin function from Java code
+{
+  "type": "JAVA_METHOD",
+  "classFQN": "testing.rename.C",
+  "methodSignature": "int first()",
+  "newName": "second",
+  "comment": "KT-3256 Can't rename a Kotlin function from Java code"
+}

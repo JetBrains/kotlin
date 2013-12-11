@@ -1,2 +1,6 @@
-// RENAME: KOTLIN_CLASS->testing.ClassBefore->ClassAfter
-// FILE: ClassBefore.kt
+{
+  "type": "KOTLIN_CLASS",
+  "classFQN": "testing.ClassBefore",
+  "newName": "ClassAfter",
+  "mainFile": "ClassBefore.kt"
+}

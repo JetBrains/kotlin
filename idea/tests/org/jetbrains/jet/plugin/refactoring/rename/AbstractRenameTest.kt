@@ -14,243 +14,196 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.rename;
+package org.jetbrains.jet.plugin.refactoring.rename
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.refactoring.MultiFileTestCase;
-import com.intellij.refactoring.rename.RenameProcessor;
-import com.intellij.refactoring.rename.RenamePsiElementProcessor;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.util.Function;
-import junit.framework.Assert;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import com.intellij.refactoring.MultiFileTestCase
+import com.intellij.openapi.util.io.FileUtil
+import java.io.File
+import junit.framework.Assert
+import com.google.gson.JsonParser
+import com.google.gson.JsonObject
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.refactoring.rename.RenameProcessor
+import com.intellij.refactoring.rename.RenamePsiElementProcessor
+import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.jet.plugin.PluginTestCaseBase
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.module.Module
+import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.resolve.BindingContext
+import java.util.Collections
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.BindingContextUtils
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 
-import java.io.File;
-import java.util.Collections;
+private enum class RenameType {
+    JAVA_CLASS
+    JAVA_METHOD
+    KOTLIN_CLASS
+    KOTLIN_FUNCTION
+    KOTLIN_PROPERTY
+}
 
-public abstract class AbstractRenameTest extends MultiFileTestCase {
-    private enum RenameType {
-        JAVA_CLASS,
-        JAVA_METHOD,
-        KOTLIN_CLASS,
-        KOTLIN_FUNCTION,
-        KOTLIN_PROPERTY,
+fun JsonObject.getString(name: String): String {
+    val member = getNullableString(name)
+    if (member == null) {
+        throw IllegalStateException("Member with name '$name' is expected in '$this'")
     }
 
-    public void doTest(String path) {
+    return member
+}
+
+fun JsonObject.getNullableString(name: String): String? = this[name]?.getAsString()
+
+public abstract class AbstractRenameTest : MultiFileTestCase() {
+    inner class TestContext(
+            val project: Project = getProject()!!,
+            val javaFacade: JavaPsiFacade = getJavaFacade()!!,
+            val module: Module = getModule()!!)
+
+    public open fun doTest(path : String) {
+        val fileText = FileUtil.loadFile(File(path))
+
+        val jsonParser = JsonParser()
+        val renameObject = jsonParser.parse(fileText) as JsonObject
+
+        val renameTypeStr = renameObject.getString("type")
+
+        val hintDirective = renameObject.getNullableString("hint")
+
         try {
-            String fileText = FileUtil.loadFile(new File(path));
-            String renameDirective = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// RENAME:");
-            Assert.assertNotNull("'// RENAME:' directive is expected for rename test file", renameDirective);
+            val context = TestContext()
 
-            String[] strings = renameDirective.split("->");
-            Assert.assertTrue("'// RENAME:' directive should have at least AbstractRenameTest.RenameType parameter", strings.length > 0);
-
-            String hintDirective = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// HINT:");
-
-            String mainFile = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FILE:");
-
-            String renameTypeStr = strings[0];
-            RenameType type = RenameType.valueOf(renameTypeStr);
-
-            try {
-                FqNameUnsafe fqNameUnsafe = new FqNameUnsafe(strings[1]);
-
-                switch (type) {
-                    case JAVA_CLASS:
-                        renameJavaClassTest(fqNameUnsafe.asString(), strings[2]);
-                        break;
-                    case JAVA_METHOD:
-                        renameJavaMethodTest(fqNameUnsafe.asString(), strings[2], strings[3]);
-                        break;
-                    case KOTLIN_CLASS:
-                        renameKotlinClassTest(fqNameUnsafe.toSafe(), strings[2], mainFile);
-                        break;
-                    case KOTLIN_FUNCTION:
-                        renameKotlinFunctionTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2], mainFile);
-                        break;
-                    case KOTLIN_PROPERTY:
-                        renameKotlinPropertyTest(fqNameUnsafe.parent().toSafe(), fqNameUnsafe.shortName().asString(), strings[2], mainFile);
-                        break;
-                }
-
-                if (hintDirective != null) {
-                    Assert.fail(String.format("Hint \"%s\" was expected", hintDirective));
-                }
+            when (RenameType.valueOf(renameTypeStr)) {
+                RenameType.JAVA_CLASS -> renameJavaClassTest(renameObject, context)
+                RenameType.JAVA_METHOD -> renameJavaMethodTest(renameObject, context)
+                RenameType.KOTLIN_CLASS -> renameKotlinClassTest(renameObject, context)
+                RenameType.KOTLIN_FUNCTION -> renameKotlinFunctionTest(renameObject, context)
+                RenameType.KOTLIN_PROPERTY -> renameKotlinPropertyTest(renameObject, context)
             }
-            catch (CommonRefactoringUtil.RefactoringErrorHintException hintException) {
-                String hintExceptionUnquoted = StringUtil.unquoteString(hintException.getMessage());
-                if (hintDirective != null) {
-                    Assert.assertEquals(hintDirective, hintExceptionUnquoted);
-                }
-                else {
-                    Assert.fail(String.format("Unexpected hint: // HINT: %s", hintExceptionUnquoted));
-                }
+
+            if (hintDirective != null) {
+                Assert.fail("""Hint "$hintDirective" was expected""")
             }
         }
-        catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
+        catch (hintException : CommonRefactoringUtil.RefactoringErrorHintException) {
+            val hintExceptionUnquoted = StringUtil.unquoteString(hintException.getMessage()!!)
+            if (hintDirective != null) {
+                Assert.assertEquals(hintDirective, hintExceptionUnquoted)
+            }
+            else {
+                Assert.fail("""Unexpected "hint: $hintExceptionUnquoted" """)
+            }
         }
     }
 
-    private void renameJavaClassTest(@NonNls final String qClassName, @NonNls final String newName) throws Exception {
-        doTest(new MultiFileTestCase.PerformAction() {
-            @Override
-            public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
-                PsiClass aClass = myJavaFacade.findClass(qClassName, GlobalSearchScope.allScope(getProject()));
-                assertNotNull("Class " + qClassName + " not found", aClass);
+    private fun renameJavaClassTest(renameParamsObject: JsonObject, context: TestContext) {
+        val classFQN = renameParamsObject.getString("classFQN")
+        val newName = renameParamsObject.getString("newName")
 
-                PsiElement substitution = RenamePsiElementProcessor.forElement(aClass).substituteElementToRename(aClass, null);
+        doTest { rootDir, rootAfter ->
+            val aClass = context.javaFacade.findClass(classFQN, GlobalSearchScope.allScope(context.project))!!
+            val substitution = RenamePsiElementProcessor.forElement(aClass).substituteElementToRename(aClass, null)
 
-                new RenameProcessor(myProject, substitution, newName, true, true).run();
+            RenameProcessor(context.project, substitution, newName, true, true).run()
 
-                PsiDocumentManager.getInstance(myProject).commitAllDocuments();
-                FileDocumentManager.getInstance().saveAllDocuments();
-            }
-        });
+            PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+            FileDocumentManager.getInstance()?.saveAllDocuments()
+        }
     }
 
-    private void renameJavaMethodTest(final String className, final String methodSignature, final String newName) throws Exception {
-        doTest(new MultiFileTestCase.PerformAction() {
-            @Override
-            public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
-                JavaPsiFacade manager = getJavaFacade();
+    private fun renameJavaMethodTest(renameParamsObject: JsonObject, context: TestContext) {
+        val classFQN = renameParamsObject.getString("classFQN")
+        val methodSignature = renameParamsObject.getString("methodSignature")
+        val newName = renameParamsObject.getString("newName")
 
-                PsiClass aClass = manager.findClass(className, GlobalSearchScope.moduleScope(myModule));
-                assertNotNull("Class " + className + " not found", aClass);
+        doTest { rootDir, rootAfter ->
+            val aClass = context.javaFacade.findClass(classFQN, GlobalSearchScope.moduleScope(context.module))!!
 
-                PsiMethod methodBySignature = aClass.findMethodBySignature(manager.getElementFactory().createMethodFromText(methodSignature + "{}", null), false);
-                assertNotNull("Method with signature '" + methodSignature + "' wasn't found in class " + className, methodBySignature);
+            val methodText = context.javaFacade.getElementFactory().createMethodFromText(methodSignature + "{}", null)
+            val method = aClass.findMethodBySignature(methodText, false)
 
-                PsiElement substitution = RenamePsiElementProcessor.forElement(methodBySignature).substituteElementToRename(methodBySignature, null);
-                assert substitution != null;
+            if (method == null) throw IllegalStateException("Method with signature '$methodSignature' wasn't found in class $classFQN")
 
-                new RenameProcessor(myProject, substitution, newName, false, false).run();
+            val substitution = RenamePsiElementProcessor.forElement(method).substituteElementToRename(method, null)
 
-                PsiDocumentManager.getInstance(myProject).commitAllDocuments();
-                FileDocumentManager.getInstance().saveAllDocuments();
-            }
-        });
+            RenameProcessor(context.project, substitution, newName, false, false).run()
+
+            PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+            FileDocumentManager.getInstance()?.saveAllDocuments()
+        }
     }
 
-    private void renameKotlinFunctionTest(final FqName qClassName, final String oldMethodName, String newMethodName, String mainFile) throws Exception {
-        doTestWithKotlinRename(new Function<PsiFile, PsiElement>() {
-            @Override
-            public PsiElement fun(PsiFile file) {
-                BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file)
-                        .getBindingContext();
-                ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
+    private fun renameKotlinFunctionTest(renameParamsObject: JsonObject, context: TestContext) {
+        val oldMethodName = Name.identifier(renameParamsObject.getString("oldName"))
 
-                assertNotNull(classDescriptor);
-                JetScope scope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-                FunctionDescriptor methodDescriptor = scope.getFunctions(Name.identifier(oldMethodName)).iterator().next();
-                return BindingContextUtils.callableDescriptorToDeclaration(bindingContext, methodDescriptor);
-            }
-        }, newMethodName, mainFile);
+        doRenameInKotlinClass(renameParamsObject, context) { classDescriptor ->
+            val scope = classDescriptor.getMemberScope(Collections.emptyList())
+            scope.getFunctions(oldMethodName).first()
+        }
     }
 
-    private void renameKotlinPropertyTest(final FqName qClassName, final String oldPropertyName, String newPropertyName, String mainFile) throws Exception {
-        doTestWithKotlinRename(new Function<PsiFile, PsiElement>() {
-            @Override
-            public PsiElement fun(PsiFile file) {
-                BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
-                ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
-                assertNotNull(classDescriptor);
+    private fun renameKotlinPropertyTest(renameParamsObject: JsonObject, context: TestContext) {
+        val oldPropertyName = Name.identifier(renameParamsObject.getString("oldName"))
 
-                JetScope scope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-                VariableDescriptor propertyName = scope.getProperties(Name.identifier(oldPropertyName)).iterator().next();
-                return BindingContextUtils.descriptorToDeclaration(bindingContext, propertyName);
-            }
-        }, newPropertyName, mainFile);
+        doRenameInKotlinClass(renameParamsObject, context) { classDescriptor ->
+            val scope = classDescriptor.getMemberScope(Collections.emptyList())
+            scope.getProperties(oldPropertyName).first()
+        }
     }
 
-    private void renameKotlinClassTest(@NonNls final FqName qClassName, @NonNls String newName, String mainFile) throws Exception {
-        doTestWithKotlinRename(new Function<PsiFile, PsiElement>() {
-            @Override
-            public PsiElement fun(PsiFile file) {
-                BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file)
-                        .getBindingContext();
-                ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
-
-                assertNotNull(classDescriptor);
-
-                return BindingContextUtils.classDescriptorToDeclaration(bindingContext, classDescriptor);
-            }
-        }, newName, mainFile);
+    private fun renameKotlinClassTest(renameParamsObject: JsonObject, context: TestContext) {
+        doRenameInKotlinClass(renameParamsObject, context) { classDescriptor -> classDescriptor }
     }
 
-    private void doTestWithKotlinRename(
-            @NonNls final Function<PsiFile, PsiElement> elementToRenameCallback,
-            @NonNls final String newName,
-            @Nullable final String mainFile
-    ) throws Exception {
-        doTest(new MultiFileTestCase.PerformAction() {
-            @Override
-            public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
-                VirtualFile child = rootDir.findChild(mainFile == null ? (getTestDirName(false) + ".kt") : mainFile);
-                assertNotNull(child);
+    private fun doRenameInKotlinClass(renameParamsObject: JsonObject, context: TestContext,
+                                      findDescriptorToRename: (ClassDescriptor) -> DeclarationDescriptor
+    ) {
+        val classFqName = FqName(renameParamsObject.getString("classFQN"))
+        val newName = renameParamsObject.getString("newName")
+        val mainFilePath = renameParamsObject.getNullableString("mainFile") ?: "${getTestDirName(false)}.kt"
 
-                Document document = FileDocumentManager.getInstance().getDocument(child);
-                assertNotNull(document);
+        doTest { rootDir, rootAfter ->
+            val mainFile = rootDir.findChild(mainFilePath)!!
+            val document = FileDocumentManager.getInstance()!!.getDocument(mainFile)!!
+            val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as JetFile
 
-                PsiFile file = PsiDocumentManager.getInstance(getProject()).getPsiFile(document);
-                assertTrue(file instanceof JetFile);
+            val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext()
+            val classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, classFqName)!!
 
-                PsiElement psiElement = elementToRenameCallback.fun(file);
-                assertNotNull(psiElement);
+            val psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, findDescriptorToRename(classDescriptor))!!
 
-                PsiElement substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null);
-                assert substitution != null;
+            val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
 
-                new RenameProcessor(myProject, substitution, newName, true, true).run();
+            RenameProcessor(context.project, substitution, newName, true, true).run()
 
-                PsiDocumentManager.getInstance(myProject).commitAllDocuments();
-                FileDocumentManager.getInstance().saveAllDocuments();
-                VirtualFileManager.getInstance().syncRefresh();
-            }
-        });
+            PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+            FileDocumentManager.getInstance()?.saveAllDocuments()
+        }
     }
 
-    protected String getTestDirName(boolean lowercaseFirstLetter) {
-        String testName = getTestName(lowercaseFirstLetter);
-        return testName.substring(0, testName.indexOf('_'));
+    protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
+        val testName = getTestName(lowercaseFirstLetter)
+        return testName.substring(0, testName.indexOf('_'))
     }
 
-    @Override
-    protected void doTest(PerformAction performAction) throws Exception {
-        super.doTest(performAction, getTestDirName(true));
+    protected fun doTest(action : (VirtualFile, VirtualFile?) -> Unit) {
+        super.doTest(action, getTestDirName(true))
     }
 
-    @Override
-    protected String getTestRoot() {
-        return "/refactoring/rename/";
+    protected override fun getTestRoot() : String {
+        return "/refactoring/rename/"
     }
 
-    @Override
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase();
+    protected override fun getTestDataPath() : String {
+        return PluginTestCaseBase.getTestDataPathBase()
     }
 }
