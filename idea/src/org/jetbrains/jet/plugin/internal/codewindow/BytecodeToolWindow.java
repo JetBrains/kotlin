@@ -65,6 +65,10 @@ public class BytecodeToolWindow extends JPanel implements Disposable {
     public class UpdateBytecodeToolWindowTask extends LongRunningReadTask<Location, String> {
         @Override
         protected Location prepareRequestInfo() {
+            if (!toolWindow.isVisible()) {
+                return null;
+            }
+
             Location location = Location.fromEditor(FileEditorManager.getInstance(myProject).getSelectedTextEditor(), myProject);
             if (location.getEditor() == null) {
                 return null;
@@ -169,12 +173,15 @@ public class BytecodeToolWindow extends JPanel implements Disposable {
     private final Editor myEditor;
     private final Alarm myUpdateAlarm;
     private final Project myProject;
+    private final ToolWindow toolWindow;
 
     private UpdateBytecodeToolWindowTask currentTask = null;
 
-    public BytecodeToolWindow(Project project) {
+    public BytecodeToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
         myProject = project;
+        this.toolWindow = toolWindow;
+
         myEditor = EditorFactory.getInstance().createEditor(
                 EditorFactory.getInstance().createDocument(""), project, JavaFileType.INSTANCE, true);
         add(myEditor.getComponent());
@@ -244,7 +251,6 @@ public class BytecodeToolWindow extends JPanel implements Disposable {
 
             byteCodeLine++;
         }
-
 
         if (byteCodeStartLine == -1 || byteCodeEndLine == -1) {
             return new Pair<Integer, Integer>(0, 0);

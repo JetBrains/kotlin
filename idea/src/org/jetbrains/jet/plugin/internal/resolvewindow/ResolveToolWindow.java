@@ -23,6 +23,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -76,6 +77,10 @@ public class ResolveToolWindow extends JPanel implements Disposable {
     private class UpdateResolveToolWindowTask extends LongRunningReadTask<Location, String> {
         @Override
         protected Location prepareRequestInfo() {
+            if (!toolWindow.isVisible()) {
+                return null;
+            }
+
             Location location = Location.fromEditor(FileEditorManager.getInstance(myProject).getSelectedTextEditor(), myProject);
             if (location.getEditor() == null || location.getJetFile() == null) {
                 return null;
@@ -154,13 +159,16 @@ public class ResolveToolWindow extends JPanel implements Disposable {
     private UpdateResolveToolWindowTask currentTask = null;
 
     private final Project myProject;
+    private final ToolWindow toolWindow;
 
-    public ResolveToolWindow(Project project) {
+    public ResolveToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
         myProject = project;
+        this.toolWindow = toolWindow;
         myEditor = EditorFactory.getInstance()
                 .createEditor(EditorFactory.getInstance().createDocument(""), project, JetFileType.INSTANCE, true);
         add(myEditor.getComponent());
+
         myUpdateAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
         myUpdateAlarm.addRequest(new Runnable() {
             @Override
