@@ -48,10 +48,6 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     protected final List<JsPropertyInitializer> staticResult;
     protected final List<JsPropertyInitializer> enumEntryList = new SmartList<JsPropertyInitializer>();
 
-    public DeclarationBodyVisitor() {
-        this(new SmartList<JsPropertyInitializer>(), new SmartList<JsPropertyInitializer>());
-    }
-
     public DeclarationBodyVisitor(@NotNull List<JsPropertyInitializer> result, @NotNull List<JsPropertyInitializer> staticResult) {
         this.result = result;
         this.staticResult = staticResult;

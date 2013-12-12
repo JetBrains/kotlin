@@ -17,8 +17,6 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -29,8 +27,9 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.k2js.translate.LabelGenerator;
+import org.jetbrains.k2js.translate.context.DefinitionPlace;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -39,7 +38,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
-import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createClassObjectInitializer;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
@@ -110,7 +108,7 @@ public final class ClassTranslator extends AbstractTranslator {
         if (containingClass == null) {
             return translate(context());
         }
-        return context().literalFunctionTranslator().translate(containingClass, context(), classDeclaration, descriptor, this);
+        return new LiteralFunctionTranslator(context()).translate(containingClass, context(), classDeclaration, descriptor, this);
     }
 
     @NotNull
@@ -130,34 +128,26 @@ public final class ClassTranslator extends AbstractTranslator {
     private List<JsExpression> getClassCreateInvocationArguments(@NotNull TranslationContext declarationContext) {
         List<JsExpression> invocationArguments = new ArrayList<JsExpression>();
 
-        final List<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
-        final List<JsPropertyInitializer> staticProperties = new SmartList<JsPropertyInitializer>();
+        List<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
+        List<JsPropertyInitializer> staticProperties = new SmartList<JsPropertyInitializer>();
+
         boolean isTopLevelDeclaration = context() == declarationContext;
-        final JsNameRef qualifiedReference;
+
+        JsNameRef qualifiedReference;
         if (!isTopLevelDeclaration) {
             qualifiedReference = null;
         }
-        else if (descriptor.getKind().isSingleton() || isAnonymousObject(descriptor)) {
-            qualifiedReference = null;
-            declarationContext.literalFunctionTranslator().setDefinitionPlace(
-                    new NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>() {
-                        @Override
-                        @NotNull
-                        public Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> compute() {
-                            return createPlace(properties, context().getThisObject(descriptor));
-                        }
-                    });
-        }
         else {
-            qualifiedReference = declarationContext.getQualifiedReference(descriptor);
-            declarationContext.literalFunctionTranslator().setDefinitionPlace(
-                    new NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>() {
-                        @Override
-                        @NotNull
-                        public Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> compute() {
-                            return createPlace(staticProperties, qualifiedReference);
-                        }
-                    });
+            DefinitionPlace definitionPlace;
+            if (descriptor.getKind().isSingleton() || isAnonymousObject(descriptor)) {
+                qualifiedReference = null;
+                definitionPlace = new DefinitionPlace(properties, context().getThisObject(descriptor));
+            }
+            else {
+                qualifiedReference = declarationContext.getQualifiedReference(descriptor);
+                definitionPlace = new DefinitionPlace(staticProperties, qualifiedReference);
+            }
+            declarationContext = declarationContext.newDeclaration(descriptor, definitionPlace);
         }
 
         invocationArguments.add(getSuperclassReferences(declarationContext));
@@ -170,10 +160,6 @@ public final class ClassTranslator extends AbstractTranslator {
         DeclarationBodyVisitor bodyVisitor = new DeclarationBodyVisitor(properties, staticProperties);
         bodyVisitor.traverseContainer(classDeclaration, declarationContext);
         mayBeAddEnumEntry(bodyVisitor.getEnumEntryList(), staticProperties, declarationContext);
-
-        if (isTopLevelDeclaration) {
-            declarationContext.literalFunctionTranslator().setDefinitionPlace(null);
-        }
 
         boolean hasStaticProperties = !staticProperties.isEmpty();
         if (!properties.isEmpty() || hasStaticProperties) {

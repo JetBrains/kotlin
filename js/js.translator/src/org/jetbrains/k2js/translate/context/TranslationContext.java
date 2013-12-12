@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 
 import java.util.HashMap;
@@ -46,31 +45,42 @@ public class TranslationContext {
     private final AliasingContext aliasingContext;
     @Nullable
     private final UsageTracker usageTracker;
+    @Nullable
+    private final TranslationContext parent;
+    @Nullable
+    private final DefinitionPlace definitionPlace;
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext, JsFunction rootFunction) {
         DynamicContext rootDynamicContext =
                 DynamicContext.rootContext(rootFunction.getScope(), rootFunction.getBody());
         AliasingContext rootAliasingContext = AliasingContext.getCleanContext();
-        return new TranslationContext(staticContext, rootDynamicContext, rootAliasingContext, null);
+        return new TranslationContext(null, staticContext, rootDynamicContext, rootAliasingContext, null, null);
     }
 
     private final HashMap<JsExpression, TemporaryConstVariable> expressionToTempConstVariableCache = new HashMap<JsExpression, TemporaryConstVariable>();
 
     private TranslationContext(
+            @Nullable TranslationContext parent,
             @NotNull StaticContext staticContext,
             @NotNull DynamicContext dynamicContext,
             @NotNull AliasingContext aliasingContext,
-            @Nullable UsageTracker usageTracker
+            @Nullable UsageTracker usageTracker,
+            @Nullable DefinitionPlace definitionPlace
     ) {
+        this.parent = parent;
         this.dynamicContext = dynamicContext;
         this.staticContext = staticContext;
         this.aliasingContext = aliasingContext;
         this.usageTracker = usageTracker;
+        this.definitionPlace = definitionPlace;
     }
 
-    private TranslationContext(@NotNull TranslationContext parent, @NotNull AliasingContext aliasingContext) {
-        this(parent.staticContext, parent.dynamicContext, aliasingContext, parent.usageTracker);
+    private TranslationContext(
+            @NotNull TranslationContext parent,
+            @NotNull AliasingContext aliasingContext
+    ) {
+        this(parent, parent.staticContext, parent.dynamicContext, aliasingContext, parent.usageTracker, null);
     }
 
     private TranslationContext(
@@ -79,8 +89,8 @@ public class TranslationContext {
             @NotNull AliasingContext aliasingContext,
             @Nullable UsageTracker usageTracker
     ) {
-        this(parent.staticContext, DynamicContext.newContext(fun.getScope(), fun.getBody()), aliasingContext,
-             usageTracker == null ? parent.usageTracker : usageTracker);
+        this(parent, parent.staticContext, DynamicContext.newContext(fun.getScope(), fun.getBody()), aliasingContext,
+             usageTracker == null ? parent.usageTracker : usageTracker, null);
     }
 
     @Nullable
@@ -98,14 +108,6 @@ public class TranslationContext {
     }
 
     @NotNull
-    private TranslationContext contextWithScope(@NotNull JsScope newScope,
-            @NotNull JsBlock block,
-            @NotNull AliasingContext aliasingContext,
-            @Nullable UsageTracker usageTracker) {
-        return new TranslationContext(staticContext, DynamicContext.newContext(newScope, block), aliasingContext, usageTracker);
-    }
-
-    @NotNull
     public TranslationContext newFunctionBody(
             @NotNull JsFunction fun,
             @Nullable AliasingContext aliasingContext,
@@ -117,12 +119,13 @@ public class TranslationContext {
 
     @NotNull
     public TranslationContext innerBlock(@NotNull JsBlock block) {
-        return new TranslationContext(staticContext, dynamicContext.innerBlock(block), aliasingContext, usageTracker);
+        return new TranslationContext(this, staticContext, dynamicContext.innerBlock(block), aliasingContext, usageTracker, null);
     }
 
     @NotNull
-    public TranslationContext newDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return contextWithScope(getScopeForDescriptor(descriptor), getBlockForDescriptor(descriptor), aliasingContext, usageTracker);
+    public TranslationContext newDeclaration(@NotNull DeclarationDescriptor descriptor, @Nullable DefinitionPlace place) {
+        DynamicContext dynamicContext = DynamicContext.newContext(getScopeForDescriptor(descriptor), getBlockForDescriptor(descriptor));
+        return new TranslationContext(this, staticContext, dynamicContext, aliasingContext, usageTracker, place);
     }
 
     @NotNull
@@ -248,11 +251,6 @@ public class TranslationContext {
     }
 
     @NotNull
-    public LiteralFunctionTranslator literalFunctionTranslator() {
-        return staticContext.getLiteralFunctionTranslator();
-    }
-
-    @NotNull
     public JsFunction getFunctionObject(@NotNull CallableDescriptor descriptor) {
         return staticContext.getFunctionWithScope(descriptor);
     }
@@ -286,5 +284,13 @@ public class TranslationContext {
 
         JsExpression alias = aliasingContext.getAliasForDescriptor(effectiveDescriptor);
         return alias == null ? JsLiteral.THIS : alias;
+    }
+
+    @NotNull
+    public DefinitionPlace getDefinitionPlace() {
+        if (definitionPlace != null) return definitionPlace;
+        if (parent != null) return parent.getDefinitionPlace();
+
+        throw new AssertionError("Can not find definition place from rootContext(definitionPlace and parent is null)");
     }
 }

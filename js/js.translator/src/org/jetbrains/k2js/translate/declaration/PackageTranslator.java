@@ -17,15 +17,14 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.util.Trinity;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.k2js.translate.LabelGenerator;
+import org.jetbrains.k2js.translate.context.DefinitionPlace;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
@@ -34,61 +33,50 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.k2js.translate.declaration.DefineInvocation.createDefineInvocation;
-import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
-
 final class PackageTranslator extends AbstractTranslator {
+    static PackageTranslator create(
+            @NotNull PackageFragmentDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
+        SmartList<JsPropertyInitializer> properties = new SmartList<JsPropertyInitializer>();
+        DefinitionPlace definitionPlace = new DefinitionPlace(properties, context.getQualifiedReference(descriptor));
+
+        TranslationContext newContext = context.newDeclaration(descriptor, definitionPlace);
+        FileDeclarationVisitor visitor = new FileDeclarationVisitor(newContext, definitionPlace.getProperties());
+        return new PackageTranslator(descriptor, newContext, visitor);
+    }
+
     @NotNull
     private final PackageFragmentDescriptor descriptor;
 
     private final FileDeclarationVisitor visitor;
 
-    private final NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>> definitionPlace;
-
-    PackageTranslator(
-            @NotNull final PackageFragmentDescriptor descriptor,
-            @NotNull final Map<FqName, DefineInvocation> packageFqNameToDefineInvocation,
-            @NotNull TranslationContext context
+    private PackageTranslator(
+            @NotNull PackageFragmentDescriptor descriptor,
+            @NotNull TranslationContext context,
+            @NotNull FileDeclarationVisitor visitor
     ) {
-        super(context.newDeclaration(descriptor));
-
+        super(context);
         this.descriptor = descriptor;
-
-        visitor = new FileDeclarationVisitor(context());
-
-        definitionPlace = new NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>() {
-            @Override
-            @NotNull
-            public Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> compute() {
-                DefineInvocation defineInvocation = packageFqNameToDefineInvocation.get(descriptor.getFqName());
-                if (defineInvocation == null) {
-                    defineInvocation = createDefinitionPlace(null, packageFqNameToDefineInvocation);
-                }
-
-                return createPlace(defineInvocation.getMembers(), context().getQualifiedReference(descriptor.getFqName()));
-            }
-        };
+        this.visitor = visitor;
     }
-
+    
     public void translate(JetFile file) {
-        context().literalFunctionTranslator().setDefinitionPlace(definitionPlace);
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (!AnnotationsUtils.isPredefinedObject(BindingUtils.getDescriptorForElement(bindingContext(), declaration))) {
                 declaration.accept(visitor, context());
             }
         }
-        context().literalFunctionTranslator().setDefinitionPlace(null);
     }
 
-    private DefineInvocation createDefinitionPlace(
+    private void createDefinitionPlace(
             @Nullable JsExpression initializer,
             Map<FqName, DefineInvocation> packageFqNameToDefineInvocation
     ) {
         FqName fqName = descriptor.getFqName();
-        DefineInvocation place = createDefineInvocation(fqName, initializer, new JsObjectLiteral(visitor.getResult(), true), context());
+        DefineInvocation place = DefineInvocation.create(fqName, initializer, new JsObjectLiteral(visitor.getResult(), true), context());
         packageFqNameToDefineInvocation.put(fqName, place);
         addToParent(fqName.parent(), getEntry(fqName, place), packageFqNameToDefineInvocation);
-        return place;
     }
 
     public void add(@NotNull Map<FqName, DefineInvocation> packageFqNameToDefineInvocation) {
@@ -137,7 +125,7 @@ final class PackageTranslator extends AbstractTranslator {
             Map<FqName, DefineInvocation> packageFqNameToDefineInvocation) {
         while (!addEntryIfParentExists(parentFqName, entry, packageFqNameToDefineInvocation)) {
             JsObjectLiteral members = new JsObjectLiteral(new SmartList<JsPropertyInitializer>(entry), true);
-            DefineInvocation defineInvocation = createDefineInvocation(parentFqName, null, members, context());
+            DefineInvocation defineInvocation = DefineInvocation.create(parentFqName, null, members, context());
             entry = getEntry(parentFqName, defineInvocation);
 
             packageFqNameToDefineInvocation.put(parentFqName, defineInvocation);

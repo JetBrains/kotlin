@@ -17,9 +17,6 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.util.Trinity;
-import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -31,42 +28,24 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.LabelGenerator;
-import org.jetbrains.k2js.translate.context.AliasingContext;
-import org.jetbrains.k2js.translate.context.Namer;
-import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.context.UsageTracker;
+import org.jetbrains.k2js.translate.context.*;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-
-import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
 public class LiteralFunctionTranslator extends AbstractTranslator {
-    private final Stack<NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>> definitionPlaces =
-            new Stack<NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>>();
-    private NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>> definitionPlace;
+    private static final LabelGenerator FUNCTION_NAME_GENERATOR = new LabelGenerator('f');
 
+    @NotNull
+    private final DefinitionPlace definitionPlace;
+
+    // TODO: Maybe we need make it private and add static method `translate`
     public LiteralFunctionTranslator(@NotNull TranslationContext context) {
         super(context);
-    }
-
-    public static Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> createPlace(@NotNull List<JsPropertyInitializer> list,
-            @NotNull JsExpression reference) {
-        return Trinity.create(list, new LabelGenerator('f'), reference);
-    }
-
-    public void setDefinitionPlace(@Nullable NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>> place) {
-        if (place == null) {
-            definitionPlaces.pop();
-            definitionPlace = definitionPlaces.isEmpty() ? null : definitionPlaces.peek();
-        }
-        else {
-            definitionPlaces.push(place);
-            definitionPlace = place;
-        }
+        this.definitionPlace = context.getDefinitionPlace();
     }
 
     @NotNull
@@ -128,16 +107,13 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
 
         InnerFunctionTranslator translator = new InnerFunctionTranslator(descriptor, funContext, fun);
 
-        JsExpression result = translator.translate(createReference(fun), outerContext);
+        JsExpression result = translator.translate(defineFunction(fun), outerContext);
         addRegularParameters(descriptor, fun, funContext, receiverName);
         return result;
     }
 
-    private JsNameRef createReference(JsFunction fun) {
-        Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> place = definitionPlace.getValue();
-        JsNameRef nameRef = new JsNameRef(place.second.generate(), place.third);
-        place.first.add(new JsPropertyInitializer(nameRef, fun));
-        return nameRef;
+    private JsNameRef defineFunction(JsFunction fun) {
+        return definitionPlace.define(FUNCTION_NAME_GENERATOR.generate(), fun);
     }
 
     private static void addRegularParameters(
@@ -172,6 +148,6 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
         fun.getBody().getStatements().add(new JsReturn(classTranslator.translate(funContext)));
         JetClassBody body = declaration.getBody();
         assert body != null;
-        return new InnerObjectTranslator(funContext, fun).translate(createReference(fun), usageTracker.isUsed() ? outerClassRef : null);
+        return new InnerObjectTranslator(funContext, fun).translate(defineFunction(fun), usageTracker.isUsed() ? outerClassRef : null);
     }
 }

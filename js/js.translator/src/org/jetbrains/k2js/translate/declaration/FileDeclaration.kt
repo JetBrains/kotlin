@@ -15,14 +15,11 @@
  */
 package org.jetbrains.k2js.translate.declaration
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsNameRef
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
 import org.jetbrains.k2js.translate.initializer.InitializerVisitor
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.k2js.translate.context.TranslationContext
 import org.jetbrains.jet.lang.psi.JetClassInitializer
-import com.google.dart.compiler.backend.js.ast.JsStatement
 import org.jetbrains.k2js.translate.general.Translation
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.k2js.translate.initializer.InitializerUtils
@@ -32,8 +29,13 @@ import com.google.dart.compiler.backend.js.ast.JsFunction
 import org.jetbrains.k2js.translate.utils.BindingUtils.*
 import org.jetbrains.k2js.translate.initializer.InitializerUtils.*
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import com.intellij.util.SmartList
 
-class FileDeclarationVisitor(val context: TranslationContext) : DeclarationBodyVisitor() {
+class FileDeclarationVisitor(
+        val context: TranslationContext,
+        initializers: List<JsPropertyInitializer> = SmartList()
+) : DeclarationBodyVisitor(initializers, SmartList()) {
+
     private val initializer = JsAstUtils.createFunctionWithEmptyBody(context.scope())
     private val initializerContext = context.contextWithScope(initializer)
     private val initializerStatements = initializer.getBody()!!.getStatements()!!

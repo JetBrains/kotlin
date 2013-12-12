@@ -187,7 +187,7 @@ public final class PropertyTranslator extends AbstractTranslator {
     @NotNull
     private JsFunction generateDefaultSetterFunction(@NotNull PropertySetterDescriptor setterDescriptor) {
         JsFunction fun = new JsFunction(context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration()));
-        JsParameter defaultParameter = new JsParameter(propertyAccessContext(setterDescriptor).scope().declareTemporary());
+        JsParameter defaultParameter = new JsParameter(fun.getScope().declareTemporary());
         fun.getParameters().add(defaultParameter);
         JsExpression setExpression;
 
@@ -206,11 +206,6 @@ public final class PropertyTranslator extends AbstractTranslator {
     private JsPropertyInitializer generateDefaultAccessor(@NotNull PropertyAccessorDescriptor accessorDescriptor,
             @NotNull JsFunction function) {
         return TranslationUtils.translateFunctionAsEcma5PropertyDescriptor(function, accessorDescriptor, context());
-    }
-
-    @NotNull
-    private TranslationContext propertyAccessContext(@NotNull PropertySetterDescriptor propertySetterDescriptor) {
-        return context().newDeclaration(propertySetterDescriptor);
     }
 
     @NotNull

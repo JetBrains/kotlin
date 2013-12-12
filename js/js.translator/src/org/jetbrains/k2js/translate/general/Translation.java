@@ -134,7 +134,6 @@ public final class Translation {
         statements.add(program.getStringLiteral("use strict").makeStmt());
 
         TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
-        staticContext.initTranslators(context);
         statements.addAll(PackageDeclarationTranslator.translateFiles(files, context));
         defineModule(context, statements, config.getModuleId());
 
