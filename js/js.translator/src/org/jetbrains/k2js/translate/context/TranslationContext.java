@@ -287,10 +287,14 @@ public class TranslationContext {
     }
 
     @NotNull
-    public DefinitionPlace getDefinitionPlace() {
+    private DefinitionPlace getDefinitionPlace() {
         if (definitionPlace != null) return definitionPlace;
         if (parent != null) return parent.getDefinitionPlace();
 
         throw new AssertionError("Can not find definition place from rootContext(definitionPlace and parent is null)");
+    }
+
+    public JsNameRef define(String name, JsExpression expression) {
+        return getDefinitionPlace().define(name, expression);
     }
 }
