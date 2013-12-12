@@ -221,13 +221,14 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public Type mapType(@NotNull VariableDescriptor variableDescriptor) {
-        return mapType(variableDescriptor.getType(), null, JetTypeMapperMode.VALUE);
+    public Type mapType(@NotNull CallableDescriptor descriptor) {
+        //noinspection ConstantConditions
+        return mapType(descriptor.getReturnType());
     }
 
     @NotNull
-    public Type mapType(@NotNull ClassifierDescriptor classifierDescriptor) {
-        return mapType(classifierDescriptor.getDefaultType(), null, JetTypeMapperMode.VALUE);
+    public Type mapType(@NotNull ClassifierDescriptor descriptor) {
+        return mapType(descriptor.getDefaultType());
     }
 
     @NotNull

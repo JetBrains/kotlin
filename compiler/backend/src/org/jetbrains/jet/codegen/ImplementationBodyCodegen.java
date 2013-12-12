@@ -654,7 +654,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.store(2, AsmTypeConstants.OBJECT_TYPE);
 
         for (PropertyDescriptor propertyDescriptor : properties) {
-            Type asmType = typeMapper.mapType(propertyDescriptor.getType());
+            Type asmType = typeMapper.mapType(propertyDescriptor);
 
             genPropertyOnStack(iv, propertyDescriptor, 0);
             genPropertyOnStack(iv, propertyDescriptor, 2);
@@ -702,7 +702,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             genPropertyOnStack(iv, propertyDescriptor, 0);
 
             Label ifNull = null;
-            Type asmType = typeMapper.mapType(propertyDescriptor.getType());
+            Type asmType = typeMapper.mapType(propertyDescriptor);
             if (!isPrimitive(asmType)) {
                 ifNull = new Label();
                 iv.dup();
@@ -829,7 +829,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateCopyFunction(@NotNull final FunctionDescriptor function) {
         JvmMethodSignature methodSignature = typeMapper.mapSignature(function);
 
-        final Type thisDescriptorType = typeMapper.mapType(descriptor.getDefaultType());
+        final Type thisDescriptorType = typeMapper.mapType(descriptor);
 
         functionCodegen.generateMethod(myClass, methodSignature, function, new FunctionGenerationStrategy() {
             @Override
@@ -888,7 +888,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                         assert propertyDescriptor != null
                                                                 : "Trying to generate default value for parameter of copy function that doesn't correspond to any property";
                                                         codegen.v.load(0, thisDescriptorType);
-                                                        Type propertyType = codegen.typeMapper.mapType(propertyDescriptor.getType());
+                                                        Type propertyType = codegen.typeMapper.mapType(propertyDescriptor);
                                                         codegen.intermediateValueForProperty(propertyDescriptor, false, null)
                                                                 .put(propertyType, codegen.v);
                                                     }
@@ -1300,8 +1300,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             !propertyDescriptor.isVar() &&
             Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
             // final property with backing field
-            field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType()), classAsmType,
-                                     propertyDescriptor.getName().asString(), false);
+            field = StackValue.field(typeMapper.mapType(propertyDescriptor), classAsmType, propertyDescriptor.getName().asString(), false);
         }
         else {
             iv.load(0, classAsmType);
@@ -1712,7 +1711,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     public static boolean shouldWriteFieldInitializer(PropertyDescriptor descriptor, JetTypeMapper mapper) {
         //final field of primitive or String type
         if (!descriptor.isVar()) {
-            Type type = mapper.mapType(descriptor.getType());
+            Type type = mapper.mapType(descriptor);
             return AsmUtil.isPrimitive(type) || "java.lang.String".equals(type.getClassName());
         }
         return false;

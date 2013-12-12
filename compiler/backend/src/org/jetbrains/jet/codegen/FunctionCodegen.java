@@ -245,7 +245,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
     private Type getThisTypeForFunction(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodContext context) {
         ReceiverParameterDescriptor expectedThisObject = functionDescriptor.getExpectedThisObject();
         if (functionDescriptor instanceof ConstructorDescriptor) {
-            return typeMapper.mapType(functionDescriptor.getReturnType());
+            return typeMapper.mapType(functionDescriptor);
         }
         else if (expectedThisObject != null) {
             return typeMapper.mapType(expectedThisObject.getType());
