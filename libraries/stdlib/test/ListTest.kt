@@ -11,6 +11,11 @@ class ListTest {
         assertEquals("[foo, bar]", data.toString())
     }
 
+    test fun emptyHead() {
+        val data = ArrayList<String>()
+        assertNull(data.head)
+    }
+
     test fun head() {
         val data = arrayList("foo", "bar")
         assertEquals("foo", data.head)
@@ -21,6 +26,11 @@ class ListTest {
         val actual = data.tail
         val expected = arrayList("bar", "whatnot")
         assertEquals(expected, actual)
+    }
+
+    test fun emptyFirst() {
+        val data  = ArrayList<String>()
+        assertNull(data.first)
     }
 
     test fun first() {

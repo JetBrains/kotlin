@@ -90,7 +90,7 @@ val <T> List<T>.lastIndex : Int
  * @includeFunctionBody ../../test/ListTest.kt head
  */
 val <T> List<T>.head : T?
-    get() = this.get(0)
+    get() = if (this.isNotEmpty()) this.get(0) else null
 
 /**
  * Returns all elements in this collection apart from the first one
