@@ -76,6 +76,8 @@ public class CompareTo implements IntrinsicMethod {
         else {
             throw new UnsupportedOperationException();
         }
-        return StackValue.onStack(Type.INT_TYPE);
+
+        StackValue.coerce(Type.INT_TYPE, returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

@@ -20,13 +20,14 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_INT_RANGE_TYPE;
 
 public class ArrayIndices implements IntrinsicMethod {
     @Override
@@ -42,6 +43,7 @@ public class ArrayIndices implements IntrinsicMethod {
         receiver.put(receiver.type, v);
         v.arraylength();
         v.invokestatic("jet/runtime/Ranges", "arrayIndices", "(I)Ljet/IntRange;");
-        return StackValue.onStack(AsmTypeConstants.JET_INT_RANGE_TYPE);
+        StackValue.coerce(JET_INT_RANGE_TYPE, returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

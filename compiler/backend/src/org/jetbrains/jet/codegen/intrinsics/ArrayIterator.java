@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -38,6 +37,7 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_ITERATOR_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
 
 public class ArrayIterator implements IntrinsicMethod {
@@ -59,7 +59,8 @@ public class ArrayIterator implements IntrinsicMethod {
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
         if (containingDeclaration.equals(KotlinBuiltIns.getInstance().getArray())) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
-            return StackValue.onStack(AsmTypeConstants.JET_ITERATOR_TYPE);
+            StackValue.coerce(JET_ITERATOR_TYPE, returnType, v);
+            return StackValue.onStack(returnType);
         }
 
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
@@ -69,7 +70,8 @@ public class ArrayIterator implements IntrinsicMethod {
                 String iteratorDesc = asmDescByFqNameWithoutInnerClasses(new FqName("jet." + primitiveType.getTypeName() + "Iterator"));
                 String methodSignature = "([" + asmTypeForPrimitive(jvmPrimitiveType) + ")" + iteratorDesc;
                 v.invokestatic("jet/runtime/ArrayIterator", "iterator", methodSignature);
-                return StackValue.onStack(Type.getType(iteratorDesc));
+                StackValue.coerce(Type.getType(iteratorDesc), returnType, v);
+                return StackValue.onStack(returnType);
             }
         }
 

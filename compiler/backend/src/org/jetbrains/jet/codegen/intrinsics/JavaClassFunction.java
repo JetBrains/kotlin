@@ -29,13 +29,13 @@ import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 
 public class JavaClassFunction implements IntrinsicMethod {
     @Override
@@ -57,6 +57,8 @@ public class JavaClassFunction implements IntrinsicMethod {
         else {
             v.aconst(type);
         }
-        return StackValue.onStack(AsmTypeConstants.getType(Class.class));
+
+        StackValue.coerce(getType(Class.class), expectedType, v);
+        return StackValue.onStack(expectedType);
     }
 }

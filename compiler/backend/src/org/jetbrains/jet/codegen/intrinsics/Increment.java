@@ -60,7 +60,8 @@ public class Increment implements IntrinsicMethod {
             if (operand instanceof JetReferenceExpression && returnType == Type.INT_TYPE) {
                 int index = codegen.indexOfLocal((JetReferenceExpression) operand);
                 if (index >= 0) {
-                    return StackValue.preIncrement(index, myDelta);
+                    StackValue.preIncrement(index, myDelta).put(returnType, v);
+                    return StackValue.onStack(returnType);
                 }
             }
             StackValue value = codegen.genQualified(receiver, operand);

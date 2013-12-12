@@ -57,6 +57,8 @@ public class Equals implements IntrinsicMethod {
         leftExpr.put(AsmTypeConstants.OBJECT_TYPE, v);
         codegen.gen(rightExpr).put(AsmTypeConstants.OBJECT_TYPE, v);
 
-        return genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, AsmTypeConstants.OBJECT_TYPE, AsmTypeConstants.OBJECT_TYPE);
+        StackValue value = genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, AsmTypeConstants.OBJECT_TYPE, AsmTypeConstants.OBJECT_TYPE);
+        value.put(returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

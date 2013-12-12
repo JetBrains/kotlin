@@ -42,6 +42,7 @@ public class ArraySize implements IntrinsicMethod {
         receiver.put(receiver.type, v);
         v.arraylength();
 
-        return StackValue.onStack(Type.INT_TYPE);
+        StackValue.coerce(Type.INT_TYPE, returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

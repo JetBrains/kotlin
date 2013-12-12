@@ -41,6 +41,7 @@ public class StringLength implements IntrinsicMethod {
     ) {
         receiver.put(receiver.type, v);
         v.invokeinterface("java/lang/CharSequence", "length", "()I");
-        return StackValue.onStack(Type.INT_TYPE);
+        StackValue.coerce(Type.INT_TYPE, returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

@@ -29,10 +29,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import java.util.List;
 
 public class RangeTo implements IntrinsicMethod {
-
-    public RangeTo() {
-    }
-
     @Override
     public StackValue generate(
             ExpressionCodegen codegen,
@@ -50,22 +46,17 @@ public class RangeTo implements IntrinsicMethod {
             codegen.gen(arguments.get(0), rightType);
             v.invokestatic("jet/runtime/Ranges", "rangeTo",
                            "(" + receiver.type.getDescriptor() + leftType.getDescriptor() + ")" + returnType.getDescriptor());
-            return StackValue.onStack(returnType);
         }
         else {
             JetBinaryExpression expression = (JetBinaryExpression) element;
             Type leftType = codegen.expressionType(expression.getLeft());
             Type rightType = codegen.expressionType(expression.getRight());
-            //            if (JetTypeMapper.isIntPrimitive(leftType)) {
             codegen.gen(expression.getLeft(), leftType);
             codegen.gen(expression.getRight(), rightType);
             v.invokestatic("jet/runtime/Ranges", "rangeTo",
                            "(" + leftType.getDescriptor() + rightType.getDescriptor() + ")" + returnType.getDescriptor());
-            return StackValue.onStack(returnType);
-            //            }
-            //            else {
-            //                throw new UnsupportedOperationException("ranges are only supported for int objects");
-            //            }
         }
+
+        return StackValue.onStack(returnType);
     }
 }

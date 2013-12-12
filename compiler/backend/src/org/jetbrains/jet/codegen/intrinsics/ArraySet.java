@@ -24,7 +24,6 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.List;
 
@@ -49,6 +48,8 @@ public class ArraySet implements IntrinsicMethod {
 
         v.astore(type);
 
-        return StackValue.none();
+        StackValue.coerce(Type.VOID_TYPE, returnType, v);
+
+        return StackValue.onStack(returnType);
     }
 }

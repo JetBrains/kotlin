@@ -46,6 +46,7 @@ public class StringGetChar implements IntrinsicMethod {
             codegen.gen(arguments.get(0)).put(Type.INT_TYPE, v);
         }
         v.invokeinterface("java/lang/CharSequence", "charAt", "(I)C");
-        return StackValue.onStack(Type.CHAR_TYPE);
+        StackValue.coerce(Type.CHAR_TYPE, returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

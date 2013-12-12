@@ -22,11 +22,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.List;
 
@@ -43,6 +43,7 @@ public class HashCode implements IntrinsicMethod {
     ) {
         receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
         v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I");
-        return StackValue.onStack(Type.INT_TYPE);
+        StackValue.coerce(Type.INT_TYPE, returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

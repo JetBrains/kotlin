@@ -53,6 +53,7 @@ public class IdentityEquals implements IntrinsicMethod {
             codegen.gen(e.getLeft()).put(OBJECT_TYPE, v);
             codegen.gen(e.getRight()).put(OBJECT_TYPE, v);
         }
-        return StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE);
+        StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE).put(returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

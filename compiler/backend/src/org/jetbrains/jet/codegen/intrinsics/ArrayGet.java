@@ -48,6 +48,8 @@ public class ArrayGet implements IntrinsicMethod {
 
         v.aload(type);
 
-        return StackValue.onStack(type);
+        StackValue.coerce(type, returnType, v);
+
+        return StackValue.onStack(returnType);
     }
 }

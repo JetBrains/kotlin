@@ -39,6 +39,7 @@ public class IteratorIterator implements IntrinsicMethod {
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        return receiver;
+        receiver.put(returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

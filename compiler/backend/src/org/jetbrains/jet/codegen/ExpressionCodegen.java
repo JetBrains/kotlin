@@ -1621,13 +1621,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         descriptor = descriptor.getOriginal();
 
         if (descriptor instanceof CallableMemberDescriptor) {
-            CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
-            memberDescriptor = unwrapFakeOverride(memberDescriptor);
+            CallableMemberDescriptor memberDescriptor = unwrapFakeOverride((CallableMemberDescriptor) descriptor);
 
             IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
             if (intrinsic != null) {
                 Type returnType = typeMapper.mapType(memberDescriptor);
-                return intrinsic.generate(this, v, returnType, expression, Collections.<JetExpression>emptyList(), receiver, state);
+                intrinsic.generate(this, v, returnType, expression, Collections.<JetExpression>emptyList(), receiver, state);
+                return StackValue.onStack(returnType);
             }
         }
 
@@ -2010,8 +2010,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             Type returnType = typeMapper.mapType(resolvedCall.getResultingDescriptor());
 
-            StackValue stackValue = intrinsic.generate(this, v, returnType, call.getCallElement(), args, receiver, state);
-            stackValue.put(returnType, v);
+            intrinsic.generate(this, v, returnType, call.getCallElement(), args, receiver, state);
             return StackValue.onStack(returnType);
         }
     }
@@ -2650,8 +2649,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (callable instanceof IntrinsicMethod) {
                 //noinspection ConstantConditions
                 Type returnType = typeMapper.mapType(resolvedCall.getResultingDescriptor());
-                return ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
-                                                             Arrays.asList(expression.getLeft(), expression.getRight()), receiver, state);
+                ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
+                                                      Arrays.asList(expression.getLeft(), expression.getRight()), receiver, state);
+                return StackValue.onStack(returnType);
             }
             else {
                 return invokeFunction(call, receiver, resolvedCall);
@@ -2983,35 +2983,34 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Callable callable = resolveToCallable((FunctionDescriptor) op, false);
         if (callable instanceof IntrinsicMethod) {
             Type returnType = typeMapper.mapType((FunctionDescriptor) op);
-            return ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
-                                                         Collections.singletonList(expression.getBaseExpression()), receiver, state);
+            ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
+                                                  Collections.singletonList(expression.getBaseExpression()), receiver, state);
+            return StackValue.onStack(returnType);
         }
-        else {
-            DeclarationDescriptor cls = op.getContainingDeclaration();
-            ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                    bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
-            assert resolvedCall != null;
 
-            if (isPrimitiveNumberClassDescriptor(cls) || !(op.getName().asString().equals("inc") || op.getName().asString().equals("dec"))) {
-                Call call = bindingContext.get(BindingContext.CALL, expression.getOperationReference());
-                return invokeFunction(call, receiver, resolvedCall);
-            }
-            else {
-                CallableMethod callableMethod = (CallableMethod) callable;
+        DeclarationDescriptor cls = op.getContainingDeclaration();
+        ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+        assert resolvedCall != null;
 
-                StackValue value = gen(expression.getBaseExpression());
-                value.dupReceiver(v);
-                value.dupReceiver(v);
-
-                Type type = expressionType(expression.getBaseExpression());
-                value.put(type, v);
-                callableMethod.invokeWithNotNullAssertion(v, state, resolvedCall);
-
-                value.store(callableMethod.getReturnType(), v);
-                value.put(type, v);
-                return StackValue.onStack(type);
-            }
+        if (isPrimitiveNumberClassDescriptor(cls) || !(op.getName().asString().equals("inc") || op.getName().asString().equals("dec"))) {
+            Call call = bindingContext.get(BindingContext.CALL, expression.getOperationReference());
+            return invokeFunction(call, receiver, resolvedCall);
         }
+
+        CallableMethod callableMethod = (CallableMethod) callable;
+
+        StackValue value = gen(expression.getBaseExpression());
+        value.dupReceiver(v);
+        value.dupReceiver(v);
+
+        Type type = expressionType(expression.getBaseExpression());
+        value.put(type, v);
+        callableMethod.invokeWithNotNullAssertion(v, state, resolvedCall);
+
+        value.store(callableMethod.getReturnType(), v);
+        value.put(type, v);
+        return StackValue.onStack(type);
     }
 
     @Override
