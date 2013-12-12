@@ -61,6 +61,16 @@ public class JetSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/ChainedCall.kt");
     }
     
+    @TestMetadata("ClassObjectMembers.kt")
+    public void testClassObjectMembers() throws Exception {
+        doTest("idea/testData/completion/smart/ClassObjectMembers.kt");
+    }
+    
+    @TestMetadata("ClassObjectMembersForNullable.kt")
+    public void testClassObjectMembersForNullable() throws Exception {
+        doTest("idea/testData/completion/smart/ClassObjectMembersForNullable.kt");
+    }
+    
     @TestMetadata("Constructor.kt")
     public void testConstructor() throws Exception {
         doTest("idea/testData/completion/smart/Constructor.kt");
@@ -81,9 +91,39 @@ public class JetSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/EmptyPrefix.kt");
     }
     
+    @TestMetadata("EnumMembers.kt")
+    public void testEnumMembers() throws Exception {
+        doTest("idea/testData/completion/smart/EnumMembers.kt");
+    }
+    
     @TestMetadata("InsideIdentifier.kt")
     public void testInsideIdentifier() throws Exception {
         doTest("idea/testData/completion/smart/InsideIdentifier.kt");
+    }
+    
+    @TestMetadata("JavaEnumMembers.kt")
+    public void testJavaEnumMembers() throws Exception {
+        doTest("idea/testData/completion/smart/JavaEnumMembers.kt");
+    }
+    
+    @TestMetadata("JavaEnumMembersForNullable.kt")
+    public void testJavaEnumMembersForNullable() throws Exception {
+        doTest("idea/testData/completion/smart/JavaEnumMembersForNullable.kt");
+    }
+    
+    @TestMetadata("JavaStaticFields.kt")
+    public void testJavaStaticFields() throws Exception {
+        doTest("idea/testData/completion/smart/JavaStaticFields.kt");
+    }
+    
+    @TestMetadata("JavaStaticFieldsForNullable.kt")
+    public void testJavaStaticFieldsForNullable() throws Exception {
+        doTest("idea/testData/completion/smart/JavaStaticFieldsForNullable.kt");
+    }
+    
+    @TestMetadata("JavaStaticMethods.kt")
+    public void testJavaStaticMethods() throws Exception {
+        doTest("idea/testData/completion/smart/JavaStaticMethods.kt");
     }
     
     @TestMetadata("MethodCallArgument.kt")
