@@ -20,24 +20,23 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.List;
 
-public class IteratorNext implements IntrinsicMethod {
+public class IteratorNext extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         String name;
         if (returnType == Type.CHAR_TYPE) {
@@ -69,6 +68,6 @@ public class IteratorNext implements IntrinsicMethod {
         }
         receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
         v.invokevirtual("jet/" + name + "Iterator", "next" + name, "()" + returnType.getDescriptor());
-        return StackValue.onStack(returnType);
+        return returnType;
     }
 }

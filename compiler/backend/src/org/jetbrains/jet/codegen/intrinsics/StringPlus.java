@@ -22,7 +22,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
@@ -30,16 +29,16 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-public class StringPlus implements IntrinsicMethod {
+public class StringPlus extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         if (receiver == null || receiver == StackValue.none()) {
             codegen.gen(arguments.get(0)).put(JAVA_STRING_TYPE, v);
@@ -50,8 +49,6 @@ public class StringPlus implements IntrinsicMethod {
             codegen.gen(arguments.get(0)).put(OBJECT_TYPE, v);
         }
         v.invokestatic("jet/runtime/Intrinsics", "stringPlus", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;");
-
-        StackValue.coerce(JAVA_STRING_TYPE, returnType, v);
-        return StackValue.onStack(returnType);
+        return JAVA_STRING_TYPE;
     }
 }

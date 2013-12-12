@@ -22,7 +22,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -30,27 +29,26 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.genIncrement;
-import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 
-public class Increment implements IntrinsicMethod {
+public class Increment extends IntrinsicMethod {
     private final int myDelta;
 
     public Increment(int delta) {
         myDelta = delta;
     }
 
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
-        boolean nullable = returnType.getSort() == Type.OBJECT;
-        assert !nullable : "Return type of Increment intrinsic should be of primitive type : " + returnType;
+        assert isPrimitive(returnType) : "Return type of Increment intrinsic should be of primitive type : " + returnType;
 
         if (arguments.size() > 0) {
             JetExpression operand = arguments.get(0);
@@ -61,7 +59,7 @@ public class Increment implements IntrinsicMethod {
                 int index = codegen.indexOfLocal((JetReferenceExpression) operand);
                 if (index >= 0) {
                     StackValue.preIncrement(index, myDelta).put(returnType, v);
-                    return StackValue.onStack(returnType);
+                    return returnType;
                 }
             }
             StackValue value = codegen.genQualified(receiver, operand);
@@ -77,6 +75,7 @@ public class Increment implements IntrinsicMethod {
             receiver.put(returnType, v);
             genIncrement(returnType, myDelta, v);
         }
-        return StackValue.onStack(returnType);
+
+        return returnType;
     }
 }

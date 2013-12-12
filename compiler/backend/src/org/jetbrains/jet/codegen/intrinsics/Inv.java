@@ -22,27 +22,25 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.codegen.AsmUtil.numberFunctionOperandType;
-import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
-public class Inv implements IntrinsicMethod {
+public class Inv extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
-        boolean nullable = returnType.getSort() == Type.OBJECT;
-        assert !nullable : "Return type of Inv intrinsic should be of primitive type : " + returnType;
+        assert isPrimitive(returnType) : "Return type of Inv intrinsic should be of primitive type : " + returnType;
 
         receiver.put(numberFunctionOperandType(returnType), v);
         if (returnType == Type.LONG_TYPE) {
@@ -52,6 +50,6 @@ public class Inv implements IntrinsicMethod {
             v.iconst(-1);
         }
         v.xor(returnType);
-        return StackValue.onStack(returnType);
+        return returnType;
     }
 }

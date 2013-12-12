@@ -22,36 +22,32 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.codegen.AsmUtil.numberFunctionOperandType;
-import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
 
-public class BinaryOp implements IntrinsicMethod {
+public class BinaryOp extends IntrinsicMethod {
     private final int opcode;
 
     public BinaryOp(int opcode) {
         this.opcode = opcode;
     }
 
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
-
-        boolean nullable = returnType.getSort() == Type.OBJECT;
-        assert !nullable : "Return type of BinaryOp intrinsic should be of primitive type : " + returnType;
+        assert isPrimitive(returnType) : "Return type of BinaryOp intrinsic should be of primitive type : " + returnType;
 
         Type operandType = numberFunctionOperandType(returnType);
 
@@ -67,8 +63,7 @@ public class BinaryOp implements IntrinsicMethod {
             codegen.gen(arguments.get(1), shift() ? Type.INT_TYPE : operandType);
         }
         v.visitInsn(returnType.getOpcode(opcode));
-
-        return StackValue.onStack(returnType);
+        return returnType;
     }
 
     private boolean shift() {

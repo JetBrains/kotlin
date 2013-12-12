@@ -22,28 +22,26 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_INT_RANGE_TYPE;
 
-public class ArrayIndices implements IntrinsicMethod {
+public class ArrayIndices extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         receiver.put(receiver.type, v);
         v.arraylength();
         v.invokestatic("jet/runtime/Ranges", "arrayIndices", "(I)Ljet/IntRange;");
-        StackValue.coerce(JET_INT_RANGE_TYPE, returnType, v);
-        return StackValue.onStack(returnType);
+        return JET_INT_RANGE_TYPE;
     }
 }

@@ -23,7 +23,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -37,20 +36,20 @@ import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 
-public class JavaClassFunction implements IntrinsicMethod {
+public class JavaClassFunction extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state
+            @Nullable List<JetExpression> arguments, StackValue receiver
     ) {
         JetCallExpression call = (JetCallExpression) element;
         ResolvedCall<? extends CallableDescriptor> resolvedCall =
                 codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, call.getCalleeExpression());
         assert resolvedCall != null;
-        CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-        JetType returnType = resultingDescriptor.getReturnType();
+        JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
         assert returnType != null;
-        Type type = state.getTypeMapper().mapType(returnType.getArguments().get(0).getType());
+        Type type = codegen.getState().getTypeMapper().mapType(returnType.getArguments().get(0).getType());
         if (isPrimitive(type)) {
             v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");
         }
@@ -58,7 +57,6 @@ public class JavaClassFunction implements IntrinsicMethod {
             v.aconst(type);
         }
 
-        StackValue.coerce(getType(Class.class), expectedType, v);
-        return StackValue.onStack(expectedType);
+        return getType(Class.class);
     }
 }

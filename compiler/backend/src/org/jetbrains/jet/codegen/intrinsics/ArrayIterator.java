@@ -22,7 +22,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
@@ -34,22 +33,23 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_ITERATOR_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
 
-public class ArrayIterator implements IntrinsicMethod {
+public class ArrayIterator extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         receiver.put(receiver.type, v);
         JetCallExpression call = (JetCallExpression) element;
@@ -59,8 +59,7 @@ public class ArrayIterator implements IntrinsicMethod {
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
         if (containingDeclaration.equals(KotlinBuiltIns.getInstance().getArray())) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
-            StackValue.coerce(JET_ITERATOR_TYPE, returnType, v);
-            return StackValue.onStack(returnType);
+            return getType(Iterator.class);
         }
 
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
@@ -70,8 +69,7 @@ public class ArrayIterator implements IntrinsicMethod {
                 String iteratorDesc = asmDescByFqNameWithoutInnerClasses(new FqName("jet." + primitiveType.getTypeName() + "Iterator"));
                 String methodSignature = "([" + asmTypeForPrimitive(jvmPrimitiveType) + ")" + iteratorDesc;
                 v.invokestatic("jet/runtime/ArrayIterator", "iterator", methodSignature);
-                StackValue.coerce(Type.getType(iteratorDesc), returnType, v);
-                return StackValue.onStack(returnType);
+                return Type.getType(iteratorDesc);
             }
         }
 

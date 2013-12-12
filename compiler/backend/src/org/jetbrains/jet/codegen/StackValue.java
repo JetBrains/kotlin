@@ -632,7 +632,7 @@ public abstract class StackValue {
                 ((CallableMethod) getter).invokeWithNotNullAssertion(v, state, resolvedGetCall);
             }
             else {
-                ((IntrinsicMethod) getter).generate(codegen, v, this.type, null, null, null, state);
+                ((IntrinsicMethod) getter).generate(codegen, v, this.type, null, null, null);
             }
             coerceTo(type, v);
         }
@@ -655,7 +655,7 @@ public abstract class StackValue {
             }
             else {
                 //noinspection ConstantConditions
-                ((IntrinsicMethod) setter).generate(codegen, v, null, null, null, null, state);
+                ((IntrinsicMethod) setter).generate(codegen, v, null, null, null, null);
             }
         }
 

@@ -1626,7 +1626,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
             if (intrinsic != null) {
                 Type returnType = typeMapper.mapType(memberDescriptor);
-                intrinsic.generate(this, v, returnType, expression, Collections.<JetExpression>emptyList(), receiver, state);
+                intrinsic.generate(this, v, returnType, expression, Collections.<JetExpression>emptyList(), receiver);
                 return StackValue.onStack(returnType);
             }
         }
@@ -2010,7 +2010,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             Type returnType = typeMapper.mapType(resolvedCall.getResultingDescriptor());
 
-            intrinsic.generate(this, v, returnType, call.getCallElement(), args, receiver, state);
+            intrinsic.generate(this, v, returnType, call.getCallElement(), args, receiver);
             return StackValue.onStack(returnType);
         }
     }
@@ -2650,7 +2650,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 //noinspection ConstantConditions
                 Type returnType = typeMapper.mapType(resolvedCall.getResultingDescriptor());
                 ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
-                                                      Arrays.asList(expression.getLeft(), expression.getRight()), receiver, state);
+                                                      Arrays.asList(expression.getLeft(), expression.getRight()), receiver);
                 return StackValue.onStack(returnType);
             }
             else {
@@ -2897,7 +2897,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 JetExpression right = expression.getRight();
                 assert right != null;
                 Type returnType = typeMapper.mapType((FunctionDescriptor) op);
-                intrinsic.generate(this, v, returnType, expression, Collections.singletonList(right), StackValue.onStack(lhsType), state);
+                intrinsic.generate(this, v, returnType, expression, Collections.singletonList(right), StackValue.onStack(lhsType));
                 value.store(lhsType, v);
             }
             else {
@@ -2984,7 +2984,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (callable instanceof IntrinsicMethod) {
             Type returnType = typeMapper.mapType((FunctionDescriptor) op);
             ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
-                                                  Collections.singletonList(expression.getBaseExpression()), receiver, state);
+                                                  Collections.singletonList(expression.getBaseExpression()), receiver);
             return StackValue.onStack(returnType);
         }
 

@@ -23,7 +23,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
@@ -32,16 +31,16 @@ import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 
-public class JavaClassProperty implements IntrinsicMethod {
+public class JavaClassProperty extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         Type type = receiver.type;
         if (isPrimitive(type)) {
@@ -52,7 +51,6 @@ public class JavaClassProperty implements IntrinsicMethod {
             v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;");
         }
 
-        StackValue.coerce(getType(Class.class), returnType, v);
-        return StackValue.onStack(returnType);
+        return getType(Class.class);
     }
 }

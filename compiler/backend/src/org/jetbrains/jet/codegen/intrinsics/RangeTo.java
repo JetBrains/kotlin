@@ -22,22 +22,21 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-public class RangeTo implements IntrinsicMethod {
+public class RangeTo extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         if (arguments.size() == 1) {
             Type leftType = receiver.type;
@@ -56,7 +55,6 @@ public class RangeTo implements IntrinsicMethod {
             v.invokestatic("jet/runtime/Ranges", "rangeTo",
                            "(" + leftType.getDescriptor() + rightType.getDescriptor() + ")" + returnType.getDescriptor());
         }
-
-        return StackValue.onStack(returnType);
+        return returnType;
     }
 }

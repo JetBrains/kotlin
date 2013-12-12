@@ -23,7 +23,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -31,27 +30,26 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
 
-public class StaticField implements IntrinsicMethod {
+public class StaticField extends IntrinsicMethod {
     private final FqName ownerClass;
     private final Name propertyName;
-
 
     public StaticField(FqName ownerClass, Name propertyName) {
         this.ownerClass = ownerClass;
         this.propertyName = propertyName;
     }
 
+    @NotNull
     @Override
-    public StackValue generate(
+    public Type generateImpl(
             ExpressionCodegen codegen,
             InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         v.getstatic(JvmClassName.byFqNameWithoutInnerClasses(ownerClass).getInternalName(), propertyName.asString(), returnType.getDescriptor());
-        return StackValue.onStack(returnType);
+        return returnType;
     }
 }
