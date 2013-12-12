@@ -118,7 +118,7 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
 
     @Override
     public boolean isSafeCall() {
-        return variableCall.isSafeCall();
+        return variableCall.isSafeCall() || functionCall.isSafeCall();
     }
 
     @Override
