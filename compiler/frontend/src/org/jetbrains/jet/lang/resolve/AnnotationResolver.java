@@ -255,6 +255,21 @@ public class AnnotationResolver {
                 if (constant != null) {
                     constants.add(constant);
                 }
+                else {
+                    JetType expressionType = trace.get(BindingContext.EXPRESSION_TYPE, argumentExpression);
+                    if (expressionType != null && expressionType.equals(expectedType)) {
+                        ClassifierDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
+                        if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
+                            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression));
+                        }
+                        else if (descriptor instanceof ClassDescriptor && AnnotationUtils.isJavaLangClass((ClassDescriptor) descriptor)) {
+                            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL.on(argumentExpression));
+                        }
+                        else {
+                            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CONST.on(argumentExpression));
+                        }
+                    }
+                }
             }
         }
         return constants;

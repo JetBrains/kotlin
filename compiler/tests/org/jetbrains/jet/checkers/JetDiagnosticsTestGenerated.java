@@ -540,6 +540,21 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/annotations/annotationModifier.kt");
             }
             
+            @TestMetadata("annotationParameterMustBeClassLiteral.kt")
+            public void testAnnotationParameterMustBeClassLiteral() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeClassLiteral.kt");
+            }
+            
+            @TestMetadata("annotationParameterMustBeConstant.kt")
+            public void testAnnotationParameterMustBeConstant() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant.kt");
+            }
+            
+            @TestMetadata("annotationParameterMustBeEnumConst.kt")
+            public void testAnnotationParameterMustBeEnumConst() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeEnumConst.kt");
+            }
+            
             @TestMetadata("AnnotationsForClasses.kt")
             public void testAnnotationsForClasses() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/AnnotationsForClasses.kt");
