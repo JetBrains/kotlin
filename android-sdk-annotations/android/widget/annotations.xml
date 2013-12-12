@@ -192,7 +192,7 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.widget.TextView void append(java.lang.CharSequence) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
     </item>
     <item name='android.widget.FrameLayout FrameLayout(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
