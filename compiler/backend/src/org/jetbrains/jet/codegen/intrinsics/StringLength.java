@@ -33,7 +33,7 @@ public class StringLength implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,

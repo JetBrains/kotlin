@@ -17,7 +17,7 @@ public class CopyToArray implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
             @Nullable StackValue receiver,
@@ -28,11 +28,11 @@ public class CopyToArray implements IntrinsicMethod {
         v.dup();
         v.invokeinterface("java/util/Collection", "size", "()I");
 
-        v.newarray(expectedType.getElementType());
+        v.newarray(returnType.getElementType());
         v.invokeinterface("java/util/Collection", "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;");
 
-        StackValue.coerce(Type.getType("[Ljava/lang/Object;"), expectedType, v);
+        StackValue.coerce(Type.getType("[Ljava/lang/Object;"), returnType, v);
 
-        return StackValue.onStack(expectedType);
+        return StackValue.onStack(returnType);
     }
 }

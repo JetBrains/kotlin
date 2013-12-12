@@ -33,7 +33,7 @@ public class IteratorIterator implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
             StackValue receiver,

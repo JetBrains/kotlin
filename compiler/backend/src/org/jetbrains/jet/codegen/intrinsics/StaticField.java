@@ -45,13 +45,13 @@ public class StaticField implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        v.getstatic(JvmClassName.byFqNameWithoutInnerClasses(ownerClass).getInternalName(), propertyName.asString(), expectedType.getDescriptor());
-        return StackValue.onStack(expectedType);
+        v.getstatic(JvmClassName.byFqNameWithoutInnerClasses(ownerClass).getInternalName(), propertyName.asString(), returnType.getDescriptor());
+        return StackValue.onStack(returnType);
     }
 }

@@ -43,17 +43,17 @@ public class BinaryOp implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
 
-        boolean nullable = expectedType.getSort() == Type.OBJECT;
-        assert !nullable : "Return type of BinaryOp intrinsic should be of primitive type : " + expectedType;
+        boolean nullable = returnType.getSort() == Type.OBJECT;
+        assert !nullable : "Return type of BinaryOp intrinsic should be of primitive type : " + returnType;
 
-        Type operandType = numberFunctionOperandType(expectedType);
+        Type operandType = numberFunctionOperandType(returnType);
 
         if (arguments.size() == 1) {
             // Intrinsic is called as an ordinary function
@@ -66,9 +66,9 @@ public class BinaryOp implements IntrinsicMethod {
             codegen.gen(arguments.get(0), operandType);
             codegen.gen(arguments.get(1), shift() ? Type.INT_TYPE : operandType);
         }
-        v.visitInsn(expectedType.getOpcode(opcode));
+        v.visitInsn(returnType.getOpcode(opcode));
 
-        return StackValue.onStack(expectedType);
+        return StackValue.onStack(returnType);
     }
 
     private boolean shift() {

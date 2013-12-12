@@ -36,7 +36,7 @@ public class Concat implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,
@@ -51,12 +51,12 @@ public class Concat implements IntrinsicMethod {
             receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
             genStringBuilderConstructor(v);
             v.swap();                                                              // StringBuilder LHS
-            genInvokeAppendMethod(v, expectedType);  // StringBuilder(LHS)
+            genInvokeAppendMethod(v, returnType);  // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(0));
         }
 
         v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-        StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE).put(expectedType, v);
-        return StackValue.onStack(expectedType);
+        StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE).put(returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

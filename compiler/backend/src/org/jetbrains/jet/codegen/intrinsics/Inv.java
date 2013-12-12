@@ -35,23 +35,23 @@ public class Inv implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        boolean nullable = expectedType.getSort() == Type.OBJECT;
-        assert !nullable : "Return type of Inv intrinsic should be of primitive type : " + expectedType;
+        boolean nullable = returnType.getSort() == Type.OBJECT;
+        assert !nullable : "Return type of Inv intrinsic should be of primitive type : " + returnType;
 
-        receiver.put(numberFunctionOperandType(expectedType), v);
-        if (expectedType == Type.LONG_TYPE) {
+        receiver.put(numberFunctionOperandType(returnType), v);
+        if (returnType == Type.LONG_TYPE) {
             v.lconst(-1L);
         }
         else {
             v.iconst(-1);
         }
-        v.xor(expectedType);
-        return StackValue.onStack(expectedType);
+        v.xor(returnType);
+        return StackValue.onStack(returnType);
     }
 }

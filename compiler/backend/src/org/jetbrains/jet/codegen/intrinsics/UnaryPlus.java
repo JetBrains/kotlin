@@ -35,22 +35,22 @@ public class UnaryPlus implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        boolean nullable = expectedType.getSort() == Type.OBJECT;
-        assert !nullable : "Return type of UnaryPlus intrinsic should be of primitive type : " + expectedType;
+        boolean nullable = returnType.getSort() == Type.OBJECT;
+        assert !nullable : "Return type of UnaryPlus intrinsic should be of primitive type : " + returnType;
 
         if (receiver != null && receiver != StackValue.none()) {
-            receiver.put(expectedType, v);
+            receiver.put(returnType, v);
         }
         else {
             assert arguments != null;
-            codegen.gen(arguments.get(0), expectedType);
+            codegen.gen(arguments.get(0), returnType);
         }
-        return StackValue.onStack(expectedType);
+        return StackValue.onStack(returnType);
     }
 }

@@ -34,7 +34,7 @@ public class EnumName implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
             StackValue receiver,
@@ -42,7 +42,7 @@ public class EnumName implements IntrinsicMethod {
     ) {
         receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
         v.invokevirtual("java/lang/Enum", "name", "()Ljava/lang/String;");
-        StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE).put(expectedType, v);
-        return StackValue.onStack(expectedType);
+        StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE).put(returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

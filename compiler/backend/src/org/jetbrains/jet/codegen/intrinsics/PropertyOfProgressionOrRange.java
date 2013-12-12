@@ -46,19 +46,19 @@ public class PropertyOfProgressionOrRange implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
         String ownerInternalName = JvmClassName.byFqNameWithoutInnerClasses(this.ownerClass).getInternalName();
-        Type boxedType = boxType(expectedType);
+        Type boxedType = boxType(returnType);
         String getterName = PropertyCodegen.getterName(propertyName);
 
         receiver.put(receiver.type, v);
         v.invokevirtual(ownerInternalName, getterName, "()" + boxedType.getDescriptor());
-        StackValue.coerce(boxedType, expectedType, v);
-        return StackValue.onStack(expectedType);
+        StackValue.coerce(boxedType, returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

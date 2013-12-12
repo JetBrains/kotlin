@@ -41,7 +41,7 @@ public class JavaClassArray implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
             StackValue receiver,
@@ -52,6 +52,6 @@ public class JavaClassArray implements IntrinsicMethod {
         assert call != null;
         Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> next = call.getValueArguments().entrySet().iterator().next();
         codegen.genVarargs(next.getKey(), (VarargValueArgument) next.getValue());
-        return StackValue.onStack(expectedType);
+        return StackValue.onStack(returnType);
     }
 }

@@ -33,42 +33,42 @@ public class IteratorNext implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
         String name;
-        if (expectedType == Type.CHAR_TYPE) {
+        if (returnType == Type.CHAR_TYPE) {
             name = "Char";
         }
-        else if (expectedType == Type.BOOLEAN_TYPE) {
+        else if (returnType == Type.BOOLEAN_TYPE) {
             name = "Boolean";
         }
-        else if (expectedType == Type.BYTE_TYPE) {
+        else if (returnType == Type.BYTE_TYPE) {
             name = "Byte";
         }
-        else if (expectedType == Type.SHORT_TYPE) {
+        else if (returnType == Type.SHORT_TYPE) {
             name = "Short";
         }
-        else if (expectedType == Type.INT_TYPE) {
+        else if (returnType == Type.INT_TYPE) {
             name = "Int";
         }
-        else if (expectedType == Type.LONG_TYPE) {
+        else if (returnType == Type.LONG_TYPE) {
             name = "Long";
         }
-        else if (expectedType == Type.FLOAT_TYPE) {
+        else if (returnType == Type.FLOAT_TYPE) {
             name = "Float";
         }
-        else if (expectedType == Type.DOUBLE_TYPE) {
+        else if (returnType == Type.DOUBLE_TYPE) {
             name = "Double";
         }
         else {
             throw new UnsupportedOperationException();
         }
         receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
-        v.invokevirtual("jet/" + name + "Iterator", "next" + name, "()" + expectedType.getDescriptor());
-        return StackValue.onStack(expectedType);
+        v.invokevirtual("jet/" + name + "Iterator", "next" + name, "()" + returnType.getDescriptor());
+        return StackValue.onStack(returnType);
     }
 }

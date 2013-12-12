@@ -32,13 +32,13 @@ public class NumberCast implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        receiver.put(expectedType, v);
-        return StackValue.onStack(expectedType);
+        receiver.put(returnType, v);
+        return StackValue.onStack(returnType);
     }
 }

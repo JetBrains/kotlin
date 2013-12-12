@@ -36,16 +36,16 @@ public class UnaryMinus implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        boolean nullable = expectedType.getSort() == Type.OBJECT;
-        assert !nullable : "Return type of UnaryMinus intrinsic should be of primitive type : " + expectedType;
+        boolean nullable = returnType.getSort() == Type.OBJECT;
+        assert !nullable : "Return type of UnaryMinus intrinsic should be of primitive type : " + returnType;
 
-        Type operandType = numberFunctionOperandType(expectedType);
+        Type operandType = numberFunctionOperandType(returnType);
 
         if (arguments.size() == 1) {
             codegen.gen(arguments.get(0), operandType);
@@ -53,6 +53,6 @@ public class UnaryMinus implements IntrinsicMethod {
         else {
             receiver.put(operandType, v);
         }
-        return StackValue.onStack(genNegate(expectedType, v));
+        return StackValue.onStack(genNegate(returnType, v));
     }
 }

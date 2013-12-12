@@ -33,13 +33,13 @@ public class NewArray implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
         codegen.generateNewArray((JetCallExpression) element);
-        return StackValue.onStack(expectedType);
+        return StackValue.onStack(returnType);
     }
 }

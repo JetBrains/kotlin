@@ -43,21 +43,21 @@ public class Increment implements IntrinsicMethod {
     public StackValue generate(
             ExpressionCodegen codegen,
             InstructionAdapter v,
-            @NotNull Type expectedType,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
             StackValue receiver,
             @NotNull GenerationState state
     ) {
-        boolean nullable = expectedType.getSort() == Type.OBJECT;
-        assert !nullable : "Return type of Increment intrinsic should be of primitive type : " + expectedType;
+        boolean nullable = returnType.getSort() == Type.OBJECT;
+        assert !nullable : "Return type of Increment intrinsic should be of primitive type : " + returnType;
 
         if (arguments.size() > 0) {
             JetExpression operand = arguments.get(0);
             while (operand instanceof JetParenthesizedExpression) {
                 operand = ((JetParenthesizedExpression) operand).getExpression();
             }
-            if (operand instanceof JetReferenceExpression && expectedType == Type.INT_TYPE) {
+            if (operand instanceof JetReferenceExpression && returnType == Type.INT_TYPE) {
                 int index = codegen.indexOfLocal((JetReferenceExpression) operand);
                 if (index >= 0) {
                     return StackValue.preIncrement(index, myDelta);
@@ -67,15 +67,15 @@ public class Increment implements IntrinsicMethod {
             value.dupReceiver(v);
             value.dupReceiver(v);
 
-            value.put(expectedType, v);
-            genIncrement(expectedType, myDelta, v);
-            value.store(expectedType, v);
-            value.put(expectedType, v);
+            value.put(returnType, v);
+            genIncrement(returnType, myDelta, v);
+            value.store(returnType, v);
+            value.put(returnType, v);
         }
         else {
-            receiver.put(expectedType, v);
-            genIncrement(expectedType, myDelta, v);
+            receiver.put(returnType, v);
+            genIncrement(returnType, myDelta, v);
         }
-        return StackValue.onStack(expectedType);
+        return StackValue.onStack(returnType);
     }
 }
