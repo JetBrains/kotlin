@@ -39,6 +39,7 @@ abstract class InnerDeclarationTranslator {
         this.fun = fun;
     }
 
+    @NotNull
     public JsExpression translate(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
         UsageTracker usageTracker = context.usageTracker();
         assert usageTracker != null : "Usage tracker should not be null for InnerDeclarationTranslator";
@@ -72,7 +73,9 @@ abstract class InnerDeclarationTranslator {
         return invocation;
     }
 
+    @NotNull
     protected abstract JsExpression createExpression(@NotNull JsNameRef nameRef, @Nullable JsExpression self);
 
+    @NotNull
     protected abstract JsInvocation createInvocation(@NotNull JsNameRef nameRef, @Nullable JsExpression self);
 }

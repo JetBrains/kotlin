@@ -43,11 +43,13 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
     }
 
     @Override
+    @NotNull
     protected JsExpression createExpression(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
         return nameRef;
     }
 
     @Override
+    @NotNull
     protected JsInvocation createInvocation(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
         return new JsInvocation(new JsNameRef("bind", nameRef), new SmartList<JsExpression>(self));
     }
