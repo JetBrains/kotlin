@@ -733,6 +733,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/casts/asSafe.kt");
         }
         
+        @TestMetadata("asSafeFail.kt")
+        public void testAsSafeFail() throws Exception {
+            doTest("compiler/testData/codegen/box/casts/asSafeFail.kt");
+        }
+        
         @TestMetadata("castGenericNull.kt")
         public void testCastGenericNull() throws Exception {
             doTest("compiler/testData/codegen/box/casts/castGenericNull.kt");

@@ -3565,7 +3565,7 @@ The "returned" value of try expression with no finally is either the last expres
             DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
                 StackValue value = genQualified(receiver, left);
-                value.put(boxType(rightTypeAsm), v);
+                value.put(boxType(value.type), v);
 
                 if (opToken != JetTokens.AS_SAFE) {
                     if (!CodegenUtil.isNullableType(rightType)) {
