@@ -1,2 +1,4 @@
-OUT Hello, a!
+OUT:
+Hello, a!
+
 Return code: 0
