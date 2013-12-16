@@ -80,7 +80,7 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
             return returnType.toList()
         }
         else if (descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY) {
-            return descriptor.getDefaultType().toList()
+            return listOf(descriptor.getDefaultType())
         }
         else {
             return listOf()
@@ -251,10 +251,11 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
 
     val descriptors = ArrayList<DeclarationDescriptor>()
 
-    val isSuitableCallable: (DeclarationDescriptor) -> Boolean = { it is CallableDescriptor && it.getReturnType()?.let { JetTypeChecker.INSTANCE.isSubtypeOf(it, expectedType) } ?: false }
+    val isSuitableCallable: (DeclarationDescriptor) -> Boolean = {
+        it is CallableDescriptor && it.getReturnType()?.let { JetTypeChecker.INSTANCE.isSubtypeOf(it, expectedType) } ?: false
+    }
 
     if (classDescriptor is JavaClassDescriptor) {
-        //TODO: shouldn't we have special util to obtain this pseudo package?
         val container = classDescriptor.getContainingDeclaration() //TODO: nested classes!
         if (container is NamespaceDescriptor) {
             val pseudoPackage: NamespaceDescriptor? = container.getMemberScope().getNamespace(classDescriptor.getName())
@@ -271,7 +272,7 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
 
     if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
         classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
-                .filterTo(descriptors) { it is ClassDescriptor && it.getKind() == ClassKind.ENUM_ENTRY && JetTypeChecker.INSTANCE.isSubtypeOf(it.getDefaultType(), expectedType) }
+                .filterTo(descriptors) { it is ClassDescriptor && it.getKind() == ClassKind.ENUM_ENTRY }
     }
 
     return descriptors
@@ -284,7 +285,10 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
                             .withIcon(presentation.getIcon())
                             .withStrikeoutness(presentation.isStrikeout())
                             .withTailText(" (" + DescriptorUtils.getFQName(classDescriptor.getContainingDeclaration()) + ")")
-                            .withTypeText(if (presentation.getTypeText() != "") presentation.getTypeText() else DescriptorRenderer.TEXT.renderType(classDescriptor.getDefaultType()))
+                            .withTypeText(if (!presentation.getTypeText().isNullOrEmpty())
+                                              presentation.getTypeText()
+                                          else
+                                              DescriptorRenderer.TEXT.renderType(classDescriptor.getDefaultType()))
                     if (it is FunctionDescriptor) {
                         builder = builder.withPresentableText(builder.getLookupString() + "()")
                         val caretPosition = if (it.getValueParameters().empty) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
@@ -301,3 +305,5 @@ private fun <T> MutableCollection<T>.addAll(iterator: Iterator<T>) {
         add(item)
     }
 }
+
+private fun String?.isNullOrEmpty() = this == null || this.isEmpty()
