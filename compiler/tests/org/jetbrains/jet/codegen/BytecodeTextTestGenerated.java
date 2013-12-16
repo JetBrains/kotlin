@@ -113,6 +113,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest("compiler/testData/codegen/bytecodeText/constants/byte.kt");
         }
         
+        @TestMetadata("nullableByteAndShort.kt")
+        public void testNullableByteAndShort() throws Exception {
+            doTest("compiler/testData/codegen/bytecodeText/constants/nullableByteAndShort.kt");
+        }
+        
         @TestMetadata("short.kt")
         public void testShort() throws Exception {
             doTest("compiler/testData/codegen/bytecodeText/constants/short.kt");

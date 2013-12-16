@@ -160,12 +160,14 @@ public abstract class StackValue {
 
     private static void box(Type type, Type toType, InstructionAdapter v) {
         if (type == Type.BYTE_TYPE || toType.getInternalName().equals(NULLABLE_BYTE_TYPE_NAME) && type == Type.INT_TYPE) {
+            v.cast(type, Type.BYTE_TYPE);
             v.invokestatic(NULLABLE_BYTE_TYPE_NAME, "valueOf", "(B)L" + NULLABLE_BYTE_TYPE_NAME + ";");
         }
         else if (type == Type.SHORT_TYPE || toType.getInternalName().equals(NULLABLE_SHORT_TYPE_NAME) && type == Type.INT_TYPE) {
+            v.cast(type, Type.SHORT_TYPE);
             v.invokestatic(NULLABLE_SHORT_TYPE_NAME, "valueOf", "(S)L" + NULLABLE_SHORT_TYPE_NAME + ";");
         }
-        else if (toType.getInternalName().equals(NULLABLE_LONG_TYPE_NAME) && type == Type.INT_TYPE) {
+        else if (type == Type.LONG_TYPE || toType.getInternalName().equals(NULLABLE_LONG_TYPE_NAME) && type == Type.INT_TYPE) {
             v.cast(type, Type.LONG_TYPE);
             v.invokestatic(NULLABLE_LONG_TYPE_NAME, "valueOf", "(J)L" + NULLABLE_LONG_TYPE_NAME +";");
         }
@@ -177,9 +179,6 @@ public abstract class StackValue {
         }
         else if (type == Type.CHAR_TYPE) {
             v.invokestatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
-        }
-        else if (type == Type.LONG_TYPE) {
-            v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
         }
         else if (type == Type.FLOAT_TYPE) {
             v.invokestatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
