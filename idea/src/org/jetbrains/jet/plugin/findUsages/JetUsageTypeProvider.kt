@@ -137,9 +137,8 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             }
 
             return when {
-                simpleName.getParentByTypeAndPredicate(
-                        javaClass<JetBinaryExpression>(), false, { JetPsiUtil.isAssignment(it) }
-                )?.getLeft().isAncestor(simpleName) ->
+                (simpleName.getParentByTypesAndPredicate(false, javaClass<JetBinaryExpression>()) { JetPsiUtil.isAssignment(it) })
+                        ?.getLeft().isAncestor(simpleName) ->
                     UsageType.WRITE
 
                 simpleName.getParentByType(javaClass<JetSimpleNameExpression>()) != null ->

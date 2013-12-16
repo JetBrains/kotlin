@@ -38,25 +38,6 @@ import kotlin.test.assertTrue
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 
-fun PsiElement.getParentByTypeAndPredicate<T: PsiElement>(
-        parentClass : Class<T>, strict : Boolean = false, predicate: (T) -> Boolean
-) : T? {
-    var element = if (strict) getParent() else this
-    while (element != null) {
-        [suppress("UNCHECKED_CAST")]
-        when {
-            parentClass.isInstance(element) && predicate(element as T) ->
-                return element as T
-            element is PsiFile ->
-                return null
-            else ->
-                element = element?.getParent()
-        }
-    }
-
-    return null
-}
-
 fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
 ) : T? {
@@ -64,7 +45,7 @@ fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
     while (element != null) {
         [suppress("UNCHECKED_CAST")]
         when {
-            parentClasses.any {parentClass -> parentClass.isInstance(element)} && predicate(element!! as T) ->
+            (parentClasses.isEmpty() || parentClasses.any {parentClass -> parentClass.isInstance(element)}) && predicate(element!! as T) ->
                 return element as T
             element is PsiFile ->
                 return null
