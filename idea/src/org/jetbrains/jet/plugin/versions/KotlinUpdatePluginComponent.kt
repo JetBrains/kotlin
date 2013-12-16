@@ -29,11 +29,16 @@ import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.jet.plugin.vfilefinder.KotlinClassFileIndex
+import com.intellij.openapi.application.ApplicationManager
 
 private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
 
 class KotlinUpdatePluginComponent : ApplicationComponent {
     override fun initComponent() {
+        if (ApplicationManager.getApplication()?.isUnitTestMode() == true) {
+            return
+        }
+
         val installedKotlinVersion = PropertiesComponent.getInstance()?.getValue(INSTALLED_KOTLIN_VERSION)
 
         if (installedKotlinVersion == null || JetPluginUtil.getPluginVersion() != installedKotlinVersion) {
