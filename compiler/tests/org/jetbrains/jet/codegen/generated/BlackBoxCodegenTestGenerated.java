@@ -4845,6 +4845,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/unaryOp/callNullable.kt");
         }
         
+        @TestMetadata("callWithCommonType.kt")
+        public void testCallWithCommonType() throws Exception {
+            doTest("compiler/testData/codegen/box/unaryOp/callWithCommonType.kt");
+        }
+        
         @TestMetadata("intrinsic.kt")
         public void testIntrinsic() throws Exception {
             doTest("compiler/testData/codegen/box/unaryOp/intrinsic.kt");
