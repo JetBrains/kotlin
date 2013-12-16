@@ -1,0 +1,14 @@
+package foo;
+
+import org.jetbrains.annotations.NotNull;
+
+class JavaClass {
+
+    @NotNull
+    @Override
+    public void bar(String price) {
+        
+    }
+}
+
+// KT-1043 'Implement Methods' throws a ClassCastException
