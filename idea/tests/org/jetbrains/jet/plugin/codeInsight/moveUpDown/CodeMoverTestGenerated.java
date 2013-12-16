@@ -867,6 +867,26 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/if4.kt");
         }
         
+        @TestMetadata("insideExpression1.kt")
+        public void testInsideExpression1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/insideExpression1.kt");
+        }
+        
+        @TestMetadata("insideExpression2.kt")
+        public void testInsideExpression2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/insideExpression2.kt");
+        }
+        
+        @TestMetadata("insideExpression3.kt")
+        public void testInsideExpression3() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/insideExpression3.kt");
+        }
+        
+        @TestMetadata("insideExpression4.kt")
+        public void testInsideExpression4() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/insideExpression4.kt");
+        }
+        
         @TestMetadata("intoClosure1.kt")
         public void testIntoClosure1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoClosure1.kt");
