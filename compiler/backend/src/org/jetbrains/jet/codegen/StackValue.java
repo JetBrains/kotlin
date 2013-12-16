@@ -673,134 +673,134 @@ public abstract class StackValue {
         public void dupReceiver(InstructionAdapter v) {
             if (isStandardStack(resolvedGetCall, 1) && isStandardStack(resolvedSetCall, 2)) {
                 v.dup2();   // collection and index
+                return;
             }
-            else {
-                int size = 0;
-                // ugly hack: getting the last variable index
-                int lastIndex = frame.enterTemp(Type.INT_TYPE);
-                frame.leaveTemp(Type.INT_TYPE);
+            
+            int size = 0;
+            // ugly hack: getting the last variable index
+            int lastIndex = frame.enterTemp(Type.INT_TYPE);
+            frame.leaveTemp(Type.INT_TYPE);
 
-                // indexes
-                List<ValueParameterDescriptor> valueParameters = resolvedGetCall.getResultingDescriptor().getValueParameters();
-                int firstParamIndex = -1;
-                for (int i = valueParameters.size() - 1; i >= 0; --i) {
-                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
-                    int sz = type.getSize();
-                    frame.enterTemp(type);
-                    lastIndex += sz;
-                    size += sz;
-                    v.store((firstParamIndex = lastIndex) - sz, type);
-                }
+            // indexes
+            List<ValueParameterDescriptor> valueParameters = resolvedGetCall.getResultingDescriptor().getValueParameters();
+            int firstParamIndex = -1;
+            for (int i = valueParameters.size() - 1; i >= 0; --i) {
+                Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
+                int sz = type.getSize();
+                frame.enterTemp(type);
+                lastIndex += sz;
+                size += sz;
+                v.store((firstParamIndex = lastIndex) - sz, type);
+            }
 
-                List<TypeParameterDescriptor> typeParameters = resolvedGetCall.getResultingDescriptor().getTypeParameters();
-                int firstTypeParamIndex = -1;
-                for (int i = typeParameters.size() - 1; i >= 0; --i) {
-                    if (typeParameters.get(i).isReified()) {
-                        frame.enterTemp(OBJECT_TYPE);
-                        lastIndex++;
-                        size++;
-                        v.store(firstTypeParamIndex = lastIndex - 1, OBJECT_TYPE);
-                    }
-                }
-
-                ReceiverValue receiverParameter = resolvedGetCall.getReceiverArgument();
-                int receiverIndex = -1;
-                if (receiverParameter.exists()) {
-                    Type type = codegen.typeMapper.mapType(receiverParameter.getType());
-                    int sz = type.getSize();
-                    frame.enterTemp(type);
-                    lastIndex += sz;
-                    size += sz;
-                    v.store((receiverIndex = lastIndex) - sz, type);
-                }
-
-                ReceiverValue thisObject = resolvedGetCall.getThisObject();
-                int thisIndex = -1;
-                if (thisObject.exists()) {
+            List<TypeParameterDescriptor> typeParameters = resolvedGetCall.getResultingDescriptor().getTypeParameters();
+            int firstTypeParamIndex = -1;
+            for (int i = typeParameters.size() - 1; i >= 0; --i) {
+                if (typeParameters.get(i).isReified()) {
                     frame.enterTemp(OBJECT_TYPE);
                     lastIndex++;
                     size++;
-                    v.store((thisIndex = lastIndex) - 1, OBJECT_TYPE);
+                    v.store(firstTypeParamIndex = lastIndex - 1, OBJECT_TYPE);
                 }
+            }
 
-                // for setter
+            ReceiverValue receiverParameter = resolvedGetCall.getReceiverArgument();
+            int receiverIndex = -1;
+            if (receiverParameter.exists()) {
+                Type type = codegen.typeMapper.mapType(receiverParameter.getType());
+                int sz = type.getSize();
+                frame.enterTemp(type);
+                lastIndex += sz;
+                size += sz;
+                v.store((receiverIndex = lastIndex) - sz, type);
+            }
 
-                int realReceiverIndex;
-                Type realReceiverType;
-                if (thisIndex != -1) {
-                    if (receiverIndex != -1) {
-                        realReceiverIndex = receiverIndex;
-                        realReceiverType = codegen.typeMapper.mapType(receiverParameter.getType());
-                    }
-                    else {
-                        realReceiverIndex = thisIndex;
-                        realReceiverType = OBJECT_TYPE;
-                    }
+            ReceiverValue thisObject = resolvedGetCall.getThisObject();
+            int thisIndex = -1;
+            if (thisObject.exists()) {
+                frame.enterTemp(OBJECT_TYPE);
+                lastIndex++;
+                size++;
+                v.store((thisIndex = lastIndex) - 1, OBJECT_TYPE);
+            }
+
+            // for setter
+
+            int realReceiverIndex;
+            Type realReceiverType;
+            if (thisIndex != -1) {
+                if (receiverIndex != -1) {
+                    realReceiverIndex = receiverIndex;
+                    realReceiverType = codegen.typeMapper.mapType(receiverParameter.getType());
                 }
                 else {
-                    if (receiverIndex != -1) {
-                        realReceiverType = codegen.typeMapper.mapType(receiverParameter.getType());
-                        realReceiverIndex = receiverIndex;
-                    }
-                    else {
-                        throw new UnsupportedOperationException();
-                    }
+                    realReceiverIndex = thisIndex;
+                    realReceiverType = OBJECT_TYPE;
                 }
+            }
+            else {
+                if (receiverIndex != -1) {
+                    realReceiverType = codegen.typeMapper.mapType(receiverParameter.getType());
+                    realReceiverIndex = receiverIndex;
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
+            }
 
-                if (resolvedSetCall.getThisObject().exists()) {
-                    if (resolvedSetCall.getReceiverArgument().exists()) {
-                        codegen.generateFromResolvedCall(resolvedSetCall.getThisObject(), OBJECT_TYPE);
-                    }
+            if (resolvedSetCall.getThisObject().exists()) {
+                if (resolvedSetCall.getReceiverArgument().exists()) {
+                    codegen.generateFromResolvedCall(resolvedSetCall.getThisObject(), OBJECT_TYPE);
+                }
+                v.load(realReceiverIndex - realReceiverType.getSize(), realReceiverType);
+            }
+            else {
+                if (resolvedSetCall.getReceiverArgument().exists()) {
                     v.load(realReceiverIndex - realReceiverType.getSize(), realReceiverType);
                 }
                 else {
-                    if (resolvedSetCall.getReceiverArgument().exists()) {
-                        v.load(realReceiverIndex - realReceiverType.getSize(), realReceiverType);
-                    }
-                    else {
-                        throw new UnsupportedOperationException();
-                    }
+                    throw new UnsupportedOperationException();
                 }
+            }
 
-                int index = firstParamIndex;
-                for (int i = 0; i != valueParameters.size(); ++i) {
-                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
-                    int sz = type.getSize();
-                    v.load(index - sz, type);
-                    index -= sz;
-                }
+            int index = firstParamIndex;
+            for (int i = 0; i != valueParameters.size(); ++i) {
+                Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
+                int sz = type.getSize();
+                v.load(index - sz, type);
+                index -= sz;
+            }
 
-                // restoring original
-                if (thisIndex != -1) {
-                    v.load(thisIndex - 1, OBJECT_TYPE);
-                }
+            // restoring original
+            if (thisIndex != -1) {
+                v.load(thisIndex - 1, OBJECT_TYPE);
+            }
 
-                if (receiverIndex != -1) {
-                    Type type = codegen.typeMapper.mapType(receiverParameter.getType());
-                    v.load(receiverIndex - type.getSize(), type);
-                }
+            if (receiverIndex != -1) {
+                Type type = codegen.typeMapper.mapType(receiverParameter.getType());
+                v.load(receiverIndex - type.getSize(), type);
+            }
 
-                if (firstTypeParamIndex != -1) {
-                    index = firstTypeParamIndex;
-                    for (int i = 0; i != typeParameters.size(); ++i) {
-                        if (typeParameters.get(i).isReified()) {
-                            v.load(index - 1, OBJECT_TYPE);
-                            index--;
-                        }
+            if (firstTypeParamIndex != -1) {
+                index = firstTypeParamIndex;
+                for (int i = 0; i != typeParameters.size(); ++i) {
+                    if (typeParameters.get(i).isReified()) {
+                        v.load(index - 1, OBJECT_TYPE);
+                        index--;
                     }
                 }
+            }
 
-                index = firstParamIndex;
-                for (int i = 0; i != valueParameters.size(); ++i) {
-                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
-                    int sz = type.getSize();
-                    v.load(index - sz, type);
-                    index -= sz;
-                }
+            index = firstParamIndex;
+            for (int i = 0; i != valueParameters.size(); ++i) {
+                Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
+                int sz = type.getSize();
+                v.load(index - sz, type);
+                index -= sz;
+            }
 
-                for (int i = 0; i < size; i++) {
-                    frame.leaveTemp(OBJECT_TYPE);
-                }
+            for (int i = 0; i < size; i++) {
+                frame.leaveTemp(OBJECT_TYPE);
             }
         }
 
