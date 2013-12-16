@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -28,12 +29,12 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.LabelGenerator;
-import org.jetbrains.k2js.translate.context.AliasingContext;
-import org.jetbrains.k2js.translate.context.Namer;
-import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.context.UsageTracker;
+import org.jetbrains.k2js.translate.context.*;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
+
+import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
@@ -41,6 +42,7 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedRe
 
 public class LiteralFunctionTranslator extends AbstractTranslator {
     private static final LabelGenerator FUNCTION_NAME_GENERATOR = new LabelGenerator('f');
+    private static final String CAPTURED_VALUE_FIELD = "v";
 
     private final JetDeclarationWithBody declaration;
     private final FunctionDescriptor descriptor;
@@ -49,6 +51,7 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
     private final boolean inConstructorOrTopLevel;
     private final ClassDescriptor outerClass;
     private final JsName receiverName;
+    private JsNameRef tempRef = null;
 
     private LiteralFunctionTranslator(@NotNull JetDeclarationWithBody declaration, @NotNull TranslationContext context) {
         super(context);
@@ -115,7 +118,7 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
         else {
             JsNameRef funReference = context().define(FUNCTION_NAME_GENERATOR.generate(), jsFunction);
 
-            InnerFunctionTranslator innerTranslator = new InnerFunctionTranslator(descriptor, functionContext, jsFunction);
+            InnerFunctionTranslator innerTranslator = new InnerFunctionTranslator(descriptor, functionContext, jsFunction, tempRef);
             result = innerTranslator.translate(funReference, context());
         }
 
@@ -130,6 +133,52 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
         return finish();
     }
 
+    @NotNull
+    public JsVars translateLocalNamedFunction() {
+        // Add ability to capture this named function.
+        // Will be available like `foo.v` (for function `foo`)
+        // Can not generate direct call because function may have some closures.
+        JsName funName = functionContext.getNameForDescriptor(descriptor);
+        JsNameRef alias = new JsNameRef(CAPTURED_VALUE_FIELD, funName.makeRef());
+        functionContext.aliasingContext().registerAlias(descriptor, alias);
+
+        translateBody();
+
+        UsageTracker funTracker = functionContext.usageTracker();
+        assert funTracker != null;
+        boolean funIsCaptured = funTracker.isCaptured(descriptor);
+
+        // Create temporary variable name which will be contain reference to the function.
+        JsName temp;
+        if (funIsCaptured) {
+            assert !inConstructorOrTopLevel : "A recursive closure in constructor is unsupported.";
+            // Use `context()` because it should be created in the scope which contain call.
+            temp = context().scope().declareTemporary();
+            tempRef = temp.makeRef();
+        }
+        else {
+            temp = null;
+        }
+
+        JsExpression result = finish();
+
+        List<JsVars.JsVar> vars = new SmartList<JsVars.JsVar>();
+
+        if (funIsCaptured) {
+            JsVars.JsVar tempVar = new JsVars.JsVar(temp, new JsObjectLiteral());
+            vars.add(tempVar);
+
+            // Save `result` to the field of temporary variable if the function is captured.
+            result = JsAstUtils.assignment(new JsNameRef(CAPTURED_VALUE_FIELD, temp.makeRef()), result);
+
+        }
+
+        JsVars.JsVar fun = new JsVars.JsVar(funName, result);
+        vars.add(fun);
+
+        return new JsVars(vars, /*mulitline =*/ false);
+    }
+
     private static void addRegularParameters(
             @NotNull FunctionDescriptor descriptor,
             @NotNull JsFunction fun,
@@ -140,6 +189,11 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
             fun.getParameters().add(new JsParameter(receiverName));
         }
         FunctionTranslator.addParameters(fun.getParameters(), descriptor, funContext);
+    }
+
+    @NotNull
+    public static JsVars translateLocalNamedFunction(@NotNull JetDeclarationWithBody declaration, @NotNull TranslationContext outerContext) {
+        return new LiteralFunctionTranslator(declaration, outerContext).translateLocalNamedFunction();
     }
 
     @NotNull

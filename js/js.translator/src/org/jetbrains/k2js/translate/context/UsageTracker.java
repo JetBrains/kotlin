@@ -68,7 +68,7 @@ public final class UsageTracker {
         capturedVariables.add(descriptor);
     }
 
-    public void triggerUsed(DeclarationDescriptor descriptor) {
+    public void triggerUsed(@NotNull DeclarationDescriptor descriptor) {
         if ((descriptor instanceof PropertyDescriptor || descriptor instanceof PropertyAccessorDescriptor)) {
             checkOuterClass(descriptor);
         }
@@ -158,6 +158,21 @@ public final class UsageTracker {
         if (children != null) {
             for (UsageTracker child : children) {
                 if (child.hasCaptured()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isCaptured(@NotNull CallableDescriptor descriptor) {
+        if (capturedVariables != null && capturedVariables.contains(descriptor)) {
+            return true;
+        }
+
+        if (children != null) {
+            for (UsageTracker child : children) {
+                if (child.isCaptured(descriptor)) {
                     return true;
                 }
             }

@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -409,11 +408,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
-        JsExpression alias = LiteralFunctionTranslator.translate(expression, context);
-        FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
-        JsName name = context.scope().declareFreshName(descriptor.getName().asString());
-        context.aliasingContext().registerAlias(descriptor, name.makeRef());
-        return new JsVars(new JsVars.JsVar(name, alias)).source(expression);
+        return LiteralFunctionTranslator.translateLocalNamedFunction(expression, context).source(expression);
     }
 
     @Override

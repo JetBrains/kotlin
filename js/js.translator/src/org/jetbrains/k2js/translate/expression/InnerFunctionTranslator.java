@@ -20,26 +20,41 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 class InnerFunctionTranslator extends InnerDeclarationTranslator {
-    private final FunctionDescriptor descriptor;
+    @NotNull private final FunctionDescriptor descriptor;
+    @Nullable private final JsNameRef funRef;
 
     public InnerFunctionTranslator(
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context,
-            @NotNull JsFunction fun
+            @NotNull JsFunction fun,
+            @Nullable JsNameRef funRef
     ) {
         super(context, fun);
         this.descriptor = descriptor;
+        this.funRef = funRef;
     }
 
     @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
     @NotNull
     public JsExpression translate(@NotNull JsNameRef nameRef, @NotNull TranslationContext outerContext) {
         return translate(nameRef, getThis(outerContext));
+    }
+
+    @Override
+    @NotNull
+    protected JsNameRef getParameterNameRefFor(@NotNull CallableDescriptor descriptor) {
+        if (descriptor == this.descriptor) {
+            assert funRef != null;
+            return funRef;
+        }
+
+        return super.getParameterNameRefFor(descriptor);
     }
 
     @Override
