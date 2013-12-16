@@ -79,6 +79,9 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
             }
             return returnType.toList()
         }
+        else if (descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            return descriptor.getDefaultType().toList()
+        }
         else {
             return listOf()
         }

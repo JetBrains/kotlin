@@ -106,6 +106,11 @@ public class JetSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/JavaEnumMembers.kt");
     }
     
+    @TestMetadata("JavaEnumMembersAfterQualifier.kt")
+    public void testJavaEnumMembersAfterQualifier() throws Exception {
+        doTest("idea/testData/completion/smart/JavaEnumMembersAfterQualifier.kt");
+    }
+    
     @TestMetadata("JavaEnumMembersForNullable.kt")
     public void testJavaEnumMembersForNullable() throws Exception {
         doTest("idea/testData/completion/smart/JavaEnumMembersForNullable.kt");
