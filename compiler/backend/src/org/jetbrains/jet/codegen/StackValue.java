@@ -675,7 +675,7 @@ public abstract class StackValue {
                 v.dup2();   // collection and index
                 return;
             }
-            
+
             int size = 0;
             // ugly hack: getting the last variable index
             int lastIndex = frame.enterTemp(Type.INT_TYPE);
@@ -691,17 +691,6 @@ public abstract class StackValue {
                 lastIndex += sz;
                 size += sz;
                 v.store((firstParamIndex = lastIndex) - sz, type);
-            }
-
-            List<TypeParameterDescriptor> typeParameters = resolvedGetCall.getResultingDescriptor().getTypeParameters();
-            int firstTypeParamIndex = -1;
-            for (int i = typeParameters.size() - 1; i >= 0; --i) {
-                if (typeParameters.get(i).isReified()) {
-                    frame.enterTemp(OBJECT_TYPE);
-                    lastIndex++;
-                    size++;
-                    v.store(firstTypeParamIndex = lastIndex - 1, OBJECT_TYPE);
-                }
             }
 
             ReceiverValue receiverParameter = resolvedGetCall.getReceiverArgument();
@@ -728,24 +717,16 @@ public abstract class StackValue {
 
             int realReceiverIndex;
             Type realReceiverType;
-            if (thisIndex != -1) {
-                if (receiverIndex != -1) {
-                    realReceiverIndex = receiverIndex;
-                    realReceiverType = codegen.typeMapper.mapType(receiverParameter.getType());
-                }
-                else {
-                    realReceiverIndex = thisIndex;
-                    realReceiverType = OBJECT_TYPE;
-                }
+            if (receiverIndex != -1) {
+                realReceiverType = codegen.typeMapper.mapType(receiverParameter.getType());
+                realReceiverIndex = receiverIndex;
+            }
+            else if (thisIndex != -1) {
+                realReceiverType = OBJECT_TYPE;
+                realReceiverIndex = thisIndex;
             }
             else {
-                if (receiverIndex != -1) {
-                    realReceiverType = codegen.typeMapper.mapType(receiverParameter.getType());
-                    realReceiverIndex = receiverIndex;
-                }
-                else {
-                    throw new UnsupportedOperationException();
-                }
+                throw new UnsupportedOperationException();
             }
 
             if (resolvedSetCall.getThisObject().exists()) {
@@ -764,8 +745,8 @@ public abstract class StackValue {
             }
 
             int index = firstParamIndex;
-            for (int i = 0; i != valueParameters.size(); ++i) {
-                Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
+            for (ValueParameterDescriptor valueParameter : valueParameters) {
+                Type type = codegen.typeMapper.mapType(valueParameter.getType());
                 int sz = type.getSize();
                 v.load(index - sz, type);
                 index -= sz;
@@ -777,23 +758,12 @@ public abstract class StackValue {
             }
 
             if (receiverIndex != -1) {
-                Type type = codegen.typeMapper.mapType(receiverParameter.getType());
-                v.load(receiverIndex - type.getSize(), type);
-            }
-
-            if (firstTypeParamIndex != -1) {
-                index = firstTypeParamIndex;
-                for (int i = 0; i != typeParameters.size(); ++i) {
-                    if (typeParameters.get(i).isReified()) {
-                        v.load(index - 1, OBJECT_TYPE);
-                        index--;
-                    }
-                }
+                v.load(receiverIndex - realReceiverType.getSize(), realReceiverType);
             }
 
             index = firstParamIndex;
-            for (int i = 0; i != valueParameters.size(); ++i) {
-                Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
+            for (ValueParameterDescriptor valueParameter : valueParameters) {
+                Type type = codegen.typeMapper.mapType(valueParameter.getType());
                 int sz = type.getSize();
                 v.load(index - sz, type);
                 index -= sz;
@@ -807,12 +777,6 @@ public abstract class StackValue {
         private boolean isStandardStack(ResolvedCall call, int valueParamsSize) {
             if (call == null) {
                 return true;
-            }
-
-            for (TypeParameterDescriptor typeParameterDescriptor : call.getResultingDescriptor().getTypeParameters()) {
-                if (typeParameterDescriptor.isReified()) {
-                    return false;
-                }
             }
 
             List<ValueParameterDescriptor> valueParameters = call.getResultingDescriptor().getValueParameters();
