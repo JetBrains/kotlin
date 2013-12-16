@@ -62,11 +62,14 @@ public class HierarchySearchRequest<T: PsiElement> (
         override val originalElement: T,
         override val searchScope: SearchScope,
         val searchDeeply: Boolean = true
-) : SearchRequestWithElement<T>
+) : SearchRequestWithElement<T> {
+    fun copy<U: PsiElement>(newOriginalElement: U): HierarchySearchRequest<U> =
+            HierarchySearchRequest(newOriginalElement, searchScope, searchDeeply)
+}
 
-abstract class HierarchyTraverser<T> {
-    protected abstract fun nextElements(current: T): Iterable<T>
-    protected abstract fun shouldDescend(element: T): Boolean
+trait HierarchyTraverser<T> {
+    protected fun nextElements(current: T): Iterable<T>
+    protected fun shouldDescend(element: T): Boolean
 
     fun forEach(initialElement: T, body: (T) -> Unit) {
         val stack = Stack<T>()
@@ -96,6 +99,25 @@ fun <T: PsiElement> Processor<T>.consumeHierarchy(request: SearchRequestWithElem
     traverser.forEach(request.originalElement) { element ->
         if (element in request.searchScope) {
             process(element)
+        }
+    }
+}
+
+abstract class HierarchySearch<T: PsiElement>(
+        protected val traverser: HierarchyTraverser<T>
+): DeclarationsSearch<T, HierarchySearchRequest<T>>() {
+    protected open fun doSearchAll(request: HierarchySearchRequest<T>, consumer: Processor<T>) {
+        consumer.consumeHierarchy(request, traverser)
+    }
+
+    protected abstract fun doSearchDirect(request: HierarchySearchRequest<T>, consumer: Processor<T>)
+
+    protected override fun doSearch(request: HierarchySearchRequest<T>, consumer: Processor<T>) {
+        if (request.searchDeeply) {
+            doSearchAll(request, consumer)
+        }
+        else {
+            doSearchDirect(request, consumer)
         }
     }
 }
