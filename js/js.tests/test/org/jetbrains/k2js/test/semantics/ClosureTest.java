@@ -68,4 +68,8 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void igonre_testClosureLocalFunctionByInnerFunctionInConstrunctor() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testClosureThisInConstructor() throws Exception {
+        fooBoxTest();
+    }
 }

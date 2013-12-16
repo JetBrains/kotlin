@@ -1,7 +1,5 @@
+// KT-2388
 package foo
-
-native
-fun _setTimeout(callback:()->Unit):Unit = noImpl
 
 var done = false
 
@@ -15,6 +13,6 @@ object foo {
 }
 
 fun box(): Boolean {
-    _setTimeout(foo.callbackWrapper)
+    foo.callbackWrapper()
     return foo.timeoutId == -1 as Long
 }
