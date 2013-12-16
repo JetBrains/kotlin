@@ -198,6 +198,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         public void testObjectFromTrait() throws Exception {
             doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ObjectFromTrait");
         }
+        
     }
     
     @TestMetadata("idea/testData/hierarchy/calls/callers")
