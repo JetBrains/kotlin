@@ -728,6 +728,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/casts/as.kt");
         }
         
+        @TestMetadata("asForConstants.kt")
+        public void testAsForConstants() throws Exception {
+            doTest("compiler/testData/codegen/box/casts/asForConstants.kt");
+        }
+        
         @TestMetadata("asSafe.kt")
         public void testAsSafe() throws Exception {
             doTest("compiler/testData/codegen/box/casts/asSafe.kt");
@@ -736,6 +741,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("asSafeFail.kt")
         public void testAsSafeFail() throws Exception {
             doTest("compiler/testData/codegen/box/casts/asSafeFail.kt");
+        }
+        
+        @TestMetadata("asSafeForConstants.kt")
+        public void testAsSafeForConstants() throws Exception {
+            doTest("compiler/testData/codegen/box/casts/asSafeForConstants.kt");
         }
         
         @TestMetadata("castGenericNull.kt")

@@ -990,6 +990,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/cast/AsErasedWarning.kt");
             }
             
+            @TestMetadata("constants.kt")
+            public void testConstants() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cast/constants.kt");
+            }
+            
             @TestMetadata("DowncastMap.kt")
             public void testDowncastMap() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cast/DowncastMap.kt");

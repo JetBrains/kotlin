@@ -153,7 +153,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, allowBareTypes);
         PossiblyBareType possiblyBareTarget = context.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(typeResolutionContext, right);
 
-        if (isTypeFlexible(left) || operationType == JetTokens.COLON) {
+        if (operationType == JetTokens.COLON) {
             // We do not allow bare types on static assertions, because static assertions provide an expected type for their argument,
             // thus causing a circularity in type dependencies
             assert !possiblyBareTarget.isBare() : "Bare types should not be allowed for static assertions, because argument inference makes no sense there";

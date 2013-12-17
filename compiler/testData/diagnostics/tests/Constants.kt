@@ -30,11 +30,11 @@ fun test() {
     <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>: Double
     <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>: Float
     
-    1 <!USELESS_CAST!>as<!> Byte
+    1 <!CAST_NEVER_SUCCEEDS!>as<!> Byte
     1 <!USELESS_CAST!>as<!> Int
-    0xff <!USELESS_CAST!>as<!> Long
+    0xff <!CAST_NEVER_SUCCEEDS!>as<!> Long
     
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.1<!> <!CAST_NEVER_SUCCEEDS!>as<!> Int
+    1.1 <!CAST_NEVER_SUCCEEDS!>as<!> Int
     <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.1<!>: Int
 
     varargByte(0x77, 1, 3, <!CONSTANT_EXPECTED_TYPE_MISMATCH!>200<!>, 0b111)
