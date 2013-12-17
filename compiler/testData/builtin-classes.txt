@@ -1296,7 +1296,7 @@ public final class LongRange : jet.Range<jet.Long>, jet.Progression<jet.Long> {
     }
 }
 
-public trait Map</*0*/ K, /*1*/ out V> {
+public trait Map</*0*/ out K, /*1*/ out V> {
     public abstract fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
     public abstract fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
     public abstract fun entrySet(): jet.Set<jet.Map.Entry<K, V>>

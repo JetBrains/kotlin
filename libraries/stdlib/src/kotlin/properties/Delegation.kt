@@ -26,12 +26,12 @@ public object Delegates {
         return ObservableProperty<T>(initial, onChange)
     }
 
-    public fun mapVar<T>(map: MutableMap<in String, Any?>,
+    public fun mapVar<T>(map: MutableMap<String, Any?>,
                          default: (thisRef: Any?, desc: String) -> T = defaultValueProvider): ReadWriteProperty<Any?, T> {
         return FixedMapVar<Any?, String, T>(map, defaultKeyProvider, default)
     }
 
-    public fun mapVal<T>(map: Map<in String, Any?>,
+    public fun mapVal<T>(map: Map<String, Any?>,
                          default: (thisRef: Any?, desc: String) -> T = defaultValueProvider): ReadOnlyProperty<Any?, T> {
         return FixedMapVal<Any?, String, T>(map, defaultKeyProvider, default)
     }
@@ -111,8 +111,8 @@ private class BlockingLazyVal<T>(lock: Any?, private val initializer: () -> T) :
 
 public class KeyMissingException(message: String): RuntimeException(message)
 
-public abstract class MapVal<T, in K, out V>() : ReadOnlyProperty<T, V> {
-    protected abstract fun map(ref: T): Map<in K, Any?>
+public abstract class MapVal<T, K, out V>() : ReadOnlyProperty<T, V> {
+    protected abstract fun map(ref: T): Map<K, Any?>
     protected abstract fun key(desc: PropertyMetadata): K
 
     protected open fun default(ref: T, desc: PropertyMetadata): V {
@@ -130,8 +130,8 @@ public abstract class MapVal<T, in K, out V>() : ReadOnlyProperty<T, V> {
     }
 }
 
-public abstract class MapVar<T, in K, V>() : MapVal<T, K, V>(), ReadWriteProperty<T, V> {
-    protected abstract override fun map(ref: T): MutableMap<in K, Any?>
+public abstract class MapVar<T, K, V>() : MapVal<T, K, V>(), ReadWriteProperty<T, V> {
+    protected abstract override fun map(ref: T): MutableMap<K, Any?>
 
     public override fun set(thisRef: T, desc: PropertyMetadata, value: V) {
         val map = map(thisRef)
@@ -142,10 +142,10 @@ public abstract class MapVar<T, in K, V>() : MapVal<T, K, V>(), ReadWritePropert
 private val defaultKeyProvider:(PropertyMetadata) -> String = {it.name}
 private val defaultValueProvider:(Any?, Any?) -> Nothing = {(thisRef, key) -> throw KeyMissingException("$key is missing from $thisRef")}
 
-public open class FixedMapVal<T, in K, out V>(private val map: Map<in K, Any?>,
+public open class FixedMapVal<T, K, out V>(private val map: Map<K, Any?>,
                                               private val key: (PropertyMetadata) -> K,
                                               private val default: (ref: T, key: K) -> V = defaultValueProvider) : MapVal<T, K, V>() {
-    protected override fun map(ref: T): Map<in K, Any?> {
+    protected override fun map(ref: T): Map<K, Any?> {
         return map
     }
 
@@ -158,10 +158,10 @@ public open class FixedMapVal<T, in K, out V>(private val map: Map<in K, Any?>,
     }
 }
 
-public open class FixedMapVar<T, in K, V>(private val map: MutableMap<in K, Any?>,
+public open class FixedMapVar<T, K, V>(private val map: MutableMap<K, Any?>,
                                           private val key: (PropertyMetadata) -> K,
                                           private val default: (ref: T, key: K) -> V = defaultValueProvider) : MapVar<T, K, V>() {
-    protected override fun map(ref: T): MutableMap<in K, Any?> {
+    protected override fun map(ref: T): MutableMap<K, Any?> {
         return map
     }
 

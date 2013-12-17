@@ -110,7 +110,7 @@ public trait MutableSet<E> : Set<E>, MutableCollection<E> {
     override fun clear()
 }
 
-public trait Map<K, out V> {
+public trait Map<out K, out V> {
     // Query Operations
     public fun size() : Int
     public fun isEmpty() : Boolean

@@ -138,7 +138,7 @@
     </item>
     <item name="java.util.AbstractMap void putAll(java.util.Map&lt;? extends K,? extends V&gt;)">
         <annotation name="jet.runtime.typeinfo.KotlinSignature">
-            <val name="value" val="&quot;fun putAll(m : Map&lt;out K, V&gt;)&quot;"/>
+            <val name="value" val="&quot;fun putAll(m : Map&lt;K, V&gt;)&quot;"/>
         </annotation>
     </item>
     <item name="java.util.AbstractMap void putAll(java.util.Map&lt;? extends K,? extends V&gt;) 0">
@@ -1541,7 +1541,7 @@
         <annotation name="org.jetbrains.annotations.NotNull"/>
         <annotation name="jet.runtime.typeinfo.KotlinSignature">
             <val name="value"
-                    val="&quot;fun &lt;K, V&gt; unmodifiableMap(m : Map&lt;out K, V&gt;) : MutableMap&lt;K, V&gt;&quot;"/>
+                    val="&quot;fun &lt;K, V&gt; unmodifiableMap(m : Map&lt;K, V&gt;) : MutableMap&lt;K, V&gt;&quot;"/>
         </annotation>
     </item>
     <item name="java.util.Collections java.util.Map&lt;K,V&gt; unmodifiableMap(java.util.Map&lt;? extends K,? extends V&gt;) 0">
@@ -2168,7 +2168,7 @@
     </item>
     <item name="java.util.HashMap void putAll(java.util.Map&lt;? extends K,? extends V&gt;)">
         <annotation name="jet.runtime.typeinfo.KotlinSignature">
-            <val name="value" val="&quot;fun putAll(m : Map&lt;out K, V&gt;)&quot;"/>
+            <val name="value" val="&quot;fun putAll(m : Map&lt;K, V&gt;)&quot;"/>
         </annotation>
     </item>
     <item name="java.util.HashMap void putAll(java.util.Map&lt;? extends K,? extends V&gt;) 0">
@@ -2756,7 +2756,7 @@
     </item>
     <item name="java.util.Map void putAll(java.util.Map&lt;? extends K,? extends V&gt;)">
         <annotation name="jet.runtime.typeinfo.KotlinSignature">
-            <val name="value" val="&quot;fun putAll(m : Map&lt;out K, out V&gt;)&quot;"/>
+            <val name="value" val="&quot;fun putAll(m : Map&lt;K, V&gt;)&quot;"/>
         </annotation>
     </item>
     <item name="java.util.Map void putAll(java.util.Map&lt;? extends K,? extends V&gt;) 0">
