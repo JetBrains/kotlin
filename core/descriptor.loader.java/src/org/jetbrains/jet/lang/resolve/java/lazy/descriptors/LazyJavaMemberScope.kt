@@ -155,8 +155,7 @@ public abstract class LazyJavaMemberScope(
                 effectiveSignature.getValueParameters(),
                 effectiveSignature.getReturnType(),
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
-                method.getVisibility(),
-                false
+                method.getVisibility()
         )
 
         if (record) {
@@ -296,10 +295,6 @@ public abstract class LazyJavaMemberScope(
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> = _properties(name)
     protected open fun getAllPropertyNames(): Collection<Name> = memberIndex().getAllFieldNames()
-
-    // No object can be defined in Java
-    override fun getObjectDescriptor(name: Name): ClassDescriptor? = null
-    override fun getObjectDescriptors() = emptyList<ClassDescriptor>()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
     override fun getDeclarationsByLabel(labelName: LabelName) = emptyList<DeclarationDescriptor>()

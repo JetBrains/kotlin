@@ -40,7 +40,7 @@ class LazyJavaClassDescriptor(
         containingDeclaration: DeclarationDescriptor,
         internal val fqName: FqName,
         private val jClass: JavaClass
-) : ClassDescriptorBase(containingDeclaration, fqName.shortName()), LazyJavaDescriptor, JavaClassDescriptor {
+) : ClassDescriptorBase(outerC.storageManager, containingDeclaration, fqName.shortName()), LazyJavaDescriptor, JavaClassDescriptor {
 
     private val c: LazyJavaResolverContextWithTypes = outerC.child(this, jClass.getTypeParameters().toSet());
 
@@ -63,9 +63,6 @@ class LazyJavaClassDescriptor(
 
     private val _scopeForMemberLookup = LazyJavaClassMemberScope(c, this, jClass)
     override fun getScopeForMemberLookup() = _scopeForMemberLookup
-
-    private val _thisAsReceiverParameter = c.storageManager.createLazyValue { DescriptorFactory.createLazyReceiverParameterDescriptor(this) }
-    override fun getThisAsReceiverParameter() = _thisAsReceiverParameter()
 
     private val _innerClassesScope = InnerClassesScopeWrapper(getScopeForMemberLookup())
     override fun getUnsubstitutedInnerClassesScope(): JetScope = _innerClassesScope
