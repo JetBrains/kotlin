@@ -28,18 +28,16 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator
 import org.jetbrains.jet.lang.cfg.pseudocode.LocalFunctionDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
-import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastReceiver;
-import org.jetbrains.jet.lang.resolve.calls.model.*;
-import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
-import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.BooleanValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -54,7 +52,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.cfg.JetControlFlowBuilder.PredefinedOperation.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -1009,7 +1009,8 @@ public class JetControlFlowProcessor {
             return trace.get(BindingContext.RESOLVED_CALL, expression);
         }
 
-        private boolean generateCall(JetExpression calleeExpression) {
+        private boolean generateCall(@Nullable JetExpression calleeExpression) {
+            if (calleeExpression == null) return false;
             return checkAndGenerateCall(calleeExpression, getResolvedCall(calleeExpression));
         }
 
