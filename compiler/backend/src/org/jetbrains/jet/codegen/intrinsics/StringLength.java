@@ -30,8 +30,8 @@ public class StringLength extends IntrinsicMethod {
     @NotNull
     @Override
     public Type generateImpl(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,

@@ -31,8 +31,12 @@ public class EnumValues extends IntrinsicMethod {
     @NotNull
     @Override
     public Type generateImpl(
-            ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type returnType, @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments, StackValue receiver
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
+            @Nullable PsiElement element,
+            @Nullable List<JetExpression> arguments,
+            StackValue receiver
     ) {
         v.invokestatic(returnType.getElementType().getInternalName(), "values", "()" + returnType);
         return returnType;

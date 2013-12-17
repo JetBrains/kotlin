@@ -39,8 +39,8 @@ public class JavaClassArray extends IntrinsicMethod {
     @NotNull
     @Override
     public Type generateImpl(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,

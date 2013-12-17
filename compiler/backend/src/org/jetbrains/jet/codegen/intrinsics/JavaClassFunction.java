@@ -40,8 +40,12 @@ public class JavaClassFunction extends IntrinsicMethod {
     @NotNull
     @Override
     public Type generateImpl(
-            ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments, StackValue receiver
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type expectedType,
+            @Nullable PsiElement element,
+            @Nullable List<JetExpression> arguments,
+            StackValue receiver
     ) {
         JetCallExpression call = (JetCallExpression) element;
         ResolvedCall<? extends CallableDescriptor> resolvedCall =

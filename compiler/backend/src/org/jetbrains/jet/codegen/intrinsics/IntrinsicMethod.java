@@ -43,8 +43,8 @@ public abstract class IntrinsicMethod implements Callable {
 
     @NotNull
     protected abstract Type generateImpl(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
             @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,

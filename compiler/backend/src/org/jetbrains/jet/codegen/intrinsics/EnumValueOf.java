@@ -33,8 +33,12 @@ public class EnumValueOf extends IntrinsicMethod {
     @NotNull
     @Override
     public Type generateImpl(
-            ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type returnType, @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments, StackValue receiver
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
+            @Nullable PsiElement element,
+            @Nullable List<JetExpression> arguments,
+            StackValue receiver
     ) {
         assert arguments != null;
         codegen.gen(arguments.get(0), JAVA_STRING_TYPE);
