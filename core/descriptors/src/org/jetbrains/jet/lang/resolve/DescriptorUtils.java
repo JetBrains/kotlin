@@ -421,6 +421,14 @@ public class DescriptorUtils {
         return parameterTypes;
     }
 
+    public static boolean isInsideOuterClassOrItsSubclass(@Nullable DeclarationDescriptor nested, @NotNull ClassDescriptor outer) {
+        if (nested == null) return false;
+
+        if (nested instanceof ClassDescriptor && isSubclass((ClassDescriptor) nested, outer)) return true;
+
+        return isInsideOuterClassOrItsSubclass(nested.getContainingDeclaration(), outer);
+    }
+
     public static boolean isConstructorOfStaticNestedClass(@Nullable CallableDescriptor descriptor) {
         return descriptor instanceof ConstructorDescriptor && isStaticNestedClass(descriptor.getContainingDeclaration());
     }
