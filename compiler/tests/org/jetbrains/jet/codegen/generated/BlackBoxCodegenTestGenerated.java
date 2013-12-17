@@ -525,6 +525,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
     
     @TestMetadata("compiler/testData/codegen/box/callableReference")
+    @InnerTestClasses({CallableReference.Local.class})
     public static class CallableReference extends AbstractBlackBoxCodegenTest {
         @TestMetadata("abstractClassMember.kt")
         public void testAbstractClassMember() throws Exception {
@@ -715,6 +716,65 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/callableReference/traitMember.kt");
         }
         
+        @TestMetadata("compiler/testData/codegen/box/callableReference/local")
+        public static class Local extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInLocal() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/callableReference/local"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("classMember.kt")
+            public void testClassMember() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/classMember.kt");
+            }
+            
+            @TestMetadata("constructor.kt")
+            public void testConstructor() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/constructor.kt");
+            }
+            
+            @TestMetadata("constructorWithInitializer.kt")
+            public void testConstructorWithInitializer() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/constructorWithInitializer.kt");
+            }
+            
+            @TestMetadata("enumExtendsTrait.kt")
+            public void testEnumExtendsTrait() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/enumExtendsTrait.kt");
+            }
+            
+            @TestMetadata("genericMember.kt")
+            public void testGenericMember() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/genericMember.kt");
+            }
+            
+            @TestMetadata("localLocal.kt")
+            public void testLocalLocal() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/localLocal.kt");
+            }
+            
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/simple.kt");
+            }
+            
+            @TestMetadata("simpleWithArg.kt")
+            public void testSimpleWithArg() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/simpleWithArg.kt");
+            }
+            
+            @TestMetadata("unitWithSideEffect.kt")
+            public void testUnitWithSideEffect() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/unitWithSideEffect.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("CallableReference");
+            suite.addTestSuite(CallableReference.class);
+            suite.addTestSuite(Local.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/codegen/box/casts")
@@ -5073,7 +5133,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         suite.addTestSuite(BinaryOp.class);
         suite.addTestSuite(Bridges.class);
         suite.addTestSuite(BuiltinStubMethods.class);
-        suite.addTestSuite(CallableReference.class);
+        suite.addTest(CallableReference.innerSuite());
         suite.addTestSuite(Casts.class);
         suite.addTestSuite(Classes.class);
         suite.addTest(Closures.innerSuite());

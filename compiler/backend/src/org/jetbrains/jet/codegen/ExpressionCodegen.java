@@ -1987,9 +1987,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        fd = accessibleFunctionDescriptor(fd);
+        Callable callable = resolveToCallable(accessibleFunctionDescriptor(fd), superCall);
 
-        Callable callable = resolveToCallable(fd, superCall);
         if (callable instanceof CallableMethod) {
             CallableMethod callableMethod = (CallableMethod) callable;
             Type calleeType = callableMethod.getGenerateCalleeType();
@@ -1997,17 +1996,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 assert !callableMethod.isNeedsThis() : "Method should have a receiver: " + resolvedCall.getResultingDescriptor();
                 gen(call.getCalleeExpression(), calleeType);
             }
+        }
 
+        return invokeFunctionWithCalleeOnStack(call, receiver, resolvedCall, callable);
+    }
+
+    @NotNull
+    private StackValue invokeFunctionWithCalleeOnStack(
+            @NotNull Call call,
+            @NotNull StackValue receiver,
+            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            @NotNull Callable callable
+    ) {
+        if (callable instanceof CallableMethod) {
+            CallableMethod callableMethod = (CallableMethod) callable;
             invokeMethodWithArguments(callableMethod, resolvedCall, receiver);
-
-            Type callReturnType = callableMethod.getSignature().getAsmMethod().getReturnType();
-            if (callReturnType == Type.VOID_TYPE) return StackValue.none();
-
-            JetType type = fd.getReturnType();
-            assert type != null;
-            Type retType = typeMapper.mapReturnType(type);
-            StackValue.coerce(callReturnType, retType, v);
-            return StackValue.onStack(retType);
+            //noinspection ConstantConditions
+            Type returnType = typeMapper.mapReturnType(resolvedCall.getResultingDescriptor().getReturnType());
+            StackValue.coerce(callableMethod.getSignature().getAsmMethod().getReturnType(), returnType, v);
+            return StackValue.onStack(returnType);
         }
         else {
             receiver = StackValue.receiver(resolvedCall, receiver, this, null);
@@ -2497,13 +2504,34 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
             }
             else {
-                Call call = CallMaker.makeCall(fakeExpression, NO_RECEIVER, null, fakeExpression, fakeArguments);
-                result = codegen.invokeFunction(call, StackValue.none(), fakeResolvedCall);
+                result = generateNormalFunctionCall(codegen, fakeResolvedCall,
+                                                    CallMaker.makeCall(fakeExpression, NO_RECEIVER, null, fakeExpression, fakeArguments));
             }
 
             InstructionAdapter v = codegen.v;
             result.put(returnType, v);
             v.areturn(returnType);
+        }
+
+        @NotNull
+        private StackValue generateNormalFunctionCall(
+                @NotNull ExpressionCodegen codegen,
+                @NotNull ResolvedCall<CallableDescriptor> fakeResolvedCall,
+                @NotNull Call call
+        ) {
+            Callable callable = codegen.resolveToCallable(codegen.accessibleFunctionDescriptor(referencedFunction), false);
+
+            StackValue receiver;
+            if (callable instanceof CallableMethod && ((CallableMethod) callable).getGenerateCalleeType() != null) {
+                Type asmType = asmTypeForAnonymousClass(codegen.getBindingContext(), referencedFunction);
+                codegen.v.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
+                receiver = StackValue.onStack(asmType);
+            }
+            else {
+                receiver = StackValue.none();
+            }
+
+            return codegen.invokeFunctionWithCalleeOnStack(call, receiver, fakeResolvedCall, callable);
         }
 
         @NotNull
