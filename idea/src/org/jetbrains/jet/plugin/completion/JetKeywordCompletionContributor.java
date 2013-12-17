@@ -70,6 +70,86 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList(GET_KEYWORD.toString(), SET_KEYWORD.toString());
 
+    public JetKeywordCompletionContributor() {
+        registerScopeKeywordsCompletion(InTopFilter.class.getName(), new InTopFilter(),
+                                        ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
+                                        FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
+                                        IMPORT_KEYWORD, INTERNAL_KEYWORD,
+                                        OPEN_KEYWORD, PACKAGE_KEYWORD, PRIVATE_KEYWORD,
+                                        PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD, TRAIT_KEYWORD,
+                                        TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD);
+
+        registerScopeKeywordsCompletion("In modifier list but not in parameters",
+                                        new AndFilter(
+                                                new SuperParentFilter(new ClassFilter(JetModifierList.class)),
+                                                new NotFilter(new InTypeParameterFirstChildFilter())),
+                                        ABSTRACT_KEYWORD, FINAL_KEYWORD, INTERNAL_KEYWORD,
+                                        OPEN_KEYWORD, PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD);
+
+        registerScopeKeywordsCompletion(InClassBodyFilter.class.getName(), new InClassBodyFilter(),
+                                        ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
+                                        FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
+                                        INTERNAL_KEYWORD,
+                                        OPEN_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
+                                        PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD, TRAIT_KEYWORD,
+                                        TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD);
+
+        registerScopeKeywordsCompletion(InNonClassBlockFilter.class.getName(), new InNonClassBlockFilter(),
+                                        AS_KEYWORD, BREAK_KEYWORD, BY_KEYWORD,
+                                        CATCH_KEYWORD, CLASS_KEYWORD, CONTINUE_KEYWORD,
+                                        DO_KEYWORD, ELSE_KEYWORD, ENUM_KEYWORD,
+                                        FALSE_KEYWORD, FINALLY_KEYWORD, FOR_KEYWORD, FUN_KEYWORD,
+                                        GET_KEYWORD, IF_KEYWORD,
+                                        IN_KEYWORD, INTERNAL_KEYWORD,
+                                        IS_KEYWORD, NULL_KEYWORD, OBJECT_KEYWORD,
+                                        PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD,
+                                        RETURN_KEYWORD, SET_KEYWORD, SUPER_KEYWORD,
+                                        CAPITALIZED_THIS_KEYWORD, THIS_KEYWORD, THROW_KEYWORD,
+                                        TRAIT_KEYWORD, TRUE_KEYWORD, TRY_KEYWORD,
+                                        TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
+                                        VARARG_KEYWORD, WHEN_KEYWORD, WHERE_KEYWORD, WHILE_KEYWORD);
+
+        registerScopeKeywordsCompletion(InPropertyBodyFilter.class.getName(), new InPropertyBodyFilter(),
+                                        ELSE_KEYWORD, FALSE_KEYWORD, IF_KEYWORD,
+                                        NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD, WHEN_KEYWORD);
+
+        registerScopeKeywordsCompletion(InTypeParameterFirstChildFilter.class.getName(), new InTypeParameterFirstChildFilter(), false,
+                                        IN_KEYWORD, OUT_KEYWORD);
+
+        registerScopeKeywordsCompletion(AfterClassInClassBodyFilter.class.getName(), new AfterClassInClassBodyFilter(), false,
+                                        OBJECT_KEYWORD);
+    }
+
+    private static String[] convertTokensToStrings(JetToken... keywords) {
+        ArrayList<String> strings = new ArrayList<String>(keywords.length);
+        for (JetToken keyword : keywords) {
+            strings.add(keyword.toString());
+        }
+
+        return ArrayUtil.toStringArray(strings);
+    }
+
+    private static ElementPattern<PsiElement> getPlacePattern(ElementFilter placeFilter, boolean notIdentifier) {
+        if (notIdentifier) {
+            return PlatformPatterns.psiElement().and(new FilterPattern(new AndFilter(GENERAL_FILTER, NOT_IDENTIFIER_FILTER, placeFilter)));
+        }
+        else {
+            return PlatformPatterns.psiElement().and(new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
+        }
+    }
+
+    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, boolean notIdentifier, String... keywords) {
+        extend(CompletionType.BASIC, getPlacePattern(placeFilter, notIdentifier), new KeywordsCompletionProvider(debugName, keywords));
+    }
+
+    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, boolean notIdentifier, JetToken... keywords) {
+        registerScopeKeywordsCompletion(debugName, placeFilter, notIdentifier, convertTokensToStrings(keywords));
+    }
+
+    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, JetToken... keywords) {
+        registerScopeKeywordsCompletion(debugName, placeFilter, true, convertTokensToStrings(keywords));
+    }
+
     private static class CommentFilter implements ElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
@@ -157,13 +237,6 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     }
 
     private static class InPropertyBodyFilter extends PositionElementFilter {
-        @Override
-        public boolean isAcceptable(Object element, PsiElement context) {
-            if (!(element instanceof PsiElement)) return false;
-            JetProperty property = PsiTreeUtil.getParentOfType(context, JetProperty.class, false);
-            return property != null && isAfterName(property, (PsiElement) element);
-        }
-
         private static boolean isAfterName(@NotNull JetProperty property, @NotNull PsiElement element) {
             for (PsiElement child = property.getFirstChild(); child != null; child = child.getNextSibling()) {
                 if (PsiTreeUtil.isAncestor(child, element, false)) {
@@ -176,6 +249,13 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
             }
 
             return false;
+        }
+
+        @Override
+        public boolean isAcceptable(Object element, PsiElement context) {
+            if (!(element instanceof PsiElement)) return false;
+            JetProperty property = PsiTreeUtil.getParentOfType(context, JetProperty.class, false);
+            return property != null && isAfterName(property, (PsiElement) element);
         }
     }
 
@@ -196,8 +276,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
-    public static class KeywordsCompletionProvider extends CompletionProvider<CompletionParameters> {
-
+    private static class KeywordsCompletionProvider extends CompletionProvider<CompletionParameters> {
         private final Collection<LookupElement> elements;
         private final String debugName;
 
@@ -220,8 +299,10 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
 
         @Override
-        protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
-                                      @NotNull CompletionResultSet result) {
+        protected void addCompletions(
+                @NotNull CompletionParameters parameters, ProcessingContext context,
+                @NotNull CompletionResultSet result
+        ) {
             WeigherPackage.addJetSorting(result, parameters)
                     .withPrefixMatcher(new SimplePrefixMatcher(result.getPrefixMatcher().getPrefix()))
                     .addAllElements(elements);
@@ -230,87 +311,6 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         @Override
         public String toString() {
             return debugName;
-        }
-    }
-
-    public JetKeywordCompletionContributor() {
-        registerScopeKeywordsCompletion(InTopFilter.class.getName(), new InTopFilter(),
-                                        ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
-                                        FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
-                                        IMPORT_KEYWORD, INTERNAL_KEYWORD,
-                                        OPEN_KEYWORD, PACKAGE_KEYWORD, PRIVATE_KEYWORD,
-                                        PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD, TRAIT_KEYWORD,
-                                        TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD);
-
-        registerScopeKeywordsCompletion(
-                "In modifier list but not in parameters",
-                new AndFilter(
-                        new SuperParentFilter(new ClassFilter(JetModifierList.class)),
-                        new NotFilter(new InTypeParameterFirstChildFilter())),
-                ABSTRACT_KEYWORD, FINAL_KEYWORD, INTERNAL_KEYWORD,
-                OPEN_KEYWORD, PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD);
-
-        registerScopeKeywordsCompletion(InClassBodyFilter.class.getName(), new InClassBodyFilter(),
-                                        ABSTRACT_KEYWORD, CLASS_KEYWORD, ENUM_KEYWORD,
-                                        FINAL_KEYWORD, FUN_KEYWORD, GET_KEYWORD,
-                                        INTERNAL_KEYWORD,
-                                        OPEN_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
-                                        PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD, TRAIT_KEYWORD,
-                                        TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD);
-
-        registerScopeKeywordsCompletion(InNonClassBlockFilter.class.getName(), new InNonClassBlockFilter(),
-                                        AS_KEYWORD, BREAK_KEYWORD, BY_KEYWORD,
-                                        CATCH_KEYWORD, CLASS_KEYWORD, CONTINUE_KEYWORD,
-                                        DO_KEYWORD, ELSE_KEYWORD, ENUM_KEYWORD,
-                                        FALSE_KEYWORD, FINALLY_KEYWORD, FOR_KEYWORD, FUN_KEYWORD,
-                                        GET_KEYWORD, IF_KEYWORD,
-                                        IN_KEYWORD, INTERNAL_KEYWORD,
-                                        IS_KEYWORD, NULL_KEYWORD, OBJECT_KEYWORD,
-                                        PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD,
-                                        RETURN_KEYWORD, SET_KEYWORD, SUPER_KEYWORD,
-                                        CAPITALIZED_THIS_KEYWORD, THIS_KEYWORD, THROW_KEYWORD,
-                                        TRAIT_KEYWORD, TRUE_KEYWORD, TRY_KEYWORD,
-                                        TYPE_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
-                                        VARARG_KEYWORD, WHEN_KEYWORD, WHERE_KEYWORD, WHILE_KEYWORD);
-
-        registerScopeKeywordsCompletion(InPropertyBodyFilter.class.getName(), new InPropertyBodyFilter(),
-                                        ELSE_KEYWORD, FALSE_KEYWORD, IF_KEYWORD,
-                                        NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD, WHEN_KEYWORD);
-
-        registerScopeKeywordsCompletion(InTypeParameterFirstChildFilter.class.getName(), new InTypeParameterFirstChildFilter(), false,
-                                        IN_KEYWORD, OUT_KEYWORD);
-
-        registerScopeKeywordsCompletion(AfterClassInClassBodyFilter.class.getName(), new AfterClassInClassBodyFilter(), false,
-                                        OBJECT_KEYWORD);
-    }
-
-    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, boolean notIdentifier, String... keywords) {
-        extend(CompletionType.BASIC, getPlacePattern(placeFilter, notIdentifier), new KeywordsCompletionProvider(debugName, keywords));
-    }
-
-    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, boolean notIdentifier, JetToken... keywords) {
-        registerScopeKeywordsCompletion(debugName, placeFilter, notIdentifier, convertTokensToStrings(keywords));
-    }
-
-    private void registerScopeKeywordsCompletion(String debugName, ElementFilter placeFilter, JetToken... keywords) {
-        registerScopeKeywordsCompletion(debugName, placeFilter, true, convertTokensToStrings(keywords));
-    }
-
-    private static String[] convertTokensToStrings(JetToken... keywords) {
-        ArrayList<String> strings = new ArrayList<String>(keywords.length);
-        for (JetToken keyword : keywords) {
-            strings.add(keyword.toString());
-        }
-
-        return ArrayUtil.toStringArray(strings);
-    }
-
-    private static ElementPattern<PsiElement> getPlacePattern(ElementFilter placeFilter, boolean notIdentifier) {
-        if (notIdentifier) {
-            return PlatformPatterns.psiElement().and(new FilterPattern(new AndFilter(GENERAL_FILTER, NOT_IDENTIFIER_FILTER, placeFilter)));
-        }
-        else {
-            return PlatformPatterns.psiElement().and(new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
         }
     }
 }
