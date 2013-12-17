@@ -70,6 +70,6 @@ public final class ClosureTest extends SingleFileTranslationTest {
     }
 
     public void testClosureThisInConstructor() throws Exception {
-        fooBoxTest();
+        checkFooBoxIsOk();
     }
 }

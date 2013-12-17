@@ -79,9 +79,11 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
             outerClass = (ClassDescriptor) descriptor.getContainingDeclaration().getContainingDeclaration();
             assert outerClass != null;
 
-            if (receiverDescriptor == null) {
-                aliasingContext = context().aliasingContext().notShareableThisAliased(outerClass, new JsNameRef("o", jsFunction.getName().makeRef()));
+            if (aliasingContext == null) {
+                aliasingContext = context().aliasingContext();
             }
+
+            aliasingContext = aliasingContext.notShareableThisAliased(outerClass, new JsNameRef("o", jsFunction.getName().makeRef()));
         }
         else {
             outerClass = null;
