@@ -367,4 +367,40 @@ public class CodegenBinding {
 
         return null;
     }
+
+    @NotNull
+    public static Collection<ClassDescriptor> getAllInnerClasses(
+            @NotNull BindingContext bindingContext, @NotNull ClassDescriptor outermostClass
+    ) {
+        Collection<ClassDescriptor> innerClasses = bindingContext.get(INNER_CLASSES, outermostClass);
+        if (innerClasses == null || innerClasses.isEmpty()) return Collections.emptySet();
+
+        Set<ClassDescriptor> allInnerClasses = new HashSet<ClassDescriptor>();
+
+        Deque<ClassDescriptor> stack = new ArrayDeque<ClassDescriptor>(innerClasses);
+        do {
+            ClassDescriptor currentClass = stack.pop();
+            if (allInnerClasses.add(currentClass)) {
+                Collection<ClassDescriptor> nextClasses = bindingContext.get(INNER_CLASSES, currentClass);
+                if (nextClasses != null) {
+                    for (ClassDescriptor nextClass : nextClasses) {
+                        stack.push(nextClass);
+                    }
+                }
+            }
+        } while (!stack.isEmpty());
+
+        return allInnerClasses;
+    }
+
+    @NotNull
+    public static String getJvmInternalName(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
+        Type asmType = bindingContext.get(CodegenBinding.ASM_TYPE, classDescriptor);
+        assert (asmType != null);
+
+        String jvmInternalName = asmType.getClassName();
+        assert (jvmInternalName != null);
+
+        return jvmInternalName;
+    }
 }

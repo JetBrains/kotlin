@@ -42,7 +42,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.ResolvePackage;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -59,7 +60,7 @@ import java.util.List;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightClass implements KotlinLightClass, JetJavaMirrorMarker {
-    private final static Key<CachedValue<GeneratedLightClassData>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
+    private final static Key<CachedValue<LightClassStubWithData>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     @Nullable
     public static KotlinLightClassForExplicitDeclaration create(@NotNull PsiManager manager, @NotNull JetClassOrObject classOrObject) {
@@ -77,7 +78,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
     private static String getJvmInternalName(JetClassOrObject classOrObject) {
         if (JetPsiUtil.isLocal(classOrObject)) {
-            return getGeneratedLightClassData(classOrObject).getJvmInternalName();
+            return getLightClassDataExactly(classOrObject).getJvmInternalName();
         }
         return PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
     }
@@ -156,24 +157,21 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
     @NotNull
     private PsiJavaFileStub getJavaFileStub() {
-        return getGeneratedLightClassData().getJavaFileStub();
+        return getLightClassStubWithData().getJavaFileStub();
     }
 
     @NotNull
     private ClassDescriptor getDescriptor() {
-        ClassDescriptor descriptor = getGeneratedLightClassData().getDescriptor();
-        assert descriptor != null;
-
-        return descriptor;
+        return getLightClassDataExactly(classOrObject).getDescriptor();
     }
 
     @NotNull
-    private GeneratedLightClassData getGeneratedLightClassData() {
-        return getGeneratedLightClassData(classOrObject);
+    private LightClassStubWithData getLightClassStubWithData() {
+        return getLightClassStubWithData(classOrObject);
     }
 
     @NotNull
-    private static GeneratedLightClassData getGeneratedLightClassData(JetClassOrObject classOrObject) {
+    private static LightClassStubWithData getLightClassStubWithData(JetClassOrObject classOrObject) {
         JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
         return CachedValuesManager.getManager(classOrObject.getProject()).getCachedValue(
                 outermostClassOrObject,
@@ -181,6 +179,18 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                 KotlinJavaFileStubProvider.createForDeclaredClass(outermostClassOrObject),
                 /*trackValue = */false
         );
+    }
+
+    @NotNull
+    private static LightClassDataForKotlinClass getLightClassDataExactly(JetClassOrObject classOrObject) {
+        OutermostKotlinClassLightClassData data =
+                (OutermostKotlinClassLightClassData) getLightClassStubWithData(classOrObject).getClassData();
+
+        if (data.getClassOrObject().equals(classOrObject)) return data;
+
+        LightClassDataForKotlinClass innerClassData = data.getAllInnerClasses().get(classOrObject);
+        assert innerClassData != null;
+        return innerClassData;
     }
 
     @NotNull

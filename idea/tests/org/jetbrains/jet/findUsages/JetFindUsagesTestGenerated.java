@@ -135,6 +135,16 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinClassDerivedClasses.0.kt");
             }
             
+            @TestMetadata("kotlinClassDerivedInnerClasses.0.kt")
+            public void testKotlinClassDerivedInnerClasses() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinClassDerivedInnerClasses.0.kt");
+            }
+            
+            @TestMetadata("kotlinClassDerivedInnerObjects.0.kt")
+            public void testKotlinClassDerivedInnerObjects() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinClassDerivedInnerObjects.0.kt");
+            }
+            
             @TestMetadata("kotlinClassDerivedLocalClasses.0.kt")
             public void testKotlinClassDerivedLocalClasses() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinClassDerivedLocalClasses.0.kt");
@@ -238,6 +248,16 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("kotlinTraitDerivedClasses.0.kt")
             public void testKotlinTraitDerivedClasses() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinTraitDerivedClasses.0.kt");
+            }
+            
+            @TestMetadata("kotlinTraitDerivedInnerClasses.0.kt")
+            public void testKotlinTraitDerivedInnerClasses() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinTraitDerivedInnerClasses.0.kt");
+            }
+            
+            @TestMetadata("kotlinTraitDerivedInnerObjects.0.kt")
+            public void testKotlinTraitDerivedInnerObjects() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findClassUsages/kotlinTraitDerivedInnerObjects.0.kt");
             }
             
             @TestMetadata("kotlinTraitDerivedLocalClasses.0.kt")
@@ -571,6 +591,16 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/java/findJavaClassUsages/JKClassDerivedClasses.0.java");
             }
             
+            @TestMetadata("JKClassDerivedInnerClasses.0.java")
+            public void testJKClassDerivedInnerClasses() throws Exception {
+                doTest("idea/testData/findUsages/java/findJavaClassUsages/JKClassDerivedInnerClasses.0.java");
+            }
+            
+            @TestMetadata("JKClassDerivedInnerObjects.0.java")
+            public void testJKClassDerivedInnerObjects() throws Exception {
+                doTest("idea/testData/findUsages/java/findJavaClassUsages/JKClassDerivedInnerObjects.0.java");
+            }
+            
             @TestMetadata("JKClassDerivedLocalClasses.0.java")
             public void testJKClassDerivedLocalClasses() throws Exception {
                 doTest("idea/testData/findUsages/java/findJavaClassUsages/JKClassDerivedLocalClasses.0.java");
@@ -614,6 +644,16 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("JKInterfaceDerivedClasses.0.java")
             public void testJKInterfaceDerivedClasses() throws Exception {
                 doTest("idea/testData/findUsages/java/findJavaClassUsages/JKInterfaceDerivedClasses.0.java");
+            }
+            
+            @TestMetadata("JKInterfaceDerivedInnerClasses.0.java")
+            public void testJKInterfaceDerivedInnerClasses() throws Exception {
+                doTest("idea/testData/findUsages/java/findJavaClassUsages/JKInterfaceDerivedInnerClasses.0.java");
+            }
+            
+            @TestMetadata("JKInterfaceDerivedInnerObjects.0.java")
+            public void testJKInterfaceDerivedInnerObjects() throws Exception {
+                doTest("idea/testData/findUsages/java/findJavaClassUsages/JKInterfaceDerivedInnerObjects.0.java");
             }
             
             @TestMetadata("JKInterfaceDerivedLocalClasses.0.java")
