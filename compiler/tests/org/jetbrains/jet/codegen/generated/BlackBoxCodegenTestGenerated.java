@@ -666,6 +666,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/callableReference/newArray.kt");
         }
         
+        @TestMetadata("objectMemberUnitNoArgs.kt")
+        public void testObjectMemberUnitNoArgs() throws Exception {
+            doTest("compiler/testData/codegen/box/callableReference/objectMemberUnitNoArgs.kt");
+        }
+        
+        @TestMetadata("objectMemberUnitOneStringArg.kt")
+        public void testObjectMemberUnitOneStringArg() throws Exception {
+            doTest("compiler/testData/codegen/box/callableReference/objectMemberUnitOneStringArg.kt");
+        }
+        
+        @TestMetadata("privateClassMember.kt")
+        public void testPrivateClassMember() throws Exception {
+            doTest("compiler/testData/codegen/box/callableReference/privateClassMember.kt");
+        }
+        
         @TestMetadata("sortListOfStrings.kt")
         public void testSortListOfStrings() throws Exception {
             doTest("compiler/testData/codegen/box/callableReference/sortListOfStrings.kt");
