@@ -25,7 +25,7 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
     }
 
     public void testInitializersOfBasicClassExecute() throws Exception {
-        runFunctionOutputTest("initializersOfBasicClassExecute.kt", "foo", "box", 3);
+        fooBoxIsValue(3);
     }
 
     public void testMethodOverride() throws Exception {

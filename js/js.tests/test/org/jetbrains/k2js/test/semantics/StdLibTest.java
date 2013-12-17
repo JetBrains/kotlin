@@ -49,7 +49,7 @@ public final class StdLibTest extends SingleFileTranslationTest {
 
         generateJavaScriptFiles(files, kotlinFilename, mainCallParameters, ecmaVersions);
         runRhinoTests(kotlinFilename, ecmaVersions,
-                      new RhinoFunctionNativeObjectResultChecker("test.browser", "foo", "Some Dynamically Created Content!!!"));
+                      new RhinoFunctionNativeObjectResultChecker("test.browser", TEST_FUNCTION, "Some Dynamically Created Content!!!"));
     }
 
     @Override

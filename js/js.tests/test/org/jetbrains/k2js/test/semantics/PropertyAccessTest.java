@@ -43,7 +43,7 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     }
 
     public void testSetter() throws Exception {
-        runFunctionOutputTest("setter.kt", "foo", "f", 99.0);
+        fooBoxIsValue(99.0);
     }
 
 

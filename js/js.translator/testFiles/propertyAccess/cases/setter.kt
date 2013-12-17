@@ -4,7 +4,7 @@ class Test() {
     var a : Int = 1
 }
 
-fun f() : Int {
+fun box() : Int {
     var a = Test()
     var b = Test()
     b.a = 100

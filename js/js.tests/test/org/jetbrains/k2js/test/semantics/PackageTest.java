@@ -24,25 +24,22 @@ public final class PackageTest extends SingleFileTranslationTest {
     }
 
     public void testNestedPackage() throws Exception {
-        runFunctionOutputTest("nestedPackage.kt", "foo.bar", "box", true);
+        runFunctionOutputTest("nestedPackage.kt", "foo.bar", TEST_FUNCTION, true);
     }
 
     public void testDeeplyNestedPackage() throws Exception {
-        runFunctionOutputTest("deeplyNestedPackage.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", "box", true);
+        runFunctionOutputTest("deeplyNestedPackage.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", TEST_FUNCTION, true);
     }
 
     public void testDeeplyNestedPackageFunctionCalled() throws Exception {
-        runFunctionOutputTest("deeplyNestedPackageFunctionCalled.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", "box", true
-        );
+        runFunctionOutputTest("deeplyNestedPackageFunctionCalled.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", TEST_FUNCTION, true);
     }
 
     public void testClassCreatedInDeeplyNestedPackage() throws Exception {
-        runFunctionOutputTest("classCreatedInDeeplyNestedPackage.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", "box", true
-        );
+        runFunctionOutputTest("classCreatedInDeeplyNestedPackage.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", TEST_FUNCTION, true);
     }
 
     public void testInitializersOfNestedPackagesExecute() throws Exception {
-        runFunctionOutputTest("initializersOfNestedPackagesExecute.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", "box", true
-        );
+        runFunctionOutputTest("initializersOfNestedPackagesExecute.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", TEST_FUNCTION, true);
     }
 }

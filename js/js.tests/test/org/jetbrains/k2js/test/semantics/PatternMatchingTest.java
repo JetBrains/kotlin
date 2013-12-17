@@ -54,7 +54,7 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
     }
 
     public void testMultipleCases() throws Exception {
-        runFunctionOutputTest("multipleCases.kt", "foo", "box", 2.0);
+        fooBoxIsValue(2.0);
     }
 
     public void testMatchNullableType() throws Exception {
