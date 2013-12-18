@@ -48,8 +48,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean unitReturnType;
     private final boolean normalizedVisibilities;
     private final boolean showInternalKeyword;
-    private final boolean alwaysRenderAny;
-    private final boolean prettyFunctionTypes;
     @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
     @NotNull
@@ -70,8 +68,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean unitReturnType,
             boolean normalizedVisibilities,
             boolean showInternalKeyword,
-            boolean alwaysRenderAny,
-            boolean prettyFunctionTypes,
             @NotNull OverrideRenderingPolicy overrideRenderingPolicy,
             @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat,
@@ -91,8 +87,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.debugMode = debugMode;
         this.textFormat = textFormat;
         this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
-        this.alwaysRenderAny = alwaysRenderAny;
-        this.prettyFunctionTypes = prettyFunctionTypes;
     }
 
 
@@ -214,7 +208,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (type.isError()) {
             return type.toString();
         }
-        if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) && prettyFunctionTypes) {
+        if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type)) {
             return renderFunctionType(type);
         }
         return renderDefaultType(type);
@@ -410,7 +404,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         int upperBoundsCount = typeParameter.getUpperBounds().size();
         if ((upperBoundsCount > 1 && !topLevel) || upperBoundsCount == 1) {
             JetType upperBound = typeParameter.getUpperBounds().iterator().next();
-            if (!KotlinBuiltIns.getInstance().getDefaultBound().equals(upperBound) || alwaysRenderAny) {
+            if (!KotlinBuiltIns.getInstance().getDefaultBound().equals(upperBound)) {
                 builder.append(" : ").append(renderType(upperBound));
             }
         }
@@ -640,7 +634,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         if (!klass.equals(KotlinBuiltIns.getInstance().getNothing())) {
             Collection<JetType> supertypes = klass.getTypeConstructor().getSupertypes();
-            if (supertypes.isEmpty() || !alwaysRenderAny && supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAnyOrNullableAny(
+            if (supertypes.isEmpty() || supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAnyOrNullableAny(
                     supertypes.iterator().next())) {
             }
             else {
