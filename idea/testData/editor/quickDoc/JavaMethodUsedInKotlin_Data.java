@@ -1,3 +1,5 @@
+import jet.runtime.typeinfo.KotlinSignature;
+
 class Test {
     /**
      * Java Method
