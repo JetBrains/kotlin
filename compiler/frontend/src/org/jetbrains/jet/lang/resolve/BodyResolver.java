@@ -360,11 +360,13 @@ public class BodyResolver {
         if (primaryConstructor != null) {
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, context.getOuterDataFlowInfo(), trace);
+                annotationResolver.resolveAnnotationsWithArguments(scopeForInitializers, anonymousInitializer.getModifierList(), trace);
             }
         }
         else {
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 trace.report(ANONYMOUS_INITIALIZER_IN_TRAIT.on(anonymousInitializer));
+                annotationResolver.resolveAnnotationsWithArguments(scopeForInitializers, anonymousInitializer.getModifierList(), trace);
             }
         }
     }

@@ -620,6 +620,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/annotations/onExpression.kt");
             }
             
+            @TestMetadata("onInitializer.kt")
+            public void testOnInitializer() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/onInitializer.kt");
+            }
+            
             @TestMetadata("onLoops.kt")
             public void testOnLoops() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/onLoops.kt");
