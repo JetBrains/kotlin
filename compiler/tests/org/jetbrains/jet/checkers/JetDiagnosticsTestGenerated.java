@@ -119,6 +119,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             doTest("compiler/testData/diagnostics/tests/CharacterLiterals.kt");
         }
         
+        @TestMetadata("checkType.kt")
+        public void testCheckType() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/checkType.kt");
+        }
+        
         @TestMetadata("CompareToWithErrorType.kt")
         public void testCompareToWithErrorType() throws Exception {
             doTest("compiler/testData/diagnostics/tests/CompareToWithErrorType.kt");

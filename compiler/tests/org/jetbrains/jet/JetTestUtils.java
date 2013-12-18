@@ -87,10 +87,10 @@ import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 
 public class JetTestUtils {
     private static final Pattern KT_FILES = Pattern.compile(".*?.kt");
-    private static List<File> filesToDelete = new ArrayList<File>();
+    private static final List<File> filesToDelete = new ArrayList<File>();
 
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
-    public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+):\\s*(.*)$", Pattern.MULTILINE);
+    public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
 
@@ -453,7 +453,7 @@ public class JetTestUtils {
                 Assert.fail("Directives should only occur at the beginning of a file: " + directiveMatcher.group());
             }
             String name = directiveMatcher.group(1);
-            String value = directiveMatcher.group(2);
+            String value = directiveMatcher.group(3);
             String oldValue = directives.put(name, value);
             Assert.assertNull("Directive overwritten: " + name + " old value: " + oldValue + " new value: " + value, oldValue);
             start = directiveMatcher.end() + 1;

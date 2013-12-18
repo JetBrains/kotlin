@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -32,7 +33,6 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -255,9 +255,22 @@ public class CheckerTestUtil {
         return matcher.replaceAll("");
     }
     
-    public static StringBuffer addDiagnosticMarkersToText(@NotNull final PsiFile psiFile, Collection<Diagnostic> diagnostics) {
+    public static StringBuffer addDiagnosticMarkersToText(@NotNull final PsiFile psiFile, @NotNull Collection<Diagnostic> diagnostics) {
+        return addDiagnosticMarkersToText(psiFile, diagnostics, new Function<PsiFile, String>() {
+            @Override
+            public String fun(PsiFile file) {
+                return file.getText();
+            }
+        });
+    }
+
+    public static StringBuffer addDiagnosticMarkersToText(
+            @NotNull final PsiFile psiFile,
+            @NotNull Collection<Diagnostic> diagnostics,
+            @NotNull Function<PsiFile, String> getFileText
+    ) {
+        String text = getFileText.fun(psiFile);
         StringBuffer result = new StringBuffer();
-        String text = psiFile.getText();
         diagnostics = Collections2.filter(diagnostics, new Predicate<Diagnostic>() {
             @Override
             public boolean apply(Diagnostic diagnostic) {
