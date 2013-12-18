@@ -77,6 +77,7 @@ import org.jetbrains.jet.evaluate.AbstractEvaluateExpressionTest
 import org.jetbrains.jet.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest
 import org.jetbrains.jet.generators.tests.generator.SingleClassTestModel
+import org.jetbrains.jet.generators.tests.generator.TestClassModel
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -400,6 +401,10 @@ fun main(args: Array<String>) {
             model("diagnosticMessage")
         }
 
+        testClass(javaClass<AbstractRenameTest>()) {
+            model("refactoring/rename", extension = "test", singleClass = true)
+        }
+
         testClass(javaClass<AbstractOutOfBlockModificationTest>()) {
             model("codeInsight/outOfBlock")
         }
@@ -408,20 +413,6 @@ fun main(args: Array<String>) {
             model("dataFlowValueRendering")
         }
     }
-
-    // TODO this is the only custom test left
-    TestGenerator("idea/tests/",
-                  javaClass<AbstractRenameTest>().getPackage()!!.getName()!!,
-                  "RenameTestGenerated",
-                  javaClass<AbstractRenameTest>(),
-                  listOf(SingleClassTestModel(
-                          File("idea/testData/refactoring/rename"),
-                          Pattern.compile("^(.+)\\.test$"),
-                          "doTest"
-                  )),
-                  "org.jetbrains.jet.generators.tests.TestsPackage"
-    ).generateAndSave()
-
 }
 
 private class TestGroup(val testsRoot: String, val testDataRoot: String) {
@@ -445,20 +436,22 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
 
     inner class TestClass() {
 
-        val testModels = ArrayList<SimpleTestClassModel>()
+        val testModels = ArrayList<TestClassModel>()
+
         fun model(
                 relativeRootPath: String,
                 recursive: Boolean = true,
                 extension: String = "kt", // empty string means dir
                 pattern: String = "^(.+)" + (if (extension == "") "" else "\\.$extension") + "\$",
-                testMethod: String = "doTest"
+                testMethod: String = "doTest",
+                singleClass: Boolean = false
         ) {
-            testModels.add(SimpleTestClassModel(
-                    File(testDataRoot + "/" + relativeRootPath),
-                    recursive,
-                    Pattern.compile(pattern),
-                    testMethod
-            ))
+            val rootFile = File(testDataRoot + "/" + relativeRootPath)
+            val compiledPattern = Pattern.compile(pattern)
+            testModels.add(if (singleClass)
+                               SingleClassTestModel(rootFile, compiledPattern, testMethod)
+                           else
+                               SimpleTestClassModel(rootFile, recursive, compiledPattern, testMethod))
         }
     }
 
