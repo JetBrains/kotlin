@@ -76,9 +76,11 @@ public final class JetContentBasedFileSubstitutor implements ContentBasedClassFi
             DumbService.getInstance(project).runWhenSmart(new Runnable() {
                 @Override
                 public void run() {
-                    FileDocumentManager docManager = FileDocumentManager.getInstance();
-                    docManager.getDocument(file); // force getting document because it can be collected
-                    docManager.reloadFiles(file);
+                    if (DecompiledUtils.isKotlinCompiledFile(file)) {
+                        FileDocumentManager docManager = FileDocumentManager.getInstance();
+                        docManager.getDocument(file); // force getting document because it can be collected
+                        docManager.reloadFiles(file);
+                    }
                 }
             });
             return false;
