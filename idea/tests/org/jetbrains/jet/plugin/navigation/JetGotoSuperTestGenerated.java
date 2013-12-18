@@ -33,7 +33,7 @@ import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
 @TestMetadata("idea/testData/navigation/gotoSuper")
 public class JetGotoSuperTestGenerated extends JetAbstractGotoSuperTest {
     public void testAllFilesPresentInGotoSuper() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/navigation/gotoSuper"), Pattern.compile("^(.+)\\.test$"), false);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/navigation/gotoSuper"), Pattern.compile("^(.+)\\.test$"), true);
     }
     
     @TestMetadata("ClassSimple.test")

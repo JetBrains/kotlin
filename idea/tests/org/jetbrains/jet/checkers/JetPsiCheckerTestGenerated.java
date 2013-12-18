@@ -424,7 +424,7 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     @TestMetadata("idea/testData/checker/infos")
     public static class Infos extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInInfos() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
         @TestMetadata("Autocasts.kt")

@@ -230,11 +230,11 @@ fun main(args: Array<String>) {
             model("checker", recursive = false)
             model("checker/regression")
             model("checker/rendering")
-            model("checker/infos", recursive = false, testMethod = "doTestWithInfos") // TODO remove recursive = false
+            model("checker/infos", testMethod = "doTestWithInfos")
         }
 
         testClass(javaClass<AbstractJetJsCheckerTest>()) {
-            model("checker/js", recursive = false)
+            model("checker/js")
         }
 
         testClass(javaClass<AbstractQuickFixTest>()) {
@@ -264,7 +264,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<JetAbstractGotoSuperTest>(), "JetGotoSuperTestGenerated") {
-            model("navigation/gotoSuper", recursive = false, extension = "test") // TODO remove recursive = false
+            model("navigation/gotoSuper", extension = "test")
         }
 
         testClass(javaClass<AbstractQuickFixMultiFileTest>()) {
