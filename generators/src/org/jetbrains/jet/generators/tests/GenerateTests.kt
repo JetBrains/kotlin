@@ -14,605 +14,464 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators.tests;
+package org.jetbrains.jet.generators.tests
 
-import junit.framework.TestCase;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cfg.AbstractControlFlowTest;
-import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve;
-import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest;
-import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest;
-import org.jetbrains.jet.cli.AbstractKotlincExecutableTest;
-import org.jetbrains.jet.codegen.AbstractBytecodeTextTest;
-import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest;
-import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest;
-import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest;
-import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest;
-import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
-import org.jetbrains.jet.completion.*;
-import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest;
-import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest;
-import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest;
-import org.jetbrains.jet.evaluate.AbstractEvaluateExpressionTest;
-import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest;
-import org.jetbrains.jet.formatter.AbstractJetFormatterTest;
-import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel;
-import org.jetbrains.jet.generators.tests.generator.SingleClassTestModel;
-import org.jetbrains.jet.generators.tests.generator.TestClassModel;
-import org.jetbrains.jet.generators.tests.generator.TestGenerator;
-import org.jetbrains.jet.jvm.compiler.*;
-import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest;
-import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest;
-import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest;
-import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest;
-import org.jetbrains.jet.parsing.AbstractJetParsingTest;
-import org.jetbrains.jet.plugin.codeInsight.AbstractOutOfBlockModificationTest;
-import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest;
-import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest;
-import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest;
-import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest;
-import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest;
-import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest;
-import org.jetbrains.jet.plugin.highlighter.AbstractDiagnosticMessageTest;
-import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest;
-import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest;
-import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest;
-import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest;
-import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest;
-import org.jetbrains.jet.plugin.refactoring.inline.AbstractInlineTest;
-import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest;
-import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest;
-import org.jetbrains.jet.resolve.AbstractResolveBaseTest;
-import org.jetbrains.jet.resolve.AbstractResolveTest;
-import org.jetbrains.jet.resolve.AbstractResolveWithLibTest;
-import org.jetbrains.jet.resolve.annotation.AbstractAnnotationParameterTest;
-import org.jetbrains.jet.resolve.calls.AbstractResolvedCallsTest;
-import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest;
+import org.jetbrains.jet.generators.tests.generator.TestGenerator
+import java.util.ArrayList
+import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel
+import java.io.File
+import java.util.regex.Pattern
+import junit.framework.TestCase
+import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve
+import org.jetbrains.jet.resolve.AbstractResolveTest
+import org.jetbrains.jet.parsing.AbstractJetParsingTest
+import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest
+import org.jetbrains.jet.codegen.AbstractBytecodeTextTest
+import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest
+import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest
+import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest
+import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest
+import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest
+import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
+import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
+import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest
+import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest
+import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest
+import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
+import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest
+import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
+import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
+import org.jetbrains.jet.cfg.AbstractControlFlowTest
+import org.jetbrains.jet.psi.AbstractJetPsiMatcherTest
+import org.jetbrains.jet.checkers.AbstractJetPsiCheckerTest
+import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest
+import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixTest
+import org.jetbrains.jet.completion.AbstractJSBasicCompletionTest
+import org.jetbrains.jet.completion.AbstractKeywordCompletionTest
+import org.jetbrains.jet.completion.AbstractJvmSmartCompletionTest
+import org.jetbrains.jet.completion.AbstractJvmBasicCompletionTest
+import org.jetbrains.jet.completion.AbstractJvmWithLibBasicCompletionTest
+import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest
+import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest
+import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest
+import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest
+import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest
+import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest
+import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest
+import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest
+import org.jetbrains.jet.plugin.refactoring.inline.AbstractInlineTest
+import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest
+import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest
+import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest
+import org.jetbrains.jet.resolve.AbstractResolveBaseTest
+import org.jetbrains.jet.resolve.AbstractResolveWithLibTest
+import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest
+import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest
+import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest
+import org.jetbrains.jet.formatter.AbstractJetFormatterTest
+import org.jetbrains.jet.plugin.highlighter.AbstractDiagnosticMessageTest
+import org.jetbrains.jet.plugin.codeInsight.AbstractOutOfBlockModificationTest
+import org.jetbrains.jet.completion.AbstractDataFlowValueRenderingTest
+import org.jetbrains.jet.resolve.annotation.AbstractAnnotationParameterTest
+import org.jetbrains.jet.evaluate.AbstractEvaluateExpressionTest
+import org.jetbrains.jet.resolve.calls.AbstractResolvedCallsTest
+import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest
+import org.jetbrains.jet.generators.tests.generator.SingleClassTestModel
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.regex.Pattern;
+fun main(args: Array<String>) {
+    System.setProperty("java.awt.headless", "true")
 
-public class GenerateTests {
-    private static void generateTest(
-            @NotNull String baseDir,
-            @NotNull String suiteClass,
-            @NotNull Class<? extends TestCase> baseTestClass,
-            @NotNull TestClassModel... testClassModels
-    ) throws IOException {
-        new TestGenerator(
-                baseDir,
-                baseTestClass.getPackage().getName(),
-                suiteClass,
+    testGroup("compiler/tests", "compiler/testData") {
+
+        testClass(javaClass<AbstractDiagnosticsTestWithEagerResolve>(), "JetDiagnosticsTestGenerated") {
+            model("diagnostics/tests")
+            model("diagnostics/tests/script", extension = "ktscript")
+            model("codegen/box/functions/tailRecursion")
+        }
+
+        testClass(javaClass<AbstractResolveTest>(), "JetResolveTestGenerated") {
+            model("resolve", extension = "resolve")
+        }
+
+        testClass(javaClass<AbstractResolvedCallsTest>(), "JetResolvedCallsTestGenerated") {
+            model("resolvedCalls")
+        }
+
+        testClass(javaClass<AbstractJetParsingTest>()) {
+            model("psi", testMethod = "doParsingTest")
+        }
+
+        GenerateRangesCodegenTestData.main(array<String>())
+
+        testClass(javaClass<AbstractBlackBoxCodegenTest>()) {
+            model("codegen/box")
+        }
+
+        testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxMultiFileCodegenTestGenerated") {
+            model("codegen/boxMultiFile", extension = "", recursive = false, testMethod = "doTestMultiFile")
+        }
+
+        testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithJavaCodegenTestGenerated") {
+            model("codegen/boxWithJava", testMethod = "doTestWithJava")
+        }
+
+        testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithStdlibCodegenTestGenerated") {
+            model("codegen/boxWithStdlib", testMethod = "doTestWithStdlib")
+        }
+
+        testClass(javaClass<AbstractBytecodeTextTest>()) {
+            model("codegen/bytecodeText")
+        }
+
+        testClass(javaClass<AbstractTopLevelMembersInvocationTest>()) {
+            model("codegen/topLevelMemberInvocation", extension = "", recursive = false)
+        }
+
+        testClass(javaClass<AbstractCheckLocalVariablesTableTest>()) {
+            model("checkLocalVariablesTable")
+        }
+
+        testClass(javaClass<AbstractWriteFlagsTest>()) {
+            model("writeFlags")
+        }
+
+        testClass(javaClass<AbstractDefaultConstructorCodegenTest>(), "DefaultArgumentsReflectionTestGenerated") {
+            model("codegen/defaultArguments/reflection")
+        }
+
+
+        testClass(javaClass<AbstractLoadJavaTest>()) {
+            model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
+            model("loadJava/compiledJavaAndKotlin", extension = "txt", testMethod = "doTestCompiledJavaAndKotlin")
+            model("loadJava/compiledJavaCompareWithKotlin", extension = "java", testMethod = "doTestCompiledJavaCompareWithKotlin")
+            model("loadJava/compiledJavaIncludeObjectMethods", extension = "java", testMethod = "doTestCompiledJavaIncludeObjectMethods")
+            model("loadJava/compiledKotlin", testMethod = "doTestCompiledKotlin")
+            model("loadJava/javaAgainstKotlin", extension = "txt", testMethod = "doTestJavaAgainstKotlin")
+            model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava")
+        }
+
+        testClass(javaClass<AbstractCompileJavaAgainstKotlinTest>()) {
+            model("compileJavaAgainstKotlin")
+        }
+
+        testClass(javaClass<AbstractCompileKotlinAgainstKotlinTest>()) {
+            model("compileKotlinAgainstKotlin", extension = "A.kt")
+        }
+
+        testClass(javaClass<AbstractLazyResolveDescriptorRendererTest>()) {
+            model("renderer")
+        }
+
+        testClass(javaClass<AbstractLazyResolveTest>()) {
+            model("resolve/imports", recursive = false, extension = "resolve")
+        }
+
+        testClass(javaClass<AbstractLazyResolveNamespaceComparingTest>()) {
+            model("loadJava/compiledKotlin", testMethod = "doTestCheckingPrimaryConstructorsAndAccessors")
+            model("loadJava/compiledJavaCompareWithKotlin", testMethod = "doTestNotCheckingPrimaryConstructors")
+            model("lazyResolve/namespaceComparator", testMethod = "doTestCheckingPrimaryConstructors")
+        }
+
+        testClass(javaClass<AbstractModuleXmlParserTest>()) {
+            model("modules.xml", extension = "xml")
+        }
+
+        testClass(javaClass<AbstractDescriptorSerializationTest>()) {
+            model("loadJava/compiledKotlin/class")
+            model("loadJava/compiledKotlin/classFun")
+            model("loadJava/compiledKotlin/classObject")
+            model("loadJava/compiledKotlin/constructor")
+            model("loadJava/compiledKotlin/fun")
+            model("loadJava/compiledKotlin/prop")
+            model("loadJava/compiledKotlin/type")
+            model("loadJava/compiledKotlin/visibility")
+        }
+
+        testClass(javaClass<AbstractWriteSignatureTest>()) {
+            model("writeSignature")
+        }
+
+        testClass(javaClass<AbstractKotlincExecutableTest>()) {
+            model("cli/jvm", extension = "args", testMethod = "doJvmTest")
+            model("cli/js", extension = "args", testMethod = "doJsTest")
+        }
+
+        testClass(javaClass<AbstractControlFlowTest>()) {
+            model("cfg")
+        }
+
+        testClass(javaClass<AbstractAnnotationParameterTest>()) {
+            model("resolveAnnotations/parameters")
+        }
+
+        testClass(javaClass<AbstractEvaluateExpressionTest>()) {
+            model("evaluate/constant", testMethod = "doConstantTest")
+            model("evaluate/isPure", testMethod = "doIsPureTest")
+        }
+
+        testClass(javaClass<AbstractAnnotationParameterTest>()) {
+            model("resolveAnnotations/parameters")
+        }
+
+        testClass(javaClass<AbstractEvaluateExpressionTest>()) {
+            model("evaluate/constant", testMethod = "doConstantTest")
+            model("evaluate/isPure", testMethod = "doIsPureTest")
+        }
+    }
+
+
+    testGroup("idea/tests", "idea/testData") {
+        testClass(javaClass<AbstractJetPsiMatcherTest>(), "JetPsiMatcherTest") {
+            model("jetPsiMatcher/expressions", testMethod = "doTestExpressions")
+            model("jetPsiMatcher/types", testMethod = "doTestTypes")
+        }
+
+        testClass(javaClass<AbstractJetPsiCheckerTest>()) {
+            model("checker", recursive = false)
+            model("checker/regression")
+            model("checker/rendering")
+            model("checker/infos", recursive = false, testMethod = "doTestWithInfos") // TODO remove recursive = false
+        }
+
+        testClass(javaClass<AbstractJetJsCheckerTest>()) {
+            model("checker/js", recursive = false)
+        }
+
+        testClass(javaClass<AbstractQuickFixTest>()) {
+            model("quickfix", pattern = "^before(\\w+)\\.kt$")
+        }
+
+        testClass(javaClass<AbstractJSBasicCompletionTest>(), "JetBasicJSCompletionTestGenerated") {
+            model("completion/basic/common")
+            model("completion/basic/js")
+        }
+
+        testClass(javaClass<AbstractJvmBasicCompletionTest>(), "JetBasicJavaCompletionTestGenerated") {
+            model("completion/basic/common")
+            model("completion/basic/java")
+        }
+
+        testClass(javaClass<AbstractJvmSmartCompletionTest>(), "JetSmartCompletionTestGenerated") {
+            model("completion/smart")
+        }
+
+        testClass(javaClass<AbstractKeywordCompletionTest>(), "JetKeywordCompletionTestGenerated") {
+            model("completion/keywords", recursive = false)
+        }
+
+        testClass(javaClass<AbstractJvmWithLibBasicCompletionTest>(), "JetJavaLibCompletionTestGenerated") {
+            model("completion/basic/custom", recursive = false)
+        }
+
+        testClass(javaClass<JetAbstractGotoSuperTest>(), "JetGotoSuperTestGenerated") {
+            model("navigation/gotoSuper", recursive = false, extension = "test") // TODO remove recursive = false
+        }
+
+        testClass(javaClass<AbstractQuickFixMultiFileTest>()) {
+            model("quickfix", pattern = "^(\\w+)\\.before\\.Main\\.kt\$", testMethod = "doTestWithExtraFile")
+        }
+
+        testClass(javaClass<AbstractHighlightingTest>()) {
+            model("highlighter")
+        }
+
+        testClass(javaClass<AbstractKotlinFoldingTest>()) {
+            model("folding/noCollapse")
+            model("folding/checkCollapse", testMethod = "doSettingsFoldingTest")
+        }
+
+        testClass(javaClass<AbstractSurroundWithTest>()) {
+            model("codeInsight/surroundWith/if", testMethod = "doTestWithIfSurrounder")
+            model("codeInsight/surroundWith/ifElse", testMethod = "doTestWithIfElseSurrounder")
+            model("codeInsight/surroundWith/not", testMethod = "doTestWithNotSurrounder")
+            model("codeInsight/surroundWith/parentheses", testMethod = "doTestWithParenthesesSurrounder")
+            model("codeInsight/surroundWith/stringTemplate", testMethod = "doTestWithStringTemplateSurrounder")
+            model("codeInsight/surroundWith/when", testMethod = "doTestWithWhenSurrounder")
+            model("codeInsight/surroundWith/tryCatch", testMethod = "doTestWithTryCatchSurrounder")
+            model("codeInsight/surroundWith/tryCatchFinally", testMethod = "doTestWithTryCatchFinallySurrounder")
+            model("codeInsight/surroundWith/tryFinally", testMethod = "doTestWithTryFinallySurrounder")
+            model("codeInsight/surroundWith/functionLiteral", testMethod = "doTestWithFunctionLiteralSurrounder")
+        }
+
+        testClass(javaClass<AbstractCodeTransformationTest>(), "CodeTransformationsTestGenerated") {
+            model("intentions/branched/folding/ifToAssignment", testMethod = "doTestFoldIfToAssignment")
+            model("intentions/branched/folding/ifToReturn", testMethod = "doTestFoldIfToReturn")
+            model("intentions/branched/folding/ifToReturnAsymmetrically", testMethod = "doTestFoldIfToReturnAsymmetrically")
+            model("intentions/branched/folding/whenToAssignment", testMethod = "doTestFoldWhenToAssignment")
+            model("intentions/branched/folding/whenToReturn", testMethod = "doTestFoldWhenToReturn")
+            model("intentions/branched/unfolding/assignmentToIf", testMethod = "doTestUnfoldAssignmentToIf")
+            model("intentions/branched/unfolding/assignmentToWhen", testMethod = "doTestUnfoldAssignmentToWhen")
+            model("intentions/branched/unfolding/propertyToIf", testMethod = "doTestUnfoldPropertyToIf")
+            model("intentions/branched/unfolding/propertyToWhen", testMethod = "doTestUnfoldPropertyToWhen")
+            model("intentions/branched/unfolding/returnToIf", testMethod = "doTestUnfoldReturnToIf")
+            model("intentions/branched/unfolding/returnToWhen", testMethod = "doTestUnfoldReturnToWhen")
+            model("intentions/branched/ifWhen/ifToWhen", testMethod = "doTestIfToWhen")
+            model("intentions/branched/ifWhen/whenToIf", testMethod = "doTestWhenToIf")
+            model("intentions/branched/when/flatten", testMethod = "doTestFlattenWhen")
+            model("intentions/branched/when/merge", testMethod = "doTestMergeWhen")
+            model("intentions/branched/when/introduceSubject", testMethod = "doTestIntroduceWhenSubject")
+            model("intentions/branched/when/eliminateSubject", testMethod = "doTestEliminateWhenSubject")
+            model("intentions/declarations/split", testMethod = "doTestSplitProperty")
+            model("intentions/declarations/join", testMethod = "doTestJoinProperty")
+            model("intentions/declarations/convertMemberToExtension", testMethod = "doTestConvertMemberToExtension")
+            model("intentions/reconstructedType", testMethod = "doTestReconstructType")
+            model("intentions/removeUnnecessaryParentheses", testMethod = "doTestRemoveUnnecessaryParentheses")
+        }
+
+        testClass(javaClass<AbstractHierarchyTest>()) {
+            model("hierarchy/class/type", extension = "", recursive = false, testMethod = "doTypeClassHierarchyTest")
+            model("hierarchy/class/super", extension = "", recursive = false, testMethod = "doSuperClassHierarchyTest")
+            model("hierarchy/class/sub", extension = "", recursive = false, testMethod = "doSubClassHierarchyTest")
+            model("hierarchy/calls/callers", extension = "", recursive = false, testMethod = "doCallerHierarchyTest")
+            model("hierarchy/calls/callees", extension = "", recursive = false, testMethod = "doCalleeHierarchyTest")
+        }
+
+        testClass(javaClass<AbstractCodeMoverTest>()) {
+            model("codeInsight/moveUpDown/classBodyDeclarations", testMethod = "doTestClassBodyDeclaration")
+            model("codeInsight/moveUpDown/closingBraces", testMethod = "doTestExpression")
+            model("codeInsight/moveUpDown/expressions", testMethod = "doTestExpression")
+        }
+
+        testClass(javaClass<AbstractInlineTest>()) {
+            model("refactoring/inline")
+        }
+
+        testClass(javaClass<AbstractUnwrapRemoveTest>()) {
+            model("codeInsight/unwrapAndRemove/removeExpression", testMethod = "doTestExpressionRemover")
+            model("codeInsight/unwrapAndRemove/unwrapThen", testMethod = "doTestThenUnwrapper")
+            model("codeInsight/unwrapAndRemove/unwrapElse", testMethod = "doTestElseUnwrapper")
+            model("codeInsight/unwrapAndRemove/removeElse", testMethod = "doTestElseRemover")
+            model("codeInsight/unwrapAndRemove/unwrapLoop", testMethod = "doTestLoopUnwrapper")
+            model("codeInsight/unwrapAndRemove/unwrapTry", testMethod = "doTestTryUnwrapper")
+            model("codeInsight/unwrapAndRemove/unwrapCatch", testMethod = "doTestCatchUnwrapper")
+            model("codeInsight/unwrapAndRemove/removeCatch", testMethod = "doTestCatchRemover")
+            model("codeInsight/unwrapAndRemove/unwrapFinally", testMethod = "doTestFinallyUnwrapper")
+            model("codeInsight/unwrapAndRemove/removeFinally", testMethod = "doTestFinallyRemover")
+            model("codeInsight/unwrapAndRemove/unwrapLambda", testMethod = "doTestLambdaUnwrapper")
+        }
+
+        testClass(javaClass<AbstractJetQuickDocProviderTest>()) {
+            model("editor/quickDoc", pattern = "^([^_]+)\\.[^\\.]*\$")
+        }
+
+        testClass(javaClass<AbstractJetSafeDeleteTest>()) {
+            model("safeDelete/deleteClass/kotlinClass", testMethod = "doClassTest")
+            model("safeDelete/deleteObject/kotlinObject", testMethod = "doObjectTest")
+            model("safeDelete/deleteFunction/kotlinFunction", testMethod = "doFunctionTest")
+            model("safeDelete/deleteFunction/kotlinFunctionWithJava", testMethod = "doFunctionTestWithJava")
+            model("safeDelete/deleteFunction/javaFunctionWithKotlin", testMethod = "doJavaMethodTest")
+            model("safeDelete/deleteProperty/kotlinProperty", testMethod = "doPropertyTest")
+            model("safeDelete/deleteProperty/kotlinPropertyWithJava", testMethod = "doPropertyTestWithJava")
+            model("safeDelete/deleteProperty/javaPropertyWithKotlin", testMethod = "doJavaPropertyTest")
+            model("safeDelete/deleteTypeParameter/kotlinTypeParameter", testMethod = "doTypeParameterTest")
+            model("safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava", testMethod = "doTypeParameterTestWithJava")
+            model("safeDelete/deleteValueParameter/kotlinValueParameter", testMethod = "doValueParameterTest")
+            model("safeDelete/deleteValueParameter/kotlinValueParameterWithJava", testMethod = "doValueParameterTestWithJava")
+        }
+
+        testClass(javaClass<AbstractResolveBaseTest>(), "ReferenceResolveTestGenerated") {
+            model("resolve/references")
+        }
+
+        testClass(javaClass<AbstractResolveWithLibTest>(), "ReferenceResolveWithLibTestGenerated") {
+            model("resolve/referenceWithLib", recursive = false)
+        }
+
+        testClass(javaClass<AbstractJetFindUsagesTest>()) {
+            model("findUsages/kotlin", pattern = "^(.+)\\.0\\.kt\$")
+            model("findUsages/java", pattern = "^(.+)\\.0\\.java\$")
+        }
+
+        testClass(javaClass<AbstractCompletionWeigherTest>()) {
+            model("completion/weighers", pattern = "^([^\\.]+)\\.kt\$")
+        }
+
+        testClass(javaClass<AbstractConfigureProjectByChangingFileTest>()) {
+            model("configuration/android-gradle", pattern = "(\\w+)_before\\.gradle\$", testMethod = "doTestAndroidGradle")
+            model("configuration/gradle", pattern = "(\\w+)_before\\.gradle\$", testMethod = "doTestGradle")
+            model("configuration/maven", extension = "", recursive = false, testMethod = "doTestWithMaven")
+        }
+
+        testClass(javaClass<AbstractJetFormatterTest>()) {
+            model("formatter", pattern = "^([^\\.]+)\\.kt$")
+        }
+
+        testClass(javaClass<AbstractDiagnosticMessageTest>()) {
+            model("diagnosticMessage")
+        }
+
+        testClass(javaClass<AbstractOutOfBlockModificationTest>()) {
+            model("codeInsight/outOfBlock")
+        }
+
+        testClass(javaClass<AbstractDataFlowValueRenderingTest>()) {
+            model("dataFlowValueRendering")
+        }
+    }
+
+    // TODO this is the only custom test left
+    TestGenerator("idea/tests/",
+                  javaClass<AbstractRenameTest>().getPackage()!!.getName()!!,
+                  "RenameTestGenerated",
+                  javaClass<AbstractRenameTest>(),
+                  listOf(SingleClassTestModel(
+                          File("idea/testData/refactoring/rename"),
+                          Pattern.compile("^(.+)\\.test$"),
+                          "doTest"
+                  )),
+                  "org.jetbrains.jet.generators.tests.GenerateTests" // TODO wrong class name
+    ).generateAndSave()
+
+}
+
+private class TestGroup(val testsRoot: String, val testDataRoot: String) {
+    fun testClass(
+            baseTestClass: Class<out TestCase>,
+            suiteTestClass: String = getDefaultSuiteTestClass(baseTestClass),
+            init: TestClass.() -> Unit) {
+
+        val testClass = TestClass()
+        testClass.init()
+
+        TestGenerator(
+                testsRoot,
+                baseTestClass.getPackage()!!.getName()!!,
+                suiteTestClass,
                 baseTestClass,
-                Arrays.asList(testClassModels),
-                GenerateTests.class
-        ).generateAndSave();
+                testClass.testModels,
+                "org.jetbrains.jet.generators.tests.GenerateTests" // TODO wrong class name
+        ).generateAndSave()
     }
 
-    public static void main(String[] args) throws IOException {
-        System.setProperty("java.awt.headless", "true");
-        generateTest(
-                "compiler/tests/",
-                "JetDiagnosticsTestGenerated",
-                AbstractDiagnosticsTestWithEagerResolve.class,
-                testModel("compiler/testData/diagnostics/tests"),
-                testModel("compiler/testData/diagnostics/tests/script", true, "ktscript", "doTest"),
-                testModel("compiler/testData/codegen/box/functions/tailRecursion")
-        );
+    inner class TestClass() {
 
-        generateTest(
-                "compiler/tests/",
-                "JetResolveTestGenerated",
-                AbstractResolveTest.class,
-                testModel("compiler/testData/resolve", true, "resolve", "doTest")
-        );
-
-        generateTest(
-                "compiler/tests",
-                "JetResolvedCallsTestGenerated",
-                AbstractResolvedCallsTest.class,
-                testModel("compiler/testData/resolvedCalls")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "JetParsingTestGenerated",
-                AbstractJetParsingTest.class,
-                testModel("compiler/testData/psi", true, "kt", "doParsingTest")
-        );
-
-        GenerateRangesCodegenTestData.main(args);
-
-        generateTest(
-                "compiler/tests/",
-                "BlackBoxCodegenTestGenerated",
-                AbstractBlackBoxCodegenTest.class,
-                testModel("compiler/testData/codegen/box", "doTest")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "BlackBoxMultiFileCodegenTestGenerated",
-                AbstractBlackBoxCodegenTest.class,
-                testModelWithDirectories(("compiler/testData/codegen/boxMultiFile"), "doTestMultiFile")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "BlackBoxWithJavaCodegenTestGenerated",
-                AbstractBlackBoxCodegenTest.class,
-                testModel("compiler/testData/codegen/boxWithJava", "doTestWithJava")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "BlackBoxWithStdlibCodegenTestGenerated",
-                AbstractBlackBoxCodegenTest.class,
-                testModel("compiler/testData/codegen/boxWithStdlib", "doTestWithStdlib")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "BytecodeTextTestGenerated",
-                AbstractBytecodeTextTest.class,
-                testModel("compiler/testData/codegen/bytecodeText")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "TopLevelMembersInvocationTestGenerated",
-                AbstractTopLevelMembersInvocationTest.class,
-                testModelWithDirectories("compiler/testData/codegen/topLevelMemberInvocation", "doTest")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "CheckLocalVariablesTableTestGenerated",
-                AbstractCheckLocalVariablesTableTest.class,
-                testModel("compiler/testData/checkLocalVariablesTable", "doTest")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "WriteFlagsTestGenerated",
-                AbstractWriteFlagsTest.class,
-                testModel("compiler/testData/writeFlags")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "DefaultArgumentsReflectionTestGenerated",
-                AbstractDefaultConstructorCodegenTest.class,
-                testModel("compiler/testData/codegen/defaultArguments/reflection")
-        );
-
-
-        generateTest(
-                "compiler/tests/",
-                "LoadJavaTestGenerated",
-                AbstractLoadJavaTest.class,
-                testModel("compiler/testData/loadJava/compiledJava", true, "java", "doTestCompiledJava"),
-                testModel("compiler/testData/loadJava/compiledJavaAndKotlin", true, "txt", "doTestCompiledJavaAndKotlin"),
-                testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", true, "java", "doTestCompiledJavaCompareWithKotlin"),
-                testModel("compiler/testData/loadJava/compiledJavaIncludeObjectMethods", true, "java",
-                          "doTestCompiledJavaIncludeObjectMethods"),
-                testModel("compiler/testData/loadJava/compiledKotlin", true, "kt", "doTestCompiledKotlin"),
-                testModel("compiler/testData/loadJava/javaAgainstKotlin", true, "txt", "doTestJavaAgainstKotlin"),
-                testModel("compiler/testData/loadJava/sourceJava", true, "java", "doTestSourceJava")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "CompileJavaAgainstKotlinTestGenerated",
-                AbstractCompileJavaAgainstKotlinTest.class,
-                testModel("compiler/testData/compileJavaAgainstKotlin", "doTest")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "CompileKotlinAgainstKotlinTestGenerated",
-                AbstractCompileKotlinAgainstKotlinTest.class,
-                testModel("compiler/testData/compileKotlinAgainstKotlin", true, "A.kt", "doTest")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "LazyResolveDescriptorRendererTestGenerated",
-                AbstractLazyResolveDescriptorRendererTest.class,
-                testModel("compiler/testData/renderer")
-        );
-
-        generateTest("compiler/tests",
-                     "LazyResolveTestGenerated",
-                     AbstractLazyResolveTest.class,
-                     testModel("compiler/testData/resolve/imports", false, "resolve", "doTest"));
-
-        generateTest(
-                "compiler/tests/",
-                "LazyResolveNamespaceComparingTestGenerated",
-                AbstractLazyResolveNamespaceComparingTest.class,
-                testModel("compiler/testData/loadJava/compiledKotlin", "doTestCheckingPrimaryConstructorsAndAccessors"),
-                testModel("compiler/testData/loadJava/compiledJavaCompareWithKotlin", "doTestNotCheckingPrimaryConstructors"),
-                testModel("compiler/testData/lazyResolve/namespaceComparator", "doTestCheckingPrimaryConstructors")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "ModuleXmlParserTestGenerated",
-                AbstractModuleXmlParserTest.class,
-                testModel("compiler/testData/modules.xml", true, "xml", "doTest")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "DescriptorSerializationTestGenerated",
-                AbstractDescriptorSerializationTest.class,
-                testModel("compiler/testData/loadJava/compiledKotlin/class"),
-                testModel("compiler/testData/loadJava/compiledKotlin/classFun"),
-                testModel("compiler/testData/loadJava/compiledKotlin/classObject"),
-                testModel("compiler/testData/loadJava/compiledKotlin/constructor"),
-                testModel("compiler/testData/loadJava/compiledKotlin/fun"),
-                testModel("compiler/testData/loadJava/compiledKotlin/prop"),
-                testModel("compiler/testData/loadJava/compiledKotlin/type"),
-                testModel("compiler/testData/loadJava/compiledKotlin/visibility")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "WriteSignatureTestGenerated",
-                AbstractWriteSignatureTest.class,
-                testModel("compiler/testData/writeSignature", true, "kt", "doTest")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "KotlincExecutableTestGenerated",
-                AbstractKotlincExecutableTest.class,
-                testModel("compiler/testData/cli/jvm", true, "args", "doJvmTest"),
-                testModel("compiler/testData/cli/js", true, "args", "doJsTest")
-        );
-
-        generateTest(
-                "compiler/tests/",
-                "ControlFlowTestGenerated",
-                AbstractControlFlowTest.class,
-                testModel("compiler/testData/cfg")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetPsiMatcherTest",
-                AbstractJetPsiMatcherTest.class,
-                testModel("idea/testData/jetPsiMatcher/expressions", "doTestExpressions"),
-                testModel("idea/testData/jetPsiMatcher/types", "doTestTypes")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetPsiCheckerTestGenerated",
-                AbstractJetPsiCheckerTest.class,
-                testModel("idea/testData/checker", false, "kt", "doTest"),
-                testModel("idea/testData/checker/regression"),
-                testModel("idea/testData/checker/rendering"),
-                testModel("idea/testData/checker/infos", false, "kt", "doTestWithInfos")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetJsCheckerTestGenerated",
-                AbstractJetJsCheckerTest.class,
-                testModel("idea/testData/checker/js", false, "kt", "doTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "QuickFixTestGenerated",
-                AbstractQuickFixTest.class,
-                new SimpleTestClassModel(new File("idea/testData/quickfix"), true, Pattern.compile("^before(\\w+)\\.kt$"), "doTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetBasicJSCompletionTestGenerated",
-                AbstractJSBasicCompletionTest.class,
-                testModel("idea/testData/completion/basic/common"),
-                testModel("idea/testData/completion/basic/js")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetBasicJavaCompletionTestGenerated",
-                AbstractJvmBasicCompletionTest.class,
-                testModel("idea/testData/completion/basic/common"),
-                testModel("idea/testData/completion/basic/java")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetSmartCompletionTestGenerated",
-                AbstractJvmSmartCompletionTest.class,
-                testModel("idea/testData/completion/smart")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetKeywordCompletionTestGenerated",
-                AbstractKeywordCompletionTest.class,
-                testModel("idea/testData/completion/keywords", false, "doTest")
-        );
-
-        generateTest(
-                "idea/tests",
-                "JetJavaLibCompletionTestGenerated",
-                AbstractJvmWithLibBasicCompletionTest.class,
-                testModel("idea/testData/completion/basic/custom", false, "doTest"));
-
-        generateTest(
-                "idea/tests",
-                "JetGotoSuperTestGenerated",
-                JetAbstractGotoSuperTest.class,
-                testModel("idea/testData/navigation/gotoSuper", false, "test", "doTest"));
-
-        generateTest(
-                "idea/tests/",
-                "QuickFixMultiFileTestGenerated",
-                AbstractQuickFixMultiFileTest.class,
-                new SimpleTestClassModel(new File("idea/testData/quickfix"), true, Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"),
-                                         "doTestWithExtraFile")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "HighlightingTestGenerated",
-                AbstractHighlightingTest.class,
-                testModel("idea/testData/highlighter")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "KotlinFoldingTestGenerated",
-                AbstractKotlinFoldingTest.class,
-                testModel("idea/testData/folding/noCollapse", "doTest"),
-                testModel("idea/testData/folding/checkCollapse", "doSettingsFoldingTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "SurroundWithTestGenerated",
-                AbstractSurroundWithTest.class,
-                testModel("idea/testData/codeInsight/surroundWith/if", "doTestWithIfSurrounder"),
-                testModel("idea/testData/codeInsight/surroundWith/ifElse", "doTestWithIfElseSurrounder"),
-                testModel("idea/testData/codeInsight/surroundWith/not", "doTestWithNotSurrounder"),
-                testModel("idea/testData/codeInsight/surroundWith/parentheses", "doTestWithParenthesesSurrounder"),
-                testModel("idea/testData/codeInsight/surroundWith/stringTemplate", "doTestWithStringTemplateSurrounder"),
-                testModel("idea/testData/codeInsight/surroundWith/when", "doTestWithWhenSurrounder"),
-                testModel("idea/testData/codeInsight/surroundWith/tryCatch", "doTestWithTryCatchSurrounder"),
-                testModel("idea/testData/codeInsight/surroundWith/tryCatchFinally", "doTestWithTryCatchFinallySurrounder"),
-                testModel("idea/testData/codeInsight/surroundWith/tryFinally", "doTestWithTryFinallySurrounder"),
-                testModel("idea/testData/codeInsight/surroundWith/functionLiteral", "doTestWithFunctionLiteralSurrounder")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "CodeTransformationsTestGenerated",
-                AbstractCodeTransformationTest.class,
-                testModel("idea/testData/intentions/branched/folding/ifToAssignment", "doTestFoldIfToAssignment"),
-                testModel("idea/testData/intentions/branched/folding/ifToReturn", "doTestFoldIfToReturn"),
-                testModel("idea/testData/intentions/branched/folding/ifToReturnAsymmetrically", "doTestFoldIfToReturnAsymmetrically"),
-                testModel("idea/testData/intentions/branched/folding/whenToAssignment", "doTestFoldWhenToAssignment"),
-                testModel("idea/testData/intentions/branched/folding/whenToReturn", "doTestFoldWhenToReturn"),
-                testModel("idea/testData/intentions/branched/unfolding/assignmentToIf", "doTestUnfoldAssignmentToIf"),
-                testModel("idea/testData/intentions/branched/unfolding/assignmentToWhen", "doTestUnfoldAssignmentToWhen"),
-                testModel("idea/testData/intentions/branched/unfolding/propertyToIf", "doTestUnfoldPropertyToIf"),
-                testModel("idea/testData/intentions/branched/unfolding/propertyToWhen", "doTestUnfoldPropertyToWhen"),
-                testModel("idea/testData/intentions/branched/unfolding/returnToIf", "doTestUnfoldReturnToIf"),
-                testModel("idea/testData/intentions/branched/unfolding/returnToWhen", "doTestUnfoldReturnToWhen"),
-                testModel("idea/testData/intentions/branched/ifWhen/ifToWhen", "doTestIfToWhen"),
-                testModel("idea/testData/intentions/branched/ifWhen/whenToIf", "doTestWhenToIf"),
-                testModel("idea/testData/intentions/branched/when/flatten", "doTestFlattenWhen"),
-                testModel("idea/testData/intentions/branched/when/merge", "doTestMergeWhen"),
-                testModel("idea/testData/intentions/branched/when/introduceSubject", "doTestIntroduceWhenSubject"),
-                testModel("idea/testData/intentions/branched/when/eliminateSubject", "doTestEliminateWhenSubject"),
-                testModel("idea/testData/intentions/declarations/split", "doTestSplitProperty"),
-                testModel("idea/testData/intentions/declarations/join", "doTestJoinProperty"),
-                testModel("idea/testData/intentions/declarations/convertMemberToExtension", "doTestConvertMemberToExtension"),
-                testModel("idea/testData/intentions/reconstructedType", "doTestReconstructType"),
-                testModel("idea/testData/intentions/removeUnnecessaryParentheses", "doTestRemoveUnnecessaryParentheses")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "HierarchyTestGenerated",
-                AbstractHierarchyTest.class,
-                testModelWithDirectories("idea/testData/hierarchy/class/type", "doTypeClassHierarchyTest"),
-                testModelWithDirectories("idea/testData/hierarchy/class/super", "doSuperClassHierarchyTest"),
-                testModelWithDirectories("idea/testData/hierarchy/class/sub", "doSubClassHierarchyTest"),
-                testModelWithDirectories("idea/testData/hierarchy/calls/callers", "doCallerHierarchyTest"),
-                testModelWithDirectories("idea/testData/hierarchy/calls/callees", "doCalleeHierarchyTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "CodeMoverTestGenerated",
-                AbstractCodeMoverTest.class,
-                testModel("idea/testData/codeInsight/moveUpDown/classBodyDeclarations", "doTestClassBodyDeclaration"),
-                testModel("idea/testData/codeInsight/moveUpDown/closingBraces", "doTestExpression"),
-                testModel("idea/testData/codeInsight/moveUpDown/expressions", "doTestExpression")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "InlineTestGenerated",
-                AbstractInlineTest.class,
-                testModel("idea/testData/refactoring/inline", "doTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "UnwrapRemoveTestGenerated",
-                AbstractUnwrapRemoveTest.class,
-                testModel("idea/testData/codeInsight/unwrapAndRemove/removeExpression", "doTestExpressionRemover"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapThen", "doTestThenUnwrapper"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapElse", "doTestElseUnwrapper"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/removeElse", "doTestElseRemover"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapLoop", "doTestLoopUnwrapper"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapTry", "doTestTryUnwrapper"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapCatch", "doTestCatchUnwrapper"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/removeCatch", "doTestCatchRemover"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapFinally", "doTestFinallyUnwrapper"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/removeFinally", "doTestFinallyRemover"),
-                testModel("idea/testData/codeInsight/unwrapAndRemove/unwrapLambda", "doTestLambdaUnwrapper")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetQuickDocProviderTestGenerated",
-                AbstractJetQuickDocProviderTest.class,
-                testModelWithPattern("idea/testData/editor/quickDoc", "^([^_]+)\\.[^\\.]*$", "doTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetSafeDeleteTestGenerated",
-                AbstractJetSafeDeleteTest.class,
-                testModel("idea/testData/safeDelete/deleteClass/kotlinClass", "doClassTest"),
-                testModel("idea/testData/safeDelete/deleteObject/kotlinObject", "doObjectTest"),
-                testModel("idea/testData/safeDelete/deleteFunction/kotlinFunction", "doFunctionTest"),
-                testModel("idea/testData/safeDelete/deleteFunction/kotlinFunctionWithJava", "doFunctionTestWithJava"),
-                testModel("idea/testData/safeDelete/deleteFunction/javaFunctionWithKotlin", "doJavaMethodTest"),
-                testModel("idea/testData/safeDelete/deleteProperty/kotlinProperty", "doPropertyTest"),
-                testModel("idea/testData/safeDelete/deleteProperty/kotlinPropertyWithJava", "doPropertyTestWithJava"),
-                testModel("idea/testData/safeDelete/deleteProperty/javaPropertyWithKotlin", "doJavaPropertyTest"),
-                testModel("idea/testData/safeDelete/deleteTypeParameter/kotlinTypeParameter", "doTypeParameterTest"),
-                testModel("idea/testData/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava", "doTypeParameterTestWithJava"),
-                testModel("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter", "doValueParameterTest"),
-                testModel("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava", "doValueParameterTestWithJava")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "ReferenceResolveTestGenerated",
-                AbstractResolveBaseTest.class,
-                testModel("idea/testData/resolve/references", true, "doTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "ReferenceResolveWithLibTestGenerated",
-                AbstractResolveWithLibTest.class,
-                testModel("idea/testData/resolve/referenceWithLib", false, "doTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetFindUsagesTestGenerated",
-                AbstractJetFindUsagesTest.class,
-                testModelWithPattern("idea/testData/findUsages/kotlin", "^(.+)\\.0\\.kt$", "doTest"),
-                testModelWithPattern("idea/testData/findUsages/java", "^(.+)\\.0\\.java$", "doTest")
-        );
-
-        generateTest(
-                "idea/tests",
-                "CompletionWeigherTestGenerated",
-                AbstractCompletionWeigherTest.class,
-                testModelWithPattern("idea/testData/completion/weighers", "^([^\\.]+)\\.kt$", "doTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "ConfigureProjectByChangingFileTestGenerated",
-                AbstractConfigureProjectByChangingFileTest.class,
-                new SimpleTestClassModel(new File("idea/testData/configuration/android-gradle"), true, Pattern.compile("(\\w+)_before\\.gradle$"), "doTestAndroidGradle"),
-                new SimpleTestClassModel(new File("idea/testData/configuration/gradle"), true, Pattern.compile("(\\w+)_before\\.gradle$"), "doTestGradle"),
-                testModelWithDirectories("idea/testData/configuration/maven", "doTestWithMaven")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "JetFormatterTestGenerated",
-                AbstractJetFormatterTest.class,
-                testModelWithPattern("idea/testData/formatter", "^([^\\.]+)\\.kt$", "doTest")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "DiagnosticMessageTestGenerated",
-                AbstractDiagnosticMessageTest.class,
-                testModel("idea/testData/diagnosticMessage")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "OutOfBlockModificationTestGenerated",
-                AbstractOutOfBlockModificationTest.class,
-                testModel("idea/testData/codeInsight/outOfBlock")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "DataFlowValueRenderingTestGenerated",
-                AbstractDataFlowValueRenderingTest.class,
-                testModel("idea/testData/dataFlowValueRendering")
-        );
-
-        generateTest(
-                "idea/tests/",
-                "RenameTestGenerated",
-                AbstractRenameTest.class,
-                new SingleClassTestModel(new File("idea/testData/refactoring/rename"), Pattern.compile("^(.+)\\.test$"), "doTest")
-        );
-
-        generateTest(
-                "compiler/tests",
-                "AnnotationParameterTestGenerated",
-                AbstractAnnotationParameterTest.class,
-                testModel("compiler/testData/resolveAnnotations/parameters")
-        );
-
-        generateTest(
-                "compiler/tests",
-                "EvaluateExpressionTestGenerated",
-                AbstractEvaluateExpressionTest.class,
-                testModel("compiler/testData/evaluate/constant", "doConstantTest"),
-                testModel("compiler/testData/evaluate/isPure", "doIsPureTest")
-        );
+        val testModels = ArrayList<SimpleTestClassModel>()
+        fun model(
+                relativeRootPath: String,
+                recursive: Boolean = true,
+                extension: String = "kt", // empty string means dir
+                pattern: String = "^(.+)" + (if (extension == "") "" else "\\.$extension") + "\$",
+                testMethod: String = "doTest"
+        ) {
+            testModels.add(SimpleTestClassModel(
+                    File(testDataRoot + "/" + relativeRootPath),
+                    recursive,
+                    Pattern.compile(pattern),
+                    testMethod
+            ))
+        }
     }
 
-    private static SimpleTestClassModel testModel(@NotNull String rootPath) {
-        return testModel(rootPath, true, "kt", "doTest");
-    }
+}
 
-    private static SimpleTestClassModel testModel(@NotNull String rootPath, @NotNull String methodName) {
-        return testModel(rootPath, true, "kt", methodName);
-    }
+private fun testGroup(testsRoot: String, testDataRoot: String, init: TestGroup.() -> Unit) {
+    TestGroup(testsRoot, testDataRoot).init()
+}
 
-    private static SimpleTestClassModel testModel(@NotNull String rootPath, boolean recursive, @NotNull String methodName) {
-        return testModel(rootPath, recursive, "kt", methodName);
+private fun getDefaultSuiteTestClass(baseTestClass:Class<*>): String {
+    val baseName = baseTestClass.getSimpleName()
+    if (!baseName.startsWith("Abstract")) {
+        throw IllegalArgumentException("Doesn't start with \"Abstract\": $baseName")
     }
-
-    private static SimpleTestClassModel testModelWithDirectories(@NotNull String rootPath, @NotNull String methodName) {
-        return new SimpleTestClassModel(new File(rootPath), false, Pattern.compile("^(.+)$"), methodName);
-    }
-
-    private static SimpleTestClassModel testModelWithPattern(
-            @NotNull String rootPath,
-            @NotNull String pattern,
-            @NotNull String methodName
-    ) {
-        return new SimpleTestClassModel(new File(rootPath), true, Pattern.compile(pattern), methodName);
-    }
-
-    private static SimpleTestClassModel testModel(
-            @NotNull String rootPath,
-            boolean recursive,
-            @NotNull String extension,
-            @NotNull String doTestMethodName
-    ) {
-        return new SimpleTestClassModel(new File(rootPath), recursive, Pattern.compile("^(.+)\\." + extension + "$"), doTestMethodName);
-    }
-
-    private GenerateTests() {
-    }
+    return baseName.substring("Abstract".length) + "Generated"
 }

@@ -52,7 +52,7 @@ public class TestGenerator {
             @NotNull String suiteClassName,
             @NotNull Class<? extends TestCase> baseTestClass,
             @NotNull Collection<? extends TestClassModel> testClassModels,
-            @NotNull Class<?> generatorClass
+            @NotNull String generatorClass
     ) {
         this.baseDir = baseDir;
         this.suiteClassPackage = suiteClassPackage;
@@ -60,7 +60,7 @@ public class TestGenerator {
         this.baseTestClassPackage = baseTestClass.getPackage().getName();
         this.baseTestClassName = baseTestClass.getSimpleName();
         this.testClassModels = Lists.newArrayList(testClassModels);
-        this.generatorName = generatorClass.getCanonicalName();
+        this.generatorName = generatorClass;
     }
 
     public void generateAndSave() throws IOException {
