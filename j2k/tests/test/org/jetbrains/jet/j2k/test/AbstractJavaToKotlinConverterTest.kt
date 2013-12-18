@@ -35,6 +35,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import kotlin.test.fail
 
 public abstract class AbstractJavaToKotlinConverterPluginTest() : AbstractJavaToKotlinConverterTest("ide.kt", PluginSettings)
 public abstract class AbstractJavaToKotlinConverterBasicTest() : AbstractJavaToKotlinConverterTest("kt", TestSettings)
@@ -47,13 +48,6 @@ public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension:
     protected fun doTest(javaPath: String) {
         val project = LightPlatformTestCase.getProject()!!
         val converter = Converter(project, settings)
-        val kotlinPath = javaPath.replace(".java", ".$kotlinFileExtension")
-        val kotlinFile = File(kotlinPath)
-        if (!kotlinFile.exists()) {
-            FileUtil.writeToFile(kotlinFile, "")
-        }
-
-        val expected = FileUtil.loadFile(kotlinFile, true)
         val javaFile = File(javaPath)
         val fileContents = FileUtil.loadFile(javaFile, true)
         val matcher = testHeaderPattern.matcher(fileContents)
@@ -70,20 +64,10 @@ public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension:
             else -> throw IllegalStateException("Specify what is it: file, class, method, statement or expression " +
                                                 "using the first line of test data file")
         }
-
-        compare(expected, reformat(rawConverted, project), File(kotlinPath + ".tmp"))
-    }
-
-    private fun compare(expected: String, actual: String, tmp: File) {
-        if (expected != actual) {
-            FileUtil.writeToFile(tmp, actual)
-        }
-
-        if (expected == actual && tmp.exists()) {
-            tmp.delete()
-        }
-
-        Assert.assertEquals(expected, actual)
+        val actual = reformat(rawConverted, project)
+        val kotlinPath = javaPath.replace(".java", ".$kotlinFileExtension")
+        val expectedFile = File(kotlinPath)
+        JetTestUtils.assertEqualsToFile(expectedFile, actual)
     }
 
     private fun reformat(text: String, project: Project): String {
