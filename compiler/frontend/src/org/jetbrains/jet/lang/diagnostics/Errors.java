@@ -111,6 +111,7 @@ public interface Errors {
 
     // Annotations
 
+    DiagnosticFactory0<JetDelegationSpecifierList> SUPERTYPES_FOR_ANNOTATION_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetParameter> MISSING_VAL_ON_ANNOTATION_PARAMETER = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetCallExpression> ANNOTATION_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetAnnotationEntry, String> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);

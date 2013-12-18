@@ -283,6 +283,10 @@ public class BodyResolver {
             delegationSpecifier.accept(visitor);
         }
 
+        if (DescriptorUtils.isAnnotationClass(descriptor) && jetClass.getDelegationSpecifierList() != null) {
+            trace.report(SUPERTYPES_FOR_ANNOTATION_CLASS.on(jetClass.getDelegationSpecifierList()));
+        }
+
         Set<TypeConstructor> parentEnum =
                 jetClass instanceof JetEnumEntry
                 ? Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor())

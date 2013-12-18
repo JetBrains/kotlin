@@ -540,6 +540,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/annotations/AnnotationForObject.kt");
             }
             
+            @TestMetadata("annotationInheritance.kt")
+            public void testAnnotationInheritance() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/annotationInheritance.kt");
+            }
+            
             @TestMetadata("annotationModifier.kt")
             public void testAnnotationModifier() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/annotationModifier.kt");
