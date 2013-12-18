@@ -16,6 +16,6 @@
 
 package org.jetbrains.jet.j2k.ast.types
 
-public open class StarProjectionType() : NotNullType {
-    public override fun toKotlin(): String = "*"
+open class StarProjectionType() : NotNullType {
+    override fun toKotlin(): String = "*"
 }

@@ -22,9 +22,9 @@ import org.jetbrains.jet.j2k.Converter
 import com.intellij.psi.PsiTypeParameterList
 import java.util.ArrayList
 
-public class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element {
-    public fun hasWhere(): Boolean = extendsTypes.size() > 1
-    public fun getWhereToKotlin(): String {
+class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element {
+    fun hasWhere(): Boolean = extendsTypes.size() > 1
+    fun getWhereToKotlin(): String {
         if (hasWhere()) {
             return name.toKotlin() + " : " + extendsTypes.get(1).toKotlin()
         }
@@ -32,7 +32,7 @@ public class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) :
         return ""
     }
 
-    public override fun toKotlin(): String {
+    override fun toKotlin(): String {
         if (extendsTypes.size() > 0) {
             return name.toKotlin() + " : " + extendsTypes [0].toKotlin()
         }
@@ -41,14 +41,14 @@ public class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) :
     }
 }
 
-public class TypeParameterList(val parameters: List<TypeParameter>) : Element {
+class TypeParameterList(val parameters: List<TypeParameter>) : Element {
     override fun toKotlin(): String = if (!parameters.isEmpty())
         parameters.map {
             it.toKotlin()
         }.makeString(", ", "<", ">")
     else ""
 
-    public fun whereToKotlin(): String {
+    fun whereToKotlin(): String {
         if (hasWhere()) {
             val wheres = parameters.map { it.getWhereToKotlin() }
             return "where " + wheres.makeString(", ")
@@ -61,15 +61,15 @@ public class TypeParameterList(val parameters: List<TypeParameter>) : Element {
     private fun hasWhere(): Boolean = parameters.any { it.hasWhere() }
 
     class object {
-        public val Empty: TypeParameterList = TypeParameterList(ArrayList())
+        val Empty = TypeParameterList(ArrayList())
     }
 }
 
-public fun Converter.convertTypeParameter(psiTypeParameter: PsiTypeParameter): TypeParameter {
+fun Converter.convertTypeParameter(psiTypeParameter: PsiTypeParameter): TypeParameter {
     return convertElement(psiTypeParameter) as TypeParameter
 }
 
-public fun Converter.convertTypeParameterList(psiTypeParameterlist: PsiTypeParameterList?): TypeParameterList {
+fun Converter.convertTypeParameterList(psiTypeParameterlist: PsiTypeParameterList?): TypeParameterList {
     return if (psiTypeParameterlist == null) TypeParameterList.Empty
     else TypeParameterList(psiTypeParameterlist.getTypeParameters()!!.toList().map { convertTypeParameter(it) })
 }

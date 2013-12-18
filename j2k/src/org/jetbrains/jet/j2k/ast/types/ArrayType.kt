@@ -18,9 +18,12 @@ package org.jetbrains.jet.j2k.ast.types
 
 import org.jetbrains.jet.j2k.Converter
 
-public class ArrayType(val elementType: Type, nullable: Boolean,
-                       converter: Converter) : MayBeNullableType(nullable, converter) {
-    public override fun toKotlin(): String {
+class ArrayType(
+        val elementType: Type,
+        nullable: Boolean,
+        converter: Converter
+) : MayBeNullableType(nullable, converter) {
+    override fun toKotlin(): String {
         if (elementType is PrimitiveType) {
             return elementType.toKotlin() + "Array" + isNullableStr()
         }
@@ -28,5 +31,5 @@ public class ArrayType(val elementType: Type, nullable: Boolean,
         return "Array<" + elementType.toKotlin() + ">" + isNullableStr()
     }
 
-    public override fun convertedToNotNull(): Type = ArrayType(elementType, false, converter)
+    override fun convertedToNotNull(): Type = ArrayType(elementType, false, converter)
 }

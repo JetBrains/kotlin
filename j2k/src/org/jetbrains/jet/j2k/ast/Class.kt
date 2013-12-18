@@ -22,15 +22,17 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.HashSet
 import java.util.ArrayList
 
-public open class Class(val converter: Converter,
-                        val name: Identifier,
-                        comments: MemberComments,
-                        modifiers: Set<Modifier>,
-                        val typeParameterList: TypeParameterList,
-                        val extendsTypes: List<Type>,
-                        val baseClassParams: List<Expression>,
-                        val implementsTypes: List<Type>,
-                        val members: List<Element>) : Member(comments, modifiers) {
+open class Class(
+        val converter: Converter,
+        val name: Identifier,
+        comments: MemberComments,
+        modifiers: Set<Modifier>,
+        val typeParameterList: TypeParameterList,
+        val extendsTypes: List<Type>,
+        val baseClassParams: List<Expression>,
+        val implementsTypes: List<Type>,
+        val members: List<Element>
+) : Member(comments, modifiers) {
     open val TYPE: String
         get() = "class"
 

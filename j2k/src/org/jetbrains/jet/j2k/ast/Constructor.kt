@@ -19,22 +19,24 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.j2k.Converter
 
-public class Constructor(converter: Converter,
-                         identifier: Identifier,
-                         comments: MemberComments,
-                         modifiers: Set<Modifier>,
-                         `type`: Type,
-                         typeParameters: TypeParameterList,
-                         params: Element,
-                         block: Block,
-                         val isPrimary: Boolean) : Function(converter, identifier, comments, modifiers,
-                                                            `type`, typeParameters, params, block) {
+class Constructor(
+        converter: Converter,
+        identifier: Identifier,
+        comments: MemberComments,
+        modifiers: Set<Modifier>,
+        `type`: Type,
+        typeParameters: TypeParameterList,
+        params: Element,
+        block: Block,
+        val isPrimary: Boolean
+) : Function(converter, identifier, comments, modifiers,
+             `type`, typeParameters, params, block) {
 
-    public fun primarySignatureToKotlin(): String {
+    fun primarySignatureToKotlin(): String {
         return "(" + params.toKotlin() + ")"
     }
 
-    public fun primaryBodyToKotlin(): String {
+    fun primaryBodyToKotlin(): String {
         return block!!.toKotlin()
     }
 }

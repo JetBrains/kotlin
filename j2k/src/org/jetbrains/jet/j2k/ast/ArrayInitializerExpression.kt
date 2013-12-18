@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.jet.j2k.ast.types.ArrayType
 import org.jetbrains.jet.j2k.ast.types.isPrimitive
 
-public open class ArrayInitializerExpression(val arrayType: ArrayType, val initializers: List<Expression>) : Expression() {
-    public override fun toKotlin(): String {
+open class ArrayInitializerExpression(val arrayType: ArrayType, val initializers: List<Expression>) : Expression() {
+    override fun toKotlin(): String {
         return createArrayFunction() + "(" + createInitializers() + ")"
     }
 

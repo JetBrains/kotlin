@@ -19,12 +19,11 @@ package org.jetbrains.jet.j2k
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiReferenceExpression
-import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.JavaRecursiveElementVisitor
 import java.util.LinkedHashSet
 
-public fun isConstructorPrimary(constructor: PsiMethod): Boolean {
+fun isConstructorPrimary(constructor: PsiMethod): Boolean {
     val parent = constructor.getParent()
     if (parent is PsiClass) {
         if (parent.getConstructors().size == 1) {
@@ -49,7 +48,7 @@ private fun getPrimaryConstructorForThisCase(psiClass: PsiClass): PsiMethod? {
 private class FindPrimaryConstructorVisitor() : JavaRecursiveElementVisitor() {
     private val myResolvedConstructors = LinkedHashSet<PsiMethod>()
 
-    public override fun visitReferenceExpression(expression: PsiReferenceExpression?) {
+    override fun visitReferenceExpression(expression: PsiReferenceExpression?) {
         for (r in expression?.getReferences()!!) {
             if (r.getCanonicalText() == "this") {
                 val res: PsiElement? = r.resolve()
@@ -60,7 +59,7 @@ private class FindPrimaryConstructorVisitor() : JavaRecursiveElementVisitor() {
         }
     }
 
-    public fun getPrimaryConstructor(): PsiMethod? {
+    fun getPrimaryConstructor(): PsiMethod? {
         if (myResolvedConstructors.size() > 0) {
             val first: PsiMethod = myResolvedConstructors.iterator().next()
             for (m in myResolvedConstructors)

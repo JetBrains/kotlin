@@ -19,10 +19,10 @@ package org.jetbrains.jet.j2k.visitors
 import com.intellij.psi.*
 import java.util.HashSet
 
-public open class SuperVisitor() : JavaRecursiveElementVisitor() {
-    public val resolvedSuperCallParameters: HashSet<PsiExpressionList> = HashSet()
+open class SuperVisitor() : JavaRecursiveElementVisitor() {
+    val resolvedSuperCallParameters: HashSet<PsiExpressionList> = HashSet()
 
-    public override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
+    override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
         if (expression != null && isSuper(expression.getMethodExpression())) {
             resolvedSuperCallParameters.add(expression.getArgumentList())
         }

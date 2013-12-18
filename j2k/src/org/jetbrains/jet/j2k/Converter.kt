@@ -38,14 +38,14 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     private val dispatcher: Dispatcher = Dispatcher(this)
 
-    public var methodReturnType: PsiType? = null
+    var methodReturnType: PsiType? = null
         private set
 
     public fun setClassIdentifiers(identifiers: MutableSet<String>) {
         classIdentifiersSet = identifiers
     }
 
-    public fun getClassIdentifiers(): Set<String> {
+    fun getClassIdentifiers(): Set<String> {
         return Collections.unmodifiableSet(classIdentifiersSet)
     }
 
@@ -58,7 +58,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return kElement?.toKotlin() ?: ""
     }
 
-    public fun convertTopElement(element: PsiElement?): Element? = when(element) {
+    fun convertTopElement(element: PsiElement?): Element? = when(element) {
         is PsiJavaFile -> convertFile(element)
         is PsiClass -> convertClass(element)
         is PsiMethod -> convertMethod(element)
@@ -78,7 +78,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return File(fileMembers, createMainFunction(javaFile))
     }
 
-    public fun convertAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {
+    fun convertAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {
         return AnonymousClass(this, convertMembers(anonymousClass))
     }
 
@@ -270,22 +270,22 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return ParameterList(result)
     }
 
-    public fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean): Block {
+    fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean): Block {
         if (block == null)
             return Block.Empty
 
         return Block(convertStatements(block.getChildren().toList()), notEmpty)
     }
 
-    public fun convertBlock(block: PsiCodeBlock?): Block {
+    fun convertBlock(block: PsiCodeBlock?): Block {
         return convertBlock(block, true)
     }
 
-    public fun convertStatements(statements: List<PsiElement>): StatementList {
+    fun convertStatements(statements: List<PsiElement>): StatementList {
         return StatementList(statements.map { if (it is PsiStatement) convertStatement(it) else convertElement(it) })
     }
 
-    public fun convertStatement(s: PsiStatement?): Statement {
+    fun convertStatement(s: PsiStatement?): Statement {
         if (s == null)
             return Statement.Empty
 
@@ -294,14 +294,14 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return statementVisitor.getResult() as Statement
     }
 
-    public fun convertExpressions(expressions: Array<PsiExpression>): List<Expression> {
+    fun convertExpressions(expressions: Array<PsiExpression>): List<Expression> {
         val result = ArrayList<Expression>()
         for (e : PsiExpression? in expressions)
             result.add(convertExpression(e))
         return result
     }
 
-    public fun convertExpression(e: PsiExpression?): Expression {
+    fun convertExpression(e: PsiExpression?): Expression {
         if (e == null)
             return Expression.Empty
 
@@ -310,7 +310,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return expressionVisitor.getResult()
     }
 
-    public fun convertElement(e: PsiElement?): Element {
+    fun convertElement(e: PsiElement?): Element {
         if (e == null)
             return Element.Empty
 
@@ -319,7 +319,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return elementVisitor.getResult()
     }
 
-    public fun convertElements(elements: Array<out PsiElement?>): List<Element> {
+    fun convertElements(elements: Array<out PsiElement?>): List<Element> {
         val result = ArrayList<Element>()
         for (element in elements) {
             result.add(convertElement(element))
@@ -327,14 +327,14 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return result
     }
 
-    public fun convertTypeElement(element: PsiTypeElement?): TypeElement {
+    fun convertTypeElement(element: PsiTypeElement?): TypeElement {
         return TypeElement(if (element == null)
                                EmptyType()
                            else
                                convertType(element.getType()))
     }
 
-    public fun convertType(`type`: PsiType?): Type {
+    fun convertType(`type`: PsiType?): Type {
         if (`type` == null)
             return EmptyType()
 
@@ -343,11 +343,11 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return typeVisitor.getResult()
     }
 
-    public fun convertTypes(types: Array<PsiType>): List<Type> {
+    fun convertTypes(types: Array<PsiType>): List<Type> {
         return types.map { convertType(it) }
     }
 
-    public fun convertType(`type`: PsiType?, notNull: Boolean): Type {
+    fun convertType(`type`: PsiType?, notNull: Boolean): Type {
         val result: Type = convertType(`type`)
         if (notNull) {
             return result.convertedToNotNull()
@@ -364,17 +364,17 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return result
     }
 
-    public fun convertParameterList(parameters: Array<PsiParameter>): List<Parameter?> {
+    fun convertParameterList(parameters: Array<PsiParameter>): List<Parameter?> {
         return parameters.map { convertParameter(it) }
     }
 
-    public fun convertParameter(parameter: PsiParameter, forceNotNull: Boolean = false): Parameter {
+    fun convertParameter(parameter: PsiParameter, forceNotNull: Boolean = false): Parameter {
         return Parameter(Identifier(parameter.getName()!!),
                          convertType(parameter.getType(),
                                      forceNotNull || isAnnotatedAsNotNull(parameter.getModifierList())), true)
     }
 
-    public fun convertArguments(expression: PsiCallExpression): List<Expression> {
+    fun convertArguments(expression: PsiCallExpression): List<Expression> {
         val argumentList: PsiExpressionList? = expression.getArgumentList()
         val arguments: Array<PsiExpression> = (if (argumentList != null)
             argumentList.getExpressions()
@@ -399,7 +399,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return result
     }
 
-    public fun convertExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
+    fun convertExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
         if (argument == null)
             return Identifier.Empty
 
@@ -429,7 +429,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return expression
     }
 
-    public fun quoteKeywords(packageName: String): String {
+    fun quoteKeywords(packageName: String): String {
         return packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
     }
 
@@ -460,14 +460,14 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return s + "(" + fields.map { initializers[it.identifier.toKotlin()] }.makeString(", ") + ")"
     }
 
-    public fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
+    fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
         if (identifier == null)
             return Identifier.Empty
 
         return Identifier(identifier.getText()!!)
     }
 
-    public fun convertModifierList(modifierList: PsiModifierList?): MutableSet<Modifier> {
+    fun convertModifierList(modifierList: PsiModifierList?): MutableSet<Modifier> {
         val modifiersSet: HashSet<Modifier> = hashSetOf()
         if (modifierList != null) {
             if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT))
@@ -516,8 +516,8 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 }
 
-public val NOT_NULL_ANNOTATIONS: Set<String> = ImmutableSet.of<String>("org.jetbrains.annotations.NotNull", "com.sun.istack.internal.NotNull", "javax.annotation.Nonnull")!!
-public val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = ImmutableMap.builder<String, String>()
+val NOT_NULL_ANNOTATIONS: Set<String> = ImmutableSet.of<String>("org.jetbrains.annotations.NotNull", "com.sun.istack.internal.NotNull", "javax.annotation.Nonnull")!!
+val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = ImmutableMap.builder<String, String>()
 ?.put("byte", BYTE.asString())
 ?.put("short", SHORT.asString())
 ?.put("int", INT.asString())
@@ -535,7 +535,7 @@ public val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = ImmutableMap.builde
 ?.build()!!
 
 
-public fun countWritingAccesses(element: PsiElement?, container: PsiElement?): Int {
+fun countWritingAccesses(element: PsiElement?, container: PsiElement?): Int {
     var counter: Int = 0
     if (container != null) {
         val visitor: ReferenceCollector = ReferenceCollector()
@@ -552,11 +552,11 @@ public fun countWritingAccesses(element: PsiElement?, container: PsiElement?): I
 open class ReferenceCollector() : JavaRecursiveElementVisitor() {
     private val myCollectedReferences = ArrayList<PsiReferenceExpression>()
 
-    public open fun getCollectedReferences(): List<PsiReferenceExpression> {
+    open fun getCollectedReferences(): List<PsiReferenceExpression> {
         return myCollectedReferences
     }
 
-    public override fun visitReferenceExpression(expression: PsiReferenceExpression?) {
+    override fun visitReferenceExpression(expression: PsiReferenceExpression?) {
         super.visitReferenceExpression(expression)
         if (expression != null) {
             myCollectedReferences.add(expression)
@@ -564,11 +564,11 @@ open class ReferenceCollector() : JavaRecursiveElementVisitor() {
     }
 }
 
-public fun isReadOnly(element: PsiElement?, container: PsiElement?): Boolean {
+fun isReadOnly(element: PsiElement?, container: PsiElement?): Boolean {
     return countWritingAccesses(element, container) == 0
 }
 
-public fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
+fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
     if (modifierList != null) {
         val annotations: Array<PsiAnnotation> = modifierList.getAnnotations()
         for (a : PsiAnnotation in annotations) {
@@ -581,13 +581,13 @@ public fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
     return false
 }
 
-public fun isDefinitelyNotNull(element: PsiElement?): Boolean = when(element) {
+fun isDefinitelyNotNull(element: PsiElement?): Boolean = when(element) {
     is PsiLiteralExpression -> element.getValue() != null
     is PsiNewExpression -> true
     else -> false
 }
 
-public fun getDefaultInitializer(f: Field): String {
+fun getDefaultInitializer(f: Field): String {
     if (f.`type`.nullable) {
         return "null"
     }

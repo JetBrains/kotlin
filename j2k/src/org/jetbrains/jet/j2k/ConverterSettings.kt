@@ -21,7 +21,8 @@ public class ConverterSettings(
         val forceLocalVariableImmutability: Boolean,
         val specifyLocalVariableTypeByDefault: Boolean,
         val openByDefault: Boolean
-) {}
+) {
+}
 
 public val PluginSettings: ConverterSettings = ConverterSettings(
         forceNotNullTypes = true,

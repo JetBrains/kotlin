@@ -20,12 +20,14 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.j2k.*
 import java.util.ArrayList
 
-public open class Field(val identifier: Identifier,
-                        comments: MemberComments,
-                        modifiers: Set<Modifier>,
-                        val `type`: Type,
-                        val initializer: Element,
-                        val writingAccesses: Int) : Member(comments, modifiers) {
+open class Field(
+        val identifier: Identifier,
+        comments: MemberComments,
+        modifiers: Set<Modifier>,
+        val `type`: Type,
+        val initializer: Element,
+        val writingAccesses: Int
+) : Member(comments, modifiers) {
 
     fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()
@@ -41,9 +43,9 @@ public open class Field(val identifier: Identifier,
         return modifierList.toKotlin() + (if (isVal()) "val " else "var ")
     }
 
-    public fun isVal(): Boolean = modifiers.contains(Modifier.FINAL)
+    fun isVal(): Boolean = modifiers.contains(Modifier.FINAL)
 
-    public override fun toKotlin(): String {
+    override fun toKotlin(): String {
         val declaration: String = commentsToKotlin() +
         modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
         if (initializer.isEmpty()) {

@@ -21,14 +21,16 @@ import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.types.isUnit
 import org.jetbrains.jet.j2k.Converter
 
-public open class Function(val converter: Converter,
-                           val name: Identifier,
-                           comments: MemberComments,
-                           modifiers: Set<Modifier>,
-                           val `type`: Type,
-                           val typeParameterList: TypeParameterList,
-                           val params: Element,
-                           var block: Block?) : Member(comments, modifiers) {
+open class Function(
+        val converter: Converter,
+        val name: Identifier,
+        comments: MemberComments,
+        modifiers: Set<Modifier>,
+        val `type`: Type,
+        val typeParameterList: TypeParameterList,
+        val params: Element,
+        var block: Block?
+) : Member(comments, modifiers) {
 
     private fun modifiersToKotlin(): String {
         val resultingModifiers = ArrayList<Modifier>()
@@ -63,7 +65,7 @@ public open class Function(val converter: Converter,
 
     private fun returnTypeToKotlin() = if (!`type`.isUnit()) " : " + `type`.toKotlin() + " " else " "
 
-    public override fun toKotlin(): String {
+    override fun toKotlin(): String {
         return commentsToKotlin() +
         modifiersToKotlin() +
         "fun ${typeParameterList.toKotlin().withSuffix(" ")}${name.toKotlin()}" +

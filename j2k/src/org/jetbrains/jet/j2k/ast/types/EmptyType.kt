@@ -16,6 +16,6 @@
 
 package org.jetbrains.jet.j2k.ast.types
 
-public open class EmptyType() : NotNullType {
-    public override fun toKotlin(): String = "UNRESOLVED_TYPE"
+open class EmptyType() : NotNullType {
+    override fun toKotlin(): String = "UNRESOLVED_TYPE"
 }

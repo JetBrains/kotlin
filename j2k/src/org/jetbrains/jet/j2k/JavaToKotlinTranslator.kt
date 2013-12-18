@@ -32,7 +32,7 @@ import java.io.File
 import java.net.URLClassLoader
 import java.util.HashSet
 
-object JavaToKotlinTranslator {
+public object JavaToKotlinTranslator {
     private val DISPOSABLE: Disposable? = Disposer.newDisposable()
 
     private fun createFile(text: String): PsiFile? {
@@ -40,7 +40,7 @@ object JavaToKotlinTranslator {
         return PsiFileFactory.getInstance(javaCoreEnvironment?.getProject())?.createFileFromText("test.java", JavaLanguage.INSTANCE, text)
     }
 
-    public fun createFile(project: Project, text: String): PsiFile? {
+    fun createFile(project: Project, text: String): PsiFile? {
         return PsiFileFactory.getInstance(project)?.createFileFromText("test.java", JavaLanguage.INSTANCE, text)
     }
 
@@ -70,7 +70,7 @@ object JavaToKotlinTranslator {
                 .trim()
     }
 
-    public fun findAnnotations(): File? {
+    fun findAnnotations(): File? {
         var classLoader = javaClass<JavaToKotlinTranslator>().getClassLoader()
         while (classLoader != null) {
             val loader = classLoader
@@ -104,7 +104,7 @@ object JavaToKotlinTranslator {
     }
 }
 
-public fun main(args: Array<String>) {
+fun main(args: Array<String>) {
     if (args.size == 1) {
         try {
             val kotlinCode = JavaToKotlinTranslator.generateKotlinCode(args[0])

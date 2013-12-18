@@ -19,13 +19,15 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.j2k.Converter
 
-public class LocalVariable(val identifier: Identifier,
-                           val modifiersSet: Set<Modifier>,
-                           val javaType: Type,
-                           val initializer: Expression,
-                           val converter: Converter) : Expression() {
+class LocalVariable(
+        val identifier: Identifier,
+        val modifiersSet: Set<Modifier>,
+        val javaType: Type,
+        val initializer: Expression,
+        val converter: Converter
+) : Expression() {
 
-    public fun isImmutable(): Boolean =
+    fun isImmutable(): Boolean =
             converter.settings.forceLocalVariableImmutability || modifiersSet.contains(Modifier.FINAL)
 
     override fun toKotlin(): String {

@@ -19,27 +19,27 @@ package org.jetbrains.jet.j2k.ast.types
 import org.jetbrains.jet.j2k.ast.Element
 import org.jetbrains.jet.j2k.Converter
 
-public fun Type.isPrimitive(): Boolean = this is PrimitiveType
-public fun Type.isUnit(): Boolean = this == UnitType
+fun Type.isPrimitive(): Boolean = this is PrimitiveType
+fun Type.isUnit(): Boolean = this == UnitType
 
-public abstract class MayBeNullableType(nullable: Boolean, val converter: Converter): Type {
-    override public val nullable: Boolean = !converter.settings.forceNotNullTypes && nullable
+abstract class MayBeNullableType(nullable: Boolean, val converter: Converter) : Type {
+    override val nullable: Boolean = !converter.settings.forceNotNullTypes && nullable
 }
 
-public trait NotNullType : Type {
-    override public val nullable: Boolean
+trait NotNullType : Type {
+    override val nullable: Boolean
         get() = false
 }
 
-public object UnitType: NotNullType {
+object UnitType: NotNullType {
     override fun toKotlin() = "Unit"
 }
 
-public trait Type : Element {
+trait Type : Element {
 
-    public val nullable: Boolean
+    val nullable: Boolean
 
-    public open fun convertedToNotNull(): Type {
+    open fun convertedToNotNull(): Type {
         if (nullable) throw UnsupportedOperationException("convertedToNotNull must be defined")
         return this
     }

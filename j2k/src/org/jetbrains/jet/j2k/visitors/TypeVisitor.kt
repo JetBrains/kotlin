@@ -28,13 +28,13 @@ import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 
-public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisitor<Type>() {
+open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisitor<Type>() {
     private var myResult: Type = EmptyType()
-    public open fun getResult(): Type {
+    open fun getResult(): Type {
         return myResult
     }
 
-    public override fun visitPrimitiveType(primitiveType: PsiPrimitiveType?): Type {
+    override fun visitPrimitiveType(primitiveType: PsiPrimitiveType?): Type {
         val name: String = primitiveType?.getCanonicalText()!!
         if (name == "void") {
             myResult = UnitType
@@ -48,7 +48,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         return myResult
     }
 
-    public override fun visitArrayType(arrayType: PsiArrayType?): Type {
+    override fun visitArrayType(arrayType: PsiArrayType?): Type {
         if (myResult is EmptyType) {
             myResult = ArrayType(myConverter.convertType(arrayType?.getComponentType()), true, myConverter)
         }
@@ -56,7 +56,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         return myResult
     }
 
-    public override fun visitClassType(classType: PsiClassType?): Type {
+    override fun visitClassType(classType: PsiClassType?): Type {
         if (classType == null) return myResult
         val identifier: Identifier = constructClassTypeIdentifier(classType)
         val resolvedClassTypeParams: List<Type> = createRawTypesForResolvedReference(classType)
@@ -130,7 +130,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         return typeParams
     }
 
-    public override fun visitWildcardType(wildcardType: PsiWildcardType?): Type {
+    override fun visitWildcardType(wildcardType: PsiWildcardType?): Type {
         if (wildcardType!!.isExtends()) {
             myResult = OutProjectionType(myConverter.convertType(wildcardType.getExtendsBound()))
         }
@@ -144,7 +144,7 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         return myResult
     }
 
-    public override fun visitEllipsisType(ellipsisType: PsiEllipsisType?): Type {
+    override fun visitEllipsisType(ellipsisType: PsiEllipsisType?): Type {
         myResult = VarArg(myConverter.convertType(ellipsisType?.getComponentType()))
         return myResult
     }

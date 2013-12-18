@@ -25,10 +25,9 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
-import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiArrayType
 
-public fun createMainFunction(file: PsiFile): String {
+fun createMainFunction(file: PsiFile): String {
     val classNamesWithMains = ArrayList<Pair<String, PsiMethod>>()
     for (c in (file as PsiJavaFile).getClasses()) {
         val main = findMainMethod(c)
@@ -69,7 +68,7 @@ private fun findMainMethod(mainMethods: Array<PsiMethod>): PsiMethod? {
     return mainMethods.find { isMainMethod(it) }
 }
 
-public fun isMainMethod(method: PsiMethod): Boolean {
+fun isMainMethod(method: PsiMethod): Boolean {
     if (method.getContainingClass() == null)
         return false
 

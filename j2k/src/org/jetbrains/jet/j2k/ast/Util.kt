@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
 
-public fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: String = ""): String {
+fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: String = ""): String {
     val result = StringBuilder()
     if (size() > 0) {
         result.append(prefix)
@@ -33,7 +33,7 @@ public fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: S
     return result.toString()
 }
 
-public fun Collection<Modifier>.toKotlin(separator: String = " "): String {
+fun Collection<Modifier>.toKotlin(separator: String = " "): String {
     val result = StringBuilder()
     for (x in this) {
         result.append(x.name)
@@ -42,9 +42,9 @@ public fun Collection<Modifier>.toKotlin(separator: String = " "): String {
     return result.toString()
 }
 
-public fun String.withSuffix(suffix: String): String = if (isEmpty()) "" else this + suffix
-public fun String.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + this
-public fun Expression.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + toKotlin()
+fun String.withSuffix(suffix: String): String = if (isEmpty()) "" else this + suffix
+fun String.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + this
+fun Expression.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + toKotlin()
 
 open class WhiteSpaceSeparatedElementList(
         val elements: List<Element>,

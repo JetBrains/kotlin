@@ -20,7 +20,7 @@ import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.Collections
 
-public class AnonymousClass(converter: Converter, members: List<Element>)
+class AnonymousClass(converter: Converter, members: List<Element>)
 : Class(converter,
         Identifier("anonClass"),
         MemberComments.Empty,
@@ -29,5 +29,5 @@ public class AnonymousClass(converter: Converter, members: List<Element>)
         Collections.emptyList<Type>(),
         Collections.emptyList<Expression>(),
         Collections.emptyList<Type>(), members) {
-    public override fun toKotlin() = bodyToKotlin()
+    override fun toKotlin() = bodyToKotlin()
 }

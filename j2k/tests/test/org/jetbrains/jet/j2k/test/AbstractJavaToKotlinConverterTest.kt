@@ -18,7 +18,6 @@ package org.jetbrains.jet.j2k.test
 
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
-import junit.framework.Assert
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.j2k.Converter
@@ -35,17 +34,18 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import kotlin.test.fail
 
 public abstract class AbstractJavaToKotlinConverterPluginTest() : AbstractJavaToKotlinConverterTest("ide.kt", PluginSettings)
 public abstract class AbstractJavaToKotlinConverterBasicTest() : AbstractJavaToKotlinConverterTest("kt", TestSettings)
 
-public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension: String,
-                                                        val settings: ConverterSettings) : LightIdeaTestCase() {
+abstract class AbstractJavaToKotlinConverterTest(
+        val kotlinFileExtension: String,
+                                                 val settings: ConverterSettings
+) : LightIdeaTestCase() {
 
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
 
-    protected fun doTest(javaPath: String) {
+    public fun doTest(javaPath: String) {
         val project = LightPlatformTestCase.getProject()!!
         val converter = Converter(project, settings)
         val javaFile = File(javaPath)

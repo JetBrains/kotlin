@@ -16,14 +16,16 @@
 
 package org.jetbrains.jet.j2k.ast
 
-class FileMemberList(elements: List<Element>): WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine, false)
+class FileMemberList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine, false)
 
-class PackageStatement(val packageName: String): Element {
+class PackageStatement(val packageName: String) : Element {
     override fun toKotlin(): String = "package " + packageName
 }
 
-public class File(val body: FileMemberList,
-                  val mainFunction: String) : Element {
+class File(
+        val body: FileMemberList,
+        val mainFunction: String
+) : Element {
 
     override fun toKotlin(): String {
         return body.toKotlin() + mainFunction

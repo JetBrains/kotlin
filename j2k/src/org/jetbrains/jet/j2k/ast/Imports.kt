@@ -24,11 +24,11 @@ import org.jetbrains.jet.util.QualifiedNamesUtil
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 
 
-public class Import(val name: String) : Element {
-    public override fun toKotlin() = "import " + name
+class Import(val name: String) : Element {
+    override fun toKotlin() = "import " + name
 }
 
-public class ImportList(val imports: List<Import>) : Element {
+class ImportList(val imports: List<Import>) : Element {
     val filteredImports = imports.filter {
         !it.name.isEmpty() && it.name !in NOT_NULL_ANNOTATIONS
     }.filter {
@@ -49,10 +49,10 @@ public class ImportList(val imports: List<Import>) : Element {
     override fun toKotlin() = filteredImports.toKotlin("\n")
 }
 
-public fun Converter.convertImportList(importList: PsiImportList): ImportList =
+fun Converter.convertImportList(importList: PsiImportList): ImportList =
         ImportList(importList.getAllImportStatements() map { convertImport(it) })
 
-public fun Converter.convertImport(i: PsiImportStatementBase): Import {
+fun Converter.convertImport(i: PsiImportStatementBase): Import {
     val reference = i.getImportReference()
     if (reference != null) {
         return Import(quoteKeywords(reference.getQualifiedName()!!) + if (i.isOnDemand()) ".*" else "")

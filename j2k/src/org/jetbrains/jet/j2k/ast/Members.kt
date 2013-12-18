@@ -18,31 +18,31 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
 
-public class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NoSpace) {
+class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NoSpace) {
     class object {
-        public val Empty: MemberComments = MemberComments(ArrayList())
+        val Empty = MemberComments(ArrayList())
     }
 }
 
-public abstract class Member(val comments: MemberComments, val modifiers: Set<Modifier>) : Element {
+abstract class Member(val comments: MemberComments, val modifiers: Set<Modifier>) : Element {
     fun accessModifier(): Modifier? {
         return modifiers.find { m -> m == Modifier.PUBLIC || m == Modifier.PROTECTED || m == Modifier.PRIVATE }
     }
 
-    public fun isAbstract(): Boolean = modifiers.contains(Modifier.ABSTRACT)
-    public fun isStatic(): Boolean = modifiers.contains(Modifier.STATIC)
-    public fun commentsToKotlin(): String = comments.toKotlin()
+    fun isAbstract(): Boolean = modifiers.contains(Modifier.ABSTRACT)
+    fun isStatic(): Boolean = modifiers.contains(Modifier.STATIC)
+    fun commentsToKotlin(): String = comments.toKotlin()
 }
 
 //member itself and all the elements before it in the code (comments, whitespaces)
 class MemberHolder(val member: Member, val elements: List<Element>)
 
-public class MemberList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine) {
+class MemberList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine) {
     val members: List<Member>
         get() = elements.filter { it is Member }.map { it as Member }
 }
 
-public class ClassMembers(
+class ClassMembers(
         val primaryConstructor: Constructor?,
         val secondaryConstructors: MemberList,
         val allMembers: MemberList,

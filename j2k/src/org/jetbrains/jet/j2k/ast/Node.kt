@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
 
-
-public trait Node {
+trait Node {
     public fun toKotlin(): String
 }

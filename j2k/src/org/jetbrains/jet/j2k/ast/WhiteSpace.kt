@@ -17,11 +17,11 @@
 package org.jetbrains.jet.j2k.ast
 
 
-public class WhiteSpace(val text: String) : Element {
+class WhiteSpace(val text: String) : Element {
     override fun toKotlin() = text
     override fun isEmpty() = text.isEmpty()
 
-    public fun compareTo(other: WhiteSpace): Int {
+    fun compareTo(other: WhiteSpace): Int {
 
         fun newLinesCount(w: WhiteSpace) = w.text.count { it == '\n' }
 
@@ -36,8 +36,8 @@ public class WhiteSpace(val text: String) : Element {
     }
 
     class object {
-        public val NewLine: WhiteSpace = WhiteSpace("\n")
-        public val NoSpace: WhiteSpace = WhiteSpace("")
+        val NewLine = WhiteSpace("\n")
+        val NoSpace = WhiteSpace("")
     }
 }
 

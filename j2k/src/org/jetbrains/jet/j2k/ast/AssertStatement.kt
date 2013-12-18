@@ -17,8 +17,8 @@
 package org.jetbrains.jet.j2k.ast
 
 
-public class AssertStatement(val condition: Expression, val detail: Expression) : Statement() {
-    public override fun toKotlin(): String {
+class AssertStatement(val condition: Expression, val detail: Expression) : Statement() {
+    override fun toKotlin(): String {
         val lazyStringMessage = if (detail != Expression.Empty)
             " {" + detail.toKotlin() + "}"
         else
