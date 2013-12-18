@@ -20,7 +20,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-public abstract class AbstractResolveWithLibTest extends AbstractResolveBaseTest {
+public abstract class AbstractReferenceResolveWithLibTest extends AbstractReferenceResolveTest {
     private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/resolve/referenceWithLib";
 
     @Override

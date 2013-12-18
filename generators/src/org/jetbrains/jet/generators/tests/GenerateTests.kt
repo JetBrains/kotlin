@@ -22,7 +22,7 @@ import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel
 import java.io.File
 import java.util.regex.Pattern
 import junit.framework.TestCase
-import org.jetbrains.jet.checkers.AbstractDiagnosticsTestWithEagerResolve
+import org.jetbrains.jet.checkers.AbstractJetDiagnostics1Test
 import org.jetbrains.jet.resolve.AbstractResolveTest
 import org.jetbrains.jet.parsing.AbstractJetParsingTest
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest
@@ -30,7 +30,7 @@ import org.jetbrains.jet.codegen.AbstractBytecodeTextTest
 import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest
 import org.jetbrains.jet.codegen.AbstractCheckLocalVariablesTableTest
 import org.jetbrains.jet.codegen.flags.AbstractWriteFlagsTest
-import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultConstructorCodegenTest
+import org.jetbrains.jet.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.jet.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
@@ -51,7 +51,7 @@ import org.jetbrains.jet.completion.AbstractKeywordCompletionTest
 import org.jetbrains.jet.completion.AbstractJvmSmartCompletionTest
 import org.jetbrains.jet.completion.AbstractJvmBasicCompletionTest
 import org.jetbrains.jet.completion.AbstractJvmWithLibBasicCompletionTest
-import org.jetbrains.jet.plugin.navigation.JetAbstractGotoSuperTest
+import org.jetbrains.jet.plugin.navigation.AbstractGotoSuperTest
 import org.jetbrains.jet.plugin.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest
@@ -63,8 +63,8 @@ import org.jetbrains.jet.plugin.refactoring.inline.AbstractInlineTest
 import org.jetbrains.jet.plugin.codeInsight.unwrap.AbstractUnwrapRemoveTest
 import org.jetbrains.jet.editor.quickDoc.AbstractJetQuickDocProviderTest
 import org.jetbrains.jet.safeDelete.AbstractJetSafeDeleteTest
-import org.jetbrains.jet.resolve.AbstractResolveBaseTest
-import org.jetbrains.jet.resolve.AbstractResolveWithLibTest
+import org.jetbrains.jet.resolve.AbstractReferenceResolveTest
+import org.jetbrains.jet.resolve.AbstractReferenceResolveWithLibTest
 import org.jetbrains.jet.completion.weighers.AbstractCompletionWeigherTest
 import org.jetbrains.jet.findUsages.AbstractJetFindUsagesTest
 import org.jetbrains.jet.plugin.configuration.AbstractConfigureProjectByChangingFileTest
@@ -83,17 +83,17 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/tests", "compiler/testData") {
 
-        testClass(javaClass<AbstractDiagnosticsTestWithEagerResolve>(), "JetDiagnosticsTestGenerated") {
+        testClass(javaClass<AbstractJetDiagnostics1Test>()) {
             model("diagnostics/tests")
             model("diagnostics/tests/script", extension = "ktscript")
             model("codegen/box/functions/tailRecursion")
         }
 
-        testClass(javaClass<AbstractResolveTest>(), "JetResolveTestGenerated") {
+        testClass(javaClass<AbstractResolveTest>()) {
             model("resolve", extension = "resolve")
         }
 
-        testClass(javaClass<AbstractResolvedCallsTest>(), "JetResolvedCallsTestGenerated") {
+        testClass(javaClass<AbstractResolvedCallsTest>()) {
             model("resolvedCalls")
         }
 
@@ -135,7 +135,7 @@ fun main(args: Array<String>) {
             model("writeFlags")
         }
 
-        testClass(javaClass<AbstractDefaultConstructorCodegenTest>(), "DefaultArgumentsReflectionTestGenerated") {
+        testClass(javaClass<AbstractDefaultArgumentsReflectionTest>()) {
             model("codegen/defaultArguments/reflection")
         }
 
@@ -221,7 +221,7 @@ fun main(args: Array<String>) {
 
 
     testGroup("idea/tests", "idea/testData") {
-        testClass(javaClass<AbstractJetPsiMatcherTest>(), "JetPsiMatcherTest") {
+        testClass(javaClass<AbstractJetPsiMatcherTest>()) {
             model("jetPsiMatcher/expressions", testMethod = "doTestExpressions")
             model("jetPsiMatcher/types", testMethod = "doTestTypes")
         }
@@ -241,29 +241,29 @@ fun main(args: Array<String>) {
             model("quickfix", pattern = "^before(\\w+)\\.kt$")
         }
 
-        testClass(javaClass<AbstractJSBasicCompletionTest>(), "JetBasicJSCompletionTestGenerated") {
+        testClass(javaClass<AbstractJSBasicCompletionTest>()) {
             model("completion/basic/common")
             model("completion/basic/js")
         }
 
-        testClass(javaClass<AbstractJvmBasicCompletionTest>(), "JetBasicJavaCompletionTestGenerated") {
+        testClass(javaClass<AbstractJvmBasicCompletionTest>()) {
             model("completion/basic/common")
             model("completion/basic/java")
         }
 
-        testClass(javaClass<AbstractJvmSmartCompletionTest>(), "JetSmartCompletionTestGenerated") {
+        testClass(javaClass<AbstractJvmSmartCompletionTest>()) {
             model("completion/smart")
         }
 
-        testClass(javaClass<AbstractKeywordCompletionTest>(), "JetKeywordCompletionTestGenerated") {
+        testClass(javaClass<AbstractKeywordCompletionTest>()) {
             model("completion/keywords", recursive = false)
         }
 
-        testClass(javaClass<AbstractJvmWithLibBasicCompletionTest>(), "JetJavaLibCompletionTestGenerated") {
+        testClass(javaClass<AbstractJvmWithLibBasicCompletionTest>()) {
             model("completion/basic/custom", recursive = false)
         }
 
-        testClass(javaClass<JetAbstractGotoSuperTest>(), "JetGotoSuperTestGenerated") {
+        testClass(javaClass<AbstractGotoSuperTest>()) {
             model("navigation/gotoSuper", extension = "test")
         }
 
@@ -293,7 +293,7 @@ fun main(args: Array<String>) {
             model("codeInsight/surroundWith/functionLiteral", testMethod = "doTestWithFunctionLiteralSurrounder")
         }
 
-        testClass(javaClass<AbstractCodeTransformationTest>(), "CodeTransformationsTestGenerated") {
+        testClass(javaClass<AbstractCodeTransformationTest>()) {
             model("intentions/branched/folding/ifToAssignment", testMethod = "doTestFoldIfToAssignment")
             model("intentions/branched/folding/ifToReturn", testMethod = "doTestFoldIfToReturn")
             model("intentions/branched/folding/ifToReturnAsymmetrically", testMethod = "doTestFoldIfToReturnAsymmetrically")
@@ -369,11 +369,11 @@ fun main(args: Array<String>) {
             model("safeDelete/deleteValueParameter/kotlinValueParameterWithJava", testMethod = "doValueParameterTestWithJava")
         }
 
-        testClass(javaClass<AbstractResolveBaseTest>(), "ReferenceResolveTestGenerated") {
+        testClass(javaClass<AbstractReferenceResolveTest>()) {
             model("resolve/references")
         }
 
-        testClass(javaClass<AbstractResolveWithLibTest>(), "ReferenceResolveWithLibTestGenerated") {
+        testClass(javaClass<AbstractReferenceResolveWithLibTest>()) {
             model("resolve/referenceWithLib", recursive = false)
         }
 

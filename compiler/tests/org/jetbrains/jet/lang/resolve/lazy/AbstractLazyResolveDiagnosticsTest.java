@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.google.common.base.Predicate;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
+import org.jetbrains.jet.checkers.BaseDiagnosticsTest;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -33,7 +33,7 @@ import java.util.Set;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptors;
 
-public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiagnosticsTest {
+public abstract class AbstractLazyResolveDiagnosticsTest extends BaseDiagnosticsTest {
 
     public static final File TEST_DATA_DIR = new File("compiler/testData/diagnostics/tests");
 

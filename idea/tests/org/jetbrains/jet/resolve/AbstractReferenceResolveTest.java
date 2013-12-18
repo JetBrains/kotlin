@@ -34,7 +34,7 @@ import org.jetbrains.jet.testing.ReferenceUtils;
 
 import java.util.List;
 
-public abstract class AbstractResolveBaseTest extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsightFixtureTestCase {
 
     public static final String MULTIRESOLVE = "MULTIRESOLVE";
     public static final String REF_EMPTY = "REF_EMPTY";

@@ -27,7 +27,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import java.io.File;
 import java.util.List;
 
-public abstract class JetAbstractGotoSuperTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractGotoSuperTest extends LightCodeInsightFixtureTestCase {
     protected void doTest(String testPath) {
         List<String> parts = JetTestUtils.loadBeforeAfterText(testPath);
 

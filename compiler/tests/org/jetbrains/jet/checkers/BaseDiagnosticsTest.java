@@ -51,7 +51,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
+public abstract class BaseDiagnosticsTest extends JetLiteFixture {
 
     public static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
     public static final Pattern DIAGNOSTICS_PATTERN = Pattern.compile("([\\+\\-!])(\\w+)\\s*");

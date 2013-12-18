@@ -27,7 +27,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.InTextDirectivesUtils.findListWithPrefixes;
 
-public abstract class AbstractDefaultConstructorCodegenTest extends CodegenTestCase {
+public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTestCase {
 
     @Override
     public void setUp() throws Exception {

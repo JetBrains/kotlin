@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -39,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJetDiagnosticsTest {
+public abstract class AbstractJetDiagnostics1Test extends BaseDiagnosticsTest {
 
     @Override
     protected void analyzeAndCheck(File testDataFile, List<TestFile> testFiles) {
