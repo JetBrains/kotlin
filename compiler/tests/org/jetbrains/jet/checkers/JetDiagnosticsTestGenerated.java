@@ -610,6 +610,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/annotations/kt1886annotationBody.kt");
             }
             
+            @TestMetadata("missingValOnParameter.kt")
+            public void testMissingValOnParameter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/missingValOnParameter.kt");
+            }
+            
             @TestMetadata("NonAnnotationClass.kt")
             public void testNonAnnotationClass() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/NonAnnotationClass.kt");
