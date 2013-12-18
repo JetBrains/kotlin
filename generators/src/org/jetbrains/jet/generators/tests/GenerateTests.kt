@@ -419,7 +419,7 @@ fun main(args: Array<String>) {
                           Pattern.compile("^(.+)\\.test$"),
                           "doTest"
                   )),
-                  "org.jetbrains.jet.generators.tests.GenerateTests" // TODO wrong class name
+                  "org.jetbrains.jet.generators.tests.TestsPackage"
     ).generateAndSave()
 
 }
@@ -439,7 +439,7 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 suiteTestClass,
                 baseTestClass,
                 testClass.testModels,
-                "org.jetbrains.jet.generators.tests.GenerateTests" // TODO wrong class name
+                "org.jetbrains.jet.generators.tests.TestsPackage"
         ).generateAndSave()
     }
 
