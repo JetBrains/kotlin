@@ -316,6 +316,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
     @Override
     public String toString() {
+        // not using descriptor render to preserve laziness
         return "lazy class " + getName().toString();
     }
 

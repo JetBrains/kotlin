@@ -294,6 +294,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
     @Override
     public String toString() {
+        // not using descriptor render to preserve laziness
         return "deserialized class " + getName().toString();
     }
 
