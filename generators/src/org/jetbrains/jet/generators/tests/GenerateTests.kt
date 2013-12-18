@@ -418,11 +418,11 @@ fun main(args: Array<String>) {
 
     testGroup("j2k/tests/test", "j2k/tests/testData") {
         testClass(javaClass<AbstractJavaToKotlinConverterPluginTest>()) {
-            model("ast", extension = "jav")
+            model("ast", extension = "java")
         }
 
         testClass(javaClass<AbstractJavaToKotlinConverterBasicTest>()) {
-            model("ast", extension = "jav")
+            model("ast", extension = "java")
         }
     }
 }

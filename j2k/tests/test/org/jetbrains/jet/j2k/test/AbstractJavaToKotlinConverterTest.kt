@@ -47,7 +47,7 @@ public abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension:
     protected fun doTest(javaPath: String) {
         val project = LightPlatformTestCase.getProject()!!
         val converter = Converter(project, settings)
-        val kotlinPath = javaPath.replace(".jav", ".$kotlinFileExtension")
+        val kotlinPath = javaPath.replace(".java", ".$kotlinFileExtension")
         val kotlinFile = File(kotlinPath)
         if (!kotlinFile.exists()) {
             FileUtil.writeToFile(kotlinFile, "")
