@@ -14,324 +14,282 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.completion;
+package org.jetbrains.jet.plugin.completion
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
-import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.filters.*;
-import com.intellij.psi.filters.position.FilterPattern;
-import com.intellij.psi.filters.position.LeftNeighbour;
-import com.intellij.psi.filters.position.PositionElementFilter;
-import com.intellij.psi.filters.position.SuperParentFilter;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.ProcessingContext;
-import com.intellij.util.containers.MultiMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
-import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler;
-import org.jetbrains.jet.plugin.completion.weigher.WeigherPackage;
+import com.intellij.psi.filters.*
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.filters.position.LeftNeighbour
+import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.jet.lexer.JetToken
+import org.jetbrains.jet.lexer.JetTokens
+import com.intellij.codeInsight.completion.CompletionContributor
+import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.psi.filters.position.SuperParentFilter
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.filters.position.PositionElementFilter
+import com.intellij.util.containers.MultiMap
+import java.util.HashSet
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.codeInsight.completion.PrefixMatcher
+import com.intellij.codeInsight.completion.CompletionProvider
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.util.ProcessingContext
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
+import com.intellij.psi.filters.position.FilterPattern
+import com.intellij.patterns.PlatformPatterns
+import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler
+import org.jetbrains.jet.plugin.completion.weigher.addJetSorting
 
-import java.util.*;
-import java.util.List;
+public open class JetKeywordCompletionContributor() : CompletionContributor() {
+    {
+        val inTopLevel = notIdentifier(InTopFilter())
+        val inTypeParameterFirstChildFilter = InTypeParameterFirstChildFilter()
+        val inClassBody = notIdentifier(InClassBodyFilter())
+        val inNonClassBlock = notIdentifier(InNonClassBlockFilter())
+        val inAfterClassInClassBody = AfterClassInClassBodyFilter()
+        val inPropertyBody = notIdentifier(InPropertyBodyFilter())
 
-import static org.jetbrains.jet.lexer.JetTokens.*;
+        val inNonParameterModifier = notIdentifier(AndFilter(
+                SuperParentFilter(ClassFilter(javaClass<JetModifierList>())),
+                NotFilter(inTypeParameterFirstChildFilter)
+        ))
 
-/**
- * A keyword contributor for Kotlin
- */
-public class JetKeywordCompletionContributor extends CompletionContributor {
-    private final static InsertHandler<LookupElement> KEYWORDS_INSERT_HANDLER = new JetKeywordInsertHandler();
+        BunchKeywordRegister()
+                .add(JetTokens.ABSTRACT_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody)
+                .add(JetTokens.FINAL_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody)
+                .add(JetTokens.OPEN_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody)
 
-    private final static ElementFilter GENERAL_FILTER = new NotFilter(new OrFilter(
-            new CommentFilter(), // or
-            new ParentFilter(new ClassFilter(JetLiteralStringTemplateEntry.class)), // or
-            new ParentFilter(new ClassFilter(JetConstantExpression.class)), // or
-            new LeftNeighbour(new TextFilter("."))
-    ));
+                .add(JetTokens.INTERNAL_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody, inNonClassBlock)
+                .add(JetTokens.PRIVATE_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody, inNonClassBlock)
+                .add(JetTokens.PROTECTED_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody, inNonClassBlock)
+                .add(JetTokens.PUBLIC_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody, inNonClassBlock)
 
-    private final static ElementFilter NOT_IDENTIFIER_FILTER = new NotFilter(new AndFilter(
-            new LeafElementFilter(JetTokens.IDENTIFIER),
-            new NotFilter(new ParentFilter(new ClassFilter(JetReferenceExpression.class))))
-    );
+                .add(JetTokens.CLASS_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
+                .add(JetTokens.ENUM_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
+                .add(JetTokens.FUN_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
+                .add(JetTokens.GET_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
+                .add(JetTokens.SET_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
+                .add(JetTokens.TRAIT_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
+                .add(JetTokens.VAL_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
+                .add(JetTokens.VAR_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
+                .add(JetTokens.TYPE_KEYWORD, inTopLevel, inClassBody, inNonClassBlock)
 
-    private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList(GET_KEYWORD.toString(), SET_KEYWORD.toString());
+                .add(JetTokens.IMPORT_KEYWORD, inTopLevel)
+                .add(JetTokens.PACKAGE_KEYWORD, inTopLevel)
 
-    public JetKeywordCompletionContributor() {
-        ElementFilter inTopLevel = notIdentifier(new InTopFilter());
-        ElementFilter inTypeParameterFirstChildFilter = new InTypeParameterFirstChildFilter();
-        ElementFilter inClassBody = notIdentifier(new InClassBodyFilter());
-        ElementFilter inNonClassBlock = notIdentifier(new InNonClassBlockFilter());
-        ElementFilter inAfterClassInClassBody = new AfterClassInClassBodyFilter();
-        ElementFilter inPropertyBody = notIdentifier(new InPropertyBodyFilter());
-        ElementFilter inNonParameterModifier = notIdentifier(new AndFilter(
-                new SuperParentFilter(new ClassFilter(JetModifierList.class)),
-                new NotFilter(inTypeParameterFirstChildFilter)));
+                .add(JetTokens.OVERRIDE_KEYWORD, inClassBody)
 
-        BunchKeywordRegister register = new BunchKeywordRegister();
+                .add(JetTokens.IN_KEYWORD, inNonClassBlock, inTypeParameterFirstChildFilter)
 
-        register.add(ABSTRACT_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody);
-        register.add(FINAL_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody);
-        register.add(OPEN_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody);
+                .add(JetTokens.OUT_KEYWORD, inTypeParameterFirstChildFilter)
 
-        register.add(INTERNAL_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody, inNonClassBlock);
-        register.add(PRIVATE_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody, inNonClassBlock);
-        register.add(PROTECTED_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody, inNonClassBlock);
-        register.add(PUBLIC_KEYWORD, inTopLevel, inNonParameterModifier, inClassBody, inNonClassBlock);
+                .add(JetTokens.OBJECT_KEYWORD, inNonClassBlock, inAfterClassInClassBody)
 
-        register.add(CLASS_KEYWORD, inTopLevel, inClassBody, inNonClassBlock);
-        register.add(ENUM_KEYWORD, inTopLevel, inClassBody, inNonClassBlock);
-        register.add(FUN_KEYWORD, inTopLevel, inClassBody, inNonClassBlock);
-        register.add(GET_KEYWORD, inTopLevel, inClassBody, inNonClassBlock);
-        register.add(SET_KEYWORD, inTopLevel, inClassBody, inNonClassBlock);
-        register.add(TRAIT_KEYWORD, inTopLevel, inClassBody, inNonClassBlock);
-        register.add(VAL_KEYWORD, inTopLevel, inClassBody, inNonClassBlock);
-        register.add(VAR_KEYWORD, inTopLevel, inClassBody, inNonClassBlock);
-        register.add(TYPE_KEYWORD, inTopLevel, inClassBody, inNonClassBlock);
+                .add(JetTokens.ELSE_KEYWORD, inNonClassBlock, inPropertyBody)
+                .add(JetTokens.IF_KEYWORD, inNonClassBlock, inPropertyBody)
+                .add(JetTokens.TRUE_KEYWORD, inNonClassBlock, inPropertyBody)
+                .add(JetTokens.FALSE_KEYWORD, inNonClassBlock, inPropertyBody)
+                .add(JetTokens.NULL_KEYWORD, inNonClassBlock, inPropertyBody)
+                .add(JetTokens.THIS_KEYWORD, inNonClassBlock, inPropertyBody)
+                .add(JetTokens.WHEN_KEYWORD, inNonClassBlock, inPropertyBody)
 
-        register.add(IMPORT_KEYWORD, inTopLevel);
-        register.add(PACKAGE_KEYWORD, inTopLevel);
-
-        register.add(OVERRIDE_KEYWORD, inClassBody);
-
-        register.add(IN_KEYWORD, inNonClassBlock, inTypeParameterFirstChildFilter);
-        register.add(OUT_KEYWORD, inTypeParameterFirstChildFilter);
-        register.add(OBJECT_KEYWORD, inNonClassBlock, inAfterClassInClassBody);
-
-        register.add(ELSE_KEYWORD, inNonClassBlock, inPropertyBody);
-        register.add(IF_KEYWORD, inNonClassBlock, inPropertyBody);
-        register.add(TRUE_KEYWORD, inNonClassBlock, inPropertyBody);
-        register.add(FALSE_KEYWORD, inNonClassBlock, inPropertyBody);
-        register.add(NULL_KEYWORD, inNonClassBlock, inPropertyBody);
-        register.add(THIS_KEYWORD, inNonClassBlock, inPropertyBody);
-        register.add(WHEN_KEYWORD, inNonClassBlock, inPropertyBody);
-
-        register.add(AS_KEYWORD, inNonClassBlock);
-        register.add(BREAK_KEYWORD, inNonClassBlock);
-        register.add(BY_KEYWORD, inNonClassBlock);
-        register.add(CATCH_KEYWORD, inNonClassBlock);
-        register.add(CONTINUE_KEYWORD, inNonClassBlock);
-        register.add(DO_KEYWORD, inNonClassBlock);
-        register.add(FINALLY_KEYWORD, inNonClassBlock);
-        register.add(FOR_KEYWORD, inNonClassBlock);
-        register.add(IS_KEYWORD, inNonClassBlock);
-        register.add(RETURN_KEYWORD, inNonClassBlock);
-        register.add(SUPER_KEYWORD, inNonClassBlock);
-        register.add(CAPITALIZED_THIS_KEYWORD, inNonClassBlock);
-        register.add(THROW_KEYWORD, inNonClassBlock);
-        register.add(TRY_KEYWORD, inNonClassBlock);
-        register.add(VARARG_KEYWORD, inNonClassBlock);
-        register.add(WHERE_KEYWORD, inNonClassBlock);
-        register.add(WHILE_KEYWORD, inNonClassBlock);
-
-        register.registerAll();
+                .add(JetTokens.AS_KEYWORD, inNonClassBlock)
+                .add(JetTokens.BREAK_KEYWORD, inNonClassBlock)
+                .add(JetTokens.BY_KEYWORD, inNonClassBlock)
+                .add(JetTokens.CATCH_KEYWORD, inNonClassBlock)
+                .add(JetTokens.CONTINUE_KEYWORD, inNonClassBlock)
+                .add(JetTokens.DO_KEYWORD, inNonClassBlock)
+                .add(JetTokens.FINALLY_KEYWORD, inNonClassBlock)
+                .add(JetTokens.FOR_KEYWORD, inNonClassBlock)
+                .add(JetTokens.IS_KEYWORD, inNonClassBlock)
+                .add(JetTokens.RETURN_KEYWORD, inNonClassBlock)
+                .add(JetTokens.SUPER_KEYWORD, inNonClassBlock)
+                .add(JetTokens.CAPITALIZED_THIS_KEYWORD, inNonClassBlock)
+                .add(JetTokens.THROW_KEYWORD, inNonClassBlock)
+                .add(JetTokens.TRY_KEYWORD, inNonClassBlock)
+                .add(JetTokens.VARARG_KEYWORD, inNonClassBlock)
+                .add(JetTokens.WHERE_KEYWORD, inNonClassBlock)
+                .add(JetTokens.WHILE_KEYWORD, inNonClassBlock)
+                .registerAll()
     }
 
-    private static ElementFilter notIdentifier(ElementFilter filter) {
-        return new AndFilter(NOT_IDENTIFIER_FILTER, filter);
+    private fun registerScopeKeywordsCompletion(placeFilter : ElementFilter, keywords : Collection<JetToken>) {
+        extend(CompletionType.BASIC, getPlacePattern(placeFilter), KeywordsCompletionProvider(keywords.map { it.toString()!! }))
     }
 
-    private static ElementPattern<PsiElement> getPlacePattern(ElementFilter placeFilter) {
-        return PlatformPatterns.psiElement().and(new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
+    private inner class BunchKeywordRegister() {
+        private val orFiltersToKeywords : MultiMap<HashSet<ElementFilter>, JetToken> = MultiMap.create()
+
+        fun add(keyword: JetToken, vararg filters: ElementFilter): BunchKeywordRegister {
+            orFiltersToKeywords.putValue(hashSetOf(*filters), keyword)
+            return this
+        }
+
+        fun registerAll() {
+            for (entry in orFiltersToKeywords.entrySet()!!) {
+                val orFilter = OrFilter()
+                entry.key.forEach { filter -> orFilter.addFilter(filter) }
+
+                registerScopeKeywordsCompletion(orFilter, entry.value)
+            }
+        }
     }
 
-    private void registerScopeKeywordsCompletion(ElementFilter placeFilter, Collection<JetToken> keywords) {
-        extend(CompletionType.BASIC, getPlacePattern(placeFilter),
-               new KeywordsCompletionProvider(Collections2.transform(keywords, Functions.toStringFunction())));
-    }
+    class object {
+        private val KEYWORDS_INSERT_HANDLER = JetKeywordInsertHandler()
+        private val FUNCTION_KEYWORDS = listOf(JetTokens.GET_KEYWORD.toString(), JetTokens.SET_KEYWORD.toString())
 
-    private static class CommentFilter implements ElementFilter {
-        @Override
-        public boolean isAcceptable(Object element, PsiElement context) {
-            if (!(element instanceof PsiElement)) {
-                return false;
+        private val NOT_IDENTIFIER_FILTER = NotFilter(AndFilter(
+                LeafElementFilter(JetTokens.IDENTIFIER),
+                NotFilter(ParentFilter(ClassFilter(javaClass<JetReferenceExpression>())))
+        ))
+
+        private val GENERAL_FILTER : ElementFilter = NotFilter(OrFilter(
+                CommentFilter(),
+                ParentFilter(ClassFilter(javaClass<JetLiteralStringTemplateEntry>())),
+                ParentFilter(ClassFilter(javaClass<JetConstantExpression>())),
+                LeftNeighbour(TextFilter("."))
+        ))
+
+        private fun notIdentifier(filter : ElementFilter) = AndFilter(NOT_IDENTIFIER_FILTER, filter)
+
+        private fun getPlacePattern(placeFilter : ElementFilter) =
+            PlatformPatterns.psiElement().and(FilterPattern(AndFilter(GENERAL_FILTER, placeFilter)))
+
+        private open class CommentFilter() : ElementFilter {
+            override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
+                return (element is PsiElement) && JetPsiUtil.isInComment(element as PsiElement)
             }
 
-            return JetPsiUtil.isInComment((PsiElement) element);
+            override fun isClassAcceptable(hintClass: Class<out Any?>?): Boolean = true
         }
 
-        @Override
-        public boolean isClassAcceptable(Class hintClass) {
-            return true;
-        }
-    }
-
-    private static class ParentFilter extends PositionElementFilter {
-        public ParentFilter(ElementFilter filter) {
-            setFilter(filter);
-        }
-
-        @Override
-        public boolean isAcceptable(Object element, PsiElement context) {
-            if (!(element instanceof PsiElement)) {
-                return false;
-            }
-            PsiElement parent = ((PsiElement) element).getParent();
-            return parent != null && getFilter().isAcceptable(parent, context);
-        }
-    }
-
-    private static class InTopFilter extends PositionElementFilter {
-        @Override
-        public boolean isAcceptable(Object element, PsiElement context) {
-            //noinspection unchecked
-            return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClass.class, JetClassBody.class, JetBlockExpression.class,
-                                               JetFunction.class) != null &&
-                   PsiTreeUtil.getParentOfType(context, JetParameterList.class, JetTypeParameterList.class, JetClass.class) == null;
-        }
-    }
-
-    private static class InNonClassBlockFilter extends PositionElementFilter {
-        @Override
-        public boolean isAcceptable(Object element, PsiElement context) {
-            //noinspection unchecked
-            return PsiTreeUtil.getParentOfType(context, JetBlockExpression.class, true, JetClassBody.class) != null;
-        }
-    }
-
-    private static class InTypeParameterFirstChildFilter extends PositionElementFilter {
-        @Override
-        public boolean isAcceptable(Object element, PsiElement context) {
-            JetTypeParameter typeParameterElement = PsiTreeUtil.getParentOfType(context, JetTypeParameter.class, true);
-            if (typeParameterElement != null && PsiTreeUtil.isAncestor(typeParameterElement.getFirstChild(), context, false)) {
-                return true;
+        private open class ParentFilter(filter : ElementFilter) : PositionElementFilter() {
+            {
+                setFilter(filter)
             }
 
-            return false;
-        }
-    }
-
-    private static class InClassBodyFilter extends PositionElementFilter {
-        @Override
-        public boolean isAcceptable(Object element, PsiElement context) {
-            //noinspection unchecked
-            return PsiTreeUtil.getParentOfType(context, JetClassBody.class, true,
-                                               JetBlockExpression.class, JetProperty.class, JetParameterList.class) != null;
-        }
-    }
-
-    private static class AfterClassInClassBodyFilter extends InClassBodyFilter {
-        @Override
-        public boolean isAcceptable(Object element, PsiElement context) {
-            if (super.isAcceptable(element, context)) {
-                PsiElement ps = context.getPrevSibling();
-                if (ps instanceof PsiWhiteSpace) {
-                    ps = ps.getPrevSibling();
-                }
-                if (ps instanceof LeafPsiElement) {
-                    return ((LeafPsiElement) ps).getElementType() == JetTokens.CLASS_KEYWORD;
-                }
+            override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
+                val parent = (element as? PsiElement)?.getParent()
+                return parent != null && (getFilter()?.isAcceptable(parent, context) ?: true)
             }
-            return false;
         }
-    }
 
-    private static class InPropertyBodyFilter extends PositionElementFilter {
-        private static boolean isAfterName(@NotNull JetProperty property, @NotNull PsiElement element) {
-            for (PsiElement child = property.getFirstChild(); child != null; child = child.getNextSibling()) {
-                if (PsiTreeUtil.isAncestor(child, element, false)) {
-                    break;
+        private open class InTopFilter() : PositionElementFilter() {
+            override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
+                val underFile = PsiTreeUtil.getParentOfType(context, javaClass<JetFile>(), false,
+                        javaClass<JetClass>(), javaClass<JetClassBody>(), javaClass<JetBlockExpression>(), javaClass<JetFunction>()) != null
+
+                val notInDeclarationElement = PsiTreeUtil.getParentOfType(
+                        context,
+                        javaClass<JetParameterList>(), javaClass<JetTypeParameterList>(), javaClass<JetClass>()) == null
+
+                return underFile && notInDeclarationElement
+            }
+        }
+
+        private open class InNonClassBlockFilter() : PositionElementFilter() {
+            override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
+                return PsiTreeUtil.getParentOfType(context, javaClass<JetBlockExpression>(), true, javaClass<JetClassBody>()) != null
+            }
+        }
+
+        private open class InTypeParameterFirstChildFilter() : PositionElementFilter() {
+            override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
+                val typeParameterElement = PsiTreeUtil.getParentOfType(context, javaClass<JetTypeParameter>(), true)
+                return typeParameterElement != null &&
+                        context != null &&
+                        PsiTreeUtil.isAncestor(typeParameterElement.getFirstChild(), context, false)
+            }
+        }
+
+        private open class InClassBodyFilter() : PositionElementFilter() {
+            override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
+                return PsiTreeUtil.getParentOfType(
+                        context, javaClass<JetClassBody>(), true,
+                        javaClass<JetBlockExpression>(),
+                        javaClass<JetProperty>(),
+                        javaClass<JetParameterList>()) != null
+            }
+        }
+
+        private open class AfterClassInClassBodyFilter() : InClassBodyFilter() {
+            override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
+                if (super.isAcceptable(element, context)) {
+                    fun isLeafAndClass(psiElement: PsiElement?) =
+                            psiElement is LeafPsiElement && psiElement.getElementType() == JetTokens.CLASS_KEYWORD
+
+                    val ps = context?.getPrevSibling()
+                    return isLeafAndClass(if (ps is PsiWhiteSpace) ps.getPrevSibling() else ps)
                 }
 
-                if (child.getNode().getElementType() == IDENTIFIER) {
-                    return true;
-                }
+                return false
+            }
+        }
+
+        private open class InPropertyBodyFilter() : PositionElementFilter() {
+            override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
+                if (!(element is PsiElement))
+                    return false
+
+                val property = PsiTreeUtil.getParentOfType(context, javaClass<JetProperty>(), false)
+                return property != null && isAfterName(property, (element as PsiElement))
             }
 
-            return false;
-        }
+            private fun isAfterName(property : JetProperty, element : PsiElement) : Boolean {
+                var iterableChild = property.getFirstChild()
+                while (iterableChild != null) {
+                    val child = iterableChild!!
 
-        @Override
-        public boolean isAcceptable(Object element, PsiElement context) {
-            if (!(element instanceof PsiElement)) return false;
-            JetProperty property = PsiTreeUtil.getParentOfType(context, JetProperty.class, false);
-            return property != null && isAfterName(property, (PsiElement) element);
-        }
-    }
-
-    private static class SimplePrefixMatcher extends PrefixMatcher {
-        protected SimplePrefixMatcher(String prefix) {
-            super(prefix);
-        }
-
-        @Override
-        public boolean prefixMatches(@NotNull String name) {
-            return StringUtil.startsWith(name, getPrefix());
-        }
-
-        @NotNull
-        @Override
-        public PrefixMatcher cloneWithPrefix(@NotNull String prefix) {
-            return new SimplePrefixMatcher(prefix);
-        }
-    }
-
-    private static class KeywordsCompletionProvider extends CompletionProvider<CompletionParameters> {
-        private final Collection<LookupElement> elements;
-        private final String debugName;
-
-        public KeywordsCompletionProvider(Collection<String> keywords) {
-            debugName = StringUtil.join(Ordering.natural().sortedCopy(keywords), ", ");
-            elements = Collections2.transform(keywords, new Function<String, LookupElement>() {
-                @Override
-                public LookupElement apply(String keyword) {
-                    LookupElementBuilder lookupElementBuilder = LookupElementBuilder.create(keyword).bold();
-
-                    if (!FUNCTION_KEYWORDS.contains(keyword)) {
-                        return lookupElementBuilder.withInsertHandler(KEYWORDS_INSERT_HANDLER);
+                    if (PsiTreeUtil.isAncestor(child, element, false)) {
+                        break
                     }
 
-                    return lookupElementBuilder.withInsertHandler(JetFunctionInsertHandler.EMPTY_FUNCTION_HANDLER);
+                    if (child.getNode()?.getElementType() == JetTokens.IDENTIFIER) {
+                        return true
+                    }
+
+                    iterableChild = child.getNextSibling()
                 }
-            });
-        }
 
-        @Override
-        protected void addCompletions(
-                @NotNull CompletionParameters parameters, ProcessingContext context,
-                @NotNull CompletionResultSet result
-        ) {
-            WeigherPackage.addJetSorting(result, parameters)
-                    .withPrefixMatcher(new SimplePrefixMatcher(result.getPrefixMatcher().getPrefix()))
-                    .addAllElements(elements);
-        }
-
-        @Override
-        public String toString() {
-            return debugName;
-        }
-    }
-
-    private class BunchKeywordRegister {
-        private final MultiMap<HashSet<ElementFilter>, JetToken> orFiltersToKeywords = MultiMap.create();
-
-        void add(JetToken keyword, ElementFilter... filters) {
-            HashSet<ElementFilter> filtersSet = Sets.newHashSet(filters);
-            orFiltersToKeywords.putValue(filtersSet, keyword);
-        }
-
-        void registerAll() {
-            for (Map.Entry<HashSet<ElementFilter>, Collection<JetToken>> entry : orFiltersToKeywords.entrySet()) {
-                ElementFilter[] filters = ArrayUtil.toObjectArray(entry.getKey(), ElementFilter.class);
-                Collection<JetToken> tokens = entry.getValue();
-                registerScopeKeywordsCompletion(new OrFilter(filters), tokens);
+                return false
             }
+        }
+
+        private open class SimplePrefixMatcher(prefix : String) : PrefixMatcher(prefix) {
+            override fun prefixMatches(name : String) : Boolean = StringUtil.startsWith(name, getPrefix())
+            override fun cloneWithPrefix(prefix : String) : PrefixMatcher = SimplePrefixMatcher(prefix)
+        }
+
+        private inner class KeywordsCompletionProvider(keywords : Collection<String>) : CompletionProvider<CompletionParameters>() {
+            private val elements : Collection<LookupElement>
+            private val debugName : String
+
+            {
+                debugName = keywords.sort().makeString(separator = ", ")
+
+                elements = keywords.map { keyword ->
+                    val lookupElementBuilder = LookupElementBuilder.create(keyword).bold()
+
+                    if (!JetKeywordCompletionContributor.FUNCTION_KEYWORDS.contains(keyword)) {
+                        lookupElementBuilder.withInsertHandler(JetKeywordCompletionContributor.KEYWORDS_INSERT_HANDLER)
+                    }
+                    else {
+                        lookupElementBuilder.withInsertHandler(JetFunctionInsertHandler.EMPTY_FUNCTION_HANDLER)
+                    }
+                }
+            }
+
+            override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext?, result: CompletionResultSet) {
+                result.addJetSorting(parameters).withPrefixMatcher(SimplePrefixMatcher(result.getPrefixMatcher().getPrefix())).addAllElements(elements)
+            }
+
+            override fun toString() : String = debugName
         }
     }
 }

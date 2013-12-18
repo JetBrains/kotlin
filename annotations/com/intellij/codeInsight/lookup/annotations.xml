@@ -17,6 +17,9 @@
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElement withAutoCompletionPolicy(com.intellij.codeInsight.lookup.AutoCompletionPolicy)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder bold()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder create(com.intellij.psi.PsiNamedElement)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
