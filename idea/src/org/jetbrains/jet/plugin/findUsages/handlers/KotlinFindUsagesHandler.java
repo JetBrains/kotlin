@@ -55,6 +55,7 @@ public abstract class KotlinFindUsagesHandler<T extends PsiElement> extends Find
         this(psiElement, Collections.<PsiElement>emptyList(), factory);
     }
 
+    @NotNull
     public final KotlinFindUsagesHandlerFactory getFactory() {
         return factory;
     }
