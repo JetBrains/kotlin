@@ -931,16 +931,12 @@ public class CandidateResolver {
             }
         }
         else {
-            if (argument.isNamed()) {
-                return parameterDescriptor.getType();
-            }
-            else {
-                JetType varargElementType = parameterDescriptor.getVarargElementType();
-                if (varargElementType == null) {
-                    return parameterDescriptor.getType();
-                }
+            JetType varargElementType = parameterDescriptor.getVarargElementType();
+            if (varargElementType != null) {
                 return varargElementType;
             }
+
+            return parameterDescriptor.getType();
         }
     }
 
