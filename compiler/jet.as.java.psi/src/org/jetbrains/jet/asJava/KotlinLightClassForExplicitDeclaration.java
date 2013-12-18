@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.NullableLazyValue;
@@ -29,11 +30,15 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
+import com.intellij.psi.impl.light.LightClass;
+import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.reference.SoftReference;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -41,6 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ResolvePackage;
@@ -48,6 +54,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -62,6 +69,61 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightClass implements KotlinLightClass, JetJavaMirrorMarker {
     private final static Key<CachedValue<LightClassStubWithData>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
+    private static class Anonymous extends KotlinLightClassForExplicitDeclaration implements PsiAnonymousClass {
+        private Anonymous(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject classOrObject) {
+            super(manager, name, classOrObject);
+        }
+
+        private SoftReference<PsiClassType> cachedBaseType = null;
+
+        @NotNull
+        @Override
+        public PsiJavaCodeReferenceElement getBaseClassReference() {
+            ClassDescriptor classDescriptor = getDescriptor();
+            Collection<JetType> superTypes = classDescriptor.getTypeConstructor().getSupertypes();
+
+            String fqName;
+            if (!superTypes.isEmpty()) {
+                JetType superType = superTypes.iterator().next();
+                DeclarationDescriptor typeDescriptor = superType.getConstructor().getDeclarationDescriptor();
+                assert typeDescriptor != null;
+
+                fqName = DescriptorUtils.getFqName(typeDescriptor).asString();
+            }
+            else {
+                fqName = CommonClassNames.JAVA_LANG_OBJECT;
+            }
+
+            Project project = classOrObject.getProject();
+            return JavaPsiFacade.getElementFactory(project).createReferenceElementByFQClassName(
+                    fqName, GlobalSearchScope.allScope(project)
+            );
+        }
+
+        @NotNull
+        @Override
+        public PsiClassType getBaseClassType() {
+            PsiClassType type = null;
+            if (cachedBaseType != null) type = cachedBaseType.get();
+            if (type != null && type.isValid()) return type;
+
+            type = JavaPsiFacade.getInstance(classOrObject.getProject()).getElementFactory().createType(getBaseClassReference());
+            cachedBaseType = new SoftReference<PsiClassType>(type);
+            return type;
+        }
+
+        @Nullable
+        @Override
+        public PsiExpressionList getArgumentList() {
+            return null;
+        }
+
+        @Override
+        public boolean isInQualifiedNew() {
+            return false;
+        }
+    }
+
     @Nullable
     public static KotlinLightClassForExplicitDeclaration create(@NotNull PsiManager manager, @NotNull JetClassOrObject classOrObject) {
         if (LightClassUtil.belongsToKotlinBuiltIns((JetFile) classOrObject.getContainingFile())) {
@@ -73,6 +135,9 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
         FqName fqName = JvmClassName.byInternalName(jvmInternalName).getFqNameForClassNameWithoutDollars();
 
+        if (classOrObject instanceof JetObjectDeclaration && ((JetObjectDeclaration) classOrObject).isObjectLiteral()) {
+            return new KotlinLightClassForExplicitDeclaration.Anonymous(manager, fqName, classOrObject);
+        }
         return new KotlinLightClassForExplicitDeclaration(manager, fqName, classOrObject);
     }
 
@@ -84,7 +149,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     }
 
     private final FqName classFqName; // FqName of (possibly inner) class
-    private final JetClassOrObject classOrObject;
+    protected final JetClassOrObject classOrObject;
     private PsiClass delegate;
 
     @Nullable
@@ -161,7 +226,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     }
 
     @NotNull
-    private ClassDescriptor getDescriptor() {
+    protected final ClassDescriptor getDescriptor() {
         return getLightClassDataExactly(classOrObject).getDescriptor();
     }
 
