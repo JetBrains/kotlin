@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -24,6 +26,7 @@ import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
@@ -349,6 +352,12 @@ public class CallExpressionResolver {
             if (functionDescriptor == null) {
                 return JetTypeInfo.create(null, context.dataFlowInfo);
             }
+            if (functionDescriptor instanceof ConstructorDescriptor && DescriptorUtils.isAnnotationClass(functionDescriptor.getContainingDeclaration())) {
+                if (!canInstantiateAnnotationClass(callExpression)) {
+                    context.trace.report(ANNOTATION_CLASS_CONSTRUCTOR_CALL.on(callExpression));
+                }
+            }
+
             JetType type = functionDescriptor.getReturnType();
 
             return JetTypeInfo.create(type, resolvedCall.getDataFlowInfoForArguments().getResultInfo());
@@ -369,6 +378,20 @@ public class CallExpressionResolver {
         }
         temporaryForFunction.commit();
         return JetTypeInfo.create(null, context.dataFlowInfo);
+    }
+
+    private static boolean canInstantiateAnnotationClass(@NotNull JetCallExpression expression) {
+        PsiElement parent = expression.getParent();
+        if (parent instanceof JetValueArgument) {
+            return PsiTreeUtil.getParentOfType(parent, JetAnnotationEntry.class) != null;
+        }
+        else if (parent instanceof JetParameter) {
+            JetClass jetClass = PsiTreeUtil.getParentOfType(parent, JetClass.class);
+            if (jetClass != null) {
+                return jetClass.hasModifier(JetTokens.ANNOTATION_KEYWORD);
+            }
+        }
+        return false;
     }
 
     private void checkSuper(@NotNull ReceiverValue receiverValue, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results,

@@ -575,6 +575,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/annotations/BasicAnnotations.kt");
             }
             
+            @TestMetadata("ConstructorCall.kt")
+            public void testConstructorCall() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/ConstructorCall.kt");
+            }
+            
             @TestMetadata("Deprecated.kt")
             public void testDeprecated() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/Deprecated.kt");
