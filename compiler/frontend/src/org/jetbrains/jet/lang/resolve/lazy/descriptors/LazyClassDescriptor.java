@@ -210,14 +210,14 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         ConstructorDescriptor primaryConstructor = getUnsubstitutedPrimaryConstructor();
         if (primaryConstructor == null) return getScopeForMemberDeclarationResolution();
 
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Scope with constructor parameters in " + getName());
+        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, primaryConstructor, RedeclarationHandler.DO_NOTHING, "Scope with constructor parameters in " + getName());
         for (ValueParameterDescriptor valueParameterDescriptor : primaryConstructor.getValueParameters()) {
             scope.addVariableDescriptor(valueParameterDescriptor);
         }
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         return new ChainedScope(
-                this,
+                primaryConstructor,
                 "ScopeForPropertyInitializerResolution: " + getName(),
                 scope, getScopeForMemberDeclarationResolution());
     }
