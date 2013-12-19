@@ -48,6 +48,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava("compiler/testData/codegen/boxWithJava/annotations/javaAnnotationCall.kt");
         }
         
+        @TestMetadata("javaAnnotationDefault.kt")
+        public void testJavaAnnotationDefault() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/annotations/javaAnnotationDefault.kt");
+        }
+        
         @TestMetadata("javaNegativePropertyAsAnnotationParameter.kt")
         public void testJavaNegativePropertyAsAnnotationParameter() throws Exception {
             doTestWithJava("compiler/testData/codegen/boxWithJava/annotations/javaNegativePropertyAsAnnotationParameter.kt");
