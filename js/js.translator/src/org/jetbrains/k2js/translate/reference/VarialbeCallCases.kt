@@ -22,35 +22,40 @@ import com.google.dart.compiler.backend.js.ast.JsLiteral
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import com.google.dart.compiler.backend.js.ast.JsInvocation
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import java.util.Collections
+import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.jet.lang.resolve.DescriptorFactory
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 
 
 class NativeVariableAccessCase(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo) {
 
     override fun VariableAccessInfo.receiverArgument(): JsExpression {
-        return constructAccessExpression(JsNameRef(propertyName, receiverObject!!))
+        return constructAccessExpression(JsNameRef(variableName, receiverObject!!))
     }
 
     override fun VariableAccessInfo.thisObject(): JsExpression {
-        return constructAccessExpression(JsNameRef(propertyName, thisObject!!))
+        return constructAccessExpression(JsNameRef(variableName, thisObject!!))
     }
 
     override fun VariableAccessInfo.noReceivers(): JsExpression {
-        return constructAccessExpression(propertyName.makeRef()!!)
+        return constructAccessExpression(variableName.makeRef()!!)
     }
 }
 
 class DefaultVariableAccessCase(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo) {
 
     override fun VariableAccessInfo.noReceivers(): JsExpression {
-        return constructAccessExpression(context.getQualifierForDescriptor(callableDescriptor)!!)
+        return constructAccessExpression(context.getQualifiedReference(variableDescriptor))
     }
 
     override fun VariableAccessInfo.thisObject(): JsExpression {
-        return constructAccessExpression(JsNameRef(propertyName, thisObject!!))
+        return constructAccessExpression(JsNameRef(variableName, thisObject!!))
     }
 
     override fun VariableAccessInfo.receiverArgument(): JsExpression {
-        val funRef = JsNameRef(getAccessFunctionName(), context.getQualifierForDescriptor(callableDescriptor))
+        val funRef = JsNameRef(getAccessFunctionName(), context.getQualifierForDescriptor(variableDescriptor))
         return if (isGetAccess()) {
             JsInvocation(funRef, receiverObject!!)
         } else {
@@ -71,15 +76,50 @@ class DefaultVariableAccessCase(callInfo: VariableAccessInfo) : VariableAccessCa
 class ValueParameterAccessCase(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo) {
     override fun VariableAccessInfo.noReceivers(): JsExpression {
         assert(isGetAccess(), "It must be get access. CallInfo: $callInfo")
-        return propertyName.makeRef()!!
+        return variableName.makeRef()!!
     }
 }
 
+class DelegatePropertyAccessIntrinsic(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo), DelegateIntrinsic<VariableAccessInfo> {
+    override fun VariableAccessInfo.canBeApply(): Boolean {
+        return variableDescriptor is PropertyDescriptor
+    }
+
+    override fun VariableAccessInfo.getArgs(): List<JsExpression> {
+        return if (isGetAccess())
+            Collections.emptyList<JsExpression>()
+        else
+            Collections.singletonList(getSetToExpression())
+    }
+
+    override fun VariableAccessInfo.getDescriptor(): CallableDescriptor {
+        val propertyDescriptor = variableDescriptor as PropertyDescriptor
+        return if (isGetAccess()) {
+            var getter = propertyDescriptor.getGetter()
+            if (getter == null) {
+                val getterImpl = DescriptorFactory.createDefaultGetter(variableDescriptor)
+                getterImpl.initialize(propertyDescriptor.getType())
+                ((propertyDescriptor as PropertyDescriptorImpl)).initialize(getterImpl, propertyDescriptor.getSetter())
+                getter = getterImpl
+            }
+            getter!!
+        } else {
+            var setter = propertyDescriptor.getSetter()
+            if (setter == null) {
+                val setterImpl = DescriptorFactory.createDefaultSetter(variableDescriptor)
+                ((propertyDescriptor as PropertyDescriptorImpl)).initialize(propertyDescriptor.getGetter(), setterImpl)
+                setter = setterImpl
+            }
+            setter!!
+        }
+    }
+}
 
 fun createVariableAccessCases(): CallCaseDispatcher<VariableAccessCase, VariableAccessInfo> {
     val caseDispatcher = CallCaseDispatcher<VariableAccessCase, VariableAccessInfo>()
 
-    caseDispatcher.addCase(::ValueParameterAccessCase) { it.callableDescriptor is ValueParameterDescriptor}
+    caseDispatcher.addCase { DelegatePropertyAccessIntrinsic(it).intrinsic() }
+    caseDispatcher.addCase(::ValueParameterAccessCase) { it.variableDescriptor is ValueParameterDescriptor}
     caseDispatcher.addCase(::NativeVariableAccessCase) { it.isNative() }
     caseDispatcher.addCase(::DefaultVariableAccessCase) { true } // TODO: fix this
     return caseDispatcher

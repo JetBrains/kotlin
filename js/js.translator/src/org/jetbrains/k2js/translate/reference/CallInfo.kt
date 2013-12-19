@@ -40,7 +40,7 @@ open class BaseCallInfo(
         val receiverObject: JsExpression?,
         val nullableReceiverForSafeCall: JsExpression?
 ) {
-    val callableDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
+    open val callableDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
 
     fun isExtension(): Boolean = receiverObject != null
     fun isMemberCall(): Boolean = thisObject != null
@@ -61,7 +61,7 @@ private open class CallInfoWrapper(callInfo: BaseCallInfo) :
 // if setTo == null, it is get access
 class VariableAccessInfo(callInfo: BaseCallInfo, private val setTo: JsExpression? = null): CallInfoWrapper(callInfo) {
     val variableDescriptor = super.callableDescriptor as VariableDescriptor
-    val propertyName : JsName
+    val variableName : JsName
         get() {
             return context.getNameForDescriptor(variableDescriptor)
         }
