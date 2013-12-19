@@ -26,10 +26,13 @@ import org.jetbrains.k2js.translate.context.TranslationContext
 import java.util.ArrayList
 import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
+import com.google.dart.compiler.backend.js.ast.JsNameRef
+import org.jetbrains.k2js.translate.utils.JsAstUtils
+import org.jetbrains.k2js.translate.context.Namer
 
 
 val functionCallCases: CallCaseDispatcher<FunctionCallCase, FunctionCallInfo> = createFunctionCases()
-val variableAccessCases = CallCaseDispatcher<VariableAccessCase, VariableAccessInfo>()
+val variableAccessCases: CallCaseDispatcher<VariableAccessCase, VariableAccessInfo> = createVariableAccessCases()
 
 fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver: JsExpression? = null): JsExpression {
     return buildCall(resolvedCall, receiver, null)
@@ -108,7 +111,20 @@ trait CallCase<I : BaseCallInfo> {
 }
 
 open class FunctionCallCase(override val callInfo: FunctionCallInfo) : CallCase<FunctionCallInfo>
-open class VariableAccessCase(override val callInfo: VariableAccessInfo) : CallCase<VariableAccessInfo>
+
+open class VariableAccessCase(override val callInfo: VariableAccessInfo) : CallCase<VariableAccessInfo> {
+    protected fun VariableAccessInfo.getAccessFunctionName(): String {
+        return Namer.getNameForAccessor(propertyName.getIdent()!!, isGetAccess(), false)
+    }
+
+    protected fun VariableAccessInfo.constructAccessExpression(ref: JsNameRef): JsExpression {
+        if (isGetAccess()) {
+            return ref
+        } else {
+            return JsAstUtils.assignment(ref, getSetToExpression())
+        }
+    }
+}
 
 class CallCaseDispatcher<C : CallCase<I>, I : BaseCallInfo> {
     private val cases: MutableList<(I) -> JsExpression?> = ArrayList()
