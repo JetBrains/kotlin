@@ -20,14 +20,12 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 public class JetCompletionContributor extends CompletionContributor {
@@ -104,7 +102,7 @@ public class JetCompletionContributor extends CompletionContributor {
             int offset = context.getStartOffset();
             PsiElement tokenBefore = context.getFile().findElementAt(Math.max(0, offset - 1));
             if (context.getCompletionType() == CompletionType.SMART) {
-                context.setDummyIdentifier(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$"); // add '$' to ignore context after the caret
+                context.setDummyIdentifier(CompletionUtil.DUMMY_IDENTIFIER_TRIMMED + "$"); // add '$' to ignore context after the caret
             }
             else {
                 if (JetPackagesContributor.ACTIVATION_PATTERN.accepts(tokenBefore)) {
@@ -114,7 +112,7 @@ public class JetCompletionContributor extends CompletionContributor {
                     context.setDummyIdentifier(JetExtensionReceiverTypeContributor.DUMMY_IDENTIFIER);
                 }
                 else{
-                    context.setDummyIdentifier(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
+                    context.setDummyIdentifier(CompletionUtil.DUMMY_IDENTIFIER_TRIMMED);
                 }
             }
 
