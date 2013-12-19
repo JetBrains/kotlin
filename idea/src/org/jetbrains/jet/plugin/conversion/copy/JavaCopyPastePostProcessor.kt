@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.editor.JetEditorOptions
 import java.awt.datatransfer.Transferable
 import java.util.ArrayList
+import com.intellij.openapi.util.TextRange
 
 public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
 
@@ -52,12 +53,15 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
         }
 
         val lightFile = PsiFileFactory.getInstance(file.getProject())!!.createFileFromText(file.getText()!!, file)
-        return CopiedCode(lightFile, startOffsets!!, endOffsets!!)
+        return CopiedCode(lightFile as? PsiJavaFile, startOffsets!!, endOffsets!!)
     }
 
     public override fun processTransferableData(project: Project?, editor: Editor?, bounds: RangeMarker?,
                                                 caretOffset: Int, indented: Ref<Boolean>?, value: TextBlockTransferableData?) {
         if (value !is CopiedCode)
+            return
+
+        if (value.getFile() == null)
             return
 
         val file = PsiDocumentManager.getInstance(project!!).getPsiFile(editor!!.getDocument())
@@ -67,8 +71,8 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
         val jetEditorOptions = JetEditorOptions.getInstance()!!
         val needConvert = jetEditorOptions.isEnableJavaToKotlinConversion() && (jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project))
         if (needConvert) {
-            val text = convertCopiedCodeToKotlin((value as CopiedCode), file)
-            if (text.isNotEmpty() ) {
+            val text = convertCopiedCodeToKotlin(value, file)
+            if (text.isNotEmpty()) {
                 ApplicationManager.getApplication()!!.runWriteAction {
                     editor.getDocument().replaceString(bounds!!.getStartOffset(), bounds.getEndOffset(), text)
                     editor.getCaretModel().moveToOffset(bounds.getStartOffset() + text.length())
@@ -78,38 +82,68 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
         }
     }
 
-    private fun convertCopiedCodeToKotlin(code: CopiedCode, file: PsiFile): String {
-        val buffer = getSelectedElements(code.getFile()!!, code.getStartOffsets(), code.getEndOffsets())
-        val project = file.getProject()
-        val converter = Converter(project, PluginSettings)
-        val result = buffer.map { converter.elementToKotlin(it) }.makeString("")
-        return StringUtil.convertLineSeparators(result.toString())
-    }
-
-    private fun getSelectedElements(file: PsiFile, startOffsets: IntArray, endOffsets: IntArray): MutableList<PsiElement> {
-        val buffer = ArrayList<PsiElement>()
+    private fun convertCopiedCodeToKotlin(code: CopiedCode, fileToPaste: PsiFile): String {
+        val converter = Converter(fileToPaste.getProject(), PluginSettings)
+        val startOffsets = code.getStartOffsets()
+        val endOffsets = code.getEndOffsets()
         assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
+        val result = StringBuilder()
         for (i in 0..startOffsets.size - 1) {
             val startOffset = startOffsets[i]
             val endOffset = endOffsets[i]
-            var elem = file.findElementAt(startOffset)
-            while (elem != null &&
-                elem!!.getParent() != null &&
-                !(elem!!.getParent() is PsiFile) &&
-                elem!!.getParent()!!.getTextRange()!!.getEndOffset() <= endOffset) {
-                elem = elem!!.getParent()
-            }
-            if (elem != null) {
-                buffer.add(elem!!)
-            }
-            while (elem != null && elem!!.getTextRange()!!.getEndOffset() < endOffset) {
-                elem = elem!!.getNextSibling()
-                if (elem != null) {
-                    buffer.add(elem!!)
-                }
-            }
+            result.append(convertRangeToKotlin(code.getFile()!!, TextRange(startOffset, endOffset), converter))
         }
-        return buffer
+        return StringUtil.convertLineSeparators(result.toString())
+    }
+
+    private fun convertRangeToKotlin(file: PsiJavaFile,
+                                     range: TextRange,
+                                     converter: Converter): String {
+        val result = StringBuilder()
+        var currentRange = range
+        while (!currentRange.isEmpty()) {
+            val leafElement = findFirstLeafElementWhollyInRange(file, currentRange)
+            if (leafElement == null) {
+                break;
+            }
+            val elementToConvert = findTopMostParentWhollyInRange(currentRange, leafElement)
+            result.append(converter.elementToKotlin(elementToConvert))
+            val endOfConverted = elementToConvert.getTextRange()!!.getEndOffset()
+            currentRange = TextRange(endOfConverted, currentRange.getEndOffset())
+        }
+        return result.toString()
+    }
+
+    private fun findFirstLeafElementWhollyInRange(file: PsiJavaFile, range: TextRange): PsiElement? {
+        var i = range.getStartOffset()
+        while (i < range.getEndOffset()) {
+            var element = file.findElementAt(i)
+            if (element == null) {
+                ++i
+                continue
+            }
+            val elemRange = element!!.getTextRange()!!
+            if (elemRange !in range) {
+                i = elemRange.getEndOffset()
+                continue
+            }
+            return element
+        }
+        return null
+    }
+
+    private fun findTopMostParentWhollyInRange(range: TextRange,
+                                               base: PsiElement): PsiElement {
+        var elem = base
+        var parent = elem.getParent()
+        while (elem.getTextRange()!! in range &&
+               parent != null &&
+               parent !is PsiJavaFile &&
+               parent!!.getTextRange()!! in range) {
+            elem = parent!!
+            parent = elem.getParent()
+        }
+        return elem
     }
 
     private fun okFromDialog(project: Project): Boolean {

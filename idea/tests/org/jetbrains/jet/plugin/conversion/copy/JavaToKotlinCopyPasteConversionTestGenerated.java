@@ -51,6 +51,26 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest("idea/testData/copyPaste/conversion/Imports2.java");
     }
     
+    @TestMetadata("Imports3.java")
+    public void testImports3() throws Exception {
+        doTest("idea/testData/copyPaste/conversion/Imports3.java");
+    }
+    
+    @TestMetadata("MethodReferenceWithoutQualifier.java")
+    public void testMethodReferenceWithoutQualifier() throws Exception {
+        doTest("idea/testData/copyPaste/conversion/MethodReferenceWithoutQualifier.java");
+    }
+    
+    @TestMetadata("OnlyClosingBrace.java")
+    public void testOnlyClosingBrace() throws Exception {
+        doTest("idea/testData/copyPaste/conversion/OnlyClosingBrace.java");
+    }
+    
+    @TestMetadata("OnlyQualifier.java")
+    public void testOnlyQualifier() throws Exception {
+        doTest("idea/testData/copyPaste/conversion/OnlyQualifier.java");
+    }
+    
     @TestMetadata("SampleBlock.java")
     public void testSampleBlock() throws Exception {
         doTest("idea/testData/copyPaste/conversion/SampleBlock.java");
