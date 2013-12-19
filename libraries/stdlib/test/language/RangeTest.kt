@@ -23,12 +23,12 @@ public class RangeTest {
     }
 
     test fun byteRange() {
-        val range = -5.toByte()..9.toByte()
-        assertFalse(-100.toByte() in range)
-        assertFalse(-6.toByte() in range)
+        val range = (-5).toByte()..9.toByte()
+        assertFalse((-100).toByte() in range)
+        assertFalse((-6).toByte() in range)
 
-        assertTrue(-5.toByte() in range)
-        assertTrue(-4.toByte() in range)
+        assertTrue((-5).toByte() in range)
+        assertTrue((-4).toByte() in range)
         assertTrue(0.toByte() in range)
         assertTrue(3.toByte() in range)
         assertTrue(8.toByte() in range)
@@ -39,12 +39,12 @@ public class RangeTest {
     }
 
     test fun shortRange() {
-        val range = -5.toShort()..9.toShort()
-        assertFalse(-1000.toShort() in range)
-        assertFalse(-6.toShort() in range)
+        val range = (-5).toShort()..9.toShort()
+        assertFalse((-1000).toShort() in range)
+        assertFalse((-6).toShort() in range)
 
-        assertTrue(-5.toShort() in range)
-        assertTrue(-4.toShort() in range)
+        assertTrue((-5).toShort() in range)
+        assertTrue((-4).toShort() in range)
         assertTrue(0.toShort() in range)
         assertTrue(3.toShort() in range)
         assertTrue(8.toShort() in range)

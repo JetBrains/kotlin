@@ -73,7 +73,7 @@ public final class Byte : jet.Number, jet.Comparable<jet.Byte> {
     public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Byte
-    public final fun minus(): jet.Byte
+    public final fun minus(): jet.Int
     public final fun minus(/*0*/ other: jet.Byte): jet.Int
     public final fun minus(/*0*/ other: jet.Char): jet.Int
     public final fun minus(/*0*/ other: jet.Double): jet.Double
@@ -88,7 +88,7 @@ public final class Byte : jet.Number, jet.Comparable<jet.Byte> {
     public final fun mod(/*0*/ other: jet.Int): jet.Int
     public final fun mod(/*0*/ other: jet.Long): jet.Long
     public final fun mod(/*0*/ other: jet.Short): jet.Int
-    public final fun plus(): jet.Byte
+    public final fun plus(): jet.Int
     public final fun plus(/*0*/ other: jet.Byte): jet.Int
     public final fun plus(/*0*/ other: jet.Char): jet.Int
     public final fun plus(/*0*/ other: jet.Double): jet.Double
@@ -1493,7 +1493,7 @@ public final class Short : jet.Number, jet.Comparable<jet.Short> {
     public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Short
-    public final fun minus(): jet.Short
+    public final fun minus(): jet.Int
     public final fun minus(/*0*/ other: jet.Byte): jet.Int
     public final fun minus(/*0*/ other: jet.Char): jet.Int
     public final fun minus(/*0*/ other: jet.Double): jet.Double
@@ -1508,7 +1508,7 @@ public final class Short : jet.Number, jet.Comparable<jet.Short> {
     public final fun mod(/*0*/ other: jet.Int): jet.Int
     public final fun mod(/*0*/ other: jet.Long): jet.Long
     public final fun mod(/*0*/ other: jet.Short): jet.Int
-    public final fun plus(): jet.Short
+    public final fun plus(): jet.Int
     public final fun plus(/*0*/ other: jet.Byte): jet.Int
     public final fun plus(/*0*/ other: jet.Char): jet.Int
     public final fun plus(/*0*/ other: jet.Double): jet.Double
