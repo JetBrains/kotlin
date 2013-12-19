@@ -48,7 +48,6 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     private static final FqName PACKAGE = new FqName("test");
 
     protected BindingContext context;
-    protected AnalyzeExhaust analyzeExhaust;
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -261,7 +260,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     protected PackageViewDescriptor getPackage(@NotNull String content) {
         JetFile ktFile = JetTestUtils.createFile("dummy.kt", content, getProject());
-        analyzeExhaust = JetTestUtils.analyzeFile(ktFile);
+        AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(ktFile);
         context = analyzeExhaust.getBindingContext();
 
         PackageViewDescriptor packageView = analyzeExhaust.getModuleDescriptor().getPackage(PACKAGE);
@@ -271,8 +270,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
 
     protected static String getContent(@NotNull String annotationText) throws IOException {
         File file = new File(PATH);
-        String content = JetTestUtils.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
-        return content;
+        return JetTestUtils.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
     }
 
     protected static void checkDescriptor(String expectedAnnotation, DeclarationDescriptor member) {
