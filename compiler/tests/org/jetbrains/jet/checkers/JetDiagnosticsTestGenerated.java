@@ -6299,6 +6299,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt4009.kt");
                 }
                 
+                @TestMetadata("smartCastOnReceiver.kt")
+                public void testSmartCastOnReceiver() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/smartCasts/inference/smartCastOnReceiver.kt");
+                }
+                
             }
             
             public static Test innerSuite() {
