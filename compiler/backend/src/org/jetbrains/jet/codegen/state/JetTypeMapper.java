@@ -264,7 +264,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         if (ErrorUtils.isError(descriptor)) {
             if (classBuilderMode != ClassBuilderMode.LIGHT_CLASSES) {
-                throw new IllegalStateException(generateErrorMessageForErrorType(descriptor));
+                throw new IllegalStateException(generateErrorMessageForErrorType(jetType, descriptor));
             }
             Type asmType = Type.getObjectType("error/NonExistentClass");
             if (signatureVisitor != null) {
@@ -319,7 +319,8 @@ public class JetTypeMapper extends BindingTraceAware {
         return Type.getObjectType(getAsmType(bindingTrace, descriptor).getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
     }
 
-    private String generateErrorMessageForErrorType(@NotNull DeclarationDescriptor descriptor) {
+    @NotNull
+    private String generateErrorMessageForErrorType(@NotNull JetType type, @NotNull DeclarationDescriptor descriptor) {
         PsiElement declarationElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         PsiElement parentDeclarationElement = null;
         if (declarationElement != null) {
@@ -329,13 +330,16 @@ public class JetTypeMapper extends BindingTraceAware {
             }
         }
 
-        return String.format("Error types are not allowed when classBuilderMode = %s. Descriptor: %s. For declaration %s:%s in %s:%s",
-                      classBuilderMode,
-                      descriptor,
-                      declarationElement,
-                      declarationElement != null ? declarationElement.getText() : "null",
-                      parentDeclarationElement,
-                      parentDeclarationElement != null ? parentDeclarationElement.getText() : "null");
+        return String.format("Error types are not allowed when classBuilderMode = %s. " +
+                             "Type: %s (%s). Descriptor: %s. For declaration %s:%s in %s:%s",
+                             classBuilderMode,
+                             type,
+                             type.getClass().getSimpleName(),
+                             descriptor,
+                             declarationElement,
+                             declarationElement != null ? declarationElement.getText() : "null",
+                             parentDeclarationElement,
+                             parentDeclarationElement != null ? parentDeclarationElement.getText() : "null");
     }
 
     private void writeGenericType(
