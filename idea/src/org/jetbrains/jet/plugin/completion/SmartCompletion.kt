@@ -47,7 +47,7 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
 
     val bindingContext = resolveSession.resolveToElement(expressionWithType)
     val expectedType: JetType? = bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType)
-    if (expectedType == null) return null
+    if (expectedType == null || expectedType.isError()) return null
 
     val itemsToSkip = calcItemsToSkip(expressionWithType, resolveSession)
 
@@ -90,7 +90,7 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
 
     return object: SmartCompletionData {
         override fun accepts(descriptor: DeclarationDescriptor)
-                = !itemsToSkip.contains(descriptor) && typesOf(descriptor).any { JetTypeChecker.INSTANCE.isSubtypeOf(it, expectedType) }
+                = !itemsToSkip.contains(descriptor) && typesOf(descriptor).any { isSubtypeOf(it, expectedType) }
 
         override val additionalElements = additionalElements
     }
@@ -167,7 +167,7 @@ private fun thisItems(context: JetExpression, expectedType: JetType, bindingCont
     for (i in 0..receivers.size - 1) {
         val receiver = receivers[i]
         val thisType = receiver.getType()
-        if (JetTypeChecker.INSTANCE.isSubtypeOf(thisType, expectedType)) {
+        if (isSubtypeOf(thisType, expectedType)) {
             //TODO: use this code when KT-4258 fixed
             //val expressionText = if (i == 0) "this" else "this@" + (thisQualifierName(receiver, bindingContext) ?: continue)
             val qualifier = if (i == 0) null else thisQualifierName(receiver, bindingContext) ?: continue
@@ -253,7 +253,7 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
     val descriptors = ArrayList<DeclarationDescriptor>()
 
     val isSuitableCallable: (DeclarationDescriptor) -> Boolean = {
-        it is CallableDescriptor && it.getReturnType()?.let { JetTypeChecker.INSTANCE.isSubtypeOf(it, expectedType) } ?: false
+        it is CallableDescriptor && it.getReturnType()?.let { isSubtypeOf(it, expectedType) } ?: false
     }
 
     if (classDescriptor is JavaClassDescriptor) {
@@ -294,6 +294,10 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
                     }
                     builder
                 }
+}
+
+private fun isSubtypeOf(t: JetType, expectedType: JetType): Boolean{
+    return !t.isError() && JetTypeChecker.INSTANCE.isSubtypeOf(t, expectedType)
 }
 
 private fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()

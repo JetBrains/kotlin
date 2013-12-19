@@ -216,9 +216,19 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/QualifiedThisOfExtensionLambda3.kt");
     }
     
+    @TestMetadata("SkipUnresolvedTypes.kt")
+    public void testSkipUnresolvedTypes() throws Exception {
+        doTest("idea/testData/completion/smart/SkipUnresolvedTypes.kt");
+    }
+    
     @TestMetadata("This.kt")
     public void testThis() throws Exception {
         doTest("idea/testData/completion/smart/This.kt");
+    }
+    
+    @TestMetadata("UnresolvedExpectedType.kt")
+    public void testUnresolvedExpectedType() throws Exception {
+        doTest("idea/testData/completion/smart/UnresolvedExpectedType.kt");
     }
     
     @TestMetadata("VariableInitializer.kt")
