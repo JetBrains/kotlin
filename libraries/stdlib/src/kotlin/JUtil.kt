@@ -57,7 +57,7 @@ public inline fun <in T> List<T>.sort(transform: fun(T) : java.lang.Comparable<*
 */
 
 /**
- * Returns the first item in the list
+ * Returns the first item in the list or null if the list is empty
  *
  * @includeFunctionBody ../../test/ListTest.kt first
  */
@@ -66,7 +66,7 @@ val <T> List<T>.first : T?
 
 
 /**
- * Returns the last item in the list
+ * Returns the last item in the list or null if the list is empty
  *
  * @includeFunctionBody ../../test/ListTest.kt last
  */
@@ -85,12 +85,12 @@ val <T> List<T>.lastIndex : Int
     get() = this.size - 1
 
 /**
- * Returns the first item in the list
+ * Returns the first item in the list or null if the list is empty
  *
  * @includeFunctionBody ../../test/ListTest.kt head
  */
 val <T> List<T>.head : T?
-    get() = this.get(0)
+    get() = if (this.isNotEmpty()) this.get(0) else null
 
 /**
  * Returns all elements in this collection apart from the first one

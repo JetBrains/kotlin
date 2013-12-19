@@ -35,16 +35,8 @@ public class JetNamespaceHeader extends JetReferenceExpression {
     }
 
     @NotNull
-    public List<JetSimpleNameExpression> getParentNamespaceNames() {
-        List<JetSimpleNameExpression> parentParts = findChildrenByType(JetNodeTypes.REFERENCE_EXPRESSION);
-        JetSimpleNameExpression lastPart = (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
-        parentParts.remove(lastPart);
-        return parentParts;
-    }
-
-    @Nullable
-    public JetSimpleNameExpression getLastPartExpression() {
-        return (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+    public List<JetSimpleNameExpression> getNamespaceNames() {
+        return findChildrenByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 
     @Nullable
@@ -81,32 +73,31 @@ public class JetNamespaceHeader extends JetReferenceExpression {
     }
 
     @NotNull
-    public FqName getParentFqName(JetReferenceExpression nameExpression) {
-        String parentQualifiedName = getQualifiedNameParentOf(nameExpression);
-        return parentQualifiedName.isEmpty() ? FqName.ROOT : new FqName(parentQualifiedName);
+    public FqName getFqName(JetSimpleNameExpression nameExpression) {
+        return new FqName(getQualifiedNameOf(nameExpression));
     }
 
     @NotNull
     public String getQualifiedName() {
         if (qualifiedNameCache == null) {
-            qualifiedNameCache = getQualifiedNameParentOf(null);
+            qualifiedNameCache = getQualifiedNameOf(null);
         }
 
         return qualifiedNameCache;
     }
 
     @NotNull
-    private String getQualifiedNameParentOf(@Nullable JetReferenceExpression nameExpression) {
+    private String getQualifiedNameOf(@Nullable JetSimpleNameExpression nameExpression) {
         StringBuilder builder = new StringBuilder();
         for (JetSimpleNameExpression e : findChildrenByClass(JetSimpleNameExpression.class)) {
-            if (e == nameExpression) {
-                break;
-            }
-
             if (builder.length() > 0) {
                 builder.append(".");
             }
             builder.append(e.getReferencedName());
+
+            if (e == nameExpression) {
+                break;
+            }
         }
         return builder.toString();
     }

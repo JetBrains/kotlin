@@ -24,6 +24,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -54,7 +55,7 @@ public class SignatureMarkerProviderTest extends LightCodeInsightFixtureTestCase
         ClassDescriptor preResolvedClass = context.get(BindingContext.CLASS, psiClass);
 
         InjectorForJavaDescriptorResolver injector =
-                new InjectorForJavaDescriptorResolver(project, KotlinSignatureInJavaMarkerProvider.createDelegatingTrace(project));
+                InjectorForJavaDescriptorResolverUtil.create(project, KotlinSignatureInJavaMarkerProvider.createDelegatingTrace(project));
         ClassDescriptor reResolvedClass = injector.getJavaDescriptorResolver()
                 .resolveClass(new FqName("java.lang.Thread"), IGNORE_KOTLIN_SOURCES);
 

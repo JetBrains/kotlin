@@ -20,6 +20,8 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionSorter
 import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.codeInsight.lookup.LookupElementWeigher
+import com.intellij.codeInsight.lookup.LookupElement
 
 public fun CompletionResultSet.addJetSorting(parameters : CompletionParameters) : CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
@@ -31,5 +33,14 @@ public fun CompletionResultSet.addJetSorting(parameters : CompletionParameters) 
             JetDeclarationRemotenessWeigher(parameters.getOriginalFile() as JetFile),
             JetAccessibleWeigher())
 
+    sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher(parameters))
+
     return withRelevanceSorter(sorter)
+}
+
+class PreferMatchingItemWeigher(private val parameters: CompletionParameters) : LookupElementWeigher("preferMatching", false, true){
+    override fun weigh(element: LookupElement): Comparable<Int>? {
+        val prefix = parameters.getLookup().itemPattern(element)
+        return if (element.getLookupString() == prefix) 0 else 1
+    }
 }

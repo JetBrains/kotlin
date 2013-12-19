@@ -28,7 +28,7 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
-import org.jetbrains.jet.codegen.context.NamespaceFacadeContext;
+import org.jetbrains.jet.codegen.context.PackageFacadeContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
@@ -92,8 +92,8 @@ public class PropertyCodegen extends GenerationStateAware {
                 : "Generating property with a wrong kind (" + kind + "): " + propertyDescriptor;
 
 
-        if (context instanceof NamespaceFacadeContext) {
-            Type ownerType = ((NamespaceFacadeContext) context).getDelegateToClassType();
+        if (context instanceof PackageFacadeContext) {
+            Type ownerType = ((PackageFacadeContext) context).getDelegateToClassType();
             v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, propertyDescriptor, shortNameByAsmType(ownerType));
         }
         else if (!generateBackingField(p, propertyDescriptor)) {
@@ -311,18 +311,12 @@ public class PropertyCodegen extends GenerationStateAware {
 
 
     private static class DefaultPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased<PropertyAccessorDescriptor> {
-
-        public DefaultPropertyAccessorStrategy(
-                @NotNull GenerationState state,
-                @NotNull PropertyAccessorDescriptor callableDescriptor
-        ) {
-            super(state, callableDescriptor);
+        public DefaultPropertyAccessorStrategy(@NotNull GenerationState state, @NotNull PropertyAccessorDescriptor descriptor) {
+            super(state, descriptor);
         }
 
         @Override
-        public void doGenerateBody(
-                ExpressionCodegen codegen, JvmMethodSignature signature
-        ) {
+        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             generateDefaultAccessor(callableDescriptor, codegen.v, codegen);
         }
     }
@@ -371,9 +365,7 @@ public class PropertyCodegen extends GenerationStateAware {
         }
 
         @Override
-        public void doGenerateBody(
-                @NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature
-        ) {
+        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             JetTypeMapper typeMapper = codegen.typeMapper;
             OwnerKind kind = codegen.context.getContextKind();
             InstructionAdapter iv = codegen.v;

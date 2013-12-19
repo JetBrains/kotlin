@@ -45,6 +45,7 @@ public abstract class JetFilesProvider {
     }
 
     public abstract Function<JetFile, Collection<JetFile>> sampleToAllFilesInModule();
+    @NotNull
     public abstract Collection<JetFile> allInScope(@NotNull GlobalSearchScope scope);
     public abstract boolean isFileInScope(@NotNull JetFile file, @NotNull GlobalSearchScope scope);
 

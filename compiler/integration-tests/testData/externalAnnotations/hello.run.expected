@@ -1,3 +1,5 @@
-OUT Hello, a!
-OUT Java Hello
+OUT:
+Hello, a!
+Java Hello
+
 Return code: 0

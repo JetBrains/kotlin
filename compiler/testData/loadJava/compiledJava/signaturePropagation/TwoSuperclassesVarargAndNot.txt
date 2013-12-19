@@ -16,7 +16,7 @@ public trait TwoSuperclassesVarargAndNot : java.lang.Object {
     }
 }
 
-package TwoSuperclassesVarargAndNot {
+package test.TwoSuperclassesVarargAndNot {
     public /*synthesized*/ fun Super1(/*0*/ function: (jet.Array<jet.String?>) -> jet.Unit): test.TwoSuperclassesVarargAndNot.Super1
     public /*synthesized*/ fun Super2(/*0*/ function: (jet.Array<out jet.String?>?) -> jet.Unit): test.TwoSuperclassesVarargAndNot.Super2
 }

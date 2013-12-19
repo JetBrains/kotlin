@@ -58,11 +58,11 @@ public class ChainedScope implements JetScope {
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
         for (JetScope jetScope : scopeChain) {
-            NamespaceDescriptor namespace = jetScope.getNamespace(name);
-            if (namespace != null) {
-                return namespace;
+            PackageViewDescriptor aPackage = jetScope.getPackage(name);
+            if (aPackage != null) {
+                return aPackage;
             }
         }
         return null;

@@ -28,7 +28,7 @@ public class WithReified<reified A, reified out B>
 
 public trait TwoUpperBounds<T> where T : Number, T : Any
 
-//package rendererTest defined in root package
+//package rendererTest
 //internal final annotation class TheAnnotation : jet.Annotation defined in rendererTest
 //public constructor TheAnnotation() defined in rendererTest.TheAnnotation
 //rendererTest.TheAnnotation public open class TheClass<out T : jet.Int, X> defined in rendererTest

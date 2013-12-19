@@ -90,7 +90,7 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.SpannableStringBuilder java.lang.Appendable append(java.lang.CharSequence) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
     </item>
     <item name='android.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.text.TextDirectionHeuristic, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
@@ -162,7 +162,7 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.SpannableStringBuilder android.text.Editable append(java.lang.CharSequence) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
     </item>
     <item name='android.text.Editable android.text.Editable append(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
@@ -198,7 +198,7 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.Editable android.text.Editable append(java.lang.CharSequence) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
     </item>
     <item name='android.text.TextUtils java.lang.String[] split(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
@@ -489,7 +489,7 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.SpannableStringBuilder android.text.SpannableStringBuilder append(java.lang.CharSequence) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
     </item>
     <item name='android.text.Selection boolean moveRight(android.text.Spannable, android.text.Layout) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>

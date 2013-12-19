@@ -228,7 +228,7 @@ public class GenerateJavaToKotlinMethodMap {
 
         private void appendBeforeClass(@NotNull ClassDescriptor kotlinClass, @NotNull PsiClass psiClass) {
             String psiFqName = psiClass.getQualifiedName();
-            String kotlinFqName = DescriptorUtils.getFQName(kotlinClass).toSafe().asString();
+            String kotlinFqName = DescriptorUtils.getFqNameSafe(kotlinClass).asString();
 
             assert kotlinFqName.startsWith(BUILTINS_FQNAME_PREFIX);
             String kotlinSubQualifiedName = kotlinFqName.substring(BUILTINS_FQNAME_PREFIX.length());

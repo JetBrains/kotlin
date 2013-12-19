@@ -1,22 +1,22 @@
-package jet
+package-fragment jet
 
-public fun </*0*/ T> arrayOfNulls(/*0*/ size: jet.Int): jet.Array<T?>
-public fun </*0*/ R> synchronized(/*0*/ lock: jet.Any, /*1*/ block: () -> R): R
+public fun </*0*/ T : jet.Any?> arrayOfNulls(/*0*/ size: jet.Int): jet.Array<T?>
+public fun </*0*/ R : jet.Any?> synchronized(/*0*/ lock: jet.Any, /*1*/ block: jet.Function0<R>): R
 public fun jet.Any?.equals(/*0*/ other: jet.Any?): jet.Boolean
 public fun jet.Any?.identityEquals(/*0*/ other: jet.Any?): jet.Boolean
-public fun </*0*/ T> jet.Iterator<T>.iterator(): jet.Iterator<T>
+public fun </*0*/ T : jet.Any?> jet.Iterator<T>.iterator(): jet.Iterator<T>
 public fun jet.String?.plus(/*0*/ other: jet.Any?): jet.String
 public fun jet.Any?.toString(): jet.String
 
-public trait Annotation {
+public trait Annotation : jet.Any {
 }
 
 public open class Any {
     /*primary*/ public constructor Any()
 }
 
-public final class Array</*0*/ reified T> {
-    /*primary*/ public constructor Array</*0*/ reified T>(/*0*/ size: jet.Int, /*1*/ init: (jet.Int) -> T)
+public final class Array</*0*/ reified T : jet.Any?> : jet.Any {
+    /*primary*/ public constructor Array</*0*/ reified T : jet.Any?>(/*0*/ size: jet.Int, /*1*/ init: jet.Function1<jet.Int, T>)
     public final val indices: jet.IntRange
         public final fun <get-indices>(): jet.IntRange
     public final val size: jet.Int
@@ -26,7 +26,7 @@ public final class Array</*0*/ reified T> {
     public final fun set(/*0*/ index: jet.Int, /*1*/ value: T): jet.Unit
 }
 
-public final class Boolean {
+public final class Boolean : jet.Any {
     /*primary*/ private constructor Boolean()
     public final fun and(/*0*/ other: jet.Boolean): jet.Boolean
     public final fun equals(/*0*/ other: jet.Any?): jet.Boolean
@@ -35,7 +35,7 @@ public final class Boolean {
     public final fun xor(/*0*/ other: jet.Boolean): jet.Boolean
 }
 
-public final class BooleanArray {
+public final class BooleanArray : jet.Any {
     /*primary*/ public constructor BooleanArray(/*0*/ size: jet.Int)
     public final val indices: jet.IntRange
         public final fun <get-indices>(): jet.IntRange
@@ -119,7 +119,7 @@ public final class Byte : jet.Number, jet.Comparable<jet.Byte> {
     public open override /*1*/ fun toShort(): jet.Short
 }
 
-public final class ByteArray {
+public final class ByteArray : jet.Any {
     /*primary*/ public constructor ByteArray(/*0*/ size: jet.Int)
     public final val indices: jet.IntRange
         public final fun <get-indices>(): jet.IntRange
@@ -159,7 +159,7 @@ public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
     public open override /*1*/ fun contains(/*0*/ item: jet.Byte): jet.Boolean
     public open override /*1*/ fun iterator(): jet.ByteIterator
     
-    public class object <class-object-for-ByteRange> {
+    public class object <class-object-for-ByteRange> : jet.Any {
         /*primary*/ private constructor <class-object-for-ByteRange>()
         public final val EMPTY: jet.ByteRange
             public final fun <get-EMPTY>(): jet.ByteRange
@@ -222,7 +222,7 @@ public final class Char : jet.Hashable, jet.Comparable<jet.Char> {
     public final fun toShort(): jet.Short
 }
 
-public final class CharArray {
+public final class CharArray : jet.Any {
     /*primary*/ public constructor CharArray(/*0*/ size: jet.Int)
     public final val indices: jet.IntRange
         public final fun <get-indices>(): jet.IntRange
@@ -262,21 +262,21 @@ public final class CharRange : jet.Range<jet.Char>, jet.Progression<jet.Char> {
     public open override /*1*/ fun contains(/*0*/ item: jet.Char): jet.Boolean
     public open override /*1*/ fun iterator(): jet.CharIterator
     
-    public class object <class-object-for-CharRange> {
+    public class object <class-object-for-CharRange> : jet.Any {
         /*primary*/ private constructor <class-object-for-CharRange>()
         public final val EMPTY: jet.CharRange
             public final fun <get-EMPTY>(): jet.CharRange
     }
 }
 
-public trait CharSequence {
+public trait CharSequence : jet.Any {
     public abstract val length: jet.Int
         public abstract fun <get-length>(): jet.Int
     public abstract fun get(/*0*/ index: jet.Int): jet.Char
     public abstract fun toString(): jet.String
 }
 
-public trait Collection</*0*/ out E> : jet.Iterable<E>, jet.Hashable {
+public trait Collection</*0*/ out E : jet.Any?> : jet.Iterable<E>, jet.Hashable {
     public abstract fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
@@ -286,7 +286,7 @@ public trait Collection</*0*/ out E> : jet.Iterable<E>, jet.Hashable {
     public abstract fun size(): jet.Int
 }
 
-public trait Comparable</*0*/ in T> {
+public trait Comparable</*0*/ in T : jet.Any?> : jet.Any {
     public abstract fun compareTo(/*0*/ other: T): jet.Int
 }
 
@@ -355,7 +355,7 @@ public final class Double : jet.Number, jet.Comparable<jet.Double> {
     public open override /*1*/ fun toShort(): jet.Short
 }
 
-public final class DoubleArray {
+public final class DoubleArray : jet.Any {
     /*primary*/ public constructor DoubleArray(/*0*/ size: jet.Int)
     public final val indices: jet.IntRange
         public final fun <get-indices>(): jet.IntRange
@@ -395,108 +395,108 @@ public final class DoubleRange : jet.Range<jet.Double>, jet.Progression<jet.Doub
     public open override /*1*/ fun contains(/*0*/ item: jet.Double): jet.Boolean
     public open override /*1*/ fun iterator(): jet.DoubleIterator
     
-    public class object <class-object-for-DoubleRange> {
+    public class object <class-object-for-DoubleRange> : jet.Any {
         /*primary*/ private constructor <class-object-for-DoubleRange>()
         public final val EMPTY: jet.DoubleRange
             public final fun <get-EMPTY>(): jet.DoubleRange
     }
 }
 
-public abstract class Enum</*0*/ E : jet.Enum<E>> {
+public abstract class Enum</*0*/ E : jet.Enum<E>> : jet.Any {
     /*primary*/ public constructor Enum</*0*/ E : jet.Enum<E>>(/*0*/ name: jet.String, /*1*/ ordinal: jet.Int)
     public final fun name(): jet.String
     public final fun ordinal(): jet.Int
 }
 
-public trait ExtensionFunction0</*0*/ in T, /*1*/ out R> {
+public trait ExtensionFunction0</*0*/ in T : jet.Any?, /*1*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(): R
 }
 
-public trait ExtensionFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> {
+public trait ExtensionFunction1</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1): R
 }
 
-public trait ExtensionFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> {
+public trait ExtensionFunction10</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
-public trait ExtensionFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> {
+public trait ExtensionFunction11</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
-public trait ExtensionFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> {
+public trait ExtensionFunction12</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
-public trait ExtensionFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> {
+public trait ExtensionFunction13</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
-public trait ExtensionFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> {
+public trait ExtensionFunction14</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
-public trait ExtensionFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> {
+public trait ExtensionFunction15</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
-public trait ExtensionFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> {
+public trait ExtensionFunction16</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
-public trait ExtensionFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> {
+public trait ExtensionFunction17</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
-public trait ExtensionFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> {
+public trait ExtensionFunction18</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
-public trait ExtensionFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> {
+public trait ExtensionFunction19</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
-public trait ExtensionFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> {
+public trait ExtensionFunction2</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
-public trait ExtensionFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> {
+public trait ExtensionFunction20</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ in P20 : jet.Any?, /*21*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
-public trait ExtensionFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> {
+public trait ExtensionFunction21</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ in P20 : jet.Any?, /*21*/ in P21 : jet.Any?, /*22*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
-public trait ExtensionFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> {
+public trait ExtensionFunction22</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ in P20 : jet.Any?, /*21*/ in P21 : jet.Any?, /*22*/ in P22 : jet.Any?, /*23*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
-public trait ExtensionFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> {
+public trait ExtensionFunction3</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
-public trait ExtensionFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> {
+public trait ExtensionFunction4</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
-public trait ExtensionFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> {
+public trait ExtensionFunction5</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
-public trait ExtensionFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> {
+public trait ExtensionFunction6</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
-public trait ExtensionFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> {
+public trait ExtensionFunction7</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
-public trait ExtensionFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> {
+public trait ExtensionFunction8</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
-public trait ExtensionFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> {
+public trait ExtensionFunction9</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ out R : jet.Any?> : jet.Any {
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
@@ -566,7 +566,7 @@ public final class Float : jet.Number, jet.Comparable<jet.Float> {
     public open override /*1*/ fun toShort(): jet.Short
 }
 
-public final class FloatArray {
+public final class FloatArray : jet.Any {
     /*primary*/ public constructor FloatArray(/*0*/ size: jet.Int)
     public final val indices: jet.IntRange
         public final fun <get-indices>(): jet.IntRange
@@ -606,106 +606,106 @@ public final class FloatRange : jet.Range<jet.Float>, jet.Progression<jet.Float>
     public open override /*1*/ fun contains(/*0*/ item: jet.Float): jet.Boolean
     public open override /*1*/ fun iterator(): jet.FloatIterator
     
-    public class object <class-object-for-FloatRange> {
+    public class object <class-object-for-FloatRange> : jet.Any {
         /*primary*/ private constructor <class-object-for-FloatRange>()
         public final val EMPTY: jet.FloatRange
             public final fun <get-EMPTY>(): jet.FloatRange
     }
 }
 
-public trait Function0</*0*/ out R> {
+public trait Function0</*0*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(): R
 }
 
-public trait Function1</*0*/ in P1, /*1*/ out R> {
+public trait Function1</*0*/ in P1 : jet.Any?, /*1*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1): R
 }
 
-public trait Function10</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ out R> {
+public trait Function10</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
-public trait Function11</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ out R> {
+public trait Function11</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
-public trait Function12</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ out R> {
+public trait Function12</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
-public trait Function13</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ out R> {
+public trait Function13</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
-public trait Function14</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ out R> {
+public trait Function14</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
-public trait Function15</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ out R> {
+public trait Function15</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
-public trait Function16</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ out R> {
+public trait Function16</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
-public trait Function17</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ out R> {
+public trait Function17</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
-public trait Function18</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ out R> {
+public trait Function18</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
-public trait Function19</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ out R> {
+public trait Function19</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ in P19 : jet.Any?, /*19*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
-public trait Function2</*0*/ in P1, /*1*/ in P2, /*2*/ out R> {
+public trait Function2</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
-public trait Function20</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ out R> {
+public trait Function20</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ in P19 : jet.Any?, /*19*/ in P20 : jet.Any?, /*20*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
-public trait Function21</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ out R> {
+public trait Function21</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ in P19 : jet.Any?, /*19*/ in P20 : jet.Any?, /*20*/ in P21 : jet.Any?, /*21*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
-public trait Function22</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ in P22, /*22*/ out R> {
+public trait Function22</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ in P19 : jet.Any?, /*19*/ in P20 : jet.Any?, /*20*/ in P21 : jet.Any?, /*21*/ in P22 : jet.Any?, /*22*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
-public trait Function3</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ out R> {
+public trait Function3</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
-public trait Function4</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ out R> {
+public trait Function4</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
-public trait Function5</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ out R> {
+public trait Function5</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
-public trait Function6</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ out R> {
+public trait Function6</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
-public trait Function7</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ out R> {
+public trait Function7</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
-public trait Function8</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ out R> {
+public trait Function8</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
-public trait Function9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ out R> {
+public trait Function9</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ out R : jet.Any?> : jet.Any {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
-public trait Hashable {
+public trait Hashable : jet.Any {
     public abstract fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public abstract fun hashCode(): jet.Int
 }
@@ -819,7 +819,7 @@ public final class Int : jet.Number, jet.Comparable<jet.Int> {
     public final fun xor(/*0*/ other: jet.Int): jet.Int
 }
 
-public final class IntArray {
+public final class IntArray : jet.Any {
     /*primary*/ public constructor IntArray(/*0*/ size: jet.Int)
     public final val indices: jet.IntRange
         public final fun <get-indices>(): jet.IntRange
@@ -859,299 +859,299 @@ public final class IntRange : jet.Range<jet.Int>, jet.Progression<jet.Int> {
     public open override /*1*/ fun contains(/*0*/ item: jet.Int): jet.Boolean
     public open override /*1*/ fun iterator(): jet.IntIterator
     
-    public class object <class-object-for-IntRange> {
+    public class object <class-object-for-IntRange> : jet.Any {
         /*primary*/ private constructor <class-object-for-IntRange>()
         public final val EMPTY: jet.IntRange
             public final fun <get-EMPTY>(): jet.IntRange
     }
 }
 
-public trait Iterable</*0*/ out T> {
+public trait Iterable</*0*/ out T : jet.Any?> : jet.Any {
     public abstract fun iterator(): jet.Iterator<T>
 }
 
-public trait Iterator</*0*/ out T> {
+public trait Iterator</*0*/ out T : jet.Any?> : jet.Any {
     public abstract fun hasNext(): jet.Boolean
     public abstract fun next(): T
 }
 
-public trait KExtensionFunction0</*0*/ in T, /*1*/ out R> : T.() -> R {
+public trait KExtensionFunction0</*0*/ in T : jet.Any?, /*1*/ out R : jet.Any?> : jet.ExtensionFunction0<T, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(): R
 }
 
-public trait KExtensionFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : T.(P1) -> R {
+public trait KExtensionFunction1</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ out R : jet.Any?> : jet.ExtensionFunction1<T, P1, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1): R
 }
 
-public trait KExtensionFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
+public trait KExtensionFunction10</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ out R : jet.Any?> : jet.ExtensionFunction10<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
-public trait KExtensionFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) -> R {
+public trait KExtensionFunction11</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ out R : jet.Any?> : jet.ExtensionFunction11<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
-public trait KExtensionFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) -> R {
+public trait KExtensionFunction12</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ out R : jet.Any?> : jet.ExtensionFunction12<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
-public trait KExtensionFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13) -> R {
+public trait KExtensionFunction13</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ out R : jet.Any?> : jet.ExtensionFunction13<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
-public trait KExtensionFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14) -> R {
+public trait KExtensionFunction14</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ out R : jet.Any?> : jet.ExtensionFunction14<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
-public trait KExtensionFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15) -> R {
+public trait KExtensionFunction15</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ out R : jet.Any?> : jet.ExtensionFunction15<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
-public trait KExtensionFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16) -> R {
+public trait KExtensionFunction16</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ out R : jet.Any?> : jet.ExtensionFunction16<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
-public trait KExtensionFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17) -> R {
+public trait KExtensionFunction17</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ out R : jet.Any?> : jet.ExtensionFunction17<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
-public trait KExtensionFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18) -> R {
+public trait KExtensionFunction18</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ out R : jet.Any?> : jet.ExtensionFunction18<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
-public trait KExtensionFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19) -> R {
+public trait KExtensionFunction19</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ out R : jet.Any?> : jet.ExtensionFunction19<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
-public trait KExtensionFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : T.(P1, P2) -> R {
+public trait KExtensionFunction2</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ out R : jet.Any?> : jet.ExtensionFunction2<T, P1, P2, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
-public trait KExtensionFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20) -> R {
+public trait KExtensionFunction20</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ in P20 : jet.Any?, /*21*/ out R : jet.Any?> : jet.ExtensionFunction20<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
-public trait KExtensionFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21) -> R {
+public trait KExtensionFunction21</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ in P20 : jet.Any?, /*21*/ in P21 : jet.Any?, /*22*/ out R : jet.Any?> : jet.ExtensionFunction21<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
-public trait KExtensionFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R {
+public trait KExtensionFunction22</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ in P20 : jet.Any?, /*21*/ in P21 : jet.Any?, /*22*/ in P22 : jet.Any?, /*23*/ out R : jet.Any?> : jet.ExtensionFunction22<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
-public trait KExtensionFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : T.(P1, P2, P3) -> R {
+public trait KExtensionFunction3</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ out R : jet.Any?> : jet.ExtensionFunction3<T, P1, P2, P3, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
-public trait KExtensionFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : T.(P1, P2, P3, P4) -> R {
+public trait KExtensionFunction4</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ out R : jet.Any?> : jet.ExtensionFunction4<T, P1, P2, P3, P4, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
-public trait KExtensionFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : T.(P1, P2, P3, P4, P5) -> R {
+public trait KExtensionFunction5</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ out R : jet.Any?> : jet.ExtensionFunction5<T, P1, P2, P3, P4, P5, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
-public trait KExtensionFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : T.(P1, P2, P3, P4, P5, P6) -> R {
+public trait KExtensionFunction6</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ out R : jet.Any?> : jet.ExtensionFunction6<T, P1, P2, P3, P4, P5, P6, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
-public trait KExtensionFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7) -> R {
+public trait KExtensionFunction7</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ out R : jet.Any?> : jet.ExtensionFunction7<T, P1, P2, P3, P4, P5, P6, P7, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
-public trait KExtensionFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8) -> R {
+public trait KExtensionFunction8</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ out R : jet.Any?> : jet.ExtensionFunction8<T, P1, P2, P3, P4, P5, P6, P7, P8, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
-public trait KExtensionFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
+public trait KExtensionFunction9</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ out R : jet.Any?> : jet.ExtensionFunction9<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
-public trait KFunction0</*0*/ out R> : () -> R {
+public trait KFunction0</*0*/ out R : jet.Any?> : jet.Function0<R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(): R
 }
 
-public trait KFunction1</*0*/ in P1, /*1*/ out R> : (P1) -> R {
+public trait KFunction1</*0*/ in P1 : jet.Any?, /*1*/ out R : jet.Any?> : jet.Function1<P1, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1): R
 }
 
-public trait KFunction10</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
+public trait KFunction10</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ out R : jet.Any?> : jet.Function10<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
-public trait KFunction11</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) -> R {
+public trait KFunction11</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ out R : jet.Any?> : jet.Function11<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
-public trait KFunction12</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) -> R {
+public trait KFunction12</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ out R : jet.Any?> : jet.Function12<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
-public trait KFunction13</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13) -> R {
+public trait KFunction13</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ out R : jet.Any?> : jet.Function13<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
-public trait KFunction14</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14) -> R {
+public trait KFunction14</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ out R : jet.Any?> : jet.Function14<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
-public trait KFunction15</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15) -> R {
+public trait KFunction15</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ out R : jet.Any?> : jet.Function15<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
-public trait KFunction16</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16) -> R {
+public trait KFunction16</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ out R : jet.Any?> : jet.Function16<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
-public trait KFunction17</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17) -> R {
+public trait KFunction17</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ out R : jet.Any?> : jet.Function17<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
-public trait KFunction18</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18) -> R {
+public trait KFunction18</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ out R : jet.Any?> : jet.Function18<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
-public trait KFunction19</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19) -> R {
+public trait KFunction19</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ in P19 : jet.Any?, /*19*/ out R : jet.Any?> : jet.Function19<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
-public trait KFunction2</*0*/ in P1, /*1*/ in P2, /*2*/ out R> : (P1, P2) -> R {
+public trait KFunction2</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ out R : jet.Any?> : jet.Function2<P1, P2, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
-public trait KFunction20</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20) -> R {
+public trait KFunction20</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ in P19 : jet.Any?, /*19*/ in P20 : jet.Any?, /*20*/ out R : jet.Any?> : jet.Function20<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
-public trait KFunction21</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21) -> R {
+public trait KFunction21</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ in P19 : jet.Any?, /*19*/ in P20 : jet.Any?, /*20*/ in P21 : jet.Any?, /*21*/ out R : jet.Any?> : jet.Function21<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
-public trait KFunction22</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ in P22, /*22*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R {
+public trait KFunction22</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ in P10 : jet.Any?, /*10*/ in P11 : jet.Any?, /*11*/ in P12 : jet.Any?, /*12*/ in P13 : jet.Any?, /*13*/ in P14 : jet.Any?, /*14*/ in P15 : jet.Any?, /*15*/ in P16 : jet.Any?, /*16*/ in P17 : jet.Any?, /*17*/ in P18 : jet.Any?, /*18*/ in P19 : jet.Any?, /*19*/ in P20 : jet.Any?, /*20*/ in P21 : jet.Any?, /*21*/ in P22 : jet.Any?, /*22*/ out R : jet.Any?> : jet.Function22<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
-public trait KFunction3</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ out R> : (P1, P2, P3) -> R {
+public trait KFunction3</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ out R : jet.Any?> : jet.Function3<P1, P2, P3, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
-public trait KFunction4</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ out R> : (P1, P2, P3, P4) -> R {
+public trait KFunction4</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ out R : jet.Any?> : jet.Function4<P1, P2, P3, P4, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
-public trait KFunction5</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ out R> : (P1, P2, P3, P4, P5) -> R {
+public trait KFunction5</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ out R : jet.Any?> : jet.Function5<P1, P2, P3, P4, P5, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
-public trait KFunction6</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ out R> : (P1, P2, P3, P4, P5, P6) -> R {
+public trait KFunction6</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ out R : jet.Any?> : jet.Function6<P1, P2, P3, P4, P5, P6, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
-public trait KFunction7</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ out R> : (P1, P2, P3, P4, P5, P6, P7) -> R {
+public trait KFunction7</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ out R : jet.Any?> : jet.Function7<P1, P2, P3, P4, P5, P6, P7, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
-public trait KFunction8</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8) -> R {
+public trait KFunction8</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ out R : jet.Any?> : jet.Function8<P1, P2, P3, P4, P5, P6, P7, P8, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
-public trait KFunction9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ out R> : (P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
+public trait KFunction9</*0*/ in P1 : jet.Any?, /*1*/ in P2 : jet.Any?, /*2*/ in P3 : jet.Any?, /*3*/ in P4 : jet.Any?, /*4*/ in P5 : jet.Any?, /*5*/ in P6 : jet.Any?, /*6*/ in P7 : jet.Any?, /*7*/ in P8 : jet.Any?, /*8*/ in P9 : jet.Any?, /*9*/ out R : jet.Any?> : jet.Function9<P1, P2, P3, P4, P5, P6, P7, P8, P9, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
-public trait KMemberFunction0</*0*/ in T, /*1*/ out R> : T.() -> R {
+public trait KMemberFunction0</*0*/ in T : jet.Any?, /*1*/ out R : jet.Any?> : jet.ExtensionFunction0<T, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(): R
 }
 
-public trait KMemberFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : T.(P1) -> R {
+public trait KMemberFunction1</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ out R : jet.Any?> : jet.ExtensionFunction1<T, P1, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1): R
 }
 
-public trait KMemberFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
+public trait KMemberFunction10</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ out R : jet.Any?> : jet.ExtensionFunction10<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
-public trait KMemberFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11) -> R {
+public trait KMemberFunction11</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ out R : jet.Any?> : jet.ExtensionFunction11<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
-public trait KMemberFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12) -> R {
+public trait KMemberFunction12</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ out R : jet.Any?> : jet.ExtensionFunction12<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
-public trait KMemberFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13) -> R {
+public trait KMemberFunction13</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ out R : jet.Any?> : jet.ExtensionFunction13<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
-public trait KMemberFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14) -> R {
+public trait KMemberFunction14</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ out R : jet.Any?> : jet.ExtensionFunction14<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
-public trait KMemberFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15) -> R {
+public trait KMemberFunction15</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ out R : jet.Any?> : jet.ExtensionFunction15<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
-public trait KMemberFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16) -> R {
+public trait KMemberFunction16</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ out R : jet.Any?> : jet.ExtensionFunction16<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
-public trait KMemberFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17) -> R {
+public trait KMemberFunction17</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ out R : jet.Any?> : jet.ExtensionFunction17<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
-public trait KMemberFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18) -> R {
+public trait KMemberFunction18</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ out R : jet.Any?> : jet.ExtensionFunction18<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
-public trait KMemberFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19) -> R {
+public trait KMemberFunction19</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ out R : jet.Any?> : jet.ExtensionFunction19<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
-public trait KMemberFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : T.(P1, P2) -> R {
+public trait KMemberFunction2</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ out R : jet.Any?> : jet.ExtensionFunction2<T, P1, P2, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
-public trait KMemberFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20) -> R {
+public trait KMemberFunction20</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ in P20 : jet.Any?, /*21*/ out R : jet.Any?> : jet.ExtensionFunction20<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
-public trait KMemberFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21) -> R {
+public trait KMemberFunction21</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ in P20 : jet.Any?, /*21*/ in P21 : jet.Any?, /*22*/ out R : jet.Any?> : jet.ExtensionFunction21<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
-public trait KMemberFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R {
+public trait KMemberFunction22</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ in P10 : jet.Any?, /*11*/ in P11 : jet.Any?, /*12*/ in P12 : jet.Any?, /*13*/ in P13 : jet.Any?, /*14*/ in P14 : jet.Any?, /*15*/ in P15 : jet.Any?, /*16*/ in P16 : jet.Any?, /*17*/ in P17 : jet.Any?, /*18*/ in P18 : jet.Any?, /*19*/ in P19 : jet.Any?, /*20*/ in P20 : jet.Any?, /*21*/ in P21 : jet.Any?, /*22*/ in P22 : jet.Any?, /*23*/ out R : jet.Any?> : jet.ExtensionFunction22<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
-public trait KMemberFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : T.(P1, P2, P3) -> R {
+public trait KMemberFunction3</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ out R : jet.Any?> : jet.ExtensionFunction3<T, P1, P2, P3, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
-public trait KMemberFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : T.(P1, P2, P3, P4) -> R {
+public trait KMemberFunction4</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ out R : jet.Any?> : jet.ExtensionFunction4<T, P1, P2, P3, P4, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
-public trait KMemberFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : T.(P1, P2, P3, P4, P5) -> R {
+public trait KMemberFunction5</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ out R : jet.Any?> : jet.ExtensionFunction5<T, P1, P2, P3, P4, P5, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
-public trait KMemberFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : T.(P1, P2, P3, P4, P5, P6) -> R {
+public trait KMemberFunction6</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ out R : jet.Any?> : jet.ExtensionFunction6<T, P1, P2, P3, P4, P5, P6, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
-public trait KMemberFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7) -> R {
+public trait KMemberFunction7</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ out R : jet.Any?> : jet.ExtensionFunction7<T, P1, P2, P3, P4, P5, P6, P7, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
-public trait KMemberFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8) -> R {
+public trait KMemberFunction8</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ out R : jet.Any?> : jet.ExtensionFunction8<T, P1, P2, P3, P4, P5, P6, P7, P8, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
-public trait KMemberFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : T.(P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
+public trait KMemberFunction9</*0*/ in T : jet.Any?, /*1*/ in P1 : jet.Any?, /*2*/ in P2 : jet.Any?, /*3*/ in P3 : jet.Any?, /*4*/ in P4 : jet.Any?, /*5*/ in P5 : jet.Any?, /*6*/ in P6 : jet.Any?, /*7*/ in P7 : jet.Any?, /*8*/ in P8 : jet.Any?, /*9*/ in P9 : jet.Any?, /*10*/ out R : jet.Any?> : jet.ExtensionFunction9<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
-public trait List</*0*/ out E> : jet.Collection<E> {
+public trait List</*0*/ out E : jet.Any?> : jet.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
@@ -1167,7 +1167,7 @@ public trait List</*0*/ out E> : jet.Collection<E> {
     public abstract fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.List<E>
 }
 
-public trait ListIterator</*0*/ out T> : jet.Iterator<T> {
+public trait ListIterator</*0*/ out T : jet.Any?> : jet.Iterator<T> {
     public abstract override /*1*/ fun hasNext(): jet.Boolean
     public abstract fun hasPrevious(): jet.Boolean
     public abstract override /*1*/ fun next(): T
@@ -1249,7 +1249,7 @@ public final class Long : jet.Number, jet.Comparable<jet.Long> {
     public final fun xor(/*0*/ other: jet.Long): jet.Long
 }
 
-public final class LongArray {
+public final class LongArray : jet.Any {
     /*primary*/ public constructor LongArray(/*0*/ size: jet.Int)
     public final val indices: jet.IntRange
         public final fun <get-indices>(): jet.IntRange
@@ -1289,14 +1289,14 @@ public final class LongRange : jet.Range<jet.Long>, jet.Progression<jet.Long> {
     public open override /*1*/ fun contains(/*0*/ item: jet.Long): jet.Boolean
     public open override /*1*/ fun iterator(): jet.LongIterator
     
-    public class object <class-object-for-LongRange> {
+    public class object <class-object-for-LongRange> : jet.Any {
         /*primary*/ private constructor <class-object-for-LongRange>()
         public final val EMPTY: jet.LongRange
             public final fun <get-EMPTY>(): jet.LongRange
     }
 }
 
-public trait Map</*0*/ K, /*1*/ out V> {
+public trait Map</*0*/ K : jet.Any?, /*1*/ out V : jet.Any?> : jet.Any {
     public abstract fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
     public abstract fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
     public abstract fun entrySet(): jet.Set<jet.Map.Entry<K, V>>
@@ -1306,7 +1306,7 @@ public trait Map</*0*/ K, /*1*/ out V> {
     public abstract fun size(): jet.Int
     public abstract fun values(): jet.Collection<V>
     
-    public trait Entry</*0*/ out K, /*1*/ out V> : jet.Hashable {
+    public trait Entry</*0*/ out K : jet.Any?, /*1*/ out V : jet.Any?> : jet.Hashable {
         public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
         public abstract fun getKey(): K
         public abstract fun getValue(): V
@@ -1314,7 +1314,7 @@ public trait Map</*0*/ K, /*1*/ out V> {
     }
 }
 
-public trait MutableCollection</*0*/ E> : jet.Collection<E>, jet.MutableIterable<E> {
+public trait MutableCollection</*0*/ E : jet.Any?> : jet.Collection<E>, jet.MutableIterable<E> {
     public abstract fun add(/*0*/ e: E): jet.Boolean
     public abstract fun addAll(/*0*/ c: jet.Collection<E>): jet.Boolean
     public abstract fun clear(): jet.Unit
@@ -1330,17 +1330,17 @@ public trait MutableCollection</*0*/ E> : jet.Collection<E>, jet.MutableIterable
     public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
 }
 
-public trait MutableIterable</*0*/ out T> : jet.Iterable<T> {
+public trait MutableIterable</*0*/ out T : jet.Any?> : jet.Iterable<T> {
     public abstract override /*1*/ fun iterator(): jet.MutableIterator<T>
 }
 
-public trait MutableIterator</*0*/ out T> : jet.Iterator<T> {
+public trait MutableIterator</*0*/ out T : jet.Any?> : jet.Iterator<T> {
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun next(): T
     public abstract fun remove(): jet.Unit
 }
 
-public trait MutableList</*0*/ E> : jet.List<E>, jet.MutableCollection<E> {
+public trait MutableList</*0*/ E : jet.Any?> : jet.List<E>, jet.MutableCollection<E> {
     public abstract override /*1*/ fun add(/*0*/ e: E): jet.Boolean
     public abstract fun add(/*0*/ index: jet.Int, /*1*/ element: E): jet.Unit
     public abstract override /*1*/ fun addAll(/*0*/ c: jet.Collection<E>): jet.Boolean
@@ -1366,7 +1366,7 @@ public trait MutableList</*0*/ E> : jet.List<E>, jet.MutableCollection<E> {
     public abstract override /*1*/ fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.MutableList<E>
 }
 
-public trait MutableListIterator</*0*/ T> : jet.ListIterator<T>, jet.MutableIterator<T> {
+public trait MutableListIterator</*0*/ T : jet.Any?> : jet.ListIterator<T>, jet.MutableIterator<T> {
     public abstract fun add(/*0*/ e: T): jet.Unit
     public abstract override /*2*/ fun hasNext(): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun hasPrevious(): jet.Boolean
@@ -1378,7 +1378,7 @@ public trait MutableListIterator</*0*/ T> : jet.ListIterator<T>, jet.MutableIter
     public abstract fun set(/*0*/ e: T): jet.Unit
 }
 
-public trait MutableMap</*0*/ K, /*1*/ V> : jet.Map<K, V> {
+public trait MutableMap</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : jet.Map<K, V> {
     public abstract fun clear(): jet.Unit
     public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
@@ -1392,7 +1392,7 @@ public trait MutableMap</*0*/ K, /*1*/ V> : jet.Map<K, V> {
     public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
     public abstract override /*1*/ fun values(): jet.MutableCollection<V>
     
-    public trait MutableEntry</*0*/ K, /*1*/ V> : jet.Map.Entry<K, V>, jet.Hashable {
+    public trait MutableEntry</*0*/ K : jet.Any?, /*1*/ V : jet.Any?> : jet.Map.Entry<K, V>, jet.Hashable {
         public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
         public abstract override /*1*/ /*fake_override*/ fun getKey(): K
         public abstract override /*1*/ /*fake_override*/ fun getValue(): V
@@ -1401,7 +1401,7 @@ public trait MutableMap</*0*/ K, /*1*/ V> : jet.Map<K, V> {
     }
 }
 
-public trait MutableSet</*0*/ E> : jet.Set<E>, jet.MutableCollection<E> {
+public trait MutableSet</*0*/ E : jet.Any?> : jet.Set<E>, jet.MutableCollection<E> {
     public abstract override /*1*/ fun add(/*0*/ e: E): jet.Boolean
     public abstract override /*1*/ fun addAll(/*0*/ c: jet.Collection<E>): jet.Boolean
     public abstract override /*1*/ fun clear(): jet.Unit
@@ -1444,7 +1444,7 @@ public trait Progression</*0*/ N : jet.Any> : jet.Iterable<N> {
     public abstract override /*1*/ /*fake_override*/ fun iterator(): jet.Iterator<N>
 }
 
-public trait PropertyMetadata {
+public trait PropertyMetadata : jet.Any {
     public abstract val name: jet.String
         public abstract fun <get-name>(): jet.String
 }
@@ -1455,7 +1455,7 @@ public final class PropertyMetadataImpl : jet.PropertyMetadata {
         public open override /*1*/ fun <get-name>(): jet.String
 }
 
-public trait Range</*0*/ in T : jet.Comparable<T>> {
+public trait Range</*0*/ in T : jet.Comparable<T>> : jet.Any {
     public abstract val end: T
         public abstract fun <get-end>(): T
     public abstract val start: T
@@ -1463,7 +1463,7 @@ public trait Range</*0*/ in T : jet.Comparable<T>> {
     public abstract fun contains(/*0*/ item: T): jet.Boolean
 }
 
-public trait Set</*0*/ out E> : jet.Collection<E> {
+public trait Set</*0*/ out E : jet.Any?> : jet.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
@@ -1539,7 +1539,7 @@ public final class Short : jet.Number, jet.Comparable<jet.Short> {
     public open override /*1*/ fun toShort(): jet.Short
 }
 
-public final class ShortArray {
+public final class ShortArray : jet.Any {
     /*primary*/ public constructor ShortArray(/*0*/ size: jet.Int)
     public final val indices: jet.IntRange
         public final fun <get-indices>(): jet.IntRange
@@ -1579,7 +1579,7 @@ public final class ShortRange : jet.Range<jet.Short>, jet.Progression<jet.Short>
     public open override /*1*/ fun contains(/*0*/ item: jet.Short): jet.Boolean
     public open override /*1*/ fun iterator(): jet.ShortIterator
     
-    public class object <class-object-for-ShortRange> {
+    public class object <class-object-for-ShortRange> : jet.Any {
         /*primary*/ private constructor <class-object-for-ShortRange>()
         public final val EMPTY: jet.ShortRange
             public final fun <get-EMPTY>(): jet.ShortRange
@@ -1597,17 +1597,17 @@ public final class String : jet.Comparable<jet.String>, jet.CharSequence {
     public open override /*1*/ fun toString(): jet.String
 }
 
-public open class Throwable {
+public open class Throwable : jet.Any {
     /*primary*/ public constructor Throwable(/*0*/ message: jet.String? = ..., /*1*/ cause: jet.Throwable? = ...)
     public final fun getCause(): jet.Throwable?
     public final fun getMessage(): jet.String?
     public final fun printStackTrace(): jet.Unit
 }
 
-public final class Unit {
+public final class Unit : jet.Any {
     /*primary*/ private constructor Unit()
     
-    public class object <class-object-for-Unit> {
+    public class object <class-object-for-Unit> : jet.Any {
         /*primary*/ private constructor <class-object-for-Unit>()
         public final val VALUE: jet.Unit
             public final fun <get-VALUE>(): jet.Unit

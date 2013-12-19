@@ -125,8 +125,8 @@ public class AnnotationUtils {
         return false;
     }
 
-    private static boolean isJavaLangClass(ClassDescriptor descriptor) {
-        return "java.lang.Class".equals(DescriptorUtils.getFQName(descriptor).asString());
+    public static boolean isJavaLangClass(ClassDescriptor descriptor) {
+        return "java.lang.Class".equals(DescriptorUtils.getFqName(descriptor).asString());
     }
 
     private AnnotationUtils() {

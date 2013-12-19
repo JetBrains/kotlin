@@ -20,10 +20,10 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
@@ -121,7 +121,7 @@ public class ScriptHeaderResolver {
         JetFile file = (JetFile) script.getContainingFile();
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
         FqName fqName = namespaceHeader != null ? new FqName(namespaceHeader.getQualifiedName()) : FqName.ROOT;
-        NamespaceDescriptorImpl ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(fqName);
+        PackageFragmentDescriptor ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(fqName);
 
         Integer priority = script.getUserData(PRIORITY_KEY);
         if (priority == null) {

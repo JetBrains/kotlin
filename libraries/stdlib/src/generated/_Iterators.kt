@@ -216,11 +216,12 @@ public inline fun <T, R, C: MutableCollection<in R>> Iterator<T>.mapTo(result: C
  * Returns the largest element or null if there are no elements
  */
 public fun <T: Comparable<T>> Iterator<T>.max() : T? {
-    var max: T? = null
-    for (e in this) {
-        if (max == null || max!! < e) {
-           max = e
-        }
+    if (!hasNext()) return null
+    
+    var max = next()
+    while (hasNext()) {
+        val e = next()
+        if (max < e) max = e
     }
     return max
 }
@@ -248,11 +249,12 @@ public inline fun <R: Comparable<R>, T: Any> Iterator<T>.maxBy(f: (T) -> R) : T?
  * Returns the smallest element or null if there are no elements
  */
 public fun <T: Comparable<T>> Iterator<T>.min() : T? {
-    var min: T? = null
-    for (e in this) {
-        if (min == null || min!! > e) {
-           min = e
-        }
+    if (!hasNext()) return null
+    
+    var min = next()
+    while (hasNext()) {
+        val e = next()
+        if (min > e) min = e
     }
     return min
 }

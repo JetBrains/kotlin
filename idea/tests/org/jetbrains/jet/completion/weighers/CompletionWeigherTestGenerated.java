@@ -41,6 +41,11 @@ public class CompletionWeigherTestGenerated extends AbstractCompletionWeigherTes
         doTest("idea/testData/completion/weighers/DeprecatedFun.kt");
     }
     
+    @TestMetadata("ExactMatchForKeyword.kt")
+    public void testExactMatchForKeyword() throws Exception {
+        doTest("idea/testData/completion/weighers/ExactMatchForKeyword.kt");
+    }
+    
     @TestMetadata("KeywordsLast.kt")
     public void testKeywordsLast() throws Exception {
         doTest("idea/testData/completion/weighers/KeywordsLast.kt");

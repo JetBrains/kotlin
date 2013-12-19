@@ -358,7 +358,7 @@ public class JetFlowInformationProvider {
         if (variableDescriptor.isVar() && variableDescriptor instanceof PropertyDescriptor) {
             DeclarationDescriptor descriptor = BindingContextUtils.getEnclosingDescriptor(trace.getBindingContext(), expression);
             PropertySetterDescriptor setterDescriptor = ((PropertyDescriptor) variableDescriptor).getSetter();
-            if (Visibilities.isVisible(variableDescriptor, descriptor) && !Visibilities.isVisible(setterDescriptor, descriptor) && setterDescriptor != null) {
+            if (Visibilities.isVisible(variableDescriptor, descriptor) && setterDescriptor != null && !Visibilities.isVisible(setterDescriptor, descriptor)) {
                 report(Errors.INVISIBLE_SETTER.on(expression, variableDescriptor, setterDescriptor.getVisibility(),
                                                   variableDescriptor.getContainingDeclaration()), ctxt);
                 return true;

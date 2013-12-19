@@ -6,8 +6,8 @@ fun test(x: Any) {
       if (y !is String) return
       class Local {
         {
-          x.length
-          y.length
+          <!DEBUG_INFO_AUTOCAST!>x<!>.length
+          <!DEBUG_INFO_AUTOCAST!>y<!>.length
         }
       }
     }

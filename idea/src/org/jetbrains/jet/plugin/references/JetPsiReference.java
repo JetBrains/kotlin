@@ -18,14 +18,15 @@ package org.jetbrains.jet.plugin.references;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -119,9 +120,17 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         if (targetDescriptors != null) {
             assert !(targetDescriptors.isEmpty()) : "targetDescriptors is not null, but empty, for " + myExpression.getText();
             Set<PsiElement> result = Sets.newHashSet();
+            Project project = myExpression.getProject();
             for (DeclarationDescriptor target : targetDescriptors) {
                 result.addAll(BindingContextUtils.descriptorToDeclarations(context, target));
-                result.addAll(findDeclarationsForDescriptorWithoutTrace(myExpression.getProject(), target));
+                result.addAll(findDeclarationsForDescriptorWithoutTrace(project, target));
+
+                if (target instanceof PackageViewDescriptor) {
+                    JavaPsiFacade psiFacade = JavaPsiFacade.getInstance(project);
+                    String fqName = ((PackageViewDescriptor) target).getFqName().asString();
+                    ContainerUtil.addIfNotNull(result, psiFacade.findPackage(fqName));
+                    ContainerUtil.addIfNotNull(result, psiFacade.findClass(fqName, GlobalSearchScope.allScope(project)));
+                }
             }
             return result;
         }

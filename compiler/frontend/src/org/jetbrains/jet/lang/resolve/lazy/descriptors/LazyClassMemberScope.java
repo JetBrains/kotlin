@@ -329,8 +329,9 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         result.addAll(getFunctions(Name.identifier("copy")));
     }
 
+    @Nullable
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
         return null;
     }
 

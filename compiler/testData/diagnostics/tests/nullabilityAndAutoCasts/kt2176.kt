@@ -3,7 +3,7 @@ package kt2176
 
 fun f1(a: String?) {
     a!!
-    a: String
+    <!DEBUG_INFO_AUTOCAST!>a<!>: String
 }
 
 fun f2(a: String) {
@@ -13,12 +13,12 @@ fun f2(a: String) {
 
 fun f3(a: Any?) {
     a as String
-    a: String
+    <!DEBUG_INFO_AUTOCAST!>a<!>: String
 }
 
 fun f4(a: Any) {
     a as String
-    a: String
+    <!DEBUG_INFO_AUTOCAST!>a<!>: String
 }
 
 fun f5(a: String) {

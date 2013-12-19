@@ -19,13 +19,10 @@ package org.jetbrains.kotlin;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.OutputListener;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -119,6 +116,7 @@ public abstract class KotlinIntegrationTestBase {
         content = normalizePath(content, testDataDir, "[TestData]");
         content = normalizePath(content, tmpdir.getTmpDir(), "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
+        content = StringUtil.convertLineSeparators(content);
         return content;
     }
 
@@ -135,6 +133,7 @@ public abstract class KotlinIntegrationTestBase {
         else {
             try {
                 JetTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
+                //noinspection ResultOfMethodCallIgnored
                 actualFile.delete();
             }
             catch (ComparisonFailure e) {
@@ -148,39 +147,28 @@ public abstract class KotlinIntegrationTestBase {
         OSProcessHandler handler =
                 new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString(), commandLine.getCharset());
 
-        final StringBuilder outContent = new StringBuilder();
-        final StringBuilder errContent = new StringBuilder();
+        StringBuilder outContent = new StringBuilder();
+        StringBuilder errContent = new StringBuilder();
 
-        handler.addProcessListener(new ProcessAdapter() {
-            @Override
-            public void onTextAvailable(ProcessEvent event, Key outputType) {
-                if (outputType == ProcessOutputTypes.SYSTEM) {
-                    System.out.print(event.getText());
-                }
-                else if (outputType == ProcessOutputTypes.STDOUT) {
-                    appendToContent(outContent, "OUT ", event.getText());
-                }
-                else if (outputType == ProcessOutputTypes.STDERR) {
-                    appendToContent(errContent, "ERR ", event.getText());
-                }
-            }
-
-            private synchronized void appendToContent(StringBuilder content, String prefix, String line) {
-                content.append(prefix);
-                content.append(StringUtil.trimTrailing(line));
-                content.append("\n");
-            }
-        });
+        handler.addProcessListener(new OutputListener(outContent, errContent));
 
         handler.startNotify();
         handler.waitFor();
         int exitCode = handler.getProcess().exitValue();
 
-        executionLog.append(outContent);
-        executionLog.append(errContent);
-        executionLog.append("Return code: ").append(exitCode).append("\n");
+        appendIfNotEmpty(executionLog, "OUT:\n", outContent);
+        appendIfNotEmpty(executionLog, "\nERR:\n", errContent);
+
+        executionLog.append("\nReturn code: ").append(exitCode).append("\n");
 
         return exitCode;
+    }
+
+    private static void appendIfNotEmpty(StringBuilder executionLog, String prefix, StringBuilder content) {
+        if (content.length() > 0) {
+            executionLog.append(prefix);
+            executionLog.append(content);
+        }
     }
 
     protected static File getJavaRuntime() {

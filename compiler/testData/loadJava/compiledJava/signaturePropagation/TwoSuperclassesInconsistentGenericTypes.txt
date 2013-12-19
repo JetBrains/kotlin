@@ -15,6 +15,6 @@ public trait TwoSuperclassesInconsistentGenericTypes : java.lang.Object {
     }
 }
 
-package TwoSuperclassesInconsistentGenericTypes {
+package test.TwoSuperclassesInconsistentGenericTypes {
     public /*synthesized*/ fun Other(/*0*/ function: () -> jet.MutableList<jet.String>?): test.TwoSuperclassesInconsistentGenericTypes.Other
 }

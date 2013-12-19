@@ -19,6 +19,7 @@ package org.jetbrains.jet.testing;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPackage;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.KotlinLightClass;
@@ -46,6 +47,8 @@ public final class ReferenceUtils {
 
         String presentableText = presentation.getPresentableText();
         String locationString = presentation.getLocationString();
-        return locationString != null ? (locationString + "." + presentableText) : presentableText;
+        return locationString == null || element instanceof PsiPackage // for PsiPackage, presentableText is FQ name of current package
+               ? presentableText
+               : locationString + "." + presentableText;
     }
 }

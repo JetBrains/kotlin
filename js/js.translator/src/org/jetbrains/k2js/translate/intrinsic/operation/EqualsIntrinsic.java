@@ -48,7 +48,7 @@ public final class EqualsIntrinsic implements BinaryOperationIntrinsic {
         }
         FunctionDescriptor functionDescriptor = getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
         assert functionDescriptor != null;
-        return JsDescriptorUtils.isStandardDeclaration(functionDescriptor);
+        return JsDescriptorUtils.isBuiltin(functionDescriptor);
     }
 
     @Override

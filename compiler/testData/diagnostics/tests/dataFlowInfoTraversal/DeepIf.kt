@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DEBUG_INFO_AUTOCAST
 fun bar(x: Int) = x + 1
 
 fun foo() {
@@ -19,8 +20,8 @@ fun foo() {
         bar(<!TYPE_MISMATCH!>x<!>)
         if (<!SENSELESS_COMPARISON!>x != null<!>) {
             bar(x)
-            if (x == null) bar(x)
-            if (x == null) bar(x) else bar(x)
+            if (<!SENSELESS_COMPARISON!>x == null<!>) bar(x)
+            if (<!SENSELESS_COMPARISON!>x == null<!>) bar(x) else bar(x)
             bar(bar(x) + bar(x))
         } else if (<!SENSELESS_COMPARISON!>x == null<!>) {
             bar(<!TYPE_MISMATCH!>x<!>)

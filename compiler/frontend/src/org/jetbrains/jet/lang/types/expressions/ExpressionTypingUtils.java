@@ -132,15 +132,6 @@ public class ExpressionTypingUtils {
         }
     }
 
-    public static boolean isTypeFlexible(@Nullable JetExpression expression) {
-        if (expression == null) return false;
-
-        return TokenSet.create(
-                JetNodeTypes.INTEGER_CONSTANT,
-                JetNodeTypes.FLOAT_CONSTANT
-        ).contains(expression.getNode().getElementType());
-    }
-
     private static boolean isCapturedInInline(
             @NotNull BindingContext context,
             @NotNull DeclarationDescriptor scopeContainer,

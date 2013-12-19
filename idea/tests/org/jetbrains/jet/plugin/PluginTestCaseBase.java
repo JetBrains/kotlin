@@ -36,6 +36,7 @@ public class PluginTestCaseBase {
     private PluginTestCaseBase() {
     }
 
+    @NotNull
     public static String getTestDataPathBase() {
         return JetTestCaseBuilder.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }

@@ -22,13 +22,11 @@ import com.google.common.collect.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilder;
+import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -96,13 +94,13 @@ public class DeclarationResolver {
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
         createFunctionsForDataClasses();
-        importsResolver.processMembersImports(rootScope);
+        importsResolver.processMembersImports();
         checkRedeclarationsInNamespaces();
         checkRedeclarationsInInnerClassNames();
     }
 
     private void checkModifiersAndAnnotationsInNamespaceHeaders() {
-        for (JetFile file : context.getNamespaceDescriptors().keySet()) {
+        for (JetFile file : context.getPackageFragments().keySet()) {
             JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
             if (namespaceHeader == null) continue;
 
@@ -163,7 +161,7 @@ public class DeclarationResolver {
         for (Map.Entry<JetFile, WritableScope> entry : context.getNamespaceScopes().entrySet()) {
             JetFile namespace = entry.getKey();
             WritableScope namespaceScope = entry.getValue();
-            NamespaceLikeBuilder namespaceDescriptor = context.getNamespaceDescriptors().get(namespace).getBuilder();
+            NamespaceLikeBuilder namespaceDescriptor = context.getPackageFragments().get(namespace).getBuilder();
 
             resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceScope, namespaceScope, namespaceDescriptor);
         }
@@ -312,8 +310,10 @@ public class DeclarationResolver {
     }
 
     private void checkRedeclarationsInNamespaces() {
-        for (NamespaceDescriptorImpl descriptor : Sets.newHashSet(context.getNamespaceDescriptors().values())) {
-            Multimap<Name, DeclarationDescriptor> simpleNameDescriptors = descriptor.getMemberScope().getDeclaredDescriptorsAccessibleBySimpleName();
+        for (MutablePackageFragmentDescriptor packageFragment : Sets.newHashSet(context.getPackageFragments().values())) {
+            PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
+            JetScope packageViewScope = packageView.getMemberScope();
+            Multimap<Name, DeclarationDescriptor> simpleNameDescriptors = packageFragment.getMemberScope().getDeclaredDescriptorsAccessibleBySimpleName();
             for (Name name : simpleNameDescriptors.keySet()) {
                 // Keep only properties with no receiver
                 Collection<DeclarationDescriptor> descriptors = Collections2.filter(simpleNameDescriptors.get(name), new Predicate<DeclarationDescriptor>() {
@@ -326,6 +326,8 @@ public class DeclarationResolver {
                         return true;
                     }
                 });
+                ContainerUtil.addIfNotNull(descriptors, packageViewScope.getPackage(name));
+
                 if (descriptors.size() > 1) {
                     for (DeclarationDescriptor declarationDescriptor : descriptors) {
                         for (PsiElement declaration : getDeclarationsByDescriptor(declarationDescriptor)) {
@@ -341,18 +343,18 @@ public class DeclarationResolver {
 
     private Collection<PsiElement> getDeclarationsByDescriptor(DeclarationDescriptor declarationDescriptor) {
         Collection<PsiElement> declarations;
-        if (declarationDescriptor instanceof NamespaceDescriptor) {
-            final NamespaceDescriptor namespace = (NamespaceDescriptor)declarationDescriptor;
-            Collection<JetFile> files = trace.get(BindingContext.NAMESPACE_TO_FILES, namespace);
+        if (declarationDescriptor instanceof PackageViewDescriptor) {
+            final PackageViewDescriptor aPackage = (PackageViewDescriptor)declarationDescriptor;
+            Collection<JetFile> files = trace.get(BindingContext.PACKAGE_TO_FILES, aPackage.getFqName());
 
             if (files == null) {
-                throw new IllegalStateException("declarations corresponding to " + namespace + " are not found");
+                throw new IllegalStateException("declarations corresponding to " + aPackage + " are not found");
             }
 
             declarations = Collections2.transform(files, new Function<JetFile, PsiElement>() {
                 @Override
                 public PsiElement apply(@Nullable JetFile file) {
-                    assert file != null : "File is null for namespace " + namespace;
+                    assert file != null : "File is null for aPackage " + aPackage;
                     return file.getNamespaceHeader().getNameIdentifier();
                 }
             });

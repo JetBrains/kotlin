@@ -16,11 +16,13 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +35,7 @@ import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -43,9 +45,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
@@ -54,7 +54,6 @@ import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
 public class NamespaceCodegen extends MemberCodegen {
-    @NotNull
     private final ClassBuilderOnDemand v;
 
     @NotNull
@@ -62,7 +61,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
     @NotNull
     private final Collection<JetFile> files;
-    private final NamespaceDescriptor descriptor;
+    private final Set<PackageFragmentDescriptor> packageFragments;
 
     public NamespaceCodegen(
             @NotNull ClassBuilderOnDemand v,
@@ -77,8 +76,10 @@ public class NamespaceCodegen extends MemberCodegen {
         name = fqName;
         this.files = namespaceFiles;
 
-        descriptor = state.getBindingContext().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, name);
-        assert descriptor != null : "No namespace found for FQ name " + name;
+        packageFragments = Sets.newHashSet();
+        for (JetFile file : namespaceFiles) {
+            packageFragments.add(getPackageFragment(file));
+        }
 
         final PsiFile sourceFile = namespaceFiles.size() == 1 ? namespaceFiles.iterator().next().getContainingFile() : null;
 
@@ -89,9 +90,8 @@ public class NamespaceCodegen extends MemberCodegen {
                               ACC_PUBLIC | ACC_FINAL,
                               JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(fqName)).getInternalName(),
                               null,
-                              //"jet/lang/Namespace",
                               "java/lang/Object",
-                              new String[0]
+                              ArrayUtil.EMPTY_STRING_ARRAY
                 );
                 //We don't generate any source information for namespace with multiple files
                 if (sourceFile != null) {
@@ -147,7 +147,7 @@ public class NamespaceCodegen extends MemberCodegen {
         }
 
         DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(bindings));
-        ProtoBuf.Package packageProto = serializer.packageProto(descriptor).build();
+        ProtoBuf.Package packageProto = serializer.packageProto(packageFragments).build();
 
         if (packageProto.getMemberCount() == 0) return;
 
@@ -167,7 +167,7 @@ public class NamespaceCodegen extends MemberCodegen {
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file) {
         boolean generateSrcClass = false;
-        FieldOwnerContext packageFragmentContext = CodegenContext.STATIC.intoNamespace(descriptor);
+        FieldOwnerContext packagePartContext = CodegenContext.STATIC.intoPackagePart(getPackageFragment(file));
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
@@ -179,18 +179,18 @@ public class NamespaceCodegen extends MemberCodegen {
                 }
             }
             else if (declaration instanceof JetScript) {
-               ScriptCodegen.createScriptCodegen((JetScript) declaration, state, packageFragmentContext).generate();
+               ScriptCodegen.createScriptCodegen((JetScript) declaration, state, packagePartContext).generate();
             }
         }
 
         if (!generateSrcClass) return null;
 
-        Type packageFragmentType = getNamespacePartType(getPackageClassFqName(name), file.getVirtualFile());
-        ClassBuilder builder = state.getFactory().forPackageFragment(packageFragmentType, file);
+        Type packagePartType = getNamespacePartType(getPackageClassFqName(name), file.getVirtualFile());
+        ClassBuilder builder = state.getFactory().forPackageFragment(packagePartType, file);
 
-        new NamespacePartCodegen(builder, file, packageFragmentType, packageFragmentContext, state).generate();
+        new NamespacePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
-        FieldOwnerContext namespaceFacade = CodegenContext.STATIC.intoNamespaceFacade(packageFragmentType, descriptor);
+        FieldOwnerContext namespaceFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, getPackageFragment(file));
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
@@ -201,8 +201,15 @@ public class NamespaceCodegen extends MemberCodegen {
         return builder;
     }
 
+    @NotNull
+    private PackageFragmentDescriptor getPackageFragment(@NotNull JetFile file) {
+        PackageFragmentDescriptor packageFragment = bindingContext.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
+        assert packageFragment != null : "package fragment is null for " + file;
+        return packageFragment;
+    }
+
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
+        CodegenContext context = CodegenContext.STATIC.intoPackagePart(getPackageFragment((JetFile) classOrObject.getContainingFile()));
         genClassOrObject(context, classOrObject);
     }
 

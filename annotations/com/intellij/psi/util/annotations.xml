@@ -1,5 +1,9 @@
 <root>
   <item
+      name='com.intellij.psi.util.CachedValueProvider.Result com.intellij.psi.util.CachedValueProvider.Result&lt;T&gt; create(T, java.lang.Object...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.psi.util.CachedValuesManager com.intellij.psi.util.CachedValue&lt;T&gt; createCachedValue(com.intellij.psi.util.CachedValueProvider&lt;T&gt;, boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

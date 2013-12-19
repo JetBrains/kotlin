@@ -45,7 +45,6 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilderDummy;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
@@ -104,7 +103,9 @@ public class ReplInterpreter {
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
-        module.setModuleConfiguration(injector.getJavaBridgeConfiguration());
+        module.addFragmentProvider(injector.getTopDownAnalyzer().getPackageFragmentProvider());
+        module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        module.addFragmentProvider(injector.getJavaPackageFragmentProvider());
 
         List<URL> classpath = Lists.newArrayList();
 
@@ -287,15 +288,9 @@ public class ReplInterpreter {
 
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        NamespaceDescriptorImpl rootNs = injector.getNamespaceFactory().createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
-
-        // map "jet" namespace into KotlinBuiltIns
-        // @see DefaultModuleConfiguraiton#extendNamespaceScope
-        injector.getNamespaceFactory().createNamespaceDescriptorPathIfNeeded(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName());
-
         // Import a scope that contains all top-level namespaces that come from dependencies
         // This makes the namespaces visible at all, does not import themselves
-        scope.importScope(rootNs.getMemberScope());
+        scope.importScope(module.getPackage(FqName.ROOT).getMemberScope());
 
         if (lastLineScope != null) {
             scope.importScope(lastLineScope);

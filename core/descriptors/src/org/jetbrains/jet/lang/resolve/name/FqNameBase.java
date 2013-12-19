@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.resolve.name;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public abstract class FqNameBase {
 
     protected FqNameBase() {
@@ -49,4 +51,7 @@ public abstract class FqNameBase {
     public final boolean equalsTo(@NotNull FqNameUnsafe that) {
         return toFqNameUnsafe().equals(that);
     }
+
+    @NotNull
+    public abstract List<Name> pathSegments();
 }

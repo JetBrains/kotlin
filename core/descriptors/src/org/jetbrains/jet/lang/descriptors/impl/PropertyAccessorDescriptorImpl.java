@@ -129,9 +129,10 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         throw new UnsupportedOperationException("Accessors must be copied by the corresponding property");
     }
 
+    @NotNull
     protected Set<PropertyAccessorDescriptor> getOverriddenDescriptors(boolean isGetter) {
         Set<? extends PropertyDescriptor> overriddenProperties = getCorrespondingProperty().getOverriddenDescriptors();
-        Set<PropertyAccessorDescriptor> overriddenAccessors = Sets.newHashSet();
+        Set<PropertyAccessorDescriptor> overriddenAccessors = Sets.newLinkedHashSet(); // LinkedHashSet for determinism
         for (PropertyDescriptor overriddenProperty : overriddenProperties) {
             PropertyAccessorDescriptor accessorDescriptor = isGetter ? overriddenProperty.getGetter() : overriddenProperty.getSetter();
             if (accessorDescriptor != null) {

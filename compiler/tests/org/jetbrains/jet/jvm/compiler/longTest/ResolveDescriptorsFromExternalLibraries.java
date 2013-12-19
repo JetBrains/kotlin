@@ -33,6 +33,7 @@ import org.jetbrains.jet.TimeUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -157,7 +158,7 @@ public class ResolveDescriptorsFromExternalLibraries {
             }
         }
 
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(
+        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(
                 jetCoreEnvironment.getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.references;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
@@ -32,31 +33,27 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
-    private volatile BindingContext bindingContext = null;
-    private volatile Set<? extends PsiFile> builtInsSources = Sets.newHashSet();
+    private volatile BindingContext bindingContext;
+    private volatile Set<JetFile> builtInsSources;
+    private volatile MutablePackageFragmentDescriptor builtinsPackageFragment;
 
     public BuiltInsReferenceResolver(Project project) {
         super(project);
@@ -75,25 +72,24 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private void initialize() {
         assert bindingContext == null : "Attempt to initialize twice";
 
-        final List<JetFile> jetBuiltInsFiles = getJetBuiltInsFiles();
+        final Set<JetFile> jetBuiltInsFiles = getJetBuiltInsFiles();
 
         final Runnable initializeRunnable = new Runnable() {
             @Override
             public void run() {
-                BindingTraceContext context = new BindingTraceContext();
-                FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
-                context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
-                               KotlinBuiltIns.getInstance().getBuiltInsPackageFqName(), jetNamespace);
+                TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                        Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
+                ModuleDescriptorImpl module = new ModuleDescriptorImpl(
+                        Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
+                InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
+                        myProject, topDownAnalysisParameters, new BindingTraceContext(), module, PlatformToKotlinClassMap.EMPTY);
 
-                WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION,
-                                                                "Builtin classes scope");
-                scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-                jetNamespace.setMemberScope(scope);
+                TopDownAnalyzer analyzer = injector.getTopDownAnalyzer();
+                analyzer.analyzeFiles(jetBuiltInsFiles, Collections.<AnalyzerScriptParameter>emptyList());
 
-                TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, jetBuiltInsFiles);
-
+                builtinsPackageFragment = analyzer.getPackageFragmentProvider().getOrCreateFragment(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
                 builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
-                bindingContext = context.getBindingContext();
+                bindingContext = injector.getBindingTrace().getBindingContext();
             }
         };
 
@@ -108,9 +104,10 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 }
             });
         }
+
     }
 
-    private List<JetFile> getJetBuiltInsFiles() {
+    private Set<JetFile> getJetBuiltInsFiles() {
         URL url = LightClassUtil.getBuiltInsDirUrl();
         VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null : "Virtual file not found by URL: " + url;
@@ -125,12 +122,12 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
         PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(vf);
         assert psiDirectory != null : "No PsiDirectory for " + vf;
-        return ContainerUtil.mapNotNull(psiDirectory.getFiles(), new Function<PsiFile, JetFile>() {
+        return new HashSet<JetFile>(ContainerUtil.mapNotNull(psiDirectory.getFiles(), new Function<PsiFile, JetFile>() {
             @Override
             public JetFile fun(PsiFile file) {
                 return file instanceof JetFile ? (JetFile) file : null;
             }
-        });
+        }));
     }
 
     @Nullable
@@ -141,7 +138,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             return ((ClassDescriptor) currentParent).getClassObjectDescriptor();
         }
         else {
-            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFQName(originalDescriptor).toSafe());
+            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqNameSafe(originalDescriptor));
         }
     }
 
@@ -172,9 +169,10 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         if (originalDescriptor instanceof ClassDescriptor) {
             return findCurrentDescriptorForClass((ClassDescriptor) originalDescriptor);
         }
-        else if (originalDescriptor instanceof NamespaceDescriptor) {
-            return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR,
-                                      DescriptorUtils.getFQName(originalDescriptor).toSafe());
+        else if (originalDescriptor instanceof PackageFragmentDescriptor) {
+            return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageFragmentDescriptor) originalDescriptor).getFqName())
+                   ? builtinsPackageFragment
+                   : null;
         }
         else if (originalDescriptor instanceof MemberDescriptor) {
             return findCurrentDescriptorForMember((MemberDescriptor) originalDescriptor);
@@ -182,20 +180,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         else {
             return null;
         }
-    }
-
-    @NotNull
-    public Collection<PsiElement> resolveBuiltInSymbol(
-            @NotNull BindingContext originalContext,
-            @Nullable JetReferenceExpression referenceExpression
-    ) {
-        if (bindingContext == null) {
-            return Collections.emptyList();
-        }
-
-        DeclarationDescriptor declarationDescriptor = originalContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-
-        return declarationDescriptor != null ? resolveBuiltInSymbol(declarationDescriptor) : Collections.<PsiElement>emptyList();
     }
 
     @NotNull
@@ -223,33 +207,11 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         if (parent instanceof ClassDescriptor) {
             return ((ClassDescriptor) parent).getDefaultType().getMemberScope();
         }
-        else if (parent instanceof NamespaceDescriptor) {
-            return ((NamespaceDescriptor)parent).getMemberScope();
+        else if (parent instanceof PackageFragmentDescriptor) {
+            return ((PackageFragmentDescriptor) parent).getMemberScope();
         }
         else {
             return null;
-        }
-    }
-
-    private static class FakeJetNamespaceDescriptor extends NamespaceDescriptorImpl {
-        private WritableScope memberScope;
-
-        private FakeJetNamespaceDescriptor() {
-            super(new NamespaceDescriptorImpl(
-                    new ModuleDescriptorImpl(Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY)
-                            .setModuleConfiguration(ModuleConfiguration.EMPTY),
-                  Collections.<AnnotationDescriptor>emptyList(), Name.special("<root>")), Collections.<AnnotationDescriptor>emptyList(),
-                  KotlinBuiltIns.getInstance().getBuiltInsPackage().getName());
-        }
-
-        void setMemberScope(WritableScope memberScope) {
-            this.memberScope = memberScope;
-        }
-
-        @NotNull
-        @Override
-        public WritableScope getMemberScope() {
-            return memberScope;
         }
     }
 }

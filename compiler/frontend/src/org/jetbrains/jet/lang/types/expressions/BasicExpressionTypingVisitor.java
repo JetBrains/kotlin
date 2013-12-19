@@ -61,6 +61,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 import org.jetbrains.jet.utils.ThrowingList;
 
 import java.util.Collection;
@@ -152,7 +153,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, allowBareTypes);
         PossiblyBareType possiblyBareTarget = context.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(typeResolutionContext, right);
 
-        if (isTypeFlexible(left) || operationType == JetTokens.COLON) {
+        if (operationType == JetTokens.COLON) {
             // We do not allow bare types on static assertions, because static assertions provide an expected type for their argument,
             // thus causing a circularity in type dependencies
             assert !possiblyBareTarget.isBare() : "Bare types should not be allowed for static assertions, because argument inference makes no sense there";
@@ -866,10 +867,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetBinaryExpression expression,
             ExpressionTypingContext context,
             JetSimpleNameExpression operationSign,
-            JetExpression left,
-            JetExpression right
+            final JetExpression left,
+            final JetExpression right
     ) {
-        JetTypeInfo result;DataFlowInfo dataFlowInfo = context.dataFlowInfo;
+        DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (right != null && left != null) {
             ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context);
 
@@ -883,16 +884,30 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, KotlinBuiltIns.getInstance().getNullableAnyType());
             traceInterpretingRightAsNullableAny.record(PROCESSED, right);
 
+            Call call = CallMaker.makeCallWithExpressions(operationSign, receiver, null, operationSign, Collections.singletonList(right));
+            ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
             OverloadResolutionResults<FunctionDescriptor> resolutionResults =
-                    resolveFakeCall(receiver, context.replaceBindingTrace(traceInterpretingRightAsNullableAny),
-                                           Collections.singletonList(right), OperatorConventions.EQUALS);
+                    newContext.resolveCallWithGivenName(call, operationSign, OperatorConventions.EQUALS);
 
+            traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
+                @Override
+                public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
+
+                    // the type of the right expression isn't 'Any?' actually
+                    if (key == right && (slice == EXPRESSION_TYPE || slice == PROCESSED)) return false;
+
+                    // a hack due to KT-678
+                    // without this line an autocast is reported on the receiver (if it was previously checked for not-null)
+                    // with not-null check the resolution result changes from 'fun Any?.equals' to 'equals' member
+                    if (key == left && slice == AUTOCAST) return false;
+
+                    return true;
+                }
+            }, true);
             dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
 
             if (resolutionResults.isSuccess()) {
                 FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
-                context.trace.record(REFERENCE_TARGET, operationSign, equals);
-                context.trace.record(RESOLVED_CALL, operationSign, resolutionResults.getResultingCall());
                 if (ensureBooleanResult(operationSign, OperatorConventions.EQUALS, equals.getReturnType(), context)) {
                     ensureNonemptyIntersectionOfOperandTypes(expression, context);
                 }
@@ -906,8 +921,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
         }
-        result = JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), dataFlowInfo);
-        return result;
+        return JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), dataFlowInfo);
     }
 
     @NotNull
@@ -942,9 +956,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context
     ) {
         JetType booleanType = KotlinBuiltIns.getInstance().getBooleanType();
-        JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
-
-        JetType leftType = leftTypeInfo.getType();
+        JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context.replaceExpectedType(booleanType), facade);
         DataFlowInfo dataFlowInfo = leftTypeInfo.getDataFlowInfo();
 
         WritableScopeImpl leftScope = newWritableScopeImpl(context, "Left scope of && or ||");
@@ -953,13 +965,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, isAnd, context).and(dataFlowInfo);
         WritableScopeImpl rightScope = isAnd ? leftScope : newWritableScopeImpl(context, "Right scope of && or ||");
 
-        ExpressionTypingContext contextForRightExpr = context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope);
-        JetType rightType = right != null ? facade.getTypeInfo(right, contextForRightExpr).getType() : null;
-        if (left != null && leftType != null && !isBoolean(leftType)) {
-            context.trace.report(TYPE_MISMATCH.on(left, booleanType, leftType));
-        }
-        if (rightType != null && !isBoolean(rightType)) {
-            context.trace.report(TYPE_MISMATCH.on(right, booleanType, rightType));
+        ExpressionTypingContext contextForRightExpr =
+                context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope).replaceExpectedType(booleanType);
+        if (right != null) {
+            facade.getTypeInfo(right, contextForRightExpr);
         }
         return JetTypeInfo.create(booleanType, dataFlowInfo);
     }

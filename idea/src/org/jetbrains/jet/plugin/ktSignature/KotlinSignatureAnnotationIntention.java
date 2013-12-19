@@ -34,6 +34,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -163,7 +164,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     @NotNull
     private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMember psiMember) {
         BindingTraceContext trace = new BindingTraceContext();
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, trace);
+        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, trace);
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         PsiClass containingClass = psiMember.getContainingClass();
@@ -186,9 +187,9 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     @NotNull
     private static JetScope getMemberScope(PsiModifierListOwner psiModifierListOwner, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver) {
         if (psiModifierListOwner.hasModifierProperty(PsiModifier.STATIC)) {
-            NamespaceDescriptor namespaceDescriptor = javaDescriptorResolver.resolveNamespace(classFqName, IGNORE_KOTLIN_SOURCES);
-            assert namespaceDescriptor != null: "Couldn't resolve namespace descriptor for " + classFqName;
-            return namespaceDescriptor.getMemberScope();
+            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragmentProvider().getOrCreatePackage(classFqName);
+            assert packageFragment != null: "Couldn't resolve package fragment for " + classFqName;
+            return packageFragment.getMemberScope();
         }
 
         ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName, IGNORE_KOTLIN_SOURCES);

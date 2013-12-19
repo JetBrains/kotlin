@@ -146,6 +146,76 @@ fun iterables(): ArrayList<GenericFunction> {
         }
     }
 
+    templates add f("min()") {
+        doc = "Returns the smallest element or null if there are no elements"
+        returns("T?")
+        absentFor(PrimitiveType.Boolean)
+        typeParam("T: Comparable<T>")
+        isInline = false
+        Iterables.body {
+            """
+                val iterator = iterator()
+                if (!iterator.hasNext()) return null
+                
+                var min = iterator.next()
+                while (iterator.hasNext()) {
+                    val e = iterator.next()
+                    if (min > e) min = e
+                }
+                return min
+            """
+        }
+        listOf(Arrays, PrimitiveArrays).forEach {
+            it.body {
+                """
+                if (isEmpty()) return null
+                
+                var min = this[0]
+                for (i in 1..lastIndex) {
+                    val e = this[i]
+                    if (min > e) min = e
+                }
+                return min
+            """
+            }
+        }
+    }
+
+    templates add f("max()") {
+        doc = "Returns the largest element or null if there are no elements"
+        returns("T?")
+        absentFor(PrimitiveType.Boolean)
+        typeParam("T: Comparable<T>")
+        isInline = false
+        Iterables.body {
+            """
+                val iterator = iterator()
+                if (!iterator.hasNext()) return null
+                
+                var max = iterator.next()
+                while (iterator.hasNext()) {
+                    val e = iterator.next()
+                    if (max < e) max = e
+                }
+                return max
+            """
+        }
+        listOf(Arrays, PrimitiveArrays).forEach {
+            it.body {
+                """
+                if (isEmpty()) return null
+                
+                var max = this[0]
+                for (i in 1..lastIndex) {
+                    val e = this[i]
+                    if (max < e) max = e
+                }
+                return max
+            """
+            }
+        }
+    }
+
     templates add f("minBy(f: (T) -> R)") {
         doc = "Returns the first element yielding the smallest value of the given function or null if there are no elements"
         typeParam("R: Comparable<R>")

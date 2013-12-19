@@ -23,23 +23,22 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.comparisonOperandType;
 
-public class CompareTo implements IntrinsicMethod {
+public class CompareTo extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         JetExpression argument;
         assert arguments != null;
@@ -76,6 +75,7 @@ public class CompareTo implements IntrinsicMethod {
         else {
             throw new UnsupportedOperationException();
         }
-        return StackValue.onStack(Type.INT_TYPE);
+
+        return Type.INT_TYPE;
     }
 }

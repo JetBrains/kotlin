@@ -179,9 +179,8 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("jet", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
         add(pattern("js", "set").receiverExists(), NATIVE_MAP_SET);
 
-        String[] javaUtil = {"java", "util"};
-        add(pattern(javaUtil, "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
-        add(pattern(javaUtil, "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
+        add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
+        add(pattern("java.util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
 
         add(pattern("js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
         add(pattern("js", "Json", "set"), ArrayFIF.SET_INTRINSIC);

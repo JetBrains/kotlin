@@ -23,7 +23,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -140,11 +139,10 @@ public class FunctionTypesUtil {
 
     @NotNull
     private static ClassDescriptor createFunctionImplDescriptor(@NotNull Name name, @NotNull ClassDescriptor functionInterface) {
-        JetScope builtInsScope = KotlinBuiltIns.getInstance().getBuiltInsScope();
-
+        PackageFragmentDescriptor builtinsFragment = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
         MutableClassDescriptor functionImpl = new MutableClassDescriptor(
-                builtInsScope.getContainingDeclaration(),
-                builtInsScope,
+                builtinsFragment,
+                builtinsFragment.getMemberScope(),
                 ClassKind.CLASS,
                 false,
                 name

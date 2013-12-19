@@ -9,9 +9,11 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
@@ -28,8 +30,24 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     public JetExpressionMover() {
     }
 
-    private final static Class[] MOVABLE_ELEMENT_CLASSES =
-            {JetExpression.class, JetWhenEntry.class, JetValueArgument.class, PsiComment.class};
+    private final static Class[] MOVABLE_ELEMENT_CLASSES = {
+            JetDeclaration.class,
+            JetBlockExpression.class,
+            // Only assignments
+            JetBinaryExpression.class,
+            JetCallExpression.class,
+            JetWhenEntry.class,
+            JetValueArgument.class,
+            PsiComment.class
+    };
+
+    private static final Function1<PsiElement, Boolean> MOVABLE_ELEMENT_CONSTRAINT = new Function1<PsiElement, Boolean>() {
+        @NotNull
+        @Override
+        public Boolean invoke(PsiElement element) {
+            return (!(element instanceof JetBinaryExpression) || JetPsiUtil.isAssignment(element));
+        }
+    };
 
     private final static Class[] BLOCKLIKE_ELEMENT_CLASSES =
             {JetBlockExpression.class, JetWhenExpression.class, JetClassBody.class, JetFile.class};
@@ -352,7 +370,13 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
     @Nullable
     private static PsiElement getMovableElement(@NotNull PsiElement element, boolean lookRight) {
-        PsiElement movableElement = PsiTreeUtil.getNonStrictParentOfType(element, MOVABLE_ELEMENT_CLASSES);
+        //noinspection unchecked
+        PsiElement movableElement = PsiUtilPackage.getParentByTypesAndPredicate(
+                element,
+                false,
+                MOVABLE_ELEMENT_CLASSES,
+                MOVABLE_ELEMENT_CONSTRAINT
+        );
         if (movableElement == null) return null;
 
         if (isBracelessBlock(movableElement)) {

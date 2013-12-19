@@ -20,34 +20,35 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-public class StringPlus implements IntrinsicMethod {
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+
+public class StringPlus extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         if (receiver == null || receiver == StackValue.none()) {
-            codegen.gen(arguments.get(0)).put(AsmTypeConstants.JAVA_STRING_TYPE, v);
-            codegen.gen(arguments.get(1)).put(AsmTypeConstants.OBJECT_TYPE, v);
+            codegen.gen(arguments.get(0)).put(JAVA_STRING_TYPE, v);
+            codegen.gen(arguments.get(1)).put(OBJECT_TYPE, v);
         }
         else {
-            receiver.put(AsmTypeConstants.JAVA_STRING_TYPE, v);
-            codegen.gen(arguments.get(0)).put(AsmTypeConstants.OBJECT_TYPE, v);
+            receiver.put(JAVA_STRING_TYPE, v);
+            codegen.gen(arguments.get(0)).put(OBJECT_TYPE, v);
         }
         v.invokestatic("jet/runtime/Intrinsics", "stringPlus", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;");
-        return StackValue.onStack(AsmTypeConstants.JAVA_STRING_TYPE);
+        return JAVA_STRING_TYPE;
     }
 }

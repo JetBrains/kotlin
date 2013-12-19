@@ -111,7 +111,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
     }
 
     private String nameForAssertions() {
-        return getName() + " declared in " + DescriptorUtils.getFQName(getContainingDeclaration());
+        return getName() + " declared in " + DescriptorUtils.getFqName(getContainingDeclaration());
     }
 
     public void setInitialized() {

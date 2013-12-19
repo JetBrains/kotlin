@@ -44,7 +44,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
                 "This method should be invoced on inline function: " + descriptor;
 
         checkDefaults(descriptor, function, trace);
-        checkNotVirual(descriptor, function, trace);
+        checkNotVirtual(descriptor, function, trace);
         checkHasInlinableAndNullability(descriptor, function, trace);
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
@@ -90,7 +90,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         }
     }
 
-    private static void checkNotVirual(
+    private static void checkNotVirtual(
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetFunction function,
             @NotNull BindingTrace trace
@@ -99,7 +99,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             return;
         }
 
-        if (functionDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+        if (functionDescriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
             return;
         }
 

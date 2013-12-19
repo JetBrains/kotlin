@@ -21,30 +21,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class StupidSync implements IntrinsicMethod {
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_FUNCTION0_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+
+public class StupidSync extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             @Nullable PsiElement element,
             @Nullable List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
-        codegen.pushMethodArguments((JetCallExpression) element, Arrays.asList(AsmTypeConstants.OBJECT_TYPE, AsmTypeConstants.JET_FUNCTION0_TYPE));
+        codegen.pushMethodArguments((JetCallExpression) element, Arrays.asList(OBJECT_TYPE, JET_FUNCTION0_TYPE));
         v.invokestatic("jet/runtime/Intrinsics", "stupidSync", "(Ljava/lang/Object;Ljet/Function0;)Ljava/lang/Object;");
-        StackValue.onStack(AsmTypeConstants.OBJECT_TYPE).put(expectedType, v);
-        return StackValue.onStack(expectedType);
+        return OBJECT_TYPE;
     }
 }

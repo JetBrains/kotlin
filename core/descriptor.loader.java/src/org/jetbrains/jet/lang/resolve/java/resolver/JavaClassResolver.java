@@ -65,7 +65,7 @@ public final class JavaClassResolver {
     private JavaMemberResolver memberResolver;
     private JavaAnnotationResolver annotationResolver;
     private JavaClassFinder javaClassFinder;
-    private JavaNamespaceResolver namespaceResolver;
+    private JavaPackageFragmentProvider packageFragmentProvider;
     private JavaSupertypeResolver supertypesResolver;
     private JavaFunctionResolver functionResolver;
     private DeserializedDescriptorResolver deserializedDescriptorResolver;
@@ -105,8 +105,8 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setNamespaceResolver(JavaNamespaceResolver namespaceResolver) {
-        this.namespaceResolver = namespaceResolver;
+    public void setPackageFragmentProvider(JavaPackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
     }
 
     @Inject
@@ -174,7 +174,7 @@ public final class JavaClassResolver {
         List<Name> segments = qualifiedName.pathSegments();
         if (segments.size() < 2) return null;
 
-        JetScope scope = KotlinBuiltIns.getInstance().getBuiltInsScope();
+        JetScope scope = KotlinBuiltIns.getInstance().getBuiltInsPackageScope();
         for (int i = 1, size = segments.size(); i < size; i++) {
             ClassifierDescriptor classifier = scope.getClassifier(segments.get(i));
             if (classifier == null) return null;
@@ -226,7 +226,7 @@ public final class JavaClassResolver {
     }
 
     private void cacheNegativeValue(@NotNull FqNameUnsafe fqNameUnsafe) {
-        if (unresolvedCache.contains(fqNameUnsafe) || classDescriptorCache.containsKey(fqNameUnsafe)) {
+        if (classDescriptorCache.containsKey(fqNameUnsafe)) {
             throw new IllegalStateException("rewrite at " + fqNameUnsafe);
         }
         unresolvedCache.add(fqNameUnsafe);
@@ -320,7 +320,7 @@ public final class JavaClassResolver {
         FqName containerFqName = methodContainer.getFqName();
         assert containerFqName != null : "qualified name is null for " + methodContainer;
 
-        if (DescriptorUtils.getFQName(samInterface).equalsTo(containerFqName)) {
+        if (DescriptorUtils.getFqName(samInterface).equalsTo(containerFqName)) {
             SimpleFunctionDescriptor abstractMethod = functionResolver.resolveFunctionMutely(samInterfaceMethod, samInterface);
             assert abstractMethod != null : "couldn't resolve method " + samInterfaceMethod;
             return abstractMethod;
@@ -385,11 +385,11 @@ public final class JavaClassResolver {
         }
         else {
             FqName parentFqName = childClassFQName.parent();
-            NamespaceDescriptor parentNamespace = namespaceResolver.resolveNamespace(parentFqName, INCLUDE_KOTLIN_SOURCES);
-            if (parentNamespace == null) {
+            PackageFragmentDescriptor parentPackage = packageFragmentProvider.getOrCreatePackage(parentFqName);
+            if (parentPackage == null) {
                 throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
             }
-            return parentNamespace;
+            return parentPackage;
         }
     }
 

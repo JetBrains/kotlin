@@ -51,7 +51,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*;
 import static org.jetbrains.jet.lang.types.Variance.INVARIANT;
 
@@ -169,7 +169,7 @@ public class SignaturesPropagationData {
     ) {
         assert receiverType == null : "Parameters before propagation have receiver type," +
                                       " but propagation should be disabled for functions compiled from Kotlin in class: " +
-                                      DescriptorUtils.getFQName(containingClass);
+                                      DescriptorUtils.getFqName(containingClass);
 
         JetType resultReceiverType = null;
         List<ValueParameterDescriptor> resultParameters = Lists.newArrayList();
@@ -260,8 +260,8 @@ public class SignaturesPropagationData {
         Collections.sort(superFunctions, new Comparator<FunctionDescriptor>() {
             @Override
             public int compare(FunctionDescriptor fun1, FunctionDescriptor fun2) {
-                FqNameUnsafe fqName1 = getFQName(fun1.getContainingDeclaration());
-                FqNameUnsafe fqName2 = getFQName(fun2.getContainingDeclaration());
+                FqNameUnsafe fqName1 = getFqName(fun1.getContainingDeclaration());
+                FqNameUnsafe fqName2 = getFqName(fun2.getContainingDeclaration());
                 return fqName1.asString().compareTo(fqName2.asString());
             }
         });
@@ -282,7 +282,7 @@ public class SignaturesPropagationData {
         for (JetType supertype : TypeUtils.getAllSupertypes(containingClass.getDefaultType())) {
             ClassifierDescriptor klass = supertype.getConstructor().getDeclarationDescriptor();
             assert klass != null;
-            FqName fqName = DescriptorUtils.getFQName(klass).toSafe();
+            FqName fqName = DescriptorUtils.getFqNameSafe(klass);
 
             for (FunctionDescriptor fun : klass.getDefaultType().getMemberScope().getFunctions(functionName)) {
                 CallableMemberDescriptor.Kind kind = fun.getKind();

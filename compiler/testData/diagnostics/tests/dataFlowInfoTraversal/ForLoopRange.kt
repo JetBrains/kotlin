@@ -1,6 +1,6 @@
 fun foo(arr: Array<Int>?) {
     for (x in arr!!) {
-        arr : Array<Int>
+        <!DEBUG_INFO_AUTOCAST!>arr<!> : Array<Int>
     }
-    arr : Array<Int>
+    <!DEBUG_INFO_AUTOCAST!>arr<!> : Array<Int>
 }

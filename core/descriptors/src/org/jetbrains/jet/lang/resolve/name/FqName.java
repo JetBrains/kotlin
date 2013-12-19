@@ -128,6 +128,7 @@ public final class FqName extends FqNameBase {
         return path;
     }
 
+    @Override
     @NotNull
     public List<Name> pathSegments() {
         return fqName.pathSegments();
@@ -141,6 +142,11 @@ public final class FqName extends FqNameBase {
         return fqName.lastSegmentIs(segment);
     }
 
+    public boolean isAncestorOf(@NotNull FqName other) {
+        String thisString = this.asString();
+        String otherString = other.asString();
+        return otherString.equals(thisString) || otherString.startsWith(thisString + ".");
+    }
 
     @NotNull
     public static FqName topLevel(@NotNull Name shortName) {

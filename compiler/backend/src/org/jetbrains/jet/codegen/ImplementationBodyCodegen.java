@@ -217,6 +217,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
+        //noinspection ConstantConditions
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(data.toBytes())) {
@@ -233,8 +234,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isObjectLiteral = DescriptorUtils.isAnonymousObject(descriptor);
 
         boolean isLocalOrAnonymousClass = isObjectLiteral ||
-                                          !(parentDescriptor instanceof NamespaceDescriptor || parentDescriptor instanceof ClassDescriptor);
-        if (isLocalOrAnonymousClass) {
+                                          !(parentDescriptor instanceof PackageFragmentDescriptor || parentDescriptor instanceof ClassDescriptor);
+        // Do not emit enclosing method in "light-classes mode" since currently we genenerate local light classes as if they're top level
+        if (isLocalOrAnonymousClass && getState().getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
             String outerClassName = getOuterClassName(descriptor, typeMapper);
             FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
 
@@ -652,7 +654,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.store(2, AsmTypeConstants.OBJECT_TYPE);
 
         for (PropertyDescriptor propertyDescriptor : properties) {
-            Type asmType = typeMapper.mapType(propertyDescriptor.getType());
+            Type asmType = typeMapper.mapType(propertyDescriptor);
 
             genPropertyOnStack(iv, propertyDescriptor, 0);
             genPropertyOnStack(iv, propertyDescriptor, 2);
@@ -700,7 +702,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             genPropertyOnStack(iv, propertyDescriptor, 0);
 
             Label ifNull = null;
-            Type asmType = typeMapper.mapType(propertyDescriptor.getType());
+            Type asmType = typeMapper.mapType(propertyDescriptor);
             if (!isPrimitive(asmType)) {
                 ifNull = new Label();
                 iv.dup();
@@ -827,7 +829,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateCopyFunction(@NotNull final FunctionDescriptor function) {
         JvmMethodSignature methodSignature = typeMapper.mapSignature(function);
 
-        final Type thisDescriptorType = typeMapper.mapType(descriptor.getDefaultType());
+        final Type thisDescriptorType = typeMapper.mapType(descriptor);
 
         functionCodegen.generateMethod(myClass, methodSignature, function, new FunctionGenerationStrategy() {
             @Override
@@ -886,7 +888,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                         assert propertyDescriptor != null
                                                                 : "Trying to generate default value for parameter of copy function that doesn't correspond to any property";
                                                         codegen.v.load(0, thisDescriptorType);
-                                                        Type propertyType = codegen.typeMapper.mapType(propertyDescriptor.getType());
+                                                        Type propertyType = codegen.typeMapper.mapType(propertyDescriptor);
                                                         codegen.intermediateValueForProperty(propertyDescriptor, false, null)
                                                                 .put(propertyType, codegen.v);
                                                     }
@@ -1067,7 +1069,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateClassObjectBackingFieldCopies() {
         if (classObjectPropertiesToCopy != null) {
             for (PropertyAndDefaultValue propertyInfo : classObjectPropertiesToCopy) {
-                PropertyDescriptor propertyDescriptor = propertyInfo.propertyDescriptor;
+                PropertyDescriptor propertyDescriptor = propertyInfo.descriptor;
 
                 FieldVisitor fv = v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(propertyDescriptor),
                                                   typeMapper.mapType(propertyDescriptor).getDescriptor(), null, propertyInfo.defaultValue);
@@ -1139,7 +1141,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         functionCodegen.generateMethod(null, constructorSignature, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
-
                        @NotNull
                        @Override
                        protected FrameMap createFrameMap(@NotNull JetTypeMapper typeMapper, @NotNull MethodContext context) {
@@ -1224,12 +1225,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
             //generate object$
             parentCodegen.genInitSingleton(descriptor, StackValue.singleton(descriptor, typeMapper));
-            parentCodegen.generateInitializers(parentCodegen.createOrGetClInitCodegen(),
-                                               myClass.getDeclarations(), bindingContext, state);
+            generateInitializers(parentCodegen.createOrGetClInitCodegen(), myClass.getDeclarations(), bindingContext, state);
         } else {
             generateInitializers(codegen, myClass.getDeclarations(), bindingContext, state);
         }
-
 
         iv.visitInsn(RETURN);
     }
@@ -1301,8 +1300,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             !propertyDescriptor.isVar() &&
             Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
             // final property with backing field
-            field = StackValue.field(typeMapper.mapType(propertyDescriptor.getType()), classAsmType,
-                                     propertyDescriptor.getName().asString(), false);
+            field = StackValue.field(typeMapper.mapType(propertyDescriptor), classAsmType, propertyDescriptor.getName().asString(), false);
         }
         else {
             iv.load(0, classAsmType);
@@ -1435,7 +1433,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
 
-    private void generateDelegationToTraitImpl(final @NotNull FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
+    private void generateDelegationToTraitImpl(@NotNull FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
         DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) {
             return;
@@ -1713,7 +1711,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     public static boolean shouldWriteFieldInitializer(PropertyDescriptor descriptor, JetTypeMapper mapper) {
         //final field of primitive or String type
         if (!descriptor.isVar()) {
-            Type type = mapper.mapType(descriptor.getType());
+            Type type = mapper.mapType(descriptor);
             return AsmUtil.isPrimitive(type) || "java.lang.String".equals(type.getClassName());
         }
         return false;
@@ -1873,17 +1871,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         classObjectPropertiesToCopy.add(new PropertyAndDefaultValue(descriptor, defaultValue));
     }
 
-    static class PropertyAndDefaultValue {
+    private static class PropertyAndDefaultValue {
+        public final PropertyDescriptor descriptor;
+        public final Object defaultValue;
 
-        PropertyAndDefaultValue(PropertyDescriptor propertyDescriptor, Object defaultValue) {
-            this.propertyDescriptor = propertyDescriptor;
+        public PropertyAndDefaultValue(PropertyDescriptor descriptor, Object defaultValue) {
+            this.descriptor = descriptor;
             this.defaultValue = defaultValue;
         }
-
-        private PropertyDescriptor propertyDescriptor;
-
-        private Object defaultValue;
-
-
     }
 }

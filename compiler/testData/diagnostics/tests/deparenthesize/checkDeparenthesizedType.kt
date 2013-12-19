@@ -2,10 +2,10 @@ package m
 
 fun test(i: Int?) {
     if (i != null) {
-        foo(@l1 i)
-        foo((i))
-        foo(@l2 (i))
-        foo((@l3 i))
+        foo(@l1 <!DEBUG_INFO_AUTOCAST!>i<!>)
+        foo((<!DEBUG_INFO_AUTOCAST!>i<!>))
+        foo(@l2 (<!DEBUG_INFO_AUTOCAST!>i<!>))
+        foo((@l3 <!DEBUG_INFO_AUTOCAST!>i<!>))
     }
 
     val a: Int = @l4 <!TYPE_MISMATCH!>""<!>

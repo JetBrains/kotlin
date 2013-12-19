@@ -6,7 +6,7 @@ public open class Basic : java.lang.Object {
     public open fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
 }
 
-package Basic {
+package test.Basic {
     public /*synthesized*/ fun bar(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
     public open fun bar(/*0*/ p0: java.lang.Runnable?): jet.Unit
 }

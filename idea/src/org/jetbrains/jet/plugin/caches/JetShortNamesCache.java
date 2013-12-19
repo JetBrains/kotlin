@@ -244,7 +244,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         for (FqName fqName : topLevelFunctionFqNames) {
             JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, new ImportPath(fqName, false));
             Collection<? extends DeclarationDescriptor> declarationDescriptors = new QualifiedExpressionResolver().analyseImportReference(
-                    importDirective, jetScope, new BindingTraceContext(), resolveSession.getRootModuleDescriptor());
+                    importDirective, jetScope, new BindingTraceContext(), resolveSession.getModuleDescriptor());
             for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
                 if (declarationDescriptor instanceof FunctionDescriptor) {
                     result.add((FunctionDescriptor) declarationDescriptor);
@@ -267,7 +267,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         for (FqName affectedPackage : affectedPackages) {
-            NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(affectedPackage);
+            PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(affectedPackage);
             assert packageDescriptor != null : "There's a function in stub index with invalid package: " + affectedPackage;
             JetScope memberScope = packageDescriptor.getMemberScope();
             result.addAll(memberScope.getFunctions(referenceName));
@@ -316,7 +316,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         // Iterate through the function with attempt to resolve found functions
         for (FqName functionFQN : functionFQNs) {
             for (CallableDescriptor functionDescriptor : ExpressionTypingUtils.canFindSuitableCall(
-                    functionFQN, project, receiverExpression, expressionType, scope, resolveSession.getRootModuleDescriptor())) {
+                    functionFQN, project, receiverExpression, expressionType, scope, resolveSession.getModuleDescriptor())) {
 
                 resultDescriptors.add(functionDescriptor);
             }

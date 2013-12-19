@@ -47,11 +47,9 @@ import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
@@ -61,11 +59,8 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -92,10 +87,10 @@ import static org.jetbrains.jet.cli.jvm.JVMConfigurationKeys.CLASSPATH_KEY;
 
 public class JetTestUtils {
     private static final Pattern KT_FILES = Pattern.compile(".*?.kt");
-    private static List<File> filesToDelete = new ArrayList<File>();
+    private static final List<File> filesToDelete = new ArrayList<File>();
 
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
-    public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+):\\s*(.*)$", Pattern.MULTILINE);
+    public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
 
@@ -229,11 +224,13 @@ public class JetTestUtils {
         return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, Collections.<AnalyzerScriptParameter>emptyList());
     }
 
+    @NotNull
     public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable,
                                                                          ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
     }
 
+    @NotNull
     public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
         return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, ConfigurationKind.ALL);
     }
@@ -243,6 +240,7 @@ public class JetTestUtils {
         return createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(disposable, configurationKind, TestJdkKind.MOCK_JDK);
     }
 
+    @NotNull
     public static JetCoreEnvironment createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind,
@@ -392,7 +390,7 @@ public class JetTestUtils {
             String expectedText = StringUtil.convertLineSeparators(expected.trim());
             String actualText = StringUtil.convertLineSeparators(actual.trim());
             if (!Comparing.equal(expectedText, actualText)) {
-                throw new FileComparisonFailure("Expected and actual namespaces differ from " + expectedFile.getName(),
+                throw new FileComparisonFailure("Actual data differs from file content: " + expectedFile.getName(),
                                                 expected, actual, expectedFile.getAbsolutePath());
             }
         }
@@ -445,6 +443,7 @@ public class JetTestUtils {
         return testFiles;
     }
 
+    @NotNull
     public static Map<String, String> parseDirectives(String expectedText) {
         Map<String, String> directives = Maps.newHashMap();
         Matcher directiveMatcher = DIRECTIVE_PATTERN.matcher(expectedText);
@@ -454,7 +453,7 @@ public class JetTestUtils {
                 Assert.fail("Directives should only occur at the beginning of a file: " + directiveMatcher.group());
             }
             String name = directiveMatcher.group(1);
-            String value = directiveMatcher.group(2);
+            String value = directiveMatcher.group(3);
             String oldValue = directives.put(name, value);
             Assert.assertNull("Directive overwritten: " + name + " old value: " + oldValue + " new value: " + value, oldValue);
             start = directiveMatcher.end() + 1;
@@ -699,22 +698,20 @@ public class JetTestUtils {
     }
 
     public static ModuleDescriptorImpl createEmptyModule(@NotNull String name) {
-        ModuleDescriptorImpl descriptor = new ModuleDescriptorImpl(Name.special(name),
-                                                                   Collections.<ImportPath>emptyList(),
-                                                                   PlatformToKotlinClassMap.EMPTY);
-        descriptor.setModuleConfiguration(ModuleConfiguration.EMPTY);
-        return descriptor;
+        return new ModuleDescriptorImpl(Name.special(name), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
     }
 
     @NotNull
-    public static NamespaceDescriptorImpl createTestNamespace(@NotNull Name testPackageName) {
-        ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<test module>");
-        NamespaceDescriptorImpl rootNamespace =
-                new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), SpecialNames.ROOT_NAMESPACE);
-        module.setRootNamespace(rootNamespace);
-        NamespaceDescriptorImpl test = new NamespaceDescriptorImpl(rootNamespace, Collections.<AnnotationDescriptor>emptyList(), testPackageName);
-        test.initialize(new WritableScopeImpl(JetScope.EMPTY, test, RedeclarationHandler.DO_NOTHING, "members of test namespace"));
-        return test;
+    public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName) {
+        return createTestPackageFragment(testPackageName, "<test module>");
+    }
+
+    @NotNull
+    public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName, @NotNull String moduleName) {
+        ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule(moduleName);
+        MutablePackageFragmentProvider provider = new MutablePackageFragmentProvider(module);
+        module.addFragmentProvider(provider);
+        return provider.getOrCreateFragment(FqName.topLevel(testPackageName));
     }
 
     @NotNull

@@ -18,6 +18,7 @@ package org.jetbrains.k2js.test.config;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.config.Config;
@@ -33,8 +34,9 @@ public class TestConfig extends Config {
         public TestConfig create(@NotNull Project project,
                 @NotNull EcmaVersion version,
                 @NotNull List<JetFile> files,
-                @NotNull BindingContext context) {
-            return new TestConfig(project, version, files, context, false);
+                @NotNull BindingContext libraryContext,
+                @NotNull ModuleDescriptor module) {
+            return new TestConfig(project, version, files, libraryContext, module, false);
         }
     };
 
@@ -43,8 +45,9 @@ public class TestConfig extends Config {
         public TestConfig create(@NotNull Project project,
                 @NotNull EcmaVersion version,
                 @NotNull List<JetFile> files,
-                @NotNull BindingContext context) {
-            return new TestConfig(project, version, files, context, true);
+                @NotNull BindingContext libraryContext,
+                @NotNull ModuleDescriptor module) {
+            return new TestConfig(project, version, files, libraryContext, module, true);
         }
     };
 
@@ -52,17 +55,27 @@ public class TestConfig extends Config {
     private final List<JetFile> jsLibFiles;
     @NotNull
     private final BindingContext libraryContext;
+    @NotNull
+    private final ModuleDescriptor libraryModule;
 
     public TestConfig(@NotNull Project project, @NotNull EcmaVersion version,
-            @NotNull List<JetFile> files, @NotNull BindingContext context, boolean sourcemap) {
+            @NotNull List<JetFile> files, @NotNull BindingContext libraryContext, @NotNull ModuleDescriptor module, boolean sourcemap) {
         super(project, REWRITABLE_MODULE_NAME, version, sourcemap);
         jsLibFiles = files;
-        libraryContext = context;
+        this.libraryContext = libraryContext;
+        libraryModule = module;
     }
 
+    @NotNull
     @Override
-    public BindingContext getLibraryBindingContext() {
+    public BindingContext getLibraryContext() {
         return libraryContext;
+    }
+
+    @NotNull
+    @Override
+    public ModuleDescriptor getLibraryModule() {
+        return libraryModule;
     }
 
     @Override

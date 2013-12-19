@@ -179,6 +179,7 @@ public final class FqNameUnsafe extends FqNameBase {
         return path;
     }
 
+    @Override
     @NotNull
     public List<Name> pathSegments() {
         final List<Name> path = Lists.newArrayList();

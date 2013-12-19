@@ -247,7 +247,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     private static String getDescriptorString(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
-            return DescriptorUtils.getFQName(descriptor).asString();
+            return DescriptorUtils.getFqName(descriptor).asString();
         }
         else if (descriptor instanceof ConstructorDescriptor) {
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();

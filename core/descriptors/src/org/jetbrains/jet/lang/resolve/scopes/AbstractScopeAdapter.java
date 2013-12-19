@@ -46,8 +46,8 @@ public abstract class AbstractScopeAdapter implements JetScope {
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return getWorkerScope().getNamespace(name);
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
+        return getWorkerScope().getPackage(name);
     }
 
     @Override

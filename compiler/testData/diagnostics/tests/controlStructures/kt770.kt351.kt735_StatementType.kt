@@ -86,11 +86,11 @@ fun doSmth(<!UNUSED_PARAMETER!>i<!>: Int) {}
 fun testImplicitCoercion() {
     val d = 21
     var z = 0
-    var <!UNUSED_VARIABLE!>i<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>when(d) {
+    var <!UNUSED_VARIABLE!>i<!> = when(d) {
         3 -> null
         4 -> { val <!NAME_SHADOWING, UNUSED_VARIABLE!>z<!> = 23 }
         else -> z = 20
-    }<!>
+    }
 
     var <!UNUSED_VARIABLE!>u<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>when(d) {
         3 -> {

@@ -19,10 +19,8 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ResolveTestCase;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -73,40 +71,35 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
 
     public void testAllReferencesResolved() {
         BuiltInsReferenceResolver referenceResolver = getProject().getComponent(BuiltInsReferenceResolver.class);
-        for (DeclarationDescriptor descriptor : getAllStandardDescriptors(KotlinBuiltIns.getInstance().getBuiltInsPackage())) {
-            if (descriptor instanceof NamespaceDescriptor && "jet".equals(descriptor.getName().asString())) continue;
+        for (DeclarationDescriptor descriptor : getAllStandardDescriptors()) {
             assertNotNull("Can't resolve " + descriptor, referenceResolver.resolveBuiltInSymbol(descriptor));
         }
     }
 
-    private static Collection<DeclarationDescriptor> getAllStandardDescriptors(DeclarationDescriptor baseDescriptor) {
-        final ArrayList<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
-        baseDescriptor.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
-            private Void visitDescriptors(Collection<? extends DeclarationDescriptor> descriptors) {
-                for (DeclarationDescriptor descriptor : descriptors) {
-                    descriptor.acceptVoid(this);
+    private static Collection<DeclarationDescriptor> getAllStandardDescriptors() {
+        final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
+
+        PackageFragmentDescriptor builtinsPackageFragment = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
+
+        for (DeclarationDescriptor packageMember : builtinsPackageFragment.getMemberScope().getAllDescriptors()) {
+            packageMember.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
+                @Override
+                public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
+                    descriptors.add(descriptor);
+                    for (DeclarationDescriptor classMember : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+                        classMember.acceptVoid(this);
+                    }
+                    return null;
                 }
-                return null;
-            }
 
-            @Override
-            public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
-                descriptors.add(descriptor);
-                return visitDescriptors(descriptor.getDefaultType().getMemberScope().getAllDescriptors());
-            }
+                @Override
+                public Void visitDeclarationDescriptor(DeclarationDescriptor descriptor, Void data) {
+                    descriptors.add(descriptor);
+                    return null;
+                }
+            });
+        }
 
-            @Override
-            public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
-                descriptors.add(descriptor);
-                return visitDescriptors(descriptor.getMemberScope().getAllDescriptors());
-            }
-
-            @Override
-            public Void visitDeclarationDescriptor(DeclarationDescriptor descriptor, Void data) {
-                descriptors.add(descriptor);
-                return null;
-            }
-        });
         return descriptors;
     }
 

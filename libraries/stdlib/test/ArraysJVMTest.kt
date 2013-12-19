@@ -92,6 +92,7 @@ class ArraysJVMTest {
         expect(2, { shortArray(3, 2).min() })
         expect(2.0.toFloat(), { floatArray(3.0.toFloat(), 2.0.toFloat()).min() })
         expect(2.0, { doubleArray(2.0, 3.0).min() })
+        expect('a', { charArray('a', 'b').min() })
     }
 
     test fun max() {
@@ -103,6 +104,7 @@ class ArraysJVMTest {
         expect(3, { shortArray(3, 2).max() })
         expect(3.0.toFloat(), { floatArray(3.0.toFloat(), 2.0.toFloat()).max() })
         expect(3.0, { doubleArray(2.0, 3.0).max() })
+        expect('b', { charArray('a', 'b').max() })
     }
 
     test fun minBy() {

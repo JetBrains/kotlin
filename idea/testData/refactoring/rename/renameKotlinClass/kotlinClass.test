@@ -1,1 +1,5 @@
-// RENAME: KOTLIN_CLASS->testing.rename.First->Third
+{
+  "type": "KOTLIN_CLASS",
+  "classFQN": "testing.rename.First",
+  "newName": "Third"
+}

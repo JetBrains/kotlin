@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.StorageManager;
 
@@ -31,7 +32,8 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
 
     public AbstractDescriptorFinder(
             @NotNull final StorageManager storageManager,
-            @NotNull AnnotationDeserializer annotationDeserializer
+            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull final PackageFragmentProvider packageFragmentProvider
     ) {
         this.annotationDeserializer = annotationDeserializer;
 
@@ -44,11 +46,8 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
                 }
 
                 AbstractDescriptorFinder _this = AbstractDescriptorFinder.this;
-                ClassDescriptor classDescriptor =
-                        new DeserializedClassDescriptor(storageManager, _this.annotationDeserializer, _this, classData.getNameResolver(),
-                                                        classData.getClassProto());
-                classDescriptorCreated(classDescriptor);
-                return classDescriptor;
+                return new DeserializedClassDescriptor(storageManager, _this.annotationDeserializer, _this, packageFragmentProvider,
+                                                classData.getNameResolver(), classData.getClassProto());
             }
         });
     }
@@ -61,7 +60,4 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
 
     @Nullable
     protected abstract ClassData getClassData(@NotNull ClassId classId);
-
-    protected void classDescriptorCreated(@NotNull ClassDescriptor classDescriptor) {
-    }
 }

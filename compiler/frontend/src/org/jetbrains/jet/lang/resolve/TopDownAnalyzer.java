@@ -17,28 +17,28 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicates;
-import com.intellij.openapi.project.Project;
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class TopDownAnalyzer {
 
@@ -59,7 +59,7 @@ public class TopDownAnalyzer {
     @NotNull
     private ModuleDescriptor moduleDescriptor;
     @NotNull
-    private NamespaceFactoryImpl namespaceFactory;
+    private MutablePackageFragmentProvider packageFragmentProvider;
     @NotNull
     private BodyResolver bodyResolver;
 
@@ -104,8 +104,8 @@ public class TopDownAnalyzer {
     }
 
     @Inject
-    public void setNamespaceFactory(@NotNull NamespaceFactoryImpl namespaceFactory) {
-        this.namespaceFactory = namespaceFactory;
+    public void setPackageFragmentProvider(@NotNull MutablePackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
     }
 
     @Inject
@@ -142,40 +142,18 @@ public class TopDownAnalyzer {
         for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
             mutableClassDescriptor.lockScopes();
         }
-        for (Map.Entry<JetFile, WritableScope> namespaceScope : context.getNamespaceScopes().entrySet()) {
+        Set<FqName> scriptFqNames = Sets.newHashSet();
+        for (JetFile file : context.getNamespaceScopes().keySet()) {
+            if (file.isScript()) {
+                scriptFqNames.add(JetPsiUtil.getFQName(file));
+            }
+        }
+        for (MutablePackageFragmentDescriptor fragment : packageFragmentProvider.getAllFragments()) {
             // todo: this is hack in favor of REPL
-            if(!namespaceScope.getKey().isScript())
-                namespaceScope.getValue().changeLockLevel(WritableScope.LockLevel.READING);
+            if (!scriptFqNames.contains(fragment.getFqName())) {
+                fragment.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
+            }
         }
-    }
-
-    public static void processStandardLibraryNamespace(
-            @NotNull Project project,
-            @NotNull BindingTrace trace,
-            @NotNull WritableScope outerScope,
-            @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
-            @NotNull List<JetFile> files) {
-
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
-        InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(trace),       
-                KotlinBuiltIns.getInstance().getBuiltInsModule(), PlatformToKotlinClassMap.EMPTY);
-
-        injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryNamespace, files);
-    }
-
-    private void doProcessStandardLibraryNamespace(
-            WritableScope outerScope, NamespaceDescriptorImpl standardLibraryNamespace, List<JetFile> files) {
-        ArrayList<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
-        for(JetFile file : files) {
-            context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
-            context.getNamespaceScopes().put(file, standardLibraryNamespace.getMemberScope());
-            toAnalyze.addAll(file.getDeclarations());
-        }
-//        context.getDeclaringScopes().put(file, outerScope);
-
-        doProcess(outerScope, standardLibraryNamespace.getBuilder(), toAnalyze);
     }
 
     public static void processClassOrObject(
@@ -186,7 +164,6 @@ public class TopDownAnalyzer {
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<dummy for object>"),
                                                                          Collections.<ImportPath>emptyList(),
                                                                          PlatformToKotlinClassMap.EMPTY);
-        moduleDescriptor.setModuleConfiguration(ModuleConfiguration.EMPTY);
 
         TopDownAnalysisParameters topDownAnalysisParameters =
                 new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()),
@@ -231,27 +208,19 @@ public class TopDownAnalyzer {
     public void analyzeFiles(
             @NotNull Collection<JetFile> files,
             @NotNull List<AnalyzerScriptParameter> scriptParameters) {
-        WritableScope scope = new WritableScopeImpl(
-                JetScope.EMPTY, moduleDescriptor,
-                new TraceBasedRedeclarationHandler(trace), "Root scope in analyzeNamespace");
+        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(packageFragmentProvider);
 
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-
-        NamespaceDescriptorImpl rootNs = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
-
-        // map "jet" namespace into KotlinBuiltIns
-        // @see DefaultModuleConfiguraiton#extendNamespaceScope
-        namespaceFactory.createNamespaceDescriptorPathIfNeeded(KotlinBuiltIns.getInstance().getBuiltInsPackageFqName());
+        // "depend on" builtins module
+        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
         // Import a scope that contains all top-level namespaces that come from dependencies
         // This makes the namespaces visible at all, does not import themselves
-        scope.importScope(rootNs.getMemberScope());
-        
-        scope.changeLockLevel(WritableScope.LockLevel.READING);
+        PackageViewDescriptor rootPackage = moduleDescriptor.getPackage(FqName.ROOT);
+        assert rootPackage != null : "Coulnd't find root package for " + moduleDescriptor;
 
         // dummy builder is used because "root" is module descriptor,
         // namespaces added to module explicitly in
-        doProcess(scope, new NamespaceLikeBuilderDummy(), files);
+        doProcess(rootPackage.getMemberScope(), new NamespaceLikeBuilderDummy(), files);
     }
 
 
@@ -261,6 +230,10 @@ public class TopDownAnalyzer {
     }
 
 
+    @NotNull
+    public MutablePackageFragmentProvider getPackageFragmentProvider() {
+        return packageFragmentProvider;
+    }
 }
 
 

@@ -111,7 +111,7 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    private static IdentifierInfo createNamespaceInfo(Object id) {
+    private static IdentifierInfo createPackageInfo(Object id) {
         return new IdentifierInfo(id, true, true);
     }
 
@@ -156,7 +156,7 @@ public class DataFlowValueFactory {
             return getIdForThisReceiver(declarationDescriptor);
         }
         else if (expression instanceof JetRootNamespaceExpression) {
-            return createNamespaceInfo(JetModuleUtil.getRootNamespaceType(expression));
+            return createPackageInfo(JetModuleUtil.getRootNamespaceType(expression));
         }
         return NO_IDENTIFIER_INFO;
     }
@@ -179,8 +179,8 @@ public class DataFlowValueFactory {
             VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
             return combineInfo(receiverInfo, createInfo(variableDescriptor, isStableVariable(variableDescriptor)));
         }
-        if (declarationDescriptor instanceof NamespaceDescriptor) {
-            return createNamespaceInfo(declarationDescriptor);
+        if (declarationDescriptor instanceof PackageViewDescriptor) {
+            return createPackageInfo(declarationDescriptor);
         }
         return NO_IDENTIFIER_INFO;
     }

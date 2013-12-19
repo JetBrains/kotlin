@@ -2,13 +2,13 @@
 
 fun <T> Array<T>?.get(i: Int) : T {
     if (this != null)
-        return this.get(i) // <- inferred type is Any? but &T was excepted
+        return <!DEBUG_INFO_AUTOCAST!>this<!>.get(i) // <- inferred type is Any? but &T was excepted
     else throw NullPointerException()
 }
 
 fun Int?.inc() : Int {
     if (this != null)
-        return this.inc()
+        return <!DEBUG_INFO_AUTOCAST!>this<!>.inc()
     else
         throw NullPointerException()
 }

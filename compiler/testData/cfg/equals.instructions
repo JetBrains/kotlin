@@ -15,7 +15,7 @@ L0:
     mark(a == b)
     r(a)
     r(b)
-    call(a == b, equals)
+    call(==, equals)
     jf(L2)                       NEXT:[read (Unit), mark({ })]
     mark({ })
     read (Unit)

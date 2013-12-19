@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -71,39 +72,39 @@ public class ImportsResolver {
         this.importsFactory = importsFactory;
     }
 
-    public void processTypeImports(@NotNull JetScope rootScope) {
-        processImports(LookupMode.ONLY_CLASSES, rootScope);
+    public void processTypeImports() {
+        processImports(LookupMode.ONLY_CLASSES);
     }
 
-    public void processMembersImports(@NotNull JetScope rootScope) {
-        processImports(LookupMode.EVERYTHING, rootScope);
+    public void processMembersImports() {
+        processImports(LookupMode.EVERYTHING);
     }
 
-    private void processImports(@NotNull LookupMode lookupMode, @NotNull JetScope rootScope) {
-        for (JetFile file : context.getNamespaceDescriptors().keySet()) {
+    private void processImports(@NotNull LookupMode lookupMode) {
+        for (JetFile file : context.getPackageFragments().keySet()) {
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
-            processImportsInFile(lookupMode, namespaceScope, Lists.newArrayList(file.getImportDirectives()), rootScope);
+            processImportsInFile(lookupMode, namespaceScope, Lists.newArrayList(file.getImportDirectives()));
         }
         for (JetScript script : context.getScripts().keySet()) {
             WritableScope scriptScope = context.getScriptScopes().get(script);
-            processImportsInFile(lookupMode, scriptScope, script.getImportDirectives(), rootScope);
+            processImportsInFile(lookupMode, scriptScope, script.getImportDirectives());
         }
     }
 
-    private void processImportsInFile(@NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives, JetScope rootScope) {
-        processImportsInFile(lookupMode, scope, directives, rootScope, moduleDescriptor, trace, qualifiedExpressionResolver, importsFactory);
+    private void processImportsInFile(@NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives) {
+        processImportsInFile(lookupMode, scope, directives, moduleDescriptor, trace, qualifiedExpressionResolver, importsFactory);
     }
 
-    public static void processImportsInFile(
+    private static void processImportsInFile(
             LookupMode lookupMode,
             @NotNull WritableScope namespaceScope,
             @NotNull List<JetImportDirective> importDirectives,
-            @NotNull JetScope rootScope,
             @NotNull ModuleDescriptor module,
             @NotNull BindingTrace trace,
             @NotNull QualifiedExpressionResolver qualifiedExpressionResolver,
             @NotNull JetImportsFactory importsFactory
     ) {
+        @NotNull JetScope rootScope = module.getPackage(FqName.ROOT).getMemberScope();
 
         Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
         if (lookupMode == LookupMode.EVERYTHING) {
@@ -185,10 +186,10 @@ public class ImportsResolver {
             else if (wasResolved instanceof VariableDescriptor) {
                 isResolved = namespaceScope.getLocalVariable(aliasName);
             }
-            else if (wasResolved instanceof NamespaceDescriptor) {
-                isResolved = namespaceScope.getNamespace(aliasName);
+            else if (wasResolved instanceof PackageViewDescriptor) {
+                isResolved = namespaceScope.getPackage(aliasName);
             }
-            if (isResolved == null || isResolved == wasResolved) {
+            if (isResolved == null || isResolved.equals(wasResolved)) {
                 uselessHiddenImport = false;
             }
         }

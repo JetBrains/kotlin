@@ -22,36 +22,33 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmUtil.genNegate;
-import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 
-public class UnaryMinus implements IntrinsicMethod {
+public class UnaryMinus extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
-        boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if (nullable) {
-            expectedType = unboxType(expectedType);
-        }
+        assert isPrimitive(returnType) : "Return type of UnaryMinus intrinsic should be of primitive type: " + returnType;
+
+        Type operandType = numberFunctionOperandType(returnType);
+
         if (arguments.size() == 1) {
-            codegen.gen(arguments.get(0), expectedType);
+            codegen.gen(arguments.get(0), operandType);
         }
         else {
-            receiver.put(expectedType, v);
+            receiver.put(operandType, v);
         }
-        StackValue.coerce(genNegate(expectedType, v), expectedType, v);
-        return StackValue.onStack(expectedType);
+        return genNegate(returnType, v);
     }
 }

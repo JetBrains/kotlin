@@ -312,7 +312,7 @@ public class Renderers {
             StringBuilder sb = new StringBuilder();
             int index = 0;
             for (ClassDescriptor descriptor : descriptors) {
-                sb.append(DescriptorUtils.getFQName(descriptor).asString());
+                sb.append(DescriptorUtils.getFqName(descriptor).asString());
                 index++;
                 if (index <= descriptors.size() - 2) {
                     sb.append(", ");

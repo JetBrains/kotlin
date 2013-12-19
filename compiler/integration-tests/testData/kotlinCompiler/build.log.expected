@@ -1,11 +1,13 @@
-OUT Buildfile: [TestData]/build.xml
-OUT 
-OUT build:
-OUT     [mkdir] Created dir: [Temp]/classes
-OUT   [kotlinc] Compiling [[[TestData]/root1]] => [[Temp]/classes]
-OUT     [javac] Compiling 1 source file to [Temp]/classes
-OUT       [jar] Building jar: [Temp]/hello.jar
-OUT 
-OUT BUILD SUCCESSFUL
-OUT Total time: [time]
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+    [mkdir] Created dir: [Temp]/classes
+  [kotlinc] Compiling [[[TestData]/root1]] => [[Temp]/classes]
+    [javac] Compiling 1 source file to [Temp]/classes
+      [jar] Building jar: [Temp]/hello.jar
+
+BUILD SUCCESSFUL
+Total time: [time]
+
 Return code: 0

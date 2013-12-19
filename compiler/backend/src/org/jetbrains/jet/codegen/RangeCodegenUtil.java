@@ -105,11 +105,11 @@ public class RangeCodegenUtil {
     ) {
         ClassifierDescriptor declarationDescriptor = rangeOrProgression.getConstructor().getDeclarationDescriptor();
         assert declarationDescriptor != null;
-        if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsScope().getClassifier(declarationDescriptor.getName())) {
+        if (declarationDescriptor != KotlinBuiltIns.getInstance().getBuiltInsPackageScope().getClassifier(declarationDescriptor.getName())) {
             // Must be a standard library class
             return null;
         }
-        return map.get(DescriptorUtils.getFQName(declarationDescriptor).toSafe());
+        return map.get(DescriptorUtils.getFqNameSafe(declarationDescriptor));
     }
 
     public static boolean isOptimizableRangeTo(CallableDescriptor rangeTo) {

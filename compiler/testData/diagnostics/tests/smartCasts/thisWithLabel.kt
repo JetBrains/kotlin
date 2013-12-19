@@ -3,15 +3,15 @@ package foo
 class A(val i: Int?) {
     fun test1() {
         if (this@A.i != null) {
-            useInt(this.i)
-            useInt(i)
+            useInt(<!DEBUG_INFO_AUTOCAST!>this.i<!>)
+            useInt(<!DEBUG_INFO_AUTOCAST!>i<!>)
         }
     }
 
     inner class B {
         fun test2() {
             if (i != null) {
-                useInt(this@A.i)
+                useInt(<!DEBUG_INFO_AUTOCAST!>this@A.i<!>)
             }
         }
     }
@@ -19,15 +19,15 @@ class A(val i: Int?) {
 
 fun A.foo() {
     if (this@foo.i != null) {
-        useInt(this.i)
-        useInt(i)
+        useInt(<!DEBUG_INFO_AUTOCAST!>this.i<!>)
+        useInt(<!DEBUG_INFO_AUTOCAST!>i<!>)
     }
 }
 
 fun test3() {
     useFunction {
         if(i != null) {
-            useInt(this.i)
+            useInt(<!DEBUG_INFO_AUTOCAST!>this.i<!>)
         }
     }
 }

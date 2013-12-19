@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.cli;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
@@ -38,12 +39,12 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
 
         final Process process = Runtime.getRuntime().exec(ArrayUtil.prepend(kotlincFile.getAbsolutePath(), args));
 
-        // We don't need contents of stderr, just read it to null to avoid process blocking
+        final Ref<String> stderr = Ref.create();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    FileUtil.loadBytes(process.getErrorStream());
+                    stderr.set(FileUtil.loadTextAndClose(process.getErrorStream()));
                 }
                 catch (IOException e) {
                     throw new RuntimeException(e);
@@ -58,7 +59,17 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
 
         String normalizedOutput = CliBaseTest.getNormalizedCompilerOutput(output, exitCode, testDataDir);
         File outFile = new File(argsFilePath.replace(".args", ".out"));
-        JetTestUtils.assertEqualsToFile(outFile, normalizedOutput);
+
+        try {
+            JetTestUtils.assertEqualsToFile(outFile, normalizedOutput);
+        }
+        catch (Exception e) {
+            System.out.println("exitcode " + intExitCode);
+            System.out.println("<stdout>" + output + "</stdout>");
+            System.out.println("<stderr>" + stderr + "</stderr>");
+
+            throw e;
+        }
     }
 
     protected void doJvmTest(@NotNull String argsFilePath) throws Exception {

@@ -1,6 +1,6 @@
 fun foo(x: Number) {
     when (x as Int) {
-        else -> x : Int
+        else -> <!DEBUG_INFO_AUTOCAST!>x<!> : Int
     }
-    x : Int
+    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
 }

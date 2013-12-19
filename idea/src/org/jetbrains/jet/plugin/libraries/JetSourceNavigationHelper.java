@@ -42,13 +42,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
-import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
@@ -222,9 +222,11 @@ public class JetSourceNavigationHelper {
                     }
                 });
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
-                                                                         DefaultModuleConfiguration.DEFAULT_JET_IMPORTS,
+                                                                         AnalyzerFacadeForJVM.DEFAULT_IMPORTS,
                                                                          PlatformToKotlinClassMap.EMPTY);
-        moduleDescriptor.setModuleConfiguration(DefaultModuleConfiguration.INSTANCE);
+
+        moduleDescriptor.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+
         KotlinCodeAnalyzer analyzer = new ResolveSession(
                 project,
                 storageManager,
@@ -351,7 +353,7 @@ public class JetSourceNavigationHelper {
             assert className != null : "Class from BuiltIns should have a name";
             ClassDescriptor classDescriptor = KotlinBuiltIns.getInstance().getBuiltInClassByName(className);
 
-            FqNameUnsafe fqName = DescriptorUtils.getFQName(classDescriptor);
+            FqNameUnsafe fqName = DescriptorUtils.getFqName(classDescriptor);
             if (fqName.isSafe()) {
                 FqName javaFqName = KotlinToJavaTypesMap.getInstance().getKotlinToJavaFqName(fqName.toSafe());
                 if (javaFqName != null) {
@@ -360,7 +362,7 @@ public class JetSourceNavigationHelper {
                 }
             }
         }
-        return JetPsiUtil.isLocalClass(classOrObject) ? null : LightClassUtil.getPsiClass(classOrObject);
+        return LightClassUtil.getPsiClass(classOrObject);
     }
 
     @Nullable

@@ -16,49 +16,39 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
-import com.google.common.collect.Iterables;
-import com.intellij.psi.NavigatablePsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.AbstractNamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
 
-public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl implements LazyDescriptor, NamespaceDescriptor {
+public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements LazyDescriptor, PackageFragmentDescriptor {
+    private final ModuleDescriptor module;
     private final JetScope memberScope;
-    private final JetScope lazyScope;
+    private final FqName fqName;
+    private final PackageMemberDeclarationProvider declarationProvider;
 
     public LazyPackageDescriptor(
-            @NotNull NamespaceDescriptorParent containingDeclaration,
-            @NotNull Name name,
+            @NotNull ModuleDescriptor module,
+            @NotNull FqName fqName,
             @NotNull ResolveSession resolveSession,
             @NotNull PackageMemberDeclarationProvider declarationProvider
     ) {
-        super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name);
+        super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
+        this.module = module;
+        this.fqName = fqName;
+        this.declarationProvider = declarationProvider;
 
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Package scope");
-        resolveSession.getRootModuleDescriptor().getModuleConfiguration().extendNamespaceScope(this, scope);
-        scope.changeLockLevel(WritableScope.LockLevel.READING);
-
-        this.lazyScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
-
-        this.memberScope = new ChainedScope(this, "Lazy package members scope: " + name, lazyScope, scope);
-
-        NavigatablePsiElement declaration = Iterables.getFirst(declarationProvider.getPackageDeclarations(getFqName()), null);
-        if (declaration != null) {
-            resolveSession.getTrace().record(BindingContext.NAMESPACE, declaration, this);
-        }
+        this.memberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
     }
 
     @NotNull
@@ -69,17 +59,34 @@ public class LazyPackageDescriptor extends AbstractNamespaceDescriptorImpl imple
 
     @NotNull
     @Override
-    public FqName getFqName() {
-        return DescriptorUtils.getFQName(this).toSafe();
+    public ModuleDescriptor getContainingDeclaration() {
+        return module;
+    }
+
+    @Nullable
+    @Override
+    public DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
+        return this;
     }
 
     @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        throw new UnsupportedOperationException(); // TODO
+    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
+        return visitor.visitPackageFragmentDescriptor(this, data);
+    }
+
+    @NotNull
+    @Override
+    public FqName getFqName() {
+        return fqName;
     }
 
     @Override
     public void forceResolveAllContents() {
-        ForceResolveUtil.forceResolveAllContents(lazyScope);
+        ForceResolveUtil.forceResolveAllContents(memberScope);
+    }
+
+    @NotNull
+    public PackageMemberDeclarationProvider getDeclarationProvider() {
+        return declarationProvider;
     }
 }

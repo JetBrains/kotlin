@@ -1,0 +1,6 @@
+<root>
+  <item
+      name='com.intellij.refactoring.MultiFileTestCase.PerformAction void performAction(com.intellij.openapi.vfs.VirtualFile, com.intellij.openapi.vfs.VirtualFile) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

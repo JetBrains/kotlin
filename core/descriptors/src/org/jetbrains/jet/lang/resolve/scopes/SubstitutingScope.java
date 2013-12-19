@@ -105,8 +105,8 @@ public class SubstitutingScope implements JetScope {
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return workerScope.getNamespace(name); // TODO
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
+        return workerScope.getPackage(name);
     }
 
     @NotNull

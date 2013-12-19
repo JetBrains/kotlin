@@ -35,6 +35,16 @@ public class JetBasicJavaCompletionTestGenerated extends AbstractJvmBasicComplet
     @TestMetadata("idea/testData/completion/basic/common")
     @InnerTestClasses({Common.Extensions.class})
     public static class Common extends AbstractJvmBasicCompletionTest {
+        @TestMetadata("AfterFloatOnNewLine.kt")
+        public void testAfterFloatOnNewLine() throws Exception {
+            doTest("idea/testData/completion/basic/common/AfterFloatOnNewLine.kt");
+        }
+        
+        @TestMetadata("AfterIntSeparatedWithComments.kt")
+        public void testAfterIntSeparatedWithComments() throws Exception {
+            doTest("idea/testData/completion/basic/common/AfterIntSeparatedWithComments.kt");
+        }
+        
         public void testAllFilesPresentInCommon() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/completion/basic/common"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -137,6 +147,11 @@ public class JetBasicJavaCompletionTestGenerated extends AbstractJvmBasicComplet
         @TestMetadata("ExtensionInsideFunction.kt")
         public void testExtensionInsideFunction() throws Exception {
             doTest("idea/testData/completion/basic/common/ExtensionInsideFunction.kt");
+        }
+        
+        @TestMetadata("ExtensionToIntInFloatStyle.kt")
+        public void testExtensionToIntInFloatStyle() throws Exception {
+            doTest("idea/testData/completion/basic/common/ExtensionToIntInFloatStyle.kt");
         }
         
         @TestMetadata("ExtensionWithAdditionalTypeParameters.kt")
@@ -297,6 +312,26 @@ public class JetBasicJavaCompletionTestGenerated extends AbstractJvmBasicComplet
         @TestMetadata("NoClassNameDuplication.kt")
         public void testNoClassNameDuplication() throws Exception {
             doTest("idea/testData/completion/basic/common/NoClassNameDuplication.kt");
+        }
+        
+        @TestMetadata("NoCompletionAfterBigFloat.kt")
+        public void testNoCompletionAfterBigFloat() throws Exception {
+            doTest("idea/testData/completion/basic/common/NoCompletionAfterBigFloat.kt");
+        }
+        
+        @TestMetadata("NoCompletionAfterFloat.kt")
+        public void testNoCompletionAfterFloat() throws Exception {
+            doTest("idea/testData/completion/basic/common/NoCompletionAfterFloat.kt");
+        }
+        
+        @TestMetadata("NoCompletionAfterInt.kt")
+        public void testNoCompletionAfterInt() throws Exception {
+            doTest("idea/testData/completion/basic/common/NoCompletionAfterInt.kt");
+        }
+        
+        @TestMetadata("NoCompletionAfterLong.kt")
+        public void testNoCompletionAfterLong() throws Exception {
+            doTest("idea/testData/completion/basic/common/NoCompletionAfterLong.kt");
         }
         
         @TestMetadata("NoEmptyNamespace.kt")

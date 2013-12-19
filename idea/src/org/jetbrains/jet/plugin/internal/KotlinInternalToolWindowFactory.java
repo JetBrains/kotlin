@@ -21,15 +21,15 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
-import org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolwindow;
-import org.jetbrains.jet.plugin.internal.resolvewindow.ResolveToolwindow;
+import org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolWindow;
+import org.jetbrains.jet.plugin.internal.resolvewindow.ResolveToolWindow;
 
 public class KotlinInternalToolWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {
         ContentManager contentManager = toolWindow.getContentManager();
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-        contentManager.addContent(contentFactory.createContent(new ResolveToolwindow(project), "Resolve", false));
-        contentManager.addContent(contentFactory.createContent(new BytecodeToolwindow(project), "Bytecode", false));
+        contentManager.addContent(contentFactory.createContent(new ResolveToolWindow(project, toolWindow), "Resolve", false));
+        contentManager.addContent(contentFactory.createContent(new BytecodeToolWindow(project, toolWindow), "Bytecode", false));
     }
 }

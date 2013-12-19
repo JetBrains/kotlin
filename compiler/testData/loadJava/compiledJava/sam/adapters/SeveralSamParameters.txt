@@ -4,7 +4,7 @@ public open class SeveralSamParameters : java.lang.Object {
     public constructor SeveralSamParameters()
 }
 
-package SeveralSamParameters {
+package test.SeveralSamParameters {
     public /*synthesized*/ fun findMaxAndInvokeCallback(/*0*/ p0: ((jet.String, jet.String) -> jet.Int)?, /*1*/ p1: jet.String?, /*2*/ p2: jet.String?, /*3*/ p3: (() -> jet.Unit)?): jet.String?
     public open fun findMaxAndInvokeCallback(/*0*/ p0: java.util.Comparator<jet.String>?, /*1*/ p1: jet.String?, /*2*/ p2: jet.String?, /*3*/ p3: java.lang.Runnable?): jet.String?
 }

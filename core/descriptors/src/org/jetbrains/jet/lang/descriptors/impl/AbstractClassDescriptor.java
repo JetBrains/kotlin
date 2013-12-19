@@ -107,7 +107,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public JetScope getMemberScope(List<? extends TypeProjection> typeArguments) {
+    public JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
         assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Illegal number of type arguments: expected "
                                                                                      + getTypeConstructor().getParameters().size() + " but was " + typeArguments.size()
                                                                                      + " for " + getTypeConstructor() + " " + getTypeConstructor().getParameters();

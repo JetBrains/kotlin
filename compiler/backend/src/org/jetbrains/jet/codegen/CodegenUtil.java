@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
-import org.jetbrains.jet.codegen.context.NamespaceContext;
+import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -50,8 +50,6 @@ public class CodegenUtil {
 
     private CodegenUtil() {
     }
-
-    private static final Random RANDOM = new Random(55L);
 
     public static boolean isInterface(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
@@ -84,18 +82,6 @@ public class CodegenUtil {
         );
         return invokeDescriptor;
     }
-
-    public static String createTmpVariableName(Collection<String> existingNames) {
-        String prefix = "tmp";
-        int i = RANDOM.nextInt(Integer.MAX_VALUE);
-        String name = prefix + i;
-        while (existingNames.contains(name)) {
-            i++;
-            name = prefix + i;
-        }
-        return name;
-    }
-
 
     public static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
@@ -194,7 +180,7 @@ public class CodegenUtil {
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
-                 (context.getParentContext() instanceof NamespaceContext && context.getParentContext().getContextDescriptor() == containingDeclaration))
+                 (context.getParentContext() instanceof PackageContext && context.getParentContext().getContextDescriptor() == containingDeclaration))
                 && context.getContextKind() != OwnerKind.TRAIT_IMPL);
     }
 
@@ -203,7 +189,7 @@ public class CodegenUtil {
             return true;
         }
         DeclarationDescriptor contextDescriptor = context.getContextDescriptor();
-        return DescriptorUtils.isInSameModule(declarationDescriptor, contextDescriptor);
+        return DescriptorUtils.areInSameModule(declarationDescriptor, contextDescriptor);
     }
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {

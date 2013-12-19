@@ -1,0 +1,8 @@
+var b1: Boolean = true
+var b2: Boolean = true
+var b3: Boolean = true
+val c: String = ""
+
+fun bar() {
+    if (b1 && b3 && b3) {}
+}

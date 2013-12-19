@@ -135,7 +135,7 @@ class A() : BodyTag("a") {
     get() = attributes["href"]
     set(value) {
        if (value != null) {
-           attributes.put("href", value)
+           attributes.put("href", <!DEBUG_INFO_AUTOCAST!>value<!>)
 //         attributes["href"] = value //doesn't work: KT-1355
        }
     }

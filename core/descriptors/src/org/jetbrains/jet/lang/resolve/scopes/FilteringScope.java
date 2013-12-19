@@ -55,9 +55,10 @@ public class FilteringScope implements JetScope {
         return descriptor != null && predicate.apply(descriptor) ? descriptor : null;
     }
 
+    @Nullable
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
-        return filterDescriptor(workerScope.getNamespace(name));
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
+        return filterDescriptor(workerScope.getPackage(name));
     }
 
     @Override

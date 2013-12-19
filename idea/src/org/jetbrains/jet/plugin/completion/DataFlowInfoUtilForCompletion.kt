@@ -4,8 +4,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 
 fun renderDataFlowValue(value: DataFlowValue): String? {
     // If it is not a stable identifier, there's no point in rendering it
@@ -16,7 +15,7 @@ fun renderDataFlowValue(value: DataFlowValue): String? {
             is JetExpression -> id.getText()
             is ThisReceiver -> "this@${id.getDeclarationDescriptor().getName()}"
             is VariableDescriptor -> id.getName().asString()
-            is NamespaceDescriptor -> DescriptorUtils.getFQName(id).asString()
+            is PackageViewDescriptor -> id.getFqName().asString()
             is com.intellij.openapi.util.Pair<*, *> -> renderId(id.first) + "." + renderId(id.second)
             else -> null
         }

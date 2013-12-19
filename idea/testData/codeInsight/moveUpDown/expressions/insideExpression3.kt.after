@@ -1,0 +1,8 @@
+// MOVE: up
+fun foo() {
+    val x = 1 +
+    (2 +
+    <caret>3)
+    fun bar1() {}
+    fun bar2() {}
+}

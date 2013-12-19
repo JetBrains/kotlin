@@ -22,10 +22,10 @@ public trait Nested : java.lang.Object {
     }
 }
 
-package Nested {
+package test.Nested {
     public /*synthesized*/ fun Runnable(/*0*/ function: () -> jet.Unit): test.Nested.Runnable
     
-    package Deeper2 {
+    package test.Nested.Deeper2 {
         public /*synthesized*/ fun Runnable(/*0*/ function: () -> jet.Unit): test.Nested.Deeper2.Runnable
     }
 }

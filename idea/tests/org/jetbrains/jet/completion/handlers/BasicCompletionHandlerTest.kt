@@ -66,6 +66,13 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testInsertFunctionWithSingleParameterWithBrace() = doTest(0, "some", null, '{')
 
+    fun testTabReplaceIdentifier() = doTest(1, "sss", null, '\t')
+    fun testTabReplaceIdentifier2() = doTest(1, "sss", null, '\t')
+    fun testTabReplaceThis() = doTest(1, "sss", null, '\t')
+    fun testTabReplaceNull() = doTest(1, "sss", null, '\t')
+    fun testTabReplaceTrue() = doTest(1, "sss", null, '\t')
+    fun testTabReplaceNumber() = doTest(1, "sss", null, '\t')
+
     fun testSingleBrackets() {
         fixture.configureByFile(fileName())
         fixture.`type`('(')

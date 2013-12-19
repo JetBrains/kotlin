@@ -12,7 +12,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
@@ -37,6 +36,7 @@ import org.pegdown.ast.AutoLinkNode
 import org.pegdown.ast.ExpLinkNode
 import org.pegdown.ast.RefLinkNode
 import org.pegdown.ast.WikiLinkNode
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 
 /**
 * Returns the collection of functions with duplicate function names filtered out
@@ -57,9 +57,13 @@ fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(des
 fun qualifiedName(descriptor: DeclarationDescriptor?): String {
     if (descriptor == null || descriptor is ModuleDescriptor) {
         return ""
-    } else {
+    }
+    else if (descriptor is PackageFragmentDescriptor) {
+        return descriptor.getFqName().asString()
+    }
+    else {
         val parent = containerName(descriptor)
-        var name = descriptor.getName()?.asString() ?: ""
+        var name = descriptor.getName().asString()
         if (name.startsWith("<")) {
             name = ""
         }
@@ -236,27 +240,25 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
 
     ;{
         /** Loads the model from the given set of source files */
-        val allNamespaces = HashSet<NamespaceDescriptor>()
+        val allPackageFragments = HashSet<PackageFragmentDescriptor>()
         for (source in sources) {
             // We retrieve a descriptor by a PSI element from the context
-            val namespaceDescriptor = BindingContextUtils.namespaceDescriptor(context, source)
-            if (namespaceDescriptor != null) {
-                allNamespaces.add(namespaceDescriptor);
+            val packageFragment = context.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, source)
+            if (packageFragment != null) {
+                allPackageFragments.add(packageFragment);
             } else {
                 warning("No NamespaceDescriptor for source $source")
             }
         }
         val allClasses = HashSet<KClass>()
-        for (namespace in allNamespaces) {
-            getPackage(namespace)
-            for (descriptor in namespace.getMemberScope().getAllDescriptors()) {
+        for (packageFragment in allPackageFragments) {
+            getPackage(packageFragment)
+            for (descriptor in packageFragment.getMemberScope().getAllDescriptors()) {
                 if (descriptor is ClassDescriptor) {
                     val klass = getClass(descriptor)
                     if (klass != null) {
                         allClasses.add(klass)
                     }
-                } else if (descriptor is NamespaceDescriptor) {
-                    getPackage(descriptor)
                 }
             }
         }
@@ -286,7 +288,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     fun getPackage(name: String): KPackage? = packageMap.get(name)
 
     /** Returns the package for the given descriptor, creating one if its not available */
-    fun getPackage(descriptor: NamespaceDescriptor): KPackage {
+    fun getPackage(descriptor: PackageFragmentDescriptor): KPackage {
         val name = qualifiedName(descriptor)
         var created = false
         val pkg = packageMap.getOrPut(name) {
@@ -708,7 +710,7 @@ $highlight"""
         var dec: DeclarationDescriptor? = classElement.getContainingDeclaration()
         while (dec != null) {
             val container = dec
-            if (container is NamespaceDescriptor) {
+            if (container is PackageFragmentDescriptor) {
                 val pkg = getPackage(container)
                 return pkg.getClass(classElement)
             } else {
@@ -936,7 +938,7 @@ abstract class KNamed(val name: String, model: KModel, declarationDescriptor: De
 }
 
 
-class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
+class KPackage(model: KModel, val descriptor: PackageFragmentDescriptor,
         val name: String,
         var local: Boolean = false,
         var useExternalLink: Boolean = false): KClassOrPackage(model, descriptor), Comparable<KPackage> {

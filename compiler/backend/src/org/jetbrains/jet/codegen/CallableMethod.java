@@ -151,6 +151,6 @@ public class CallableMethod implements Callable {
 
     @Override
     public String toString() {
-        return Printer.OPCODES[invokeOpcode] + " " + owner + "." + signature;
+        return Printer.OPCODES[invokeOpcode] + " " + owner.getInternalName() + "." + signature;
     }
 }

@@ -117,6 +117,7 @@ public class PluginJetFilesProvider extends JetFilesProvider {
                !JetPluginUtil.isKtFileInGradleProjectInWrongFolder(virtualFile, project);
     }
 
+    @NotNull
     @Override
     public Collection<JetFile> allInScope(@NotNull GlobalSearchScope scope) {
         return cache.getValue(scope);

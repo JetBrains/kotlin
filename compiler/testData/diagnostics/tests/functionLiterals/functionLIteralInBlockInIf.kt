@@ -1,3 +1,4 @@
+// !CHECK_TYPE
 fun test() {
     val a = if (true) {
         val x = 1
@@ -5,7 +6,5 @@ fun test() {
     } else {
         { 2 }
     }
-    TypeOf(a): TypeOf<Function0<Int>>
+    a checkType { it : _<() -> Int> }
 }
-
-class TypeOf<T>(t: T)

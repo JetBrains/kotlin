@@ -28,10 +28,7 @@ import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.SubstitutionUtils;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -43,8 +40,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
-import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
@@ -120,11 +116,11 @@ public class TypeHierarchyResolver {
                                     ((MutableClassDescriptorLite) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
                 }
-                else if (descriptorForDeferredResolve instanceof NamespaceDescriptorImpl) {
+                else if (descriptorForDeferredResolve instanceof MutablePackageFragmentDescriptor) {
                     forDeferredResolve.addAll(
                             collectNamespacesAndClassifiers(
                                     scope,
-                                    ((NamespaceDescriptorImpl) descriptorForDeferredResolve).getBuilder(),
+                                    ((MutablePackageFragmentDescriptor) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
                 }
                 else {
@@ -133,7 +129,7 @@ public class TypeHierarchyResolver {
             }
         }
 
-        importsResolver.processTypeImports(outerScope);
+        importsResolver.processTypeImports();
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
@@ -454,20 +450,21 @@ public class TypeHierarchyResolver {
 
         @Override
         public void visitJetFile(@NotNull JetFile file) {
-            NamespaceDescriptorImpl namespaceDescriptor = namespaceFactory.createNamespaceDescriptorPathIfNeeded(
-                    file, outerScope, RedeclarationHandler.DO_NOTHING);
-            context.getNamespaceDescriptors().put(file, namespaceDescriptor);
+            MutablePackageFragmentDescriptor packageFragment = namespaceFactory.createPackageFragmentIfNeeded(file);
+            context.getPackageFragments().put(file, packageFragment);
 
-            WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(),
-                                                                     new TraceBasedRedeclarationHandler(trace), "namespace in file " + file.getName());
-            namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            context.getNamespaceScopes().put(file, namespaceScope);
+            PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
+            ChainedScope rootPlusPackageScope = new ChainedScope(packageView, packageView.getMemberScope(), outerScope);
+            WriteThroughScope packageScope = new WriteThroughScope(rootPlusPackageScope, packageFragment.getMemberScope(),
+                                                                     new TraceBasedRedeclarationHandler(trace), "package in file " + file.getName());
+            packageScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+            context.getNamespaceScopes().put(file, packageScope);
 
             if (file.isScript()) {
-                scriptHeaderResolver.processScriptHierarchy(file.getScript(), namespaceScope);
+                scriptHeaderResolver.processScriptHierarchy(file.getScript(), packageScope);
             }
 
-            prepareForDeferredCall(namespaceScope, namespaceDescriptor, file);
+            prepareForDeferredCall(packageScope, packageFragment, file);
         }
 
         @Override

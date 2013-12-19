@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DEBUG_INFO_AUTOCAST
 class Foo {
     fun foo(a: Foo): Foo = a
 }

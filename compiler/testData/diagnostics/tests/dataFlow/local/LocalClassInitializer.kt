@@ -2,9 +2,9 @@
 
 fun f(a: Any?) {
   if (a is B) {
-    class C : X(a) {
+    class C : X(<!DEBUG_INFO_AUTOCAST!>a<!>) {
       {
-        a.foo()
+        <!DEBUG_INFO_AUTOCAST!>a<!>.foo()
       }
     }
   }

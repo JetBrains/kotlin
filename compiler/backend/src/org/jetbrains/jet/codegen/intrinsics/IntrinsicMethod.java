@@ -24,14 +24,30 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.Callable;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-public interface IntrinsicMethod extends Callable {
-    StackValue generate(
-            ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments, @Nullable StackValue receiver, @NotNull GenerationState state
+public abstract class IntrinsicMethod implements Callable {
+    public final void generate(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
+            @Nullable PsiElement element,
+            @Nullable List<JetExpression> arguments,
+            @Nullable StackValue receiver
+    ) {
+        Type actualType = generateImpl(codegen, v, returnType, element, arguments, receiver);
+        StackValue.coerce(actualType, returnType, v);
+    }
+
+    @NotNull
+    protected abstract Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
+            @Nullable PsiElement element,
+            @Nullable List<JetExpression> arguments,
+            @Nullable StackValue receiver
     );
 }

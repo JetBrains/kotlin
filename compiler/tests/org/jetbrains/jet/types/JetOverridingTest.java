@@ -172,7 +172,7 @@ public class JetOverridingTest extends JetLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
-        return descriptorResolver.resolveFunctionDescriptor(root, builtIns.getBuiltInsScope(), function,
+        return descriptorResolver.resolveFunctionDescriptor(root, builtIns.getBuiltInsPackageScope(), function,
                                                             JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
     }
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -391,10 +392,15 @@ public class DescriptorSerializer {
     }
 
     @NotNull
-    public ProtoBuf.Package.Builder packageProto(@NotNull NamespaceDescriptor descriptor) {
+    public ProtoBuf.Package.Builder packageProto(@NotNull Collection<PackageFragmentDescriptor> fragments) {
         ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
 
-        for (DeclarationDescriptor declaration : sort(descriptor.getMemberScope().getAllDescriptors())) {
+        Collection<DeclarationDescriptor> members = Lists.newArrayList();
+        for (PackageFragmentDescriptor fragment : fragments) {
+            members.addAll(fragment.getMemberScope().getAllDescriptors());
+        }
+
+        for (DeclarationDescriptor declaration : sort(members)) {
             if (declaration instanceof PropertyDescriptor || declaration instanceof FunctionDescriptor) {
                 builder.addMember(callableProto((CallableMemberDescriptor) declaration));
             }

@@ -102,9 +102,10 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
     @Override
     @NotNull
     public Set<JetType> getPossibleTypes(@NotNull DataFlowValue key) {
-        Set<JetType> types = typeInfo.get(key);
+        Set<JetType> theseTypes = typeInfo.get(key);
+        Set<JetType> types = parent == null ? theseTypes : Sets.union(theseTypes, parent.getPossibleTypes(key));
         if (getNullability(key).canBeNull()) {
-            return parent == null ? types : Sets.union(types, parent.getPossibleTypes(key));
+            return types;
         }
 
         Set<JetType> enrichedTypes = Sets.newHashSetWithExpectedSize(types.size() + 1);
@@ -116,7 +117,7 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
             enrichedTypes.add(TypeUtils.makeNotNullable(type));
         }
 
-        return parent == null ? enrichedTypes : Sets.union(enrichedTypes, parent.getPossibleTypes(key));
+        return enrichedTypes;
     }
 
     @Override

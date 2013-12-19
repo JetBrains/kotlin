@@ -89,7 +89,7 @@ public class ModifiersChecker {
         if (modifierList == null) return;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof NamespaceDescriptor) {
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
             if (modifierList.hasModifier(PROTECTED_KEYWORD)) {
                 trace.report(Errors.PACKAGE_MEMBER_CANNOT_BE_PROTECTED.on(modifierList.getModifierNode(PROTECTED_KEYWORD).getPsi()));
             }

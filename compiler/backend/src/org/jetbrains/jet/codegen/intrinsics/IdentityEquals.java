@@ -22,7 +22,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -32,16 +31,16 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-public class IdentityEquals implements IntrinsicMethod {
+public class IdentityEquals extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         if (element instanceof JetCallExpression) {
             receiver.put(OBJECT_TYPE, v);
@@ -53,6 +52,7 @@ public class IdentityEquals implements IntrinsicMethod {
             codegen.gen(e.getLeft()).put(OBJECT_TYPE, v);
             codegen.gen(e.getRight()).put(OBJECT_TYPE, v);
         }
-        return StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE);
+        StackValue.cmp(JetTokens.EQEQEQ, OBJECT_TYPE).put(returnType, v);
+        return returnType;
     }
 }

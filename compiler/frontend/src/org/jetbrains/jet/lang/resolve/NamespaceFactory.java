@@ -17,10 +17,10 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface NamespaceFactory {
     @NotNull
-    NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName);
+    PackageFragmentDescriptor createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName);
 }

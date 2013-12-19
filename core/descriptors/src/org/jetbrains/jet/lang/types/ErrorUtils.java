@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -42,13 +41,11 @@ public class ErrorUtils {
 
     private static final ModuleDescriptor ERROR_MODULE;
     static {
-        ModuleDescriptorImpl module = new ModuleDescriptorImpl(
+        ERROR_MODULE = new ModuleDescriptorImpl(
                 Name.special("<ERROR MODULE>"),
                 Collections.<ImportPath>emptyList(),
                 PlatformToKotlinClassMap.EMPTY
         );
-        module.setModuleConfiguration(ModuleConfiguration.EMPTY);
-        ERROR_MODULE = module;
     }
 
     public static boolean containsErrorType(@NotNull FunctionDescriptor function) {
@@ -100,8 +97,8 @@ public class ErrorUtils {
         }
 
         @Override
-        public NamespaceDescriptor getNamespace(@NotNull Name name) {
-            return null; // TODO : review
+        public PackageViewDescriptor getPackage(@NotNull Name name) {
+            return null;
         }
 
         @NotNull
@@ -166,7 +163,7 @@ public class ErrorUtils {
 
         @Nullable
         @Override
-        public NamespaceDescriptor getNamespace(@NotNull Name name) {
+        public PackageViewDescriptor getPackage(@NotNull Name name) {
             throw new IllegalStateException();
         }
 

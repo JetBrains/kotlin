@@ -163,10 +163,8 @@ public class IdeRenderers {
                         stringBuilder.append(parametersToHighlight.contains(null) ? String.format(RED_TEMPLATE, ")") : ")");
                         stringBuilder.append(" <i>defined in</i> ");
                         DeclarationDescriptor containingDeclaration = funDescriptor.getContainingDeclaration();
-                        if (containingDeclaration != null) {
-                            FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
-                            stringBuilder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : fqName.asString());
-                        }
+                        FqNameUnsafe fqName = DescriptorUtils.getFqName(containingDeclaration);
+                        stringBuilder.append(FqName.ROOT.equalsTo(fqName) ? "root package" : fqName.asString());
                         stringBuilder.append("</li>");
                     }
                     return stringBuilder.toString();

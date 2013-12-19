@@ -39,7 +39,7 @@ public class DescriptorFactory {
         public DefaultConstructorDescriptor(@NotNull ClassDescriptor containingClass) {
             super(containingClass, Collections.<AnnotationDescriptor>emptyList(), true);
             initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
-                       getDefaultConstructorVisibility(containingClass));
+                       getDefaultConstructorVisibility(containingClass), true);
         }
     }
 

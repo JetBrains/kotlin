@@ -35,7 +35,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
         Assert.assertTrue(ktFilePath.endsWith(".kt"));
         File ktFile = new File(ktFilePath);
         File javaFile = new File(ktFilePath.replaceFirst("\\.kt", ".java"));
-        compileKotlinToDirAndGetAnalyzeExhaust(ktFile, tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
+        compileKotlinToDirAndGetAnalyzeExhaust(Collections.singletonList(ktFile), tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
         List<String> options = Arrays.asList(
                 "-classpath", tmpdir.getPath() + System.getProperty("path.separator") + ForTestCompileRuntime.runtimeJarForTests(),

@@ -19,8 +19,7 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -51,8 +50,8 @@ public class DeserializedResolverUtils {
         if (containing instanceof ClassDescriptor) {
             return naiveKotlinFqName((ClassDescriptor) containing).child(descriptor.getName());
         }
-        else if (containing instanceof NamespaceDescriptor) {
-            return DescriptorUtils.getFQName(containing).child(descriptor.getName());
+        else if (containing instanceof PackageFragmentDescriptor) {
+            return ((PackageFragmentDescriptor) containing).getFqName().child(descriptor.getName()).toUnsafe();
         }
         else {
             throw new IllegalArgumentException("Class doesn't have a FQ name: " + descriptor);

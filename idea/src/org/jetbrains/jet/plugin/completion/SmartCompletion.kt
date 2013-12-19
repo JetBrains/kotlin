@@ -19,6 +19,13 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration
 import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.util.PsiTreeUtil
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -49,6 +56,7 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
     if (receiver == null) {
         typeInstantiationItems(expectedType, resolveSession, bindingContext).toCollection(additionalElements)
         thisItems(expressionWithType, expectedType, bindingContext).toCollection(additionalElements)
+        staticMembers(expressionWithType, expectedType, resolveSession, bindingContext).toCollection(additionalElements)
     }
 
     val dataFlowInfo = bindingContext.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expressionWithType)
@@ -71,6 +79,9 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
                 }
             }
             return returnType.toList()
+        }
+        else if (descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            return listOf(descriptor.getDefaultType())
         }
         else {
             return listOf()
@@ -231,6 +242,60 @@ private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpres
     return ProcessDataFlowInfoResult()
 }
 
+// adds java static members, enum members and members from class object
+private fun staticMembers(context: JetExpression, expectedType: JetType, resolveSession: CancelableResolveSession, bindingContext: BindingContext): Iterable<LookupElement> {
+    val classDescriptor = TypeUtils.getClassDescriptor(expectedType)
+    if (classDescriptor == null) return listOf()
+    if (classDescriptor.getName().isSpecial()) return listOf()
+    val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, context)
+    if (scope == null) return listOf()
+
+    val descriptors = ArrayList<DeclarationDescriptor>()
+
+    val isSuitableCallable: (DeclarationDescriptor) -> Boolean = {
+        it is CallableDescriptor && it.getReturnType()?.let { JetTypeChecker.INSTANCE.isSubtypeOf(it, expectedType) } ?: false
+    }
+
+    if (classDescriptor is JavaClassDescriptor) {
+        val pseudoPackage = DescriptorResolverUtils.getPackageForCorrespondingJavaClass(classDescriptor)
+        if (pseudoPackage != null) {
+            pseudoPackage.getMemberScope().getAllDescriptors().filterTo(descriptors, isSuitableCallable)
+        }
+    }
+
+    val classObject = classDescriptor.getClassObjectDescriptor()
+    if (classObject != null) {
+        classObject.getDefaultType().getMemberScope().getAllDescriptors().filterTo(descriptors, isSuitableCallable)
+    }
+
+    if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+        classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
+                .filterTo(descriptors) { it is ClassDescriptor && it.getKind() == ClassKind.ENUM_ENTRY }
+    }
+
+    return descriptors
+                .filter { !(it is DeclarationDescriptorWithVisibility) || Visibilities.isVisible(it, scope.getContainingDeclaration()) }
+                .map {
+                    val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, it)
+                    val presentation = LookupElementPresentation()
+                    lookupElement.renderElement(presentation)
+                    var builder = LookupElementBuilder.create(lookupElement.getObject(), classDescriptor.getName().asString() + "." + lookupElement.getLookupString())
+                            .withIcon(presentation.getIcon())
+                            .withStrikeoutness(presentation.isStrikeout())
+                            .withTailText(" (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")")
+                            .withTypeText(if (!presentation.getTypeText().isNullOrEmpty())
+                                              presentation.getTypeText()
+                                          else
+                                              DescriptorRenderer.TEXT.renderType(classDescriptor.getDefaultType()))
+                    if (it is FunctionDescriptor) {
+                        builder = builder.withPresentableText(builder.getLookupString() + "()")
+                        val caretPosition = if (it.getValueParameters().empty) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
+                        builder = builder.withInsertHandler(JetFunctionInsertHandler(caretPosition, BracketType.PARENTHESIS))
+                    }
+                    builder
+                }
+}
+
 private fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()
 
 private fun <T> MutableCollection<T>.addAll(iterator: Iterator<T>) {
@@ -238,3 +303,5 @@ private fun <T> MutableCollection<T>.addAll(iterator: Iterator<T>) {
         add(item)
     }
 }
+
+private fun String?.isNullOrEmpty() = this == null || this.isEmpty()

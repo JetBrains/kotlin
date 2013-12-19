@@ -17,10 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 
 public class JavaVisibilities {
     private JavaVisibilities() {
@@ -29,7 +29,7 @@ public class JavaVisibilities {
     public static final Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            return isInSameNamespace(what, from);
+            return areInSamePackage(what, from);
         }
 
         @Override
@@ -67,8 +67,9 @@ public class JavaVisibilities {
             // protected static function or property
             else {
                 DeclarationDescriptor whatDeclarationDescriptor = what.getContainingDeclaration();
-                assert whatDeclarationDescriptor instanceof NamespaceDescriptor : "Only static declarations can have protected_static visibility";
-                whatClass = getClassForCorrespondingJavaNamespace((NamespaceDescriptor) whatDeclarationDescriptor);
+                assert whatDeclarationDescriptor instanceof JavaPackageFragmentDescriptor : "Only static declarations can have protected_static visibility";
+                whatClass = DescriptorResolverUtils
+                        .getClassForCorrespondingJavaPackage((JavaPackageFragmentDescriptor) whatDeclarationDescriptor);
             }
 
             assert whatClass != null : "Couldn't find ClassDescriptor for protected static member " + what;
@@ -94,7 +95,7 @@ public class JavaVisibilities {
     public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (isInSameNamespace(what, from)) {
+            if (areInSamePackage(what, from)) {
                 return true;
             }
 
@@ -130,40 +131,9 @@ public class JavaVisibilities {
         }
     };
 
-    private static boolean isInSameNamespace(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        NamespaceDescriptor whatPackage = DescriptorUtils.getParentOfType(first, NamespaceDescriptor.class, false);
-        NamespaceDescriptor fromPackage = DescriptorUtils.getParentOfType(second, NamespaceDescriptor.class, false);
-        return fromPackage != null && whatPackage != null && fqNamesEqual(whatPackage, fromPackage);
-    }
-
-    private static boolean fqNamesEqual(@NotNull NamespaceDescriptor a, @NotNull NamespaceDescriptor b) {
-        return DescriptorUtils.getFQName(a).equals(DescriptorUtils.getFQName(b));
-    }
-
-    @Nullable
-    private static ClassDescriptor getClassForCorrespondingJavaNamespace(@NotNull NamespaceDescriptor correspondingNamespace) {
-        NamespaceDescriptorParent containingDeclaration = correspondingNamespace.getContainingDeclaration();
-        if (!(containingDeclaration instanceof NamespaceDescriptor)) {
-            return null;
-        }
-
-        NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
-
-        ClassifierDescriptor classDescriptor = namespaceDescriptor.getMemberScope().getClassifier(correspondingNamespace.getName());
-        if (classDescriptor != null && classDescriptor instanceof ClassDescriptor) {
-            return (ClassDescriptor) classDescriptor;
-        }
-
-        ClassDescriptor classDescriptorForOuterClass = getClassForCorrespondingJavaNamespace(namespaceDescriptor);
-        if (classDescriptorForOuterClass == null) {
-            return null;
-        }
-
-        ClassifierDescriptor innerClassDescriptor =
-                classDescriptorForOuterClass.getUnsubstitutedInnerClassesScope().getClassifier(correspondingNamespace.getName());
-        if (innerClassDescriptor instanceof ClassDescriptor) {
-            return (ClassDescriptor) innerClassDescriptor;
-        }
-        return null;
+    private static boolean areInSamePackage(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
+        PackageFragmentDescriptor whatPackage = DescriptorUtils.getParentOfType(first, PackageFragmentDescriptor.class, false);
+        PackageFragmentDescriptor fromPackage = DescriptorUtils.getParentOfType(second, PackageFragmentDescriptor.class, false);
+        return fromPackage != null && whatPackage != null && whatPackage.getFqName().equals(fromPackage.getFqName());
     }
 }

@@ -38,10 +38,10 @@ public class ExpectedLoadErrorsUtil {
     public static final String ANNOTATION_CLASS_NAME = ExpectLoadError.class.getName();
 
     public static void checkForLoadErrors(
-            @NotNull NamespaceDescriptor namespaceFromJava,
+            @NotNull PackageViewDescriptor packageFromJava,
             @NotNull BindingContext bindingContext
     ) {
-        Map<DeclarationDescriptor, List<String>> expectedErrors = getExpectedLoadErrors(namespaceFromJava);
+        Map<DeclarationDescriptor, List<String>> expectedErrors = getExpectedLoadErrors(packageFromJava);
         Map<DeclarationDescriptor, List<String>> actualErrors = getActualLoadErrors(bindingContext);
 
         for (DeclarationDescriptor descriptor : ContainerUtil.union(expectedErrors.keySet(), actualErrors.keySet())) {
@@ -56,12 +56,12 @@ public class ExpectedLoadErrorsUtil {
         }
     }
 
-    private static Map<DeclarationDescriptor, List<String>> getExpectedLoadErrors(@NotNull NamespaceDescriptor namespaceFromJava) {
+    private static Map<DeclarationDescriptor, List<String>> getExpectedLoadErrors(@NotNull PackageViewDescriptor packageFromJava) {
         final Map<DeclarationDescriptor, List<String>> map = new HashMap<DeclarationDescriptor, List<String>>();
 
-        namespaceFromJava.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
+        packageFromJava.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
             @Override
-            public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
+            public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
                 return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
             }
 
@@ -85,7 +85,7 @@ public class ExpectedLoadErrorsUtil {
                     ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
                     assert annotationClass != null;
 
-                    if (DescriptorUtils.getFQName(annotationClass).asString().equals(ANNOTATION_CLASS_NAME)) {
+                    if (DescriptorUtils.getFqName(annotationClass).asString().equals(ANNOTATION_CLASS_NAME)) {
 
                         // we expect exactly one annotation argument
                         CompileTimeConstant<?> argument = annotation.getAllValueArguments().values().iterator().next();

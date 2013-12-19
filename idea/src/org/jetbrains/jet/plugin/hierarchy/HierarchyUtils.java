@@ -3,6 +3,7 @@ package org.jetbrains.jet.plugin.hierarchy;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.util.ArrayUtil;
 import jet.Function1;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
@@ -23,6 +24,7 @@ public class HierarchyUtils {
     };
 
     public static PsiElement getCallHierarchyElement(PsiElement element) {
-        return PsiUtilPackage.getParentByTypeAndPredicate(element, PsiElement.class, false, IS_CALL_HIERARCHY_ELEMENT);
+        //noinspection unchecked
+        return PsiUtilPackage.getParentByTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_CALL_HIERARCHY_ELEMENT);
     }
 }

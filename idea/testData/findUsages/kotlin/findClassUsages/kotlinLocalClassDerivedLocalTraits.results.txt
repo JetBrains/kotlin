@@ -1,0 +1,2 @@
+Unclassified usage (6: 11) trait T: A
+Unclassified usage (9: 15) trait U: T
