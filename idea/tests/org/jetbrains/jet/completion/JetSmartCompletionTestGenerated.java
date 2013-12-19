@@ -56,6 +56,21 @@ public class JetSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/AutoNotNullTypeWithQualifier.kt");
     }
     
+    @TestMetadata("BeforeArgumentWithBinaryOperation.kt")
+    public void testBeforeArgumentWithBinaryOperation() throws Exception {
+        doTest("idea/testData/completion/smart/BeforeArgumentWithBinaryOperation.kt");
+    }
+    
+    @TestMetadata("BeforeArgumentWithBinaryOperation2.kt")
+    public void testBeforeArgumentWithBinaryOperation2() throws Exception {
+        doTest("idea/testData/completion/smart/BeforeArgumentWithBinaryOperation2.kt");
+    }
+    
+    @TestMetadata("BeforeArgumentWithBinaryOperation3.kt")
+    public void testBeforeArgumentWithBinaryOperation3() throws Exception {
+        doTest("idea/testData/completion/smart/BeforeArgumentWithBinaryOperation3.kt");
+    }
+    
     @TestMetadata("ChainedCall.kt")
     public void testChainedCall() throws Exception {
         doTest("idea/testData/completion/smart/ChainedCall.kt");

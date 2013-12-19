@@ -101,17 +101,20 @@ public class JetCompletionContributor extends CompletionContributor {
     public void beforeCompletion(@NotNull CompletionInitializationContext context) {
         if (context.getFile() instanceof JetFile) {
             int offset = context.getStartOffset();
-
-            PsiElement position = context.getFile().findElementAt(Math.max(0, offset - 1));
-
-            if (JetPackagesContributor.ACTIVATION_PATTERN.accepts(position)) {
-                context.setDummyIdentifier(JetPackagesContributor.DUMMY_IDENTIFIER);
+            PsiElement tokenBefore = context.getFile().findElementAt(Math.max(0, offset - 1));
+            if (context.getCompletionType() == CompletionType.SMART) {
+                context.setDummyIdentifier(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$"); // add '$' to ignore context after the caret
             }
-            else if (JetExtensionReceiverTypeContributor.ACTIVATION_PATTERN.accepts(position)) {
-                context.setDummyIdentifier(JetExtensionReceiverTypeContributor.DUMMY_IDENTIFIER);
-            }
-            else{
-                context.setDummyIdentifier(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
+            else {
+                if (JetPackagesContributor.ACTIVATION_PATTERN.accepts(tokenBefore)) {
+                    context.setDummyIdentifier(JetPackagesContributor.DUMMY_IDENTIFIER);
+                }
+                else if (JetExtensionReceiverTypeContributor.ACTIVATION_PATTERN.accepts(tokenBefore)) {
+                    context.setDummyIdentifier(JetExtensionReceiverTypeContributor.DUMMY_IDENTIFIER);
+                }
+                else{
+                    context.setDummyIdentifier(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED);
+                }
             }
 
             if (!context.getEditor().getSelectionModel().hasSelection()) {
