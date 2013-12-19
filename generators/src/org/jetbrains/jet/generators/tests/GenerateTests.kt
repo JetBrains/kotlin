@@ -269,7 +269,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractQuickFixMultiFileTest>()) {
-            model("quickfix", pattern = "^(\\w+)\\.before\\.Main\\.kt\$", testMethod = "doTestWithExtraFile")
+            model("quickfix", pattern = """^(\w+)\.before\.Main\.kt$""", testMethod = "doTestWithExtraFile")
         }
 
         testClass(javaClass<AbstractHighlightingTest>()) {
@@ -352,7 +352,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractJetQuickDocProviderTest>()) {
-            model("editor/quickDoc", pattern = "^([^_]+)\\.[^\\.]*\$")
+            model("editor/quickDoc", pattern = """^([^_]+)\.[^\.]*$""")
         }
 
         testClass(javaClass<AbstractJetSafeDeleteTest>()) {
@@ -379,22 +379,22 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractJetFindUsagesTest>()) {
-            model("findUsages/kotlin", pattern = "^(.+)\\.0\\.kt\$")
-            model("findUsages/java", pattern = "^(.+)\\.0\\.java\$")
+            model("findUsages/kotlin", pattern = """^(.+)\.0\.kt$""")
+            model("findUsages/java", pattern = """^(.+)\.0\.java$""")
         }
 
         testClass(javaClass<AbstractCompletionWeigherTest>()) {
-            model("completion/weighers", pattern = "^([^\\.]+)\\.kt\$")
+            model("completion/weighers", pattern = """^([^\.]+)\.kt$""")
         }
 
         testClass(javaClass<AbstractConfigureProjectByChangingFileTest>()) {
-            model("configuration/android-gradle", pattern = "(\\w+)_before\\.gradle\$", testMethod = "doTestAndroidGradle")
-            model("configuration/gradle", pattern = "(\\w+)_before\\.gradle\$", testMethod = "doTestGradle")
-            model("configuration/maven", extension = "", recursive = false, testMethod = "doTestWithMaven")
+            model("configuration/android-gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestAndroidGradle")
+            model("configuration/gradle", pattern = """(\w+)_before\.gradle$""", testMethod = "doTestGradle")
+            model("configuration/maven", extension = null, recursive = false, testMethod = "doTestWithMaven")
         }
 
         testClass(javaClass<AbstractJetFormatterTest>()) {
-            model("formatter", pattern = "^([^\\.]+)\\.kt$")
+            model("formatter", pattern = """^([^\.]+)\.kt$""")
         }
 
         testClass(javaClass<AbstractDiagnosticMessageTest>()) {
