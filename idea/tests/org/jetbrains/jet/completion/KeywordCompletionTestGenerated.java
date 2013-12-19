@@ -71,6 +71,11 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest("idea/testData/completion/keywords/InClassBeforeFun.kt");
     }
     
+    @TestMetadata("InClassNoCompletionInValName.kt")
+    public void testInClassNoCompletionInValName() throws Exception {
+        doTest("idea/testData/completion/keywords/InClassNoCompletionInValName.kt");
+    }
+    
     @TestMetadata("InClassProperty.kt")
     public void testInClassProperty() throws Exception {
         doTest("idea/testData/completion/keywords/InClassProperty.kt");
@@ -89,6 +94,11 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("InFunctionName.kt")
     public void testInFunctionName() throws Exception {
         doTest("idea/testData/completion/keywords/InFunctionName.kt");
+    }
+    
+    @TestMetadata("InFunctionNoCompletionInValName.kt")
+    public void testInFunctionNoCompletionInValName() throws Exception {
+        doTest("idea/testData/completion/keywords/InFunctionNoCompletionInValName.kt");
     }
     
     @TestMetadata("InFunctionScope.kt")
@@ -129,6 +139,11 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("InString.kt")
     public void testInString() throws Exception {
         doTest("idea/testData/completion/keywords/InString.kt");
+    }
+    
+    @TestMetadata("InTopNoCompletionInVarName.kt")
+    public void testInTopNoCompletionInVarName() throws Exception {
+        doTest("idea/testData/completion/keywords/InTopNoCompletionInVarName.kt");
     }
     
     @TestMetadata("InTopProperty.kt")

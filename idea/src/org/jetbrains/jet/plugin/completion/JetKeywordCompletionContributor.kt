@@ -33,17 +33,15 @@ import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.util.containers.MultiMap
 import java.util.HashSet
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.codeInsight.completion.PrefixMatcher
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.util.ProcessingContext
-import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
-import com.intellij.psi.filters.position.FilterPattern
-import com.intellij.patterns.PlatformPatterns
 import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler
 import org.jetbrains.jet.plugin.completion.weigher.addJetSorting
+import com.intellij.util.ProcessingContext
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.psi.filters.position.FilterPattern
+import com.intellij.patterns.PlatformPatterns
+import com.intellij.psi.filters.position.PatternFilter
 
 public open class JetKeywordCompletionContributor() : CompletionContributor() {
     {
@@ -153,6 +151,7 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
                 CommentFilter(),
                 ParentFilter(ClassFilter(javaClass<JetLiteralStringTemplateEntry>())),
                 ParentFilter(ClassFilter(javaClass<JetConstantExpression>())),
+                PatternFilter(JetExtensionReceiverTypeContributor.ACTIVATION_PATTERN),
                 LeftNeighbour(TextFilter("."))
         ))
 
