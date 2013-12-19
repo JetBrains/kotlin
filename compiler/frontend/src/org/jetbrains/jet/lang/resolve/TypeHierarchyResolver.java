@@ -491,7 +491,7 @@ public class TypeHierarchyResolver {
                     createClassDescriptorForSingleton(declaration, JetPsiUtil.safeName(declaration.getName()), ClassKind.OBJECT);
 
             owner.addClassifierDescriptor(descriptor);
-            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), descriptor);
+            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getUnsafeFQName(declaration), descriptor);
 
             descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObject(descriptor));
         }
@@ -572,7 +572,7 @@ public class TypeHierarchyResolver {
             MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
                     containingDeclaration, outerScope, kind, isInner, JetPsiUtil.safeName(klass.getName()));
             context.getClasses().put(klass, mutableClassDescriptor);
-            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
+            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getUnsafeFQName(klass), mutableClassDescriptor);
 
             createClassObjectForEnumClass(mutableClassDescriptor);
 

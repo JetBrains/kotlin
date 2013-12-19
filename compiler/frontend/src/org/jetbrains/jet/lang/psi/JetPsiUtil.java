@@ -35,6 +35,7 @@ import org.jetbrains.jet.kdoc.psi.api.KDocElement;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
@@ -188,6 +189,12 @@ public class JetPsiUtil {
     public static FqName getFQName(@NotNull JetFile file) {
         JetNamespaceHeader header = file.getNamespaceHeader();
         return header != null ? header.getFqName() : FqName.ROOT;
+    }
+
+    @Nullable
+    public static FqNameUnsafe getUnsafeFQName(@NotNull JetNamedDeclaration namedDeclaration) {
+        FqName fqName = getFQName(namedDeclaration);
+        return fqName != null ? fqName.toUnsafe() : null;
     }
 
     @Nullable

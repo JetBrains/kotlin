@@ -62,7 +62,7 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     @Nullable
     @Override
     public ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName) {
-        return trace.get(FQNAME_TO_CLASS_DESCRIPTOR, fqName);
+        return trace.get(FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe());
     }
 
     @Nullable

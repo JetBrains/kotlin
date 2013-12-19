@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
@@ -245,7 +246,7 @@ public interface BindingContext {
     WritableSlice<ClassDescriptor, FunctionDescriptor> DATA_CLASS_COPY_FUNCTION =
             Slices.<ClassDescriptor, FunctionDescriptor>sliceBuilder().build();
 
-    WritableSlice<FqName, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqName, ClassDescriptor>(DO_NOTHING, true);
+    WritableSlice<FqNameUnsafe, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqNameUnsafe, ClassDescriptor>(DO_NOTHING, true);
     WritableSlice<JetFile, PackageFragmentDescriptor> FILE_TO_PACKAGE_FRAGMENT = Slices.createSimpleSlice();
     WritableSlice<FqName, Collection<JetFile>> PACKAGE_TO_FILES = Slices.createSimpleSlice();
 
