@@ -41,7 +41,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptorForObject
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.jet.utils.Printer
 
@@ -216,8 +215,8 @@ public abstract class LazyJavaMemberScope(
         val properties = ArrayList<PropertyDescriptor>()
 
         val field = memberIndex().findFieldByName(name)
-        if (field != null) {
-            if (DescriptorResolverUtils.shouldBeInEnumClassObject(field) == DescriptorUtils.isEnumClassObject(_containingDeclaration)) {
+        if (field != null && !field.isEnumEntry()) {
+            if (!DescriptorUtils.isEnumClassObject(_containingDeclaration)) {
                 properties.add(resolveProperty(field))
             }
         }
@@ -257,29 +256,6 @@ public abstract class LazyJavaMemberScope(
         val visibility = field.getVisibility()
         val annotations = c.resolveAnnotations(field.getAnnotations())
         val propertyName = field.getName()
-
-        if (field.isEnumEntry()) {
-            assert(!isVar, "Enum entries should be immutable.")
-            assert(DescriptorUtils.isEnumClassObject(_containingDeclaration), "Enum entries should be put into class object of enum only: " + _containingDeclaration)
-            //TODO: this is a hack to indicate that this enum entry is an object
-            // class descriptor for enum entries is not used by backends so for now this should be safe to use
-            val dummyClassDescriptorForEnumEntryObject = ClassDescriptorImpl(_containingDeclaration, Collections.emptyList(), Modality.FINAL, propertyName)
-            dummyClassDescriptorForEnumEntryObject.initialize(
-                    true,
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    JetScope.EMPTY,
-                    Collections.emptySet(),
-                    null,
-                    false)
-            return JavaPropertyDescriptorForObject(
-                    _containingDeclaration as ClassDescriptor,
-                    annotations,
-                    visibility,
-                    propertyName,
-                    dummyClassDescriptorForEnumEntryObject
-            )
-        }
 
         return JavaPropertyDescriptor(_containingDeclaration, annotations, visibility, isVar, propertyName)
     }
