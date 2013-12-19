@@ -109,7 +109,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxMultiFileCodegenTestGenerated") {
-            model("codegen/boxMultiFile", extension = "", recursive = false, testMethod = "doTestMultiFile")
+            model("codegen/boxMultiFile", extension = null, recursive = false, testMethod = "doTestMultiFile")
         }
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxWithJavaCodegenTestGenerated") {
@@ -125,7 +125,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractTopLevelMembersInvocationTest>()) {
-            model("codegen/topLevelMemberInvocation", extension = "", recursive = false)
+            model("codegen/topLevelMemberInvocation", extension = null, recursive = false)
         }
 
         testClass(javaClass<AbstractCheckLocalVariablesTableTest>()) {
@@ -320,11 +320,11 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
-            model("hierarchy/class/type", extension = "", recursive = false, testMethod = "doTypeClassHierarchyTest")
-            model("hierarchy/class/super", extension = "", recursive = false, testMethod = "doSuperClassHierarchyTest")
-            model("hierarchy/class/sub", extension = "", recursive = false, testMethod = "doSubClassHierarchyTest")
-            model("hierarchy/calls/callers", extension = "", recursive = false, testMethod = "doCallerHierarchyTest")
-            model("hierarchy/calls/callees", extension = "", recursive = false, testMethod = "doCalleeHierarchyTest")
+            model("hierarchy/class/type", extension = null, recursive = false, testMethod = "doTypeClassHierarchyTest")
+            model("hierarchy/class/super", extension = null, recursive = false, testMethod = "doSuperClassHierarchyTest")
+            model("hierarchy/class/sub", extension = null, recursive = false, testMethod = "doSubClassHierarchyTest")
+            model("hierarchy/calls/callers", extension = null, recursive = false, testMethod = "doCallerHierarchyTest")
+            model("hierarchy/calls/callees", extension = null, recursive = false, testMethod = "doCalleeHierarchyTest")
         }
 
         testClass(javaClass<AbstractCodeMoverTest>()) {
@@ -441,8 +441,8 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
         fun model(
                 relativeRootPath: String,
                 recursive: Boolean = true,
-                extension: String = "kt", // empty string means dir
-                pattern: String = "^(.+)" + (if (extension == "") "" else "\\.$extension") + "\$",
+                extension: String? = "kt", // null string means dir (name without dot)
+                pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
                 testMethod: String = "doTest",
                 singleClass: Boolean = false
         ) {

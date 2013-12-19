@@ -176,7 +176,7 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
     @TestMetadata("idea/testData/configuration/maven")
     public static class Maven extends AbstractConfigureProjectByChangingFileTest {
         public void testAllFilesPresentInMaven() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/configuration/maven"), Pattern.compile("^(.+)$"), false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/configuration/maven"), Pattern.compile("^([^\\.]+)$"), false);
         }
         
         @TestMetadata("libraryMissed")

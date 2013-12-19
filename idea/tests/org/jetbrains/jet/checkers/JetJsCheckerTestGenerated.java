@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractJetJsCheckerTest;
 @TestMetadata("idea/testData/checker/js")
 public class JetJsCheckerTestGenerated extends AbstractJetJsCheckerTest {
     public void testAllFilesPresentInJs() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/checker/js"), Pattern.compile("^(.+)\\.kt$"), false);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/checker/js"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("basic.kt")

@@ -35,7 +35,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestMetadata("idea/testData/hierarchy/class/type")
     public static class Type extends AbstractHierarchyTest {
         public void testAllFilesPresentInType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/class/type"), Pattern.compile("^(.+)$"), false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/class/type"), Pattern.compile("^([^\\.]+)$"), false);
         }
         
         @TestMetadata("CaretAtAnnotation")
@@ -163,7 +163,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestMetadata("idea/testData/hierarchy/class/super")
     public static class Super extends AbstractHierarchyTest {
         public void testAllFilesPresentInSuper() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/class/super"), Pattern.compile("^(.+)$"), false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/class/super"), Pattern.compile("^([^\\.]+)$"), false);
         }
         
         @TestMetadata("JetList")
@@ -181,7 +181,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestMetadata("idea/testData/hierarchy/class/sub")
     public static class Sub extends AbstractHierarchyTest {
         public void testAllFilesPresentInSub() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/class/sub"), Pattern.compile("^(.+)$"), false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/class/sub"), Pattern.compile("^([^\\.]+)$"), false);
         }
         
         @TestMetadata("ClassFromClass")
@@ -204,7 +204,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestMetadata("idea/testData/hierarchy/calls/callers")
     public static class Callers extends AbstractHierarchyTest {
         public void testAllFilesPresentInCallers() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/calls/callers"), Pattern.compile("^(.+)$"), false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/calls/callers"), Pattern.compile("^([^\\.]+)$"), false);
         }
         
         @TestMetadata("javaConstructor")
@@ -267,7 +267,7 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestMetadata("idea/testData/hierarchy/calls/callees")
     public static class Callees extends AbstractHierarchyTest {
         public void testAllFilesPresentInCallees() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/calls/callees"), Pattern.compile("^(.+)$"), false);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/calls/callees"), Pattern.compile("^([^\\.]+)$"), false);
         }
         
         @TestMetadata("javaConstructor")

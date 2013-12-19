@@ -33,7 +33,7 @@ import org.jetbrains.jet.codegen.AbstractTopLevelMembersInvocationTest;
 @TestMetadata("compiler/testData/codegen/topLevelMemberInvocation")
 public class TopLevelMembersInvocationTestGenerated extends AbstractTopLevelMembersInvocationTest {
     public void testAllFilesPresentInTopLevelMemberInvocation() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/topLevelMemberInvocation"), Pattern.compile("^(.+)$"), false);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/topLevelMemberInvocation"), Pattern.compile("^([^\\.]+)$"), false);
     }
     
     @TestMetadata("extensionFunction")

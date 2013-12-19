@@ -33,7 +33,7 @@ import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
 @TestMetadata("compiler/testData/codegen/boxMultiFile")
 public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxMultiFile() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxMultiFile"), Pattern.compile("^(.+)$"), false);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
     }
     
     @TestMetadata("internalVisibility")
