@@ -80,6 +80,7 @@ import org.jetbrains.jet.generators.tests.generator.SingleClassTestModel
 import org.jetbrains.jet.generators.tests.generator.TestClassModel
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterPluginTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterBasicTest
+import org.jetbrains.jet.plugin.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -413,6 +414,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDataFlowValueRenderingTest>()) {
             model("dataFlowValueRendering")
+        }
+
+        testClass(javaClass<AbstractJavaToKotlinCopyPasteConversionTest>()) {
+            model("copyPaste/conversion", extension = "java")
         }
     }
 
