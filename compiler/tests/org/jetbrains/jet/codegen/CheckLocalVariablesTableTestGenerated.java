@@ -36,29 +36,29 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
-    @TestMetadata("someClass.kt")
-    public void testSomeClass() throws Exception {
-        doTest("compiler/testData/checkLocalVariablesTable/someClass.kt");
+    @TestMetadata("copyFunction.kt")
+    public void testCopyFunction() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/copyFunction.kt");
     }
     
-    @TestMetadata("_DefaultPackage$foo$1.kt")
-    public void test_DefaultPackage$foo$1() throws Exception {
-        doTest("compiler/testData/checkLocalVariablesTable/_DefaultPackage$foo$1.kt");
+    @TestMetadata("itInLambda.kt")
+    public void testItInLambda() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/itInLambda.kt");
     }
     
-    @TestMetadata("_DefaultPackage$foo$1$1.kt")
-    public void test_DefaultPackage$foo$1$1() throws Exception {
-        doTest("compiler/testData/checkLocalVariablesTable/_DefaultPackage$foo$1$1.kt");
+    @TestMetadata("itInReturnedLambda.kt")
+    public void testItInReturnedLambda() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/itInReturnedLambda.kt");
     }
     
-    @TestMetadata("_DefaultPackage$foo$a$1.kt")
-    public void test_DefaultPackage$foo$a$1() throws Exception {
-        doTest("compiler/testData/checkLocalVariablesTable/_DefaultPackage$foo$a$1.kt");
+    @TestMetadata("lambdaAsVar.kt")
+    public void testLambdaAsVar() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
     }
     
-    @TestMetadata("_DefaultPackage$foo1$1.kt")
-    public void test_DefaultPackage$foo1$1() throws Exception {
-        doTest("compiler/testData/checkLocalVariablesTable/_DefaultPackage$foo1$1.kt");
+    @TestMetadata("localFun.kt")
+    public void testLocalFun() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/localFun.kt");
     }
     
 }

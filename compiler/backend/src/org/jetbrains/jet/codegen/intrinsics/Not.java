@@ -22,21 +22,20 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-public class Not implements IntrinsicMethod {
+public class Not extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         StackValue stackValue;
         if (arguments.size() == 1) {
@@ -46,6 +45,7 @@ public class Not implements IntrinsicMethod {
             stackValue = receiver;
         }
         stackValue.put(Type.BOOLEAN_TYPE, v);
-        return StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE));
+        StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE)).put(returnType, v);
+        return returnType;
     }
 }

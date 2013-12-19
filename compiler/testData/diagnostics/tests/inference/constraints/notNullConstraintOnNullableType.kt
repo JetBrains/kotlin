@@ -1,5 +1,4 @@
-class TypeOf<T>(t: T)
-
+// !CHECK_TYPE
 trait A<T>
 
 trait In<in T>
@@ -15,7 +14,7 @@ fun test(out: Out<Int>, i: In<Int>, inv: A<Int>) {
     // T? >: Int => T = Int
     doT(1)
     val r = doOut(out)
-    TypeOf(r): TypeOf<Int>
+    r checkType { it : _<Int> }
 
     // T? <: Int => error
     doIn(<!TYPE_MISMATCH!>i<!>)

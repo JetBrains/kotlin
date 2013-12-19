@@ -22,13 +22,12 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.test.util.NamespaceComparator;
+import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
 import java.io.File;
@@ -73,20 +72,20 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
 
         FqName test = new FqName("test");
 
-        NamespaceDescriptor actual = lazyModule.getNamespace(test);
+        PackageViewDescriptor actual = lazyModule.getPackage(test);
         Assert.assertNotNull("Namespace for name " + test + " is null after lazy resolve", actual);
 
-        NamespaceDescriptor expected = eagerModule.getNamespace(test);
+        PackageViewDescriptor expected = eagerModule.getPackage(test);
         Assert.assertNotNull("Namespace for name " + test + " is null after eager resolve", expected);
 
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
-        NamespaceComparator.validateAndCompareNamespaces(
-                expected, actual, NamespaceComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
-                new Predicate<FqNameUnsafe>() {
+        RecursiveDescriptorComparator.validateAndCompareDescriptors(
+                expected, actual, RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.filterRecursion(
+                new Predicate<FqName>() {
                     @Override
-                    public boolean apply(FqNameUnsafe fqName) {
-                        return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.toUnsafe().equals(fqName);
+                    public boolean apply(FqName fqName) {
+                        return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
                     }
                 })
                 .checkPrimaryConstructors(checkPrimaryConstructors)

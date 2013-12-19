@@ -64,7 +64,7 @@ innerTest.<set-propVar>:PropertySetterDescriptor
 innerTest.func:SimpleFunctionDescriptor
 innerTest.prop:PropertyDescriptor
 innerTest.propVar:PropertyDescriptor
-innerTest:NamespaceDescriptor
+innerTest:PackageViewDescriptor
 prop.this:ReceiverParameterDescriptor
 prop.this:ReceiverParameterDescriptor
-test:NamespaceDescriptor
+test:PackageViewDescriptor

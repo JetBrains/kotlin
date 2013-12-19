@@ -16,12 +16,20 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.intellij.codeInsight.generation.OverrideImplementUtil;
+import com.intellij.codeInsight.generation.PsiMethodMember;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.psi.PsiElement;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.PostprocessReformattingAspect;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.util.SmartList;
+import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
@@ -67,6 +75,23 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
         doDirectoryTest(new OverrideMethodsHandler(), memberToImplement);
     }
 
+    protected void doImplementJavaDirectoryTest(String className, String methodName) {
+        myFixture.copyDirectoryToProject(getTestName(true), "");
+        myFixture.configureFromTempProjectFile("foo/JavaClass.java");
+
+        Project project = myFixture.getProject();
+
+        PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project));
+        Assert.assertNotNull("Can't find class: " + className, aClass);
+
+        PsiMethod method = aClass.findMethodsByName(methodName, false)[0];
+        Assert.assertNotNull(String.format("Can't find method '%s' in class %s", methodName, className), method);
+
+        generateImplementation(method);
+
+        myFixture.checkResultByFile(getTestName(true) + "/foo/JavaClass.java.after");
+    }
+
     private void doFileTest(OverrideImplementMethodsHandler handler) {
         myFixture.configureByFile(getTestName(true) + ".kt");
         doOverrideImplement(handler, null);
@@ -96,8 +121,7 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile)
-                .getBindingContext();
+        final BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
         Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
         final CallableMemberDescriptor singleToOverride;
@@ -158,5 +182,21 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
                         OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, descriptorsList, bindingContext));
             }
         }.execute();
+    }
+
+    private void generateImplementation(@NotNull final PsiMethod method) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                PsiClass aClass = ((PsiClassOwner) myFixture.getFile()).getClasses()[0];
+
+                PsiMethodMember methodMember = new PsiMethodMember(method, PsiSubstitutor.EMPTY);
+
+                OverrideImplementUtil.overrideOrImplementMethodsInRightPlace(
+                        myFixture.getEditor(), aClass, new SmartList<PsiMethodMember>(methodMember), false);
+
+                PostprocessReformattingAspect.getInstance(myFixture.getProject()).doPostponedFormatting();
+            }
+        });
     }
 }

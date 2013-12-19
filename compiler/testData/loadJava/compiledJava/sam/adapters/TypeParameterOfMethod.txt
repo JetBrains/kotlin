@@ -4,7 +4,7 @@ public open class TypeParameterOfMethod : java.lang.Object {
     public constructor TypeParameterOfMethod()
 }
 
-package TypeParameterOfMethod {
+package test.TypeParameterOfMethod {
     public /*synthesized*/ fun </*0*/ T> max(/*0*/ p0: ((T, T) -> jet.Int)?, /*1*/ p1: T?, /*2*/ p2: T?): T?
     public open fun </*0*/ T> max(/*0*/ p0: java.util.Comparator<T>?, /*1*/ p1: T?, /*2*/ p2: T?): T?
     public /*synthesized*/ fun </*0*/ T : jet.CharSequence?> max2(/*0*/ p0: ((T, T) -> jet.Int)?, /*1*/ p1: T?, /*2*/ p2: T?): T?

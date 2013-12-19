@@ -185,11 +185,10 @@ public class ResolveElementCache {
                 }
             }
 
-            Name name = packageNameExpression.getReferencedNameAsName();
-            if (Name.isValidIdentifier(name.asString())) {
+            if (Name.isValidIdentifier(packageNameExpression.getReferencedName())) {
                 if (trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, packageNameExpression) == null) {
-                    FqName fqName = header.getParentFqName(packageNameExpression).child(name);
-                    NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(fqName);
+                    FqName fqName = header.getFqName(packageNameExpression);
+                    PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(fqName);
                     assert packageDescriptor != null: "Package descriptor should be present in session for " + fqName;
                     trace.record(BindingContext.REFERENCE_TARGET, packageNameExpression, packageDescriptor);
                 }
@@ -231,7 +230,7 @@ public class ResolveElementCache {
     private static void delegationSpecifierAdditionalResolve(
             KotlinCodeAnalyzer analyzer,
             JetDelegationSpecifierList specifier, BindingTrace trace, JetFile file) {
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getRootModuleDescriptor());
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getModuleDescriptor());
 
         JetClassOrObject classOrObject = (JetClassOrObject) specifier.getParent();
         LazyClassDescriptor descriptor = (LazyClassDescriptor) analyzer.resolveToDescriptor(classOrObject);
@@ -256,7 +255,7 @@ public class ResolveElementCache {
                 return propertyResolutionScope;
             }
         });
-        BodyResolver bodyResolver = createBodyResolver(trace, file, bodyResolveContext, resolveSession.getRootModuleDescriptor());
+        BodyResolver bodyResolver = createBodyResolver(trace, file, bodyResolveContext, resolveSession.getModuleDescriptor());
         PropertyDescriptor descriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(jetProperty);
 
         JetExpression propertyInitializer = jetProperty.getInitializer();
@@ -278,7 +277,7 @@ public class ResolveElementCache {
             BindingTrace trace,
             JetFile file
     ) {
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, resolveSession.getRootModuleDescriptor());
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, resolveSession.getModuleDescriptor());
         JetScope scope = resolveSession.getInjector().getScopeProvider().getResolutionScopeForDeclaration(namedFunction);
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(namedFunction);
         bodyResolver.resolveFunctionBody(trace, namedFunction, functionDescriptor, scope);
@@ -290,7 +289,7 @@ public class ResolveElementCache {
             BindingTrace trace,
             JetFile file
     ) {
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, resolveSession.getRootModuleDescriptor());
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, resolveSession.getModuleDescriptor());
         JetScope scope = resolveSession.getInjector().getScopeProvider().getResolutionScopeForDeclaration(klass);
 
         ClassDescriptor classDescriptor = (ClassDescriptor) resolveSession.resolveToDescriptor(klass);
@@ -306,7 +305,7 @@ public class ResolveElementCache {
             BindingTrace trace,
             JetFile file
     ) {
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getRootModuleDescriptor());
+        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(trace, file, analyzer.getModuleDescriptor());
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(classInitializer, JetClassOrObject.class);
         LazyClassDescriptor classOrObjectDescriptor = (LazyClassDescriptor) analyzer.resolveToDescriptor(classOrObject);
         bodyResolver.resolveAnonymousInitializers(classOrObject, classOrObjectDescriptor.getUnsubstitutedPrimaryConstructor(),
@@ -364,15 +363,16 @@ public class ResolveElementCache {
 
             // Inside import
             if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class, false) != null) {
-                NamespaceDescriptor rootPackage = resolveSession.getPackageDescriptorByFqName(FqName.ROOT);
+                PackageViewDescriptor rootPackage = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT);
                 assert rootPackage != null;
 
                 if (expression.getParent() instanceof JetDotQualifiedExpression) {
                     JetExpression element = ((JetDotQualifiedExpression) expression.getParent()).getReceiverExpression();
                     String name = ((JetFile) expression.getContainingFile()).getPackageName();
 
-                    NamespaceDescriptor filePackage =
-                            name != null ? resolveSession.getPackageDescriptorByFqName(new FqName(name)) : rootPackage;
+                    PackageViewDescriptor filePackage = name != null
+                                                        ? resolveSession.getModuleDescriptor().getPackage(new FqName(name))
+                                                        : rootPackage;
                     assert filePackage != null : "File package should be already resolved and be found";
 
                     JetScope scope = filePackage.getMemberScope();
@@ -390,8 +390,8 @@ public class ResolveElementCache {
                     }
 
                     for (DeclarationDescriptor descriptor : descriptors) {
-                        if (descriptor instanceof NamespaceDescriptor) {
-                            return ((NamespaceDescriptor) descriptor).getMemberScope();
+                        if (descriptor instanceof PackageViewDescriptor) {
+                            return ((PackageViewDescriptor) descriptor).getMemberScope();
                         }
                     }
                 }
@@ -403,8 +403,8 @@ public class ResolveElementCache {
             // Inside package declaration
             JetNamespaceHeader namespaceHeader = PsiTreeUtil.getParentOfType(expression, JetNamespaceHeader.class, false);
             if (namespaceHeader != null) {
-                NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(
-                        namespaceHeader.getParentFqName((JetReferenceExpression) expression));
+                PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(
+                        namespaceHeader.getFqName((JetSimpleNameExpression) expression).parent());
                 if (packageDescriptor != null) {
                     return packageDescriptor.getMemberScope();
                 }

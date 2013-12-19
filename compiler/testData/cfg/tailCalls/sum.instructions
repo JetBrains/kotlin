@@ -18,7 +18,7 @@ L0:
     mark(toLong())
     r(0)
     call(toLong, toLong)
-    call(x == 0.toLong(), equals)
+    call(==, equals)
     jf(L2)                                                                  NEXT:[read (Unit), r(sum)]
     r(sum)
     ret(*) L1                                                               NEXT:[<END>]

@@ -83,7 +83,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"));
         JetFile jetFile = JetPsiFactory.createFile(getProject(), text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
-        JetScope topLevelDeclarations = module.getNamespace(FqName.ROOT).getMemberScope();
+        JetScope topLevelDeclarations = module.getPackage(FqName.ROOT).getMemberScope();
         ClassifierDescriptor contextClass = topLevelDeclarations.getClassifier(Name.identifier("___Context"));
         assert contextClass instanceof ClassDescriptor;
         WritableScopeImpl typeParameters = new WritableScopeImpl(JetScope.EMPTY, module, RedeclarationHandler.THROW_EXCEPTION,
@@ -96,7 +96,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                                 topLevelDeclarations,
                                 typeParameters,
                                 contextClass.getDefaultType().getMemberScope(),
-                                KotlinBuiltIns.getInstance().getBuiltInsScope());
+                                KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
     }
 
     private void doTest(@Nullable String expectedTypeStr, String initialTypeStr, Pair<String, String>... substitutionStrs) {

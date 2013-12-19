@@ -97,7 +97,7 @@ class IntrinsicsMap {
     @Nullable
     public IntrinsicMethod getIntrinsic(@NotNull CallableMemberDescriptor descriptor) {
         Key key = new Key(
-                DescriptorUtils.getFQName(descriptor.getContainingDeclaration()),
+                DescriptorUtils.getFqName(descriptor.getContainingDeclaration()),
                 descriptor.getName(),
                 valueParameterCountForKey(descriptor));
         return intrinsicsMap.get(key);

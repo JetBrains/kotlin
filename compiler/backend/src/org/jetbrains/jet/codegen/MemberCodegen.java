@@ -78,12 +78,13 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
     public void genClassOrObject(CodegenContext parentContext, JetClassOrObject aClass) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
 
-        if (descriptor == null || ErrorUtils.isError(descriptor) || descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED)) {
-            if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
-                throw new IllegalStateException(
-                        "Generating bad descriptor in ClassBuilderMode = " + state.getClassBuilderMode() + ": " + descriptor);
-            }
+        if (descriptor == null || ErrorUtils.isError(descriptor)) {
+            badDescriptor(descriptor);
             return;
+        }
+
+        if (descriptor.getName().equals(SpecialNames.NO_NAME_PROVIDED)) {
+            badDescriptor(descriptor);
         }
 
         ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor, aClass.getContainingFile());
@@ -96,6 +97,13 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
             new TraitImplBodyCodegen(aClass, parentContext.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state), traitBuilder, state, this)
                     .generate();
             traitBuilder.done();
+        }
+    }
+
+    private void badDescriptor(ClassDescriptor descriptor) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
+            throw new IllegalStateException(
+                    "Generating bad descriptor in ClassBuilderMode = " + state.getClassBuilderMode() + ": " + descriptor);
         }
     }
 }

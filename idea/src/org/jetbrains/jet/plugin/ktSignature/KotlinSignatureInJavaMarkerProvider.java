@@ -36,9 +36,10 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
@@ -99,7 +100,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         }
 
         BindingTrace trace = createDelegatingTrace(project);
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, trace);
+        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, trace);
 
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
@@ -166,12 +167,12 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             @NotNull PsiMember member
     ) {
         if (member.hasModifierProperty(PsiModifier.STATIC)) {
-            NamespaceDescriptor packageDescriptor = javaDescriptorResolver.resolveNamespace(classFqName, IGNORE_KOTLIN_SOURCES);
-            if (packageDescriptor == null) {
+            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragmentProvider().getOrCreatePackage(classFqName);
+            if (packageFragment == null) {
                 return null;
             }
 
-            return packageDescriptor.getMemberScope();
+            return packageFragment.getMemberScope();
         }
         else {
             ClassDescriptor klass = javaDescriptorResolver.resolveClass(classFqName, IGNORE_KOTLIN_SOURCES);

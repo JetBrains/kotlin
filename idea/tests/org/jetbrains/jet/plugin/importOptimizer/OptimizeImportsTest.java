@@ -79,7 +79,7 @@ public class OptimizeImportsTest extends JetLightCodeInsightFixtureTestCase {
 
     public void doTest() throws Exception {
         myFixture.configureByFile(fileName());
-        invokeFormatFile();
+        invokeOptimizeImports();
         myFixture.checkResultByFile(checkFileName(), false);
     }
 
@@ -93,7 +93,7 @@ public class OptimizeImportsTest extends JetLightCodeInsightFixtureTestCase {
         return getTestName(false) + "_after.kt";
     }
 
-    private void invokeFormatFile() {
+    private void invokeOptimizeImports() {
         CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new JetImportOptimizer().processFile(myFixture.getFile()),
                 "Optimize Imports", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
     }

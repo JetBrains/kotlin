@@ -6,6 +6,6 @@ fun main() {
 
 class MyClass {
     class object {
-        public val TEST: String = ""
+        object TEST {}
     }
 }

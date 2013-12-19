@@ -36,12 +36,12 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFQName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
     private static final Set<String> FAKE_CLASSES = ContainerUtil.immutableSet(
-            getFQName(KotlinBuiltIns.getInstance().getAny()).toSafe().asString(),
+            getFqNameSafe(KotlinBuiltIns.getInstance().getAny()).asString(),
             "jet.Iterable"
     );
 
@@ -82,7 +82,7 @@ public final class JsDescriptorUtils {
             @Override
             public boolean value(JetType type) {
                 ClassDescriptor classDescriptor = getClassDescriptorForType(type);
-                return !FAKE_CLASSES.contains(getFQName(classDescriptor).toSafe().asString());
+                return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString());
             }
         });
     }
@@ -163,17 +163,9 @@ public final class JsDescriptorUtils {
                !propertyDescriptor.getModality().isOverridable();
     }
 
-    public static boolean isStandardDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        NamespaceDescriptor namespace = getContainingNamespace(descriptor);
-        if (namespace == null) {
-            return false;
-        }
-        return namespace.equals(KotlinBuiltIns.getInstance().getBuiltInsScope().getContainingDeclaration());
-    }
-
-    @Nullable
-    public static NamespaceDescriptor getContainingNamespace(@NotNull DeclarationDescriptor descriptor) {
-        return DescriptorUtils.getParentOfType(descriptor, NamespaceDescriptor.class);
+    public static boolean isBuiltin(@NotNull DeclarationDescriptor descriptor) {
+        PackageFragmentDescriptor containingPackageFragment = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor.class);
+        return containingPackageFragment == KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
     }
 
     @Nullable
@@ -185,7 +177,7 @@ public final class JsDescriptorUtils {
     @Nullable
     public static Name getNameIfStandardType(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor != null && descriptor.getContainingDeclaration() == KotlinBuiltIns.getInstance().getBuiltInsPackage()) {
+        if (descriptor != null && descriptor.getContainingDeclaration() == KotlinBuiltIns.getInstance().getBuiltInsPackageFragment()) {
             return descriptor.getName();
         }
 

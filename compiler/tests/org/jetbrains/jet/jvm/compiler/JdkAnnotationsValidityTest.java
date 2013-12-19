@@ -36,6 +36,7 @@ import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -95,7 +96,8 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
                 JetCoreEnvironment commonEnvironment = createEnvironment(parentDisposable);
 
                 BindingTrace trace = new BindingTraceContext();
-                InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(commonEnvironment.getProject(), trace);
+                InjectorForJavaDescriptorResolver injector =
+                        InjectorForJavaDescriptorResolverUtil.create(commonEnvironment.getProject(), trace);
 
                 BindingContext bindingContext = trace.getBindingContext();
                 JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
@@ -105,15 +107,15 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
                     ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass, IGNORE_KOTLIN_SOURCES);
-                    NamespaceDescriptor topLevelNamespace = javaDescriptorResolver.resolveNamespace(javaClass, IGNORE_KOTLIN_SOURCES);
+                    PackageViewDescriptor topLevelPackage = injector.getModule().getPackage(javaClass);
                     if (topLevelClass == null) {
                         continue;
                     }
 
                     topLevelClass.acceptVoid(visitor);
 
-                    if (topLevelNamespace != null) {
-                        topLevelNamespace.acceptVoid(visitor);
+                    if (topLevelPackage != null) {
+                        topLevelPackage.acceptVoid(visitor);
                     }
                 }
             }
@@ -179,14 +181,14 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
         }
 
         @Override
-        public Void visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
+        public Void visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
             return visitDeclarationRecursively(descriptor, descriptor.getMemberScope());
         }
 
         @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
             // skip java.util.Collection, etc.
-            if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(DescriptorUtils.getFQName(descriptor).toSafe()).isEmpty()) {
+            if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(DescriptorUtils.getFqNameSafe(descriptor)).isEmpty()) {
                 return null;
             }
 

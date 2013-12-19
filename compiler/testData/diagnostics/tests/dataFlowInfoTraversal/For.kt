@@ -9,16 +9,16 @@ fun foo() {
     for (p in a) {
         bar(<!TYPE_MISMATCH!>x<!>)
         if (x == null) continue
-        bar(x)
+        bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
         for (q in a) {
-            bar(x)
-            if (<!SENSELESS_COMPARISON!>x == null<!>) bar(x)
+            bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
+            if (<!SENSELESS_COMPARISON!>x == null<!>) bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
         }
     }
 
     for (p in a) {
         bar(<!TYPE_MISMATCH!>x<!>)
         if (x == null) break
-        bar(x)
+        bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
     }
 }

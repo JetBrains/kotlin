@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndPredicate
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypesAndPredicate
 
 public abstract class JetSelfTargetingIntention<T: JetElement>(val key: String, val elementType: Class<T>) : BaseIntentionAction() {
     {
@@ -39,7 +39,7 @@ public abstract class JetSelfTargetingIntention<T: JetElement>(val key: String, 
 
     private fun getTarget(editor: Editor, file: PsiFile): T? {
         val offset = editor.getCaretModel().getOffset()
-        return file.findElementAt(offset)?.getParentByTypeAndPredicate(elementType) { element -> isApplicableTo(element) }
+        return file.findElementAt(offset)?.getParentByTypesAndPredicate(false, elementType) { element -> isApplicableTo(element) }
     }
 
     public override fun getFamilyName(): String {

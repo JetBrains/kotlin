@@ -23,24 +23,34 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lexer.JetTokens
+import java.util.Collections
+import com.intellij.extapi.psi.StubBasedPsiElementBase
+import org.jetbrains.jet.lang.psi.stubs.PsiJetClassOrObjectStub
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetPsiFactory
+import kotlin.test.assertTrue
+import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.PsiSearchScopeUtil
 
-fun PsiElement.getParentByTypeAndPredicate<T: PsiElement>(
-        parentClass : Class<T>, strict : Boolean = false, predicate: (T) -> Boolean
+fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
+        strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
 ) : T? {
     var element = if (strict) getParent() else this
     while (element != null) {
         [suppress("UNCHECKED_CAST")]
         when {
-            parentClass.isInstance(element) && predicate(element as T) ->
+            (parentClasses.isEmpty() || parentClasses.any {parentClass -> parentClass.isInstance(element)}) && predicate(element!! as T) ->
                 return element as T
             element is PsiFile ->
                 return null
             else ->
-                element = element?.getParent()
+                element = element!!.getParent()
         }
     }
 
@@ -91,4 +101,58 @@ fun JetElement.wrapInBlock(): JetBlockExpression {
     val block = JetPsiFactory.createEmptyBody(getProject()) as JetBlockExpression
     block.appendElement(this)
     return block
+}
+/**
+ * Returns the list of unqualified names that are indexed as the superclass names of this class. For the names that might be imported
+ * via an aliased import, includes both the original and the aliased name (reference resolution during inheritor search will sort this out).
+ *
+ * @return the list of possible superclass names
+ */
+fun <T: JetClassOrObject> StubBasedPsiElementBase<out PsiJetClassOrObjectStub<T>>.getSuperNames(): List<String> {
+    fun addSuperName(result: MutableList<String>, referencedName: String): Unit {
+        result.add(referencedName)
+
+        val file = getContainingFile()
+        if (file is JetFile) {
+            val directive = file.findImportByAlias(referencedName)
+            if (directive != null) {
+                var reference = directive.getImportedReference()
+                while (reference is JetDotQualifiedExpression) {
+                    reference = (reference as JetDotQualifiedExpression).getSelectorExpression()
+                }
+                if (reference is JetSimpleNameExpression) {
+                    result.add((reference as JetSimpleNameExpression).getReferencedName())
+                }
+            }
+        }
+    }
+
+    assertTrue(this is JetClassOrObject)
+
+    val stub = getStub()
+    if (stub != null) {
+        return stub.getSuperNames()
+    }
+
+    val specifiers = (this as JetClassOrObject).getDelegationSpecifiers()
+    if (specifiers.isEmpty()) return Collections.emptyList<String>()
+
+    val result = ArrayList<String>()
+    for (specifier in specifiers) {
+        val superType = specifier.getTypeAsUserType()
+        if (superType != null) {
+            val referencedName = superType.getReferencedName()
+            if (referencedName != null) {
+                addSuperName(result, referencedName)
+            }
+        }
+    }
+
+    return result
+}
+
+fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
+
+fun JetClass.isInheritable(): Boolean {
+    return isTrait() || hasModifier(JetTokens.OPEN_KEYWORD)
 }

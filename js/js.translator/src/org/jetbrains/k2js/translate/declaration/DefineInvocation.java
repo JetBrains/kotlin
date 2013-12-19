@@ -19,7 +19,7 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
@@ -31,13 +31,13 @@ public class DefineInvocation {
     /* package */
     @NotNull
     static DefineInvocation createDefineInvocation(
-            @NotNull NamespaceDescriptor descriptor,
+            @NotNull FqName packageFqName,
             @Nullable JsExpression initializer,
             @NotNull JsObjectLiteral members,
             @NotNull TranslationContext context
     ) {
         return new DefineInvocation(initializer == null ? JsLiteral.NULL : initializer,
-                             new JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, context.getQualifiedReference(descriptor)),
+                             new JsDocComment(JsAstUtils.LENDS_JS_DOC_TAG, context.getQualifiedReference(packageFqName)),
                              members);
     }
 

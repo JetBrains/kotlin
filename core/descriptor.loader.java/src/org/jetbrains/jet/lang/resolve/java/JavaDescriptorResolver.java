@@ -19,12 +19,10 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 
 import javax.inject.Inject;
@@ -35,7 +33,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
     private JavaClassResolver classResolver;
-    private JavaNamespaceResolver namespaceResolver;
+    private JavaPackageFragmentProvider packageFragmentProvider;
 
     @Inject
     public void setClassResolver(JavaClassResolver classResolver) {
@@ -43,8 +41,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Inject
-    public void setNamespaceResolver(JavaNamespaceResolver namespaceResolver) {
-        this.namespaceResolver = namespaceResolver;
+    public void setPackageFragmentProvider(JavaPackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
     }
 
     @Nullable
@@ -57,13 +55,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         return classResolver.resolveClass(qualifiedName, IGNORE_KOTLIN_SOURCES);
     }
 
-    @Nullable
-    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        return namespaceResolver.resolveNamespace(qualifiedName, searchRule);
-    }
-
-    @Nullable
-    public JetScope getJavaPackageScope(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(namespaceDescriptor);
+    @NotNull
+    public JavaPackageFragmentProvider getPackageFragmentProvider() {
+        return packageFragmentProvider;
     }
 }

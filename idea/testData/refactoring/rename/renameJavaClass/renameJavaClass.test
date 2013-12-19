@@ -1,1 +1,5 @@
-// RENAME: JAVA_CLASS->testing.SomeClass->NewName
+{
+  "type": "JAVA_CLASS",
+  "classFQN": "testing.SomeClass",
+  "newName": "NewName"
+}

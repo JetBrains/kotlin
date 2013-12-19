@@ -195,8 +195,8 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             if (container instanceof JetFunction)
                 return getFunctionBodyScope((JetFunction) container, bindingContext);
         }
-        else if (containingDeclaration instanceof NamespaceDescriptor)
-            return ((NamespaceDescriptor) containingDeclaration).getMemberScope();
+        else if (containingDeclaration instanceof PackageFragmentDescriptor)
+            return ((PackageFragmentDescriptor) containingDeclaration).getMemberScope();
 
         return null;
     }

@@ -49,6 +49,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
@@ -578,6 +579,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     private Editor currentFileEditor;
     private Editor containingFileEditor;
     private BindingContext currentFileContext;
+    private ModuleDescriptor currentFileModule;
     private JetClass ownerClass;
     private ClassDescriptor ownerClassDescriptor;
     private TypeCandidate selectedReceiverType;
@@ -604,7 +606,9 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     public void invoke(@NotNull final Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         currentFile = file;
         currentFileEditor = editor;
-        currentFileContext = AnalyzerFacadeWithCache.analyzeFileWithCache(currentFile).getBindingContext();
+        AnalyzeExhaust exhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(currentFile);
+        currentFileContext = exhaust.getBindingContext();
+        currentFileModule = exhaust.getModuleDescriptor();
 
         ownerType.computeTypeCandidates(currentFileContext);
         List<TypeCandidate> ownerTypeCandidates = ownerType.getTypeCandidates();
@@ -663,9 +667,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
         JetScope scope;
         if (isExtension) {
-            NamespaceDescriptor namespaceDescriptor = currentFileContext.get(BindingContext.FILE_TO_NAMESPACE, currentFile);
-            assert namespaceDescriptor != null;
-            scope = namespaceDescriptor.getMemberScope();
+            scope = currentFileModule.getPackage(JetPsiUtil.getFQName(currentFile)).getMemberScope();
         } else {
             assert ownerClassDescriptor instanceof MutableClassDescriptor;
             scope = ((MutableClassDescriptor) ownerClassDescriptor).getScopeForMemberResolution();
@@ -899,7 +901,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             assert returnTypeRef != null;
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, returnTypeRef.getText());
         }
-        properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFQName(ownerClassDescriptor).asString());
+        properties.setProperty(FileTemplate.ATTRIBUTE_CLASS_NAME, DescriptorUtils.getFqName(ownerClassDescriptor).asString());
         properties.setProperty(FileTemplate.ATTRIBUTE_SIMPLE_CLASS_NAME, ownerClassDescriptor.getName().asString());
         properties.setProperty(ATTRIBUTE_FUNCTION_NAME, functionName);
 
@@ -1057,7 +1059,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             String replacement = typeParameterNameMap.get(declarationDescriptor);
             return replacement == null ? declarationDescriptor.getName().asString() : replacement;
         } else {
-            return fq ? DescriptorUtils.getFQName(declarationDescriptor).asString() : declarationDescriptor.getName().asString();
+            return fq ? DescriptorUtils.getFqName(declarationDescriptor).asString() : declarationDescriptor.getName().asString();
         }
     }
 

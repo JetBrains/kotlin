@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen.state;
 
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +29,7 @@ import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -37,10 +37,19 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
+import org.jetbrains.jet.lang.resolve.java.scope.JavaPurePackageScope;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -88,8 +97,8 @@ public class JetTypeMapper extends BindingTraceAware {
     @NotNull
     public Type getOwner(@NotNull DeclarationDescriptor descriptor, @NotNull OwnerKind kind, boolean isInsideModule) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof NamespaceDescriptor) {
-            return asmTypeForNamespace((NamespaceDescriptor) containingDeclaration, descriptor, isInsideModule);
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            return asmTypeForPackage((PackageFragmentDescriptor) containingDeclaration, descriptor, isInsideModule);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -104,84 +113,60 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    private JavaNamespaceKind getNsKind(@NotNull NamespaceDescriptor ns) {
-        JavaNamespaceKind javaNamespaceKind = bindingContext.get(JavaBindingContext.JAVA_NAMESPACE_KIND, ns);
-        Boolean src = bindingContext.get(BindingContext.NAMESPACE_IS_SRC, ns);
-
-        if (javaNamespaceKind == null && src == null) {
-            throw new IllegalStateException("unknown namespace origin: " + ns);
-        }
-
-        if (javaNamespaceKind != null) {
-            if (javaNamespaceKind == JavaNamespaceKind.CLASS_STATICS && src != null) {
-                throw new IllegalStateException(
-                        "conflicting namespace " + ns + ": it is both java statics and from src");
-            }
-            return javaNamespaceKind;
-        }
-        else {
-            return JavaNamespaceKind.PROPER;
-        }
-    }
-
-    @NotNull
-    private Type asmTypeForNamespace(
-            @NotNull NamespaceDescriptor namespace,
+    private Type asmTypeForPackage(
+            @NotNull PackageFragmentDescriptor packageFragment,
             @NotNull DeclarationDescriptor descriptor,
             boolean insideModule
     ) {
-        StringBuilder r = new StringBuilder();
-
-        List<DeclarationDescriptor> path = getPathWithoutRootNsAndModule(namespace);
-
-        for (DeclarationDescriptor pathElement : path) {
-            NamespaceDescriptor ns = (NamespaceDescriptor) pathElement;
-            if (r.length() > 0) {
-                JavaNamespaceKind nsKind = getNsKind((NamespaceDescriptor) ns.getContainingDeclaration());
-                if (nsKind == JavaNamespaceKind.PROPER) {
-                    r.append("/");
-                }
-                else if (nsKind == JavaNamespaceKind.CLASS_STATICS) {
-                    r.append("$");
-                }
-            }
-            r.append(ns.getName());
-        }
-
-        if (getNsKind(namespace) == JavaNamespaceKind.PROPER) {
-            if (r.length() > 0) {
-                r.append("/");
-            }
-
-            JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
-            if (insideModule && file != null) {
-                String internalName = NamespaceCodegen.getNamespacePartInternalName(file);
-                r.append(internalName.substring(r.length()));
-            }
-            else {
-                r.append(PackageClassUtils.getPackageClassName(namespace.getFqName()));
-            }
-        }
-
-        if (r.length() == 0) {
-            throw new IllegalStateException("internal error: failed to generate classname for " + namespace);
-        }
-
-        return Type.getObjectType(r.toString());
+        return Type.getObjectType(internalNameForPackage(packageFragment, descriptor, insideModule));
     }
 
     @NotNull
-    public static List<DeclarationDescriptor> getPathWithoutRootNsAndModule(@NotNull NamespaceDescriptor descriptor) {
-        List<DeclarationDescriptor> path = new ArrayList<DeclarationDescriptor>();
-        DeclarationDescriptor current = descriptor;
-        while (true) {
-            if (current instanceof NamespaceDescriptor && DescriptorUtils.isRootNamespace((NamespaceDescriptor) current)) {
-                return Lists.reverse(path);
+    private String internalNameForPackage(
+            @NotNull PackageFragmentDescriptor packageFragment,
+            @NotNull DeclarationDescriptor descriptor,
+            boolean insideModule
+    ) {
+        JetScope packageScope = packageFragment.getMemberScope();
+        if (!(packageFragment instanceof JavaPackageFragmentDescriptor)
+            || packageScope instanceof DeserializedPackageMemberScope
+            || packageScope instanceof JavaFullPackageScope) {
+            JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
+            if (insideModule && file != null) {
+                return NamespaceCodegen.getNamespacePartInternalName(file);
             }
-            path.add(current);
-            assert current != null : "Namespace must have a parent: " + descriptor;
-            current = current.getContainingDeclaration();
+            else {
+                return PackageClassUtils.getPackageClassFqName(packageFragment.getFqName()).asString().replace('.', '/');
+            }
         }
+
+        if (!(packageScope instanceof JavaClassStaticMembersScope)) {
+            throw new IllegalStateException("Unexpected scope: " + packageScope.getClass());
+        }
+
+        JavaPackageFragmentProvider javaFragmentProvider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
+
+        StringBuilder r = new StringBuilder();
+        for (FqName pathItem : packageFragment.getFqName().parent().path()) {
+            if (pathItem.isRoot()) {
+                continue;
+            }
+            r.append(pathItem.shortName().asString());
+
+            JetScope memberScope = javaFragmentProvider.getOrCreatePackage(pathItem).getMemberScope();
+            if (memberScope instanceof JavaClassStaticMembersScope) {
+                r.append("$");
+            }
+            else if (memberScope instanceof JavaPurePackageScope || memberScope instanceof JavaFullPackageScope) {
+                r.append("/");
+            }
+            else {
+                throw new IllegalStateException("Unexpected scope: " + memberScope.getClass());
+            }
+        }
+
+        r.append(packageFragment.getName().asString());
+        return r.toString();
     }
 
     @NotNull
@@ -221,13 +206,14 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public Type mapType(@NotNull VariableDescriptor variableDescriptor) {
-        return mapType(variableDescriptor.getType(), null, JetTypeMapperMode.VALUE);
+    public Type mapType(@NotNull CallableDescriptor descriptor) {
+        //noinspection ConstantConditions
+        return mapType(descriptor.getReturnType());
     }
 
     @NotNull
-    public Type mapType(@NotNull ClassifierDescriptor classifierDescriptor) {
-        return mapType(classifierDescriptor.getDefaultType(), null, JetTypeMapperMode.VALUE);
+    public Type mapType(@NotNull ClassifierDescriptor descriptor) {
+        return mapType(descriptor.getDefaultType());
     }
 
     @NotNull
@@ -247,7 +233,7 @@ public class JetTypeMapper extends BindingTraceAware {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
 
         if (descriptor instanceof ClassDescriptor) {
-            FqNameUnsafe className = DescriptorUtils.getFQName(descriptor);
+            FqNameUnsafe className = DescriptorUtils.getFqName(descriptor);
             if (className.isSafe()) {
                 known = KotlinToJavaTypesMap.getInstance().getJavaAnalog(className.toSafe(), jetType.isNullable());
             }
@@ -315,7 +301,7 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            Type asmType = getAsmType(bindingTrace, descriptor);
+            Type asmType = getAsmType(bindingTrace, (ClassDescriptor) descriptor);
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
             return asmType;
         }
@@ -446,7 +432,7 @@ public class JetTypeMapper extends BindingTraceAware {
     ) {
         DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
 
-        functionDescriptor = unwrapFakeOverride(functionDescriptor);
+        functionDescriptor = unwrapFakeOverride(functionDescriptor.getOriginal());
 
         JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), true, kind);
         Type owner;
@@ -472,9 +458,9 @@ public class JetTypeMapper extends BindingTraceAware {
             descriptor = mapSignature("invoke", functionDescriptor, true, kind);
             calleeType = owner;
         }
-        else if (functionParent instanceof NamespaceDescriptor) {
+        else if (functionParent instanceof PackageFragmentDescriptor) {
             assert !superCall;
-            owner = asmTypeForNamespace((NamespaceDescriptor) functionParent, functionDescriptor, isInsideModule);
+            owner = asmTypeForPackage((PackageFragmentDescriptor) functionParent, functionDescriptor, isInsideModule);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;
@@ -853,22 +839,18 @@ public class JetTypeMapper extends BindingTraceAware {
 
             JetDelegatorToSuperCall superCall = closure.getSuperCall();
             if (superCall != null) {
-                DeclarationDescriptor superDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET,
-                                                                                                    superCall
-                                                                                                            .getCalleeExpression()
-                                                                                                            .getConstructorReferenceExpression());
+                DeclarationDescriptor superDescriptor = bindingContext
+                        .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
 
-                if(superDescriptor instanceof ConstructorDescriptor) {
+                if (superDescriptor instanceof ConstructorDescriptor) {
                     ConstructorDescriptor superConstructor = (ConstructorDescriptor) superDescriptor;
 
                     if (isObjectLiteral(bindingContext, descriptor.getContainingDeclaration())) {
                         List<JvmMethodParameterSignature> types = mapConstructorSignature(superConstructor).getKotlinParameterTypes();
-                        if (types != null) {
-                            for (JvmMethodParameterSignature type : types) {
-                                signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
-                                signatureWriter.writeAsmType(type.getAsmType());
-                                signatureWriter.writeParameterTypeEnd();
-                            }
+                        for (JvmMethodParameterSignature type : types) {
+                            signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
+                            signatureWriter.writeAsmType(type.getAsmType());
+                            signatureWriter.writeParameterTypeEnd();
                         }
                     }
                 }

@@ -22,53 +22,48 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.boxType;
-import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.jet.codegen.AsmUtil.numberFunctionOperandType;
 
-public class BinaryOp implements IntrinsicMethod {
+public class BinaryOp extends IntrinsicMethod {
     private final int opcode;
 
     public BinaryOp(int opcode) {
         this.opcode = opcode;
     }
 
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
-        boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if (nullable) {
-            expectedType = unboxType(expectedType);
-        }
+        assert isPrimitive(returnType) : "Return type of BinaryOp intrinsic should be of primitive type : " + returnType;
+
+        Type operandType = numberFunctionOperandType(returnType);
+
         if (arguments.size() == 1) {
             // Intrinsic is called as an ordinary function
             if (receiver != null) {
-                receiver.put(expectedType, v);
+                receiver.put(operandType, v);
             }
-            codegen.gen(arguments.get(0), shift() ? Type.INT_TYPE : expectedType);
+            codegen.gen(arguments.get(0), shift() ? Type.INT_TYPE : operandType);
         }
         else {
-            codegen.gen(arguments.get(0), expectedType);
-            codegen.gen(arguments.get(1), shift() ? Type.INT_TYPE : expectedType);
+            codegen.gen(arguments.get(0), operandType);
+            codegen.gen(arguments.get(1), shift() ? Type.INT_TYPE : operandType);
         }
-        v.visitInsn(expectedType.getOpcode(opcode));
-
-        if (nullable) {
-            StackValue.onStack(expectedType).put(expectedType = boxType(expectedType), v);
-        }
-        return StackValue.onStack(expectedType);
+        v.visitInsn(returnType.getOpcode(opcode));
+        return returnType;
     }
 
     private boolean shift() {

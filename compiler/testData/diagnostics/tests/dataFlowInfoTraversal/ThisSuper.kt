@@ -11,11 +11,11 @@ class Derived : Base() {
         super.bar(<!TYPE_MISMATCH!>x<!>)
         this.baz(<!TYPE_MISMATCH!>x<!>)
         if (x == null) return
-        super.bar(x)
-        this.baz(x)
+        super.bar(<!DEBUG_INFO_AUTOCAST!>x<!>)
+        this.baz(<!DEBUG_INFO_AUTOCAST!>x<!>)
 
         val y: Int? = null
-        if (y != null) super.bar(this.baz(y))
+        if (y != null) super.bar(this.baz(<!DEBUG_INFO_AUTOCAST!>y<!>))
         else this.baz(super.bar(<!TYPE_MISMATCH!>y<!>))
     }
 }

@@ -13,7 +13,7 @@ public trait InheritedSimple : java.lang.Object {
     }
 }
 
-package InheritedSimple {
+package test.InheritedSimple {
     public /*synthesized*/ fun Sub(/*0*/ function: (java.lang.Runnable?) -> jet.Unit): test.InheritedSimple.Sub
     public /*synthesized*/ fun Super(/*0*/ function: (java.lang.Runnable?) -> jet.Unit): test.InheritedSimple.Super
 }

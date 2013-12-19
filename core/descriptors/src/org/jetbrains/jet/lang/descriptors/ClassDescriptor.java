@@ -30,7 +30,7 @@ import java.util.List;
 public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor, ClassOrNamespaceDescriptor {
 
     @NotNull
-    JetScope getMemberScope(List<? extends TypeProjection> typeArguments);
+    JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
 
     @NotNull
     JetScope getUnsubstitutedInnerClassesScope();

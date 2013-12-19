@@ -22,36 +22,34 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmUtil.unboxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.jet.codegen.AsmUtil.numberFunctionOperandType;
 
-public class Inv implements IntrinsicMethod {
+public class Inv extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
-        boolean nullable = expectedType.getSort() == Type.OBJECT;
-        if (nullable) {
-            expectedType = unboxType(expectedType);
-        }
-        receiver.put(expectedType, v);
-        if (expectedType == Type.LONG_TYPE) {
+        assert isPrimitive(returnType) : "Return type of Inv intrinsic should be of primitive type : " + returnType;
+
+        receiver.put(numberFunctionOperandType(returnType), v);
+        if (returnType == Type.LONG_TYPE) {
             v.lconst(-1L);
         }
         else {
             v.iconst(-1);
         }
-        v.xor(expectedType);
-        return StackValue.onStack(expectedType);
+        v.xor(returnType);
+        return returnType;
     }
 }

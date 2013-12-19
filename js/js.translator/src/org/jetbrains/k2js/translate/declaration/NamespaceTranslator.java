@@ -22,8 +22,9 @@ import com.intellij.openapi.util.Trinity;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -38,15 +39,15 @@ import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.
 
 final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
-    private final NamespaceDescriptor descriptor;
+    private final PackageFragmentDescriptor descriptor;
 
     private final FileDeclarationVisitor visitor;
 
     private final NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>> definitionPlace;
 
     NamespaceTranslator(
-            @NotNull final NamespaceDescriptor descriptor,
-            @NotNull final Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation,
+            @NotNull final PackageFragmentDescriptor descriptor,
+            @NotNull final Map<FqName, DefineInvocation> packageFqNameToDefineInvocation,
             @NotNull TranslationContext context
     ) {
         super(context.newDeclaration(descriptor));
@@ -59,12 +60,12 @@ final class NamespaceTranslator extends AbstractTranslator {
             @Override
             @NotNull
             public Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> compute() {
-                DefineInvocation defineInvocation = descriptorToDefineInvocation.get(descriptor);
+                DefineInvocation defineInvocation = packageFqNameToDefineInvocation.get(descriptor.getFqName());
                 if (defineInvocation == null) {
-                    defineInvocation = createDefinitionPlace(null, descriptorToDefineInvocation);
+                    defineInvocation = createDefinitionPlace(null, packageFqNameToDefineInvocation);
                 }
 
-                return createPlace(defineInvocation.getMembers(), context().getQualifiedReference(descriptor));
+                return createPlace(defineInvocation.getMembers(), context().getQualifiedReference(descriptor.getFqName()));
             }
         };
     }
@@ -81,21 +82,22 @@ final class NamespaceTranslator extends AbstractTranslator {
 
     private DefineInvocation createDefinitionPlace(
             @Nullable JsExpression initializer,
-            Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation
+            Map<FqName, DefineInvocation> packageFqNameToDefineInvocation
     ) {
-        DefineInvocation place = createDefineInvocation(descriptor, initializer, new JsObjectLiteral(visitor.getResult(), true), context());
-        descriptorToDefineInvocation.put(descriptor, place);
-        addToParent((NamespaceDescriptor) descriptor.getContainingDeclaration(), getEntry(descriptor, place), descriptorToDefineInvocation);
+        FqName fqName = descriptor.getFqName();
+        DefineInvocation place = createDefineInvocation(fqName, initializer, new JsObjectLiteral(visitor.getResult(), true), context());
+        packageFqNameToDefineInvocation.put(fqName, place);
+        addToParent(fqName.parent(), getEntry(fqName, place), packageFqNameToDefineInvocation);
         return place;
     }
 
-    public void add(@NotNull Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation) {
+    public void add(@NotNull Map<FqName, DefineInvocation> packageFqNameToDefineInvocation) {
         JsExpression initializer = visitor.computeInitializer();
 
-        DefineInvocation defineInvocation = descriptorToDefineInvocation.get(descriptor);
+        DefineInvocation defineInvocation = packageFqNameToDefineInvocation.get(descriptor.getFqName());
         if (defineInvocation == null) {
             if (initializer != null || !visitor.getResult().isEmpty()) {
-                createDefinitionPlace(initializer, descriptorToDefineInvocation);
+                createDefinitionPlace(initializer, packageFqNameToDefineInvocation);
             }
         }
         else {
@@ -112,15 +114,17 @@ final class NamespaceTranslator extends AbstractTranslator {
         }
     }
 
-    private JsPropertyInitializer getEntry(@NotNull NamespaceDescriptor descriptor, DefineInvocation defineInvocation) {
-        return new JsPropertyInitializer(context().getNameForDescriptor(descriptor).makeRef(),
+    private JsPropertyInitializer getEntry(@NotNull FqName fqName, DefineInvocation defineInvocation) {
+        return new JsPropertyInitializer(context().getNameForPackage(fqName).makeRef(),
                                          new JsInvocation(context().namer().packageDefinitionMethodReference(), defineInvocation.asList()));
     }
 
-    private boolean addEntryIfParentExists(NamespaceDescriptor parentDescriptor,
+    private static boolean addEntryIfParentExists(
+            FqName parentFqName,
             JsPropertyInitializer entry,
-            Map<NamespaceDescriptor, DefineInvocation> descriptorToDeclarationPlace) {
-        DefineInvocation parentDefineInvocation = descriptorToDeclarationPlace.get(parentDescriptor);
+            Map<FqName, DefineInvocation> packageFqNameToDeclarationPlace
+    ) {
+        DefineInvocation parentDefineInvocation = packageFqNameToDeclarationPlace.get(parentFqName);
         if (parentDefineInvocation != null) {
             parentDefineInvocation.getMembers().add(entry);
             return true;
@@ -128,16 +132,16 @@ final class NamespaceTranslator extends AbstractTranslator {
         return false;
     }
 
-    private void addToParent(NamespaceDescriptor parentDescriptor,
+    private void addToParent(@NotNull FqName parentFqName,
             JsPropertyInitializer entry,
-            Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation) {
-        while (!addEntryIfParentExists(parentDescriptor, entry, descriptorToDefineInvocation)) {
+            Map<FqName, DefineInvocation> packageFqNameToDefineInvocation) {
+        while (!addEntryIfParentExists(parentFqName, entry, packageFqNameToDefineInvocation)) {
             JsObjectLiteral members = new JsObjectLiteral(new SmartList<JsPropertyInitializer>(entry), true);
-            DefineInvocation defineInvocation = createDefineInvocation(parentDescriptor, null, members, context());
-            entry = getEntry(parentDescriptor, defineInvocation);
+            DefineInvocation defineInvocation = createDefineInvocation(parentFqName, null, members, context());
+            entry = getEntry(parentFqName, defineInvocation);
 
-            descriptorToDefineInvocation.put(parentDescriptor, defineInvocation);
-            parentDescriptor = (NamespaceDescriptor) parentDescriptor.getContainingDeclaration();
+            packageFqNameToDefineInvocation.put(parentFqName, defineInvocation);
+            parentFqName = parentFqName.parent();
         }
     }
 

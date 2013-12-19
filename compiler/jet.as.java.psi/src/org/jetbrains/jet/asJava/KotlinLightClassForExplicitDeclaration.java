@@ -42,7 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -59,7 +59,7 @@ import java.util.List;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightClass implements KotlinLightClass, JetJavaMirrorMarker {
-    private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
+    private final static Key<CachedValue<GeneratedLightClassData>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     @Nullable
     public static KotlinLightClassForExplicitDeclaration create(@NotNull PsiManager manager, @NotNull JetClassOrObject classOrObject) {
@@ -67,16 +67,19 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
             return null;
         }
 
-        // TODO temporary not building light classes for local classes: e.g., they won't be visible in hierarchy
-        if (JetPsiUtil.getOutermostClassOrObject(classOrObject) == null) {
-            return null;
-        }
-
-        String jvmInternalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
+        String jvmInternalName = getJvmInternalName(classOrObject);
         if (jvmInternalName == null) return null;
 
         FqName fqName = JvmClassName.byInternalName(jvmInternalName).getFqNameForClassNameWithoutDollars();
+
         return new KotlinLightClassForExplicitDeclaration(manager, fqName, classOrObject);
+    }
+
+    private static String getJvmInternalName(JetClassOrObject classOrObject) {
+        if (JetPsiUtil.isLocal(classOrObject)) {
+            return getGeneratedLightClassData(classOrObject).getJvmInternalName();
+        }
+        return PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
     }
 
     private final FqName classFqName; // FqName of (possibly inner) class
@@ -153,12 +156,31 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
     @NotNull
     private PsiJavaFileStub getJavaFileStub() {
+        return getGeneratedLightClassData().getJavaFileStub();
+    }
+
+    @NotNull
+    private ClassDescriptor getDescriptor() {
+        ClassDescriptor descriptor = getGeneratedLightClassData().getDescriptor();
+        assert descriptor != null;
+
+        return descriptor;
+    }
+
+    @NotNull
+    private GeneratedLightClassData getGeneratedLightClassData() {
+        return getGeneratedLightClassData(classOrObject);
+    }
+
+    @NotNull
+    private static GeneratedLightClassData getGeneratedLightClassData(JetClassOrObject classOrObject) {
         JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
-        return CachedValuesManager.getManager(getProject()).getCachedValue(
+        return CachedValuesManager.getManager(classOrObject.getProject()).getCachedValue(
                 outermostClassOrObject,
                 JAVA_API_STUB,
-                KotlinJavaFileStubProvider.createForDeclaredTopLevelClass(outermostClassOrObject),
-                        /*trackValue = */false);
+                KotlinJavaFileStubProvider.createForDeclaredClass(outermostClassOrObject),
+                /*trackValue = */false
+        );
     }
 
     @NotNull
@@ -291,6 +313,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         Collection<String> psiModifiers = Sets.newHashSet();
 
         // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
+        //noinspection unchecked
         List<Pair<JetKeywordToken, String>> jetTokenToPsiModifier = Lists.newArrayList(
                 Pair.create(PUBLIC_KEYWORD, PsiModifier.PUBLIC),
                 Pair.create(INTERNAL_KEYWORD, PsiModifier.PUBLIC),
@@ -347,7 +370,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
         ClassDescriptor deprecatedAnnotation = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
         String deprecatedName = deprecatedAnnotation.getName().asString();
-        FqNameUnsafe deprecatedFqName = DescriptorUtils.getFQName(deprecatedAnnotation);
+        FqNameUnsafe deprecatedFqName = DescriptorUtils.getFqName(deprecatedAnnotation);
 
         for (JetAnnotationEntry annotationEntry : jetModifierList.getAnnotationEntries()) {
             JetTypeReference typeReference = annotationEntry.getTypeReference();
@@ -390,6 +413,19 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     @Override
     public boolean isValid() {
         return classOrObject.isValid();
+    }
+
+    @Override
+    public boolean isInheritor(@NotNull PsiClass baseClass, boolean checkDeep) {
+        String qualifiedName;
+        if (baseClass instanceof KotlinLightClassForExplicitDeclaration) {
+            qualifiedName = DescriptorUtils.getFqName(((KotlinLightClassForExplicitDeclaration) baseClass).getDescriptor()).asString();
+        }
+        else {
+            qualifiedName = baseClass.getQualifiedName();
+        }
+
+        return ResolvePackage.checkSuperTypeByFQName(getDescriptor(), qualifiedName, checkDeep);
     }
 
     @Override

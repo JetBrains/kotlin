@@ -72,11 +72,13 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private final ClassKind kind;
     private final boolean isInner;
     private final DescriptorFinder descriptorFinder;
+    private final PackageFragmentProvider packageFragmentProvider;
 
     public DeserializedClassDescriptor(
             @NotNull StorageManager storageManager,
             @NotNull AnnotationDeserializer annotationResolver,
             @NotNull DescriptorFinder descriptorFinder,
+            @NotNull PackageFragmentProvider packageFragmentProvider,
             @NotNull NameResolver nameResolver,
             @NotNull ProtoBuf.Class classProto
     ) {
@@ -84,6 +86,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         this.classProto = classProto;
         this.classId = nameResolver.getClassId(classProto.getFqName());
         this.storageManager = storageManager;
+        this.packageFragmentProvider = packageFragmentProvider;
         this.descriptorFinder = descriptorFinder;
 
         TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, null, nameResolver,
@@ -143,10 +146,15 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
     @NotNull
     private DeclarationDescriptor computeContainingDeclaration() {
-        ClassOrNamespaceDescriptor result = classId.isTopLevelClass() ?
-                                            descriptorFinder.findPackage(classId.getPackageFqName()) :
-                                            descriptorFinder.findClass(classId.getOuterClassId());
-        return result != null ? result : ErrorUtils.getErrorModule();
+        if (classId.isTopLevelClass()) {
+            List<PackageFragmentDescriptor> fragments = packageFragmentProvider.getPackageFragments(classId.getPackageFqName());
+            assert fragments.size() == 1 : "there should be exactly one package: " + fragments;
+            return fragments.iterator().next();
+        }
+        else {
+            ClassOrNamespaceDescriptor result = descriptorFinder.findClass(classId.getOuterClassId());
+            return result != null ? result : ErrorUtils.getErrorModule();
+        }
     }
 
     @NotNull
@@ -245,8 +253,8 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                 throw new IllegalStateException("Object should have a serialized class object: " + classId);
             }
 
-            return new DeserializedClassDescriptor(storageManager, annotationDeserializer, descriptorFinder, deserializer.getNameResolver(),
-                                                   classObjectProto.getData());
+            return new DeserializedClassDescriptor(storageManager, annotationDeserializer, descriptorFinder, packageFragmentProvider, 
+                                                   deserializer.getNameResolver(), classObjectProto.getData());
         }
 
         return descriptorFinder.findClass(classId.createNestedClassId(getClassObjectName(getName())));

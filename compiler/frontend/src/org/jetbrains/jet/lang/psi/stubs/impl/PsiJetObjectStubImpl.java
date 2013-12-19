@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,36 +28,47 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> implements PsiJetObjectStub {
     private final StringRef name;
     private final FqName fqName;
+    private final StringRef[] superNames;
     private final boolean isTopLevel;
     private final boolean isClassObject;
+    private final boolean isLocal;
 
     public PsiJetObjectStubImpl(
             @NotNull IStubElementType elementType,
-            @NotNull StubElement parent,
+            StubElement parent,
             @Nullable String name,
             @Nullable FqName fqName,
+            @NotNull List<String> superNames,
             boolean isTopLevel,
-            boolean isClassObject
+            boolean isClassObject,
+            boolean isLocal
     ) {
-        this(elementType, parent, StringRef.fromString(name), fqName, isTopLevel, isClassObject);
+        this(elementType, parent, StringRef.fromString(name), fqName, Utils.instance$.wrapStrings(superNames), isTopLevel, isClassObject, isLocal);
     }
 
     public PsiJetObjectStubImpl(
             @NotNull IStubElementType elementType,
-            @NotNull StubElement parent,
+            StubElement parent,
             @Nullable StringRef name,
             @Nullable FqName fqName,
+            @NotNull StringRef[] superNames,
             boolean isTopLevel,
-            boolean isClassObject) {
+            boolean isClassObject,
+            boolean isLocal) {
         super(parent, elementType);
 
         this.name = name;
         this.fqName = fqName;
+        this.superNames = superNames;
         this.isTopLevel = isTopLevel;
         this.isClassObject = isClassObject;
+        this.isLocal = isLocal;
     }
 
     @Override
@@ -69,6 +82,16 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
         return fqName;
     }
 
+    @NotNull
+    @Override
+    public List<String> getSuperNames() {
+        List<String> result = new ArrayList<String>();
+        for (StringRef ref : superNames) {
+            result.add(ref.toString());
+        }
+        return result;
+    }
+
     @Override
     public boolean isTopLevel() {
         return isTopLevel;
@@ -77,6 +100,11 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     @Override
     public boolean isClassObject() {
         return isClassObject;
+    }
+
+    @Override
+    public boolean isLocal() {
+        return isLocal;
     }
 
     @Override
@@ -93,8 +121,13 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
             builder.append("top ");
         }
 
+        if (isLocal()) {
+            builder.append("local ");
+        }
+
         builder.append("name=").append(getName());
         builder.append(" fqName=").append(fqName != null ? fqName.toString() : "null");
+        builder.append(" superNames=").append("[").append(StringUtil.join(ArrayUtil.toStringArray(getSuperNames()))).append("]");
         builder.append("]");
 
         return builder.toString();

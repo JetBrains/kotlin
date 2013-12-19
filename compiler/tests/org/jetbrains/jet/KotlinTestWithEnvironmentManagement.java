@@ -25,10 +25,12 @@ public abstract class KotlinTestWithEnvironmentManagement extends UsefulTestCase
         System.setProperty("java.awt.headless", "true");
     }
 
+    @NotNull
     protected JetCoreEnvironment createEnvironmentWithMockJdk(@NotNull ConfigurationKind configurationKind) {
         return createEnvironmentWithJdk(configurationKind, TestJdkKind.MOCK_JDK);
     }
 
+    @NotNull
     protected JetCoreEnvironment createEnvironmentWithJdk(@NotNull ConfigurationKind configurationKind, @NotNull TestJdkKind jdkKind) {
         return JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(getTestRootDisposable(), configurationKind, jdkKind);
     }

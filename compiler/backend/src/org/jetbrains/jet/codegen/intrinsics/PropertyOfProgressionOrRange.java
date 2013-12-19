@@ -23,7 +23,6 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -33,7 +32,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 
-public class PropertyOfProgressionOrRange implements IntrinsicMethod {
+public class PropertyOfProgressionOrRange extends IntrinsicMethod {
     private final FqName ownerClass;
     private final Name propertyName;
 
@@ -42,23 +41,22 @@ public class PropertyOfProgressionOrRange implements IntrinsicMethod {
         this.propertyName = propertyName;
     }
 
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
-        String ownerInternalName = JvmClassName.byFqNameWithoutInnerClasses(this.ownerClass).getInternalName();
-        Type boxedType = boxType(expectedType);
+        String ownerInternalName = JvmClassName.byFqNameWithoutInnerClasses(ownerClass).getInternalName();
+        Type boxedType = boxType(returnType);
         String getterName = PropertyCodegen.getterName(propertyName);
 
         receiver.put(receiver.type, v);
         v.invokevirtual(ownerInternalName, getterName, "()" + boxedType.getDescriptor());
-        StackValue.coerce(boxedType, expectedType, v);
-        return StackValue.onStack(expectedType);
+        return boxedType;
     }
 }

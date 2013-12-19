@@ -17,16 +17,17 @@ fun main(args : Array<String>) {
         d<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     }
 
+    // auto cast isn't needed, but is reported due to KT-4294
     if (d is String) {
-        d<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+        <!DEBUG_INFO_AUTOCAST!>d<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     }
 
     if (d is String?) {
         if (d != null) {
-            d<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+            <!DEBUG_INFO_AUTOCAST!>d<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         }
         if (d is String) {
-            d<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+            <!DEBUG_INFO_AUTOCAST!>d<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         }
     }
 

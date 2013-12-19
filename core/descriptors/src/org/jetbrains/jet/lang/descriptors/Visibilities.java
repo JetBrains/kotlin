@@ -33,14 +33,21 @@ public class Visibilities {
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
                 if ((parent instanceof ClassDescriptor && !DescriptorUtils.isClassObject(parent)) ||
-                    parent instanceof NamespaceDescriptor) {
+                    parent instanceof PackageFragmentDescriptor) {
                     break;
                 }
+            }
+            if (parent == null) {
+                return false;
             }
             DeclarationDescriptor fromParent = from;
             while (fromParent != null) {
                 if (parent == fromParent) {
                     return true;
+                }
+                if (fromParent instanceof PackageFragmentDescriptor) {
+                    return parent instanceof PackageFragmentDescriptor && ((PackageFragmentDescriptor) parent).getFqName()
+                            .isAncestorOf(((PackageFragmentDescriptor) fromParent).getFqName());
                 }
                 fromParent = fromParent.getContainingDeclaration();
             }
@@ -66,7 +73,8 @@ public class Visibilities {
     public static final Visibility INTERNAL = new Visibility("internal", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            return DescriptorUtils.isInSameModule(what, from);
+            DeclarationDescriptor fromOrModule = from instanceof PackageViewDescriptor ? ((PackageViewDescriptor) from).getModule() : from;
+            return DescriptorUtils.areInSameModule(what, fromOrModule);
         }
     };
 
@@ -104,12 +112,13 @@ public class Visibilities {
     private Visibilities() {
     }
 
-    public static boolean isVisible(@Nullable DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+    public static boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
         return findInvisibleMember(what, from) == null;
     }
 
+    @Nullable
     public static DeclarationDescriptorWithVisibility findInvisibleMember(
-            @Nullable DeclarationDescriptorWithVisibility what,
+            @NotNull DeclarationDescriptorWithVisibility what,
             @NotNull DeclarationDescriptor from
     ) {
         DeclarationDescriptorWithVisibility parent = what;

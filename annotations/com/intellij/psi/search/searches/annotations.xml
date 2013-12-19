@@ -1,0 +1,6 @@
+<root>
+  <item
+      name='com.intellij.psi.search.searches.DirectClassInheritorsSearch com.intellij.util.Query&lt;com.intellij.psi.PsiClass&gt; search(com.intellij.psi.PsiClass, com.intellij.psi.search.SearchScope, boolean, boolean)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

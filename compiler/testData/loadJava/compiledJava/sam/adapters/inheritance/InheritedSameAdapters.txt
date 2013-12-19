@@ -18,7 +18,7 @@ public trait InheritedSameAdapters : java.lang.Object {
     }
 }
 
-package InheritedSameAdapters {
+package test.InheritedSameAdapters {
     public /*synthesized*/ fun Sub(/*0*/ function: (java.lang.Runnable?) -> jet.Unit): test.InheritedSameAdapters.Sub
     public /*synthesized*/ fun Super1(/*0*/ function: (java.lang.Runnable?) -> jet.Unit): test.InheritedSameAdapters.Super1
     public /*synthesized*/ fun Super2(/*0*/ function: (java.lang.Runnable?) -> jet.Unit): test.InheritedSameAdapters.Super2

@@ -54,6 +54,10 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doImplementDirectoryTest();
     }
 
+    public void testFunctionFromTraitInJava() {
+        doImplementJavaDirectoryTest("foo.KotlinTrait", "bar");
+    }
+
     public void testGenericMethod() {
         doImplementFileTest();
     }

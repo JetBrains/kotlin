@@ -23,32 +23,22 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
 
-public class EnumValues implements IntrinsicMethod {
+public class EnumValues extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
+            @Nullable PsiElement element,
+            @Nullable List<JetExpression> arguments,
+            StackValue receiver
     ) {
-        JetCallExpression call = (JetCallExpression) element;
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, call.getCalleeExpression());
-        assert resolvedCall != null;
-        CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-        JetType returnType = resultingDescriptor.getReturnType();
-        assert returnType != null;
-        Type type = state.getTypeMapper().mapType(returnType);
-        v.invokestatic(type.getElementType().getInternalName(), "values", "()" + type);
-        StackValue.onStack(type).put(expectedType, v);
-        return StackValue.onStack(expectedType);
+        v.invokestatic(returnType.getElementType().getInternalName(), "values", "()" + returnType);
+        return returnType;
     }
 }

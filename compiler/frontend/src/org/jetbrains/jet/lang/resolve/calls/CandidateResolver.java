@@ -727,12 +727,12 @@ public class CandidateResolver {
         ValueArgumentsCheckingResult checkingResult = checkValueArgumentTypes(
                 context, context.candidateCall, trace, resolveFunctionArgumentBodies);
         ResolutionStatus resultStatus = checkingResult.status;
-        resultStatus = resultStatus.combine(checkReceiver(context, trace));
+        resultStatus = resultStatus.combine(checkReceivers(context, trace));
 
         return new ValueArgumentsCheckingResult(resultStatus, checkingResult.argumentTypes);
     }
 
-    private static <D extends CallableDescriptor> ResolutionStatus checkReceiver(
+    private static <D extends CallableDescriptor> ResolutionStatus checkReceivers(
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull BindingTrace trace
     ) {
@@ -828,7 +828,7 @@ public class CandidateResolver {
     ) {
         ExpressionReceiver receiverToCast = new ExpressionReceiver(JetPsiUtil.safeDeparenthesize(expression, false), actualType);
         List<ReceiverValue> variants =
-                AutoCastUtils.getAutoCastVariants(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
+                AutoCastUtils.getAutoCastVariantsExcludingReceiver(context.trace.getBindingContext(), context.dataFlowInfo, receiverToCast);
         for (ReceiverValue receiverValue : variants) {
             JetType possibleType = receiverValue.getType();
             if (JetTypeChecker.INSTANCE.isSubtypeOf(possibleType, expectedType)) {
@@ -891,11 +891,15 @@ public class CandidateResolver {
 
         BindingContext bindingContext = trace.getBindingContext();
         boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
-        AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, bindingContext);
-        if (!safeAccess && !receiverParameter.getType().isNullable() && !autoCastService.isNotNull(receiverArgument)) {
+        if (!safeAccess && !receiverParameter.getType().isNullable() && receiverArgument.getType().isNullable()) {
+            if (!AutoCastUtils.isNotNull(receiverArgument, bindingContext, context.dataFlowInfo)) {
 
-            context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
-            return UNSAFE_CALL_ERROR;
+                context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
+                return UNSAFE_CALL_ERROR;
+            }
+            if (isExplicitReceiver) {
+                AutoCastUtils.recordAutoCastToNotNullableType(receiverArgument, context.trace);
+            }
         }
         DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext);
         if (safeAccess && !context.dataFlowInfo.getNullability(receiverValue).canBeNull()) {
@@ -927,16 +931,12 @@ public class CandidateResolver {
             }
         }
         else {
-            if (argument.isNamed()) {
-                return parameterDescriptor.getType();
-            }
-            else {
-                JetType varargElementType = parameterDescriptor.getVarargElementType();
-                if (varargElementType == null) {
-                    return parameterDescriptor.getType();
-                }
+            JetType varargElementType = parameterDescriptor.getVarargElementType();
+            if (varargElementType != null) {
                 return varargElementType;
             }
+
+            return parameterDescriptor.getType();
         }
     }
 

@@ -1,8 +1,10 @@
-OUT Buildfile: [TestData]/build.xml
-OUT 
-OUT build:
-OUT [kotlin2js] Compiling [[TestData]/root1,[TestData]/bar.kt,[TestData]/root2/Foo.kt] => [[Temp]/out.js]
-OUT 
-OUT BUILD SUCCESSFUL
-OUT Total time: [time]
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+[kotlin2js] Compiling [[TestData]/root1,[TestData]/bar.kt,[TestData]/root2/Foo.kt] => [[Temp]/out.js]
+
+BUILD SUCCESSFUL
+Total time: [time]
+
 Return code: 0

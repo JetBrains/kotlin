@@ -23,22 +23,26 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.DefaultModificationTracker;
 import com.intellij.openapi.util.ModificationTracker;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.asJava.KotlinLightClassContextCache;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.util.Map;
 
 public class KotlinCacheManager {
+    @NotNull
     public static KotlinCacheManager getInstance(@NotNull Project project) {
         return ServiceManager.getService(project, KotlinCacheManager.class);
     }
 
     private final Map<TargetPlatform, DeclarationsCacheProvider> cacheProviders = Maps.newHashMap();
+    private final KotlinLightClassContextCache lightClassContextCache;
 
     private final DefaultModificationTracker kotlinDeclarationsTracker = new DefaultModificationTracker();
 
     public KotlinCacheManager(@NotNull Project project) {
         cacheProviders.put(TargetPlatform.JVM, new JvmDeclarationsCacheProvider(project));
         cacheProviders.put(TargetPlatform.JS, new JSDeclarationsCacheProvider(project));
+        lightClassContextCache = new KotlinLightClassContextCache(project);
     }
 
     /**
@@ -82,6 +86,10 @@ public class KotlinCacheManager {
         }
 
         return provider;
+    }
+
+    public KotlinLightClassContextCache getLightClassContextCache() {
+        return lightClassContextCache;
     }
 
     public void invalidateCache() {

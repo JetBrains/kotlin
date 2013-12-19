@@ -44,7 +44,7 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
         String text = FileUtil.loadFile(ktFile);
         JetFile jetFile = JetTestUtils.createFile("declarations.kt", text, getEnvironment().getProject());
         AnalyzeExhaust exhaust = JetTestUtils.analyzeFile(jetFile);
-        NamespaceDescriptor testPackage = exhaust.getModuleDescriptor().getNamespace(FqName.topLevel(Name.identifier("test")));
+        PackageViewDescriptor testPackage = exhaust.getModuleDescriptor().getPackage(FqName.topLevel(Name.identifier("test")));
         assert testPackage != null;
 
         List<String> descriptors = recursivelyCollectDescriptors(testPackage);
@@ -74,7 +74,7 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
         return closestInterface(aClass.getSuperclass());
     }
 
-    private static List<String> recursivelyCollectDescriptors(NamespaceDescriptor testPackage) {
+    private static List<String> recursivelyCollectDescriptors(PackageViewDescriptor testPackage) {
         final List<String> lines = Lists.newArrayList();
         RecursiveDescriptorProcessor.process(testPackage, null, new DeclarationDescriptorVisitor<Boolean, Void>() {
 
@@ -92,7 +92,13 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
             }
 
             @Override
-            public Boolean visitNamespaceDescriptor(NamespaceDescriptor descriptor, Void data) {
+            public Boolean visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, Void data) {
+                add(descriptor);
+                return true;
+            }
+
+            @Override
+            public Boolean visitPackageViewDescriptor(PackageViewDescriptor descriptor, Void data) {
                 add(descriptor);
                 return true;
             }

@@ -69,7 +69,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             InjectorForTests injector = new InjectorForTests(getProject(), root);
             KotlinBuiltIns builtIns = injector.getKotlinBuiltIns();
             descriptorResolver = injector.getDescriptorResolver();
-            scope = createScope(builtIns.getBuiltInsScope());
+            scope = createScope(builtIns.getBuiltInsPackageScope());
         }
 
         public void tearDown() throws Exception {

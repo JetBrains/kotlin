@@ -18,6 +18,7 @@ package org.jetbrains.k2js.analyze;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProv
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
@@ -42,6 +44,11 @@ import java.util.Collections;
 import java.util.List;
 
 public final class AnalyzerFacadeForJS {
+    public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
+            new ImportPath("js.*"),
+            new ImportPath("java.lang.*"),
+            new ImportPath("jet.*"),
+            new ImportPath("kotlin.*"));
 
     private AnalyzerFacadeForJS() {
     }
@@ -84,14 +91,18 @@ public final class AnalyzerFacadeForJS {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
 
-        BindingContext libraryBindingContext = config.getLibraryBindingContext();
-        BindingTrace trace = libraryBindingContext == null ?
-                             new ObservableBindingTrace(new BindingTraceContext()) :
-                             new DelegatingBindingTrace(libraryBindingContext, "trace for analyzing library in js");
-        owner.setModuleConfiguration(new JsConfiguration(libraryBindingContext));
+        ModuleDescriptor libraryModule = config.getLibraryModule();
+        if (libraryModule != null) {
+            owner.addFragmentProvider(libraryModule.getPackageFragmentProvider()); // "import" analyzed library module
+        }
+
+        BindingContext libraryContext = config.getLibraryContext();
+        BindingTrace trace = libraryContext == null
+                             ? new BindingTraceContext()
+                             : new DelegatingBindingTrace(libraryContext, "trace with preanalyzed library");
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(project, topDownAnalysisParameters, trace, owner);
         try {
-            Collection<JetFile> allFiles = libraryBindingContext != null ?
+            Collection<JetFile> allFiles = libraryModule != null ?
                                            files :
                                            Config.withJsLibAdded(files, config);
             injector.getTopDownAnalyzer().analyzeFiles(allFiles, Collections.<AnalyzerScriptParameter>emptyList());
@@ -143,14 +154,14 @@ public final class AnalyzerFacadeForJS {
         LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
-        ModuleDescriptorImpl lazyModule = createJsModule("<lazy module>");
-        lazyModule.setModuleConfiguration(new JsConfiguration(null));
-        return new ResolveSession(config.getProject(), storageManager, lazyModule, declarationProviderFactory);
+        ModuleDescriptorImpl module = createJsModule("<lazy module>");
+        module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        return new ResolveSession(config.getProject(), storageManager, module, declarationProviderFactory);
     }
 
     @NotNull
     private static ModuleDescriptorImpl createJsModule(@NotNull String name) {
-        return new ModuleDescriptorImpl(Name.special(name), JsConfiguration.DEFAULT_IMPORT_PATHS, PlatformToKotlinClassMap.EMPTY);
+        return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, PlatformToKotlinClassMap.EMPTY);
     }
 
 }

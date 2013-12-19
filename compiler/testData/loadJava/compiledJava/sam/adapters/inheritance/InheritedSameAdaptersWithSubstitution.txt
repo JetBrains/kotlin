@@ -23,7 +23,7 @@ public trait InheritedSameAdaptersWithSubstitution : java.lang.Object {
     }
 }
 
-package InheritedSameAdaptersWithSubstitution {
+package test.InheritedSameAdaptersWithSubstitution {
     public /*synthesized*/ fun Sub(/*0*/ function: (java.util.Comparator<jet.String>?) -> jet.Unit): test.InheritedSameAdaptersWithSubstitution.Sub
     public /*synthesized*/ fun Super1(/*0*/ function: (java.util.Comparator<jet.String>?) -> jet.Unit): test.InheritedSameAdaptersWithSubstitution.Super1
     public /*synthesized*/ fun </*0*/ T> Super2(/*0*/ function: (java.util.Comparator<T>?) -> jet.Unit): test.InheritedSameAdaptersWithSubstitution.Super2<T>

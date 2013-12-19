@@ -20,28 +20,18 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.EnumValue;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
@@ -103,6 +93,7 @@ public class KotlinBuiltIns {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final ModuleDescriptorImpl builtInsModule;
+    private final BuiltinsPackageFragment builtinsPackageFragment;
 
     private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
 
@@ -133,48 +124,31 @@ public class KotlinBuiltIns {
     private volatile JetType annotationType;
 
     private KotlinBuiltIns() {
-        try {
-            this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
-                                                           DefaultModuleConfiguration.DEFAULT_JET_IMPORTS,
-                                                           PlatformToKotlinClassMap.EMPTY);
-            builtInsModule.setModuleConfiguration(ModuleConfiguration.EMPTY);
-            loadBuiltIns(builtInsModule);
+        this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
+                                                       Collections.<ImportPath>emptyList(),
+                                                       PlatformToKotlinClassMap.EMPTY);
+        builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), builtInsModule);
+        builtInsModule.addFragmentProvider(builtinsPackageFragment.packageFragmentProvider);
 
-            this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
-            this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
+        this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
+        this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
 
-            this.primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
-            this.primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-            this.primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-            this.primitiveTypeToArrayClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
-            this.primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-            this.primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
-            this.jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
+        this.primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
+        this.primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+        this.primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+        this.primitiveTypeToArrayClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
+        this.primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+        this.primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
+        this.jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
 
-            this.nothingClass = getBuiltInClassByName("Nothing");
-            this.arrayClass = getBuiltInClassByName("Array");
-            this.deprecatedAnnotationClass = getBuiltInClassByName("deprecated");
-            this.dataAnnotationClass = getBuiltInClassByName("data");
-            this.functionClasses = new ClassDescriptor[FUNCTION_TRAIT_COUNT];
-            for (int i = 0; i < functionClasses.length; i++) {
-                functionClasses[i] = getBuiltInClassByName("Function" + i);
-            }
+        this.nothingClass = getBuiltInClassByName("Nothing");
+        this.arrayClass = getBuiltInClassByName("Array");
+        this.deprecatedAnnotationClass = getBuiltInClassByName("deprecated");
+        this.dataAnnotationClass = getBuiltInClassByName("data");
+        this.functionClasses = new ClassDescriptor[FUNCTION_TRAIT_COUNT];
+        for (int i = 0; i < functionClasses.length; i++) {
+            functionClasses[i] = getBuiltInClassByName("Function" + i);
         }
-        catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static void loadBuiltIns(@NotNull ModuleDescriptorImpl module) throws IOException {
-        NamespaceDescriptorImpl rootNamespace =
-                        new NamespaceDescriptorImpl(module, Collections.<AnnotationDescriptor>emptyList(), SpecialNames.ROOT_NAMESPACE);
-        rootNamespace.initialize(
-                new WritableScopeImpl(JetScope.EMPTY, rootNamespace, RedeclarationHandler.DO_NOTHING, "members of root namespace"));
-
-        module.setRootNamespace(rootNamespace);
-
-        rootNamespace.getMemberScope().addNamespace(new BuiltinsNamespaceDescriptorImpl(new LockBasedStorageManager(), rootNamespace));
-        rootNamespace.getMemberScope().changeLockLevel(WritableScope.LockLevel.READING);
     }
 
     private void doInitialize() {
@@ -216,20 +190,13 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public NamespaceDescriptor getBuiltInsPackage() {
-        NamespaceDescriptor namespace = getBuiltInsModule().getNamespace(BUILT_INS_PACKAGE_FQ_NAME);
-        assert namespace != null : "Built ins namespace not found: " + BUILT_INS_PACKAGE_FQ_NAME;
-        return namespace;
+    public PackageFragmentDescriptor getBuiltInsPackageFragment() {
+        return builtinsPackageFragment;
     }
 
     @NotNull
-    public FqName getBuiltInsPackageFqName() {
-        return getBuiltInsPackage().getFqName();
-    }
-
-    @NotNull
-    public JetScope getBuiltInsScope() {
-        return getBuiltInsPackage().getMemberScope();
+    public JetScope getBuiltInsPackageScope() {
+        return builtinsPackageFragment.getMemberScope();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -240,7 +207,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsScope().getClassifier(simpleName);
+        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
     }
@@ -942,14 +909,13 @@ public class KotlinBuiltIns {
                && type.getConstructor() == getNothing().getTypeConstructor();
     }
 
-    public boolean isAny(@NotNull JetType type) {
+    public boolean isAnyOrNullableAny(@NotNull JetType type) {
         return !(type instanceof NamespaceType) &&
                type.getConstructor() == getAny().getTypeConstructor();
     }
 
     public boolean isUnit(@NotNull JetType type) {
-        return !(type instanceof NamespaceType) &&
-               type.getConstructor() == getUnitType().getConstructor();
+        return !(type instanceof NamespaceType) && type.equals(getUnitType());
     }
 
     public boolean isData(@NotNull ClassDescriptor classDescriptor) {

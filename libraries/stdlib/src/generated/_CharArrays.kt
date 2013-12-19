@@ -226,6 +226,20 @@ public inline fun <R, C: MutableCollection<in R>> CharArray.mapTo(result: C, tra
 }
 
 /**
+ * Returns the largest element or null if there are no elements
+ */
+public fun CharArray.max() : Char? {
+    if (isEmpty()) return null
+    
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (max < e) max = e
+    }
+    return max
+}
+
+/**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
 public inline fun <R: Comparable<R>> CharArray.maxBy(f: (Char) -> R) : Char? {
@@ -242,6 +256,20 @@ public inline fun <R: Comparable<R>> CharArray.maxBy(f: (Char) -> R) : Char? {
         }
     }
     return maxElem
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun CharArray.min() : Char? {
+    if (isEmpty()) return null
+    
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (min > e) min = e
+    }
+    return min
 }
 
 /**

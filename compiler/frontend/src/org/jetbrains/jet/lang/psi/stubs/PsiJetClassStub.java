@@ -16,13 +16,9 @@
 
 package org.jetbrains.jet.lang.psi.stubs;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 
-import java.util.List;
-
-public interface PsiJetClassStub extends PsiJetStubWithFqName<JetClass> {
-
+public interface PsiJetClassStub extends PsiJetClassOrObjectStub<JetClass> {
     boolean isTrait();
 
     boolean isAnnotation();
@@ -32,7 +28,4 @@ public interface PsiJetClassStub extends PsiJetStubWithFqName<JetClass> {
     boolean isInner();
 
     boolean isEnumEntry();
-
-    @NotNull
-    List<String> getSuperNames();
 }

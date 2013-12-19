@@ -66,7 +66,13 @@ public class RecursiveDescriptorProcessor {
         }
 
         @Override
-        public Boolean visitNamespaceDescriptor(NamespaceDescriptor descriptor, D data) {
+        public Boolean visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, D data) {
+            return applyWorker(descriptor, data)
+                   && visitChildren(descriptor.getMemberScope().getAllDescriptors(), data);
+        }
+
+        @Override
+        public Boolean visitPackageViewDescriptor(PackageViewDescriptor descriptor, D data) {
             return applyWorker(descriptor, data)
                    && visitChildren(descriptor.getMemberScope().getAllDescriptors(), data);
         }
@@ -106,7 +112,7 @@ public class RecursiveDescriptorProcessor {
         @Override
         public Boolean visitModuleDeclaration(ModuleDescriptor descriptor, D data) {
             return applyWorker(descriptor, data)
-                   && visitChildren(descriptor.getNamespace(FqName.ROOT), data);
+                   && visitChildren(descriptor.getPackage(FqName.ROOT), data);
         }
 
         @Override

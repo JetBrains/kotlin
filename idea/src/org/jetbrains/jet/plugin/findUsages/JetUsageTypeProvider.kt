@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public object JetUsageTypeProvider : UsageTypeProviderEx {
@@ -137,9 +137,8 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             }
 
             return when {
-                simpleName.getParentByTypeAndPredicate(
-                        javaClass<JetBinaryExpression>(), false, { JetPsiUtil.isAssignment(it) }
-                )?.getLeft().isAncestor(simpleName) ->
+                (simpleName.getParentByTypesAndPredicate(false, javaClass<JetBinaryExpression>()) { JetPsiUtil.isAssignment(it) })
+                        ?.getLeft().isAncestor(simpleName) ->
                     UsageType.WRITE
 
                 simpleName.getParentByType(javaClass<JetSimpleNameExpression>()) != null ->
@@ -186,7 +185,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             } else {
                 getClassUsageType()
             }
-            is JavaNamespaceDescriptor -> getClassUsageType()
+            is PackageViewDescriptor -> getClassUsageType()
             is VariableDescriptor -> getVariableUsageType()
             is FunctionDescriptor -> getFunctionUsageType(descriptor)
             else -> null

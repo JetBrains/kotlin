@@ -27,11 +27,23 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withIcon(javax.swing.Icon)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withInsertHandler(com.intellij.codeInsight.completion.InsertHandler&lt;com.intellij.codeInsight.lookup.LookupElement&gt;)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withLookupString(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withPresentableText(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withStrikeoutness(boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item

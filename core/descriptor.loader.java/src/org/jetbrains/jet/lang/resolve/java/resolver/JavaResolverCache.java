@@ -30,9 +30,6 @@ public interface JavaResolverCache {
     ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName);
 
     @Nullable
-    NamespaceDescriptor getPackageResolvedFromSource(@NotNull FqName fqName);
-
-    @Nullable
     SimpleFunctionDescriptor getMethod(@NotNull JavaMethod method);
 
     @Nullable
@@ -49,9 +46,7 @@ public interface JavaResolverCache {
 
     void recordClass(@NotNull JavaClass javaClass, @NotNull ClassDescriptor descriptor);
 
-    void recordProperNamespace(@NotNull NamespaceDescriptor descriptor);
+    void recordProperPackage(@NotNull PackageFragmentDescriptor descriptor);
 
-    void recordClassStaticMembersNamespace(@NotNull NamespaceDescriptor descriptor);
-
-    void recordPackage(@NotNull JavaElement element, @NotNull NamespaceDescriptor descriptor);
+    void recordClassStaticMembersNamespace(@NotNull PackageFragmentDescriptor descriptor);
 }

@@ -4,6 +4,6 @@ fun gg() {
     val a: String? = ""
 
     if (a != null) {
-        ff(a)
+        ff(<!DEBUG_INFO_AUTOCAST!>a<!>)
     }
 }

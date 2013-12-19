@@ -20,16 +20,18 @@ import com.google.common.collect.Lists;
 import com.intellij.core.CoreJavaFileManager;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElementFinder;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.JavaPsiFacadeImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TODO Temporary class until {@link JavaPsiFacadeImpl} hacked.
@@ -100,4 +102,36 @@ public class JavaPsiFacadeKotlinHacks {
         return null;
     }
 
+    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage) {
+        GlobalSearchScope scope = GlobalSearchScope.allScope(psiPackage.getProject());
+
+        LinkedHashSet<PsiPackage> result = new LinkedHashSet<PsiPackage>();
+        for (PsiElementFinder finder : extensionPsiElementFinders) {
+            PsiPackage[] packages = finder.getSubPackages(psiPackage, scope);
+            ContainerUtil.addAll(result, packages);
+        }
+        ContainerUtil.addAll(result, getDefaultSubPackages(psiPackage, scope));
+
+        return result.toArray(new PsiPackage[result.size()]);
+    }
+
+    private static PsiPackage[] getDefaultSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+        Map<String, PsiPackage> packagesMap = new HashMap<String, PsiPackage>();
+        String qualifiedName = psiPackage.getQualifiedName();
+        for (PsiDirectory dir : psiPackage.getDirectories(scope)) {
+            PsiDirectory[] subDirs = dir.getSubdirectories();
+            for (PsiDirectory subDir : subDirs) {
+                PsiPackage aPackage = JavaDirectoryService.getInstance().getPackage(subDir);
+                if (aPackage != null) {
+                    String subQualifiedName = aPackage.getQualifiedName();
+                    if (subQualifiedName.startsWith(qualifiedName) && !packagesMap.containsKey(subQualifiedName)) {
+                        packagesMap.put(aPackage.getQualifiedName(), aPackage);
+                    }
+                }
+            }
+        }
+
+        packagesMap.remove(qualifiedName);    // avoid SOE caused by returning a package as a subpackage of itself
+        return packagesMap.values().toArray(new PsiPackage[packagesMap.size()]);
+    }
 }

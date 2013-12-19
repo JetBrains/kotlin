@@ -24,8 +24,8 @@ import org.jetbrains.jet.JetTestUtils
 public abstract class AbstractAnnotationParameterTest : AbstractAnnotationDescriptorResolveTest() {
     fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path))
-        val namespaceDescriptor = getNamespaceDescriptor(fileText)
-        val classDescriptor = AbstractAnnotationDescriptorResolveTest.getClassDescriptor(namespaceDescriptor, "MyClass")
+        val packageView = getPackage(fileText)
+        val classDescriptor = AbstractAnnotationDescriptorResolveTest.getClassDescriptor(packageView, "MyClass")
 
         val expected = InTextDirectivesUtils.findListWithPrefixes(fileText, "// EXPECTED: ").makeString(", ")
         val actual = AbstractAnnotationDescriptorResolveTest.getAnnotations(classDescriptor)

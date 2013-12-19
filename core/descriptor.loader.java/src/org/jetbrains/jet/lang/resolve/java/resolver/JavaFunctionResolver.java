@@ -19,17 +19,16 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
@@ -137,7 +136,7 @@ public final class JavaFunctionResolver {
         List<FunctionDescriptor> superFunctions;
         ExternalSignatureResolver.AlternativeMethodSignature effectiveSignature;
 
-        if (ownerDescriptor instanceof NamespaceDescriptor) {
+        if (ownerDescriptor instanceof PackageFragmentDescriptor) {
             superFunctions = Collections.emptyList();
             effectiveSignature = externalSignatureResolver
                     .resolveAlternativeMethodSignature(method, false, returnType, null, valueParameters, methodTypeParameters);
@@ -198,8 +197,8 @@ public final class JavaFunctionResolver {
             }
         }
 
-        if (owner instanceof NamespaceDescriptor) {
-            SamConstructorDescriptor samConstructor = resolveSamConstructor((NamespaceDescriptor) owner, members);
+        if (owner instanceof JavaPackageFragmentDescriptor) {
+            SamConstructorDescriptor samConstructor = resolveSamConstructor((JavaPackageFragmentDescriptor) owner, members);
             if (samConstructor != null) {
                 functionsFromCurrent.add(samConstructor);
             }
@@ -229,47 +228,9 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    private static JavaClassDescriptor findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
-        ClassifierDescriptor classifier = memberScope.getClassifier(name);
-        if (classifier instanceof JavaClassDescriptor) {
-            return (JavaClassDescriptor) classifier;
-        }
-        return null;
-    }
-
-    // E.g. we have foo.Bar.Baz class declared in Java. It will produce the following descriptors structure:
-    // namespace foo
-    // +-- class Bar
-    // |    +-- class Baz
-    // +-- namespace Bar
-    // We need to find class 'Baz' in namespace 'foo.Bar'.
-    @Nullable
-    private static JavaClassDescriptor findClassInNamespace(@NotNull NamespaceDescriptor namespace, @NotNull Name name) {
-        // First, try to find in namespace directly
-        JavaClassDescriptor found = findClassInScope(namespace.getMemberScope(), name);
-        if (found != null) {
-            return found;
-        }
-
-        // If unsuccessful, try to find class of the same name as current (class 'foo.Bar')
-        NamespaceDescriptorParent parent = namespace.getContainingDeclaration();
-        if (parent instanceof NamespaceDescriptor) {
-            // Calling recursively, looking for 'Bar' in 'foo'
-            ClassDescriptor classForCurrentNamespace = findClassInNamespace((NamespaceDescriptor) parent, namespace.getName());
-            if (classForCurrentNamespace == null) {
-                return null;
-            }
-
-            // Try to find nested class 'Baz' in class 'foo.Bar'
-            return findClassInScope(DescriptorUtils.getStaticNestedClassesScope(classForCurrentNamespace), name);
-        }
-        return null;
-    }
-
-    @Nullable
-    public static SamConstructorDescriptor resolveSamConstructor(@NotNull NamespaceDescriptor owner, @NotNull NamedMembers namedMembers) {
+    public static SamConstructorDescriptor resolveSamConstructor(@NotNull JavaPackageFragmentDescriptor owner, @NotNull NamedMembers namedMembers) {
         if (namedMembers.getSamInterface() != null) {
-            JavaClassDescriptor klass = findClassInNamespace(owner, namedMembers.getName());
+            JavaClassDescriptor klass = DescriptorResolverUtils.findClassInPackage(owner, namedMembers.getName());
             if (klass != null) {
                 return createSamConstructorFunction(owner, klass);
             }

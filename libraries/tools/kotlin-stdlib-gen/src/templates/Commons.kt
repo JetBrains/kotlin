@@ -416,44 +416,6 @@ fun commons(): ArrayList<GenericFunction> {
         }
     }
 
-    templates add f("min()") {
-        doc = "Returns the smallest element or null if there are no elements"
-        returns("T?")
-        absentFor(PrimitiveType.Boolean, PrimitiveType.Char)//currently there are no sane way to compare Char? with something (KT-4251)
-        typeParam("T: Comparable<T>")
-        isInline = false
-        body {
-            """
-                var min: T? = null
-                for (e in this) {
-                    if (min == null || min!! > e) {
-                       min = e
-                    }
-                }
-                return min
-            """
-        }
-    }
-
-    templates add f("max()") {
-        doc = "Returns the largest element or null if there are no elements"
-        returns("T?")
-        absentFor(PrimitiveType.Boolean, PrimitiveType.Char)//currently there are no sane way to compare Char? with something (KT-4251)
-        typeParam("T: Comparable<T>")
-        isInline = false
-        body {
-            """
-                var max: T? = null
-                for (e in this) {
-                    if (max == null || max!! < e) {
-                       max = e
-                    }
-                }
-                return max
-            """
-        }
-    }
-
     templates add f("appendString(buffer: Appendable, separator: String = \", \", prefix: String =\"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
         isInline = false
         doc =

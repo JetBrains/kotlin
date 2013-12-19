@@ -18,8 +18,7 @@ package org.jetbrains.jet.lang.types.lang;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -51,30 +50,30 @@ public class BuiltInsSerializationUtil {
 
     @NotNull
     public static String getClassMetadataPath(@NotNull ClassId classId) {
-        return packageFqNameToPath(classId.getPackageFqName().toUnsafe())
+        return packageFqNameToPath(classId.getPackageFqName())
                + "/" + relativeClassNameToFilePath(classId.getRelativeClassName())
                + "." + CLASS_METADATA_FILE_EXTENSION;
     }
 
     @NotNull
-    public static String getPackageFilePath(@NotNull NamespaceDescriptor packageDescriptor) {
-        FqNameUnsafe fqName = DescriptorUtils.getFQName(packageDescriptor);
+    public static String getPackageFilePath(@NotNull PackageFragmentDescriptor packageFragment) {
+        FqName fqName = packageFragment.getFqName();
         return packageFqNameToPath(fqName) + "/" + PACKAGE_FILE_NAME;
     }
 
     @NotNull
-    public static String getNameTableFilePath(@NotNull NamespaceDescriptor packageDescriptor) {
-        FqNameUnsafe fqName = DescriptorUtils.getFQName(packageDescriptor);
+    public static String getNameTableFilePath(@NotNull PackageFragmentDescriptor packageFragment) {
+        FqName fqName = packageFragment.getFqName();
         return packageFqNameToPath(fqName) + "/" + NAME_TABLE_FILE_NAME;
     }
 
     @NotNull
-    public static String getClassNamesFilePath(@NotNull NamespaceDescriptor packageDescriptor) {
-        FqNameUnsafe fqName = DescriptorUtils.getFQName(packageDescriptor);
+    public static String getClassNamesFilePath(@NotNull PackageFragmentDescriptor packageFragmentDescriptor) {
+        FqName fqName = packageFragmentDescriptor.getFqName();
         return packageFqNameToPath(fqName) + "/" + CLASS_NAMES_FILE_NAME;
     }
 
-    private static String packageFqNameToPath(FqNameUnsafe fqName) {
+    private static String packageFqNameToPath(FqName fqName) {
         return fqName.asString().replace('.', '/');
     }
 }

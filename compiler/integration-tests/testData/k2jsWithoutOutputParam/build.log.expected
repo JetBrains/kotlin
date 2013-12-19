@@ -1,9 +1,13 @@
-OUT Buildfile: [TestData]/build.xml
-OUT 
-OUT build:
-ERR 
-ERR BUILD FAILED
-ERR [TestData]/build.xml:5: "output" should be specified
-ERR 
-ERR Total time: [time]
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+
+ERR:
+
+BUILD FAILED
+[TestData]/build.xml:5: "output" should be specified
+
+Total time: [time]
+
 Return code: 1

@@ -18,7 +18,6 @@ package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -30,14 +29,20 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -65,6 +70,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     private BindingTrace trace;
+    private ModuleDescriptorImpl module;
 
     public CliLightClassGenerationSupport() {
     }
@@ -77,15 +83,40 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
         return trace;
     }
 
+    @NotNull
+    public ModuleDescriptorImpl getModule() {
+        if (module == null) {
+            module = AnalyzerFacadeForJVM.createJavaModule("<module>");
+        }
+        return module;
+    }
+
+    @TestOnly
+    public void setModule(@NotNull ModuleDescriptorImpl module) {
+        assert this.module == null : "module already configured: " + module;
+        this.module = module;
+    }
+
+    @TestOnly
     public void newBindingTrace() {
-        assert ApplicationManager.getApplication().isUnitTestMode() : "Mutating project service's state shouldn't happen other than in tests";
         trace = null;
+        module = null;
+    }
+
+    private LightClassConstructionContext analyzeRelevantCode() {
+        return new LightClassConstructionContext(getTrace().getBindingContext(), null);
     }
 
     @NotNull
     @Override
     public LightClassConstructionContext analyzeRelevantCode(@NotNull Collection<JetFile> files) {
-        return new LightClassConstructionContext(getTrace().getBindingContext(), null);
+        return analyzeRelevantCode();
+    }
+
+    @NotNull
+    @Override
+    public LightClassConstructionContext analyzeRelevantCode(@NotNull JetClassOrObject classOrObject) {
+        return analyzeRelevantCode();
     }
 
     @NotNull
@@ -123,17 +154,14 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull final GlobalSearchScope searchScope) {
-        NamespaceDescriptor namespaceDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName);
-        if (namespaceDescriptor != null) {
-            Collection<JetFile> files = getTrace().get(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor);
-            if (files != null) {
-                return Collections2.filter(files, new Predicate<JetFile>() {
-                    @Override
-                    public boolean apply(JetFile input) {
-                        return PsiSearchScopeUtil.isInScope(searchScope, input);
-                    }
-                });
-            }
+        Collection<JetFile> files = getTrace().get(BindingContext.PACKAGE_TO_FILES, fqName);
+        if (files != null) {
+            return Collections2.filter(files, new Predicate<JetFile>() {
+                @Override
+                public boolean apply(JetFile input) {
+                    return PsiSearchScopeUtil.isInScope(searchScope, input);
+                }
+            });
         }
         return Collections.emptyList();
     }
@@ -156,24 +184,22 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @Override
-    public boolean packageExists(
-            @NotNull FqName fqName, @NotNull GlobalSearchScope scope
-    ) {
-        return getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName) != null;
+    public boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope) {
+        return getModule().getPackage(fqName) != null;
     }
 
     @NotNull
     @Override
     public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
-        NamespaceDescriptor namespaceDescriptor = getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, fqn);
-        if (namespaceDescriptor == null) return Collections.emptyList();
+        PackageViewDescriptor packageView = getModule().getPackage(fqn);
+        if (packageView == null) return Collections.emptyList();
 
-        Collection<DeclarationDescriptor> allDescriptors = namespaceDescriptor.getMemberScope().getAllDescriptors();
-        return ContainerUtil.mapNotNull(allDescriptors, new Function<DeclarationDescriptor, FqName>() {
+        Collection<DeclarationDescriptor> members = packageView.getMemberScope().getAllDescriptors();
+        return ContainerUtil.mapNotNull(members, new Function<DeclarationDescriptor, FqName>() {
             @Override
-            public FqName fun(DeclarationDescriptor input) {
-                if (input instanceof NamespaceDescriptor) {
-                    return DescriptorUtils.getFQName(input).toSafe();
+            public FqName fun(DeclarationDescriptor member) {
+                if (member instanceof PackageViewDescriptor) {
+                    return ((PackageViewDescriptor) member).getFqName();
                 }
                 return null;
             }

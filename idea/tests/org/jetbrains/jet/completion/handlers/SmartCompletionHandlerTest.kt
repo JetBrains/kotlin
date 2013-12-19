@@ -42,4 +42,13 @@ public class SmartCompletionHandlerTest() : CompletionHandlerTestBase() {
     fun testConstructorForNullable() = doTest()
     fun testConstructorForJavaClass() = doTest()
     //fun testConstructorInsertsImport() = doTest() //TODO
+    fun testJavaStaticMethod() = doTest(1, "Thread.currentThread", null, '\n')
+    fun testClassObjectMethod1() = doTest(1, "K.bar", null, '\n')
+    fun testClassObjectMethod2() = doTest(1, "K.bar", null, '\n')
+    //fun testJavaStaticFieldInsertImport() = doTest(1, "Locale.ENGLISH", null, '\n') //TODO
+    fun testTabReplaceIdentifier() = doTest(1, "ss", null, '\t')
+    fun testTabReplaceExpression() = doTest(1, "sss", null, '\t')
+    fun testTabReplaceExpression2() = doTest(1, "sss", null, '\t')
+    fun testTabReplaceExpression3() = doTest(1, "sss", null, '\t')
+    fun testTabReplaceOperand() = doTest(1, "b3", null, '\t')
 }

@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -BASE_WITH_NULLABLE_UPPER_BOUND
-class TypeOf<T>(t: T)
-
+// !CHECK_TYPE
 trait A<T>
 
 trait Out<out T>
@@ -12,13 +11,13 @@ fun <T> doOut(o: Out<T?>): T = throw Exception("$o")
 fun test(a: A<Int>, aN: A<Int?>, o: Out<Int?>) {
     val out = doOut(o)
     //T? >: Int? => T >: Int
-    TypeOf(out): TypeOf<Int>
+    out checkType { it : _<Int> }
 
     val nullable = foo(aN, o)
     //T = Int?, T? >: Int? => T = Int?
-    TypeOf(nullable): TypeOf<Int?>
+    nullable checkType { it : _<Int?> }
 
     val notNullable = foo(a, o)
     //T = Int, T? >: Int? => T = Int
-    TypeOf(notNullable): TypeOf<Int>
+    notNullable checkType { it : _<Int> }
 }

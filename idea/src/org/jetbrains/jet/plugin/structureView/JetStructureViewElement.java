@@ -225,7 +225,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             textBuilder = new StringBuilder(descriptor.getName().asString());
             textBuilder
                     .append(" (")
-                    .append(DescriptorUtils.getFQName(descriptor.getContainingDeclaration()))
+                    .append(DescriptorUtils.getFqName(descriptor.getContainingDeclaration()))
                     .append(")");
         }
         else {

@@ -23,40 +23,44 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 
-public class JavaClassFunction implements IntrinsicMethod {
+public class JavaClassFunction extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen, InstructionAdapter v, @NotNull Type expectedType, @Nullable PsiElement element,
-            @Nullable List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type expectedType,
+            @Nullable PsiElement element,
+            @Nullable List<JetExpression> arguments,
+            StackValue receiver
     ) {
         JetCallExpression call = (JetCallExpression) element;
         ResolvedCall<? extends CallableDescriptor> resolvedCall =
                 codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, call.getCalleeExpression());
         assert resolvedCall != null;
-        CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-        JetType returnType = resultingDescriptor.getReturnType();
+        JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
         assert returnType != null;
-        Type type = state.getTypeMapper().mapType(returnType.getArguments().get(0).getType());
+        Type type = codegen.getState().getTypeMapper().mapType(returnType.getArguments().get(0).getType());
         if (isPrimitive(type)) {
             v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");
         }
         else {
             v.aconst(type);
         }
-        return StackValue.onStack(AsmTypeConstants.getType(Class.class));
+
+        return getType(Class.class);
     }
 }

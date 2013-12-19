@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -25,11 +26,10 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
@@ -38,8 +38,6 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProv
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
@@ -49,6 +47,12 @@ import java.util.List;
 public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     INSTANCE;
+
+    public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
+            new ImportPath("java.lang.*"),
+            new ImportPath("kotlin.*"),
+            new ImportPath("kotlin.io.*"),
+            new ImportPath("jet.*"));
 
     private AnalyzerFacadeForJVM() {
     }
@@ -80,7 +84,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @Override
     public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
         BindingTraceContext javaResolverTrace = new BindingTraceContext();
-        InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(fileProject, javaResolverTrace);
+        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(fileProject, javaResolverTrace);
         return createLazyResolveSession(fileProject, files, javaResolverTrace, injector, true);
     }
 
@@ -90,7 +94,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
             @NotNull InjectorForJavaDescriptorResolver injector,
-            final boolean addBuiltIns
+            boolean addBuiltIns
     ) {
         final JavaClassFinderImpl classFinder = injector.getJavaClassFinder();
 
@@ -103,30 +107,13 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             }
         });
 
-        final JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+        ModuleDescriptorImpl module = injector.getModule();
 
-        ModuleConfiguration moduleConfiguration = new ModuleConfiguration() {
-            @Override
-            public void extendNamespaceScope(
-                    @NotNull NamespaceDescriptor namespaceDescriptor,
-                    @NotNull WritableScope namespaceMemberScope
-            ) {
-                FqName fqName = DescriptorUtils.getFQName(namespaceDescriptor).toSafe();
-                if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName) && addBuiltIns) {
-                    namespaceMemberScope.importScope(KotlinBuiltIns.getInstance().getBuiltInsScope());
-                }
-                if (classFinder.findPackage(fqName) != null) {
-                    JetScope javaPackageScope = javaDescriptorResolver.getJavaPackageScope(namespaceDescriptor);
-                    assert javaPackageScope != null;
-                    namespaceMemberScope.importScope(javaPackageScope);
-                }
-            }
-        };
+        if (addBuiltIns) {
+            module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        }
 
-        ModuleDescriptorImpl lazyModule = createJavaModule("<lazy module>");
-        lazyModule.setModuleConfiguration(moduleConfiguration);
-
-        return new ResolveSession(project, storageManager, lazyModule, declarationProviderFactory, trace);
+        return new ResolveSession(project, storageManager, module, declarationProviderFactory, trace);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
@@ -191,28 +178,38 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve
     ) {
-        ModuleDescriptorImpl owner = createJavaModule("<module>");
+        return analyzeFilesWithJavaIntegration(project, files, trace, scriptParameters, filesToAnalyzeCompletely,
+                                               storeContextForBodiesResolve, createJavaModule("<module>"));
+    }
 
+    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
+            Project project,
+            Collection<JetFile> files,
+            BindingTrace trace,
+            List<AnalyzerScriptParameter> scriptParameters,
+            Predicate<PsiFile> filesToAnalyzeCompletely,
+            boolean storeContextForBodiesResolve,
+            ModuleDescriptorImpl module
+    ) {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, scriptParameters);
 
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
-                project, topDownAnalysisParameters,
-                new ObservableBindingTrace(trace), owner);
-        owner.setModuleConfiguration(injector.getJavaBridgeConfiguration());
+        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         try {
+            module.addFragmentProvider(injector.getJavaPackageFragmentProvider());
             injector.getTopDownAnalyzer().analyzeFiles(files, scriptParameters);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
                                                         null;
-            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, owner);
-        } finally {
+            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, module);
+        }
+        finally {
             injector.destroy();
         }
     }
 
     @NotNull
     public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
-        return new ModuleDescriptorImpl(Name.special(name), JavaBridgeConfiguration.ALL_JAVA_IMPORTS, JavaToKotlinClassMap.getInstance());
+        return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, JavaToKotlinClassMap.getInstance());
     }
 }

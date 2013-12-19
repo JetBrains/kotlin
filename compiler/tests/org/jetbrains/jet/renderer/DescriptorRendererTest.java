@@ -27,12 +27,14 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -94,6 +96,13 @@ public class DescriptorRendererTest extends JetLiteFixture {
                 AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.<AnalyzerScriptParameter>emptyList());
         final BindingContext bindingContext = analyzeExhaust.getBindingContext();
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
+
+        FqName fqName = psiFile.getNamespaceHeader().getFqName();
+        if (!fqName.isRoot()) {
+            PackageViewDescriptor packageDescriptor = analyzeExhaust.getModuleDescriptor().getPackage(fqName);
+            descriptors.add(packageDescriptor);
+        }
+
         psiFile.acceptChildren(new JetVisitorVoid() {
             @Override
             public void visitJetElement(@NotNull JetElement element) {

@@ -19,10 +19,10 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -34,8 +34,8 @@ import static org.jetbrains.k2js.translate.declaration.DefineInvocation.createDe
 
 public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private final Iterable<JetFile> files;
-    private final Map<NamespaceDescriptor,NamespaceTranslator> descriptorToTranslator =
-            new LinkedHashMap<NamespaceDescriptor, NamespaceTranslator>();
+    private final Map<PackageFragmentDescriptor, NamespaceTranslator> packageFragmentToTranslator =
+            new LinkedHashMap<PackageFragmentDescriptor, NamespaceTranslator>();
 
     public static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
         return new NamespaceDeclarationTranslator(files, context).translate();
@@ -50,50 +50,36 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private List<JsStatement> translate() {
         // predictable order
-        Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation = new THashMap<NamespaceDescriptor, DefineInvocation>();
-        NamespaceDescriptor rootNamespaceDescriptor = null;
+        Map<FqName, DefineInvocation> packageFqNameToDefineInvocation = new THashMap<FqName, DefineInvocation>();
 
         for (JetFile file : files) {
-            NamespaceDescriptor descriptor = context().bindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
-            assert descriptor != null;
-            NamespaceTranslator translator = descriptorToTranslator.get(descriptor);
+            PackageFragmentDescriptor packageFragment = context().bindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
+
+            NamespaceTranslator translator = packageFragmentToTranslator.get(packageFragment);
             if (translator == null) {
-                if (rootNamespaceDescriptor == null) {
-                    rootNamespaceDescriptor = getRootPackageDescriptor(descriptorToDefineInvocation, descriptor);
-                }
-                translator = new NamespaceTranslator(descriptor, descriptorToDefineInvocation, context());
-                descriptorToTranslator.put(descriptor, translator);
+                createRootPackageDefineInvocationIfNeeded(packageFqNameToDefineInvocation);
+                translator = new NamespaceTranslator(packageFragment, packageFqNameToDefineInvocation, context());
+                packageFragmentToTranslator.put(packageFragment, translator);
             }
 
             translator.translate(file);
         }
 
-        if (rootNamespaceDescriptor == null) {
-            return Collections.emptyList();
-        }
-
-        for (NamespaceTranslator translator : descriptorToTranslator.values()) {
-            translator.add(descriptorToDefineInvocation);
+        for (NamespaceTranslator translator : packageFragmentToTranslator.values()) {
+            translator.add(packageFqNameToDefineInvocation);
         }
 
         JsVars vars = new JsVars(true);
-        vars.addIfHasInitializer(getRootPackageDeclaration(descriptorToDefineInvocation.get(rootNamespaceDescriptor)));
+        vars.addIfHasInitializer(getRootPackageDeclaration(packageFqNameToDefineInvocation.get(FqName.ROOT)));
 
         return Collections.<JsStatement>singletonList(vars);
     }
 
-    @NotNull
-    private NamespaceDescriptor getRootPackageDescriptor(
-            @NotNull Map<NamespaceDescriptor, DefineInvocation> descriptorToDefineInvocation,
-            @NotNull NamespaceDescriptor descriptor
-    ) {
-        NamespaceDescriptor rootNamespace = descriptor;
-        while (DescriptorUtils.isTopLevelDeclaration(rootNamespace)) {
-            rootNamespace = (NamespaceDescriptor) rootNamespace.getContainingDeclaration();
+    private void createRootPackageDefineInvocationIfNeeded(@NotNull Map<FqName, DefineInvocation> packageFqNameToDefineInvocation) {
+        if (!packageFqNameToDefineInvocation.containsKey(FqName.ROOT)) {
+            packageFqNameToDefineInvocation.put(
+                    FqName.ROOT, createDefineInvocation(FqName.ROOT, null, new JsObjectLiteral(true), context()));
         }
-
-        descriptorToDefineInvocation.put(rootNamespace, createDefineInvocation(rootNamespace, null, new JsObjectLiteral(true), context()));
-        return rootNamespace;
     }
 
     private JsVar getRootPackageDeclaration(@NotNull DefineInvocation defineInvocation) {

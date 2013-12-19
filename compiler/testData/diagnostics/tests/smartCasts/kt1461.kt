@@ -7,8 +7,8 @@ class Sub(str : String) : Super(str) {}
 
 fun foo(sup : Super, sub : Sub) {
     if (sup is Sub) {
-        println("${sup.property}")
-        println(sup.property)
+        println("${<!DEBUG_INFO_AUTOCAST!>sup<!>.property}")
+        println(<!DEBUG_INFO_AUTOCAST!>sup<!>.property)
     }
     println("${sub.property}")
     println(sub.property)

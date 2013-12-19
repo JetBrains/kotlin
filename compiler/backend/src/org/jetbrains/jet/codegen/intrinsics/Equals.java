@@ -22,26 +22,25 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.genEqualsForExpressionsOnStack;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
-public class Equals implements IntrinsicMethod {
+public class Equals extends IntrinsicMethod {
+    @NotNull
     @Override
-    public StackValue generate(
-            ExpressionCodegen codegen,
-            InstructionAdapter v,
-            @NotNull Type expectedType,
+    public Type generateImpl(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull InstructionAdapter v,
+            @NotNull Type returnType,
             PsiElement element,
             List<JetExpression> arguments,
-            StackValue receiver,
-            @NotNull GenerationState state
+            StackValue receiver
     ) {
         StackValue leftExpr;
         JetExpression rightExpr;
@@ -54,9 +53,10 @@ public class Equals implements IntrinsicMethod {
             rightExpr = arguments.get(1);
         }
 
-        leftExpr.put(AsmTypeConstants.OBJECT_TYPE, v);
-        codegen.gen(rightExpr).put(AsmTypeConstants.OBJECT_TYPE, v);
+        leftExpr.put(OBJECT_TYPE, v);
+        codegen.gen(rightExpr).put(OBJECT_TYPE, v);
 
-        return genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, AsmTypeConstants.OBJECT_TYPE, AsmTypeConstants.OBJECT_TYPE);
+        genEqualsForExpressionsOnStack(v, JetTokens.EQEQ, OBJECT_TYPE, OBJECT_TYPE).put(returnType, v);
+        return returnType;
     }
 }

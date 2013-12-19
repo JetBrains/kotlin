@@ -97,9 +97,7 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
     @Override
     protected void register(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor, @NotNull Direction direction) {
         if (direction == Direction.BOTH || direction == Direction.KOTLIN_TO_JAVA) {
-            FqNameUnsafe fqNameUnsafe = DescriptorUtils.getFQName(kotlinDescriptor);
-            assert fqNameUnsafe.isSafe() : "FQ name of a mapped class should be safe: " + fqNameUnsafe;
-            FqName fqName = fqNameUnsafe.toSafe();
+            FqName fqName = DescriptorUtils.getFqNameSafe(kotlinDescriptor);
             register(fqName, AsmTypeConstants.getType(javaClass));
             registerFqName(fqName, new FqName(javaClass.getCanonicalName()));
         }

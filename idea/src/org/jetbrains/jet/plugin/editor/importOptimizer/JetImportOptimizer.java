@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.*;
@@ -184,9 +183,7 @@ public class JetImportOptimizer implements ImportOptimizer {
             private void addResolvedCallFqName(@Nullable ResolvedCall resolvedCall) {
                 if (resolvedCall != null) {
                     CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-                    FqNameUnsafe name = DescriptorUtils.getFQName(resultingDescriptor);
-                    assert name.isSafe(): "FqName for resulting descriptor should be safe " + resultingDescriptor.getName();
-                    usedQualifiedNames.add(name.toSafe());
+                    usedQualifiedNames.add(DescriptorUtils.getFqNameSafe(resultingDescriptor));
                 }
             }
         });

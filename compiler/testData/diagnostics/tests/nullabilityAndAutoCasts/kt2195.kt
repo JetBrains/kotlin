@@ -3,6 +3,6 @@ package foo
 
 private fun sendCommand<T>(errorCallback: (()->Unit)? = null) {
     if (errorCallback != null) {
-        errorCallback()
+        <!DEBUG_INFO_AUTOCAST!>errorCallback<!>()
     }
 }

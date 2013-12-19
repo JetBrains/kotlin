@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
@@ -108,42 +109,54 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static FqNameUnsafe getFQName(@NotNull DeclarationDescriptor descriptor) {
+    public static FqNameUnsafe getFqName(@NotNull DeclarationDescriptor descriptor) {
+        FqName safe = getFqNameSafeIfPossible(descriptor);
+        return safe != null ? safe.toUnsafe() : getFqNameUnsafe(descriptor);
+    }
+
+    @NotNull
+    public static FqName getFqNameSafe(@NotNull DeclarationDescriptor descriptor) {
+        FqName safe = getFqNameSafeIfPossible(descriptor);
+        return safe != null ? safe : getFqNameUnsafe(descriptor).toSafe();
+    }
+
+
+    @Nullable
+    private static FqName getFqNameSafeIfPossible(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ModuleDescriptor || ErrorUtils.isError(descriptor)) {
+            return FqName.ROOT;
+        }
+
+        if (descriptor instanceof PackageViewDescriptor) {
+            return ((PackageViewDescriptor) descriptor).getFqName();
+        }
+        else if (descriptor instanceof PackageFragmentDescriptor) {
+            return ((PackageFragmentDescriptor) descriptor).getFqName();
+        }
+
+        return null;
+    }
+
+    @NotNull
+    private static FqNameUnsafe getFqNameUnsafe(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-
-        if (descriptor instanceof ModuleDescriptor || containingDeclaration instanceof ModuleDescriptor) {
-            return FqName.ROOT.toUnsafe();
-        }
-
-        if (containingDeclaration == null) {
-            if (descriptor instanceof NamespaceDescriptor) {
-                // TODO: namespace must always have parent
-                if (descriptor.getName().equals(Name.identifier("jet"))) {
-                    return FqNameUnsafe.topLevel(Name.identifier("jet"));
-                }
-                if (descriptor.getName().equals(Name.special("<java_root>"))) {
-                    return FqName.ROOT.toUnsafe();
-                }
-            }
-            throw new IllegalStateException("descriptor is not module descriptor and has null containingDeclaration: " + descriptor);
-        }
 
         if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.CLASS_OBJECT) {
             DeclarationDescriptor classOfClassObject = containingDeclaration.getContainingDeclaration();
             assert classOfClassObject != null;
-            return getFQName(classOfClassObject).child(descriptor.getName());
+            return getFqName(classOfClassObject).child(descriptor.getName());
         }
 
-        return getFQName(containingDeclaration).child(descriptor.getName());
+        return getFqName(containingDeclaration).child(descriptor.getName());
     }
 
     public static boolean isTopLevelDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+        return descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor;
     }
 
-    public static boolean isInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        ModuleDescriptor parentModule = getParentOfType(first, ModuleDescriptorImpl.class, false);
-        ModuleDescriptor fromModule = getParentOfType(second, ModuleDescriptorImpl.class, false);
+    public static boolean areInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
+        ModuleDescriptor parentModule = getParentOfType(first, ModuleDescriptor.class, false);
+        ModuleDescriptor fromModule = getParentOfType(second, ModuleDescriptor.class, false);
         assert parentModule != null && fromModule != null;
         return parentModule.equals(fromModule);
     }
@@ -217,10 +230,6 @@ public class DescriptorUtils {
             }
         }
         return false;
-    }
-
-    public static boolean isRootNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        return namespaceDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
     }
 
     public static boolean isFunctionLiteral(@NotNull FunctionDescriptor descriptor) {
@@ -303,7 +312,7 @@ public class DescriptorUtils {
 
     public static boolean inStaticContext(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof NamespaceDescriptor) {
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
             return true;
         }
         if (containingDeclaration instanceof ClassDescriptor) {
@@ -421,6 +430,14 @@ public class DescriptorUtils {
         return parameterTypes;
     }
 
+    public static boolean isInsideOuterClassOrItsSubclass(@Nullable DeclarationDescriptor nested, @NotNull ClassDescriptor outer) {
+        if (nested == null) return false;
+
+        if (nested instanceof ClassDescriptor && isSubclass((ClassDescriptor) nested, outer)) return true;
+
+        return isInsideOuterClassOrItsSubclass(nested.getContainingDeclaration(), outer);
+    }
+
     public static boolean isConstructorOfStaticNestedClass(@Nullable CallableDescriptor descriptor) {
         return descriptor instanceof ConstructorDescriptor && isStaticNestedClass(descriptor.getContainingDeclaration());
     }
@@ -432,8 +449,7 @@ public class DescriptorUtils {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         return descriptor instanceof ClassDescriptor &&
                containing instanceof ClassDescriptor &&
-               !((ClassDescriptor) descriptor).isInner() &&
-               !((ClassDescriptor) containing).getKind().isSingleton();
+               !((ClassDescriptor) descriptor).isInner();
     }
 
     @Nullable
@@ -486,5 +502,13 @@ public class DescriptorUtils {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         return isTopLevelDeclaration(descriptor) ||
                containing instanceof ClassDescriptor && isTopLevelOrInnerClass((ClassDescriptor) containing);
+    }
+
+    @TestOnly
+    @NotNull
+    public static PackageFragmentDescriptor getExactlyOnePackageFragment(@NotNull ModuleDescriptor module, @NotNull FqName fqName) {
+        List<PackageFragmentDescriptor> packageFragments = module.getPackageFragmentProvider().getPackageFragments(fqName);
+        assert packageFragments.size() == 1 : "Exactly one package fragment expected: " + packageFragments;
+        return packageFragments.get(0);
     }
 }

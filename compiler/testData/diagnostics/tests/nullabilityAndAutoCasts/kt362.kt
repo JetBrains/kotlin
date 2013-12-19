@@ -7,11 +7,11 @@ fun test() {
   val p = test.Public()
   if (p.public is Int) <!AUTOCAST_IMPOSSIBLE!>p.public<!> + 1
   if (p.<!INVISIBLE_MEMBER!>protected<!> is Int) <!AUTOCAST_IMPOSSIBLE!>p.<!INVISIBLE_MEMBER!>protected<!><!> + 1
-  if (p.internal is Int) p.internal + 1
+  if (p.internal is Int) <!DEBUG_INFO_AUTOCAST!>p.internal<!> + 1
   val i = test.Internal()
-  if (i.public is Int) i.public + 1
-  if (i.<!INVISIBLE_MEMBER!>protected<!> is Int) i.<!INVISIBLE_MEMBER!>protected<!> + 1
-  if (i.internal is Int) i.internal + 1
+  if (i.public is Int) <!DEBUG_INFO_AUTOCAST!>i.public<!> + 1
+  if (i.<!INVISIBLE_MEMBER!>protected<!> is Int) <!DEBUG_INFO_AUTOCAST!>i.<!INVISIBLE_MEMBER!>protected<!><!> + 1
+  if (i.internal is Int) <!DEBUG_INFO_AUTOCAST!>i.internal<!> + 1
 }
 
 // FILE: other.kt

@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DEBUG_INFO_AUTOCAST
 trait Either<out A, out B>
 trait Left<out A>: Either<A, Nothing> {
     val value: A

@@ -20,12 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeProjectionImpl;
@@ -33,6 +38,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameSafe;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
@@ -41,10 +47,8 @@ public final class DescriptorResolverUtils {
 
     public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
         if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
-            FqName fqName = javaClass.getFqName();
-            if (fqName != null && PackageClassUtils.isPackageClassFqName(fqName)) {
-                return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE) != null;
-            }
+            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE) != null
+                   || javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT) != null;
         }
         return false;
     }
@@ -56,7 +60,7 @@ public final class DescriptorResolverUtils {
         return false;
     }
 
-    public static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
+    private static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
         return isCompiledKotlinClass(javaClass) || isCompiledKotlinPackageClass(javaClass);
     }
 
@@ -264,5 +268,105 @@ public final class DescriptorResolverUtils {
                                         new TypeProjectionImpl(originalToAltTypeParameter.getValue().getDefaultType()));
         }
         return TypeSubstitutor.create(typeSubstitutionContext);
+    }
+
+    @Nullable
+    private static JavaClassDescriptor findClassInScope(@NotNull JetScope memberScope, @NotNull Name name) {
+        ClassifierDescriptor classifier = memberScope.getClassifier(name);
+        if (classifier instanceof JavaClassDescriptor) {
+            return (JavaClassDescriptor) classifier;
+        }
+        return null;
+    }
+
+    // E.g. we have foo.Bar.Baz class declared in Java. It will produce the following descriptors structure:
+    // package fragment foo
+    // +-- class Bar
+    // |    +-- class Baz
+    // +-- package fragment Bar
+    // We need to find class 'Baz' in fragment 'foo.Bar'.
+    @Nullable
+    static JavaClassDescriptor findClassInPackage(@NotNull JavaPackageFragmentDescriptor fragment, @NotNull Name name) {
+        // First, try to find in fragment directly
+        JavaClassDescriptor found = findClassInScope(fragment.getMemberScope(), name);
+        if (found != null) {
+            return found;
+        }
+
+        // If unsuccessful, try to find class of the same name as current (class 'foo.Bar')
+        JavaPackageFragmentDescriptor parentPackage = getParentPackage(fragment);
+        if (parentPackage == null) {
+            return null;
+        }
+
+        // Calling recursively, looking for 'Bar' in 'foo'
+        ClassDescriptor classForCurrentPackage = findClassInPackage(parentPackage, fragment.getName());
+        if (classForCurrentPackage != null) {
+            // Try to find nested class 'Baz' in class 'foo.Bar'
+            return findClassInScope(DescriptorUtils.getStaticNestedClassesScope(classForCurrentPackage), name);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static JavaPackageFragmentDescriptor getParentPackage(@NotNull JavaPackageFragmentDescriptor fragment) {
+        FqName fqName = fragment.getFqName();
+        if (fqName.isRoot()) {
+            return null;
+        }
+
+        JavaPackageFragmentDescriptor parentPackage = fragment.getProvider().getOrCreatePackage(fqName.parent());
+        assert parentPackage != null : " couldn't find parent package for " + fragment;
+        return parentPackage;
+    }
+
+    @Nullable
+    public static JavaClassDescriptor getClassForCorrespondingJavaPackage(@NotNull JavaPackageFragmentDescriptor fragment) {
+        JavaPackageFragmentDescriptor parentPackage = getParentPackage(fragment);
+        if (parentPackage == null) {
+            return null;
+        }
+
+        return findClassInPackage(parentPackage, fragment.getFqName().shortName());
+    }
+
+    @Nullable
+    public static JavaPackageFragmentDescriptor getPackageForCorrespondingJavaClass(@NotNull JavaClassDescriptor javaClass) {
+        PackageFragmentDescriptor packageFragment = DescriptorUtils.getParentOfType(javaClass, PackageFragmentDescriptor.class);
+        assert packageFragment instanceof JavaPackageFragmentDescriptor :
+                "java class " + javaClass + " is under non-java fragment: " + packageFragment;
+
+        JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
+        return provider.getOrCreatePackage(getFqNameSafe(javaClass));
+    }
+
+    public static boolean isJavaClassVisibleAsPackage(@NotNull JavaClass javaClass) {
+        return !isCompiledKotlinClassOrPackageClass(javaClass) && hasStaticMembers(javaClass);
+    }
+
+    private static boolean hasStaticMembers(@NotNull JavaClass javaClass) {
+        for (JavaMethod method : javaClass.getMethods()) {
+            if (method.isStatic() && !shouldBeInEnumClassObject(method)) {
+                return true;
+            }
+        }
+
+        for (JavaField field : javaClass.getFields()) {
+            if (field.isStatic() && !field.isEnumEntry()) {
+                return true;
+            }
+        }
+
+        for (JavaClass nestedClass : javaClass.getInnerClasses()) {
+            if (SingleAbstractMethodUtils.isSamInterface(nestedClass)) {
+                return true;
+            }
+            if (nestedClass.isStatic() && hasStaticMembers(nestedClass)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

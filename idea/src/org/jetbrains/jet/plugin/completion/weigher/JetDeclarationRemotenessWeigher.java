@@ -63,7 +63,7 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
 
             DeclarationDescriptor descriptor = lookupObject.getDescriptor();
             if (descriptor != null) {
-                FqNameUnsafe fqName = DescriptorUtils.getFQName(descriptor);
+                FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
                 // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
                 if (QualifiedNamesUtil.isValidJavaFqName(fqName.toString())) {
                     ImportPath importPath = new ImportPath(fqName.toString());
@@ -71,7 +71,7 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
                         return MyResult.notImported;
                     }
                     else {
-                        if (ImportInsertHelper.isImportedWithKotlinDefault(importPath)) {
+                        if (ImportInsertHelper.isImportedWithDefault(importPath, file)) {
                             return MyResult.kotlinDefaultImport;
                         }
                         return MyResult.imported;

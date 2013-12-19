@@ -40,6 +40,11 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 
 public abstract class StackValue {
+
+    private static final String NULLABLE_BYTE_TYPE_NAME = "java/lang/Byte";
+    private static final String NULLABLE_SHORT_TYPE_NAME = "java/lang/Short";
+    private static final String NULLABLE_LONG_TYPE_NAME = "java/lang/Long";
+
     @NotNull
     public final Type type;
 
@@ -154,8 +159,19 @@ public abstract class StackValue {
     }
 
     private static void box(Type type, Type toType, InstructionAdapter v) {
-        // TODO handle toType correctly
-        if (type == Type.INT_TYPE || (isIntPrimitive(type) && toType.getInternalName().equals("java/lang/Integer"))) {
+        if (type == Type.BYTE_TYPE || toType.getInternalName().equals(NULLABLE_BYTE_TYPE_NAME) && type == Type.INT_TYPE) {
+            v.cast(type, Type.BYTE_TYPE);
+            v.invokestatic(NULLABLE_BYTE_TYPE_NAME, "valueOf", "(B)L" + NULLABLE_BYTE_TYPE_NAME + ";");
+        }
+        else if (type == Type.SHORT_TYPE || toType.getInternalName().equals(NULLABLE_SHORT_TYPE_NAME) && type == Type.INT_TYPE) {
+            v.cast(type, Type.SHORT_TYPE);
+            v.invokestatic(NULLABLE_SHORT_TYPE_NAME, "valueOf", "(S)L" + NULLABLE_SHORT_TYPE_NAME + ";");
+        }
+        else if (type == Type.LONG_TYPE || toType.getInternalName().equals(NULLABLE_LONG_TYPE_NAME) && type == Type.INT_TYPE) {
+            v.cast(type, Type.LONG_TYPE);
+            v.invokestatic(NULLABLE_LONG_TYPE_NAME, "valueOf", "(J)L" + NULLABLE_LONG_TYPE_NAME +";");
+        }
+        else if (type == Type.INT_TYPE) {
             v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
         }
         else if (type == Type.BOOLEAN_TYPE) {
@@ -163,15 +179,6 @@ public abstract class StackValue {
         }
         else if (type == Type.CHAR_TYPE) {
             v.invokestatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;");
-        }
-        else if (type == Type.SHORT_TYPE) {
-            v.invokestatic("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;");
-        }
-        else if (type == Type.LONG_TYPE) {
-            v.invokestatic("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;");
-        }
-        else if (type == Type.BYTE_TYPE) {
-            v.invokestatic("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;");
         }
         else if (type == Type.FLOAT_TYPE) {
             v.invokestatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;");
@@ -234,8 +241,13 @@ public abstract class StackValue {
             }
         }
         else if (toType.equals(JET_UNIT_TYPE)) {
-            pop(v, fromType);
-            putUnitInstance(v);
+            if (fromType.equals(getType(Object.class))) {
+                v.checkcast(JET_UNIT_TYPE);
+            }
+            else if (!fromType.equals(getType(Void.class))) {
+                pop(v, fromType);
+                putUnitInstance(v);
+            }
         }
         else if (toType.getSort() == Type.ARRAY) {
             v.checkcast(toType);
@@ -430,6 +442,7 @@ public abstract class StackValue {
             else {
                 v.aconst(value);
             }
+
             coerceTo(type, v);
         }
 
@@ -619,7 +632,7 @@ public abstract class StackValue {
                 ((CallableMethod) getter).invokeWithNotNullAssertion(v, state, resolvedGetCall);
             }
             else {
-                ((IntrinsicMethod) getter).generate(codegen, v, type, null, null, null, state);
+                ((IntrinsicMethod) getter).generate(codegen, v, this.type, null, null, null);
             }
             coerceTo(type, v);
         }
@@ -642,7 +655,7 @@ public abstract class StackValue {
             }
             else {
                 //noinspection ConstantConditions
-                ((IntrinsicMethod) setter).generate(codegen, v, null, null, null, null, state);
+                ((IntrinsicMethod) setter).generate(codegen, v, null, null, null, null);
             }
         }
 

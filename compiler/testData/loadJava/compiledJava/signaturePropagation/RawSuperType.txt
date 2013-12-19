@@ -13,6 +13,6 @@ public open class RawSuperType : java.lang.Object {
     }
 }
 
-package RawSuperType {
+package test.RawSuperType {
     public /*synthesized*/ fun </*0*/ T> Super(/*0*/ function: (T?) -> jet.Unit): test.RawSuperType.Super<T>
 }

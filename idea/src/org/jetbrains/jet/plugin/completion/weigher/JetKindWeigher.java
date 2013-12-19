@@ -20,7 +20,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementWeigher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
@@ -53,7 +53,7 @@ class JetKindWeigher extends LookupElementWeigher {
                 else if (descriptor instanceof PropertyDescriptor) {
                     return MyResult.property;
                 }
-                else if (descriptor instanceof NamespaceDescriptor) {
+                else if (descriptor instanceof PackageViewDescriptor) {
                     return MyResult.packages;
                 }
             }

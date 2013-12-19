@@ -59,7 +59,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         private boolean isDelegationToSuperCall;
 
-        private ClassDescriptor descriptor;
+        private final ClassDescriptor descriptor;
 
         public ClassDescriptorWithState(ClassDescriptor descriptor) {
             this.descriptor = descriptor;
@@ -379,8 +379,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (containingDeclaration instanceof ClassDescriptor) {
             return peek + '$' + name;
         }
-        else if (containingDeclaration instanceof NamespaceDescriptor) {
-            FqName qualifiedName = ((NamespaceDescriptor) containingDeclaration).getFqName();
+        else if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            FqName qualifiedName = ((PackageFragmentDescriptor) containingDeclaration).getFqName();
             String packageClassShortName = PackageClassUtils.getPackageClassName(qualifiedName);
             String packageClassName = peek.isEmpty() ? packageClassShortName : peek + "/" + packageClassShortName;
             return packageClassName + '$' + name;

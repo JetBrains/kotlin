@@ -270,8 +270,14 @@ public class ControlStructureTypingUtils {
 
             @Override
             public Void visitIfExpression(@NotNull JetIfExpression ifExpression, CheckTypeContext c) {
-                checkExpressionType(ifExpression.getThen(), c);
-                checkExpressionType(ifExpression.getElse(), c);
+                JetExpression thenBranch = ifExpression.getThen();
+                JetExpression elseBranch = ifExpression.getElse();
+                if (thenBranch == null || elseBranch == null) {
+                    visitExpression(ifExpression, c);
+                    return null;
+                }
+                checkExpressionType(thenBranch, c);
+                checkExpressionType(elseBranch, c);
                 return null;
             }
 

@@ -165,13 +165,13 @@ public final class UsageTracker {
         return false;
     }
 
-    // differs from DescriptorUtils - fails if reach NamespaceDescriptor
+    // differs from DescriptorUtils - fails if reach PackageFragmentDescriptor
     private static boolean isAncestor(
             @NotNull DeclarationDescriptor ancestor,
             @NotNull DeclarationDescriptor declarationDescriptor
     ) {
         DeclarationDescriptor descriptor = declarationDescriptor.getContainingDeclaration();
-        while (descriptor != null && !(descriptor instanceof NamespaceDescriptor)) {
+        while (descriptor != null && !(descriptor instanceof PackageFragmentDescriptor)) {
             if (ancestor == descriptor) {
                 return true;
             }

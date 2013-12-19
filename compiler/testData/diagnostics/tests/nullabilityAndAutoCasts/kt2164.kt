@@ -9,30 +9,30 @@ fun main(args : Array<String>) {
     foo(<!TYPE_MISMATCH!>x<!>)
 
     if (x != null) {
-        foo(x)
+        foo(<!DEBUG_INFO_AUTOCAST!>x<!>)
         foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-        foo(x)
+        foo(<!DEBUG_INFO_AUTOCAST!>x<!>)
     }
 
     foo(<!TYPE_MISMATCH!>x<!>)
 
     if (x != null) {
-        foo(x)
+        foo(<!DEBUG_INFO_AUTOCAST!>x<!>)
         foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-        foo(x)
+        foo(<!DEBUG_INFO_AUTOCAST!>x<!>)
     } else {
         foo(<!TYPE_MISMATCH!>x<!>)
         foo(x!!)
-        foo(x)
+        foo(<!DEBUG_INFO_AUTOCAST!>x<!>)
     }
 
-    foo(x)
+    foo(<!DEBUG_INFO_AUTOCAST!>x<!>)
     foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-    foo(x)
+    foo(<!DEBUG_INFO_AUTOCAST!>x<!>)
     
     val y: Int? = null
     y!!
     y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
-    foo(y)
+    foo(<!DEBUG_INFO_AUTOCAST!>y<!>)
     foo(y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }

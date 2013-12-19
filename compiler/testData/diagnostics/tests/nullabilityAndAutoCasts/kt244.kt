@@ -5,18 +5,18 @@ package kt244
 
 fun f(s: String?) {
     if (s != null) {
-        s.length  //ok
-        var <!UNUSED_VARIABLE!>i<!> = s.length //error: Only safe calls are allowed on a nullable receiver
-        System.out.println(s.length) //error
+        <!DEBUG_INFO_AUTOCAST!>s<!>.length  //ok
+        var <!UNUSED_VARIABLE!>i<!> = <!DEBUG_INFO_AUTOCAST!>s<!>.length //error: Only safe calls are allowed on a nullable receiver
+        System.out.println(<!DEBUG_INFO_AUTOCAST!>s<!>.length) //error
     }
 }
 
 // more tests
 class A(a: String?) {
-    val b = if (a != null) a.length else 1
+    val b = if (a != null) <!DEBUG_INFO_AUTOCAST!>a<!>.length else 1
     {
         if (a != null) {
-            val c = a.length
+            val c = <!DEBUG_INFO_AUTOCAST!>a<!>.length
         }
     }
 
@@ -24,7 +24,7 @@ class A(a: String?) {
 
     {
         if (a is String) {
-            i = a.length
+            i = <!DEBUG_INFO_AUTOCAST!>a<!>.length
         }
         else {
             i = 3

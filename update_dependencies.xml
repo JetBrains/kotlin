@@ -1,6 +1,11 @@
 <project name="Update Dependencies" default="update">
+<<<<<<< HEAD
     <property name="jb.buildserver.build.id" value="2196094"/>
     <property name="public.buildserver.build.id" value="102587"/>
+=======
+    <property name="jb.buildserver.build.id" value="2257215"/>
+    <property name="public.buildserver.build.id" value="107080"/>
+>>>>>>> remotes/origin/master
 
     <condition property="os.tag" value="win.zip">
       <os family="windows" />

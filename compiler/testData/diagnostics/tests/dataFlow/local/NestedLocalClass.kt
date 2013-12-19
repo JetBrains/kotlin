@@ -4,7 +4,7 @@ fun test(x: Any) {
   class LocalOuter {
     inner class Local {
       {
-        x.length
+        <!DEBUG_INFO_AUTOCAST!>x<!>.length
       }
     }
   }

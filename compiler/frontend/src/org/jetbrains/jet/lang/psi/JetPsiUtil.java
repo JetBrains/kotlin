@@ -570,10 +570,6 @@ public class JetPsiUtil {
         return statements.isEmpty() ? null : statements.get(statements.size() - 1);
     }
 
-    public static boolean isLocalClass(@NotNull JetClassOrObject classOrObject) {
-        return getOutermostClassOrObject(classOrObject) == null;
-    }
-
     public static boolean isTrait(@NotNull JetClassOrObject classOrObject) {
         return classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait();
     }
@@ -595,7 +591,7 @@ public class JetPsiUtil {
             }
             if (!(parent instanceof JetClassBody)) {
                 // It is a local class, no legitimate outer
-                return null;
+                return current;
             }
 
             current = (JetClassOrObject) parent.getParent();
@@ -907,12 +903,12 @@ public class JetPsiUtil {
             throw new IllegalArgumentException("Should be called only for files with namespace: " + file);
         }
 
-        List<JetSimpleNameExpression> names = header.getParentNamespaceNames();
-        if (!(0 <= partIndex && partIndex < names.size() + 1)) {
+        List<JetSimpleNameExpression> names = header.getNamespaceNames();
+        if (!(0 <= partIndex && partIndex < names.size())) {
             throw new IndexOutOfBoundsException(String.format("%s index for file with header %s is out of range", partIndex, header.getText()));
         }
 
-        return (names.size() > partIndex) ? names.get(partIndex) : header.getLastPartExpression();
+        return names.get(partIndex);
     }
 
     // Delete given element and all the elements separating it from the neighboring elements of the same class
@@ -1008,8 +1004,10 @@ public class JetPsiUtil {
         }
 
         //noinspection unchecked
-        JetElement container =
-                PsiTreeUtil.getParentOfType(declaration, JetBlockExpression.class, JetClassInitializer.class);
+        JetElement container = PsiTreeUtil.getParentOfType(
+                declaration,
+                JetBlockExpression.class, JetClassInitializer.class, JetProperty.class, JetFunction.class
+        );
         if (container == null) return null;
 
         return (container instanceof JetClassInitializer) ? ((JetClassInitializer) container).getBody() : container;

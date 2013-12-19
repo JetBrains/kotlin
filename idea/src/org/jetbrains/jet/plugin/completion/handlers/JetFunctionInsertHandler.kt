@@ -177,7 +177,7 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bra
 
                         if (DescriptorUtils.isTopLevelDeclaration(functionDescriptor)) {
                             ApplicationManager.getApplication()?.runWriteAction {
-                                val fqn = DescriptorUtils.getFQName(functionDescriptor).toSafe()
+                                val fqn = DescriptorUtils.getFqNameSafe(functionDescriptor)
                                 ImportInsertHelper.addImportDirectiveIfNeeded(fqn, file)
                             }
                         }

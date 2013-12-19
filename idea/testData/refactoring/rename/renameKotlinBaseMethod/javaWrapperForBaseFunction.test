@@ -1,1 +1,6 @@
-// RENAME: JAVA_METHOD->testing.rename.A->void first()->second
+{
+  "type": "JAVA_METHOD",
+  "classFQN": "testing.rename.A",
+  "methodSignature": "void first()",
+  "newName": "second"
+}

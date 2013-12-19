@@ -198,7 +198,7 @@ public class TypeUnifierTest extends JetLiteFixture {
     }
 
     private TypeProjection makeType(String typeStr) {
-        return makeTypeProjection(builtIns.getBuiltInsScope(), typeStr);
+        return makeTypeProjection(builtIns.getBuiltInsPackageScope(), typeStr);
     }
 
     private TypeProjection makeTypeProjection(JetScope scope, String typeStr) {

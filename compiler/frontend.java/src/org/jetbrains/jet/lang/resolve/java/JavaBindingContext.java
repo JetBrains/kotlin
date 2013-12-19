@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -32,7 +32,7 @@ public class JavaBindingContext {
     /**
      * @see BindingContext#NAMESPACE_IS_SRC
      */
-    public static final WritableSlice<NamespaceDescriptor, JavaNamespaceKind> JAVA_NAMESPACE_KIND = Slices.createSimpleSlice();
+    public static final WritableSlice<PackageFragmentDescriptor, JavaNamespaceKind> JAVA_NAMESPACE_KIND = Slices.createSimpleSlice();
 
     public static final WritableSlice<DeclarationDescriptor, List<String>> LOAD_FROM_JAVA_SIGNATURE_ERRORS = Slices.createCollectiveSlice();
 

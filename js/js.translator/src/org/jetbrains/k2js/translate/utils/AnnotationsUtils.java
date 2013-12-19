@@ -98,7 +98,7 @@ public final class AnnotationsUtils {
         DeclarationDescriptor annotationDeclaration =
                 annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
         assert annotationDeclaration != null : "Annotation supposed to have a declaration";
-        return DescriptorUtils.getFQName(annotationDeclaration).asString();
+        return DescriptorUtils.getFqName(annotationDeclaration).asString();
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {

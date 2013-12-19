@@ -21,18 +21,17 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.test.util.NamespaceComparator.RECURSIVE;
-import static org.jetbrains.jet.test.util.NamespaceComparator.validateAndCompareNamespaces;
+import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.RECURSIVE;
+import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptors;
 
 public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiagnosticsTest {
 
@@ -45,8 +44,8 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
         ModuleDescriptor eagerModule = LazyResolveTestUtil.resolveEagerly(jetFiles, getEnvironment());
 
         String path = JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(TEST_DATA_DIR, testDataFile)));
-        NamespaceDescriptor expected = eagerModule.getNamespace(FqName.ROOT);
-        NamespaceDescriptor actual = lazyModule.getNamespace(FqName.ROOT);
+        PackageViewDescriptor expected = eagerModule.getPackage(FqName.ROOT);
+        PackageViewDescriptor actual = lazyModule.getPackage(FqName.ROOT);
 
         String txtFileRelativePath = path.replaceAll("\\.kt$|\\.ktscript", ".txt");
         File txtFile = new File("compiler/testData/lazyResolve/diagnostics/" + txtFileRelativePath);
@@ -54,11 +53,11 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends AbstractJetDiag
         // Only recurse into those namespaces mentioned in the files
         // Otherwise we'll be examining the whole JDK
         final Set<Name> names = LazyResolveTestUtil.getTopLevelPackagesFromFileList(jetFiles);
-        validateAndCompareNamespaces(
+        validateAndCompareDescriptors(
                 expected, actual,
-                RECURSIVE.filterRecursion(new Predicate<FqNameUnsafe>() {
+                RECURSIVE.filterRecursion(new Predicate<FqName>() {
                     @Override
-                    public boolean apply(FqNameUnsafe fqName) {
+                    public boolean apply(FqName fqName) {
                         if (fqName.isRoot()) return true;
                         if (fqName.parent().isRoot()) {
                             return names.contains(fqName.shortName());

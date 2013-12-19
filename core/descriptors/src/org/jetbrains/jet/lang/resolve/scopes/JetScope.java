@@ -54,7 +54,7 @@ public interface JetScope {
     ClassifierDescriptor getClassifier(@NotNull Name name);
 
     @Nullable
-    NamespaceDescriptor getNamespace(@NotNull Name name);
+    PackageViewDescriptor getPackage(@NotNull Name name);
 
     @NotNull
     @ReadOnly

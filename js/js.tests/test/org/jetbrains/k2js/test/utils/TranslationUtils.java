@@ -27,7 +27,6 @@ import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -50,7 +49,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    private static SoftReference<BindingContext> cachedLibraryContext = new SoftReference<BindingContext>(null);
+    private static SoftReference<AnalyzeExhaust> cachedLibraryExhaust = new SoftReference<AnalyzeExhaust>(null);
 
     @Nullable
     private static List<JetFile> libFiles = null;
@@ -64,24 +63,23 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static BindingContext getLibraryContext(@NotNull Project project) {
-        BindingContext context = cachedLibraryContext.get();
-        if (context == null) {
-            List<JetFile> allLibFiles = getAllLibFiles(project);
-            Predicate<PsiFile> filesWithCode = new Predicate<PsiFile>() {
-                @Override
-                public boolean apply(@Nullable PsiFile file) {
-                    assert file != null;
-                    return isFileWithCode((JetFile) file);
-                }
-            };
-            AnalyzeExhaust exhaust = AnalyzerFacadeForJS
-                    .analyzeFiles(allLibFiles, filesWithCode, Config.getEmptyConfig(project));
-            context = exhaust.getBindingContext();
-            AnalyzerFacadeForJS.checkForErrors(allLibFiles, context);
-            cachedLibraryContext = new SoftReference<BindingContext>(context);
+    public static AnalyzeExhaust getLibraryAnalyzeExhaust(@NotNull Project project) {
+        AnalyzeExhaust cachedModule = cachedLibraryExhaust.get();
+        if (cachedModule != null) {
+            return cachedModule;
         }
-        return context;
+        List<JetFile> allLibFiles = getAllLibFiles(project);
+        Predicate<PsiFile> filesWithCode = new Predicate<PsiFile>() {
+            @Override
+            public boolean apply(@Nullable PsiFile file) {
+                assert file != null;
+                return isFileWithCode((JetFile) file);
+            }
+        };
+        AnalyzeExhaust exhaust = AnalyzerFacadeForJS.analyzeFiles(allLibFiles, filesWithCode, Config.getEmptyConfig(project));
+        AnalyzerFacadeForJS.checkForErrors(allLibFiles, exhaust.getBindingContext());
+        cachedLibraryExhaust = new SoftReference<AnalyzeExhaust>(exhaust);
+        return exhaust;
     }
 
     private static boolean isFileWithCode(@NotNull JetFile file) {
@@ -95,8 +93,10 @@ public final class TranslationUtils {
 
     @NotNull
     public static Config getConfig(@NotNull Project project, @NotNull EcmaVersion version, @NotNull TestConfigFactory configFactory) {
-        BindingContext preanalyzedContext = getLibraryContext(project);
-        return configFactory.create(project, version, getLibFilesWithCode(getAllLibFiles(project)), preanalyzedContext);
+        AnalyzeExhaust libraryAnalyzeExhaust = getLibraryAnalyzeExhaust(project);
+        return configFactory.create(
+                project, version, getLibFilesWithCode(getAllLibFiles(project)),
+                libraryAnalyzeExhaust.getBindingContext(), libraryAnalyzeExhaust.getModuleDescriptor());
     }
 
     public static void translateFiles(

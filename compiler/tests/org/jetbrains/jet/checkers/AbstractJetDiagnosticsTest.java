@@ -24,7 +24,10 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,6 +64,9 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
                     CheckerTestUtil.DebugInfoDiagnosticFactory.MISSING_UNRESOLVED,
                     CheckerTestUtil.DebugInfoDiagnosticFactory.UNRESOLVED_WITH_TARGET
             );
+    public static final String CHECK_TYPE_DIRECTIVE = "CHECK_TYPE";
+    private static final String CHECK_TYPE_DECLARATIONS = "\nclass _<T>" +
+                                                          "\nfun <T> T.checkType(f: (_<T>) -> Unit) = f";
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -103,7 +109,7 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
                         if (fileName.endsWith(".java")) {
                             writeJavaFile(fileName, text, javaFilesDir);
                         }
-                        return new TestFile(fileName, text, parseDiagnosticFilterDirective(directives));
+                        return new TestFile(fileName, text, directives);
                     }
                 });
 
@@ -125,8 +131,8 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         return jetFiles;
     }
 
-    public static Condition<Diagnostic> parseDiagnosticFilterDirective(Map<String, String> diagnostics) {
-        String directives = diagnostics.get(DIAGNOSTICS_DIRECTIVE);
+    public static Condition<Diagnostic> parseDiagnosticFilterDirective(Map<String, String> directiveMap) {
+        String directives = directiveMap.get(DIAGNOSTICS_DIRECTIVE);
         if (directives == null) {
             return Conditions.alwaysTrue();
         }
@@ -197,9 +203,15 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
         private final String clearText;
         private final JetFile jetFile;
         private final Condition<Diagnostic> whatDiagnosticsToConsider;
+        private final boolean declareCheckType;
 
-        public TestFile(String fileName, String textWithMarkers, Condition<Diagnostic> whatDiagnosticsToConsider) {
-            this.whatDiagnosticsToConsider = whatDiagnosticsToConsider;
+        public TestFile(
+                String fileName,
+                String textWithMarkers,
+                Map<String, String> directives
+        ) {
+            this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives);
+            this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE);
             if (fileName.endsWith(".java")) {
                 PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, JavaLanguage.INSTANCE, textWithMarkers);
                 // TODO: check there's not syntax errors
@@ -209,12 +221,14 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
             else {
                 expectedText = textWithMarkers;
                 clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
-                this.jetFile = createCheckAndReturnPsiFile(null, fileName, clearText);
+                this.jetFile = createCheckAndReturnPsiFile(
+                        null, fileName, declareCheckType ? clearText + CHECK_TYPE_DECLARATIONS : clearText);
                 for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
                     diagnosedRange.setFile(jetFile);
                 }
             }
         }
+
 
         @Nullable
         public JetFile getJetFile() {
@@ -250,10 +264,14 @@ public abstract class AbstractJetDiagnosticsTest extends JetLiteFixture {
                 }
             });
 
-            actualText.append(CheckerTestUtil.addDiagnosticMarkersToText(jetFile, diagnostics));
+            actualText.append(CheckerTestUtil.addDiagnosticMarkersToText(jetFile, diagnostics, new Function<PsiFile, String>() {
+                @Override
+                public String fun(PsiFile file) {
+                    String text = file.getText();
+                    return declareCheckType ? StringUtil.trimEnd(text, CHECK_TYPE_DECLARATIONS) : text;
+                }
+            }));
             return ok[0];
         }
-
     }
-
 }

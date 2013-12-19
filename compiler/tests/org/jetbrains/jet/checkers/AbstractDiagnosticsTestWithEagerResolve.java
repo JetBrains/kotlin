@@ -45,11 +45,11 @@ public abstract class AbstractDiagnosticsTestWithEagerResolve extends AbstractJe
     protected void analyzeAndCheck(File testDataFile, List<TestFile> testFiles) {
         List<JetFile> jetFiles = getJetFiles(testFiles);
 
-        BindingTrace trace = CliLightClassGenerationSupport.getInstanceForCli(getProject()).getTrace();
+        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(getProject());
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                getProject(), jetFiles, trace,
-                Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue(), false).getBindingContext();
+                getProject(), jetFiles, support.getTrace(),
+                Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue(), false, support.getModule()).getBindingContext();
 
         boolean ok = true;
 

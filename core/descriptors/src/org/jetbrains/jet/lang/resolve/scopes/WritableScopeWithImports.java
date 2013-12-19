@@ -176,11 +176,11 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull Name name) {
+    public PackageViewDescriptor getPackage(@NotNull Name name) {
         checkMayRead();
 
         for (JetScope imported : getImports()) {
-            NamespaceDescriptor importedDescriptor = imported.getNamespace(name);
+            PackageViewDescriptor importedDescriptor = imported.getPackage(name);
             if (importedDescriptor != null) {
                 return importedDescriptor;
             }
@@ -206,10 +206,10 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
     }
 
     @Override
-    public void importNamespaceAlias(@NotNull Name aliasName, @NotNull NamespaceDescriptor namespaceDescriptor) {
+    public void importPackageAlias(@NotNull Name aliasName, @NotNull PackageViewDescriptor packageView) {
         checkMayWrite();
 
-        getCurrentIndividualImportScope().addNamespaceAlias(aliasName, namespaceDescriptor);
+        getCurrentIndividualImportScope().addPackageAlias(aliasName, packageView);
     }
 
     @Override

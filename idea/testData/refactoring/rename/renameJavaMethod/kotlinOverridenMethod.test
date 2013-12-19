@@ -1,2 +1,7 @@
-// RENAME: KOTLIN_FUNCTION->testing.kotlin.KotlinClass.foo->bar
-// FILE: MethodUsages.kt
+{
+  "type": "KOTLIN_FUNCTION",
+  "classFQN": "testing.kotlin.KotlinClass",
+  "oldName": "foo",
+  "newName": "bar",
+  "mainFile": "MethodUsages.kt"
+}

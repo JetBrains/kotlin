@@ -33,12 +33,12 @@ public class FieldInfo {
             throw new UnsupportedOperationException();
         }
 
-        Type fieldType = typeMapper.mapType(fieldClassDescriptor.getDefaultType());
+        Type fieldType = typeMapper.mapType(fieldClassDescriptor);
 
         ClassDescriptor ownerDescriptor = kind == ClassKind.OBJECT
                                           ? fieldClassDescriptor: DescriptorUtils.getParentOfType(fieldClassDescriptor, ClassDescriptor.class);
         assert ownerDescriptor != null;
-        Type ownerType = typeMapper.mapType(ownerDescriptor.getDefaultType());
+        Type ownerType = typeMapper.mapType(ownerDescriptor);
 
         String fieldName = kind == ClassKind.ENUM_ENTRY
                            ? fieldClassDescriptor.getName().asString()
@@ -52,14 +52,11 @@ public class FieldInfo {
     }
 
     private final Type fieldType;
-
     private final Type ownerType;
-
     private final String fieldName;
-
     private final boolean isStatic;
 
-    private FieldInfo(@NotNull Type ownerType, @NotNull Type fieldType, @NotNull String fieldName, @NotNull boolean isStatic) {
+    private FieldInfo(@NotNull Type ownerType, @NotNull Type fieldType, @NotNull String fieldName, boolean isStatic) {
         this.ownerType = ownerType;
         this.fieldType = fieldType;
         this.fieldName = fieldName;
@@ -86,7 +83,6 @@ public class FieldInfo {
         return fieldName;
     }
 
-    @NotNull
     public boolean isStatic() {
         return isStatic;
     }

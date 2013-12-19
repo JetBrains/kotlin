@@ -1,5 +1,8 @@
 <component name="libraryTable">
   <library name="testng-plugin">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/testng/lib/testng-plugin.jar!/" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/plugins/testng/lib/testng.jar!/" />

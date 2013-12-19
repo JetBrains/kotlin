@@ -25,13 +25,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.io.File;
@@ -48,14 +48,11 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
     }
 
     protected void doTest(@NotNull String testFile) throws IOException {
-
-        InjectorForTopDownAnalyzer injectorForTopDownAnalyzer = LazyResolveTestUtil.getEagerInjectorForTopDownAnalyzer(getEnvironment());
-
         JetFile psiFile = JetPsiFactory.createFile(getProject(), FileUtil.loadFile(new File(testFile), true));
         Collection<JetFile> files = Lists.newArrayList(psiFile);
 
-        ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
-        lazyModule.setModuleConfiguration(injectorForTopDownAnalyzer.getModuleDescriptor().getModuleConfiguration());
+        final ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
+        lazyModule.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
         final ResolveSession resolveSession = new ResolveSession(getProject(), storageManager, lazyModule,
                                                                  new FileBasedDeclarationProviderFactory(storageManager, files));
@@ -64,9 +61,9 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         psiFile.accept(new JetVisitorVoid() {
             @Override
             public void visitJetFile(@NotNull JetFile file) {
-                String qualifiedName = file.getNamespaceHeader().getQualifiedName();
-                if (!qualifiedName.isEmpty()) {
-                    NamespaceDescriptor packageDescriptor = resolveSession.getPackageDescriptorByFqName(new FqName(qualifiedName));
+                FqName fqName = file.getNamespaceHeader().getFqName();
+                if (!fqName.isRoot()) {
+                    PackageViewDescriptor packageDescriptor = lazyModule.getPackage(fqName);
                     descriptors.add(packageDescriptor);
                 }
                 file.acceptChildren(this);

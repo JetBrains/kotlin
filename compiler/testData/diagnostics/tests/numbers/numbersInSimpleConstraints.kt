@@ -1,6 +1,5 @@
+// !CHECK_TYPE
 package a
-
-class TypeOf<T>(t: T)
 
 fun <T> id(t: T): T = t
 
@@ -21,7 +20,7 @@ fun test() {
     d: Int
 
     val e = id(9223372036854775807)
-    TypeOf(e): TypeOf<Long>
+    e checkType { it : _<Long> }
 
     val f: Byte = either(1, 2)
 
@@ -32,7 +31,7 @@ fun test() {
     <!TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH!>otherGeneric<!>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 
     val r = either(1, "")
-    TypeOf(r): TypeOf<Any>
+    r checkType { it : _<Comparable<*>> }
 
     use(a, b, c, d, e, f, g, r)
 }
@@ -48,7 +47,7 @@ fun testExactBound(invS: Inv<String>, invI: Inv<Int>, invB: Inv<Byte>) {
     exactBound(1, invI)
 
     val b = exactBound(1, invB)
-    TypeOf(b): TypeOf<Byte>
+    b checkType { it : _<Byte> }
 }
 
 trait Cov<out T>
@@ -57,10 +56,10 @@ fun <T> lowerBound(t: T, l : Cov<T>): T = throw Exception("$t $l")
 
 fun testLowerBound(cov: Cov<String>, covN: Cov<Number>) {
     val r = lowerBound(1, cov)
-    TypeOf(r): TypeOf<Any>
+    r checkType { it : _<Comparable<*>> }
 
     val n = lowerBound(1, covN)
-    TypeOf(n): TypeOf<Number>
+    n checkType { it : _<Number> }
 }
 
 trait Contr<in T>
@@ -71,8 +70,8 @@ fun testUpperBound(contrS: Contr<String>, contrB: Contr<Byte>, contrN: Contr<Num
     <!TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>upperBound<!>(1, contrS)
 
     val n = upperBound(1, contrN)
-    TypeOf(n): TypeOf<Int>
+    n checkType { it : _<Int> }
 
     val b = upperBound(1, contrB)
-    TypeOf(b): TypeOf<Byte>
+    b checkType { it : _<Byte> }
 }

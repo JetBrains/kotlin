@@ -24,7 +24,7 @@ public final enum class StaticMembersInEnum : jet.Enum<test.StaticMembersInEnum>
     }
 }
 
-package StaticMembersInEnum {
+package test.StaticMembersInEnum {
     public val CONSTANT: test.StaticMembersInEnum
     public var STATIC_FIELD: jet.Int
     public open fun foo(): jet.Unit

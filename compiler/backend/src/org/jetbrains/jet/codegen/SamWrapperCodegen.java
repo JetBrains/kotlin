@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.MethodVisitor;
@@ -25,10 +24,9 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -134,13 +132,10 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
     }
 
     private String getWrapperName(@NotNull JetFile containingFile) {
-        NamespaceDescriptor namespace = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, containingFile);
-        VirtualFile virtualFile = containingFile.getVirtualFile();
-        assert namespace != null : "couldn't find namespace for file: " + virtualFile;
-        FqName fqName = DescriptorUtils.getFQName(namespace).toSafe();
-        String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(
-                PackageClassUtils.getPackageClassFqName(fqName)).getInternalName();
+        FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(JetPsiUtil.getFQName(containingFile));
+        String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageClassFqName).getInternalName();
         return packageInternalName + "$sam$" + samInterface.getName().asString() + "$" +
-               Integer.toHexString(CodegenUtil.getPathHashCode(virtualFile) * 31 + DescriptorUtils.getFQName(samInterface).hashCode());
+               Integer.toHexString(CodegenUtil.getPathHashCode(containingFile.getVirtualFile()) * 31 + DescriptorUtils.getFqNameSafe(
+                       samInterface).hashCode());
     }
 }

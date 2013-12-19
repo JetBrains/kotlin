@@ -254,14 +254,14 @@ public abstract class ExpectedResolveData {
 
                 JetType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
-                ClassifierDescriptor expectedClass = builtIns.getBuiltInsScope().getClassifier(Name.identifier(name.substring(STANDARD_PREFIX.length())));
+                ClassifierDescriptor expectedClass = builtIns.getBuiltInClassByName(Name.identifier(name.substring(STANDARD_PREFIX.length())));
                 assertNotNull("Expected class not found: " + name);
                 assertSame("Type resolution mismatch: ", expectedClass.getTypeConstructor(), actualType.getConstructor());
                 continue;
             }
             assert expected != null : "No declaration for " + name;
 
-            if (referenceTarget instanceof NamespaceDescriptor) {
+            if (referenceTarget instanceof PackageViewDescriptor) {
                 JetNamespaceHeader expectedHeader = PsiTreeUtil.getParentOfType(expected, JetNamespaceHeader.class);
                 FqName expectedFqName;
                 if (expectedHeader != null) {
@@ -275,7 +275,7 @@ public abstract class ExpectedResolveData {
                 else {
                     throw new IllegalStateException(expected.getClass().getName() + " name=" + name);
                 }
-                assertEquals(expectedFqName, ((NamespaceDescriptor) referenceTarget).getFqName());
+                assertEquals(expectedFqName, ((PackageViewDescriptor) referenceTarget).getFqName());
                 continue;
             }
 
@@ -311,7 +311,7 @@ public abstract class ExpectedResolveData {
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith(STANDARD_PREFIX)) {
                 String name = typeName.substring(STANDARD_PREFIX.length());
-                ClassifierDescriptor expectedClass = builtIns.getBuiltInsScope().getClassifier(Name.identifier(name));
+                ClassifierDescriptor expectedClass = builtIns.getBuiltInClassByName(Name.identifier(name));
 
                 assertNotNull("Expected class not found: " + typeName, expectedClass);
                 expectedTypeConstructor = expectedClass.getTypeConstructor();

@@ -269,7 +269,7 @@ public class AsmUtil {
                 return ACC_PROTECTED;
             }
         }
-        if (containingDeclaration instanceof NamespaceDescriptor) {
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
             return ACC_PUBLIC;
         }
         return null;
@@ -629,6 +629,14 @@ public class AsmUtil {
         if (left == Type.FLOAT_TYPE || right == Type.FLOAT_TYPE) return Type.FLOAT_TYPE;
         if (left == Type.LONG_TYPE || right == Type.LONG_TYPE) return Type.LONG_TYPE;
         return Type.INT_TYPE;
+    }
+
+    @NotNull
+    public static Type numberFunctionOperandType(@NotNull Type expectedType) {
+        if (expectedType == Type.SHORT_TYPE || expectedType == Type.BYTE_TYPE) {
+            return Type.INT_TYPE;
+        }
+        return expectedType;
     }
 
     public static void pop(@NotNull InstructionAdapter v, @NotNull Type type) {

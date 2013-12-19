@@ -165,11 +165,11 @@ fun declarations(a: Any?) {
 fun vars(a: Any?) {
     var <warning>b</warning>: Int = 0
     if (a is Int) {
-        b = <info descr="Automatically cast to jet.Int"><warning>a</warning></info>
+        b = <warning><info descr="Automatically cast to jet.Int">a</info></warning>
     }
 }
 fun returnFunctionLiteralBlock(<info>a</info>: Any?): Function0<Int> {
-    if (<info>a</info> is Int) return { <info><info descr="Automatically cast to jet.Int">a</info></info> }
+    if (<info>a</info> is Int) return { <info descr="Automatically cast to jet.Int"><info>a</info></info> }
     else return { 1 }
 }
 fun returnFunctionLiteral(<info>a</info>: Any?): Function0<Int> =
@@ -179,7 +179,7 @@ fun returnFunctionLiteral(<info>a</info>: Any?): Function0<Int> =
 fun merge<TYPO descr="Typo: In word 'Autocasts'">Autocasts</TYPO>(a: Any?) {
   if (a is String || a is Int) {
     a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("")
-    <info descr="Automatically cast to jet.Any">a</info>.toString()
+    a.toString()
   }
   if (a is Int || a is String) {
     a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("")

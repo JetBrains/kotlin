@@ -21,11 +21,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.ModificationTracker;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -33,8 +31,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -69,33 +65,11 @@ public class CancelableResolveSession implements KotlinCodeAnalyzer, Modificatio
     }
 
     @Override
-    public ModuleDescriptor getRootModuleDescriptor() {
+    public ModuleDescriptor getModuleDescriptor() {
         return computableWithProcessingCancel(new Computable<ModuleDescriptor>() {
             @Override
             public ModuleDescriptor compute() {
-                return resolveSession.getRootModuleDescriptor();
-            }
-        });
-    }
-
-    @Nullable
-    @Override
-    public NamespaceDescriptor getPackageDescriptor(@NotNull final Name shortName) {
-        return computableWithProcessingCancel(new Computable<NamespaceDescriptor>() {
-            @Override
-            public NamespaceDescriptor compute() {
-                return resolveSession.getPackageDescriptor(shortName);
-            }
-        });
-    }
-
-    @Nullable
-    @Override
-    public NamespaceDescriptor getPackageDescriptorByFqName(final FqName fqName) {
-        return computableWithProcessingCancel(new Computable<NamespaceDescriptor>() {
-            @Override
-            public NamespaceDescriptor compute() {
-                return resolveSession.getPackageDescriptorByFqName(fqName);
+                return resolveSession.getModuleDescriptor();
             }
         });
     }

@@ -7,5 +7,5 @@ fun <T> Iterable<T>.join(separator : String?) : String {
 fun <T : Any> T?.npe() : T {
     if (this == null)
       throw NullPointerException()
-    return this;
+    return <!DEBUG_INFO_AUTOCAST!>this<!>;
 }

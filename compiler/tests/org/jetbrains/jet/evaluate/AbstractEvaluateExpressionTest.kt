@@ -55,7 +55,7 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
     private fun doTest(path: String, getValueToTest: (JetProperty, BindingContext) -> String) {
         val myFile = File(path)
         val fileText = FileUtil.loadFile(myFile)
-        val namespaceDescriptor = getNamespaceDescriptor(fileText)
+        val packageView = getPackage(fileText)
 
         val propertiesForTest = getObjectsToTest(fileText)
 
@@ -66,7 +66,7 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
             val expected = InTextDirectivesUtils.findStringWithPrefixes(fileText, expectedProperyPrefix)
             assertNotNull(expected, "Failed to find expected directive: $expectedProperyPrefix")
 
-            val property = AbstractAnnotationDescriptorResolveTest.getPropertyDescriptor(namespaceDescriptor, propertyName)
+            val property = AbstractAnnotationDescriptorResolveTest.getPropertyDescriptor(packageView, propertyName)
             val jetProperty = BindingContextUtils.descriptorToDeclaration(context!!, property) as JetProperty
 
             val testedObject = getValueToTest(jetProperty, context!!)

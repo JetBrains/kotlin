@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.Arrays;
@@ -243,5 +244,19 @@ public final class JsAstUtils {
     @NotNull
     public static JsObjectLiteral wrapValue(@NotNull JsExpression label, @NotNull JsExpression value) {
         return new JsObjectLiteral(Collections.singletonList(new JsPropertyInitializer(label, value)));
+    }
+
+    public static void replaceRootReference(@NotNull JsNameRef fullQualifier, @NotNull JsExpression newQualifier) {
+        JsNameRef qualifier = fullQualifier;
+        while (true) {
+            JsExpression parent = qualifier.getQualifier();
+            assert parent instanceof JsNameRef : "unexpected qualifier: " + parent + ", original: " + fullQualifier;
+            if (((JsNameRef) parent).getQualifier() == null) {
+                assert Namer.getRootNamespaceName().equals(((JsNameRef) parent).getIdent());
+                qualifier.setQualifier(newQualifier);
+                return;
+            }
+            qualifier = (JsNameRef) parent;
+        }
     }
 }

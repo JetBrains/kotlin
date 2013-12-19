@@ -1,1 +1,6 @@
-// RENAME: KOTLIN_FUNCTION->testing.rename.C.first->second
+{
+  "type": "KOTLIN_FUNCTION",
+  "classFQN": "testing.rename.C",
+  "oldName": "first",
+  "newName": "second"
+}

@@ -45,6 +45,7 @@ public class CliJetFilesProvider extends JetFilesProvider {
         return allFiles;
     }
 
+    @NotNull
     @Override
     public List<JetFile> allInScope(@NotNull GlobalSearchScope scope) {
         List<JetFile> answer = new ArrayList<JetFile>();

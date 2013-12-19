@@ -12,6 +12,6 @@ public trait StringConstantInParam : java.lang.Object {
     }
 }
 
-package StringConstantInParam {
+package test.StringConstantInParam {
     public val HEL: jet.String
 }

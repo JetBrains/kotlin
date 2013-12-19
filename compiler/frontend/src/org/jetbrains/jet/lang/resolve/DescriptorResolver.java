@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -1310,36 +1309,22 @@ public class DescriptorResolver {
             @NotNull PsiElement reportErrorsOn,
             @NotNull ClassDescriptor target
     ) {
-        return checkHasOuterClassInstance(scope, trace, reportErrorsOn, target, true);
-    }
+        ClassDescriptor classDescriptor = getContainingClass(scope);
 
-    public static boolean checkHasOuterClassInstance(
-            @NotNull JetScope scope,
-            @NotNull BindingTrace trace,
-            @NotNull PsiElement reportErrorsOn,
-            @NotNull ClassDescriptor target,
-            boolean doSuperClassCheck
-    ) {
-        DeclarationDescriptor descriptor = getContainingClass(scope);
+        if (!isInsideOuterClassOrItsSubclass(classDescriptor, target)) {
+            return true;
+        }
 
-        while (descriptor != null) {
-            if (descriptor instanceof ClassDescriptor) {
-                ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-
-                if (classDescriptor == target) {
-                    return true;
-                }
-
-                if (doSuperClassCheck && isSubclass(classDescriptor, target)) {
-                    return true;
-                }
-
-                if (isStaticNestedClass(classDescriptor)) {
-                    trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(reportErrorsOn, classDescriptor));
-                    return false;
-                }
+        while (classDescriptor != null) {
+            if (isSubclass(classDescriptor, target)) {
+                return true;
             }
-            descriptor = descriptor.getContainingDeclaration();
+
+            if (isStaticNestedClass(classDescriptor)) {
+                trace.report(INACCESSIBLE_OUTER_CLASS_EXPRESSION.on(reportErrorsOn, classDescriptor));
+                return false;
+            }
+            classDescriptor = getParentOfType(classDescriptor, ClassDescriptor.class, true);
         }
         return true;
     }

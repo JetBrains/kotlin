@@ -24,27 +24,46 @@ import com.intellij.codeInsight.template.impl.TemplateImpl;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateSettings;
 import com.intellij.openapi.util.Ref;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.psi.JavaTokenType;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.intellij.patterns.PsiJavaPatterns.elementType;
+import static com.intellij.patterns.PsiJavaPatterns.psiElement;
+
 public class JetLiveTemplateCompletionContributor extends CompletionContributor {
+    private static final ElementPattern<PsiElement> AFTER_NUMBER_LITERAL = psiElement().afterLeafSkipping(
+            psiElement().withText(""),
+            psiElement().withElementType(elementType().oneOf(JetTokens.FLOAT_LITERAL, JetTokens.INTEGER_LITERAL)));
+
     public JetLiveTemplateCompletionContributor() {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(), new CompletionProvider<CompletionParameters>() {
             @Override
             protected void addCompletions(@NotNull CompletionParameters parameters,
                                           ProcessingContext context,
                                           @NotNull final CompletionResultSet result) {
+                if (AFTER_NUMBER_LITERAL.accepts(parameters.getPosition())) {
+                    // First Kotlin completion contributors - stop here will stop all completion
+                    result.stopHere();
+                    return;
+                }
+
                 if (parameters.getInvocationCount() == 0) {
                     return;
                 }
+
                 PsiFile file = parameters.getPosition().getContainingFile();
                 int offset = parameters.getOffset();
                 final List<TemplateImpl> templates = listApplicableTemplates(file, offset);

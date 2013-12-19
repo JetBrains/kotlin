@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DEBUG_INFO_AUTOCAST
 fun bar(x: Int): Int = x + 1
 
 fun foo(): Int {
