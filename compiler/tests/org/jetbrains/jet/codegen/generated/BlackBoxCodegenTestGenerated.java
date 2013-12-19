@@ -767,6 +767,26 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/callableReference/local/enumExtendsTrait.kt");
             }
             
+            @TestMetadata("extension.kt")
+            public void testExtension() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/extension.kt");
+            }
+            
+            @TestMetadata("extensionToLocalClass.kt")
+            public void testExtensionToLocalClass() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/extensionToLocalClass.kt");
+            }
+            
+            @TestMetadata("extensionToPrimitive.kt")
+            public void testExtensionToPrimitive() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/extensionToPrimitive.kt");
+            }
+            
+            @TestMetadata("extensionWithClosure.kt")
+            public void testExtensionWithClosure() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/extensionWithClosure.kt");
+            }
+            
             @TestMetadata("genericMember.kt")
             public void testGenericMember() throws Exception {
                 doTest("compiler/testData/codegen/box/callableReference/local/genericMember.kt");

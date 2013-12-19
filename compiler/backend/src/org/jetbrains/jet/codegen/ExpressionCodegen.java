@@ -2507,6 +2507,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 Call call = CallMaker.makeCall(fakeExpression, NO_RECEIVER, null, fakeExpression, fakeArguments);
                 Callable callable = codegen.resolveToCallable(codegen.accessibleFunctionDescriptor(referencedFunction), false);
                 StackValue receiver = generateCallee(codegen, callable);
+                if (extensionReceiver.exists()) {
+                    receiver = StackValue.composed(receiver, receiverParameterStackValue(signature));
+                }
                 result = codegen.invokeFunctionWithCalleeOnStack(call, receiver, fakeResolvedCall, callable);
             }
 
@@ -2574,12 +2577,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (receiver == null) return NO_RECEIVER;
 
             JetExpression receiverExpression = JetPsiFactory.createExpression(state.getProject(), "callableReferenceFakeReceiver");
-
-            Type firstParameterType = signature.getAsmMethod().getArgumentTypes()[0];
-            // 0 is this (the closure class), 1 is the method's first parameter
-            codegen.tempVariables.put(receiverExpression, StackValue.local(1, firstParameterType));
-
+            codegen.tempVariables.put(receiverExpression, receiverParameterStackValue(signature));
             return new ExpressionReceiver(receiverExpression, receiver.getType());
+        }
+
+        @NotNull
+        private static StackValue.Local receiverParameterStackValue(@NotNull JvmMethodSignature signature) {
+            // 0 is this (the callable reference class), 1 is the invoke() method's first parameter
+            return StackValue.local(1, signature.getAsmMethod().getArgumentTypes()[0]);
         }
     }
 
