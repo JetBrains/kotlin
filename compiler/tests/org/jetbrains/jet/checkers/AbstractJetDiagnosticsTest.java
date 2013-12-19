@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractJetDiagnostics1Test extends BaseDiagnosticsTest {
+public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
     @Override
     protected void analyzeAndCheck(File testDataFile, List<TestFile> testFiles) {

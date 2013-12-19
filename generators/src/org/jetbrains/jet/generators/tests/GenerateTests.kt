@@ -22,7 +22,7 @@ import org.jetbrains.jet.generators.tests.generator.SimpleTestClassModel
 import java.io.File
 import java.util.regex.Pattern
 import junit.framework.TestCase
-import org.jetbrains.jet.checkers.AbstractJetDiagnostics1Test
+import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest
 import org.jetbrains.jet.resolve.AbstractResolveTest
 import org.jetbrains.jet.parsing.AbstractJetParsingTest
 import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest
@@ -83,7 +83,7 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/tests", "compiler/testData") {
 
-        testClass(javaClass<AbstractJetDiagnostics1Test>()) {
+        testClass(javaClass<AbstractJetDiagnosticsTest>()) {
             model("diagnostics/tests")
             model("diagnostics/tests/script", extension = "ktscript")
             model("codegen/box/functions/tailRecursion")
