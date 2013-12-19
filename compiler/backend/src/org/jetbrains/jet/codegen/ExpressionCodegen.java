@@ -2504,8 +2504,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
             }
             else {
-                result = generateNormalFunctionCall(codegen, fakeResolvedCall,
-                                                    CallMaker.makeCall(fakeExpression, NO_RECEIVER, null, fakeExpression, fakeArguments));
+                Call call = CallMaker.makeCall(fakeExpression, NO_RECEIVER, null, fakeExpression, fakeArguments);
+                Callable callable = codegen.resolveToCallable(codegen.accessibleFunctionDescriptor(referencedFunction), false);
+                StackValue receiver = generateCallee(codegen, callable);
+                result = codegen.invokeFunctionWithCalleeOnStack(call, receiver, fakeResolvedCall, callable);
             }
 
             InstructionAdapter v = codegen.v;
@@ -2514,24 +2516,30 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @NotNull
-        private StackValue generateNormalFunctionCall(
-                @NotNull ExpressionCodegen codegen,
-                @NotNull ResolvedCall<CallableDescriptor> fakeResolvedCall,
-                @NotNull Call call
-        ) {
-            Callable callable = codegen.resolveToCallable(codegen.accessibleFunctionDescriptor(referencedFunction), false);
+        private StackValue generateCallee(@NotNull ExpressionCodegen codegen, @NotNull Callable callable) {
+            if (!(callable instanceof CallableMethod) || ((CallableMethod) callable).getGenerateCalleeType() == null) {
+                return StackValue.none();
+            }
 
-            StackValue receiver;
-            if (callable instanceof CallableMethod && ((CallableMethod) callable).getGenerateCalleeType() != null) {
-                Type asmType = asmTypeForAnonymousClass(codegen.getBindingContext(), referencedFunction);
+            // If referenced method is a CallableMethod with generateCalleeType != null, this means it's some kind of a closure
+            // (e.g. a local named function) and a non-trivial callee should be generated before calling invoke()
+
+            BindingContext bindingContext = codegen.bindingContext;
+            ClassDescriptor closureClassOfReferenced = bindingContext.get(CLASS_FOR_FUNCTION, referencedFunction);
+            MutableClosure closureOfReferenced = bindingContext.get(CLOSURE, closureClassOfReferenced);
+            assert closureOfReferenced != null :
+                    "Function mapped to CallableMethod with generateCalleeType != null must be a closure: " + referencedFunction;
+            if (isConst(closureOfReferenced)) {
+                // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
+                // (instead of passing this instance to the constructor and storing as a field)
+                Type asmType = asmTypeForAnonymousClass(bindingContext, referencedFunction);
                 codegen.v.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
-                receiver = StackValue.onStack(asmType);
+                return StackValue.onStack(asmType);
             }
             else {
-                receiver = StackValue.none();
+                Type asmCallRefType = asmTypeForAnonymousClass(bindingContext, callableDescriptor);
+                return codegen.context.lookupInContext(referencedFunction, StackValue.local(0, asmCallRefType), state, false);
             }
-
-            return codegen.invokeFunctionWithCalleeOnStack(call, receiver, fakeResolvedCall, callable);
         }
 
         @NotNull

@@ -107,7 +107,7 @@ public class CodegenUtil {
         return signatureWriter.makeJvmMethodSignature("invoke");
     }
 
-    public static boolean isConst(CalculatedClosure closure) {
+    public static boolean isConst(@NotNull CalculatedClosure closure) {
         return closure.getCaptureThis() == null && closure.getCaptureReceiverType() == null && closure.getCaptureVariables().isEmpty();
     }
 

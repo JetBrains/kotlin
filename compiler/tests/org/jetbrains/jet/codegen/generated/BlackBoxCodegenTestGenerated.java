@@ -737,9 +737,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/callableReference/local"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("captureOuter.kt")
+            public void testCaptureOuter() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/captureOuter.kt");
+            }
+            
             @TestMetadata("classMember.kt")
             public void testClassMember() throws Exception {
                 doTest("compiler/testData/codegen/box/callableReference/local/classMember.kt");
+            }
+            
+            @TestMetadata("closureWithSideEffect.kt")
+            public void testClosureWithSideEffect() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/closureWithSideEffect.kt");
             }
             
             @TestMetadata("constructor.kt")
@@ -762,14 +772,29 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest("compiler/testData/codegen/box/callableReference/local/genericMember.kt");
             }
             
+            @TestMetadata("localClassMember.kt")
+            public void testLocalClassMember() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/localClassMember.kt");
+            }
+            
             @TestMetadata("localLocal.kt")
             public void testLocalLocal() throws Exception {
                 doTest("compiler/testData/codegen/box/callableReference/local/localLocal.kt");
             }
             
+            @TestMetadata("recursiveClosure.kt")
+            public void testRecursiveClosure() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/recursiveClosure.kt");
+            }
+            
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 doTest("compiler/testData/codegen/box/callableReference/local/simple.kt");
+            }
+            
+            @TestMetadata("simpleClosure.kt")
+            public void testSimpleClosure() throws Exception {
+                doTest("compiler/testData/codegen/box/callableReference/local/simpleClosure.kt");
             }
             
             @TestMetadata("simpleWithArg.kt")
