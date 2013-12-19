@@ -2429,9 +2429,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return closureCodegen.putInstanceOnStack(v, this);
     }
 
-    private static class CallableReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased<CallableDescriptor> {
-        private final FunctionDescriptor functionDescriptor;
+    private static class CallableReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased<FunctionDescriptor> {
         private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
+        private final FunctionDescriptor referencedFunction;
 
         public CallableReferenceGenerationStrategy(
                 @NotNull GenerationState state,
@@ -2439,8 +2439,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall
         ) {
             super(state, functionDescriptor);
-            this.functionDescriptor = functionDescriptor;
             this.resolvedCall = resolvedCall;
+            this.referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
         }
 
         @Override
@@ -2453,14 +2453,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
              every argument boils down to calling LOAD with the corresponding index
              */
 
-            FunctionDescriptor referencedFunction = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
-
-            JetCallExpression fakeExpression = constructFakeFunctionCall(referencedFunction);
+            JetCallExpression fakeExpression = constructFakeFunctionCall();
             final List<? extends ValueArgument> fakeArguments = fakeExpression.getValueArguments();
 
             final ReceiverValue thisObject = computeAndSaveReceiver(signature, codegen, referencedFunction.getExpectedThisObject());
             final ReceiverValue extensionReceiver = computeAndSaveReceiver(signature, codegen, referencedFunction.getReceiverParameter());
-            computeAndSaveArguments(codegen.myFrameMap, fakeArguments, codegen);
+            computeAndSaveArguments(fakeArguments, codegen);
 
             ResolvedCall<CallableDescriptor> fakeResolvedCall = new DelegatingResolvedCall<CallableDescriptor>(resolvedCall) {
                 @NotNull
@@ -2490,9 +2488,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type returnType = codegen.returnType;
             if (referencedFunction instanceof ConstructorDescriptor) {
                 if (returnType.getSort() == Type.ARRAY) {
-                    JetType returnJetType = referencedFunction.getReturnType();
-                    assert returnJetType != null;
-                    codegen.generateNewArray(fakeExpression, returnJetType);
+                    //noinspection ConstantConditions
+                    codegen.generateNewArray(fakeExpression, referencedFunction.getReturnType());
                     result = StackValue.onStack(returnType);
                 }
                 else {
@@ -2510,7 +2507,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         @NotNull
-        private JetCallExpression constructFakeFunctionCall(@NotNull CallableDescriptor referencedFunction) {
+        private JetCallExpression constructFakeFunctionCall() {
             StringBuilder fakeFunctionCall = new StringBuilder("callableReferenceFakeCall(");
             for (Iterator<ValueParameterDescriptor> iterator = referencedFunction.getValueParameters().iterator(); iterator.hasNext(); ) {
                 ValueParameterDescriptor descriptor = iterator.next();
@@ -2523,15 +2520,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return (JetCallExpression) JetPsiFactory.createExpression(state.getProject(), fakeFunctionCall.toString());
         }
 
-        private void computeAndSaveArguments(
-                @NotNull FrameMap frameMap,
-                @NotNull List<? extends ValueArgument> fakeArguments,
-                @NotNull ExpressionCodegen codegen
-        ) {
-            for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
+        private void computeAndSaveArguments(@NotNull List<? extends ValueArgument> fakeArguments, @NotNull ExpressionCodegen codegen) {
+            for (ValueParameterDescriptor parameter : callableDescriptor.getValueParameters()) {
                 ValueArgument fakeArgument = fakeArguments.get(parameter.getIndex());
                 Type type = state.getTypeMapper().mapType(parameter);
-                int localIndex = frameMap.getIndex(parameter);
+                int localIndex = codegen.myFrameMap.getIndex(parameter);
                 codegen.tempVariables.put(fakeArgument.getArgumentExpression(), StackValue.local(localIndex, type));
             }
         }
