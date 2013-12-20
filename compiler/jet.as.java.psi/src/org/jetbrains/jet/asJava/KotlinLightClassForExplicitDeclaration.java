@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
@@ -69,61 +70,6 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightClass implements KotlinLightClass, JetJavaMirrorMarker {
     private final static Key<CachedValue<LightClassStubWithData>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
-    private static class Anonymous extends KotlinLightClassForExplicitDeclaration implements PsiAnonymousClass {
-        private Anonymous(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject classOrObject) {
-            super(manager, name, classOrObject);
-        }
-
-        private SoftReference<PsiClassType> cachedBaseType = null;
-
-        @NotNull
-        @Override
-        public PsiJavaCodeReferenceElement getBaseClassReference() {
-            ClassDescriptor classDescriptor = getDescriptor();
-            Collection<JetType> superTypes = classDescriptor.getTypeConstructor().getSupertypes();
-
-            String fqName;
-            if (!superTypes.isEmpty()) {
-                JetType superType = superTypes.iterator().next();
-                DeclarationDescriptor typeDescriptor = superType.getConstructor().getDeclarationDescriptor();
-                assert typeDescriptor != null;
-
-                fqName = DescriptorUtils.getFqName(typeDescriptor).asString();
-            }
-            else {
-                fqName = CommonClassNames.JAVA_LANG_OBJECT;
-            }
-
-            Project project = classOrObject.getProject();
-            return JavaPsiFacade.getElementFactory(project).createReferenceElementByFQClassName(
-                    fqName, GlobalSearchScope.allScope(project)
-            );
-        }
-
-        @NotNull
-        @Override
-        public PsiClassType getBaseClassType() {
-            PsiClassType type = null;
-            if (cachedBaseType != null) type = cachedBaseType.get();
-            if (type != null && type.isValid()) return type;
-
-            type = JavaPsiFacade.getInstance(classOrObject.getProject()).getElementFactory().createType(getBaseClassReference());
-            cachedBaseType = new SoftReference<PsiClassType>(type);
-            return type;
-        }
-
-        @Nullable
-        @Override
-        public PsiExpressionList getArgumentList() {
-            return null;
-        }
-
-        @Override
-        public boolean isInQualifiedNew() {
-            return false;
-        }
-    }
-
     @Nullable
     public static KotlinLightClassForExplicitDeclaration create(@NotNull PsiManager manager, @NotNull JetClassOrObject classOrObject) {
         if (LightClassUtil.belongsToKotlinBuiltIns((JetFile) classOrObject.getContainingFile())) {
@@ -152,16 +98,46 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     protected final JetClassOrObject classOrObject;
     private PsiClass delegate;
 
-    private static final Class[] LOCAL_CLASS_CONTAINERS = {
-            JetNamedFunction.class, JetProperty.class, JetClassInitializer.class
-    };
     private final NullableLazyValue<PsiElement> parent = new NullableLazyValue<PsiElement>() {
+        @Nullable
+        @Override
+        protected PsiElement compute() {
+            if (JetPsiUtil.isLocal(classOrObject)) {
+                //noinspection unchecked
+                PsiElement declaration = JetPsiUtil.getTopmostParentOfTypes(
+                        classOrObject,
+                        JetNamedFunction.class, JetProperty.class, JetClassInitializer.class
+                );
+
+                if (declaration instanceof JetNamedFunction) {
+                    JetNamedFunction function = (JetNamedFunction) declaration;
+                    return getParentByPsiMethod(LightClassUtil.getLightClassMethod(function), function.getName());
+                }
+
+                // Represent the property as a fake method with the same name
+                if (declaration instanceof JetProperty) {
+                    JetProperty property = (JetProperty) declaration;
+                    return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(property).getGetter(), property.getName());
+                }
+
+                if (declaration instanceof JetClassInitializer) {
+                    PsiElement parent = declaration.getParent();
+                    PsiElement grandparent = parent.getParent();
+
+                    if (parent instanceof JetClassBody && grandparent instanceof JetClassOrObject) {
+                        return LightClassUtil.getPsiClass((JetClassOrObject) grandparent);
+                    }
+                }
+            }
+
+            return classOrObject.getParent() == classOrObject.getContainingFile() ? getContainingFile() : getContainingClass();
+        }
+
         private PsiElement getParentByPsiMethod(PsiMethod method, final String name) {
-            assert method != null;
-            assert name != null;
+            if (method == null || name == null) return null;
 
             PsiClass containingClass = method.getContainingClass();
-            assert containingClass != null;
+            if (containingClass == null) return null;
 
             final String currentFileName = classOrObject.getContainingFile().getName();
 
@@ -187,37 +163,6 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                     return name;
                 }
             };
-        }
-
-        @Nullable
-        @Override
-        protected PsiElement compute() {
-            if (JetPsiUtil.isLocal(classOrObject)) {
-                //noinspection unchecked
-                PsiElement declaration = JetPsiUtil.getTopmostParentOfTypes(classOrObject, LOCAL_CLASS_CONTAINERS);
-
-                if (declaration instanceof JetNamedFunction) {
-                    JetNamedFunction function = (JetNamedFunction) declaration;
-                    return getParentByPsiMethod(LightClassUtil.getLightClassMethod((JetNamedFunction) declaration), function.getName());
-                }
-
-                // Represent the property as a fake method with the same name
-                if (declaration instanceof JetProperty) {
-                    JetProperty property = (JetProperty) declaration;
-                    return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(property).getGetter(), property.getName());
-                }
-
-                if (declaration instanceof JetClassInitializer) {
-                    PsiElement parent = declaration.getParent();
-                    PsiElement grandparent = parent.getParent();
-
-                    if (parent instanceof JetClassBody && grandparent instanceof JetClassOrObject) {
-                        return LightClassUtil.getPsiClass((JetClassOrObject) grandparent);
-                    }
-                }
-            }
-
-            return classOrObject.getParent() == classOrObject.getContainingFile() ? getContainingFile() : getContainingClass();
         }
     };
 
@@ -591,5 +536,64 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     public List<PsiClass> getOwnInnerClasses() {
         // TODO: Should return inner class wrapper
         return Arrays.asList(getDelegate().getInnerClasses());
+    }
+
+    private static class Anonymous extends KotlinLightClassForExplicitDeclaration implements PsiAnonymousClass {
+        private static final Logger LOG = Logger.getInstance(Anonymous.class);
+
+        private SoftReference<PsiClassType> cachedBaseType = null;
+
+        private Anonymous(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject classOrObject) {
+            super(manager, name, classOrObject);
+        }
+
+        @NotNull
+        @Override
+        public PsiJavaCodeReferenceElement getBaseClassReference() {
+            Project project = classOrObject.getProject();
+            return JavaPsiFacade.getElementFactory(project).createReferenceElementByFQClassName(
+                    getFirstSupertypeFQName(), GlobalSearchScope.allScope(project)
+            );
+        }
+
+        private String getFirstSupertypeFQName() {
+            Collection<JetType> superTypes = getDescriptor().getTypeConstructor().getSupertypes();
+
+            if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT;
+
+            JetType superType = superTypes.iterator().next();
+            DeclarationDescriptor superClassDescriptor = superType.getConstructor().getDeclarationDescriptor();
+
+            if (superClassDescriptor == null) {
+                LOG.error("No declaration descriptor for supertype " + superType + " of " + getDescriptor());
+                // return java.lang.Object for recovery
+                return CommonClassNames.JAVA_LANG_OBJECT;
+            }
+
+            return DescriptorUtils.getFqName(superClassDescriptor).asString();
+        }
+
+        @NotNull
+        @Override
+        public synchronized PsiClassType getBaseClassType() {
+            PsiClassType type = null;
+            if (cachedBaseType != null) type = cachedBaseType.get();
+            if (type != null && type.isValid()) return type;
+
+            type = JavaPsiFacade.getInstance(classOrObject.getProject()).getElementFactory().createType(getBaseClassReference());
+            cachedBaseType = new SoftReference<PsiClassType>(type);
+            return type;
+        }
+
+        @Nullable
+        @Override
+        public PsiExpressionList getArgumentList() {
+            return null;
+        }
+
+        @Override
+        public boolean isInQualifiedNew() {
+            return false;
+        }
     }
 }
