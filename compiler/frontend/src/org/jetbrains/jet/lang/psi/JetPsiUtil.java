@@ -1006,7 +1006,7 @@ public class JetPsiUtil {
         //noinspection unchecked
         JetElement container = PsiTreeUtil.getParentOfType(
                 declaration,
-                JetBlockExpression.class, JetClassInitializer.class, JetProperty.class, JetFunction.class
+                JetBlockExpression.class, JetClassInitializer.class, JetProperty.class, JetFunction.class, JetParameter.class
         );
         if (container == null) return null;
 

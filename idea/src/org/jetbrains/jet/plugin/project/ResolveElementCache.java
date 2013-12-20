@@ -88,6 +88,7 @@ public class ResolveElementCache {
                 JetNamedFunction.class,
                 JetClassInitializer.class,
                 JetProperty.class,
+                JetParameter.class,
                 JetDelegationSpecifierList.class,
                 JetImportDirective.class,
                 JetAnnotationEntry.class,
@@ -95,7 +96,7 @@ public class ResolveElementCache {
                 JetTypeConstraint.class,
                 JetNamespaceHeader.class);
 
-        if (elementOfAdditionalResolve != null) {
+        if (elementOfAdditionalResolve != null && !(elementOfAdditionalResolve instanceof JetParameter)) {
             if (elementOfAdditionalResolve instanceof JetNamespaceHeader) {
                 elementOfAdditionalResolve = jetElement;
             }
@@ -103,7 +104,7 @@ public class ResolveElementCache {
             return additionalResolveCache.getValue().invoke(elementOfAdditionalResolve);
         }
 
-        JetParameter parameter = PsiTreeUtil.getTopmostParentOfType(jetElement, JetParameter.class);
+        JetParameter parameter = (JetParameter) elementOfAdditionalResolve;
         if (parameter != null) {
             JetClass klass = PsiTreeUtil.getParentOfType(parameter, JetClass.class);
             if (klass != null && parameter.getParent() == klass.getPrimaryConstructorParameterList()) {

@@ -39,6 +39,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.reference.SoftReference;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -106,8 +107,12 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                 //noinspection unchecked
                 PsiElement declaration = JetPsiUtil.getTopmostParentOfTypes(
                         classOrObject,
-                        JetNamedFunction.class, JetProperty.class, JetClassInitializer.class
+                        JetNamedFunction.class, JetProperty.class, JetClassInitializer.class, JetParameter.class
                 );
+
+                if (declaration instanceof JetParameter) {
+                    declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
+                }
 
                 if (declaration instanceof JetNamedFunction) {
                     JetNamedFunction function = (JetNamedFunction) declaration;
@@ -127,6 +132,10 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                     if (parent instanceof JetClassBody && grandparent instanceof JetClassOrObject) {
                         return LightClassUtil.getPsiClass((JetClassOrObject) grandparent);
                     }
+                }
+
+                if (declaration instanceof JetClass) {
+                    return LightClassUtil.getPsiClass((JetClass) declaration);
                 }
             }
 
