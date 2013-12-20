@@ -115,11 +115,22 @@ class DelegatePropertyAccessIntrinsic(callInfo: VariableAccessInfo) : VariableAc
     }
 }
 
+class SuperPropertyAccessCase(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo) {
+    override fun VariableAccessInfo.thisObject(): JsExpression {
+        val variableName = context.program().getStringLiteral(this.variableName.getIdent())
+        return if (isGetAccess())
+            JsInvocation(context.namer().getCallGetProperty(), JsLiteral.THIS, thisObject!!, variableName)
+        else
+            JsInvocation(context.namer().getCallSetProperty(), JsLiteral.THIS, thisObject!!, variableName, getSetToExpression())
+    }
+}
+
 fun createVariableAccessCases(): CallCaseDispatcher<VariableAccessCase, VariableAccessInfo> {
     val caseDispatcher = CallCaseDispatcher<VariableAccessCase, VariableAccessInfo>()
 
     caseDispatcher.addCase { DelegatePropertyAccessIntrinsic(it).intrinsic() }
-    caseDispatcher.addCase(::ValueParameterAccessCase) { it.variableDescriptor is ValueParameterDescriptor}
+    caseDispatcher.addCase(::SuperPropertyAccessCase) { it.isSuperInvocation() }
+    //caseDispatcher.addCase(::ValueParameterAccessCase) { it.variableDescriptor is ValueParameterDescriptor}
     caseDispatcher.addCase(::NativeVariableAccessCase) { it.isNative() }
     caseDispatcher.addCase(::DefaultVariableAccessCase) { true } // TODO: fix this
     return caseDispatcher
