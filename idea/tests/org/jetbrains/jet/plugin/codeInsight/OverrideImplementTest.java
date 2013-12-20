@@ -54,7 +54,8 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doImplementDirectoryTest();
     }
 
-    public void testFunctionFromTraitInJava() {
+    // TODO: turn on this test when 2c5da897bb9eac407a290bef8b6fb7434a0edbd2 will be back ported to IDEA 12
+    public void ignore_testFunctionFromTraitInJava() {
         doImplementJavaDirectoryTest("foo.KotlinTrait", "bar");
     }
 
