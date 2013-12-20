@@ -36,6 +36,11 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/copyPaste/conversion"), Pattern.compile("^(.+)\\.java$"), true);
     }
     
+    @TestMetadata("Arithmetic.java")
+    public void testArithmetic() throws Exception {
+        doTest("idea/testData/copyPaste/conversion/Arithmetic.java");
+    }
+    
     @TestMetadata("Constructor.java")
     public void testConstructor() throws Exception {
         doTest("idea/testData/copyPaste/conversion/Constructor.java");
@@ -66,6 +71,11 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest("idea/testData/copyPaste/conversion/OnlyClosingBrace.java");
     }
     
+    @TestMetadata("OnlyOneBraceFromBlock.java")
+    public void testOnlyOneBraceFromBlock() throws Exception {
+        doTest("idea/testData/copyPaste/conversion/OnlyOneBraceFromBlock.java");
+    }
+    
     @TestMetadata("OnlyQualifier.java")
     public void testOnlyQualifier() throws Exception {
         doTest("idea/testData/copyPaste/conversion/OnlyQualifier.java");
@@ -79,6 +89,11 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
     @TestMetadata("SeveralMethodsSample.java")
     public void testSeveralMethodsSample() throws Exception {
         doTest("idea/testData/copyPaste/conversion/SeveralMethodsSample.java");
+    }
+    
+    @TestMetadata("SingleWordFromIdentifier.java")
+    public void testSingleWordFromIdentifier() throws Exception {
+        doTest("idea/testData/copyPaste/conversion/SingleWordFromIdentifier.java");
     }
     
 }

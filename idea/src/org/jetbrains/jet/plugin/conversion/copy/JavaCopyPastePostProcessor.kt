@@ -107,7 +107,13 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
                 break;
             }
             val elementToConvert = findTopMostParentWhollyInRange(currentRange, leafElement)
-            result.append(converter.elementToKotlin(elementToConvert))
+            val converted = converter.elementToKotlin(elementToConvert)
+            if (converted.isNotEmpty()) {
+                result.append(converted)
+            }
+            else {
+                result.append(elementToConvert.getText())
+            }
             val endOfConverted = elementToConvert.getTextRange()!!.getEndOffset()
             currentRange = TextRange(endOfConverted, currentRange.getEndOffset())
         }
