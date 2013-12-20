@@ -30,7 +30,6 @@ import org.jetbrains.jet.j2k.*
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.editor.JetEditorOptions
 import java.awt.datatransfer.Transferable
-import java.util.ArrayList
 import com.intellij.openapi.util.TextRange
 
 public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
@@ -71,7 +70,7 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
         val jetEditorOptions = JetEditorOptions.getInstance()!!
         val needConvert = jetEditorOptions.isEnableJavaToKotlinConversion() && (jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project))
         if (needConvert) {
-            val text = convertCopiedCodeToKotlin(value, file)
+            val text = convertCopiedCodeToKotlin(value, file.getProject())
             if (text.isNotEmpty()) {
                 ApplicationManager.getApplication()!!.runWriteAction {
                     editor.getDocument().replaceString(bounds!!.getStartOffset(), bounds.getEndOffset(), text)
@@ -82,13 +81,13 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
         }
     }
 
-    private fun convertCopiedCodeToKotlin(code: CopiedCode, fileToPaste: PsiFile): String {
-        val converter = Converter(fileToPaste.getProject(), PluginSettings)
+    private fun convertCopiedCodeToKotlin(code: CopiedCode, project: Project): String {
+        val converter = Converter(project, PluginSettings)
         val startOffsets = code.getStartOffsets()
         val endOffsets = code.getEndOffsets()
         assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
         val result = StringBuilder()
-        for (i in 0..startOffsets.size - 1) {
+        for (i in startOffsets.indices) {
             val startOffset = startOffsets[i]
             val endOffset = endOffsets[i]
             result.append(convertRangeToKotlin(code.getFile()!!, TextRange(startOffset, endOffset), converter))
@@ -96,21 +95,30 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
         return StringUtil.convertLineSeparators(result.toString())
     }
 
+    private val TextRange.start: Int
+        get() = getStartOffset()
+    private val TextRange.end: Int
+        get() = getEndOffset()
+    //TODO: not private due to KT-4340
+    val PsiElement.range: TextRange
+        get() = getTextRange()!!
+
     private fun convertRangeToKotlin(file: PsiJavaFile,
                                      range: TextRange,
                                      converter: Converter): String {
         val result = StringBuilder()
         var currentRange = range
+        //TODO: probably better to use document to get text by range
         val fileText = file.getText()!!
         while (!currentRange.isEmpty()) {
             val leafElement = findFirstLeafElementWhollyInRange(file, currentRange)
             if (leafElement == null) {
-                val unconvertedSuffix = fileText.substring(currentRange.getStartOffset(), currentRange.getEndOffset())
+                val unconvertedSuffix = fileText.substring(currentRange.start, currentRange.end)
                 result.append(unconvertedSuffix)
                 break
             }
             val elementToConvert = findTopMostParentWhollyInRange(currentRange, leafElement)
-            val unconvertedPrefix = fileText.substring(currentRange.getStartOffset(), elementToConvert.getTextRange()!!.getStartOffset())
+            val unconvertedPrefix = fileText.substring(currentRange.start, elementToConvert.range.start)
             result.append(unconvertedPrefix)
             val converted = converter.elementToKotlin(elementToConvert)
             if (converted.isNotEmpty()) {
@@ -119,23 +127,23 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
             else {
                 result.append(elementToConvert.getText())
             }
-            val endOfConverted = elementToConvert.getTextRange()!!.getEndOffset()
-            currentRange = TextRange(endOfConverted, currentRange.getEndOffset())
+            val endOfConverted = elementToConvert.range.end
+            currentRange = TextRange(endOfConverted, currentRange.end)
         }
         return result.toString()
     }
 
     private fun findFirstLeafElementWhollyInRange(file: PsiJavaFile, range: TextRange): PsiElement? {
-        var i = range.getStartOffset()
-        while (i < range.getEndOffset()) {
-            var element = file.findElementAt(i)
+        var i = range.start
+        while (i < range.end) {
+            val element = file.findElementAt(i)
             if (element == null) {
                 ++i
                 continue
             }
-            val elemRange = element!!.getTextRange()!!
+            val elemRange = element.range
             if (elemRange !in range) {
-                i = elemRange.getEndOffset()
+                i = elemRange.end
                 continue
             }
             return element
@@ -145,14 +153,16 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
 
     private fun findTopMostParentWhollyInRange(range: TextRange,
                                                base: PsiElement): PsiElement {
+        assert(base.range in range) {
+            "Base element out of range. Range: $range, element: ${base.getText()}, element's range: ${base.range}."
+        }
         var elem = base
-        var parent = elem.getParent()
-        while (elem.getTextRange()!! in range &&
-               parent != null &&
-               parent !is PsiJavaFile &&
-               parent!!.getTextRange()!! in range) {
-            elem = parent!!
-            parent = elem.getParent()
+        while (true) {
+            val parent = elem.getParent()
+            if (parent == null || parent is PsiJavaFile || parent.range !in range) {
+                break
+            }
+            elem = parent
         }
         return elem
     }
@@ -165,6 +175,5 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
 
     class object {
         private val LOG = Logger.getInstance("#org.jetbrains.jet.plugin.conversion.copy.JavaCopyPastePostProcessor")!!
-        private val EOL = System.getProperty("line.separator")!!
     }
 }
