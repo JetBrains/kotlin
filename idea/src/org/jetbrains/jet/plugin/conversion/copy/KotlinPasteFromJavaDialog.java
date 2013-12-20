@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.plugin.conversion.copy;
 
+import com.intellij.CommonBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.editor.JetEditorOptions;
 
 import javax.swing.*;
@@ -50,8 +52,11 @@ public class KotlinPasteFromJavaDialog extends DialogWrapper {
         return myPanel;
     }
 
+    @NotNull
     @Override
     protected Action[] createActions() {
+        setOKButtonText(CommonBundle.getYesButtonText());
+        setCancelButtonText(CommonBundle.getNoButtonText());
         return new Action[] {getOKAction(), getCancelAction()};
     }
 
