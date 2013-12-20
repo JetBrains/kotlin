@@ -66,7 +66,10 @@ public class SimpleTestClassModel implements TestClassModel {
             if (files != null) {
                 for (File file : files) {
                     if (file.isDirectory()) {
-                        children.add(new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName));
+                        SimpleTestClassModel childModel = new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName);
+                        if (!childModel.isEmpty()) {
+                            children.add(childModel);
+                        }
                     }
                 }
             }
