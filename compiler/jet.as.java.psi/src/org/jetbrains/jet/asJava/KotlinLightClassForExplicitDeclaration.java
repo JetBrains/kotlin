@@ -152,6 +152,75 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     protected final JetClassOrObject classOrObject;
     private PsiClass delegate;
 
+    private static final Class[] LOCAL_CLASS_CONTAINERS = {
+            JetNamedFunction.class, JetProperty.class, JetClassInitializer.class
+    };
+    private final NullableLazyValue<PsiElement> parent = new NullableLazyValue<PsiElement>() {
+        private PsiElement getParentByPsiMethod(PsiMethod method, final String name) {
+            assert method != null;
+            assert name != null;
+
+            PsiClass containingClass = method.getContainingClass();
+            assert containingClass != null;
+
+            final String currentFileName = classOrObject.getContainingFile().getName();
+
+            if (containingClass instanceof KotlinLightClassForPackage) {
+                containingClass = new LightClass(containingClass, JetLanguage.INSTANCE) {
+                    @Nullable
+                    @Override
+                    public String getName() {
+                        return currentFileName;
+                    }
+                };
+            }
+
+            return new LightMethod(myManager, method, containingClass, JetLanguage.INSTANCE) {
+                @Override
+                public PsiElement getParent() {
+                    return getContainingClass();
+                }
+
+                @NotNull
+                @Override
+                public String getName() {
+                    return name;
+                }
+            };
+        }
+
+        @Nullable
+        @Override
+        protected PsiElement compute() {
+            if (JetPsiUtil.isLocal(classOrObject)) {
+                //noinspection unchecked
+                PsiElement declaration = JetPsiUtil.getTopmostParentOfTypes(classOrObject, LOCAL_CLASS_CONTAINERS);
+
+                if (declaration instanceof JetNamedFunction) {
+                    JetNamedFunction function = (JetNamedFunction) declaration;
+                    return getParentByPsiMethod(LightClassUtil.getLightClassMethod((JetNamedFunction) declaration), function.getName());
+                }
+
+                // Represent the property as a fake method with the same name
+                if (declaration instanceof JetProperty) {
+                    JetProperty property = (JetProperty) declaration;
+                    return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(property).getGetter(), property.getName());
+                }
+
+                if (declaration instanceof JetClassInitializer) {
+                    PsiElement parent = declaration.getParent();
+                    PsiElement grandparent = parent.getParent();
+
+                    if (parent instanceof JetClassBody && grandparent instanceof JetClassOrObject) {
+                        return LightClassUtil.getPsiClass((JetClassOrObject) grandparent);
+                    }
+                }
+            }
+
+            return classOrObject.getParent() == classOrObject.getContainingFile() ? getContainingFile() : getContainingClass();
+        }
+    };
+
     @Nullable
     private PsiModifierList modifierList;
 
@@ -344,8 +413,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     @Nullable
     @Override
     public PsiElement getParent() {
-        if (classOrObject.getParent() == classOrObject.getContainingFile()) return getContainingFile();
-        return getContainingClass();
+        return parent.getValue();
     }
 
     @Nullable
