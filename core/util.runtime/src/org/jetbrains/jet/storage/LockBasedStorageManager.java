@@ -32,6 +32,12 @@ import java.util.concurrent.locks.ReentrantLock;
 public class LockBasedStorageManager implements StorageManager {
 
     public static final StorageManager NO_LOCKS = new LockBasedStorageManager(NoLock.INSTANCE) {
+        @NotNull
+        @Override
+        protected <T> RecursionDetectedResult<T> recursionDetectedDefault() {
+            return RecursionDetectedResult.fallThrough();
+        }
+
         @Override
         public String toString() {
             return "NO_LOCKS";
@@ -88,9 +94,10 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull Function0<T> computable, @NotNull final T onRecursiveCall
     ) {
         return new LockBasedNotNullLazyValue<T>(computable) {
+            @NotNull
             @Override
-            protected T recursionDetected(boolean firstTime) {
-                return onRecursiveCall;
+            protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
+                return RecursionDetectedResult.value(onRecursiveCall);
             }
         };
     }
@@ -103,13 +110,13 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull final Function1<T, Unit> postCompute
     ) {
         return new LockBasedNotNullLazyValue<T>(computable) {
-            @Nullable
+            @NotNull
             @Override
-            protected T recursionDetected(boolean firstTime) {
+            protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
                 if (onRecursiveCall == null) {
                     return super.recursionDetected(firstTime);
                 }
-                return onRecursiveCall.invoke(firstTime);
+                return RecursionDetectedResult.value(onRecursiveCall.invoke(firstTime));
             }
 
             @Override
@@ -129,9 +136,10 @@ public class LockBasedStorageManager implements StorageManager {
     @Override
     public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Function0<T> computable, final T onRecursiveCall) {
         return new LockBasedLazyValue<T>(computable) {
+            @NotNull
             @Override
-            protected T recursionDetected(boolean firstTime) {
-                return onRecursiveCall;
+            protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
+                return RecursionDetectedResult.value(onRecursiveCall);
             }
         };
     }
@@ -157,6 +165,46 @@ public class LockBasedStorageManager implements StorageManager {
         }
         finally {
             lock.unlock();
+        }
+    }
+
+    @NotNull
+    protected <T> RecursionDetectedResult<T> recursionDetectedDefault() {
+        throw new IllegalStateException("Recursive call in a lazy value");
+    }
+
+    private static class RecursionDetectedResult<T> {
+
+        @NotNull
+        public static <T> RecursionDetectedResult<T> value(T value) {
+            return new RecursionDetectedResult<T>(value, false);
+        }
+
+        @NotNull
+        public static <T> RecursionDetectedResult<T> fallThrough() {
+            return new RecursionDetectedResult<T>(null, true);
+        }
+
+        private final T value;
+        private final boolean fallThrough;
+
+        private RecursionDetectedResult(T value, boolean fallThrough) {
+            this.value = value;
+            this.fallThrough = fallThrough;
+        }
+
+        public T getValue() {
+            assert !fallThrough : "A value requested from FALL_THROUGH ";
+            return value;
+        }
+
+        public boolean isFallThrough() {
+            return fallThrough;
+        }
+
+        @Override
+        public String toString() {
+            return isFallThrough() ? "FALL_THROUGH" : String.valueOf(value);
         }
     }
 
@@ -194,11 +242,17 @@ public class LockBasedStorageManager implements StorageManager {
 
                 if (_value == NotValue.COMPUTING) {
                     value = NotValue.RECURSION_WAS_DETECTED;
-                    return recursionDetected(/*firstTime = */ true);
+                    RecursionDetectedResult<T> result = recursionDetected(/*firstTime = */ true);
+                    if (!result.isFallThrough()) {
+                        return result.getValue();
+                    }
                 }
 
                 if (_value == NotValue.RECURSION_WAS_DETECTED) {
-                    return recursionDetected(/*firstTime = */ false);
+                    RecursionDetectedResult<T> result = recursionDetected(/*firstTime = */ false);
+                    if (!result.isFallThrough()) {
+                        return result.getValue();
+                    }
                 }
 
                 value = NotValue.COMPUTING;
@@ -225,9 +279,9 @@ public class LockBasedStorageManager implements StorageManager {
          * @param firstTime {@code true} when recursion has been just detected, {@code false} otherwise
          * @return a value to be returned on a recursive call or subsequent calls
          */
-        @Nullable
-        protected T recursionDetected(boolean firstTime) {
-            throw new IllegalStateException("Recursive call in a lazy value");
+        @NotNull
+        protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
+            return recursionDetectedDefault();
         }
 
         protected void postCompute(T value) {

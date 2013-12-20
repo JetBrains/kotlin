@@ -384,6 +384,27 @@ public class StorageManagerTest extends TestCase {
         assertEquals("second", c.rec.invoke());
     }
 
+    public void testFallThrough() throws Exception {
+        final CounterImpl c = new CounterImpl();
+        class C {
+            NotNullLazyValue<Integer> rec = LockBasedStorageManager.NO_LOCKS.createLazyValue(new Function0<Integer>() {
+                @Override
+                public Integer invoke() {
+                    c.inc();
+                    if (c.getCount() < 2) {
+                        return rec.invoke();
+                    }
+                    else {
+                        return c.getCount();
+                    }
+                }
+            });
+        }
+
+        assertEquals(2, new C().rec.invoke().intValue());
+        assertEquals(2, c.getCount());
+    }
+
     // Utilities
 
     private static <K, V> Function0<V> apply(final Function1<K, V> f, final K x) {
