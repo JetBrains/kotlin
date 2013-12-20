@@ -46,6 +46,11 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest("idea/testData/copyPaste/conversion/Constructor.java");
     }
     
+    @TestMetadata("HalfTheWhiteSpace.java")
+    public void testHalfTheWhiteSpace() throws Exception {
+        doTest("idea/testData/copyPaste/conversion/HalfTheWhiteSpace.java");
+    }
+    
     @TestMetadata("Imports1.java")
     public void testImports1() throws Exception {
         doTest("idea/testData/copyPaste/conversion/Imports1.java");

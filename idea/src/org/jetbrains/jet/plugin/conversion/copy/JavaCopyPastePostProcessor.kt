@@ -101,12 +101,17 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
                                      converter: Converter): String {
         val result = StringBuilder()
         var currentRange = range
+        val fileText = file.getText()!!
         while (!currentRange.isEmpty()) {
             val leafElement = findFirstLeafElementWhollyInRange(file, currentRange)
             if (leafElement == null) {
-                break;
+                val unconvertedSuffix = fileText.substring(currentRange.getStartOffset(), currentRange.getEndOffset())
+                result.append(unconvertedSuffix)
+                break
             }
             val elementToConvert = findTopMostParentWhollyInRange(currentRange, leafElement)
+            val unconvertedPrefix = fileText.substring(currentRange.getStartOffset(), elementToConvert.getTextRange()!!.getStartOffset())
+            result.append(unconvertedPrefix)
             val converted = converter.elementToKotlin(elementToConvert)
             if (converted.isNotEmpty()) {
                 result.append(converted)

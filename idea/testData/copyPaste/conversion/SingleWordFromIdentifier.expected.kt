@@ -1,1 +1,1 @@
-class 
+class Some
