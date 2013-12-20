@@ -95,8 +95,16 @@ trait CallCase<I : BaseCallInfo> {
         throw unsupported()
     }
 
+    fun constructSafeCall(result: JsExpression): JsExpression {
+        return CallType.SAFE.constructCall(callInfo.nullableReceiverForSafeCall, object : CallType.CallConstructor {
+            override fun construct(receiver: JsExpression?): JsExpression {
+                return result
+            }
+        }, callInfo.context)
+    }
+
     final fun translate(): JsExpression {
-        return if (callInfo.thisObject == null) {
+        val result = if (callInfo.thisObject == null) {
             if (callInfo.receiverObject == null)
                 callInfo.noReceivers()
             else
@@ -107,6 +115,11 @@ trait CallCase<I : BaseCallInfo> {
             else
                 callInfo.bothReceivers()
         }
+
+        return if (callInfo.isSafeCall())
+            constructSafeCall(result)
+        else
+            return result
     }
 }
 
