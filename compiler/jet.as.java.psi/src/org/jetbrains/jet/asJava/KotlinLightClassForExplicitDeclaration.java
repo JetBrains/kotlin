@@ -111,13 +111,13 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
                 if (declaration instanceof JetNamedFunction) {
                     JetNamedFunction function = (JetNamedFunction) declaration;
-                    return getParentByPsiMethod(LightClassUtil.getLightClassMethod(function), function.getName());
+                    return getParentByPsiMethod(LightClassUtil.getLightClassMethod(function), function.getName(), false);
                 }
 
                 // Represent the property as a fake method with the same name
                 if (declaration instanceof JetProperty) {
                     JetProperty property = (JetProperty) declaration;
-                    return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(property).getGetter(), property.getName());
+                    return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(property).getGetter(), property.getName(), true);
                 }
 
                 if (declaration instanceof JetClassInitializer) {
@@ -133,7 +133,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
             return classOrObject.getParent() == classOrObject.getContainingFile() ? getContainingFile() : getContainingClass();
         }
 
-        private PsiElement getParentByPsiMethod(PsiMethod method, final String name) {
+        private PsiElement getParentByPsiMethod(PsiMethod method, final String name, boolean forceMethodWrapping) {
             if (method == null || name == null) return null;
 
             PsiClass containingClass = method.getContainingClass();
@@ -141,6 +141,8 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
             final String currentFileName = classOrObject.getContainingFile().getName();
 
+            boolean createWrapper = forceMethodWrapping;
+            // Use PsiClass wrapper instead of package light class to avoid names like "FooPackage" in Type Hierarchy and related views
             if (containingClass instanceof KotlinLightClassForPackage) {
                 containingClass = new LightClass(containingClass, JetLanguage.INSTANCE) {
                     @Nullable
@@ -149,20 +151,25 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                         return currentFileName;
                     }
                 };
+                createWrapper = true;
             }
 
-            return new LightMethod(myManager, method, containingClass, JetLanguage.INSTANCE) {
-                @Override
-                public PsiElement getParent() {
-                    return getContainingClass();
-                }
+            if (createWrapper) {
+                return new LightMethod(myManager, method, containingClass, JetLanguage.INSTANCE) {
+                    @Override
+                    public PsiElement getParent() {
+                        return getContainingClass();
+                    }
 
-                @NotNull
-                @Override
-                public String getName() {
-                    return name;
-                }
-            };
+                    @NotNull
+                    @Override
+                    public String getName() {
+                        return name;
+                    }
+                };
+            }
+
+            return method;
         }
     };
 
