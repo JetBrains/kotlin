@@ -6,6 +6,17 @@
   <item name='com.intellij.codeInsight.lookup.Lookup com.intellij.openapi.editor.Editor getEditor()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.codeInsight.lookup.LookupElement void handleInsert(com.intellij.codeInsight.completion.InsertionContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElement void renderElement(com.intellij.codeInsight.lookup.LookupElementPresentation) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElement withAutoCompletionPolicy(com.intellij.codeInsight.lookup.AutoCompletionPolicy)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder create(com.intellij.psi.PsiNamedElement)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
@@ -43,6 +54,10 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withRenderer(com.intellij.codeInsight.lookup.LookupElementRenderer&lt;com.intellij.codeInsight.lookup.LookupElement&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withStrikeoutness(boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
@@ -51,11 +66,29 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
+      name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withTailText(java.lang.String, boolean)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withTypeText(java.lang.String)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withTypeText(java.lang.String, boolean)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementDecorator void renderElement(com.intellij.codeInsight.lookup.LookupElementPresentation) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementRenderer void renderElement(T, com.intellij.codeInsight.lookup.LookupElementPresentation)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun renderElement(element: T?, presentation: LookupElementPresentation): Unit&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.codeInsight.lookup.LookupElementRenderer void renderElement(T, com.intellij.codeInsight.lookup.LookupElementPresentation) 1'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item

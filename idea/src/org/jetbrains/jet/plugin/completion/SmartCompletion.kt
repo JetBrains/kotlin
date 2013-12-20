@@ -26,6 +26,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.openapi.editor.EditorModificationUtil
+import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler
+import com.intellij.psi.PsiDocumentManager
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -122,11 +125,12 @@ private fun typeInstantiationItems(expectedType: JetType, resolveSession: Cancel
     val typeConstructor: TypeConstructor = expectedType.getConstructor()
     val classifier: ClassifierDescriptor? = typeConstructor.getDeclarationDescriptor()
     if (!(classifier is ClassDescriptor)) return listOf()
-    if (classifier.getModality() == Modality.ABSTRACT) return listOf()
 
     //TODO: check for constructor's visibility
 
     val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, classifier)
+
+    var lookupString = lookupElement.getLookupString()
 
     val typeArgs = expectedType.getArguments()
     //TODO: shouldn't be method in DescriptorRenderer to render type arguments?
@@ -135,27 +139,59 @@ private fun typeInstantiationItems(expectedType: JetType, resolveSession: Cancel
                 ""
             else
                 typeArgs.map { DescriptorRenderer.TEXT.renderType(it.getType()) }.makeString(", ", "<", ">")
-    val presentableText = lookupElement.getLookupString() + typeArgsText + "()"
+    var itemText = lookupElement.getLookupString() + typeArgsText
 
-    val constructors: Collection<ConstructorDescriptor> = classifier.getConstructors()
-    val caretPosition =
-            if (constructors.size == 0)
-                CaretPosition.AFTER_BRACKETS
-            else if (constructors.size == 1)
-                if (constructors.first().getValueParameters().isEmpty()) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
-            else
-                CaretPosition.IN_BRACKETS
-    val insertHandler = JetFunctionInsertHandler(caretPosition, BracketType.PARENTHESIS)
-
-    //TODO: very bad code
-    if (lookupElement is LookupElementBuilder) {
-        return listOf(lookupElement.withPresentableText(presentableText).withInsertHandler(insertHandler))
+    val insertHandler: InsertHandler<LookupElement>
+    var suppressAutoInsertion: Boolean = false
+    if (classifier.getModality() == Modality.ABSTRACT) {
+        val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
+        itemText += constructorParenthesis
+        itemText = "object: " + itemText + "{...}"
+        lookupString = "object" //?
+        insertHandler = object: InsertHandler<LookupElement>{
+            override fun handleInsert(context: InsertionContext, item: LookupElement) {
+                //TODO: insert import
+                val editor = context.getEditor()
+                EditorModificationUtil.insertStringAtCaret(editor, ": " + classifier.getName() + constructorParenthesis + " {}")
+                editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() - 1)
+                PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+                ImplementMethodsHandler().invoke(context.getProject(), editor, context.getFile(), true)
+            }
+        }
+        suppressAutoInsertion = true
     }
-    else if (lookupElement is JavaPsiClassReferenceElement) {
-        return listOf(lookupElement.setPresentableText(presentableText).setInsertHandler(insertHandler))
+    else {
+        itemText += "()"
+        val constructors: Collection<ConstructorDescriptor> = classifier.getConstructors()
+        val caretPosition =
+                if (constructors.size == 0)
+                    CaretPosition.AFTER_BRACKETS
+                else if (constructors.size == 1)
+                    if (constructors.first().getValueParameters().isEmpty()) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
+                else
+                    CaretPosition.IN_BRACKETS
+        insertHandler = JetFunctionInsertHandler(caretPosition, BracketType.PARENTHESIS)
     }
 
-    return listOf()
+    val lookupElementDecorated = object: LookupElementDecorator<LookupElement>(lookupElement){
+        override fun getLookupString() = lookupString
+
+        override fun renderElement(presentation: LookupElementPresentation) {
+            lookupElement.renderElement(presentation)
+            presentation.setItemText(itemText)
+        }
+
+        override fun handleInsert(context: InsertionContext) {
+            insertHandler.handleInsert(context, lookupElement)
+        }
+    }
+
+    if (suppressAutoInsertion) {
+        return listOf(AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(lookupElementDecorated))
+    }
+    else{
+        return listOf(lookupElementDecorated)
+    }
 }
 
 private fun thisItems(context: JetExpression, expectedType: JetType, bindingContext: BindingContext): Iterable<LookupElement> {
@@ -273,27 +309,45 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
                 .filterTo(descriptors) { it is ClassDescriptor && it.getKind() == ClassKind.ENUM_ENTRY }
     }
 
-    return descriptors
-                .filter { !(it is DeclarationDescriptorWithVisibility) || Visibilities.isVisible(it, scope.getContainingDeclaration()) }
-                .map {
-                    val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, it)
-                    val presentation = LookupElementPresentation()
-                    lookupElement.renderElement(presentation)
-                    var builder = LookupElementBuilder.create(lookupElement.getObject(), classDescriptor.getName().asString() + "." + lookupElement.getLookupString())
-                            .withIcon(presentation.getIcon())
-                            .withStrikeoutness(presentation.isStrikeout())
-                            .withTailText(" (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")")
-                            .withTypeText(if (!presentation.getTypeText().isNullOrEmpty())
-                                              presentation.getTypeText()
-                                          else
-                                              DescriptorRenderer.TEXT.renderType(classDescriptor.getDefaultType()))
-                    if (it is FunctionDescriptor) {
-                        builder = builder.withPresentableText(builder.getLookupString() + "()")
-                        val caretPosition = if (it.getValueParameters().empty) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
-                        builder = builder.withInsertHandler(JetFunctionInsertHandler(caretPosition, BracketType.PARENTHESIS))
-                    }
-                    builder
+    fun toLookupElement(descriptor: DeclarationDescriptor): LookupElement {
+        val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
+        val lookupString = classDescriptor.getName().asString() + "." + lookupElement.getLookupString()
+        var itemText = lookupString
+        val insertHandler: InsertHandler<LookupElement>?
+        if (descriptor is FunctionDescriptor) {
+            itemText += "()"
+            val caretPosition = if (descriptor.getValueParameters().empty) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
+            insertHandler = JetFunctionInsertHandler(caretPosition, BracketType.PARENTHESIS)
+        }
+        else {
+            insertHandler = null
+        }
+        return object: LookupElementDecorator<LookupElement>(lookupElement){
+            override fun getLookupString() = lookupString
+
+            override fun renderElement(presentation: LookupElementPresentation) {
+                lookupElement.renderElement(presentation)
+                presentation.setItemText(itemText)
+                presentation.setTailText(" (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")")
+                if (presentation.getTypeText().isNullOrEmpty()) {
+                    presentation.setTypeText(DescriptorRenderer.TEXT.renderType(classDescriptor.getDefaultType()))
                 }
+            }
+
+            override fun handleInsert(context: InsertionContext) {
+                if (insertHandler != null) {
+                    insertHandler.handleInsert(context, lookupElement)
+                }
+                else{
+                    lookupElement.handleInsert(context)
+                }
+            }
+        }
+    }
+
+    return descriptors
+            .filter { !(it is DeclarationDescriptorWithVisibility) || Visibilities.isVisible(it, scope.getContainingDeclaration()) }
+            .map({toLookupElement(it)}) //TODO: use ::toLookupElement but it causes compiler to crash
 }
 
 private fun isSubtypeOf(t: JetType, expectedType: JetType): Boolean{

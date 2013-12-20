@@ -36,6 +36,21 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/completion/smart"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("AnonymousObject1.kt")
+    public void testAnonymousObject1() throws Exception {
+        doTest("idea/testData/completion/smart/AnonymousObject1.kt");
+    }
+    
+    @TestMetadata("AnonymousObject2.kt")
+    public void testAnonymousObject2() throws Exception {
+        doTest("idea/testData/completion/smart/AnonymousObject2.kt");
+    }
+    
+    @TestMetadata("AnonymousObjectForJavaInterface.kt")
+    public void testAnonymousObjectForJavaInterface() throws Exception {
+        doTest("idea/testData/completion/smart/AnonymousObjectForJavaInterface.kt");
+    }
+    
     @TestMetadata("AutoCastedType.kt")
     public void testAutoCastedType() throws Exception {
         doTest("idea/testData/completion/smart/AutoCastedType.kt");
@@ -149,21 +164,6 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("MethodCallArgument.kt")
     public void testMethodCallArgument() throws Exception {
         doTest("idea/testData/completion/smart/MethodCallArgument.kt");
-    }
-    
-    @TestMetadata("NoConstructorForAbstract.kt")
-    public void testNoConstructorForAbstract() throws Exception {
-        doTest("idea/testData/completion/smart/NoConstructorForAbstract.kt");
-    }
-    
-    @TestMetadata("NoConstructorForJavaInterface.kt")
-    public void testNoConstructorForJavaInterface() throws Exception {
-        doTest("idea/testData/completion/smart/NoConstructorForJavaInterface.kt");
-    }
-    
-    @TestMetadata("NoConstructorForTrait.kt")
-    public void testNoConstructorForTrait() throws Exception {
-        doTest("idea/testData/completion/smart/NoConstructorForTrait.kt");
     }
     
     @TestMetadata("NoConstructorWithQualifier.kt")

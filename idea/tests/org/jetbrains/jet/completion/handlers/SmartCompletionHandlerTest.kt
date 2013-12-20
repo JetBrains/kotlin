@@ -51,4 +51,7 @@ public class SmartCompletionHandlerTest() : CompletionHandlerTestBase() {
     fun testTabReplaceExpression2() = doTest(1, "sss", null, '\t')
     fun testTabReplaceExpression3() = doTest(1, "sss", null, '\t')
     fun testTabReplaceOperand() = doTest(1, "b3", null, '\t')
+    fun testAnonymousObject1() = doTest(1, "object", null, '\t')
+    fun testAnonymousObject2() = doTest(1, "object", null, '\t')
+    fun testAnonymousObject3() = doTest(1, "object", null, '\t')
 }
