@@ -59,7 +59,7 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull Function1<K, V> compute,
             @NotNull ConcurrentMap<K, Object> map
     ) {
-        return new MapBasedMemoizedFunctionToNotNull<K, V>(lock, map, compute);
+        return new MapBasedMemoizedFunctionToNotNull<K, V>(map, compute);
     }
 
     @NotNull
@@ -73,13 +73,13 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull Function1<K, V> compute,
             @NotNull ConcurrentMap<K, Object> map
     ) {
-        return new MapBasedMemoizedFunction<K, V>(lock, map, compute);
+        return new MapBasedMemoizedFunction<K, V>(map, compute);
     }
 
     @NotNull
     @Override
     public <T> NotNullLazyValue<T> createLazyValue(@NotNull Function0<T> computable) {
-        return new LockBasedNotNullLazyValue<T>(lock, computable);
+        return new LockBasedNotNullLazyValue<T>(computable);
     }
 
     @NotNull
@@ -87,7 +87,7 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(
             @NotNull Function0<T> computable, @NotNull final T onRecursiveCall
     ) {
-        return new LockBasedNotNullLazyValue<T>(lock, computable) {
+        return new LockBasedNotNullLazyValue<T>(computable) {
             @Override
             protected T recursionDetected(boolean firstTime) {
                 return onRecursiveCall;
@@ -102,7 +102,7 @@ public class LockBasedStorageManager implements StorageManager {
             final Function1<Boolean, T> onRecursiveCall,
             @NotNull final Function1<T, Unit> postCompute
     ) {
-        return new LockBasedNotNullLazyValue<T>(lock, computable) {
+        return new LockBasedNotNullLazyValue<T>(computable) {
             @Nullable
             @Override
             protected T recursionDetected(boolean firstTime) {
@@ -122,13 +122,13 @@ public class LockBasedStorageManager implements StorageManager {
     @NotNull
     @Override
     public <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Function0<T> computable) {
-        return new LockBasedLazyValue<T>(lock, computable);
+        return new LockBasedLazyValue<T>(computable);
     }
 
     @NotNull
     @Override
     public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(@NotNull Function0<T> computable, final T onRecursiveCall) {
-        return new LockBasedLazyValue<T>(lock, computable) {
+        return new LockBasedLazyValue<T>(computable) {
             @Override
             protected T recursionDetected(boolean firstTime) {
                 return onRecursiveCall;
@@ -141,7 +141,7 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
             @NotNull Function0<T> computable, @NotNull final Function1<T, Unit> postCompute
     ) {
-        return new LockBasedLazyValue<T>(lock, computable) {
+        return new LockBasedLazyValue<T>(computable) {
             @Override
             protected void postCompute(@Nullable T value) {
                 postCompute.invoke(value);
@@ -160,22 +160,20 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
-    private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
+    private enum NotValue {
+        NOT_COMPUTED,
+        COMPUTING,
+        RECURSION_WAS_DETECTED
+    }
 
-        private enum NotValue {
-            NOT_COMPUTED,
-            COMPUTING,
-            RECURSION_WAS_DETECTED
-        }
+    private class LockBasedLazyValue<T> implements NullableLazyValue<T> {
 
-        private final Lock lock;
         private final Function0<T> computable;
 
         @Nullable
         private volatile Object value = NotValue.NOT_COMPUTED;
 
-        public LockBasedLazyValue(@NotNull Lock lock, @NotNull Function0<T> computable) {
-            this.lock = lock;
+        public LockBasedLazyValue(@NotNull Function0<T> computable) {
             this.computable = computable;
         }
 
@@ -237,10 +235,10 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
-    private static class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
+    private class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
 
-        public LockBasedNotNullLazyValue(@NotNull Lock lock, @NotNull Function0<T> computable) {
-            super(lock, computable);
+        public LockBasedNotNullLazyValue(@NotNull Function0<T> computable) {
+            super(computable);
         }
 
         @Override
@@ -252,13 +250,11 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
-    private static class MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNullable<K, V> {
-        private final Lock lock;
+    private class MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNullable<K, V> {
         private final ConcurrentMap<K, Object> cache;
         private final Function1<K, V> compute;
 
-        public MapBasedMemoizedFunction(@NotNull Lock lock, @NotNull ConcurrentMap<K, Object> map, @NotNull Function1<K, V> compute) {
-            this.lock = lock;
+        public MapBasedMemoizedFunction(@NotNull ConcurrentMap<K, Object> map, @NotNull Function1<K, V> compute) {
             this.cache = map;
             this.compute = compute;
         }
@@ -294,14 +290,13 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
-    private static class MapBasedMemoizedFunctionToNotNull<K, V> extends MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNotNull<K, V> {
+    private class MapBasedMemoizedFunctionToNotNull<K, V> extends MapBasedMemoizedFunction<K, V> implements MemoizedFunctionToNotNull<K, V> {
 
         public MapBasedMemoizedFunctionToNotNull(
-                @NotNull Lock lock,
                 @NotNull ConcurrentMap<K, Object> map,
                 @NotNull Function1<K, V> compute
         ) {
-            super(lock, map, compute);
+            super(map, compute);
         }
 
         @NotNull
