@@ -264,6 +264,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private MutableClassDescriptor createEnumClassObject() {
         MutableClassDescriptor classObject = new MutableClassDescriptor(this, getScopeForMemberLookup(), ClassKind.CLASS_OBJECT,
                                                                         false, getClassObjectName(getName()));
+        classObject.setSupertypes(Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
         classObject.setModality(Modality.FINAL);
         classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
         classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());

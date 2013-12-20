@@ -427,6 +427,7 @@ public final class JavaClassResolver {
     private JavaEnumClassObjectDescriptor createEnumClassObject(@NotNull ClassDescriptor enumClass, @NotNull JavaClass javaClass) {
         JavaEnumClassObjectDescriptor classObject = new JavaEnumClassObjectDescriptor(enumClass);
 
+        classObject.setSupertypes(Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
         classObject.setModality(Modality.FINAL);
         classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
         classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());

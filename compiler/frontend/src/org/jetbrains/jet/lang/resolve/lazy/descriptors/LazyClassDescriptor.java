@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.NullableLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
@@ -361,7 +362,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
 
                         JetClassOrObject classOrObject = info.getCorrespondingClassOrObject();
                         if (classOrObject == null) {
-                            return Collections.emptyList();
+                            return Collections.singleton(KotlinBuiltIns.getInstance().getAnyType());
                         }
 
                         List<JetType> allSupertypes = resolveSession.getInjector().getDescriptorResolver()

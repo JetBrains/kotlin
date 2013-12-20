@@ -29,11 +29,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.*;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.SubstitutionUtils;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.DFS;
 
 import javax.inject.Inject;
@@ -188,16 +186,24 @@ public class TypeHierarchyResolver {
 
             descriptor.createTypeConstructor();
 
-            if (classOrObject instanceof JetEnumEntry ||
-                classOrObject instanceof JetObjectDeclaration && classOrObject.getNameIdentifier() != null) {
+            ClassKind kind = descriptor.getKind();
+            if (kind == ClassKind.ENUM_ENTRY || kind == ClassKind.OBJECT || kind == ClassKind.ENUM_CLASS) {
                 MutableClassDescriptorLite classObject = descriptor.getClassObjectDescriptor();
                 assert classObject != null : "Enum entries and named objects should have class objects: " + classOrObject.getText();
 
-                // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.
-                // We make this class object inherit from the singleton here, thus allowing to use the singleton's class object where
-                // the instance of the singleton is applicable. Effectively all members of the singleton would be present in its class
-                // object as fake overrides, so you can access them via standard class object notation: ObjectName.memberName()
-                classObject.addSupertype(descriptor.getDefaultType());
+                JetType supertype;
+                if (kind == ClassKind.ENUM_CLASS) {
+                    supertype = KotlinBuiltIns.getInstance().getAnyType();
+                }
+                else {
+                    // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.
+                    // We make this class object inherit from the singleton here, thus allowing to use the singleton's class object where
+                    // the instance of the singleton is applicable. Effectively all members of the singleton would be present in its class
+                    // object as fake overrides, so you can access them via standard class object notation: ObjectName.memberName()
+                    supertype = descriptor.getDefaultType();
+                }
+                classObject.setSupertypes(Collections.singleton(supertype));
+                classObject.createTypeConstructor();
             }
         }
     }
@@ -546,11 +552,11 @@ public class TypeHierarchyResolver {
         private MutableClassDescriptor createSyntheticClassObject(@NotNull ClassDescriptor classDescriptor) {
             MutableClassDescriptor classObject = new MutableClassDescriptor(classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false,
                                                                             getClassObjectName(classDescriptor.getName()));
+
             classObject.setModality(Modality.FINAL);
             classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
             classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
             createPrimaryConstructorForObject(null, classObject);
-            classObject.createTypeConstructor();
             return classObject;
         }
 

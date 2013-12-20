@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -222,7 +223,14 @@ public class DescriptorValidator {
                 ClassDescriptor descriptor, DiagnosticCollector collector
         ) {
             validateTypeParameters(collector, descriptor.getTypeConstructor().getParameters());
-            validateTypes(descriptor, collector, descriptor.getTypeConstructor().getSupertypes());
+
+            Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+            if (supertypes.isEmpty() && descriptor.getKind() != ClassKind.TRAIT
+                && KotlinBuiltIns.getInstance().getAny() != descriptor
+                && KotlinBuiltIns.getInstance().getNothing() != descriptor) {
+                report(collector, descriptor, "No supertypes for non-trait");
+            }
+            validateTypes(descriptor, collector, supertypes);
 
             validateType(descriptor, descriptor.getDefaultType(), collector);
 
