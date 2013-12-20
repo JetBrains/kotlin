@@ -333,7 +333,7 @@
 
     <referencesSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinReferencesSearcher"/>
     <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
-    <definitionsScopedSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher"/>
+    <definitionsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher"/>
     <annotatedElementsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
 
     <exceptionFilter implementation="org.jetbrains.jet.plugin.filters.JetExceptionFilterFactory" order="first"/>
