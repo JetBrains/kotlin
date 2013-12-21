@@ -112,4 +112,13 @@ public class FunctionTest extends AbstractExpressionTest {
     public void testCallFunInInit() throws Exception {
         fooBoxTest();
     }
+
+    public void testMangling() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testOverloadingWithInheritance() throws Exception {
+        checkFooBoxIsOk();
+    }
+
 }
