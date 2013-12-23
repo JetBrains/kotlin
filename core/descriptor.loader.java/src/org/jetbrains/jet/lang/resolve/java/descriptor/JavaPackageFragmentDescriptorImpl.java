@@ -32,8 +32,19 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import java.util.Collections;
 
 public class JavaPackageFragmentDescriptorImpl extends DeclarationDescriptorImpl implements JavaPackageFragmentDescriptor {
+    @Nullable
+    public static JavaPackageFragmentDescriptorImpl create(
+            @NotNull JavaPackageFragmentProvider provider,
+            @NotNull FqName fqName,
+            @NotNull NullableFunction<JavaPackageFragmentDescriptor, JavaPackageFragmentScope> scopeFactory
+    ) {
+        JavaPackageFragmentDescriptorImpl descriptor = new JavaPackageFragmentDescriptorImpl(provider, fqName, scopeFactory);
+        return descriptor.memberScope == null ? null : descriptor;
+    }
+
     private final JavaPackageFragmentProvider provider;
     private final FqName fqName;
+
     private final JavaPackageFragmentScope memberScope;
 
     private JavaPackageFragmentDescriptorImpl(
@@ -45,16 +56,6 @@ public class JavaPackageFragmentDescriptorImpl extends DeclarationDescriptorImpl
         this.provider = provider;
         this.fqName = fqName;
         this.memberScope = scopeFactory.fun(this);
-    }
-
-    @Nullable
-    public static JavaPackageFragmentDescriptorImpl create(
-            @NotNull JavaPackageFragmentProvider provider,
-            @NotNull FqName fqName,
-            @NotNull NullableFunction<JavaPackageFragmentDescriptor, JavaPackageFragmentScope> scopeFactory
-    ) {
-        JavaPackageFragmentDescriptorImpl descriptor = new JavaPackageFragmentDescriptorImpl(provider, fqName, scopeFactory);
-        return descriptor.memberScope == null ? null : descriptor;
     }
 
     @NotNull
