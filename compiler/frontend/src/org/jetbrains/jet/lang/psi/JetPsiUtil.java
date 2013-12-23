@@ -1005,7 +1005,7 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static JetElement getEnclosingBlockForLocalDeclaration(@Nullable JetNamedDeclaration declaration) {
+    public static JetElement getEnclosingElementForLocalDeclaration(@Nullable JetNamedDeclaration declaration) {
         if (declaration instanceof JetTypeParameter || declaration instanceof JetParameter) {
             declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
         }
@@ -1021,7 +1021,7 @@ public class JetPsiUtil {
     }
 
     public static boolean isLocal(@NotNull JetNamedDeclaration declaration) {
-        return getEnclosingBlockForLocalDeclaration(declaration) != null;
+        return getEnclosingElementForLocalDeclaration(declaration) != null;
     }
 
     @Nullable

@@ -27,9 +27,9 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
         this.scopeType = scopeType;
     }
 
-    protected static JetElement getEnclosingBlockForLocalDeclaration(PsiElement element) {
+    protected static JetElement getEnclosingElementForLocalDeclaration(PsiElement element) {
         return element instanceof JetNamedDeclaration
-                                   ? JetPsiUtil.getEnclosingBlockForLocalDeclaration((JetNamedDeclaration) element)
+                                   ? JetPsiUtil.getEnclosingElementForLocalDeclaration((JetNamedDeclaration) element)
                                    : null;
     }
 

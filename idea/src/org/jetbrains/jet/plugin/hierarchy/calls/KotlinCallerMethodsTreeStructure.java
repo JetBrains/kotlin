@@ -215,7 +215,7 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
     }
 
     public static KotlinCallerMethodsTreeStructure newInstance(@NotNull Project project, @NotNull PsiElement element, String scopeType) {
-        JetElement codeBlockForLocalDeclaration = getEnclosingBlockForLocalDeclaration(element);
+        JetElement codeBlockForLocalDeclaration = getEnclosingElementForLocalDeclaration(element);
         if (codeBlockForLocalDeclaration != null) return new WithLocalRoot(project, element, scopeType, codeBlockForLocalDeclaration);
 
         PsiMethod representativeMethod = getRepresentativePsiMethod(element);
