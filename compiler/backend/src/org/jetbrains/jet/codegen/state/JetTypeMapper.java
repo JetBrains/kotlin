@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaPurePackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -65,6 +64,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.getTraitImplThisParameterType;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionTraitClassName;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor.Kind.CLASS_STATICS;
 
 public class JetTypeMapper extends BindingTraceAware {
 
@@ -154,16 +154,11 @@ public class JetTypeMapper extends BindingTraceAware {
             }
             r.append(pathItem.shortName().asString());
 
-            JetScope memberScope = javaFragmentProvider.getPackageFragment(pathItem).getMemberScope();
-            if (memberScope instanceof JavaClassStaticMembersScope) {
-                r.append("$");
+            JavaPackageFragmentDescriptor fragment = javaFragmentProvider.getPackageFragment(pathItem);
+            if (fragment == null) {
+                throw new IllegalStateException("Package fragment not found: " + pathItem);
             }
-            else if (memberScope instanceof JavaPurePackageScope || memberScope instanceof JavaFullPackageScope) {
-                r.append("/");
-            }
-            else {
-                throw new IllegalStateException("Unexpected scope: " + memberScope.getClass());
-            }
+            r.append(fragment.getKind() == CLASS_STATICS ? "$" : "/");
         }
 
         r.append(packageFragment.getName().asString());

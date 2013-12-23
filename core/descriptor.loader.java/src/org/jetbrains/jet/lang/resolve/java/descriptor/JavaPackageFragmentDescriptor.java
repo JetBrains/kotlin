@@ -23,4 +23,12 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 public interface JavaPackageFragmentDescriptor extends PackageFragmentDescriptor {
     @NotNull
     JavaDescriptorResolver getJavaDescriptorResolver();
+
+    enum Kind {
+        PROPER,
+        CLASS_STATICS,
+    }
+
+    @NotNull
+    Kind getKind();
 }
