@@ -118,7 +118,8 @@ public final class DecompiledNavigationUtils {
         }
         if (containerDescriptor instanceof ClassDescriptor) {
             ClassKind classKind = ((ClassDescriptor) containerDescriptor).getKind();
-            if (classKind == ClassKind.CLASS_OBJECT || classKind == ClassKind.ENUM_ENTRY) {
+            if (classKind == ClassKind.CLASS_OBJECT || classKind == ClassKind.ENUM_ENTRY
+                || DescriptorUtils.isLocal(containerDescriptor.getContainingDeclaration(), containerDescriptor)) {
                 return getContainerFqName(containerDescriptor.getContainingDeclaration());
             }
             return getFqNameSafe(containerDescriptor);
