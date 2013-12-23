@@ -276,7 +276,7 @@ public final class DescriptorResolverUtils {
                 "java class " + javaClass + " is under non-java fragment: " + packageFragment;
 
         JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptorImpl) packageFragment).getProvider();
-        return provider.getOrCreatePackage(getFqNameSafe(javaClass));
+        return provider.getPackageFragment(getFqNameSafe(javaClass));
     }
 
     public static boolean isJavaClassVisibleAsPackage(@NotNull JavaClass javaClass) {

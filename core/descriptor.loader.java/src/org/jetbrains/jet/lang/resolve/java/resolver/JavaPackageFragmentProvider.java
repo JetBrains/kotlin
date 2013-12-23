@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -32,7 +32,7 @@ public interface JavaPackageFragmentProvider extends PackageFragmentProvider {
     JavaDescriptorResolver getJavaDescriptorResolver();
 
     @Nullable
-    JavaPackageFragmentDescriptorImpl getOrCreatePackage(@NotNull FqName fqName);
+    JavaPackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName);
 
     @NotNull
     Collection<Name> getClassNamesInPackage(@NotNull FqName packageName);

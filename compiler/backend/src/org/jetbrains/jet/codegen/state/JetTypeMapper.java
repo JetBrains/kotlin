@@ -154,7 +154,7 @@ public class JetTypeMapper extends BindingTraceAware {
             }
             r.append(pathItem.shortName().asString());
 
-            JetScope memberScope = javaFragmentProvider.getOrCreatePackage(pathItem).getMemberScope();
+            JetScope memberScope = javaFragmentProvider.getPackageFragment(pathItem).getMemberScope();
             if (memberScope instanceof JavaClassStaticMembersScope) {
                 r.append("$");
             }

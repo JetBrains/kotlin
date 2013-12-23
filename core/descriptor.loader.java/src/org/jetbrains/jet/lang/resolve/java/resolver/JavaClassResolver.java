@@ -385,7 +385,7 @@ public final class JavaClassResolver {
         }
         else {
             FqName parentFqName = childClassFQName.parent();
-            PackageFragmentDescriptor parentPackage = packageFragmentProvider.getOrCreatePackage(parentFqName);
+            PackageFragmentDescriptor parentPackage = packageFragmentProvider.getPackageFragment(parentFqName);
             if (parentPackage == null) {
                 throw new IllegalStateException("Could not resolve " + parentFqName + " required to be parent for " + childClassFQName);
             }
