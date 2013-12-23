@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -547,13 +548,24 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean needGenericSignature, @NotNull OwnerKind kind) {
-        String name = f.getName().asString();
-        if (f instanceof PropertyAccessorDescriptor) {
-            boolean isGetter = f instanceof PropertyGetterDescriptor;
-            name = getPropertyAccessorName(((PropertyAccessorDescriptor) f).getCorrespondingProperty(), isGetter);
+    private static String mapFunctionName(@NotNull FunctionDescriptor descriptor) {
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            return getPropertyAccessorName(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty(),
+                                           descriptor instanceof PropertyGetterDescriptor);
         }
-        return mapSignature(name, f, needGenericSignature, kind);
+        else if (isLocalNamedFun(descriptor) ||
+                 descriptor instanceof AnonymousFunctionDescriptor ||
+                 descriptor instanceof ExpressionAsFunctionDescriptor) {
+            return "invoke";
+        }
+        else {
+            return descriptor.getName().asString();
+        }
+    }
+
+    @NotNull
+    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean needGenericSignature, @NotNull OwnerKind kind) {
+        return mapSignature(mapFunctionName(f), f, needGenericSignature, kind);
     }
 
     @NotNull
@@ -563,7 +575,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f) {
-        return mapSignature(f.getName(), f);
+        return mapSignature(mapFunctionName(f), f, false, OwnerKind.IMPLEMENTATION);
     }
 
     @NotNull
