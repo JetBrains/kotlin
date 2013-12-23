@@ -69,6 +69,13 @@ public class JvmMethodSignature {
     }
 
     @NotNull
+    public JvmMethodSignature replaceName(@NotNull String newName) {
+        return newName.equals(asmMethod.getName()) ?
+               this :
+               new JvmMethodSignature(new Method(newName, asmMethod.getDescriptor()), genericsSignature, kotlinParameterTypes);
+    }
+
+    @NotNull
     public String getName() {
         return asmMethod.getName();
     }

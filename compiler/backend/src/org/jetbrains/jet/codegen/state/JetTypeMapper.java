@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -433,7 +432,7 @@ public class JetTypeMapper extends BindingTraceAware {
             owner = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
             ownerForDefaultImpl = ownerForDefaultParam = thisClass = owner;
             invokeOpcode = INVOKEVIRTUAL;
-            descriptor = mapSignature("invoke", functionDescriptor, kind);
+            descriptor = mapSignature(functionDescriptor, kind);
             calleeType = owner;
         }
         else if (functionParent instanceof PackageFragmentDescriptor) {
@@ -564,22 +563,12 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
+    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor descriptor) {
+        return mapSignature(descriptor, OwnerKind.IMPLEMENTATION);
+    }
+
+    @NotNull
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
-        return mapSignature(mapFunctionName(f), f, kind);
-    }
-
-    @NotNull
-    public JvmMethodSignature mapSignature(@NotNull Name functionName, @NotNull FunctionDescriptor f) {
-        return mapSignature(functionName.asString(), f, OwnerKind.IMPLEMENTATION);
-    }
-
-    @NotNull
-    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f) {
-        return mapSignature(mapFunctionName(f), f, OwnerKind.IMPLEMENTATION);
-    }
-
-    @NotNull
-    private JvmMethodSignature mapSignature(@NotNull String methodName, @NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
         BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
         writeFormalTypeParameters(f.getTypeParameters(), signatureVisitor);
@@ -603,7 +592,7 @@ public class JetTypeMapper extends BindingTraceAware {
             signatureVisitor.writeReturnTypeEnd();
         }
 
-        return signatureVisitor.makeJvmMethodSignature(methodName);
+        return signatureVisitor.makeJvmMethodSignature(mapFunctionName(f));
     }
 
     private static void writeVoidReturn(@NotNull BothSignatureWriter signatureVisitor) {

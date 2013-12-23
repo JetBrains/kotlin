@@ -113,10 +113,8 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         );
         cv.visitSource(fun.getContainingFile().getName(), null);
 
-
-        generateBridge(interfaceFunction, cv);
-
-        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(interfaceFunction.getName(), funDescriptor);
+        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(funDescriptor).replaceName(interfaceFunction.getName().toString());
+        generateBridge(cv, typeMapper.mapSignature(interfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
 
         FunctionCodegen fc = new FunctionCodegen(context, cv, state, getParentCodegen());
         fc.generateMethod(fun, jvmMethodSignature, funDescriptor, strategy);
@@ -130,7 +128,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         genClosureFields(closure, cv, typeMapper);
 
         fc.generateDefaultIfNeeded(context.intoFunction(funDescriptor),
-                                   typeMapper.mapSignature(Name.identifier("invoke"), funDescriptor),
+                                   typeMapper.mapSignature(funDescriptor),
                                    funDescriptor,
                                    context.getContextKind(),
                                    DefaultParameterValueLoader.DEFAULT);
@@ -171,44 +169,38 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         }
     }
 
-    private void generateBridge(@NotNull FunctionDescriptor interfaceFunction, @NotNull ClassBuilder cv) {
-        Method bridge = typeMapper.mapSignature(interfaceFunction).getAsmMethod();
+    private void generateBridge(@NotNull ClassBuilder cv, @NotNull Method bridge, @NotNull Method delegate) {
+        if (bridge.equals(delegate)) return;
 
-        Method delegate = typeMapper.mapSignature(interfaceFunction.getName(), funDescriptor).getAsmMethod();
+        MethodVisitor mv =
+                cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE, bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
 
-        if (bridge.getDescriptor().equals(delegate.getDescriptor())) {
-            return;
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+
+        mv.visitCode();
+
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        iv.load(0, asmType);
+
+        ReceiverParameterDescriptor receiver = funDescriptor.getReceiverParameter();
+        int count = 1;
+        if (receiver != null) {
+            StackValue.local(count, bridge.getArgumentTypes()[count - 1]).put(typeMapper.mapType(receiver.getType()), iv);
+            count++;
         }
 
-        MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_BRIDGE, interfaceFunction.getName().asString(),
-                                        bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            mv.visitCode();
-
-            InstructionAdapter iv = new InstructionAdapter(mv);
-
-            iv.load(0, asmType);
-
-            ReceiverParameterDescriptor receiver = funDescriptor.getReceiverParameter();
-            int count = 1;
-            if (receiver != null) {
-                StackValue.local(count, bridge.getArgumentTypes()[count - 1]).put(typeMapper.mapType(receiver.getType()), iv);
-                count++;
-            }
-
-            List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
-            for (ValueParameterDescriptor param : params) {
-                StackValue.local(count, bridge.getArgumentTypes()[count - 1]).put(typeMapper.mapType(param.getType()), iv);
-                count++;
-            }
-
-            iv.invokevirtual(asmType.getInternalName(), interfaceFunction.getName().asString(), delegate.getDescriptor());
-            StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), iv);
-
-            iv.areturn(bridge.getReturnType());
-
-            FunctionCodegen.endVisit(mv, "bridge", fun);
+        List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
+        for (ValueParameterDescriptor param : params) {
+            StackValue.local(count, bridge.getArgumentTypes()[count - 1]).put(typeMapper.mapType(param.getType()), iv);
+            count++;
         }
+
+        iv.invokevirtual(asmType.getInternalName(), delegate.getName(), delegate.getDescriptor());
+        StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), iv);
+
+        iv.areturn(bridge.getReturnType());
+
+        FunctionCodegen.endVisit(mv, "bridge", fun);
     }
 
     @NotNull
