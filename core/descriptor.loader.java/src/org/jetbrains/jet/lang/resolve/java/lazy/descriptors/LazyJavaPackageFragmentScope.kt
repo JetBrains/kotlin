@@ -11,7 +11,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.utils.flatten
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver
 import org.jetbrains.kotlin.util.inn
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule
 
@@ -20,7 +19,7 @@ public abstract class LazyJavaPackageFragmentScope(
         packageFragment: LazyJavaPackageFragment
 ) : LazyJavaMemberScope(c.withTypes(), packageFragment) {
     
-    protected val fqName: FqName = DescriptorUtils.getFQName(packageFragment).toSafe()
+    protected val fqName: FqName = DescriptorUtils.getFqName(packageFragment).toSafe()
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
         name ->
         val fqName = fqName.child(name)
@@ -49,7 +48,8 @@ public abstract class LazyJavaPackageFragmentScope(
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = classes(name)
 
-    override fun getNamespace(name: Name): NamespaceDescriptor? = c.javaDescriptorResolver.resolveNamespace(getContainingDeclaration().getFqName().child(name), DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES)
+    // Package fragments are not nested
+    override fun getPackage(name: Name) = null
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
 

@@ -6,7 +6,6 @@ import org.jetbrains.jet.lang.resolve.name.LabelName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.utils.emptyList
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
@@ -31,18 +30,15 @@ import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver
-import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
 import java.util.Collections
 import org.jetbrains.jet.utils.emptyOrSingletonList
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
-import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.jet.utils.Printer
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -83,9 +79,9 @@ public abstract class LazyJavaMemberScope(
                                   listOf(function).iterator()
                       }.toList())
 
-        if (_containingDeclaration is NamespaceDescriptor) {
-            val klass = JavaFunctionResolver.findClassInNamespace(_containingDeclaration, name);
-            if (klass != null && klass.getFunctionTypeForSamInterface() != null) {
+        if (_containingDeclaration is JavaPackageFragmentDescriptor) {
+            val klass = c.javaDescriptorResolver.resolveClass(_containingDeclaration.getFqName().child(name))
+            if (klass is LazyJavaClassDescriptor && klass.getFunctionTypeForSamInterface() != null) {
                 functions.add(SingleAbstractMethodUtils.createSamConstructorFunction(_containingDeclaration, klass))
             }
         }
@@ -128,7 +124,7 @@ public abstract class LazyJavaMemberScope(
         val signatureErrors: MutableList<String>
         val superFunctions: List<FunctionDescriptor>
         val effectiveSignature: ExternalSignatureResolver.AlternativeMethodSignature
-        if (_containingDeclaration is NamespaceDescriptor) {
+        if (_containingDeclaration is PackageFragmentDescriptor) {
             superFunctions = Collections.emptyList()
             effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(method, false, returnType, null, valueParameters, methodTypeParameters)
             signatureErrors = effectiveSignature.getErrors()
@@ -284,7 +280,7 @@ public abstract class LazyJavaMemberScope(
         val result = LinkedHashSet<DeclarationDescriptor>()
 
         for (name in getAllPackageNames()) {
-            val descriptor = getNamespace(name)
+            val descriptor = getPackage(name)
             if (descriptor != null) {
                 // Null signifies that a package found in Java is not present in Kotlin
                 result.add(descriptor)

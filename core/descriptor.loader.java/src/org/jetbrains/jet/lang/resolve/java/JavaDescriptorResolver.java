@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
@@ -156,7 +155,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                                 public JavaClass findClass(@NotNull FqName fqName) {
                                     // Do not look for JavaClasses for Kotlin binaries & built-ins
                                     if (kotlinClassesFromBinaries.invoke(fqName) != null
-                                        || kotlinNamespacesFromBinaries.invoke(fqName) != null
+                                        //|| kotlinNamespacesFromBinaries.invoke(fqName) != null
                                         || JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName) != null) {
                                         return null;
                                     }

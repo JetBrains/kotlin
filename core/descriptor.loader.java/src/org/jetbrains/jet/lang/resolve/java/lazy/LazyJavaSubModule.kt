@@ -1,15 +1,15 @@
 package org.jetbrains.jet.lang.resolve.java.lazy
 
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaPackage
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaClass
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 
 public open class LazyJavaSubModule(
         private val outerContext: GlobalJavaResolverContext,
@@ -28,20 +28,16 @@ public open class LazyJavaSubModule(
             outerContext.javaDescriptorResolver
     )
 
-    private val _packageFragments: MemoizedFunctionToNullable<FqName, NamespaceDescriptor> = c.storageManager.createMemoizedFunctionWithNullableValues {
+    private val _packageFragments: MemoizedFunctionToNullable<FqName, PackageFragmentDescriptor> = c.storageManager.createMemoizedFunctionWithNullableValues {
         fqName ->
         val jPackage = c.finder.findPackage(fqName)
         if (jPackage != null) {
-            val result = LazyPackageFragmentForJavaPackage(c, findParent(fqName), jPackage)
-            c.javaResolverCache.recordPackage(jPackage, result)
-            result
+            LazyPackageFragmentForJavaPackage(c, module, jPackage)
         }
         else {
             val jClass = c.finder.findClass(fqName)
-            if (jClass != null && JavaNamespaceResolver.hasStaticMembers(jClass)) {
-                val result = LazyPackageFragmentForJavaClass(c, findParent(fqName), jClass)
-                c.javaResolverCache.recordPackage(jClass, result)
-                result
+            if (jClass != null && DescriptorResolverUtils.isJavaClassVisibleAsPackage(jClass)) {
+                LazyPackageFragmentForJavaClass(c, module, jClass)
             }
             else null
         }
@@ -51,7 +47,7 @@ public open class LazyJavaSubModule(
             if (fqName.isRoot()) module else getPackageFragment(fqName.parent())
                             ?: throw IllegalStateException("Cannot resolve parent package for: $fqName")
 
-    fun getPackageFragment(fqName: FqName): NamespaceDescriptor? = _packageFragments(fqName)
+    fun getPackageFragment(fqName: FqName) = _packageFragments(fqName)
 
     fun getClass(fqName: FqName): ClassDescriptor? = c.javaClassResolver.resolveClassByFqName(fqName)
 

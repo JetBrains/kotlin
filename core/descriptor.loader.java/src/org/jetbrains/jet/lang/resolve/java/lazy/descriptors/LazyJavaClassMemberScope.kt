@@ -172,7 +172,7 @@ public class LazyJavaClassMemberScope(
                 alreadyResolved
             else LazyJavaClassDescriptor(c,
                                     getContainingDeclaration(),
-                                    DescriptorUtils.getFQName(getContainingDeclaration()).child(name).toSafe(),
+                                    DescriptorUtils.getFqName(getContainingDeclaration()).child(name).toSafe(),
                                     jNestedClass)
         }
     }
@@ -189,7 +189,7 @@ public class LazyJavaClassMemberScope(
     }
 
     // namespaces should be resolved elsewhere
-    override fun getNamespace(name: Name): NamespaceDescriptor? = null
+    override fun getPackage(name: Name) = null
     override fun getAllPackageNames(): Collection<Name> = listOf()
 
     override fun toString() = "Lazy java member scope for " + jClass.getFqName()
