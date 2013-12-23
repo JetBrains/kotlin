@@ -77,7 +77,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                                             "in " + function.getContainingFile().getVirtualFile();
 
         OwnerKind kind = owner.getContextKind();
-        JvmMethodSignature method = typeMapper.mapSignature(functionDescriptor, true, kind);
+        JvmMethodSignature method = typeMapper.mapSignature(functionDescriptor, kind);
 
         if (kind != OwnerKind.TRAIT_IMPL || function.getBodyExpression() != null) {
             generateMethod(function, method, functionDescriptor,

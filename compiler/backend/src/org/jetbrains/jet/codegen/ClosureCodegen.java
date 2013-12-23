@@ -292,7 +292,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         assert supertypes.size() == 1 : "Closure must have exactly one supertype: " + funDescriptor;
         JetType supertype = supertypes.iterator().next();
 
-        BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS, true);
+        BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
         typeMapper.writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), sw);
         sw.writeSuperclass();
         typeMapper.mapSupertype(supertype, sw);

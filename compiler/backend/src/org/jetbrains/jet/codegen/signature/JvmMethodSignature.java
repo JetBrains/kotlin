@@ -25,12 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JvmMethodSignature {
-
     @NotNull
     private final Method asmMethod;
-    /**
-     * Null when we don't care about type parameters
-     */
+    @Nullable
     private final String genericsSignature;
     @NotNull
     private final List<JvmMethodParameterSignature> kotlinParameterTypes;
@@ -50,6 +47,7 @@ public class JvmMethodSignature {
         return asmMethod;
     }
 
+    @Nullable
     public String getGenericsSignature() {
         return genericsSignature;
     }
@@ -59,6 +57,7 @@ public class JvmMethodSignature {
         return kotlinParameterTypes;
     }
 
+    @NotNull
     public List<Type> getValueParameterTypes() {
         List<Type> r = new ArrayList<Type>(kotlinParameterTypes.size());
         for (JvmMethodParameterSignature p : kotlinParameterTypes) {

@@ -24,7 +24,6 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.signature.SignatureVisitor;
 import org.jetbrains.asm4.signature.SignatureWriter;
 import org.jetbrains.asm4.util.CheckSignatureAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
 
@@ -55,13 +54,9 @@ public class BothSignatureWriter {
 
     private JvmMethodParameterKind currentParameterKind;
 
-    private final boolean needGenerics;
-
     private boolean generic = false;
 
-    public BothSignatureWriter(Mode mode, boolean needGenerics) {
-        this.needGenerics = needGenerics;
-
+    public BothSignatureWriter(@NotNull Mode mode) {
         this.signatureVisitor = new CheckSignatureAdapter(mode.asmType, signatureWriter);
     }
 
@@ -97,17 +92,6 @@ public class BothSignatureWriter {
                 signatureVisitor().visitBaseType(asmType.getDescriptor().charAt(0));
                 writeAsmType0(asmType);
         }
-    }
-
-    public void writeNothing() {
-        signatureVisitor().visitBaseType('V');
-        writeAsmType0(Type.VOID_TYPE);
-    }
-
-    public void writeNullableNothing() {
-        signatureVisitor().visitClassType("java/lang/Object");
-        signatureVisitor().visitEnd();
-        writeAsmType0(AsmTypeConstants.OBJECT_TYPE);
     }
 
     private String makeArrayPrefix() {
@@ -268,11 +252,7 @@ public class BothSignatureWriter {
 
     @NotNull
     public JvmMethodSignature makeJvmMethodSignature(String name) {
-        return new JvmMethodSignature(
-                makeAsmMethod(name),
-                needGenerics ? makeJavaGenericSignature() : null,
-                kotlinParameterTypes
-        );
+        return new JvmMethodSignature(makeAsmMethod(name), makeJavaGenericSignature(), kotlinParameterTypes);
     }
 }
 

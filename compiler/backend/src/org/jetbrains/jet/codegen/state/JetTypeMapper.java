@@ -412,7 +412,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         functionDescriptor = unwrapFakeOverride(functionDescriptor.getOriginal());
 
-        JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), true, kind);
+        JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), kind);
         Type owner;
         Type ownerForDefaultImpl;
         Type ownerForDefaultParam;
@@ -433,7 +433,7 @@ public class JetTypeMapper extends BindingTraceAware {
             owner = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
             ownerForDefaultImpl = ownerForDefaultParam = thisClass = owner;
             invokeOpcode = INVOKEVIRTUAL;
-            descriptor = mapSignature("invoke", functionDescriptor, true, kind);
+            descriptor = mapSignature("invoke", functionDescriptor, kind);
             calleeType = owner;
         }
         else if (functionParent instanceof PackageFragmentDescriptor) {
@@ -498,7 +498,7 @@ public class JetTypeMapper extends BindingTraceAware {
             }
 
             if (isInterface && superCall) {
-                descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
+                descriptor = mapSignature(functionDescriptor, OwnerKind.TRAIT_IMPL);
                 owner = Type.getObjectType(owner.getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
             }
             thisClass = mapType(receiver.getDefaultType());
@@ -564,32 +564,23 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, boolean needGenericSignature, @NotNull OwnerKind kind) {
-        return mapSignature(mapFunctionName(f), f, needGenericSignature, kind);
+    public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
+        return mapSignature(mapFunctionName(f), f, kind);
     }
 
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull Name functionName, @NotNull FunctionDescriptor f) {
-        return mapSignature(functionName.asString(), f, false, OwnerKind.IMPLEMENTATION);
+        return mapSignature(functionName.asString(), f, OwnerKind.IMPLEMENTATION);
     }
 
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f) {
-        return mapSignature(mapFunctionName(f), f, false, OwnerKind.IMPLEMENTATION);
+        return mapSignature(mapFunctionName(f), f, OwnerKind.IMPLEMENTATION);
     }
 
     @NotNull
-    private JvmMethodSignature mapSignature(
-            @NotNull String methodName,
-            @NotNull FunctionDescriptor f,
-            boolean needGenericSignature,
-            @NotNull OwnerKind kind
-    ) {
-        if (kind == OwnerKind.TRAIT_IMPL) {
-            needGenericSignature = false;
-        }
-
-        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, needGenericSignature);
+    private JvmMethodSignature mapSignature(@NotNull String methodName, @NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
+        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
         writeFormalTypeParameters(f.getTypeParameters(), signatureVisitor);
 
@@ -623,7 +614,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @Nullable
     public String mapFieldSignature(@NotNull JetType backingFieldType) {
-        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE, true);
+        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
         mapType(backingFieldType, signatureVisitor, JetTypeMapperMode.VALUE);
         return signatureVisitor.makeJavaGenericSignature();
     }
@@ -721,8 +712,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public JvmMethodSignature mapGetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
-        // TODO: do not genClassOrObject generics if not needed
-        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
         writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);
 
@@ -743,8 +733,7 @@ public class JetTypeMapper extends BindingTraceAware {
     public JvmMethodSignature mapSetterSignature(PropertyDescriptor descriptor, OwnerKind kind) {
         assert descriptor.isVar();
 
-        // TODO: generics signature is not always needed
-        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
         writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);
 
@@ -767,9 +756,9 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public JvmMethodSignature mapConstructorSignature(@NotNull ConstructorDescriptor descriptor) {
-        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
-        // constructor type parmeters are fake
+        // constructor type parameters are fake
         writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), signatureWriter);
 
         signatureWriter.writeParametersStart();
@@ -850,7 +839,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public JvmMethodSignature mapScriptSignature(@NotNull ScriptDescriptor script, @NotNull List<ScriptDescriptor> importedScripts) {
-        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
+        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
         writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), signatureWriter);
 

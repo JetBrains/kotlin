@@ -334,13 +334,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private JvmClassSignature signature() {
-        List<String> superInterfaces;
-
-        LinkedHashSet<String> superInterfacesLinkedHashSet = new LinkedHashSet<String>();
-
-        // TODO: generics signature is not always needed
-        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS, true);
-
+        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
 
         {   // type parameters
             List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
@@ -360,7 +354,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
 
+        List<String> superInterfaces;
         {   // superinterfaces
+            LinkedHashSet<String> superInterfacesLinkedHashSet = new LinkedHashSet<String>();
+
             superInterfacesLinkedHashSet.add(JvmAbi.JET_OBJECT.getInternalName());
 
             for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
