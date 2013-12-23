@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationRe
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProviderImpl;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -99,7 +99,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final VirtualFileKotlinClassFinder virtualFileKotlinClassFinder;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final NamespaceFactoryImpl namespaceFactory;
-    private final JavaPackageFragmentProvider javaPackageFragmentProvider;
+    private final JavaPackageFragmentProviderImpl javaPackageFragmentProvider;
     private final VirtualFileFinder virtualFileFinder;
     private final DeclarationResolver declarationResolver;
     private final AnnotationResolver annotationResolver;
@@ -161,7 +161,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.virtualFileKotlinClassFinder = new VirtualFileKotlinClassFinder();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.namespaceFactory = new NamespaceFactoryImpl();
-        this.javaPackageFragmentProvider = new JavaPackageFragmentProvider();
+        this.javaPackageFragmentProvider = new JavaPackageFragmentProviderImpl();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
@@ -441,7 +441,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         return this.moduleDescriptor;
     }
     
-    public JavaPackageFragmentProvider getJavaPackageFragmentProvider() {
+    public JavaPackageFragmentProviderImpl getJavaPackageFragmentProvider() {
         return this.javaPackageFragmentProvider;
     }
     
