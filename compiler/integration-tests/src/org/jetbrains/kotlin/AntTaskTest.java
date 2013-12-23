@@ -86,6 +86,11 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
     }
 
     @Test
+    public void jvmClasspath() throws Exception {
+        doJvmAntTest();
+    }
+
+    @Test
     public void antTaskJvmManyRoots() throws Exception {
         doJvmAntTest();
     }

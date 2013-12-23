@@ -75,7 +75,7 @@ public class BytecodeCompiler {
             @NotNull String[] sourceRoots) {
         KotlinPaths paths = getKotlinPathsForAntTask();
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.add(CLASSPATH_KEY, PathUtil.findRtJar());
+        configuration.addAll(CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
         if ((stdlib != null) && (stdlib.trim().length() > 0)) {
             configuration.add(CLASSPATH_KEY, new File(stdlib));
         }

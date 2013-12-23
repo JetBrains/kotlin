@@ -80,6 +80,8 @@ public class SpecialFiles {
 
         excludedFiles.add("genericBackingFieldSignature.kt"); // Wrong signature after package renaming
         excludedFiles.add("genericMethodSignature.kt"); // Wrong signature after package renaming
+
+        excludedFiles.add("classpath.kt"); // Some classes are not visible on android
     }
 
     private SpecialFiles() {

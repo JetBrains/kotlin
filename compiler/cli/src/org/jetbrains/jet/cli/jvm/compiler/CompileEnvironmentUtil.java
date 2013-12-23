@@ -98,7 +98,7 @@ public class CompileEnvironmentUtil {
         if (runtimePath.exists()) {
             configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, runtimePath);
         }
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar());
+        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
         File jdkAnnotationsPath = paths.getJdkAnnotationsPath();
         if (jdkAnnotationsPath.exists()) {
             configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);

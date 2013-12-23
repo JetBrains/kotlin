@@ -480,6 +480,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/fullJdk"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("classpath.kt")
+        public void testClasspath() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/classpath.kt");
+        }
+        
         @TestMetadata("genericBackingFieldSignature.kt")
         public void testGenericBackingFieldSignature() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/fullJdk/genericBackingFieldSignature.kt");

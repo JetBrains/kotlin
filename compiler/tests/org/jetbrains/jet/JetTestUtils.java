@@ -344,7 +344,12 @@ public class JetTestUtils {
             @NotNull TestJdkKind jdkKind, @NotNull Collection<File> extraClasspath, @NotNull Collection<File> priorityClasspath) {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.addAll(CLASSPATH_KEY, priorityClasspath);
-        configuration.add(CLASSPATH_KEY, jdkKind == TestJdkKind.MOCK_JDK ? findMockJdkRtJar() : PathUtil.findRtJar());
+        if (jdkKind == TestJdkKind.MOCK_JDK) {
+            configuration.add(CLASSPATH_KEY, findMockJdkRtJar());
+        }
+        else {
+            configuration.addAll(CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
+        }
         if (configurationKind == ALL) {
             configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
         }

@@ -47,7 +47,9 @@ public object JavaToKotlinTranslator {
     fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {
         val applicationEnvironment = JavaCoreApplicationEnvironment(DISPOSABLE)
         val javaCoreEnvironment = JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment)
-        javaCoreEnvironment.addJarToClassPath(PathUtil.findRtJar())
+        for (root in PathUtil.getJdkClassesRoots()) {
+            javaCoreEnvironment.addJarToClassPath(root)
+        }
         val annotations: File? = findAnnotations()
         if (annotations != null && annotations.exists()) {
             javaCoreEnvironment.addJarToClassPath(annotations)

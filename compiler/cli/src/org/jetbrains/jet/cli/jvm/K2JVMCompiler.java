@@ -165,7 +165,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     private static List<File> getClasspath(@NotNull KotlinPaths paths, @NotNull K2JVMCompilerArguments arguments) {
         List<File> classpath = Lists.newArrayList();
         if (!arguments.noJdk) {
-            classpath.add(PathUtil.findRtJar());
+            classpath.addAll(PathUtil.getJdkClassesRoots());
         }
         if (!arguments.noStdlib) {
             classpath.add(paths.getRuntimePath());

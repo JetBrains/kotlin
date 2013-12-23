@@ -39,6 +39,11 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), true);
         }
         
+        @TestMetadata("classpath.args")
+        public void testClasspath() throws Exception {
+            doJvmTest("compiler/testData/cli/jvm/classpath.args");
+        }
+        
         @TestMetadata("diagnosticsOrder.args")
         public void testDiagnosticsOrder() throws Exception {
             doJvmTest("compiler/testData/cli/jvm/diagnosticsOrder.args");

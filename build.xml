@@ -36,6 +36,7 @@
         <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
         <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
+        <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>
 
     <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${bootstrap.compiler.home}/lib/kotlin-ant.jar"/>
@@ -279,6 +280,7 @@
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="protobuf-2.5.0.jar"/>
+              <zipgroupfileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
               <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
               <zipgroupfileset dir="${dependencies.dir}" includes="jline.jar"/>
               <zipgroupfileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
