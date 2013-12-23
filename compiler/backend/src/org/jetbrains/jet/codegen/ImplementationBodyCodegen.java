@@ -1552,9 +1552,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(((ConstructorFrameMap)codegen.myFrameMap).getOuterThisIndex(), OBJECT_TYPE);
         }
 
-        if (myClass instanceof JetObjectDeclaration &&
-            superCall instanceof JetDelegatorToSuperCall &&
-            ((JetObjectDeclaration) myClass).isObjectLiteral()) {
+        if (isAnonymousObject(descriptor) && superCall instanceof JetDelegatorToSuperCall) {
             int nextVar = findFirstSuperArgument(method);
             for (Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
                 iv.load(nextVar, t);

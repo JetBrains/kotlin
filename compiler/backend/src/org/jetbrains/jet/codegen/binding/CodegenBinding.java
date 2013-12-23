@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
@@ -40,7 +39,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 
 public class CodegenBinding {
@@ -262,22 +260,6 @@ public class CodegenBinding {
         });
 
         return sortedAnswer;
-    }
-
-    public static boolean isObjectLiteral(BindingContext bindingContext, ClassDescriptor declaration) {
-        PsiElement psiElement = descriptorToDeclaration(bindingContext, declaration);
-        if (psiElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) psiElement).isObjectLiteral()) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isObjectDeclaration(BindingContext bindingContext, ClassDescriptor declaration) {
-        PsiElement psiElement = descriptorToDeclaration(bindingContext, declaration);
-        if (psiElement instanceof JetObjectDeclaration && !((JetObjectDeclaration) psiElement).isObjectLiteral()) {
-            return true;
-        }
-        return false;
     }
 
     public static boolean isLocalNamedFun(DeclarationDescriptor fd) {

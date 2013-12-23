@@ -57,6 +57,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.getTraitImplThisParameterType;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionTraitClassName;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isAnonymousObject;
 import static org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor.Kind.CLASS_STATICS;
 
 public class JetTypeMapper extends BindingTraceAware {
@@ -818,16 +819,13 @@ public class JetTypeMapper extends BindingTraceAware {
                 DeclarationDescriptor superDescriptor = bindingContext
                         .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
 
-                if (superDescriptor instanceof ConstructorDescriptor) {
-                    ConstructorDescriptor superConstructor = (ConstructorDescriptor) superDescriptor;
-
-                    if (isObjectLiteral(bindingContext, descriptor.getContainingDeclaration())) {
-                        List<JvmMethodParameterSignature> types = mapConstructorSignature(superConstructor).getKotlinParameterTypes();
-                        for (JvmMethodParameterSignature type : types) {
-                            signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
-                            signatureWriter.writeAsmType(type.getAsmType());
-                            signatureWriter.writeParameterTypeEnd();
-                        }
+                if (superDescriptor instanceof ConstructorDescriptor && isAnonymousObject(descriptor.getContainingDeclaration())) {
+                    List<JvmMethodParameterSignature> types =
+                            mapConstructorSignature((ConstructorDescriptor) superDescriptor).getKotlinParameterTypes();
+                    for (JvmMethodParameterSignature type : types) {
+                        signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
+                        signatureWriter.writeAsmType(type.getAsmType());
+                        signatureWriter.writeParameterTypeEnd();
                     }
                 }
             }
