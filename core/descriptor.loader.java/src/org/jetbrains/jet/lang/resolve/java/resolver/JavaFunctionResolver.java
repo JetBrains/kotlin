@@ -194,8 +194,8 @@ public final class JavaFunctionResolver {
             }
         }
 
-        if (owner instanceof JavaPackageFragmentDescriptorImpl) {
-            SamConstructorDescriptor samConstructor = resolveSamConstructor((JavaPackageFragmentDescriptorImpl) owner, members);
+        if (owner instanceof JavaPackageFragmentDescriptor) {
+            SamConstructorDescriptor samConstructor = resolveSamConstructor((JavaPackageFragmentDescriptor) owner, members);
             if (samConstructor != null) {
                 functionsFromCurrent.add(samConstructor);
             }
@@ -225,11 +225,11 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    public static SamConstructorDescriptor resolveSamConstructor(@NotNull JavaPackageFragmentDescriptorImpl owner, @NotNull NamedMembers namedMembers) {
+    public static SamConstructorDescriptor resolveSamConstructor(@NotNull JavaPackageFragmentDescriptor owner, @NotNull NamedMembers namedMembers) {
         if (namedMembers.getSamInterface() != null) {
-            JavaClassDescriptor klass = DescriptorResolverUtils.findClassInPackage(owner, namedMembers.getName());
-            if (klass != null) {
-                return createSamConstructorFunction(owner, klass);
+            ClassDescriptor klass = owner.getJavaDescriptorResolver().resolveClass(owner.getFqName().child(namedMembers.getName()));
+            if (klass instanceof JavaClassDescriptor) {
+                return createSamConstructorFunction(owner, (JavaClassDescriptor) klass);
             }
         }
         return null;

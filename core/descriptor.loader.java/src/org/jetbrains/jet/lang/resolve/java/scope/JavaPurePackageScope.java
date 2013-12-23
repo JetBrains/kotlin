@@ -19,9 +19,12 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.resolver.*;
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.ProgressChecker;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -97,7 +100,7 @@ public final class JavaPurePackageScope extends JavaBaseScope implements JavaPac
         if (members == null) {
             return Collections.emptySet();
         }
-        SamConstructorDescriptor samConstructor = JavaFunctionResolver.resolveSamConstructor((JavaPackageFragmentDescriptorImpl) descriptor, members);
+        SamConstructorDescriptor samConstructor = JavaFunctionResolver.resolveSamConstructor((JavaPackageFragmentDescriptor) descriptor, members);
         if (samConstructor == null) {
             return Collections.emptySet();
         }
