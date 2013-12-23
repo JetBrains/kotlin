@@ -30,7 +30,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
     private final ModuleDescriptor module;
-    final PackageFragmentProvider packageFragmentProvider;
+    private final PackageFragmentProvider packageFragmentProvider;
 
     public BuiltinsPackageFragment(@NotNull StorageManager storageManager, @NotNull ModuleDescriptor module) {
         super(Collections.<AnnotationDescriptor>emptyList(), KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
@@ -59,6 +59,12 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     @Override
     public JetScope getMemberScope() {
         return members;
+    }
+
+    @NotNull
+    @Override
+    public PackageFragmentProvider getProvider() {
+        return packageFragmentProvider;
     }
 
     @NotNull
@@ -99,7 +105,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     }
 
     private class BuiltinsPackageFragmentProvider implements PackageFragmentProvider {
-        private final PackageFragmentDescriptor rootPackage = new MutablePackageFragmentDescriptor(module, FqName.ROOT);
+        private final PackageFragmentDescriptor rootPackage = new MutablePackageFragmentDescriptor(this, module, FqName.ROOT);
 
         @NotNull
         @Override

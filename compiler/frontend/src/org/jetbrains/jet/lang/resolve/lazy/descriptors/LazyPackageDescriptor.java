@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import java.util.Collections;
 
 public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements LazyDescriptor, PackageFragmentDescriptor {
+    private final ResolveSession resolveSession;
     private final ModuleDescriptor module;
     private final JetScope memberScope;
     private final FqName fqName;
@@ -44,6 +45,7 @@ public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements 
             @NotNull PackageMemberDeclarationProvider declarationProvider
     ) {
         super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
+        this.resolveSession = resolveSession;
         this.module = module;
         this.fqName = fqName;
         this.declarationProvider = declarationProvider;
@@ -55,6 +57,12 @@ public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements 
     @Override
     public JetScope getMemberScope() {
         return memberScope;
+    }
+
+    @NotNull
+    @Override
+    public PackageFragmentProvider getProvider() {
+        return resolveSession.getPackageFragmentProvider();
     }
 
     @NotNull

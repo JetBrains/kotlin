@@ -22,6 +22,9 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 public interface PackageFragmentDescriptor extends ClassOrNamespaceDescriptor {
     @NotNull
+    PackageFragmentProvider getProvider();
+
+    @NotNull
     @Override
     ModuleDescriptor getContainingDeclaration();
 

@@ -128,7 +128,7 @@ public class KotlinBuiltIns {
                                                        Collections.<ImportPath>emptyList(),
                                                        PlatformToKotlinClassMap.EMPTY);
         builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), builtInsModule);
-        builtInsModule.addFragmentProvider(builtinsPackageFragment.packageFragmentProvider);
+        builtInsModule.addFragmentProvider(builtinsPackageFragment.getProvider());
 
         this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
         this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);

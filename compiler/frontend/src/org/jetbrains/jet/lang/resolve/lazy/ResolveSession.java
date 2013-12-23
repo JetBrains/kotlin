@@ -151,6 +151,11 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         rootDescriptor.addFragmentProvider(packageFragmentProvider);
     }
 
+    @NotNull
+    public PackageFragmentProvider getPackageFragmentProvider() {
+        return packageFragmentProvider;
+    }
+
     @Nullable
     public LazyPackageDescriptor getPackageFragment(@NotNull FqName fqName) {
         return packages.invoke(fqName);

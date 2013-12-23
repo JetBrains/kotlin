@@ -95,6 +95,7 @@ public class JavaPackageFragmentDescriptorImpl extends DeclarationDescriptorImpl
         return fqName;
     }
 
+    @Override
     @NotNull
     public JavaPackageFragmentProvider getProvider() {
         return provider;
