@@ -44,6 +44,14 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitNamedDeclaration(property);
     }
 
+    public void visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
+        visitDeclaration(multiDeclaration);
+    }
+
+    public void visitMultiDeclarationEntry(@NotNull JetMultiDeclarationEntry multiDeclarationEntry) {
+        visitNamedDeclaration(multiDeclarationEntry);
+    }
+
     public void visitTypedef(@NotNull JetTypedef typedef) {
         visitNamedDeclaration(typedef);
     }
@@ -176,10 +184,6 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    //    public void visitNewExpression(JetNewExpression expression) {
-//        visitExpression(expression);
-//    }
-//
     public void visitReturnExpression(@NotNull JetReturnExpression expression) {
         visitLabelQualifiedExpression(expression);
     }
@@ -372,8 +376,8 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitNamedDeclaration(declaration);
     }
 
-    public void visitObjectDeclarationName(@NotNull JetObjectDeclarationName declaration) {
-        visitExpression(declaration);
+    public void visitObjectDeclarationName(@NotNull JetObjectDeclarationName declarationName) {
+        visitExpression(declarationName);
     }
 
     public void visitStringTemplateEntry(@NotNull JetStringTemplateEntry entry) {
@@ -398,13 +402,5 @@ public class JetVisitorVoid extends PsiElementVisitor {
 
     public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
         visitStringTemplateEntry(entry);
-    }
-
-    public void visitMultiDeclaration(@NotNull JetMultiDeclaration declaration) {
-        visitDeclaration(declaration);
-    }
-
-    public void visitMultiDeclarationEntry(@NotNull JetMultiDeclarationEntry entry) {
-        visitNamedDeclaration(entry);
     }
 }
