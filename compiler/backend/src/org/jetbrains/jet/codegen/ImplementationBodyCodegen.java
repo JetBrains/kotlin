@@ -1137,7 +1137,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         assert constructorDescriptor != null;
-        final JvmMethodSignature constructorSignature = typeMapper.mapConstructorSignature(constructorDescriptor, closure);
+        final JvmMethodSignature constructorSignature = typeMapper.mapConstructorSignature(constructorDescriptor);
 
         functionCodegen.generateMethod(null, constructorSignature, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
@@ -1157,7 +1157,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorSignature, constructorDescriptor,
                                                 OwnerKind.IMPLEMENTATION, DefaultParameterValueLoader.DEFAULT);
 
-        CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, closure);
+        CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor);
         FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v);
 
         if (isClassObject(descriptor)) {
@@ -1537,7 +1537,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(2, Type.INT_TYPE);
         }
 
-        CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, context.closure);
+        CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor);
 
         ResolvedCall<? extends CallableDescriptor> resolvedCall =
                 bindingContext.get(BindingContext.RESOLVED_CALL, ((JetCallElement) superCall).getCalleeExpression());
@@ -1546,11 +1546,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         //noinspection SuspiciousMethodCalls
         CalculatedClosure closureForSuper = bindingContext.get(CLOSURE, superConstructor.getContainingDeclaration());
-        CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, closureForSuper);
-
         if (closureForSuper != null && closureForSuper.getCaptureThis() != null) {
-            iv.load(((ConstructorFrameMap)codegen.myFrameMap).getOuterThisIndex(), OBJECT_TYPE);
+            iv.load(((ConstructorFrameMap) codegen.myFrameMap).getOuterThisIndex(), OBJECT_TYPE);
         }
+
+        CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
 
         if (isAnonymousObject(descriptor) && superCall instanceof JetDelegatorToSuperCall) {
             int nextVar = findFirstSuperArgument(method);

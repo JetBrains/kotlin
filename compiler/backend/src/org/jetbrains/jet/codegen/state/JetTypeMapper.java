@@ -755,18 +755,14 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public JvmMethodSignature mapConstructorSignature(@NotNull ConstructorDescriptor descriptor) {
-        return mapConstructorSignature(descriptor, bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration()));
-    }
-
-    @NotNull
-    public JvmMethodSignature mapConstructorSignature(@NotNull ConstructorDescriptor descriptor, @Nullable CalculatedClosure closure) {
-
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
 
         // constructor type parmeters are fake
         writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), signatureWriter);
 
         signatureWriter.writeParametersStart();
+
+        CalculatedClosure closure = bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration());
 
         ClassDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         ClassDescriptor captureThis = getExpectedThisObjectForConstructorCall(descriptor, closure);
@@ -867,12 +863,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public CallableMethod mapToCallableMethod(@NotNull ConstructorDescriptor descriptor) {
-        return mapToCallableMethod(descriptor, bindingContext.get(CodegenBinding.CLOSURE, descriptor.getContainingDeclaration()));
-    }
-
-    @NotNull
-    public CallableMethod mapToCallableMethod(@NotNull ConstructorDescriptor descriptor, @Nullable CalculatedClosure closure) {
-        JvmMethodSignature method = mapConstructorSignature(descriptor, closure);
+        JvmMethodSignature method = mapConstructorSignature(descriptor);
         ClassDescriptor container = descriptor.getContainingDeclaration();
         Type owner = mapClass(container);
         if (owner.getSort() != Type.OBJECT) {

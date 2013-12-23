@@ -1328,7 +1328,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, expression.getObjectDeclaration());
         assert constructorDescriptor != null;
-        CallableMethod constructor = typeMapper.mapToCallableMethod(constructorDescriptor, closure);
+        CallableMethod constructor = typeMapper.mapToCallableMethod(constructorDescriptor);
 
         Type type = bindingContext.get(ASM_TYPE, constructorDescriptor.getContainingDeclaration());
         assert type != null;
