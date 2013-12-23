@@ -16,7 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve.java.descriptor;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 
 public interface JavaPackageFragmentDescriptor extends PackageFragmentDescriptor {
+    @NotNull
+    JavaDescriptorResolver getJavaDescriptorResolver();
 }

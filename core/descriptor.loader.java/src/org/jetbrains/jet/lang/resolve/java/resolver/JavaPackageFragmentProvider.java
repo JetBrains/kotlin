@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptorImpl;
@@ -48,6 +49,7 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
     @NotNull
     private final Map<FqName, JavaPackageFragmentDescriptorImpl> packageFragments = Maps.newHashMap();
 
+    private JavaDescriptorResolver javaDescriptorResolver;
     private JavaClassFinder javaClassFinder;
     private JavaResolverCache cache;
     private JavaMemberResolver memberResolver;
@@ -56,6 +58,11 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
     private KotlinClassFinder kotlinClassFinder;
 
     private ModuleDescriptor module;
+
+    @Inject
+    public void setJavaDescriptorResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
+        this.javaDescriptorResolver = javaDescriptorResolver;
+    }
 
     @Inject
     public void setKotlinClassFinder(KotlinClassFinder kotlinClassFinder) {
@@ -85,6 +92,11 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
     @Inject
     public void setModule(ModuleDescriptor module) {
         this.module = module;
+    }
+
+    @NotNull
+    public JavaDescriptorResolver getJavaDescriptorResolver() {
+        return javaDescriptorResolver;
     }
 
     @NotNull

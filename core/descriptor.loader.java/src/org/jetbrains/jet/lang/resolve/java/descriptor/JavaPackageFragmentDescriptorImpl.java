@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageFragmentScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -56,6 +57,13 @@ public class JavaPackageFragmentDescriptorImpl extends DeclarationDescriptorImpl
         this.provider = provider;
         this.fqName = fqName;
         this.memberScope = scopeFactory.fun(this);
+    }
+
+
+    @NotNull
+    @Override
+    public JavaDescriptorResolver getJavaDescriptorResolver() {
+        return provider.getJavaDescriptorResolver();
     }
 
     @NotNull

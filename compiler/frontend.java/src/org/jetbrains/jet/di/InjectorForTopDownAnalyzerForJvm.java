@@ -254,6 +254,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaPackageFragmentProvider.setCache(traceBasedJavaResolverCache);
         this.javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         this.javaPackageFragmentProvider.setJavaClassFinder(javaClassFinder);
+        this.javaPackageFragmentProvider.setJavaDescriptorResolver(javaDescriptorResolver);
         this.javaPackageFragmentProvider.setKotlinClassFinder(virtualFileKotlinClassFinder);
         this.javaPackageFragmentProvider.setMemberResolver(javaMemberResolver);
         this.javaPackageFragmentProvider.setModule(moduleDescriptor);

@@ -154,6 +154,7 @@ public class InjectorForJavaDescriptorResolver {
         javaPackageFragmentProvider.setCache(traceBasedJavaResolverCache);
         javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaPackageFragmentProvider.setJavaClassFinder(javaClassFinder);
+        javaPackageFragmentProvider.setJavaDescriptorResolver(javaDescriptorResolver);
         javaPackageFragmentProvider.setKotlinClassFinder(virtualFileKotlinClassFinder);
         javaPackageFragmentProvider.setMemberResolver(javaMemberResolver);
         javaPackageFragmentProvider.setModule(module);
