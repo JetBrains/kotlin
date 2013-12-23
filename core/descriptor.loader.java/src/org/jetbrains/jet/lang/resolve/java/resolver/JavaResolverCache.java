@@ -45,8 +45,4 @@ public interface JavaResolverCache {
     void recordField(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor);
 
     void recordClass(@NotNull JavaClass javaClass, @NotNull ClassDescriptor descriptor);
-
-    void recordProperPackage(@NotNull PackageFragmentDescriptor descriptor);
-
-    void recordClassStaticMembersNamespace(@NotNull PackageFragmentDescriptor descriptor);
 }

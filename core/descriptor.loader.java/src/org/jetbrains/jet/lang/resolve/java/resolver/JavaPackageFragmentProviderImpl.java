@@ -146,8 +146,6 @@ public final class JavaPackageFragmentProviderImpl implements JavaPackageFragmen
             FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(fqName);
             KotlinJvmBinaryClass kotlinClass = kotlinClassFinder.find(packageClassFqName);
 
-            cache.recordProperPackage(packageFragment);
-
             if (kotlinClass != null) {
                 JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinClass);
                 if (kotlinPackageScope != null) {
@@ -163,7 +161,6 @@ public final class JavaPackageFragmentProviderImpl implements JavaPackageFragmen
 
         JavaClass javaClass = javaClassFinder.findClass(fqName);
         if (javaClass != null && DescriptorResolverUtils.isJavaClassVisibleAsPackage(javaClass)) {
-            cache.recordClassStaticMembersNamespace(packageFragment);
             return new JavaClassStaticMembersScope(packageFragment, javaClass, memberResolver);
         }
         return null;
