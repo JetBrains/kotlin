@@ -26,7 +26,7 @@ trait LightClassData {
 
 trait LightClassDataForKotlinClass: LightClassData {
     val classOrObject: JetClassOrObject
-    val descriptor: ClassDescriptor
+    val descriptor: ClassDescriptor?
 }
 
 object KotlinPackageLightClassData: LightClassData {
@@ -36,13 +36,13 @@ object KotlinPackageLightClassData: LightClassData {
 data class InnerKotlinClassLightClassData(
         override val jvmInternalName: String,
         override val classOrObject: JetClassOrObject,
-        override val descriptor: ClassDescriptor
+        override val descriptor: ClassDescriptor?
 ): LightClassDataForKotlinClass
 
 data class OutermostKotlinClassLightClassData(
         override val jvmInternalName: String,
         override val classOrObject: JetClassOrObject,
-        override val descriptor: ClassDescriptor,
+        override val descriptor: ClassDescriptor?,
         val allInnerClasses: Map<JetClassOrObject, LightClassDataForKotlinClass>
 ): LightClassDataForKotlinClass
 

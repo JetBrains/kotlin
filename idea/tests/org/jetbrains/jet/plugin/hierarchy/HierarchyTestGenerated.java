@@ -184,9 +184,24 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/hierarchy/class/sub"), Pattern.compile("^([^\\.]+)$"), false);
         }
         
+        @TestMetadata("AllFromClass")
+        public void testAllFromClass() throws Exception {
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/AllFromClass");
+        }
+        
+        @TestMetadata("AllFromTrait")
+        public void testAllFromTrait() throws Exception {
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/AllFromTrait");
+        }
+        
         @TestMetadata("ClassFromClass")
         public void testClassFromClass() throws Exception {
             doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ClassFromClass");
+        }
+        
+        @TestMetadata("ClassFromTrait")
+        public void testClassFromTrait() throws Exception {
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ClassFromTrait");
         }
         
         @TestMetadata("ObjectFromClass")
@@ -197,6 +212,16 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         @TestMetadata("ObjectFromTrait")
         public void testObjectFromTrait() throws Exception {
             doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ObjectFromTrait");
+        }
+        
+        @TestMetadata("TraitFromClass")
+        public void testTraitFromClass() throws Exception {
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/TraitFromClass");
+        }
+        
+        @TestMetadata("TraitFromTrait")
+        public void testTraitFromTrait() throws Exception {
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/TraitFromTrait");
         }
         
     }

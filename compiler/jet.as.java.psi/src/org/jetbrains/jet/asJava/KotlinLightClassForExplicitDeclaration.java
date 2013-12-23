@@ -90,7 +90,8 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
     private static String getJvmInternalName(JetClassOrObject classOrObject) {
         if (JetPsiUtil.isLocal(classOrObject)) {
-            return getLightClassDataExactly(classOrObject).getJvmInternalName();
+            LightClassData data = getLightClassDataExactly(classOrObject);
+            return data != null ? data.getJvmInternalName() : "";
         }
         return PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject);
     }
@@ -255,9 +256,10 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         return getLightClassStubWithData().getJavaFileStub();
     }
 
-    @NotNull
+    @Nullable
     protected final ClassDescriptor getDescriptor() {
-        return getLightClassDataExactly(classOrObject).getDescriptor();
+        LightClassDataForKotlinClass data = getLightClassDataExactly(classOrObject);
+        return data != null ? data.getDescriptor() : null;
     }
 
     @NotNull
@@ -276,16 +278,11 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         );
     }
 
-    @NotNull
+    @Nullable
     private static LightClassDataForKotlinClass getLightClassDataExactly(JetClassOrObject classOrObject) {
         OutermostKotlinClassLightClassData data =
                 (OutermostKotlinClassLightClassData) getLightClassStubWithData(classOrObject).getClassData();
-
-        if (data.getClassOrObject().equals(classOrObject)) return data;
-
-        LightClassDataForKotlinClass innerClassData = data.getAllInnerClasses().get(classOrObject);
-        assert innerClassData != null;
-        return innerClassData;
+        return data.getClassOrObject().equals(classOrObject) ? data : data.getAllInnerClasses().get(classOrObject);
     }
 
     @NotNull
@@ -523,13 +520,17 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     public boolean isInheritor(@NotNull PsiClass baseClass, boolean checkDeep) {
         String qualifiedName;
         if (baseClass instanceof KotlinLightClassForExplicitDeclaration) {
-            qualifiedName = DescriptorUtils.getFqName(((KotlinLightClassForExplicitDeclaration) baseClass).getDescriptor()).asString();
+            ClassDescriptor baseDescriptor = ((KotlinLightClassForExplicitDeclaration) baseClass).getDescriptor();
+            qualifiedName = baseDescriptor != null ? DescriptorUtils.getFqName(baseDescriptor).asString() : null;
         }
         else {
             qualifiedName = baseClass.getQualifiedName();
         }
 
-        return ResolvePackage.checkSuperTypeByFQName(getDescriptor(), qualifiedName, checkDeep);
+        ClassDescriptor thisDescriptor = getDescriptor();
+        return qualifiedName != null
+               && thisDescriptor != null
+               && ResolvePackage.checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep);
     }
 
     @Override
@@ -573,7 +574,10 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         }
 
         private String getFirstSupertypeFQName() {
-            Collection<JetType> superTypes = getDescriptor().getTypeConstructor().getSupertypes();
+            ClassDescriptor descriptor = getDescriptor();
+            if (descriptor == null) return CommonClassNames.JAVA_LANG_OBJECT;
+
+            Collection<JetType> superTypes = descriptor.getTypeConstructor().getSupertypes();
 
             if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT;
 

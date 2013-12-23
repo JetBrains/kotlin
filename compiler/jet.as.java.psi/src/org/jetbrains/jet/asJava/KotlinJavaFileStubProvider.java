@@ -124,7 +124,12 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<LightClas
                     @Override
                     public LightClassStubWithData createLightClassStubWithData(PsiJavaFileStub javaFileStub, BindingContext bindingContext) {
                         ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
-                        assert (classDescriptor != null);
+                        if (classDescriptor == null) {
+                            return new LightClassStubWithData(
+                                    javaFileStub,
+                                    new OutermostKotlinClassLightClassData("", classOrObject, null, Collections.<JetClassOrObject, LightClassDataForKotlinClass>emptyMap())
+                            );
+                        }
 
                         String jvmInternalName = CodegenBinding.getJvmInternalName(bindingContext, classDescriptor);
                         Collection<ClassDescriptor> allInnerClasses = CodegenBinding.getAllInnerClasses(bindingContext, classDescriptor);
