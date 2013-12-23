@@ -26,10 +26,6 @@ import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureHa
 import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetIntroduceVariableHandler;
 import org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinSafeDeleteProcessor;
 
-/**
- * User: Alefas
- * Date: 25.01.12
- */
 public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
     @Override
     public boolean isSafeDeleteAvailable(PsiElement element) {

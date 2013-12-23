@@ -56,10 +56,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-/**
- * User: Alefas
- * Date: 25.01.12
- */
 public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
 
     private static final String INTRODUCE_VARIABLE = JetRefactoringBundle.message("introduce.variable");

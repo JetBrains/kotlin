@@ -24,10 +24,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
-/**
- * User: Alexander Podkhalyuzin
- * Date: 24.01.12
- */
 public class MockParameterInfoUIContext implements ParameterInfoUIContext {
     private final PsiElement myParameterOwner;
     private final int myCurrentParameterIndex;

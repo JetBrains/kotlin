@@ -51,10 +51,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * User: Alefas
- * Date: 17.01.12
- */
 public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWithTabActionSupport<
         JetValueArgumentList,
         Pair<? extends FunctionDescriptor, CancelableResolveSession>,

@@ -2,9 +2,6 @@
 package test;
 import java.io.File;
 
-/**
- * User: ignatov
- */
 public class Test {
     public static boolean isDir(File parent) {
         if (parent == null || !parent.exists()) {

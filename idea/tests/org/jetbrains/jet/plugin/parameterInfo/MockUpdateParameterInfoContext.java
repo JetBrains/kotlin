@@ -25,10 +25,6 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: Alexander Podkhalyuzin
- * Date: 24.01.12
- */
 public class MockUpdateParameterInfoContext implements UpdateParameterInfoContext {
     private int myCurrentParameter = -1;
     private PsiFile myFile;

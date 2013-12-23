@@ -30,10 +30,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * User: Alefas
- * Date: 15.02.12
- */
 public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration> {
     public static final String CLASS_INITIALIZER = "<class initializer>";
 

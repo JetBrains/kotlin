@@ -36,10 +36,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * User: Alefas
- * Date: 15.02.12
- */
 public class JetProjectViewProvider implements SelectableTreeStructureProvider, DumbAware {
     private Project myProject;
 

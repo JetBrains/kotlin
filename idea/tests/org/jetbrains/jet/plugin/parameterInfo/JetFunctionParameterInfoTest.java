@@ -26,10 +26,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 
-/**
- * User: Alexander Podkhalyuzin
- * Date: 24.01.12
- */
 public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCase {
     public void testInheritedFunctions() {
         doTest();

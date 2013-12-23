@@ -26,10 +26,6 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * User: Alexander Podkhalyuzin
- * Date: 24.01.12
- */
 public class MockCreateParameterInfoContext implements CreateParameterInfoContext {
     private Object[] myItemsToShow = ArrayUtil.EMPTY_OBJECT_ARRAY;
     private PsiElement myHighlightedElement = null;

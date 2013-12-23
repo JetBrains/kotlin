@@ -58,10 +58,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * User: Alefas
- * Date: 25.01.12
- */
 public class JetRefactoringUtil {
 
     private JetRefactoringUtil() {

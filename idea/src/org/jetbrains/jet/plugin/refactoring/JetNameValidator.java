@@ -21,10 +21,6 @@ import com.intellij.openapi.project.Project;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * User: Alefas
- * Date: 07.02.12
- */
 public abstract class JetNameValidator {
     private final Project project;
 

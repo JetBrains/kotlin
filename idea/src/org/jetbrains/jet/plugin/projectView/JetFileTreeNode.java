@@ -29,10 +29,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * User: Alefas
- * Date: 15.02.12
- */
 public class JetFileTreeNode extends PsiFileNode {
     public JetFileTreeNode(Project project, JetFile value, ViewSettings viewSettings) {
         super(project, value, viewSettings);

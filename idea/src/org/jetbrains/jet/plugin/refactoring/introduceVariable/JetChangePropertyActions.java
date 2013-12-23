@@ -21,10 +21,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 
-/**
- * User: Alefas
- * Date: 14.02.12
- */
 public class JetChangePropertyActions {
     private JetChangePropertyActions() {
     }
