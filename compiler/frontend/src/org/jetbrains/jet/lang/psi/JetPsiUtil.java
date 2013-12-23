@@ -1006,8 +1006,14 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetElement getEnclosingElementForLocalDeclaration(@Nullable JetNamedDeclaration declaration) {
-        if (declaration instanceof JetTypeParameter || declaration instanceof JetParameter) {
+        if (declaration instanceof JetTypeParameter) {
             declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
+        }
+        else if (declaration instanceof JetParameter) {
+            PsiElement parent = declaration.getParent();
+            if (parent != null && parent.getParent() instanceof JetNamedFunction) {
+                declaration = (JetNamedFunction) parent.getParent();
+            }
         }
 
         //noinspection unchecked
