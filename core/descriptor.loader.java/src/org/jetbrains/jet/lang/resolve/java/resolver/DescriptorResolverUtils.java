@@ -23,9 +23,9 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -286,7 +286,7 @@ public final class DescriptorResolverUtils {
     // +-- package fragment Bar
     // We need to find class 'Baz' in fragment 'foo.Bar'.
     @Nullable
-    static JavaClassDescriptor findClassInPackage(@NotNull JavaPackageFragmentDescriptor fragment, @NotNull Name name) {
+    static JavaClassDescriptor findClassInPackage(@NotNull JavaPackageFragmentDescriptorImpl fragment, @NotNull Name name) {
         // First, try to find in fragment directly
         JavaClassDescriptor found = findClassInScope(fragment.getMemberScope(), name);
         if (found != null) {
@@ -294,7 +294,7 @@ public final class DescriptorResolverUtils {
         }
 
         // If unsuccessful, try to find class of the same name as current (class 'foo.Bar')
-        JavaPackageFragmentDescriptor parentPackage = getParentPackage(fragment);
+        JavaPackageFragmentDescriptorImpl parentPackage = getParentPackage(fragment);
         if (parentPackage == null) {
             return null;
         }
@@ -310,20 +310,20 @@ public final class DescriptorResolverUtils {
     }
 
     @Nullable
-    private static JavaPackageFragmentDescriptor getParentPackage(@NotNull JavaPackageFragmentDescriptor fragment) {
+    private static JavaPackageFragmentDescriptorImpl getParentPackage(@NotNull JavaPackageFragmentDescriptorImpl fragment) {
         FqName fqName = fragment.getFqName();
         if (fqName.isRoot()) {
             return null;
         }
 
-        JavaPackageFragmentDescriptor parentPackage = fragment.getProvider().getOrCreatePackage(fqName.parent());
+        JavaPackageFragmentDescriptorImpl parentPackage = fragment.getProvider().getOrCreatePackage(fqName.parent());
         assert parentPackage != null : " couldn't find parent package for " + fragment;
         return parentPackage;
     }
 
     @Nullable
-    public static JavaClassDescriptor getClassForCorrespondingJavaPackage(@NotNull JavaPackageFragmentDescriptor fragment) {
-        JavaPackageFragmentDescriptor parentPackage = getParentPackage(fragment);
+    public static JavaClassDescriptor getClassForCorrespondingJavaPackage(@NotNull JavaPackageFragmentDescriptorImpl fragment) {
+        JavaPackageFragmentDescriptorImpl parentPackage = getParentPackage(fragment);
         if (parentPackage == null) {
             return null;
         }
@@ -334,10 +334,10 @@ public final class DescriptorResolverUtils {
     @Nullable
     public static JavaPackageFragmentDescriptor getPackageForCorrespondingJavaClass(@NotNull JavaClassDescriptor javaClass) {
         PackageFragmentDescriptor packageFragment = DescriptorUtils.getParentOfType(javaClass, PackageFragmentDescriptor.class);
-        assert packageFragment instanceof JavaPackageFragmentDescriptor :
+        assert packageFragment instanceof JavaPackageFragmentDescriptorImpl :
                 "java class " + javaClass + " is under non-java fragment: " + packageFragment;
 
-        JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
+        JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptorImpl) packageFragment).getProvider();
         return provider.getOrCreatePackage(getFqNameSafe(javaClass));
     }
 

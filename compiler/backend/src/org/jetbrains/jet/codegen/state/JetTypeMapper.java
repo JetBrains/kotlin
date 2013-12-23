@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
@@ -144,7 +145,7 @@ public class JetTypeMapper extends BindingTraceAware {
             throw new IllegalStateException("Unexpected scope: " + packageScope.getClass());
         }
 
-        JavaPackageFragmentProvider javaFragmentProvider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
+        JavaPackageFragmentProvider javaFragmentProvider = ((JavaPackageFragmentDescriptorImpl) packageFragment).getProvider();
 
         StringBuilder r = new StringBuilder();
         for (FqName pathItem : packageFragment.getFqName().parent().path()) {

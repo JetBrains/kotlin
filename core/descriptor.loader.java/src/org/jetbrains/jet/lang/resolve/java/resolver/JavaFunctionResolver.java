@@ -21,10 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.*;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
@@ -197,8 +194,8 @@ public final class JavaFunctionResolver {
             }
         }
 
-        if (owner instanceof JavaPackageFragmentDescriptor) {
-            SamConstructorDescriptor samConstructor = resolveSamConstructor((JavaPackageFragmentDescriptor) owner, members);
+        if (owner instanceof JavaPackageFragmentDescriptorImpl) {
+            SamConstructorDescriptor samConstructor = resolveSamConstructor((JavaPackageFragmentDescriptorImpl) owner, members);
             if (samConstructor != null) {
                 functionsFromCurrent.add(samConstructor);
             }
@@ -228,7 +225,7 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    public static SamConstructorDescriptor resolveSamConstructor(@NotNull JavaPackageFragmentDescriptor owner, @NotNull NamedMembers namedMembers) {
+    public static SamConstructorDescriptor resolveSamConstructor(@NotNull JavaPackageFragmentDescriptorImpl owner, @NotNull NamedMembers namedMembers) {
         if (namedMembers.getSamInterface() != null) {
             JavaClassDescriptor klass = DescriptorResolverUtils.findClassInPackage(owner, namedMembers.getName());
             if (klass != null) {

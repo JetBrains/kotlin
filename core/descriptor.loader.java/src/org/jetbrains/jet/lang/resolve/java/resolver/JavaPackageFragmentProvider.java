@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageFragmentScope;
@@ -45,7 +46,7 @@ import java.util.*;
 
 public final class JavaPackageFragmentProvider implements PackageFragmentProvider {
     @NotNull
-    private final Map<FqName, JavaPackageFragmentDescriptor> packageFragments = Maps.newHashMap();
+    private final Map<FqName, JavaPackageFragmentDescriptorImpl> packageFragments = Maps.newHashMap();
 
     private JavaClassFinder javaClassFinder;
     private JavaResolverCache cache;
@@ -95,7 +96,7 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
     @NotNull
     @Override
     public Collection<FqName> getSubPackagesOf(@NotNull FqName fqName) {
-        JavaPackageFragmentDescriptor packageFragment = getOrCreatePackage(fqName);
+        JavaPackageFragmentDescriptorImpl packageFragment = getOrCreatePackage(fqName);
         if (packageFragment == null) {
             return Collections.emptyList();
         }
@@ -104,12 +105,12 @@ public final class JavaPackageFragmentProvider implements PackageFragmentProvide
     }
 
     @Nullable
-    public JavaPackageFragmentDescriptor getOrCreatePackage(@NotNull final FqName fqName) {
+    public JavaPackageFragmentDescriptorImpl getOrCreatePackage(@NotNull final FqName fqName) {
         if (packageFragments.containsKey(fqName)) {
             return packageFragments.get(fqName);
         }
 
-        JavaPackageFragmentDescriptor packageFragment = JavaPackageFragmentDescriptor.create(
+        JavaPackageFragmentDescriptorImpl packageFragment = JavaPackageFragmentDescriptorImpl.create(
                 this, fqName, new NullableFunction<JavaPackageFragmentDescriptor, JavaPackageFragmentScope>() {
             @Override
             @Nullable
