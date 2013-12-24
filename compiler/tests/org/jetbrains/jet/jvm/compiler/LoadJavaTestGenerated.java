@@ -1440,9 +1440,19 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/notNull/NotNullField.java");
             }
             
+            @TestMetadata("NotNullIntArray.java")
+            public void testNotNullIntArray() throws Exception {
+                doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/notNull/NotNullIntArray.java");
+            }
+            
             @TestMetadata("NotNullMethod.java")
             public void testNotNullMethod() throws Exception {
                 doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/notNull/NotNullMethod.java");
+            }
+            
+            @TestMetadata("NotNullObjectArray.java")
+            public void testNotNullObjectArray() throws Exception {
+                doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/notNull/NotNullObjectArray.java");
             }
             
             @TestMetadata("NotNullParameter.java")
