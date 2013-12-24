@@ -3235,6 +3235,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/localClasses"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("anonymousObjectInInitializer.kt")
+        public void testAnonymousObjectInInitializer() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/anonymousObjectInInitializer.kt");
+        }
+        
+        @TestMetadata("anonymousObjectInParameterInitializer.kt")
+        public void testAnonymousObjectInParameterInitializer() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/anonymousObjectInParameterInitializer.kt");
+        }
+        
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             doTest("compiler/testData/codegen/box/localClasses/enum.kt");
@@ -3288,6 +3298,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("localClass.kt")
         public void testLocalClass() throws Exception {
             doTest("compiler/testData/codegen/box/localClasses/localClass.kt");
+        }
+        
+        @TestMetadata("localClassInInitializer.kt")
+        public void testLocalClassInInitializer() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/localClassInInitializer.kt");
+        }
+        
+        @TestMetadata("localClassInParameterInitializer.kt")
+        public void testLocalClassInParameterInitializer() throws Exception {
+            doTest("compiler/testData/codegen/box/localClasses/localClassInParameterInitializer.kt");
         }
         
         @TestMetadata("noclosure.kt")
