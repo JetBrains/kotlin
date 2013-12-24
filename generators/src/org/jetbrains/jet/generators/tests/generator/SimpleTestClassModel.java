@@ -17,7 +17,9 @@
 package org.jetbrains.jet.generators.tests.generator;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.utils.Printer;
@@ -66,9 +68,8 @@ public class SimpleTestClassModel implements TestClassModel {
             if (files != null) {
                 for (File file : files) {
                     if (file.isDirectory()) {
-                        SimpleTestClassModel childModel = new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName);
-                        if (!childModel.isEmpty()) {
-                            children.add(childModel);
+                        if (dirHasFilesInside(file)) {
+                            children.add(new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName));
                         }
                     }
                 }
@@ -77,6 +78,15 @@ public class SimpleTestClassModel implements TestClassModel {
             innerTestClasses = children;
         }
         return innerTestClasses;
+    }
+
+    private static boolean dirHasFilesInside(@NotNull File dir) {
+        return !FileUtil.processFilesRecursively(dir, new Processor<File>() {
+            @Override
+            public boolean process(File file) {
+                return file.isDirectory();
+            }
+        });
     }
 
     @NotNull

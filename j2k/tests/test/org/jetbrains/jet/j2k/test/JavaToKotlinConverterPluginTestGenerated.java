@@ -1619,7 +1619,6 @@ public class JavaToKotlinConverterPluginTestGenerated extends AbstractJavaToKotl
     }
     
     @TestMetadata("j2k/tests/testData/ast/misc")
-    @InnerTestClasses({})
     public static class Misc extends AbstractJavaToKotlinConverterPluginTest {
         public void testAllFilesPresentInMisc() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/misc"), Pattern.compile("^(.+)\\.java$"), true);
@@ -1655,11 +1654,6 @@ public class JavaToKotlinConverterPluginTestGenerated extends AbstractJavaToKotl
             doTest("j2k/tests/testData/ast/misc/packageWithStaticImports.java");
         }
         
-        public static Test innerSuite() {
-            TestSuite suite = new TestSuite("Misc");
-            suite.addTestSuite(Misc.class);
-            return suite;
-        }
     }
     
     @TestMetadata("j2k/tests/testData/ast/newClassExpression")
@@ -2333,7 +2327,7 @@ public class JavaToKotlinConverterPluginTestGenerated extends AbstractJavaToKotl
         suite.addTestSuite(LiteralExpression.class);
         suite.addTestSuite(LocalVariable.class);
         suite.addTestSuite(MethodCallExpression.class);
-        suite.addTest(Misc.innerSuite());
+        suite.addTestSuite(Misc.class);
         suite.addTestSuite(NewClassExpression.class);
         suite.addTestSuite(ObjectLiteral.class);
         suite.addTestSuite(OutProjectionType.class);
