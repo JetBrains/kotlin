@@ -232,6 +232,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     @NotNull
     public JavaPackageFragmentProvider getPackageFragmentProvider() {
+        if (LAZY) {
+            return getLazyJavaPackageFragmentProvider();
+        }
         return packageFragmentProvider;
     }
 }
