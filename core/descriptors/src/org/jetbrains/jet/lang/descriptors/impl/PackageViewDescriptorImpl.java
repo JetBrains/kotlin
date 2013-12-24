@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import com.google.common.collect.Lists;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -131,7 +132,7 @@ public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl impleme
         public Collection<DeclarationDescriptor> getAllDescriptors() {
             List<DeclarationDescriptor> result = Lists.newArrayList();
             for (FqName subFqName : module.getPackageFragmentProvider().getSubPackagesOf(fqName)) {
-                result.add(getPackage(subFqName.shortName()));
+                ContainerUtil.addIfNotNull(result, getPackage(subFqName.shortName()));
             }
             return result;
         }
