@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 
 abstract class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
@@ -26,6 +27,8 @@ abstract class LazyJavaPackageFragment(
     override fun getMemberScope() = _memberScope
 
     override fun getJavaDescriptorResolver(): JavaDescriptorResolver = c.javaDescriptorResolver
+
+    override fun getProvider(): PackageFragmentProvider = c.subModule
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) = visitor.visitPackageFragmentDescriptor(this, data) as R
 
@@ -42,6 +45,8 @@ public class LazyPackageFragmentForJavaPackage(
     override fun getFqName(): FqName = jPackage.getFqName()
 
     override val _memberScope = LazyPackageFragmentScopeForJavaPackage(c, jPackage, this)
+
+    override fun getKind() = JavaPackageFragmentDescriptor.Kind.PROPER
 }
 
 public class LazyPackageFragmentForJavaClass(
@@ -55,4 +60,6 @@ public class LazyPackageFragmentForJavaClass(
     override fun getFqName(): FqName = jClass.getFqName()!!
 
     override val _memberScope = LazyPackageFragmentScopeForJavaClass(c, jClass, this)
+
+    override fun getKind() = JavaPackageFragmentDescriptor.Kind.CLASS_STATICS
 }

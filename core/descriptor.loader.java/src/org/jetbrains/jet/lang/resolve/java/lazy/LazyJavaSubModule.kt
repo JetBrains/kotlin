@@ -54,8 +54,8 @@ public open class LazyJavaSubModule(
     override fun getPackageFragment(fqName: FqName) = _packageFragments(fqName)
     override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)} ?: listOf()
 
-    override fun getSubPackagesOf(fqName: FqName) = listOf() // TODO
-    override fun getClassNamesInPackage(packageName: FqName) = listOf() // TODO
+    override fun getSubPackagesOf(fqName: FqName) = listOf<FqName>() // TODO
+    override fun getClassNamesInPackage(packageName: FqName) = listOf<Name>() // TODO
 
     fun getClass(fqName: FqName): ClassDescriptor? = c.javaClassResolver.resolveClassByFqName(fqName)
 
