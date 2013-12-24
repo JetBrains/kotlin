@@ -24,6 +24,7 @@ import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.BindingTraceAware;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
+import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
@@ -399,15 +400,13 @@ public class JetTypeMapper extends BindingTraceAware {
     public CallableMethod mapToCallableMethod(
             @NotNull FunctionDescriptor functionDescriptor,
             boolean superCall,
-            boolean isInsideClass,
-            boolean isInsideModule,
-            OwnerKind kind
+            @NotNull CodegenContext<?> context
     ) {
         DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
 
         functionDescriptor = unwrapFakeOverride(functionDescriptor.getOriginal());
 
-        JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), kind);
+        JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal());
         Type owner;
         Type ownerForDefaultImpl;
         Type ownerForDefaultParam;
@@ -428,12 +427,13 @@ public class JetTypeMapper extends BindingTraceAware {
             owner = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
             ownerForDefaultImpl = ownerForDefaultParam = thisClass = owner;
             invokeOpcode = INVOKEVIRTUAL;
-            descriptor = mapSignature(functionDescriptor, kind);
+            descriptor = mapSignature(functionDescriptor);
             calleeType = owner;
         }
         else if (functionParent instanceof PackageFragmentDescriptor) {
             assert !superCall;
-            owner = asmTypeForPackage((PackageFragmentDescriptor) functionParent, functionDescriptor, isInsideModule);
+            owner = asmTypeForPackage((PackageFragmentDescriptor) functionParent, functionDescriptor,
+                                      isCallInsideSameModuleAsDeclared(functionDescriptor, context));
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;
@@ -460,8 +460,6 @@ public class JetTypeMapper extends BindingTraceAware {
             boolean originalIsInterface = isInterface(declarationOwner);
             boolean currentIsInterface = isInterface(currentOwner);
 
-            boolean isAccessor = isAccessor(functionDescriptor);
-
             ClassDescriptor receiver;
             if (currentIsInterface && !originalIsInterface) {
                 receiver = declarationOwner;
@@ -483,11 +481,12 @@ public class JetTypeMapper extends BindingTraceAware {
                 invokeOpcode = superCall ? INVOKESTATIC : INVOKEINTERFACE;
             }
             else {
-                if (isAccessor) {
+                if (isAccessor(functionDescriptor)) {
                     invokeOpcode = INVOKESTATIC;
                 }
                 else {
-                    boolean isPrivateFunInvocation = isInsideClass && functionDescriptor.getVisibility() == Visibilities.PRIVATE;
+                    boolean isPrivateFunInvocation = isCallInsideSameClassAsDeclared(functionDescriptor, context) &&
+                                                     functionDescriptor.getVisibility() == Visibilities.PRIVATE;
                     invokeOpcode = superCall || isPrivateFunInvocation ? INVOKESPECIAL : INVOKEVIRTUAL;
                 }
             }

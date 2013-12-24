@@ -999,10 +999,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean callFromAccessor = !JetTypeMapper.isAccessor(functionDescriptor);
         CallableMethod callableMethod = isConstructor ?
                                         typeMapper.mapToCallableMethod((ConstructorDescriptor) functionDescriptor) :
-                                        typeMapper.mapToCallableMethod(functionDescriptor, callFromAccessor,
-                                                                       isCallInsideSameClassAsDeclared(functionDescriptor, context),
-                                                                       isCallInsideSameModuleAsDeclared(functionDescriptor, context),
-                                                                       context.getContextKind());
+                                        typeMapper.mapToCallableMethod(functionDescriptor, callFromAccessor, context);
 
         Method method = callableMethod.getSignature().getAsmMethod();
         Type[] argTypes = method.getArgumentTypes();

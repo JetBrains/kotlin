@@ -49,8 +49,6 @@ import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.isCallInsideSameClassAsDeclared;
-import static org.jetbrains.jet.codegen.CodegenUtil.isCallInsideSameModuleAsDeclared;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
@@ -610,11 +608,9 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         CallableMethod method;
         if (functionDescriptor instanceof ConstructorDescriptor) {
-            method = state.getTypeMapper().mapToCallableMethod((ConstructorDescriptor) functionDescriptor);
+            method = typeMapper.mapToCallableMethod((ConstructorDescriptor) functionDescriptor);
         } else {
-            method = state.getTypeMapper()
-                    .mapToCallableMethod(functionDescriptor, false, isCallInsideSameClassAsDeclared(functionDescriptor, methodContext),
-                                         isCallInsideSameModuleAsDeclared(functionDescriptor, methodContext), OwnerKind.IMPLEMENTATION);
+            method = typeMapper.mapToCallableMethod(functionDescriptor, false, methodContext);
         }
 
         iv.visitMethodInsn(method.getInvokeOpcode(), method.getOwner().getInternalName(), method.getSignature().getAsmMethod().getName(),

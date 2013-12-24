@@ -1774,7 +1774,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean isStatic = containingDeclaration instanceof PackageFragmentDescriptor;
         boolean isSuper = superExpression != null;
         boolean isInsideClass = isCallInsideSameClassAsDeclared(propertyDescriptor, context);
-        boolean isInsideModule = isCallInsideSameModuleAsDeclared(propertyDescriptor, context);
 
         JetType delegateType = getPropertyDelegateType(propertyDescriptor, state.getBindingContext());
         boolean isDelegatedProperty = delegateType != null;
@@ -1817,9 +1816,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
                 PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
                 if (getter != null) {
-                    callableGetter = typeMapper.mapToCallableMethod(
-                            getter, isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, isInsideClass, isInsideModule,
-                            OwnerKind.IMPLEMENTATION);
+                    callableGetter = typeMapper.mapToCallableMethod(getter, isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, context);
                 }
             }
 
@@ -1830,9 +1827,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                         callableSetter = null;
                     }
                     else {
-                        callableSetter = typeMapper.mapToCallableMethod(
-                                setter, isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, isInsideClass, isInsideModule,
-                                OwnerKind.IMPLEMENTATION);
+                        callableSetter = typeMapper.mapToCallableMethod(setter, isSuper || MethodKind.SYNTHETIC_ACCESSOR == methodKind, context);
                     }
                 }
             }
@@ -1844,7 +1839,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         propertyDescriptor = unwrapFakeOverride(propertyDescriptor);
         if (callableMethod == null) {
             owner = typeMapper.getOwner(isBackingFieldInAnotherClass ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
-                                        context.getContextKind(), isInsideModule);
+                                        context.getContextKind(), isCallInsideSameModuleAsDeclared(propertyDescriptor, context));
         }
         else {
             owner = callableMethod.getOwner();
@@ -2073,10 +2068,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else {
             SimpleFunctionDescriptor originalOfSamAdapter = (SimpleFunctionDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(fd);
-            return typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall,
-                                                  isCallInsideSameClassAsDeclared(fd, context),
-                                                  isCallInsideSameModuleAsDeclared(fd, context),
-                                                  OwnerKind.IMPLEMENTATION);
+            return typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall, context);
         }
     }
 
