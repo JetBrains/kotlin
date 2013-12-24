@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.cfg;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -744,26 +743,18 @@ public class JetControlFlowProcessor {
         public void visitQualifiedExpressionVoid(@NotNull JetQualifiedExpression expression, CFPContext context) {
             mark(expression);
             JetExpression selectorExpression = expression.getSelectorExpression();
-            if (selectorExpression != null) {
-                final Ref<Boolean> error = new Ref<Boolean>(false);
-                JetControlFlowBuilderAdapter adapter = new JetControlFlowBuilderAdapter() {
-                    @NotNull
-                    @Override
-                    protected JetControlFlowBuilder getDelegateBuilder() {
-                        return builder;
-                    }
 
-                    @Override
-                    public void compilationError(@NotNull JetElement element, @NotNull String message) {
-                        error.set(true);
-                        super.compilationError(element, message);
-                    }
-                };
-                new CFPVisitor(adapter).generateInstructions(selectorExpression, NOT_IN_CONDITION);
+            if (selectorExpression == null) {
+                generateInstructions(expression.getReceiverExpression(), NOT_IN_CONDITION);
+                return;
+            }
 
-                if (error.get()) {
-                    generateInstructions(expression.getReceiverExpression(), NOT_IN_CONDITION);
-                }
+            generateInstructions(selectorExpression, NOT_IN_CONDITION);
+
+            // receiver was generated for resolvedCall
+            JetExpression calleeExpression = JetPsiUtil.getCalleeExpressionIfAny(selectorExpression);
+            if (calleeExpression == null || getResolvedCall(calleeExpression) == null) {
+                generateInstructions(expression.getReceiverExpression(), NOT_IN_CONDITION);
             }
         }
 

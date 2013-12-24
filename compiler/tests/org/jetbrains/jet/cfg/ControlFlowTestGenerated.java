@@ -92,6 +92,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/Basic.kt");
     }
     
+    @TestMetadata("chainedQualifiedExpression.kt")
+    public void testChainedQualifiedExpression() throws Exception {
+        doTest("compiler/testData/cfg/chainedQualifiedExpression.kt");
+    }
+    
     @TestMetadata("DelegatedProperty.kt")
     public void testDelegatedProperty() throws Exception {
         doTest("compiler/testData/cfg/DelegatedProperty.kt");
@@ -185,6 +190,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
     @TestMetadata("propertySafeCall.kt")
     public void testPropertySafeCall() throws Exception {
         doTest("compiler/testData/cfg/propertySafeCall.kt");
+    }
+    
+    @TestMetadata("qualifiedExpressionWithoutSelector.kt")
+    public void testQualifiedExpressionWithoutSelector() throws Exception {
+        doTest("compiler/testData/cfg/qualifiedExpressionWithoutSelector.kt");
     }
     
     @TestMetadata("ReturnFromExpression.kt")

@@ -865,6 +865,9 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetExpression getCalleeExpressionIfAny(@NotNull JetExpression expression) {
+        if (expression instanceof JetSimpleNameExpression) {
+            return expression;
+        }
         if (expression instanceof JetCallElement) {
             JetCallElement callExpression = (JetCallElement) expression;
             return callExpression.getCalleeExpression();
