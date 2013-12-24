@@ -79,6 +79,10 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
         doTest();
     }
     
+    public void testDeprecated() {
+        doTest();
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();

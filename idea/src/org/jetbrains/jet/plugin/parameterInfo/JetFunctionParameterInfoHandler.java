@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
@@ -220,7 +221,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         int boldStartOffset = -1;
         int boldEndOffset = -1;
         boolean isGrey = false;
-        boolean isDeprecated = false; //todo: add deprecation check
+        boolean isDeprecated = KotlinBuiltIns.getInstance().isDeprecated(functionDescriptor);
 
         boolean[] usedIndexes = new boolean[valueParameters.size()];
         Arrays.fill(usedIndexes, false);
