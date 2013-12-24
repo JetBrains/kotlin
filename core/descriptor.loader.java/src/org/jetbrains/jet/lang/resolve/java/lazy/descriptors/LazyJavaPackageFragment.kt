@@ -16,50 +16,41 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescrip
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 
-abstract class LazyJavaPackageFragment(
+fun LazyPackageFragmentForJavaPackage(
+        c: LazyJavaResolverContext,
+        containingDeclaration: ModuleDescriptor,
+        jPackage: JavaPackage
+) = LazyJavaPackageFragment(c, containingDeclaration, JavaPackageFragmentDescriptor.Kind.PROPER, jPackage.getFqName(),
+                            { LazyPackageFragmentScopeForJavaPackage(c, jPackage, this) })
+
+fun LazyPackageFragmentForJavaClass(
+        c: LazyJavaResolverContext,
+        containingDeclaration: ModuleDescriptor,
+        jClass: JavaClass
+) = LazyJavaPackageFragment(c, containingDeclaration, JavaPackageFragmentDescriptor.Kind.CLASS_STATICS,
+                            jClass.getFqName().sure("Attempt to build a package of an anonymous/local class: $jClass"),
+                            { LazyPackageFragmentScopeForJavaClass(c, jClass, this) })
+
+class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
         containingDeclaration: ModuleDescriptor,
-        name: Name
-) : DeclarationDescriptorNonRootImpl(containingDeclaration, listOf(), name), JavaPackageFragmentDescriptor, LazyJavaDescriptor {
-
-    protected abstract val _memberScope: JetScope
-
+        val _kind: JavaPackageFragmentDescriptor.Kind,
+        val _fqName: FqName,
+        createMemberScope: LazyJavaPackageFragment.() -> JetScope
+) : DeclarationDescriptorNonRootImpl(containingDeclaration, listOf(), _fqName.shortNameOrSpecial()),
+    JavaPackageFragmentDescriptor, LazyJavaDescriptor
+{
+    private val _memberScope = createMemberScope()
     override fun getMemberScope() = _memberScope
 
-    override fun getJavaDescriptorResolver(): JavaDescriptorResolver = c.javaDescriptorResolver
-
-    override fun getProvider(): PackageFragmentProvider = c.packageFragmentProvider
+    override fun getKind() = _kind
+    override fun getFqName() = _fqName
+    override fun getJavaDescriptorResolver() = c.javaDescriptorResolver
+    override fun getProvider() = c.packageFragmentProvider
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) = visitor.visitPackageFragmentDescriptor(this, data) as R
 
     override fun substitute(substitutor: TypeSubstitutor) = this
 
     override fun toString() = "lazy java package fragment: " + getFqName()
-}
-
-public class LazyPackageFragmentForJavaPackage(
-        c: LazyJavaResolverContext,
-        containingDeclaration: ModuleDescriptor,
-        val jPackage: JavaPackage
-) : LazyJavaPackageFragment(c, containingDeclaration, jPackage.getFqName().shortNameOrSpecial()) {
-    override fun getFqName(): FqName = jPackage.getFqName()
-
-    override val _memberScope = LazyPackageFragmentScopeForJavaPackage(c, jPackage, this)
-
-    override fun getKind() = JavaPackageFragmentDescriptor.Kind.PROPER
-}
-
-public class LazyPackageFragmentForJavaClass(
-        c: LazyJavaResolverContext,
-        containingDeclaration: ModuleDescriptor,
-        val jClass: JavaClass
-) : LazyJavaPackageFragment(c, containingDeclaration,
-                            jClass.getFqName().sure("Attempt to build a package of an anonymous/local class: $jClass")
-                                    .shortNameOrRoot()
-) {
-    override fun getFqName(): FqName = jClass.getFqName()!!
-
-    override val _memberScope = LazyPackageFragmentScopeForJavaClass(c, jClass, this)
-
-    override fun getKind() = JavaPackageFragmentDescriptor.Kind.CLASS_STATICS
 }
