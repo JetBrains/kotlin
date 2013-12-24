@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -35,6 +36,7 @@ public interface JavaPackageFragmentProvider extends PackageFragmentProvider {
     JavaPackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName);
 
     @NotNull
+    @ReadOnly
     Collection<Name> getClassNamesInPackage(@NotNull FqName packageName);
 
     @NotNull
