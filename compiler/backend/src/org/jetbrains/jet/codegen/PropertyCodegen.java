@@ -253,9 +253,9 @@ public class PropertyCodegen extends GenerationStateAware {
 
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
         //if (!defaultGetter || isExternallyAccessible(propertyDescriptor)) {
-        JvmMethodSignature signature = typeMapper.mapGetterSignature(propertyDescriptor, kind);
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         getterDescriptor = getterDescriptor != null ? getterDescriptor : DescriptorFactory.createDefaultGetter(propertyDescriptor);
+        JvmMethodSignature signature = typeMapper.mapSignature(getterDescriptor, kind);
 
         if (kind != OwnerKind.TRAIT_IMPL || !defaultGetter) {
             FunctionGenerationStrategy strategy;
@@ -283,10 +283,9 @@ public class PropertyCodegen extends GenerationStateAware {
 
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
         if (/*!defaultSetter || isExternallyAccessible(propertyDescriptor) &&*/ propertyDescriptor.isVar()) {
-            JvmMethodSignature signature = typeMapper.mapSetterSignature(propertyDescriptor, kind);
             PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-            setterDescriptor =
-                    setterDescriptor != null ? setterDescriptor : DescriptorFactory.createDefaultSetter(propertyDescriptor);
+            setterDescriptor = setterDescriptor != null ? setterDescriptor : DescriptorFactory.createDefaultSetter(propertyDescriptor);
+            JvmMethodSignature signature = typeMapper.mapSignature(setterDescriptor, kind);
 
             if (kind != OwnerKind.TRAIT_IMPL || !defaultSetter) {
                 FunctionGenerationStrategy strategy;
@@ -405,17 +404,21 @@ public class PropertyCodegen extends GenerationStateAware {
         return JvmAbi.SETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName.asString());
     }
 
-    public void genDelegate(PropertyDescriptor delegate, PropertyDescriptor overridden, StackValue field) {
+    public void genDelegate(@NotNull PropertyDescriptor delegate, @NotNull PropertyDescriptor overridden, @NotNull StackValue field) {
         ClassDescriptor toClass = (ClassDescriptor) overridden.getContainingDeclaration();
 
-        functionCodegen.genDelegate(delegate.getGetter(), toClass, field,
-                                    typeMapper.mapGetterSignature(delegate, OwnerKind.IMPLEMENTATION),
-                                    typeMapper.mapGetterSignature(overridden.getOriginal(), OwnerKind.IMPLEMENTATION));
+        PropertyGetterDescriptor getter = delegate.getGetter();
+        if (getter != null) {
+            //noinspection ConstantConditions
+            functionCodegen.genDelegate(getter, toClass, field,
+                                        typeMapper.mapSignature(getter), typeMapper.mapSignature(overridden.getGetter().getOriginal()));
+        }
 
-        if (delegate.isVar()) {
-            functionCodegen.genDelegate(delegate.getSetter(), toClass, field,
-                                        typeMapper.mapSetterSignature(delegate, OwnerKind.IMPLEMENTATION),
-                                        typeMapper.mapSetterSignature(overridden.getOriginal(), OwnerKind.IMPLEMENTATION));
+        PropertySetterDescriptor setter = delegate.getSetter();
+        if (setter != null) {
+            //noinspection ConstantConditions
+            functionCodegen.genDelegate(setter, toClass, field,
+                                        typeMapper.mapSignature(setter), typeMapper.mapSignature(overridden.getSetter().getOriginal()));
         }
     }
 }

@@ -777,8 +777,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private Type genPropertyOnStack(InstructionAdapter iv, PropertyDescriptor propertyDescriptor, int index) {
         iv.load(index, classAsmType);
-        Method
-                method = typeMapper.mapGetterSignature(propertyDescriptor, OwnerKind.IMPLEMENTATION).getAsmMethod();
+        //noinspection ConstantConditions
+        Method method = typeMapper.mapSignature(propertyDescriptor.getGetter()).getAsmMethod();
 
         iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
         return method.getReturnType();
@@ -957,7 +957,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             PropertyGetterDescriptor getter = bridge.getGetter();
             assert getter != null;
-            functionCodegen.generateMethod(null, typeMapper.mapGetterSignature(bridge, OwnerKind.IMPLEMENTATION), getter,
+            functionCodegen.generateMethod(null, typeMapper.mapSignature(getter), getter,
                                            new FunctionGenerationStrategy.CodegenBased<PropertyGetterDescriptor>(state, getter) {
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
@@ -977,7 +977,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 PropertySetterDescriptor setter = bridge.getSetter();
                 assert setter != null;
 
-                functionCodegen.generateMethod(null, typeMapper.mapSetterSignature(bridge, OwnerKind.IMPLEMENTATION), setter,
+                functionCodegen.generateMethod(null, typeMapper.mapSignature(setter), setter,
                                                new FunctionGenerationStrategy.CodegenBased<PropertySetterDescriptor>(state, setter) {
                     @Override
                     public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
@@ -1443,9 +1443,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         int flags = ACC_PUBLIC; // TODO.
 
-        TraitImplDelegateInfo delegateInfo = getTraitImplDelegateInfo(fun);
-        Method methodToGenerate = delegateInfo.methodToGenerate;
-        Method methodInTrait = delegateInfo.methodInTrait;
+        Method methodToGenerate = typeMapper.mapSignature(fun).getAsmMethod();
+        Method methodInTrait = typeMapper.mapSignature(fun.getOriginal()).getAsmMethod();
 
         PsiElement origin = descriptorToDeclaration(bindingContext, fun);
         MethodVisitor mv = v.newMethod(origin, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null, null);
@@ -1481,44 +1480,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         FunctionCodegen.generateBridgeIfNeeded(context, state, v, methodToGenerate, fun);
-    }
-
-    private static class TraitImplDelegateInfo {
-        private final Method methodToGenerate;
-        private final Method methodInTrait;
-
-        private TraitImplDelegateInfo(@NotNull Method methodToGenerate, @NotNull Method methodInTrait) {
-            this.methodToGenerate = methodToGenerate;
-            this.methodInTrait = methodInTrait;
-        }
-    }
-
-    @NotNull
-    private TraitImplDelegateInfo getTraitImplDelegateInfo(@NotNull FunctionDescriptor fun) {
-        if (fun instanceof PropertyAccessorDescriptor) {
-            PropertyDescriptor property = ((PropertyAccessorDescriptor) fun).getCorrespondingProperty();
-            PropertyDescriptor original = property.getOriginal();
-            if (fun instanceof PropertyGetterDescriptor) {
-                JvmMethodSignature toGenerate = typeMapper.mapGetterSignature(property, OwnerKind.IMPLEMENTATION);
-                JvmMethodSignature inTrait = typeMapper.mapGetterSignature(original, OwnerKind.IMPLEMENTATION);
-                return new TraitImplDelegateInfo(
-                        toGenerate.getAsmMethod(), inTrait.getAsmMethod());
-            }
-            else if (fun instanceof PropertySetterDescriptor) {
-                JvmMethodSignature toGenerate = typeMapper.mapSetterSignature(property, OwnerKind.IMPLEMENTATION);
-                JvmMethodSignature inTrait = typeMapper.mapSetterSignature(original, OwnerKind.IMPLEMENTATION);
-                return new TraitImplDelegateInfo(
-                        toGenerate.getAsmMethod(), inTrait.getAsmMethod());
-            }
-            else {
-                throw new IllegalStateException("Accessor is neither getter, nor setter, what is it? " + fun);
-            }
-        }
-        else {
-            Method function = typeMapper.mapSignature(fun).getAsmMethod();
-            Method functionOriginal = typeMapper.mapSignature(fun.getOriginal()).getAsmMethod();
-            return new TraitImplDelegateInfo(function, functionOriginal);
-        }
     }
 
     private void generateDelegatorToConstructorCall(
