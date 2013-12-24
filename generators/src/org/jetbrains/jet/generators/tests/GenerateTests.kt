@@ -83,6 +83,7 @@ import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterBasicTest
 import org.jetbrains.jet.plugin.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.jet.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.jet.completion.handlers.AbstractSmartCompletionHandlerTest
+import org.jetbrains.jet.resolve.AbstractAdditionalLazyResolveDescriptorRendererTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -227,6 +228,10 @@ fun main(args: Array<String>) {
 
 
     testGroup("idea/tests", "idea/testData") {
+        testClass(javaClass<AbstractAdditionalLazyResolveDescriptorRendererTest>()) {
+            model("resolve/additionalLazyResolve", testMethod = "doTest")
+        }
+
         testClass(javaClass<AbstractJetPsiMatcherTest>()) {
             model("jetPsiMatcher/expressions", testMethod = "doTestExpressions")
             model("jetPsiMatcher/types", testMethod = "doTestTypes")
