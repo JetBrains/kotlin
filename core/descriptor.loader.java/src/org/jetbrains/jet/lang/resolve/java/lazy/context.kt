@@ -41,7 +41,7 @@ open class GlobalJavaResolverContext(
 )
 
 open class LazyJavaResolverContext(
-        val subModule: LazyJavaSubModule,
+        val packageFragmentProvider: LazyJavaPackageFragmentProvider,
         storageManager: StorageManager,
         finder: JavaClassFinder,
         javaClassResolver: LazyJavaClassResolver,
@@ -59,7 +59,7 @@ open class LazyJavaResolverContext(
 fun LazyJavaResolverContext.withTypes(
         typeParameterResolver: TypeParameterResolver = TypeParameterResolver.EMPTY
 )  =  LazyJavaResolverContextWithTypes(
-        subModule,
+        packageFragmentProvider,
         storageManager,
         finder,
         javaClassResolver,
@@ -73,7 +73,7 @@ fun LazyJavaResolverContext.withTypes(
         typeParameterResolver)
 
 class LazyJavaResolverContextWithTypes(
-        subModule: LazyJavaSubModule,
+        packageFragmentProvider: LazyJavaPackageFragmentProvider,
         storageManager: StorageManager,
         finder: JavaClassFinder,
         javaClassResolver: LazyJavaClassResolver,
@@ -85,7 +85,7 @@ class LazyJavaResolverContextWithTypes(
         javaDescriptorResolver: JavaDescriptorResolver,
         val typeResolver: LazyJavaTypeResolver,
         val typeParameterResolver: TypeParameterResolver
-) : LazyJavaResolverContext(subModule, storageManager, finder, javaClassResolver,
+) : LazyJavaResolverContext(packageFragmentProvider, storageManager, finder, javaClassResolver,
                             externalAnnotationResolver, externalSignatureResolver,
                             errorReporter, methodSignatureChecker, javaResolverCache,
                             javaDescriptorResolver)

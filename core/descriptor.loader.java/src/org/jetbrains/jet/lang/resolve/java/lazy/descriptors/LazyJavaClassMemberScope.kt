@@ -166,7 +166,7 @@ public class LazyJavaClassMemberScope(
             else null
         }
         else {
-            // TODO: this caching is a temporary workaround, should be replaced with properly caching the whole LazyJavaSubModule
+            // TODO: this caching is a temporary workaround, should be replaced with properly caching the whole LazyJavaPackageFragmentProvider
             val alreadyResolved = c.javaResolverCache.getClass(jNestedClass)
             if (alreadyResolved != null)
                 alreadyResolved

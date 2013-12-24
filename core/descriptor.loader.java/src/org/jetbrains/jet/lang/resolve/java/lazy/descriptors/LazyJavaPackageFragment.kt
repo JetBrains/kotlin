@@ -28,7 +28,7 @@ abstract class LazyJavaPackageFragment(
 
     override fun getJavaDescriptorResolver(): JavaDescriptorResolver = c.javaDescriptorResolver
 
-    override fun getProvider(): PackageFragmentProvider = c.subModule
+    override fun getProvider(): PackageFragmentProvider = c.packageFragmentProvider
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) = visitor.visitPackageFragmentDescriptor(this, data) as R
 

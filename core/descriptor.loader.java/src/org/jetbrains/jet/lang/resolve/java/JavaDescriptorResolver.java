@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaSubModule;
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
@@ -78,7 +78,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private JavaPackageFragmentProvider packageFragmentProvider;
     private JavaClassFinder javaClassFinder;
     private ExternalAnnotationResolver externalAnnotationResolver;
-    private LazyJavaSubModule subModule;
+    private LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private ExternalSignatureResolver externalSignatureResolver;
     private ErrorReporter errorReporter;
     private MethodSignatureChecker signatureChecker;
@@ -143,9 +143,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @NotNull
-    private LazyJavaSubModule getSubModule() {
-        if (subModule == null) {
-            subModule = new LazyJavaSubModule(
+    private LazyJavaPackageFragmentProvider getLazyJavaPackageFragmentProvider() {
+        if (lazyJavaPackageFragmentProvider == null) {
+            lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(
                     new GlobalJavaResolverContext(
                             storageManager,
                             new JavaClassFinder() {
@@ -214,13 +214,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                     module
             );
         }
-        return subModule;
+        return lazyJavaPackageFragmentProvider;
     }
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         if (LAZY) {
-            return getSubModule().getClass(qualifiedName);
+            return getLazyJavaPackageFragmentProvider().getClass(qualifiedName);
         }
         return classResolver.resolveClass(qualifiedName, searchRule);
     }

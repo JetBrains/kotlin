@@ -11,11 +11,9 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 
-public open class LazyJavaSubModule(
+public open class LazyJavaPackageFragmentProvider(
         private val outerContext: GlobalJavaResolverContext,
         private val _module: ModuleDescriptor
 ) : JavaPackageFragmentProvider {
@@ -23,7 +21,7 @@ public open class LazyJavaSubModule(
             this,
             outerContext.storageManager,
             outerContext.finder,
-            SubModuleClassResolver(),
+            FragmentClassResolver(),
             outerContext.externalAnnotationResolver,
             outerContext.externalSignatureResolver,
             outerContext.errorReporter,
@@ -59,7 +57,7 @@ public open class LazyJavaSubModule(
 
     fun getClass(fqName: FqName): ClassDescriptor? = c.javaClassResolver.resolveClassByFqName(fqName)
 
-    private inner class SubModuleClassResolver : LazyJavaClassResolver {
+    private inner class FragmentClassResolver : LazyJavaClassResolver {
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
             // TODO: there's no notion of module separation here. We must refuse to resolve classes from other modules
             val fqName = javaClass.getFqName()
