@@ -27,6 +27,7 @@ import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
@@ -45,6 +46,7 @@ import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.internal.Location;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.util.InfinitePeriodicalTask;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
 
 import javax.swing.*;
@@ -172,11 +174,8 @@ public class BytecodeToolWindow extends JPanel implements Disposable {
     }
 
     private final Editor myEditor;
-    private final Alarm myUpdateAlarm;
     private final Project myProject;
     private final ToolWindow toolWindow;
-
-    private UpdateBytecodeToolWindowTask currentTask = null;
 
     public BytecodeToolWindow(Project project, ToolWindow toolWindow) {
         super(new BorderLayout());
@@ -187,20 +186,12 @@ public class BytecodeToolWindow extends JPanel implements Disposable {
                 EditorFactory.getInstance().createDocument(""), project, JavaFileType.INSTANCE, true);
         add(myEditor.getComponent());
 
-        myUpdateAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
-        myUpdateAlarm.addRequest(new Runnable() {
+        new InfinitePeriodicalTask(UPDATE_DELAY, Alarm.ThreadToUse.SWING_THREAD, this, new Computable<LongRunningReadTask>() {
             @Override
-            public void run() {
-                myUpdateAlarm.addRequest(this, UPDATE_DELAY);
-                UpdateBytecodeToolWindowTask task = new UpdateBytecodeToolWindowTask();
-                task.init();
-
-                if (task.shouldStart(currentTask)) {
-                    currentTask = task;
-                    currentTask.run();
-                }
+            public LongRunningReadTask compute() {
+                return new UpdateBytecodeToolWindowTask();
             }
-        }, UPDATE_DELAY);
+        }).start();
 
         setText(DEFAULT_TEXT);
     }
