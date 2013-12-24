@@ -13,6 +13,7 @@ import org.jetbrains.jet.utils.flatten
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.kotlin.util.inn
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule
+import org.jetbrains.kotlin.util.sure
 
 public abstract class LazyJavaPackageFragmentScope(
         c: LazyJavaResolverContext,
@@ -47,9 +48,12 @@ public abstract class LazyJavaPackageFragmentScope(
     }
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = classes(name)
+    public abstract override fun getAllClassNames(): Collection<Name>
 
     // Package fragments are not nested
     override fun getPackage(name: Name) = null
+    final override fun getAllPackageNames() = listOf<Name>()
+    abstract fun getSubPackages(): Collection<FqName>
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
 
@@ -70,12 +74,12 @@ public class LazyPackageFragmentScopeForJavaPackage(
                 .map { c -> c.getName() }.toList()
     }
 
-    override fun getAllPackageNames(): Collection<Name> =
+    override fun getSubPackages(): Collection<FqName> =
             listOf(
                 // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
                 // and there's no harm in having some names in the result that can not be resolved
-                jPackage.getClasses().map { c -> c.getName() },
-                jPackage.getSubPackages().map { sp -> sp.getFqName().shortName() }
+                jPackage.getClasses().map { c -> c.getFqName().sure("Toplevel class has no fqName: $c}") },
+                jPackage.getSubPackages().map { sp -> sp.getFqName() }
             ).flatten()
 
 
@@ -97,7 +101,7 @@ public class LazyPackageFragmentScopeForJavaClass(
 
     // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
     // and there's no harm in having some names in the result that can not be resolved
-    override fun getAllPackageNames(): Collection<Name> = jClass.getInnerClasses().iterator()
+    override fun getSubPackages(): Collection<FqName> = jClass.getInnerClasses().iterator()
                                                                 .filter { c -> c.isStatic() }
-                                                                .map { c -> c.getName() }.toList()
+                                                                .map { c -> c.getFqName().sure("Nested class has no fqName: $c}") }.toList()
 }

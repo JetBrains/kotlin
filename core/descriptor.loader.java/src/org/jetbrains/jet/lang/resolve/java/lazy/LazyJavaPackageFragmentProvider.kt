@@ -10,7 +10,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentF
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.lang.resolve.name.Name
 
 public open class LazyJavaPackageFragmentProvider(
@@ -34,7 +34,7 @@ public open class LazyJavaPackageFragmentProvider(
 
     override fun getJavaDescriptorResolver() = c.javaDescriptorResolver
 
-    private val _packageFragments: MemoizedFunctionToNullable<FqName, JavaPackageFragmentDescriptor> = c.storageManager.createMemoizedFunctionWithNullableValues {
+    private val _packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> = c.storageManager.createMemoizedFunctionWithNullableValues {
         fqName ->
         val jPackage = c.finder.findPackage(fqName)
         if (jPackage != null) {
@@ -52,8 +52,10 @@ public open class LazyJavaPackageFragmentProvider(
     override fun getPackageFragment(fqName: FqName) = _packageFragments(fqName)
     override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)} ?: listOf()
 
-    override fun getSubPackagesOf(fqName: FqName) = listOf<FqName>() // TODO
-    override fun getClassNamesInPackage(packageName: FqName) = listOf<Name>() // TODO
+    override fun getSubPackagesOf(fqName: FqName) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages()
+                                                                        ?: listOf<FqName>()
+    override fun getClassNamesInPackage(packageName: FqName) = getPackageFragment(packageName)?.getMemberScope()?.getAllClassNames()
+                                                                    ?: listOf<Name>()
 
     fun getClass(fqName: FqName): ClassDescriptor? = c.javaClassResolver.resolveClassByFqName(fqName)
 
