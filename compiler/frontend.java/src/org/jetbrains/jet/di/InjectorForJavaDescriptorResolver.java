@@ -116,7 +116,16 @@ public class InjectorForJavaDescriptorResolver {
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
+        this.javaDescriptorResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
+        this.javaDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
+        this.javaDescriptorResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
+        this.javaDescriptorResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
+        this.javaDescriptorResolver.setJavaClassFinder(javaClassFinder);
+        this.javaDescriptorResolver.setJavaResolverCache(traceBasedJavaResolverCache);
+        this.javaDescriptorResolver.setKotlinClassFinder(virtualFileFinder);
+        this.javaDescriptorResolver.setModule(module);
         this.javaDescriptorResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
+        this.javaDescriptorResolver.setSignatureChecker(psiBasedMethodSignatureChecker);
 
         javaPackageFragmentProvider.setCache(traceBasedJavaResolverCache);
         javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
@@ -147,9 +156,11 @@ public class InjectorForJavaDescriptorResolver {
 
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
+        deserializedDescriptorResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         deserializedDescriptorResolver.setJavaPackageFragmentProvider(javaPackageFragmentProvider);
 
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
+        annotationDescriptorDeserializer.setJavaDescriptorResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);

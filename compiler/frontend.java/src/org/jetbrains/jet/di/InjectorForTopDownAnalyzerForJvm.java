@@ -224,8 +224,17 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
-        javaDescriptorResolver.setClassResolver(javaClassResolver);
-        javaDescriptorResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
+        this.javaDescriptorResolver.setClassResolver(javaClassResolver);
+        this.javaDescriptorResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
+        this.javaDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
+        this.javaDescriptorResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
+        this.javaDescriptorResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
+        this.javaDescriptorResolver.setJavaClassFinder(javaClassFinder);
+        this.javaDescriptorResolver.setJavaResolverCache(traceBasedJavaResolverCache);
+        this.javaDescriptorResolver.setKotlinClassFinder(virtualFileFinder);
+        this.javaDescriptorResolver.setModule(moduleDescriptor);
+        this.javaDescriptorResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
+        this.javaDescriptorResolver.setSignatureChecker(psiBasedMethodSignatureChecker);
 
         javaClassFinder.setProject(project);
 
@@ -341,9 +350,11 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
+        deserializedDescriptorResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         deserializedDescriptorResolver.setJavaPackageFragmentProvider(javaPackageFragmentProvider);
 
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
+        annotationDescriptorDeserializer.setJavaDescriptorResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
@@ -425,6 +436,10 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     
     public ModuleDescriptorImpl getModuleDescriptor() {
         return this.moduleDescriptor;
+    }
+    
+    public JavaDescriptorResolver getJavaDescriptorResolver() {
+        return this.javaDescriptorResolver;
     }
     
     public JavaPackageFragmentProviderImpl getJavaPackageFragmentProvider() {
