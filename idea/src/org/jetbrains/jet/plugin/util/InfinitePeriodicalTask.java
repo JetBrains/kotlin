@@ -42,12 +42,16 @@ public class InfinitePeriodicalTask {
             public void run() {
                 myUpdateAlarm.addRequest(this, delay);
                 LongRunningReadTask task = taskProvider.compute();
-                task.init();
+
+                boolean invalidRequest = !task.init();
 
                 //noinspection unchecked
                 if (task.shouldStart(currentTask)) {
                     currentTask = task;
                     currentTask.run();
+                }
+                else if (invalidRequest) {
+                    currentTask = null;
                 }
             }
         }, delay);
