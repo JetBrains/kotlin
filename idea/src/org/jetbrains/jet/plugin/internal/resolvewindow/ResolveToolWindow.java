@@ -17,13 +17,13 @@
 package org.jetbrains.jet.plugin.internal.resolvewindow;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -353,12 +353,12 @@ public class ResolveToolWindow extends JPanel implements Disposable {
     }
 
     private void setText(@NotNull final String text) {
-        new WriteCommandAction(myProject) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
-            protected void run(Result result) throws Throwable {
-                myEditor.getDocument().setText(text);
+            public void run() {
+                myEditor.getDocument().setText(StringUtil.convertLineSeparators(text));
             }
-        }.execute();
+        });
     }
 
     @Override

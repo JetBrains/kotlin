@@ -18,8 +18,7 @@ package org.jetbrains.jet.plugin.internal.codewindow;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -265,12 +264,12 @@ public class BytecodeToolWindow extends JPanel implements Disposable {
     }
 
     private void setText(@NotNull final String resultText) {
-        new WriteCommandAction(myProject) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
-            protected void run(Result result) throws Throwable {
+            public void run() {
                 myEditor.getDocument().setText(StringUtil.convertLineSeparators(resultText));
             }
-        }.execute();
+        });
     }
 
     @Override
