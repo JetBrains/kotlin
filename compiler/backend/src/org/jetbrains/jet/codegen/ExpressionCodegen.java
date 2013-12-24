@@ -2411,7 +2411,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     public Type expressionType(JetExpression expr) {
-        return typeMapper.expressionType(expr);
+        return asmTypeOrVoid(bindingContext.get(EXPRESSION_TYPE, expr));
     }
 
     public int indexOfLocal(JetReferenceExpression lhs) {

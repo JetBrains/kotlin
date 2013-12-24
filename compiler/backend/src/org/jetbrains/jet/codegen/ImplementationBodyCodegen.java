@@ -333,50 +333,40 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return typeMapper.mapClass(descriptor).getInternalName();
     }
 
+    @NotNull
     private JvmClassSignature signature() {
-        BothSignatureWriter signatureVisitor = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
+        BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
 
-        {   // type parameters
-            List<TypeParameterDescriptor> typeParameters = descriptor.getTypeConstructor().getParameters();
-            typeMapper.writeFormalTypeParameters(typeParameters, signatureVisitor);
+        typeMapper.writeFormalTypeParameters(descriptor.getTypeConstructor().getParameters(), sw);
+
+        sw.writeSuperclass();
+        if (superClassType == null) {
+            sw.writeClassBegin(superClassAsmType);
+            sw.writeClassEnd();
+        }
+        else {
+            typeMapper.mapSupertype(superClassType, sw);
+        }
+        sw.writeSuperclassEnd();
+
+        LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
+        superInterfaces.add(JvmAbi.JET_OBJECT.getInternalName());
+
+        for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
+            JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
+            assert superType != null : "No supertype for class: " + myClass.getText();
+            ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+            if (isInterface(superClassDescriptor)) {
+                sw.writeInterface();
+                Type jvmName = typeMapper.mapSupertype(superType, sw);
+                sw.writeInterfaceEnd();
+                superInterfaces.add(jvmName.getInternalName());
+            }
         }
 
-        {   // superclass
-            signatureVisitor.writeSuperclass();
-            if (superClassType == null) {
-                signatureVisitor.writeClassBegin(superClassAsmType);
-                signatureVisitor.writeClassEnd();
-            }
-            else {
-                typeMapper.mapSupertype(superClassType, signatureVisitor);
-            }
-            signatureVisitor.writeSuperclassEnd();
-        }
-
-
-        List<String> superInterfaces;
-        {   // superinterfaces
-            LinkedHashSet<String> superInterfacesLinkedHashSet = new LinkedHashSet<String>();
-
-            superInterfacesLinkedHashSet.add(JvmAbi.JET_OBJECT.getInternalName());
-
-            for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
-                JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
-                assert superType != null;
-                ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                if (isInterface(superClassDescriptor)) {
-                    signatureVisitor.writeInterface();
-                    Type jvmName = typeMapper.mapSupertype(superType, signatureVisitor);
-                    signatureVisitor.writeInterfaceEnd();
-                    superInterfacesLinkedHashSet.add(jvmName.getInternalName());
-                }
-            }
-
-            superInterfaces = new ArrayList<String>(superInterfacesLinkedHashSet);
-        }
-
-        return new JvmClassSignature(classAsmType.getInternalName(), superClassAsmType.getInternalName(), superInterfaces,
-                                     signatureVisitor.makeJavaGenericSignature());
+        return new JvmClassSignature(classAsmType.getInternalName(), superClassAsmType.getInternalName(),
+                                     new ArrayList<String>(superInterfaces),
+                                     sw.makeJavaGenericSignature());
     }
 
     protected void getSuperClass() {
@@ -1479,7 +1469,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             FunctionCodegen.endVisit(iv, "trait method", callableDescriptorToDeclaration(bindingContext, fun));
         }
 
-        FunctionCodegen.generateBridgeIfNeeded(context, state, v, methodToGenerate, fun);
+        FunctionCodegen.generateBridgeIfNeeded(context, state, v, fun);
     }
 
     private void generateDelegatorToConstructorCall(

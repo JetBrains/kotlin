@@ -26,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
-import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
-import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
-import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -47,7 +44,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class CodegenUtil {
 
@@ -84,30 +80,6 @@ public class CodegenUtil {
                                     Visibilities.PUBLIC
         );
         return invokeDescriptor;
-    }
-
-    public static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
-        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
-
-        boolean isExtensionFunction = fd.getReceiverParameter() != null;
-        int paramCount = fd.getValueParameters().size();
-        if (isExtensionFunction) {
-            paramCount++;
-        }
-
-        signatureWriter.writeParametersStart();
-
-        for (int i = 0; i < paramCount; ++i) {
-            signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            signatureWriter.writeAsmType(OBJECT_TYPE);
-            signatureWriter.writeParameterTypeEnd();
-        }
-
-        signatureWriter.writeReturnType();
-        signatureWriter.writeAsmType(OBJECT_TYPE);
-        signatureWriter.writeReturnTypeEnd();
-
-        return signatureWriter.makeJvmMethodSignature("invoke");
     }
 
     public static boolean isConst(@NotNull CalculatedClosure closure) {

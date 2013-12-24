@@ -285,7 +285,6 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         JetType supertype = supertypes.iterator().next();
 
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
-        typeMapper.writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), sw);
         sw.writeSuperclass();
         typeMapper.mapSupertype(supertype, sw);
         sw.writeSuperclassEnd();

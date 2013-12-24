@@ -145,7 +145,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         endVisit(mv, null, origin);
 
-        generateBridgeIfNeeded(owner, state, v, jvmSignature.getAsmMethod(), functionDescriptor);
+        generateBridgeIfNeeded(owner, state, v, functionDescriptor);
 
         methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, typeMapper);
     }
@@ -408,15 +408,13 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             CodegenContext owner,
             GenerationState state,
             ClassBuilder v,
-            Method jvmSignature,
             FunctionDescriptor functionDescriptor
     ) {
         if (owner.getContextKind() == OwnerKind.TRAIT_IMPL) {
             return;
         }
 
-        Method method =
-                state.getTypeMapper().mapSignature(functionDescriptor).getAsmMethod();
+        Method method = state.getTypeMapper().mapSignature(functionDescriptor).getAsmMethod();
 
         Queue<FunctionDescriptor> bfsQueue = new LinkedList<FunctionDescriptor>();
         Set<FunctionDescriptor> visited = new HashSet<FunctionDescriptor>();
@@ -435,8 +433,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         while (!bfsQueue.isEmpty()) {
             FunctionDescriptor descriptor = bfsQueue.poll();
             if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-                Method overridden =
-                        state.getTypeMapper().mapSignature(descriptor.getOriginal()).getAsmMethod();
+                Method overridden = state.getTypeMapper().mapSignature(descriptor.getOriginal()).getAsmMethod();
                 if (differentMethods(method, overridden)) {
                     bridgesToGenerate.add(overridden);
                 }
@@ -453,7 +450,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         }
 
         for (Method overridden : bridgesToGenerate) {
-            generateBridge(state, v, jvmSignature, functionDescriptor, overridden);
+            generateBridge(state, v, functionDescriptor, overridden);
         }
     }
 
@@ -701,34 +698,35 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
     private static void generateBridge(
             GenerationState state,
             ClassBuilder v,
-            Method jvmSignature,
             FunctionDescriptor functionDescriptor,
             Method overridden
     ) {
+        Method jvmSignature = state.getTypeMapper().mapSignature(functionDescriptor).getAsmMethod();
+
         int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
 
         MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overridden.getDescriptor(), null, null);
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            mv.visitCode();
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
-            Type[] argTypes = overridden.getArgumentTypes();
-            Type[] originalArgTypes = jvmSignature.getArgumentTypes();
+        mv.visitCode();
 
-            InstructionAdapter iv = new InstructionAdapter(mv);
-            iv.load(0, OBJECT_TYPE);
-            for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
-                //noinspection AssignmentToForLoopParameter
-                reg += argTypes[i].getSize();
-            }
+        Type[] argTypes = overridden.getArgumentTypes();
+        Type[] originalArgTypes = jvmSignature.getArgumentTypes();
 
-            iv.invokevirtual(v.getThisName(), jvmSignature.getName(), jvmSignature.getDescriptor());
-
-            StackValue.onStack(jvmSignature.getReturnType()).put(overridden.getReturnType(), iv);
-
-            iv.areturn(overridden.getReturnType());
-            endVisit(mv, "bridge method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        iv.load(0, OBJECT_TYPE);
+        for (int i = 0, reg = 1; i < argTypes.length; i++) {
+            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
+            //noinspection AssignmentToForLoopParameter
+            reg += argTypes[i].getSize();
         }
+
+        iv.invokevirtual(v.getThisName(), jvmSignature.getName(), jvmSignature.getDescriptor());
+
+        StackValue.coerce(jvmSignature.getReturnType(), overridden.getReturnType(), iv);
+        iv.areturn(overridden.getReturnType());
+
+        endVisit(mv, "bridge method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
     }
 
     public void genDelegate(FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
@@ -751,36 +749,36 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
         MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null, null);
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            mv.visitCode();
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
-            Type[] argTypes = delegateMethod.getArgumentTypes();
-            Type[] originalArgTypes = overriddenMethod.getArgumentTypes();
+        mv.visitCode();
 
-            InstructionAdapter iv = new InstructionAdapter(mv);
-            iv.load(0, OBJECT_TYPE);
-            field.put(field.type, iv);
-            for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
-                //noinspection AssignmentToForLoopParameter
-                reg += argTypes[i].getSize();
-            }
+        Type[] argTypes = delegateMethod.getArgumentTypes();
+        Type[] originalArgTypes = overriddenMethod.getArgumentTypes();
 
-            String internalName = typeMapper.mapType(toClass).getInternalName();
-            if (toClass.getKind() == ClassKind.TRAIT) {
-                iv.invokeinterface(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
-            }
-            else {
-                iv.invokevirtual(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
-            }
-
-            StackValue.onStack(overriddenMethod.getReturnType()).put(delegateMethod.getReturnType(), iv);
-
-            iv.areturn(delegateMethod.getReturnType());
-            endVisit(mv, "Delegate method " + functionDescriptor + " to " + jvmOverriddenMethodSignature,
-                     descriptorToDeclaration(bindingContext, functionDescriptor.getContainingDeclaration()));
-
-            generateBridgeIfNeeded(owner, state, v, jvmDelegateMethodSignature.getAsmMethod(), functionDescriptor);
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        iv.load(0, OBJECT_TYPE);
+        field.put(field.type, iv);
+        for (int i = 0, reg = 1; i < argTypes.length; i++) {
+            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
+            //noinspection AssignmentToForLoopParameter
+            reg += argTypes[i].getSize();
         }
+
+        String internalName = typeMapper.mapType(toClass).getInternalName();
+        if (toClass.getKind() == ClassKind.TRAIT) {
+            iv.invokeinterface(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
+        }
+        else {
+            iv.invokevirtual(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
+        }
+
+        StackValue.onStack(overriddenMethod.getReturnType()).put(delegateMethod.getReturnType(), iv);
+
+        iv.areturn(delegateMethod.getReturnType());
+        endVisit(mv, "Delegate method " + functionDescriptor + " to " + jvmOverriddenMethodSignature,
+                 descriptorToDeclaration(bindingContext, functionDescriptor.getContainingDeclaration()));
+
+        generateBridgeIfNeeded(owner, state, v, functionDescriptor);
     }
 }
