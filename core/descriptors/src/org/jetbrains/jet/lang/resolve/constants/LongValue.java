@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class LongValue implements CompileTimeConstant<Long> {
+public class LongValue extends CompileTimeConstant<Long> {
     public static final Function<Long, LongValue> CREATE = new Function<Long, LongValue>() {
         @Override
         public LongValue apply(@Nullable Long input) {
@@ -31,15 +31,8 @@ public class LongValue implements CompileTimeConstant<Long> {
         }
     };
 
-    private final long value;
-
     public LongValue(long value) {
-        this.value = value;
-    }
-
-    @Override
-    public Long getValue() {
-        return value;
+        super(value);
     }
 
     @NotNull

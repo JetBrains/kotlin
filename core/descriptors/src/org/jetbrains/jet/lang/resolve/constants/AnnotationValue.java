@@ -22,18 +22,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public class AnnotationValue implements CompileTimeConstant<AnnotationDescriptor> {
+public class AnnotationValue extends CompileTimeConstant<AnnotationDescriptor> {
     
-    private final AnnotationDescriptor value;
-
     public AnnotationValue(@NotNull AnnotationDescriptor value) {
-        this.value = value;
-    }
-
-    @Override
-    @NotNull
-    public AnnotationDescriptor getValue() {
-        return value;
+        super(value);
     }
 
     @Override

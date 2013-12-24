@@ -17,26 +17,20 @@
 package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
-public class ArrayValue implements CompileTimeConstant<List<CompileTimeConstant<?>>> {
+public class ArrayValue extends CompileTimeConstant<List<CompileTimeConstant<?>>> {
 
-    private final List<CompileTimeConstant<?>> value;
     private final JetType type;
 
     public ArrayValue(@NotNull List<CompileTimeConstant<?>> value, @NotNull JetType type) {
-        this.value = value;
+        super(value);
         this.type = type;
-    }
-
-    @Override
-    @NotNull
-    public List<CompileTimeConstant<?>> getValue() {
-        return value;
     }
 
     @NotNull

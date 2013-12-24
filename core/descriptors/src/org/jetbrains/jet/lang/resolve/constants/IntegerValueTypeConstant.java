@@ -27,12 +27,10 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 
-public class IntegerValueTypeConstant implements CompileTimeConstant<IntegerValueTypeConstructor> {
-
-    private final IntegerValueTypeConstructor value;
+public class IntegerValueTypeConstant extends CompileTimeConstant<IntegerValueTypeConstructor> {
 
     public IntegerValueTypeConstant(long value) {
-        this.value = new IntegerValueTypeConstructor(value);
+        super(new IntegerValueTypeConstructor(value));
     }
 
     @NotNull
@@ -47,12 +45,6 @@ public class IntegerValueTypeConstant implements CompileTimeConstant<IntegerValu
     @Override
     public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
         return visitor.visitNumberTypeValue(this, data);
-    }
-
-    @NotNull
-    @Override
-    public IntegerValueTypeConstructor getValue() {
-        return value;
     }
 
     @Override
