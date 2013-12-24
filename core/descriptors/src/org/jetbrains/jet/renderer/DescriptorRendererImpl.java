@@ -36,6 +36,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_TYPE_PARAMETER;
+import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean shortNames;
@@ -213,7 +214,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private String renderTypeWithoutEscape(@NotNull JetType type) {
-        if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == CANT_INFER_TYPE_PARAMETER) {
+        if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == CANT_INFER_TYPE_PARAMETER || type == DONT_CARE) {
             return "???";
         }
         if (type.isError()) {

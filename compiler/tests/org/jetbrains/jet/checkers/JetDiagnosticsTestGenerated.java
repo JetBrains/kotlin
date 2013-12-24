@@ -3907,6 +3907,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/inference/upperBounds"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("conflictingSubstitutionsFromUpperBound.kt")
+                public void testConflictingSubstitutionsFromUpperBound() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/upperBounds/conflictingSubstitutionsFromUpperBound.kt");
+                }
+                
                 @TestMetadata("doNotInferFromBoundsOnly.kt")
                 public void testDoNotInferFromBoundsOnly() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/upperBounds/doNotInferFromBoundsOnly.kt");
