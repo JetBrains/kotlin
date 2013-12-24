@@ -72,6 +72,7 @@ class LazyJavaClassDescriptor(
     private val _classObjectDescriptor = c.storageManager.createNullableLazyValue {
         if (jClass.isEnum()) {
             val classObject = JavaEnumClassObjectDescriptor(this)
+            classObject.setSupertypes(Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()))
             classObject.setModality(Modality.FINAL)
             classObject.setVisibility(jClass.getVisibility())
             classObject.setTypeParameterDescriptors(Collections.emptyList<TypeParameterDescriptor>())
