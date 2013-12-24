@@ -871,54 +871,56 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             final JetExpression right
     ) {
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
-        if (right != null && left != null) {
-            ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context);
+        if (right == null || left == null) {
+            ExpressionTypingUtils.getTypeInfoOrNullType(right, context, facade);
+            ExpressionTypingUtils.getTypeInfoOrNullType(left, context, facade);
+            return JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), dataFlowInfo);
+        }
+        ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context);
 
-            JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
+        JetTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context, facade);
 
-            dataFlowInfo = leftTypeInfo.getDataFlowInfo();
-            ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
+        dataFlowInfo = leftTypeInfo.getDataFlowInfo();
+        ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
 
-            TemporaryBindingTrace traceInterpretingRightAsNullableAny = TemporaryBindingTrace.create(
-                    context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:" + right);
-            traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, KotlinBuiltIns.getInstance().getNullableAnyType());
-            traceInterpretingRightAsNullableAny.record(PROCESSED, right);
+        TemporaryBindingTrace traceInterpretingRightAsNullableAny = TemporaryBindingTrace.create(
+                context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:" + right);
+        traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, KotlinBuiltIns.getInstance().getNullableAnyType());
+        traceInterpretingRightAsNullableAny.record(PROCESSED, right);
 
-            Call call = CallMaker.makeCallWithExpressions(operationSign, receiver, null, operationSign, Collections.singletonList(right));
-            ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
-            OverloadResolutionResults<FunctionDescriptor> resolutionResults =
-                    newContext.resolveCallWithGivenName(call, operationSign, OperatorConventions.EQUALS);
+        Call call = CallMaker.makeCallWithExpressions(operationSign, receiver, null, operationSign, Collections.singletonList(right));
+        ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
+        OverloadResolutionResults<FunctionDescriptor> resolutionResults =
+                newContext.resolveCallWithGivenName(call, operationSign, OperatorConventions.EQUALS);
 
-            traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
-                @Override
-                public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
+        traceInterpretingRightAsNullableAny.commit(new TraceEntryFilter() {
+            @Override
+            public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
+                // the type of the right expression isn't 'Any?' actually
+                if (key == right && (slice == EXPRESSION_TYPE || slice == PROCESSED)) return false;
 
-                    // the type of the right expression isn't 'Any?' actually
-                    if (key == right && (slice == EXPRESSION_TYPE || slice == PROCESSED)) return false;
+                // a hack due to KT-678
+                // without this line an autocast is reported on the receiver (if it was previously checked for not-null)
+                // with not-null check the resolution result changes from 'fun Any?.equals' to 'equals' member
+                if (key == left && slice == AUTOCAST) return false;
 
-                    // a hack due to KT-678
-                    // without this line an autocast is reported on the receiver (if it was previously checked for not-null)
-                    // with not-null check the resolution result changes from 'fun Any?.equals' to 'equals' member
-                    if (key == left && slice == AUTOCAST) return false;
+                return true;
+            }
+        }, true);
+        dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
 
-                    return true;
-                }
-            }, true);
-            dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
-
-            if (resolutionResults.isSuccess()) {
-                FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
-                if (ensureBooleanResult(operationSign, OperatorConventions.EQUALS, equals.getReturnType(), context)) {
-                    ensureNonemptyIntersectionOfOperandTypes(expression, context);
-                }
+        if (resolutionResults.isSuccess()) {
+            FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
+            if (ensureBooleanResult(operationSign, OperatorConventions.EQUALS, equals.getReturnType(), context)) {
+                ensureNonemptyIntersectionOfOperandTypes(expression, context);
+            }
+        }
+        else {
+            if (resolutionResults.isAmbiguity()) {
+                context.trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(operationSign, resolutionResults.getResultingCalls()));
             }
             else {
-                if (resolutionResults.isAmbiguity()) {
-                    context.trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(operationSign, resolutionResults.getResultingCalls()));
-                }
-                else {
-                    context.trace.report(EQUALS_MISSING.on(operationSign));
-                }
+                context.trace.report(EQUALS_MISSING.on(operationSign));
             }
         }
         return JetTypeInfo.create(KotlinBuiltIns.getInstance().getBooleanType(), dataFlowInfo);

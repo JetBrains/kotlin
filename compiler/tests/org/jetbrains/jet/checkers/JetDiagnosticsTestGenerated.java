@@ -3326,6 +3326,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteAssignment.kt");
             }
             
+            @TestMetadata("incompleteEquals.kt")
+            public void testIncompleteEquals() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/incompleteEquals.kt");
+            }
+            
             @TestMetadata("kt1955.kt")
             public void testKt1955() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/kt1955.kt");
