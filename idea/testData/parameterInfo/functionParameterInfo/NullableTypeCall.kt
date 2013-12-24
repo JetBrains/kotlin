@@ -14,6 +14,6 @@ fun f() {
     }
 }
 /*
-Text: (x: Int), Disabled: false, Strikeout: false, Green: false
-Text: (x: Int, y: Int), Disabled: false, Strikeout: false, Green: false
+Text: (<highlight>x: Int</highlight>), Disabled: false, Strikeout: false, Green: false
+Text: (<highlight>x: Int</highlight>, y: Int), Disabled: false, Strikeout: false, Green: false
 */

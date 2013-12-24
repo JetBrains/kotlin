@@ -106,7 +106,10 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
         MockUpdateParameterInfoContext updateContext = new MockUpdateParameterInfoContext(file, myFixture);
 
         //to update current parameter index
-        parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);
+        JetValueArgumentList elementForUpdating = parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);
+        if (elementForUpdating != null) {
+            parameterInfoHandler.updateParameterInfo(elementForUpdating, updateContext);
+        }
 
         MockParameterInfoUIContext parameterInfoUIContext =
                 new MockParameterInfoUIContext(parameterOwner, updateContext.getCurrentParameter());
