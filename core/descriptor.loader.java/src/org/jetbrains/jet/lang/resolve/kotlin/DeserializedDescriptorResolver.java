@@ -41,6 +41,8 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
+import static org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader.Kind.CLASS;
+import static org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader.Kind.PACKAGE;
 
 public final class DeserializedDescriptorResolver {
     private AnnotationDescriptorDeserializer annotationDeserializer;
@@ -90,7 +92,7 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass);
+        String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
             ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
             return new DeserializedClassDescriptor(storageManager, annotationDeserializer, javaDescriptorFinder,
@@ -101,7 +103,7 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass);
+        String[] data = readData(kotlinClass, PACKAGE);
         if (data != null) {
             return new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer, javaDescriptorFinder,
                                                       JavaProtoBufUtil.readPackageDataFrom(data));
@@ -110,10 +112,12 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass) {
+    private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull SerializedDataHeader.Kind expectedKind) {
         KotlinClassHeader header = KotlinClassHeader.read(kotlinClass);
         if (header instanceof SerializedDataHeader) {
-            return ((SerializedDataHeader) header).getAnnotationData();
+            SerializedDataHeader serializedDataHeader = (SerializedDataHeader) header;
+            if (serializedDataHeader.getKind() != expectedKind) return null;
+            return serializedDataHeader.getAnnotationData();
         }
 
         if (header != null) {
