@@ -37,6 +37,7 @@ public class JetTypeArgumentList extends JetElementImpl {
         return visitor.visitTypeArgumentList(this, data);
     }
 
+    @NotNull
     public List<JetTypeProjection> getArguments() {
         return findChildrenByType(JetNodeTypes.TYPE_PROJECTION);
     }

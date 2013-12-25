@@ -49,7 +49,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -388,7 +388,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 }
                 propertyRef.set(property);
                 if (noTypeInference) {
-                    ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(property));
+                    ShortenReferences.instance$.process(property);
                 }
             }
         };

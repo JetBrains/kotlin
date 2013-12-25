@@ -82,7 +82,7 @@ public class KotlinLightMethodForDeclaration(manager: PsiManager, val method: Ps
 
     override fun getParameterList(): PsiParameterList = paramsList.getValue()!!
 
-    override fun copy(): PsiElement? {
+    override fun copy(): PsiElement {
         return KotlinLightMethodForDeclaration(getManager()!!, method, jetDeclaration.copy() as JetDeclaration, getContainingClass()!!)
     }
 }

@@ -1,0 +1,4 @@
+import java.util.Date
+import java.sql
+
+val x = sql.Date(1)

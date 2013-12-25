@@ -81,6 +81,7 @@ import org.jetbrains.jet.generators.tests.generator.TestClassModel
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterPluginTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterBasicTest
 import org.jetbrains.jet.plugin.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
+import org.jetbrains.jet.shortenRefs.AbstractShortenRefsTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -418,6 +419,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJavaToKotlinCopyPasteConversionTest>()) {
             model("copyPaste/conversion", extension = "java")
+        }
+
+        testClass(javaClass<AbstractShortenRefsTest>()) {
+            model("shortenRefs")
         }
     }
 

@@ -170,15 +170,4 @@ public class ImportInsertHelper {
 
         return true;
     }
-
-    public static ClassDescriptor getTopLevelClass(ClassDescriptor classDescriptor) {
-        while (true) {
-            DeclarationDescriptor parent = classDescriptor.getContainingDeclaration();
-            if (parent instanceof ClassDescriptor) {
-                classDescriptor = (ClassDescriptor) parent;
-            } else {
-                return classDescriptor;
-            }
-        }
-    }
 }

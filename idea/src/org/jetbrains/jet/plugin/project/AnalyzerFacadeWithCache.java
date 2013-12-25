@@ -85,6 +85,7 @@ public final class AnalyzerFacadeWithCache {
         return cancelableResolveSession.resolveToElement(jetElement);
     }
 
+    @NotNull
     public static CancelableResolveSession getLazyResolveSessionForFile(@NotNull JetFile file) {
         Project project = file.getProject();
         DeclarationsCacheProvider provider = KotlinCacheManager.getInstance(project).getRegisteredProvider(TargetPlatformDetector.getPlatform(file));

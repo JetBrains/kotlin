@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -47,7 +47,7 @@ public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionActi
         JetType type = getReconstructedType(typeRef);
         JetTypeReference newType = JetPsiFactory.createType(project, DescriptorRenderer.SOURCE_CODE.renderType(type));
         JetTypeReference replaced = (JetTypeReference) typeRef.replace(newType);
-        ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(replaced));
+        ShortenReferences.instance$.process(replaced);
     }
 
     @Override

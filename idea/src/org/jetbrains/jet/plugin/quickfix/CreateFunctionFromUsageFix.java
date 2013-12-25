@@ -64,7 +64,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.presentation.JetClassPresenter;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
@@ -801,7 +801,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                     }
                 });
 
-                ReferenceToClassesShortening.compactReferenceToClasses(typeRefsToShorten);
+                ShortenReferences.instance$.process(typeRefsToShorten);
             }
         });
     }

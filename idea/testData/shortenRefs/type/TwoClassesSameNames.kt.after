@@ -1,0 +1,7 @@
+import java.util.HashMap
+import java.util.Date
+import java.sql
+
+class A {
+    val x: HashMap<Date, sql.Date>
+}

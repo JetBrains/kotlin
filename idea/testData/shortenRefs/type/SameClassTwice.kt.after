@@ -1,0 +1,6 @@
+import java.util.ArrayList
+import java.io.File
+
+class A {
+    val x: ArrayList<ArrayList<File>>
+}

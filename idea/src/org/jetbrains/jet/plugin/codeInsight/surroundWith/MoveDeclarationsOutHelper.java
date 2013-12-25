@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -86,7 +86,7 @@ public class MoveDeclarationsOutHelper {
             dummyFirstStatement.delete();
         }
 
-        ReferenceToClassesShortening.compactReferenceToClasses(propertiesDeclarations);
+        ShortenReferences.instance$.process(propertiesDeclarations);
 
         return PsiUtilCore.toPsiElementArray(resultStatements);
     }

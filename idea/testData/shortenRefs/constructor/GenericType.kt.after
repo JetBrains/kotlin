@@ -1,0 +1,7 @@
+import java.util.HashMap
+import java.util.ArrayList
+import java.io.File
+
+class A {
+    val x = HashMap<ArrayList<File>, String>()
+}
