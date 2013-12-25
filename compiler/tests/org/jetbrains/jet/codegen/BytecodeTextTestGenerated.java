@@ -92,6 +92,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest("compiler/testData/codegen/bytecodeText/noVolatileAnnotation.kt");
     }
     
+    @TestMetadata("noWrapperForMethodReturningPrimitive.kt")
+    public void testNoWrapperForMethodReturningPrimitive() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/noWrapperForMethodReturningPrimitive.kt");
+    }
+    
     @TestMetadata("privateDefaultArgs.kt")
     public void testPrivateDefaultArgs() throws Exception {
         doTest("compiler/testData/codegen/bytecodeText/privateDefaultArgs.kt");

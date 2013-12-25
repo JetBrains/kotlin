@@ -606,11 +606,36 @@ public class JetTypeMapper extends BindingTraceAware {
             }
 
             sw.writeReturnType();
-            mapReturnType(f, sw);
+            if (forceBoxedReturnType(f)) {
+                // TYPE_PARAMETER is a hack to automatically box the return type
+                //noinspection ConstantConditions
+                mapType(f.getReturnType(), sw, JetTypeMapperMode.TYPE_PARAMETER);
+            }
+            else {
+                mapReturnType(f, sw);
+            }
             sw.writeReturnTypeEnd();
         }
 
         return sw.makeJvmMethodSignature(mapFunctionName(f));
+    }
+
+    /**
+     * @return true iff a given function descriptor should be compiled to a method with boxed return type regardless of whether return type
+     * of that descriptor is nullable or not. This happens when a function returning a value of a primitive type overrides another function
+     * with a non-primitive return type. In that case the generated method's return type should be boxed: otherwise it's not possible to use
+     * this class from Java since javac issues errors when loading the class (incompatible return types)
+     */
+    private static boolean forceBoxedReturnType(@NotNull FunctionDescriptor descriptor) {
+        //noinspection ConstantConditions
+        if (!KotlinBuiltIns.getInstance().isPrimitiveType(descriptor.getReturnType())) return false;
+
+        for (FunctionDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+            //noinspection ConstantConditions
+            if (!KotlinBuiltIns.getInstance().isPrimitiveType(overridden.getOriginal().getReturnType())) return true;
+        }
+
+        return false;
     }
 
     private static void writeVoidReturn(@NotNull BothSignatureWriter sw) {

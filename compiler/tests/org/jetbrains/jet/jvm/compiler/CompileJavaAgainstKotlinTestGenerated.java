@@ -91,6 +91,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     }
     
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method")
+    @InnerTestClasses({Method.PrimitiveOverride.class})
     public static class Method extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInMethod() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -186,6 +187,75 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             doTest("compiler/testData/compileJavaAgainstKotlin/method/Void.kt");
         }
         
+        @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride")
+        public static class PrimitiveOverride extends AbstractCompileJavaAgainstKotlinTest {
+            public void testAllFilesPresentInPrimitiveOverride() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("ByteOverridesObject.kt")
+            public void testByteOverridesObject() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/ByteOverridesObject.kt");
+            }
+            
+            @TestMetadata("CallFinalNotInSubclass.kt")
+            public void testCallFinalNotInSubclass() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/CallFinalNotInSubclass.kt");
+            }
+            
+            @TestMetadata("CallNotInSubclass.kt")
+            public void testCallNotInSubclass() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/CallNotInSubclass.kt");
+            }
+            
+            @TestMetadata("CovariantReturnTypeOverride.kt")
+            public void testCovariantReturnTypeOverride() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/CovariantReturnTypeOverride.kt");
+            }
+            
+            @TestMetadata("FinalOverride.kt")
+            public void testFinalOverride() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/FinalOverride.kt");
+            }
+            
+            @TestMetadata("IntOverridesComparable.kt")
+            public void testIntOverridesComparable() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/IntOverridesComparable.kt");
+            }
+            
+            @TestMetadata("IntOverridesNumber.kt")
+            public void testIntOverridesNumber() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/IntOverridesNumber.kt");
+            }
+            
+            @TestMetadata("IntOverridesObject.kt")
+            public void testIntOverridesObject() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/IntOverridesObject.kt");
+            }
+            
+            @TestMetadata("ManyClassesHierarchy.kt")
+            public void testManyClassesHierarchy() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/ManyClassesHierarchy.kt");
+            }
+            
+            @TestMetadata("NullableIntOverridesObject.kt")
+            public void testNullableIntOverridesObject() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/NullableIntOverridesObject.kt");
+            }
+            
+            @TestMetadata("OverrideInJava.kt")
+            public void testOverrideInJava() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/primitiveOverride/OverrideInJava.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("Method");
+            suite.addTestSuite(Method.class);
+            suite.addTestSuite(PrimitiveOverride.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/property")
@@ -238,7 +308,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         TestSuite suite = new TestSuite("CompileJavaAgainstKotlinTestGenerated");
         suite.addTestSuite(CompileJavaAgainstKotlinTestGenerated.class);
         suite.addTestSuite(Class.class);
-        suite.addTestSuite(Method.class);
+        suite.addTest(Method.innerSuite());
         suite.addTestSuite(Property.class);
         suite.addTestSuite(StaticFields.class);
         return suite;
