@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
@@ -236,5 +237,13 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             return getLazyJavaPackageFragmentProvider();
         }
         return packageFragmentProvider;
+    }
+
+    @Nullable
+    public PackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName) {
+        if (LAZY) {
+            return getLazyJavaPackageFragmentProvider().getPackageFragment(fqName);
+        }
+        return packageFragmentProvider.getPackageFragment(fqName);
     }
 }

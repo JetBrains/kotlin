@@ -187,7 +187,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     @NotNull
     private static JetScope getMemberScope(PsiModifierListOwner psiModifierListOwner, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver) {
         if (psiModifierListOwner.hasModifierProperty(PsiModifier.STATIC)) {
-            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragmentProvider().getPackageFragment(classFqName);
+            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragment(classFqName);
             assert packageFragment != null: "Couldn't resolve package fragment for " + classFqName;
             return packageFragment.getMemberScope();
         }
