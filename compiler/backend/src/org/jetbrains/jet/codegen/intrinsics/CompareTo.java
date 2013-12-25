@@ -57,10 +57,7 @@ public class CompareTo extends IntrinsicMethod {
         receiver.put(type, v);
         codegen.gen(argument, type);
 
-        if (type == Type.BYTE_TYPE || type == Type.SHORT_TYPE || type == Type.CHAR_TYPE) {
-            v.sub(Type.INT_TYPE);
-        }
-        else if (type == Type.INT_TYPE) {
+        if (type == Type.INT_TYPE) {
             v.invokestatic("jet/runtime/Intrinsics", "compare", "(II)I");
         }
         else if (type == Type.LONG_TYPE) {
