@@ -19,13 +19,11 @@ package org.jetbrains.jet.codegen.signature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 
-public class JvmMethodParameterSignature {
-    @NotNull
+public final class JvmMethodParameterSignature {
     private final Type asmType;
-    @NotNull
     private final JvmMethodParameterKind kind;
 
-    public JvmMethodParameterSignature(@NotNull Type asmType, @NotNull JvmMethodParameterKind kind) {
+    JvmMethodParameterSignature(@NotNull Type asmType, @NotNull JvmMethodParameterKind kind) {
         this.asmType = asmType;
         this.kind = kind;
     }
@@ -38,5 +36,24 @@ public class JvmMethodParameterSignature {
     @NotNull
     public JvmMethodParameterKind getKind() {
         return kind;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JvmMethodParameterSignature)) return false;
+
+        JvmMethodParameterSignature that = (JvmMethodParameterSignature) o;
+        return asmType.equals(that.asmType) && kind == that.kind;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * asmType.hashCode() + kind.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return kind + " " + asmType;
     }
 }

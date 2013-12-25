@@ -28,7 +28,7 @@ public class JvmMethodSignature {
     private final String genericsSignature;
     private final List<JvmMethodParameterSignature> valueParameters;
 
-    protected JvmMethodSignature(
+    JvmMethodSignature(
             @NotNull Method asmMethod,
             @Nullable String genericsSignature,
             @NotNull List<JvmMethodParameterSignature> valueParameters
@@ -63,6 +63,26 @@ public class JvmMethodSignature {
         return newName.equals(asmMethod.getName()) ?
                this :
                new JvmMethodSignature(new Method(newName, asmMethod.getDescriptor()), genericsSignature, valueParameters);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JvmMethodSignature)) return false;
+
+        JvmMethodSignature that = (JvmMethodSignature) o;
+
+        return asmMethod.equals(that.asmMethod) &&
+               (genericsSignature == null ? that.genericsSignature == null : genericsSignature.equals(that.genericsSignature)) &&
+               valueParameters.equals(that.valueParameters);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = asmMethod.hashCode();
+        result = 31 * result + (genericsSignature != null ? genericsSignature.hashCode() : 0);
+        result = 31 * result + valueParameters.hashCode();
+        return result;
     }
 
     @Override
