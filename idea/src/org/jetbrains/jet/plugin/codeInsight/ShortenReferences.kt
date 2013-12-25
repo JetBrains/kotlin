@@ -43,12 +43,12 @@ public object ShortenReferences {
           }
 
         override fun visitJetElement(element : JetElement) {
-            element.acceptChildren(this)
+            acceptChildren(element)
         }
 
         override fun visitUserType(userType: JetUserType) {
             val resultElement = processType(userType)
-            resultElement.acceptChildren(this)
+            acceptChildren(resultElement)
         }
 
         private fun processType(userType: JetUserType): PsiElement {
@@ -88,7 +88,7 @@ public object ShortenReferences {
 
         override fun visitDotQualifiedExpression(expression: JetDotQualifiedExpression) {
             val resultElement = processDotQualifiedExpression(expression)
-            resultElement.acceptChildren(this)
+            acceptChildren(resultElement)
         }
 
         private fun processDotQualifiedExpression(qualifiedExpression: JetDotQualifiedExpression): PsiElement {
@@ -179,6 +179,16 @@ public object ShortenReferences {
         //TODO: do we need this "IfNeeded" check?
         private fun addImportIfNeeded(descriptor : DeclarationDescriptor) {
             ImportInsertHelper.addImportDirectiveIfNeeded(DescriptorUtils.getFqNameSafe(descriptor), file)
+        }
+
+        // we do not use standard PsiElement.acceptChildren because it won't work correctly if the element is replaced by the visitor
+        private fun acceptChildren(element: PsiElement) {
+            var child = element.getFirstChild()
+            while(child != null) {
+                val nextChild = child!!.getNextSibling()
+                child!!.accept(this)
+                child = nextChild
+            }
         }
     }
 

@@ -126,6 +126,11 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             doTest("idea/testData/shortenRefs/type/GenericType2.kt");
         }
         
+        @TestMetadata("GenericType3.kt")
+        public void testGenericType3() throws Exception {
+            doTest("idea/testData/shortenRefs/type/GenericType3.kt");
+        }
+        
         @TestMetadata("LeaveQualified.kt")
         public void testLeaveQualified() throws Exception {
             doTest("idea/testData/shortenRefs/type/LeaveQualified.kt");
