@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -62,9 +63,10 @@ public class DelegatingBindingTrace implements BindingTrace {
         @TestOnly
         @Override
         public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
-            ImmutableMap<K, V> parentContents = parentContext.getSliceContents(slice);
-            ImmutableMap<K, V> currentContents = map.getSliceContents(slice);
-            return ImmutableMap.<K, V>builder().putAll(parentContents).putAll(currentContents).build();
+            Map<K, V> result = Maps.newHashMap();
+            result.putAll(parentContext.getSliceContents(slice));
+            result.putAll(map.getSliceContents(slice));
+            return ImmutableMap.copyOf(result);
         }
     };
 
