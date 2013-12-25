@@ -404,7 +404,10 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     @NotNull
     private List<LazyPackageDescriptor> getAllPackages() {
-        return collectAllPackages(Lists.<LazyPackageDescriptor>newArrayList(), getPackageFragment(FqName.ROOT));
+        LazyPackageDescriptor rootPackage = getPackageFragment(FqName.ROOT);
+        assert rootPackage != null : "Root package must be initialized";
+
+        return collectAllPackages(Lists.<LazyPackageDescriptor>newArrayList(), rootPackage);
     }
 
     @NotNull
