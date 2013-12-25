@@ -201,6 +201,17 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         return escape(renderTypeWithoutEscape(type));
     }
 
+    @NotNull
+    @Override
+    public String renderTypeArguments(@NotNull List<TypeProjection> typeArguments) {
+        if (typeArguments.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        sb.append("<");
+        appendTypeProjections(typeArguments, sb);
+        sb.append(">");
+        return sb.toString();
+    }
+
     private String renderTypeWithoutEscape(@NotNull JetType type) {
         if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == CANT_INFER_TYPE_PARAMETER) {
             return "???";

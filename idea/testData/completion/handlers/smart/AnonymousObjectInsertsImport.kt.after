@@ -1,0 +1,7 @@
+import java.io.Closeable
+
+val c: java.io.Closeable = object: Closeable {
+    override fun close() {
+        throw UnsupportedOperationException()
+    }
+}

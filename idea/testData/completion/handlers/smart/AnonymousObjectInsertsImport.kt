@@ -1,0 +1,1 @@
+val c: java.io.Closeable = <caret>

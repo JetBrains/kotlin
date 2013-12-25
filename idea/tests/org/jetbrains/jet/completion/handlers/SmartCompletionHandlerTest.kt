@@ -41,11 +41,17 @@ public class SmartCompletionHandlerTest() : CompletionHandlerTestBase() {
     fun testConstructorWithParameters() = doTest()
     fun testConstructorForNullable() = doTest()
     fun testConstructorForJavaClass() = doTest()
-    //fun testConstructorInsertsImport() = doTest() //TODO
+    fun testConstructorForGenericType() = doTest()
+    fun testConstructorInsertsImport() = doTest()
+    fun testConstructorInsertsImport2() = doTest()
     fun testJavaStaticMethod() = doTest(1, "Thread.currentThread", null, '\n')
+    fun testJavaStaticMethodInsertsImport() = doTest(1, "Calendar.getInstance", "(TimeZone)", '\n')
     fun testClassObjectMethod1() = doTest(1, "K.bar", null, '\n')
     fun testClassObjectMethod2() = doTest(1, "K.bar", null, '\n')
-    //fun testJavaStaticFieldInsertImport() = doTest(1, "Locale.ENGLISH", null, '\n') //TODO
+    fun testEnumMember() = doTest(1, "Foo.X", null, '\n')
+    fun testJavaEnumMemberInsertsImport() = doTest(1, "ElementType.FIELD", null, '\n')
+    fun testJavaStaticField() = doTest(1, "Locale.ENGLISH", null, '\n')
+    fun testJavaStaticFieldInsertImport() = doTest(1, "Locale.ENGLISH", null, '\n')
     fun testTabReplaceIdentifier() = doTest(1, "ss", null, '\t')
     fun testTabReplaceExpression() = doTest(1, "sss", null, '\t')
     fun testTabReplaceExpression2() = doTest(1, "sss", null, '\t')
@@ -54,4 +60,5 @@ public class SmartCompletionHandlerTest() : CompletionHandlerTestBase() {
     fun testAnonymousObject1() = doTest(1, "object", null, '\t')
     fun testAnonymousObject2() = doTest(1, "object", null, '\t')
     fun testAnonymousObject3() = doTest(1, "object", null, '\t')
+    fun testAnonymousObjectInsertsImport() = doTest(1, "object", null, '\t')
 }

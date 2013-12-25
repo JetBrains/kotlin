@@ -6,6 +6,9 @@
   <item name='com.intellij.codeInsight.lookup.Lookup com.intellij.openapi.editor.Editor getEditor()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.codeInsight.lookup.Lookup java.util.List&lt;com.intellij.codeInsight.lookup.LookupElement&gt; getItems()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.codeInsight.lookup.LookupElement void handleInsert(com.intellij.codeInsight.completion.InsertionContext) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

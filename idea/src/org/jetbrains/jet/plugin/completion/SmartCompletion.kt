@@ -29,6 +29,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.openapi.editor.EditorModificationUtil
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -133,30 +136,31 @@ private fun typeInstantiationItems(expectedType: JetType, resolveSession: Cancel
     var lookupString = lookupElement.getLookupString()
 
     val typeArgs = expectedType.getArguments()
-    //TODO: shouldn't be method in DescriptorRenderer to render type arguments?
-    val typeArgsText =
-            if (typeArgs.isEmpty())
-                ""
-            else
-                typeArgs.map { DescriptorRenderer.TEXT.renderType(it.getType()) }.makeString(", ", "<", ">")
-    var itemText = lookupElement.getLookupString() + typeArgsText
+    var itemText = lookupString + DescriptorRenderer.TEXT.renderTypeArguments(typeArgs)
 
     val insertHandler: InsertHandler<LookupElement>
     var suppressAutoInsertion: Boolean = false
+    val typeText = DescriptorUtils.getFqName(classifier).toString() + DescriptorRenderer.SOURCE_CODE.renderTypeArguments(typeArgs)
     if (classifier.getModality() == Modality.ABSTRACT) {
         val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
         itemText += constructorParenthesis
         itemText = "object: " + itemText + "{...}"
         lookupString = "object" //?
-        insertHandler = object: InsertHandler<LookupElement>{
-            override fun handleInsert(context: InsertionContext, item: LookupElement) {
-                //TODO: insert import
-                val editor = context.getEditor()
-                EditorModificationUtil.insertStringAtCaret(editor, ": " + classifier.getName() + constructorParenthesis + " {}")
-                editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() - 1)
-                PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
-                ImplementMethodsHandler().invoke(context.getProject(), editor, context.getFile(), true)
+        insertHandler = InsertHandler<LookupElement> { (context, item) ->
+            val editor = context.getEditor()
+            val startOffset = context.getStartOffset()
+            val text = "object: $typeText$constructorParenthesis {}"
+            editor.getDocument().replaceString(startOffset, context.getTailOffset(), text)
+            editor.getCaretModel().moveToOffset(startOffset + text.length - 1)
+
+            PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+            val file = context.getFile() as JetFile
+            val element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, startOffset + text.length, javaClass<JetElement>())
+            if (element != null) {
+                ShortenReferences.process(element)
             }
+
+            ImplementMethodsHandler().invoke(context.getProject(), editor, context.getFile(), true)
         }
         suppressAutoInsertion = true
     }
@@ -170,7 +174,23 @@ private fun typeInstantiationItems(expectedType: JetType, resolveSession: Cancel
                     if (constructors.first().getValueParameters().isEmpty()) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
                 else
                     CaretPosition.IN_BRACKETS
-        insertHandler = JetFunctionInsertHandler(caretPosition, BracketType.PARENTHESIS)
+        insertHandler = InsertHandler<LookupElement> { (context, item) ->
+            val editor = context.getEditor()
+            val startOffset = context.getStartOffset()
+            val text = typeText + "()"
+            editor.getDocument().replaceString(startOffset, context.getTailOffset(), text)
+            val endOffset = startOffset + text.length
+            editor.getCaretModel().moveToOffset(if (caretPosition == CaretPosition.IN_BRACKETS) endOffset - 1 else endOffset)
+
+            //TODO: autopopup parameter info and other functionality from JetFunctionInsertHandler
+
+            PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+            val file = context.getFile() as JetFile
+            val element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, javaClass<JetElement>())
+            if (element != null) {
+                ShortenReferences.process(element)
+            }
+        }
     }
 
     val lookupElementDecorated = object: LookupElementDecorator<LookupElement>(lookupElement){
@@ -311,36 +331,62 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
 
     fun toLookupElement(descriptor: DeclarationDescriptor): LookupElement {
         val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
-        val lookupString = classDescriptor.getName().asString() + "." + lookupElement.getLookupString()
-        var itemText = lookupString
-        val insertHandler: InsertHandler<LookupElement>?
+        val qualifierPresentation = classDescriptor.getName().asString()
+        val lookupString = qualifierPresentation + "." + lookupElement.getLookupString()
+        val qualifierText = DescriptorUtils.getFqName(classDescriptor).asString() //TODO: escape keywords
+
+        val caretPosition: CaretPosition?
         if (descriptor is FunctionDescriptor) {
-            itemText += "()"
-            val caretPosition = if (descriptor.getValueParameters().empty) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
-            insertHandler = JetFunctionInsertHandler(caretPosition, BracketType.PARENTHESIS)
+            caretPosition = if (descriptor.getValueParameters().empty) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
         }
         else {
-            insertHandler = null
+            caretPosition = null
         }
+
+        val insertHandler = InsertHandler<LookupElement> { (context, item) ->
+            val editor = context.getEditor()
+            val startOffset = context.getStartOffset()
+            var text = qualifierText + "." + descriptor.getName().asString() //TODO: escape
+            if (descriptor is FunctionDescriptor) {
+                text += "()"
+                //TODO: autopopup parameter info and other functionality from JetFunctionInsertHandler
+            }
+
+            editor.getDocument().replaceString(startOffset, context.getTailOffset(), text)
+            val endOffset = startOffset + text.length
+            editor.getCaretModel().moveToOffset(if (caretPosition == CaretPosition.IN_BRACKETS) endOffset - 1 else endOffset)
+
+            PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+            val file = context.getFile() as JetFile
+            val element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, startOffset + qualifierText.length, javaClass<JetElement>())
+            if (element != null) {
+                ShortenReferences.process(element)
+            }
+        }
+
         return object: LookupElementDecorator<LookupElement>(lookupElement){
             override fun getLookupString() = lookupString
 
             override fun renderElement(presentation: LookupElementPresentation) {
                 lookupElement.renderElement(presentation)
-                presentation.setItemText(itemText)
-                presentation.setTailText(" (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")")
+
+                presentation.setItemText(qualifierPresentation + "." + presentation.getItemText())
+
+                val tailText = " (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")"
+                if (descriptor is FunctionDescriptor) {
+                    presentation.appendTailText(tailText, true)
+                }
+                else{
+                    presentation.setTailText(tailText, true)
+                }
+
                 if (presentation.getTypeText().isNullOrEmpty()) {
                     presentation.setTypeText(DescriptorRenderer.TEXT.renderType(classDescriptor.getDefaultType()))
                 }
             }
 
             override fun handleInsert(context: InsertionContext) {
-                if (insertHandler != null) {
-                    insertHandler.handleInsert(context, lookupElement)
-                }
-                else{
-                    lookupElement.handleInsert(context)
-                }
+                insertHandler.handleInsert(context, lookupElement)
             }
         }
     }

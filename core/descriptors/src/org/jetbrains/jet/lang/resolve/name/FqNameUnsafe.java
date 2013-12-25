@@ -85,6 +85,7 @@ public final class FqNameUnsafe extends FqNameBase {
 
 
 
+    @Override
     @NotNull
     public String asString() {
         return fqName;
@@ -267,6 +268,7 @@ public final class FqNameUnsafe extends FqNameBase {
 
 
     @Override
+    @NotNull
     public String toString() {
         return isRoot() ? ROOT_NAME.asString() : fqName;
     }

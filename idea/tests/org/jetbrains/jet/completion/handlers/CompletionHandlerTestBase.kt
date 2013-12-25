@@ -68,31 +68,31 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
 
     private fun getExistentLookupElement(lookupString : String?, tailText : String?) : LookupElement? {
         val lookup = LookupManager.getInstance(getProject())?.getActiveLookup() as LookupImpl?
+        if (lookup == null) return null
 
         var foundElement : LookupElement? = null
-        if (lookup != null) {
-            val presentation = LookupElementPresentation()
-            for (lookupElement in lookup.getItems()!!) {
+        val presentation = LookupElementPresentation()
+        for (lookupElement in lookup.getItems()) {
+            val lookupOk : Boolean
+            if (lookupString != null) {
+                lookupOk = lookupElement.getLookupString().contains(lookupString)
+            }
+            else {
+                lookupOk = true
+            }
 
-                val lookupOk : Boolean
-                if (lookupString != null) {
-                    lookupOk = lookupElement.getLookupString().contains(lookupString)
-                }
-                else {
-                    lookupOk = true
-                }
-
+            if (lookupOk) {
                 val tailOk : Boolean
                 if (tailText != null) {
                     lookupElement.renderElement(presentation)
                     val itemTailText : String? = presentation.getTailText()
-                    tailOk = itemTailText != null && (itemTailText.contains(tailText))
+                    tailOk = itemTailText != null && itemTailText.contains(tailText)
                 }
                 else {
                     tailOk = true
                 }
 
-                if (lookupOk && tailOk) {
+                if (tailOk) {
                     if (foundElement != null) {
                         Assert.fail("Several elements satisfy to completion restrictions")
                     }
@@ -102,6 +102,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
             }
         }
 
+        if (foundElement == null) error("No element satisfy completion restrictions")
         return foundElement
     }
 

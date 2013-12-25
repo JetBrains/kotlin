@@ -1,5 +1,7 @@
 fun foo(){
-    val l : java.lang.Thread = <caret>
+    val l : java.util.Calendar = <caret>
 }
 
-// EXIST: { lookupString:"Thread.currentThread", itemText:"Thread.currentThread()", tailText:" (java.lang)", typeText:"Thread" }
+// EXIST: { lookupString:"Calendar.getInstance", itemText:"Calendar.getInstance", tailText:"() (java.util)", typeText:"Calendar" }
+// EXIST: { lookupString:"Calendar.getInstance", itemText:"Calendar.getInstance", tailText:"(TimeZone) (java.util)", typeText:"Calendar" }
+// EXIST: { lookupString:"Calendar.getInstance", itemText:"Calendar.getInstance", tailText:"(TimeZone, Locale) (java.util)", typeText:"Calendar" }

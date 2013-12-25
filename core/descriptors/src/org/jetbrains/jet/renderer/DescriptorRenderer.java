@@ -21,6 +21,9 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
+
+import java.util.List;
 
 public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer COMPACT_WITH_MODIFIERS = new DescriptorRendererBuilder().setWithDefinedIn(false).build();
@@ -60,6 +63,9 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     @NotNull
     String renderType(@NotNull JetType type);
+
+    @NotNull
+    String renderTypeArguments(@NotNull List<TypeProjection> typeArguments);
 
     @NotNull
     @Override
