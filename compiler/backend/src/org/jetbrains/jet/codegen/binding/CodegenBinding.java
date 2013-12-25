@@ -395,11 +395,11 @@ public class CodegenBinding {
 
     @NotNull
     public static String getJvmInternalName(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
-        Type asmType = bindingContext.get(CodegenBinding.ASM_TYPE, classDescriptor);
-        assert (asmType != null);
+        Type asmType = bindingContext.get(ASM_TYPE, classDescriptor);
+        assert asmType != null : "ASM_TYPE not present for " + classDescriptor;
 
         String jvmInternalName = asmType.getClassName();
-        assert (jvmInternalName != null);
+        assert jvmInternalName != null : "No internal name for " + asmType + " for class " + classDescriptor;
 
         return jvmInternalName;
     }
