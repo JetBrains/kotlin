@@ -37,7 +37,7 @@ public trait Hashable {
   public fun equals(other : Any?) : Boolean
 }
 
-public class Boolean private () {
+public class Boolean private () : Comparable<Boolean> {
   public fun not() : Boolean
 
   public fun and(other : Boolean) : Boolean
@@ -45,6 +45,8 @@ public class Boolean private () {
   public fun or(other : Boolean) : Boolean
 
   public fun xor(other : Boolean) : Boolean
+
+  public override fun compareTo(other : Boolean) : Int
 
   public fun equals(other : Any?) : Boolean
 }

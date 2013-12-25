@@ -4614,11 +4614,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/library"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
-            @TestMetadata("BooleanIsNotComparable.kt")
-            public void testBooleanIsNotComparable() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/library/BooleanIsNotComparable.kt");
-            }
-            
             @TestMetadata("Collections.kt")
             public void testCollections() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/library/Collections.kt");

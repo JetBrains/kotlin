@@ -26,9 +26,10 @@ public final class Array</*0*/ reified T> {
     public final fun set(/*0*/ index: jet.Int, /*1*/ value: T): jet.Unit
 }
 
-public final class Boolean {
+public final class Boolean : jet.Comparable<jet.Boolean> {
     /*primary*/ private constructor Boolean()
     public final fun and(/*0*/ other: jet.Boolean): jet.Boolean
+    public open override /*1*/ fun compareTo(/*0*/ other: jet.Boolean): jet.Int
     public final fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public final fun not(): jet.Boolean
     public final fun or(/*0*/ other: jet.Boolean): jet.Boolean
