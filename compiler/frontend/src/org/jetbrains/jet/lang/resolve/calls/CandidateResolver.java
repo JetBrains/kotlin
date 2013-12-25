@@ -367,7 +367,8 @@ public class CandidateResolver {
         CallCandidateResolutionContext<? extends CallableDescriptor> contextForArgument = storedContextForArgument
                 .replaceContextDependency(INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
         JetType type;
-        if (contextForArgument.candidateCall.hasIncompleteTypeParameters()) {
+        if (contextForArgument.candidateCall.hasIncompleteTypeParameters()
+                && !contextForArgument.candidateCall.isCompleted()) { //e.g. 'equals' argument
             type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
         }
         else {

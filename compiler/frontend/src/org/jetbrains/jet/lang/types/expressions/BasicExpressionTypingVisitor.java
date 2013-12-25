@@ -883,10 +883,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         dataFlowInfo = leftTypeInfo.getDataFlowInfo();
         ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
 
+        JetTypeInfo rightTypeInfo = facade.getTypeInfo(right, contextWithDataFlow);
+        dataFlowInfo = rightTypeInfo.getDataFlowInfo();
+
         TemporaryBindingTrace traceInterpretingRightAsNullableAny = TemporaryBindingTrace.create(
-                context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:" + right);
+                context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:", right);
         traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, KotlinBuiltIns.getInstance().getNullableAnyType());
-        traceInterpretingRightAsNullableAny.record(PROCESSED, right);
 
         Call call = CallMaker.makeCallWithExpressions(operationSign, receiver, null, operationSign, Collections.singletonList(right));
         ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
@@ -897,7 +899,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @Override
             public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
                 // the type of the right expression isn't 'Any?' actually
-                if (key == right && (slice == EXPRESSION_TYPE || slice == PROCESSED)) return false;
+                if (key == right && slice == EXPRESSION_TYPE) return false;
 
                 // a hack due to KT-678
                 // without this line an autocast is reported on the receiver (if it was previously checked for not-null)
@@ -907,7 +909,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 return true;
             }
         }, true);
-        dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
 
         if (resolutionResults.isSuccess()) {
             FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
