@@ -29,7 +29,6 @@ import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -41,15 +40,9 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -128,41 +121,24 @@ public class JetTypeMapper extends BindingTraceAware {
             @NotNull DeclarationDescriptor descriptor,
             boolean insideModule
     ) {
-        JetScope packageScope = packageFragment.getMemberScope();
-        if (!(packageFragment instanceof JavaPackageFragmentDescriptor)
-            || packageScope instanceof DeserializedPackageMemberScope
-            || packageScope instanceof JavaFullPackageScope) {
-            JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
-            if (insideModule && file != null) {
-                return NamespaceCodegen.getNamespacePartInternalName(file);
-            }
-            else {
-                return PackageClassUtils.getPackageClassFqName(packageFragment.getFqName()).asString().replace('.', '/');
+        if (packageFragment instanceof JavaPackageFragmentDescriptor) {
+            JavaPackageFragmentDescriptor javaPackageFragment = (JavaPackageFragmentDescriptor) packageFragment;
+            if (javaPackageFragment.getKind() == CLASS_STATICS) {
+                ClassDescriptor classDescriptor =
+                        javaPackageFragment.getJavaDescriptorResolver().resolveClass(javaPackageFragment.getFqName());
+                assert classDescriptor != null : "Class not found while a package fragment exists: " + packageFragment;
+                return mapType(classDescriptor.getDefaultType()).getInternalName();
             }
         }
 
-        if (!(packageScope instanceof JavaClassStaticMembersScope)) {
-            throw new IllegalStateException("Unexpected scope: " + packageScope.getClass());
+        // It's not a package created for Java class statics
+        JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
+        if (insideModule && file != null) {
+            return NamespaceCodegen.getNamespacePartInternalName(file);
         }
-
-        JavaPackageFragmentProvider javaFragmentProvider = ((JavaPackageFragmentDescriptorImpl) packageFragment).getProvider();
-
-        StringBuilder r = new StringBuilder();
-        for (FqName pathItem : packageFragment.getFqName().parent().path()) {
-            if (pathItem.isRoot()) {
-                continue;
-            }
-            r.append(pathItem.shortName().asString());
-
-            JavaPackageFragmentDescriptor fragment = javaFragmentProvider.getPackageFragment(pathItem);
-            if (fragment == null) {
-                throw new IllegalStateException("Package fragment not found: " + pathItem);
-            }
-            r.append(fragment.getKind() == CLASS_STATICS ? "$" : "/");
+        else {
+            return PackageClassUtils.getPackageClassFqName(packageFragment.getFqName()).asString().replace('.', '/');
         }
-
-        r.append(packageFragment.getName().asString());
-        return r.toString();
     }
 
     @NotNull
