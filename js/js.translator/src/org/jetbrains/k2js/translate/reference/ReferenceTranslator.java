@@ -71,7 +71,7 @@ public final class ReferenceTranslator {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }
         if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
-            return PropertyAccessTranslator.newInstance(referenceExpression, receiver, CallType.NORMAL, context);
+            return new SimpleWrappedVariableAccessTranslator(context, referenceExpression, receiver);
         }
         if (ClassObjectAccessTranslator.isClassObjectReference(referenceExpression, context)) {
             return ClassObjectAccessTranslator.newInstance(referenceExpression, context);
