@@ -33,10 +33,11 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
@@ -104,8 +105,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
-
-        checkUsageOfDeserializedScope(DescriptorUtils.getExactlyOnePackageFragment(packageFromBinary.getModule(), TEST_PACKAGE_FQNAME));
 
         for (DeclarationDescriptor descriptor : packageFromBinary.getMemberScope().getAllDescriptors()) {
             if (descriptor instanceof ClassDescriptor) {
@@ -262,22 +261,5 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     private static File getTxtFile(String javaFileName) {
         return new File(javaFileName.replaceFirst("\\.java$", ".txt"));
-    }
-
-    private static void checkUsageOfDeserializedScope(@NotNull PackageFragmentDescriptor packageFromBinary) {
-        JetScope scope = packageFromBinary.getMemberScope();
-        boolean hasOwnMembers = false;
-        for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
-            if (declarationDescriptor instanceof CallableMemberDescriptor) {
-                hasOwnMembers = true;
-            }
-        }
-        if (hasOwnMembers) {
-            assert scope instanceof JavaFullPackageScope : "If namespace has members, members should be inside deserialized scope.";
-        }
-        else {
-            //NOTE: should probably change
-            assert !(scope instanceof JavaFullPackageScope) : "We don't use deserialized scopes for namespaces without members.";
-        }
     }
 }
