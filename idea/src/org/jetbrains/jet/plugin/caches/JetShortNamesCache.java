@@ -197,7 +197,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         for (JetObjectDeclaration objectDeclaration : topObjects) {
             FqName fqName = JetPsiUtil.getFQName(objectDeclaration);
             assert fqName != null : "Local object declaration in JetTopLevelShortObjectNameIndex:" + objectDeclaration.getText();
-            result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, true));
+            result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, ResolveSessionUtils.SINGLETON_FILTER));
         }
 
         for (PsiClass psiClass : JetFromJavaDescriptorHelper
@@ -205,7 +205,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             String qualifiedName = psiClass.getQualifiedName();
             if (qualifiedName != null) {
                 FqName fqName = new FqName(qualifiedName);
-                result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, true));
+                result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, ResolveSessionUtils.SINGLETON_FILTER));
             }
         }
 
