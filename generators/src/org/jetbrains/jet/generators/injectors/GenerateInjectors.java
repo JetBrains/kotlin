@@ -132,7 +132,7 @@ public class GenerateInjectors {
         generator.addField(PsiBasedMethodSignatureChecker.class);
         generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addField(MutablePackageFragmentProvider.class);
-        generator.addPublicField(JavaPackageFragmentProviderImpl.class);
+        generator.addField(JavaPackageFragmentProviderImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression(
                                    VirtualFileFinder.class.getName() + ".SERVICE.getInstance(project)"));

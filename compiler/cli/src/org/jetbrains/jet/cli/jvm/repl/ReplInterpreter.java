@@ -105,7 +105,7 @@ public class ReplInterpreter {
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         module.addFragmentProvider(injector.getTopDownAnalyzer().getPackageFragmentProvider());
         module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
-        module.addFragmentProvider(injector.getJavaPackageFragmentProvider());
+        module.addFragmentProvider(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
         List<URL> classpath = Lists.newArrayList();
 
