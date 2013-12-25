@@ -90,4 +90,10 @@ public class StubPackageMemberDeclarationProvider extends AbstractStubDeclaratio
             }
         });
     }
+
+    @NotNull
+    @Override
+    public Collection<JetFile> getPackageFiles() {
+        return JetAllPackagesIndex.getInstance().get(fqName.asString(), project, searchScope);
+    }
 }

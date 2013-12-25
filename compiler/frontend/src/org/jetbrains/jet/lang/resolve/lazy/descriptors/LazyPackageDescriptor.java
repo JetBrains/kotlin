@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
@@ -49,6 +51,10 @@ public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements 
         this.declarationProvider = declarationProvider;
 
         this.memberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
+
+        for (JetFile file : declarationProvider.getPackageFiles()) {
+            this.resolveSession.getTrace().record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, this);
+        }
     }
 
     @NotNull
