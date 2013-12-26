@@ -49,13 +49,12 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
     @NotNull
     @Override
     public JsExpression translateAsGet() {
-        return translateAsGet(translateArrayExpression(), translateIndexExpressions());
+        return translateAsGet(translateArrayExpression());
     }
 
     @NotNull
-    protected JsExpression translateAsGet(@NotNull JsExpression arrayExpression,
-                                          @NotNull List<JsExpression> indexExpression) {
-        return translateAsMethodCall(arrayExpression, indexExpression, /*isGetter = */ true);
+    protected JsExpression translateAsGet(@NotNull JsExpression arrayExpression) {
+        return translateAsMethodCall(arrayExpression,  /*isGetter = */ true);
     }
 
     @NotNull
@@ -68,18 +67,14 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
     protected JsExpression translateAsSet(@NotNull JsExpression arrayExpression, @NotNull List<JsExpression> indexExpressions, @NotNull JsExpression toSetTo) {
         List<JsExpression> arguments = Lists.newArrayList(indexExpressions);
         arguments.add(toSetTo);
-        return translateAsMethodCall(arrayExpression, arguments, /*isGetter = */ false);
+        return translateAsMethodCall(arrayExpression,  /*isGetter = */ false);
     }
 
     @NotNull
-    private JsExpression translateAsMethodCall(@NotNull JsExpression arrayExpression,
-                                               @NotNull List<JsExpression> arguments,
-                                               boolean isGetter) {
-        return CallBuilder.build(context())
-                .receiver(arrayExpression)
-                .args(arguments)
-                .resolvedCall(BindingUtils.getResolvedCallForArrayAccess(bindingContext(), expression, isGetter))
-                .translate();
+    private JsExpression translateAsMethodCall(@NotNull JsExpression arrayExpression, boolean isGetter) {
+        return ReferencePackage.buildCall(context(),
+                                          BindingUtils.getResolvedCallForArrayAccess(bindingContext(), expression, isGetter),
+                                          arrayExpression);
     }
 
     @NotNull

@@ -45,7 +45,7 @@ public final class CachedArrayAccessTranslator extends ArrayAccessTranslator imp
     @NotNull
     @Override
     public JsExpression translateAsGet() {
-        return translateAsGet(arrayExpression.reference(), toExpressionList(indexExpressions));
+        return translateAsGet(arrayExpression.reference());
     }
 
     @NotNull
