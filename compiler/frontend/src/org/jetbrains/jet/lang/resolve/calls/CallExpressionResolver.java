@@ -178,7 +178,9 @@ public class CallExpressionResolver {
             scopes.add(namespace.getMemberScope());
         }
 
-        JetScope scope = new ChainedScope(classifier, scopes.toArray(new JetScope[scopes.size()]));
+        JetScope scope = new ChainedScope(
+                classifier, "Member scope for extended class object type " + classifier, scopes.toArray(new JetScope[scopes.size()])
+        );
         return new NamespaceType(referencedName, scope, new ExpressionReceiver(expression, classObjectType));
     }
 
@@ -213,7 +215,9 @@ public class CallExpressionResolver {
         JetScope scope;
         ClassifierDescriptor classifier = context.scope.getClassifier(name);
         if (classifier instanceof ClassDescriptor) {
-            scope = new ChainedScope(namespace, namespace.getMemberScope(), getStaticNestedClassesScope((ClassDescriptor) classifier));
+            scope = new ChainedScope(
+                    namespace, "Namespace type member scope for " + expression.getText(), namespace.getMemberScope(), getStaticNestedClassesScope((ClassDescriptor) classifier)
+            );
         }
         else {
             scope = namespace.getMemberScope();

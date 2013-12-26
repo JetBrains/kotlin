@@ -460,7 +460,7 @@ public class TypeHierarchyResolver {
             context.getPackageFragments().put(file, packageFragment);
 
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
-            ChainedScope rootPlusPackageScope = new ChainedScope(packageView, packageView.getMemberScope(), outerScope);
+            ChainedScope rootPlusPackageScope = new ChainedScope(packageView, "Root scope for " + file, packageView.getMemberScope(), outerScope);
             WriteThroughScope packageScope = new WriteThroughScope(rootPlusPackageScope, packageFragment.getMemberScope(),
                                                                      new TraceBasedRedeclarationHandler(trace), "package in file " + file.getName());
             packageScope.changeLockLevel(WritableScope.LockLevel.BOTH);

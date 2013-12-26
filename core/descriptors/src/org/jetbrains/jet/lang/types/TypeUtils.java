@@ -215,7 +215,7 @@ public class TypeUtils {
                 constructor,
                 allNullable,
                 Collections.<TypeProjection>emptyList(),
-                new ChainedScope(null, scopes)); // TODO : check intersectibility, don't use a chanied scope
+                new ChainedScope(null, "member scope for intersection type " + constructor, scopes)); // TODO : check intersectibility, don't use a chanied scope
     }
 
     private static class TypeUnifier {

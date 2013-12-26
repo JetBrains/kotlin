@@ -37,10 +37,6 @@ public class ChainedScope implements JetScope {
     private Collection<DeclarationDescriptor> allDescriptors;
     private List<ReceiverParameterDescriptor> implicitReceiverHierarchy;
 
-    public ChainedScope(DeclarationDescriptor containingDeclaration, JetScope... scopes) {
-        this(containingDeclaration, "Untitled chained scope", scopes);
-    }
-
     public ChainedScope(DeclarationDescriptor containingDeclaration, String debugName, JetScope... scopes) {
         this.containingDeclaration = containingDeclaration;
         scopeChain = scopes.clone();
