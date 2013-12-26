@@ -468,3 +468,16 @@ public fun LongArray.sum() : Long {
     return fold(0.toLong(), {a,b -> a+b})
 }
 
+/**
+ * Returns the index of the first element which equeals to the given value
+ */
+public fun LongArray.indexOf(o: Any?): Int {
+    return this.indices.find {this[it] == o} ?: -1
+}
+
+/**
+ * Returns the index of the last element which equeals to the given value
+ */
+public fun LongArray.lastIndexOf(o: Any?): Int {
+    return this.indices.reversed().find {this[it] == o} ?: -1
+}
