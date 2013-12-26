@@ -1,6 +1,6 @@
-import java.util.HashMap
-import java.util.ArrayList
 import java.io.File
+import java.util.ArrayList
+import java.util.HashMap
 
 class A {
     val x: HashMap<ArrayList<File>, String>
