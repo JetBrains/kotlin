@@ -127,6 +127,7 @@ Then build via
     cd libraries
     mvn install
 
+Some of the code in the standard library is created by generating code from templates. See the [README](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/ReadMe.md) in the stdlib section for how run the code generator. The existing templates can be used as examples for creating new ones.
 
 ## Submitting patches
 
