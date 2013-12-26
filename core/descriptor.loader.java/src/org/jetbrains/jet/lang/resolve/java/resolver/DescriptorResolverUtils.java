@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -272,10 +271,10 @@ public final class DescriptorResolverUtils {
     @Nullable
     public static JavaPackageFragmentDescriptor getPackageForCorrespondingJavaClass(@NotNull JavaClassDescriptor javaClass) {
         PackageFragmentDescriptor packageFragment = DescriptorUtils.getParentOfType(javaClass, PackageFragmentDescriptor.class);
-        assert packageFragment instanceof JavaPackageFragmentDescriptorImpl :
+        assert packageFragment instanceof JavaPackageFragmentDescriptor :
                 "java class " + javaClass + " is under non-java fragment: " + packageFragment;
 
-        JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptorImpl) packageFragment).getProvider();
+        JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
         return provider.getPackageFragment(getFqNameSafe(javaClass));
     }
 
