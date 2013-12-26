@@ -3,3 +3,5 @@ import java.util.Locale
 fun foo(){
     var l : java.util.Locale = Locale.ENGLISH<caret>
 }
+
+// ELEMENT: Locale.ENGLISH

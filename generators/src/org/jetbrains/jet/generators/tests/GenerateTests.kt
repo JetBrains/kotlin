@@ -82,6 +82,7 @@ import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterPluginTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterBasicTest
 import org.jetbrains.jet.plugin.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.jet.shortenRefs.AbstractShortenRefsTest
+import org.jetbrains.jet.completion.handlers.AbstractSmartCompletionHandlerTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -266,6 +267,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJvmWithLibBasicCompletionTest>()) {
             model("completion/basic/custom", recursive = false)
+        }
+
+        testClass(javaClass<AbstractSmartCompletionHandlerTest>()) {
+            model("completion/handlers/smart")
         }
 
         testClass(javaClass<AbstractGotoSuperTest>()) {

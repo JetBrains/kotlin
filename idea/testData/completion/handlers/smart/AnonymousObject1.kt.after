@@ -1,3 +1,5 @@
 trait Foo
 
 var a : Foo = object: Foo {<caret>}
+
+//ELEMENT: object

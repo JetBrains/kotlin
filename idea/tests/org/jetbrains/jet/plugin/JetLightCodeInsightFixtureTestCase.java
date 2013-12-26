@@ -27,19 +27,21 @@ import org.jetbrains.jet.InTextDirectivesUtils;
 import java.io.File;
 
 public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
-    LightProjectDescriptor projectDescriptor = null;
+    LightProjectDescriptor projectDescriptor = JetLightProjectDescriptor.INSTANCE;
 
     @Override
     protected void setUp() throws Exception {
-        String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
-        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
-            projectDescriptor = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
-        }
-        else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
-            projectDescriptor = JetStdJSProjectDescriptor.INSTANCE;
-        }
-        else {
-            projectDescriptor = JetLightProjectDescriptor.INSTANCE;
+        if (!getTestName(false).startsWith("AllFilesPresentIn")) {
+            String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
+            if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
+                projectDescriptor = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+            }
+            else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
+                projectDescriptor = JetStdJSProjectDescriptor.INSTANCE;
+            }
+            else {
+                projectDescriptor = JetLightProjectDescriptor.INSTANCE;
+            }
         }
 
         super.setUp();

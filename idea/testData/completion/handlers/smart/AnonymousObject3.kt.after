@@ -3,3 +3,5 @@ var r : Runnable = object: Runnable {
         throw UnsupportedOperationException()
     }
 }
+
+//ELEMENT: object

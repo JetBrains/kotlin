@@ -5,3 +5,5 @@ val c: java.io.Closeable = object: Closeable {
         throw UnsupportedOperationException()
     }
 }
+
+//ELEMENT: object

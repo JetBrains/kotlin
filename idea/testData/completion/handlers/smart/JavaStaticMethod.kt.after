@@ -1,3 +1,5 @@
 fun foo(){
     val l : java.lang.Thread = Thread.currentThread()<caret>
 }
+
+// ELEMENT: Thread.currentThread

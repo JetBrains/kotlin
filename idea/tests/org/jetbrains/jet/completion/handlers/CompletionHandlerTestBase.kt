@@ -47,8 +47,12 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
 
     protected fun doTest() : Unit = doTest(2, null, null, '\n')
 
-    protected fun doTest(time : Int, lookupString : String?, tailText : String?, completionChar : Char) : Unit {
+    protected fun doTest(time : Int, lookupString : String?, tailText : String?, completionChar : Char) {
         fixture.configureByFile(fileName())
+        doTestWithTextLoaded(time, lookupString, tailText, completionChar)
+    }
+
+    protected fun doTestWithTextLoaded(time : Int, lookupString : String?, tailText : String?, completionChar : Char) {
         if (lookupString != null || tailText != null) {
             fixture.complete(completionType, time)
             val item = getExistentLookupElement(lookupString, tailText)

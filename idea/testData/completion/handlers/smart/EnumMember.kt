@@ -6,3 +6,5 @@ enum class Foo {
 fun foo(){
     val f : Foo = <caret>
 }
+
+// ELEMENT: Foo.X

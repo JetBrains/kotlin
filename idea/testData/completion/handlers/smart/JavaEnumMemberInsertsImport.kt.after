@@ -3,3 +3,5 @@ import java.lang.annotation.ElementType
 fun foo(){
     val e : java.lang.annotation.ElementType = ElementType.FIELD<caret>
 }
+
+// ELEMENT: ElementType.FIELD

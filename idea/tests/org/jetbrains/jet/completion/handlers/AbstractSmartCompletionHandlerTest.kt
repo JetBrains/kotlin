@@ -32,33 +32,30 @@ import org.junit.Assert
 import com.intellij.openapi.application.Result
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import kotlin.properties.Delegates
+import org.jetbrains.jet.InTextDirectivesUtils
 
-public class SmartCompletionHandlerTest() : CompletionHandlerTestBase() {
+abstract class AbstractSmartCompletionHandlerTest() : CompletionHandlerTestBase() {
+    private val INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:"
+    private val LOOKUP_STRING_PREFIX = "ELEMENT:"
+    private val TAIL_TEXT_PREFIX = "TAIL_TEXT:"
+    private val COMPLETION_CHAR_PREFIX = "CHAR:"
+
     override val completionType: CompletionType = CompletionType.SMART
     override val testDataRelativePath: String = "/completion/handlers/smart"
 
-    fun testConstructor() = doTest()
-    fun testConstructorWithParameters() = doTest()
-    fun testConstructorForNullable() = doTest()
-    fun testConstructorForJavaClass() = doTest()
-    fun testConstructorForGenericType() = doTest()
-    fun testConstructorInsertsImport() = doTest()
-    fun testConstructorInsertsImport2() = doTest()
-    fun testJavaStaticMethod() = doTest(1, "Thread.currentThread", null, '\n')
-    fun testJavaStaticMethodInsertsImport() = doTest(1, "Calendar.getInstance", "(TimeZone)", '\n')
-    fun testClassObjectMethod1() = doTest(1, "K.bar", null, '\n')
-    fun testClassObjectMethod2() = doTest(1, "K.bar", null, '\n')
-    fun testEnumMember() = doTest(1, "Foo.X", null, '\n')
-    fun testJavaEnumMemberInsertsImport() = doTest(1, "ElementType.FIELD", null, '\n')
-    fun testJavaStaticField() = doTest(1, "Locale.ENGLISH", null, '\n')
-    fun testJavaStaticFieldInsertImport() = doTest(1, "Locale.ENGLISH", null, '\n')
-    fun testTabReplaceIdentifier() = doTest(1, "ss", null, '\t')
-    fun testTabReplaceExpression() = doTest(1, "sss", null, '\t')
-    fun testTabReplaceExpression2() = doTest(1, "sss", null, '\t')
-    fun testTabReplaceExpression3() = doTest(1, "sss", null, '\t')
-    fun testTabReplaceOperand() = doTest(1, "b3", null, '\t')
-    fun testAnonymousObject1() = doTest(1, "object", null, '\t')
-    fun testAnonymousObject2() = doTest(1, "object", null, '\t')
-    fun testAnonymousObject3() = doTest(1, "object", null, '\t')
-    fun testAnonymousObjectInsertsImport() = doTest(1, "object", null, '\t')
+    protected fun doTest(testPath: String) {
+        fixture.configureByFile(testPath)
+
+        val fileText = fixture.getFile()!!.getText()
+        val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
+        val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
+        val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
+        val completionCharString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX)
+        val completionChar = when(completionCharString) {
+            "\\n", null -> '\n'
+            "\\t" -> '\t'
+            else -> error("Uknown completion char")
+        }
+        doTestWithTextLoaded(invocationCount, lookupString, tailText, completionChar)
+    }
 }
