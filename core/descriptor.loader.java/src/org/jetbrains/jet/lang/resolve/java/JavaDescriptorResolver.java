@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
@@ -53,8 +52,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
-    public static final ModuleDescriptor FAKE_JAVA_MODULE = new ModuleDescriptorImpl(Name.special("<java module>"), Collections.<ImportPath>emptyList(),
-                                                                                     PlatformToKotlinClassMap.EMPTY);
 
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
 
@@ -139,11 +136,15 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Inject
-    public void setModule(ModuleDescriptor module) {
+    public void setModule(@NotNull ModuleDescriptor module) {
         this.module = module;
     }
 
     @NotNull
+    public ModuleDescriptor getModule() {
+        return module;
+    }
+
     private LazyJavaPackageFragmentProvider getLazyJavaPackageFragmentProvider() {
         if (lazyJavaPackageFragmentProvider == null) {
             lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(

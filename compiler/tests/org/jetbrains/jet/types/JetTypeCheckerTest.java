@@ -589,7 +589,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        ModuleDescriptor module = javaDescriptorResolver.getPackageFragmentProvider().getModule();
+        ModuleDescriptor module = javaDescriptorResolver.getModule();
         for (ImportPath defaultImport : module.getDefaultImports()) {
             writableScope.importScope(module.getPackage(defaultImport.fqnPart()).getMemberScope());
         }
