@@ -31,16 +31,8 @@ public object ShortenReferences {
     }
 
     private class Visitor(val file: JetFile) : JetVisitorVoid() {
-        private var modificationCount = file.getManager()!!.getModificationTracker().getModificationCount()
-        private val resolveSession : CancelableResolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
-          get(){
-              val currentModificationCount = file.getManager()!!.getModificationTracker().getModificationCount()
-              if (currentModificationCount != modificationCount) {
-                  $resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
-                  modificationCount = currentModificationCount
-              }
-              return $resolveSession
-          }
+        private val resolveSession : CancelableResolveSession
+            get() = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
 
         override fun visitJetElement(element : JetElement) {
             acceptChildren(element)
