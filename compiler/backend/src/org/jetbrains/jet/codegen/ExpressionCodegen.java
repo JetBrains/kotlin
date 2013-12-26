@@ -2288,17 +2288,28 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes) {
+        return pushMethodArguments(resolvedCall, valueParameterTypes, false);
+    }
+
+    private int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, boolean skipLast) {
         @SuppressWarnings("unchecked")
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
+        List<ValueParameterDescriptor> valueParameters = fd.getValueParameters();
 
-        if (fd.getValueParameters().size() != valueArguments.size()) {
+        if (valueParameters.size() != valueArguments.size()) {
             throw new IllegalStateException();
         }
 
         int mask = 0;
 
-        for (ValueParameterDescriptor valueParameter : fd.getValueParameters()) {
+
+        for (Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator(); iterator.hasNext(); ) {
+            ValueParameterDescriptor valueParameter = iterator.next();
+            if (skipLast && !iterator.hasNext()) {
+                continue;
+            }
+
             ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
             Type parameterType = valueParameterTypes.get(valueParameter.getIndex());
             if (resolvedValueArgument instanceof ExpressionValueArgument) {
@@ -3380,20 +3391,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert resolvedCall != null : "couldn't find resolved call: " + expression.getText();
 
             Callable callable = resolveToCallable(operationDescriptor, false);
+            Method asmMethod = resolveToCallableMethod(operationDescriptor, false, context).getSignature().getAsmMethod();
+            Type[] argumentTypes = asmMethod.getArgumentTypes();
+
             if (callable instanceof CallableMethod) {
                 genThisAndReceiverFromResolvedCall(receiver, resolvedCall, (CallableMethod) callable);
+                pushMethodArguments(resolvedCall, ((CallableMethod) callable).getValueParameterTypes(), !isGetter);
             }
             else {
                 gen(array, arrayType); // intrinsic method
-            }
 
-            int index = operationDescriptor.getReceiverParameter() != null ? 1 : 0;
+                int index = operationDescriptor.getReceiverParameter() != null ? 1 : 0;
 
-            Method asmMethod = resolveToCallableMethod(operationDescriptor, false, context).getSignature().getAsmMethod();
-            Type[] argumentTypes = asmMethod.getArgumentTypes();
-            for (JetExpression jetExpression : expression.getIndexExpressions()) {
-                gen(jetExpression, argumentTypes[index]);
-                index++;
+                for (JetExpression jetExpression : expression.getIndexExpressions()) {
+                    gen(jetExpression, argumentTypes[index]);
+                    index++;
+                }
             }
 
             Type elementType = isGetter ? asmMethod.getReturnType() : ArrayUtil.getLastElement(argumentTypes);
