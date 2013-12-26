@@ -201,7 +201,9 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         if (member instanceof PsiMethod) {
             if (((PsiMethod) member).isConstructor()) {
                 DeclarationDescriptor container = memberScope.getContainingDeclaration();
-                assert container instanceof JavaClassDescriptor : container + "\n" + memberScope;
+                if (!(container instanceof JavaClassDescriptor)) {
+                    return null;
+                }
                 ((JavaClassDescriptor) container).getConstructors();
             }
             else {
