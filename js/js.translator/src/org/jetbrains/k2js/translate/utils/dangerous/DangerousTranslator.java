@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.utils.dangerous;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsNode;
 import com.google.dart.compiler.backend.js.ast.JsVars;
 import gnu.trove.THashMap;
@@ -48,21 +47,21 @@ public final class DangerousTranslator extends AbstractTranslator {
 
     @NotNull
     private JsNode translate() {
-        Map<JetExpression, JsName> aliasesForExpressions =
+        Map<JetExpression, JsExpression> aliasesForExpressions =
             translateAllExpressionsAndCreateAliasesForThem(data.getNodesToBeGeneratedBefore());
         TranslationContext contextWithAliases = context().innerContextWithAliasesForExpressions(aliasesForExpressions);
         return Translation.doTranslateExpression(data.getRootNode(), contextWithAliases);
     }
 
     @NotNull
-    private Map<JetExpression, JsName> translateAllExpressionsAndCreateAliasesForThem(@NotNull List<JetExpression> expressions) {
-        Map<JetExpression, JsName> aliasesForExpressions = new THashMap<JetExpression, JsName>(expressions.size());
+    private Map<JetExpression, JsExpression> translateAllExpressionsAndCreateAliasesForThem(@NotNull List<JetExpression> expressions) {
+        Map<JetExpression, JsExpression> aliasesForExpressions = new THashMap<JetExpression, JsExpression>(expressions.size());
         List<JsVars.JsVar> vars = new ArrayList<JsVars.JsVar>(expressions.size());
         for (JetExpression expression : expressions) {
             JsExpression translatedExpression = Translation.translateAsExpression(expression, context());
             JsVars.JsVar aliasForExpression = context().dynamicContext().createTemporaryVar(translatedExpression);
             vars.add(aliasForExpression);
-            aliasesForExpressions.put(expression, aliasForExpression.getName());
+            aliasesForExpressions.put(expression, aliasForExpression.getName().makeRef());
         }
         context().addStatementToCurrentBlock(new JsVars(vars, true));
         return aliasesForExpressions;
