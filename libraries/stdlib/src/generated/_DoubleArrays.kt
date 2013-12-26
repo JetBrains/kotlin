@@ -184,6 +184,22 @@ public inline fun <K> DoubleArray.groupByTo(result: MutableMap<K, MutableList<Do
 }
 
 /**
+ * Returns first index of item, or -1 if the array does not contain item
+ */
+public fun DoubleArray.indexOf(item : Double) : Int {
+    if (item == null) {
+        for (i in 0..size - 1) if (this[i] == null) {
+            return i
+        }
+    } else {
+        for (i in 0..size - 1) if (item == this[i]) {
+            return i
+        }
+    }
+    return -1
+}
+
+/**
  * Returns true if the array is empty
  */
 public fun DoubleArray.isEmpty() : Boolean {

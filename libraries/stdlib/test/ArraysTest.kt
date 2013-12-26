@@ -157,6 +157,13 @@ class ArraysTest {
         //expect(3000000000000) { array<Long>(1000000000000, 2000000000000).sum() }
         expect(3.0.toFloat()) { array<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
     }
+
+    test fun indexOf() {
+        expect(-1) { array("cat", "dog", "bird").indexOf("mouse") }
+        expect(0) { array("cat", "dog", "bird").indexOf("cat") }
+        expect(1) { array("cat", "dog", "bird").indexOf("dog") }
+        expect(2) { array("cat", "dog", "bird").indexOf("bird") }
+    }
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers
