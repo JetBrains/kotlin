@@ -146,7 +146,7 @@ public class CallableMethod implements Callable {
     }
 
     public Type getReturnType() {
-        return signature.getAsmMethod().getReturnType();
+        return signature.getReturnType();
     }
 
     @Override

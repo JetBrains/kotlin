@@ -2007,7 +2007,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             CallableMethod callableMethod = (CallableMethod) callable;
             invokeMethodWithArguments(callableMethod, resolvedCall, receiver);
             Type returnType = typeMapper.mapReturnType(resolvedCall.getResultingDescriptor());
-            StackValue.coerce(callableMethod.getSignature().getAsmMethod().getReturnType(), returnType, v);
+            StackValue.coerce(callableMethod.getSignature().getReturnType(), returnType, v);
             return StackValue.onStack(returnType);
         }
         else {

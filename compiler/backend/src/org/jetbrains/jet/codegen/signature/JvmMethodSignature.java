@@ -58,6 +58,11 @@ public class JvmMethodSignature {
     }
 
     @NotNull
+    public Type getReturnType() {
+        return asmMethod.getReturnType();
+    }
+
+    @NotNull
     public List<Type> getValueParameterTypes() {
         List<Type> r = new ArrayList<Type>(kotlinParameterTypes.size());
         for (JvmMethodParameterSignature p : kotlinParameterTypes) {

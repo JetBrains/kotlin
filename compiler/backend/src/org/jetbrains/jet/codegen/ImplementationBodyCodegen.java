@@ -796,7 +796,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     @NotNull MethodContext context,
                     @Nullable MemberCodegen parentCodegen
             ) {
-                Type componentType = signature.getAsmMethod().getReturnType();
+                Type componentType = signature.getReturnType();
                 InstructionAdapter iv = new InstructionAdapter(mv);
                 if (!componentType.equals(Type.VOID_TYPE)) {
                     iv.load(0, classAsmType);
@@ -930,8 +930,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                        @Override
                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                            generateMethodCallTo(original, codegen.v);
-
-                           codegen.v.areturn(signature.getAsmMethod().getReturnType());
+                           codegen.v.areturn(signature.getReturnType());
                        }
                    });
         }
@@ -953,7 +952,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         iv.load(0, OBJECT_TYPE);
                     }
                     property.put(property.type, iv);
-                    iv.areturn(signature.getAsmMethod().getReturnType());
+                    iv.areturn(signature.getReturnType());
                 }
             });
 
@@ -979,7 +978,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         }
                         property.store(property.type, iv);
 
-                        iv.areturn(signature.getAsmMethod().getReturnType());
+                        iv.areturn(signature.getReturnType());
                     }
                 });
             }
@@ -996,8 +995,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                         typeMapper.mapToCallableMethod((ConstructorDescriptor) functionDescriptor) :
                                         typeMapper.mapToCallableMethod(functionDescriptor, callFromAccessor, context);
 
-        Method method = callableMethod.getSignature().getAsmMethod();
-        Type[] argTypes = method.getArgumentTypes();
+        Type[] argTypes = callableMethod.getSignature().getAsmMethod().getArgumentTypes();
 
         int reg = 1;
         if (isConstructor) {

@@ -464,29 +464,25 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         int flags = getVisibilityAccessFlag(constructorDescriptor);
         MethodVisitor mv = classBuilder.newMethod(null, flags, "<init>", "()V", null, null);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) {
-            return;
-        }
-        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            InstructionAdapter v = new InstructionAdapter(mv);
-            mv.visitCode();
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
-            Type methodOwner = method.getOwner();
-            Method jvmSignature = method.getSignature().getAsmMethod();
-            v.load(0, methodOwner); // Load this on stack
+        InstructionAdapter v = new InstructionAdapter(mv);
+        mv.visitCode();
 
-            int mask = 0;
-            for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
-                Type paramType = state.getTypeMapper().mapType(parameterDescriptor.getType());
-                pushDefaultValueOnStack(paramType, v);
-                mask |= (1 << parameterDescriptor.getIndex());
-            }
-            v.iconst(mask);
-            String desc = jvmSignature.getDescriptor().replace(")", "I)");
-            v.invokespecial(methodOwner.getInternalName(), "<init>", desc);
-            v.areturn(Type.VOID_TYPE);
-            endVisit(mv, "default constructor for " + methodOwner.getInternalName(), null);
+        Type methodOwner = method.getOwner();
+        v.load(0, methodOwner); // Load this on stack
+
+        int mask = 0;
+        for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
+            Type paramType = state.getTypeMapper().mapType(parameterDescriptor.getType());
+            pushDefaultValueOnStack(paramType, v);
+            mask |= (1 << parameterDescriptor.getIndex());
         }
+        v.iconst(mask);
+        String desc = method.getSignature().getAsmMethod().getDescriptor().replace(")", "I)");
+        v.invokespecial(methodOwner.getInternalName(), "<init>", desc);
+        v.areturn(Type.VOID_TYPE);
+        endVisit(mv, "default constructor for " + methodOwner.getInternalName(), null);
     }
 
     void generateDefaultIfNeeded(
@@ -559,10 +555,9 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             frameMap.enterTemp(OBJECT_TYPE);
         }
 
-        Method jvmSignature = signature.getAsmMethod();
-        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, jvmSignature.getReturnType(), methodContext, state, getParentCodegen());
+        ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, signature.getReturnType(), methodContext, state, getParentCodegen());
 
-        Type[] argTypes = jvmSignature.getArgumentTypes();
+        Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
         Iterator<ValueParameterDescriptor> iterator = paramDescrs.iterator();
 
@@ -616,7 +611,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         iv.visitMethodInsn(method.getInvokeOpcode(), method.getOwner().getInternalName(), method.getSignature().getAsmMethod().getName(),
                            method.getSignature().getAsmMethod().getDescriptor());
 
-        iv.areturn(jvmSignature.getReturnType());
+        iv.areturn(signature.getReturnType());
 
         endVisit(mv, "default method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
     }
