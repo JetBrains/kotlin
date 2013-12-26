@@ -69,7 +69,7 @@ private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out Function
 }
 
 
-trait CallCase<I : BaseCallInfo> {
+trait CallCase<I : CallInfo> {
     val callInfo: I
 
     protected fun unsupported(message: String = "") : Exception {
@@ -139,7 +139,7 @@ open class VariableAccessCase(override val callInfo: VariableAccessInfo) : CallC
     }
 }
 
-class CallCaseDispatcher<C : CallCase<I>, I : BaseCallInfo> {
+class CallCaseDispatcher<C : CallCase<I>, I : CallInfo> {
     private val cases: MutableList<(I) -> JsExpression?> = ArrayList()
 
     fun addCase(canBeApplyCase: (I) -> JsExpression?) {
@@ -165,7 +165,7 @@ class CallCaseDispatcher<C : CallCase<I>, I : BaseCallInfo> {
     }
 }
 
-trait DelegateIntrinsic<I : BaseCallInfo> : CallCase<I> {
+trait DelegateIntrinsic<I : CallInfo> : CallCase<I> {
     fun I.canBeApply(): Boolean = true
     fun I.getReceiver(): JsExpression? {
         return when (resolvedCall.getExplicitReceiverKind()) {

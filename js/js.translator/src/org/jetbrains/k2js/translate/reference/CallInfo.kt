@@ -32,15 +32,18 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsName
 
 
-open class BaseCallInfo(
-        val context: TranslationContext,
-        val resolvedCall: ResolvedCall<out CallableDescriptor>,
+trait CallInfo {
+    val context: TranslationContext
+    val resolvedCall: ResolvedCall<out CallableDescriptor>
 
-        val thisObject: JsExpression?,
-        val receiverObject: JsExpression?,
-        val nullableReceiverForSafeCall: JsExpression?
-) {
-    open val callableDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
+    val thisObject: JsExpression?
+    val receiverObject: JsExpression?
+    val nullableReceiverForSafeCall: JsExpression?
+
+    val callableDescriptor: CallableDescriptor
+        get() {
+            return resolvedCall.getResultingDescriptor().getOriginal()
+        }
 
     fun isExtension(): Boolean = receiverObject != null
     fun isMemberCall(): Boolean = thisObject != null
@@ -55,11 +58,8 @@ open class BaseCallInfo(
     // TODO: toString for debug
 }
 
-private open class CallInfoWrapper(callInfo: BaseCallInfo) :
-    BaseCallInfo(callInfo.context, callInfo.resolvedCall, callInfo.thisObject, callInfo.receiverObject, callInfo.nullableReceiverForSafeCall)
-
 // if setTo == null, it is get access
-class VariableAccessInfo(callInfo: BaseCallInfo, private val setTo: JsExpression? = null): CallInfoWrapper(callInfo) {
+class VariableAccessInfo(callInfo: CallInfo, private val setTo: JsExpression? = null): CallInfo by callInfo {
     val variableDescriptor = super.callableDescriptor as VariableDescriptor
     val variableName : JsName
         get() {
@@ -76,7 +76,7 @@ class VariableAccessInfo(callInfo: BaseCallInfo, private val setTo: JsExpression
     }
 }
 
-class FunctionCallInfo(callInfo: BaseCallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfoWrapper(callInfo) {
+class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfo by callInfo {
     val functionName : JsName
         get() { // getter, because for several descriptors name is undefined. Example: {(a) -> a+1}(3)
             return context.getNameForDescriptor(callableDescriptor)
@@ -92,7 +92,7 @@ private fun TranslationContext.getThisObject(receiverValue: ReceiverValue): JsEx
     return getThisObject(getDeclarationDescriptorForReceiver(receiverValue))
 }
 
-private fun TranslationContext.mainGetCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): BaseCallInfo {
+private fun TranslationContext.mainGetCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): CallInfo {
     val receiverKind = resolvedCall.getExplicitReceiverKind()
     fun getNotNullReceiver1(): JsExpression {
         assert(receiver1 != null, "ResolvedCall say, that receiver(1) must be not null")
@@ -135,14 +135,20 @@ private fun TranslationContext.mainGetCallInfo(resolvedCall: ResolvedCall<out Ca
             else -> getNotNullReceiver1()
         }
     }
-    return BaseCallInfo(this, resolvedCall, getThisObject(), getReceiverObject(), getNullableReceiverForSafeCall())
+    return object : CallInfo {
+        override val context: TranslationContext = this@mainGetCallInfo
+        override val resolvedCall: ResolvedCall<out CallableDescriptor> = resolvedCall
+        override val thisObject: JsExpression? = getThisObject()
+        override val receiverObject: JsExpression? = getReceiverObject()
+        override val nullableReceiverForSafeCall: JsExpression? = getNullableReceiverForSafeCall()
+    };
 }
 
 fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
     return this.getExplicitReceiverKind() != NO_EXPLICIT_RECEIVER
 }
 
-fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiver: JsExpression?): BaseCallInfo {
+fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiver: JsExpression?): CallInfo {
     return mainGetCallInfo(resolvedCall, receiver, null)
 }
 

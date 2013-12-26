@@ -146,7 +146,7 @@ class ExpressionAsFunctionDescriptorIntrinsic(callInfo: FunctionCallInfo) : Func
         if (callableDescriptor !is ExpressionAsFunctionDescriptor) {
             throw IllegalStateException("callableDescriptor must be ExpressionAsFunctionDescriptor $callInfo")
         }
-        val funRef = Translation.translateAsExpression(callableDescriptor.getExpression()!!, context)
+        val funRef = Translation.translateAsExpression((callableDescriptor as ExpressionAsFunctionDescriptor).getExpression()!!, context)
         return JsInvocation(funRef, argumentsInfo.getTranslateArguments())
 
     }
