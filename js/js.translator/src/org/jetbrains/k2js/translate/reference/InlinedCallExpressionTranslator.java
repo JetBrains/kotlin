@@ -137,7 +137,7 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
         TemporaryVariable aliasForReceiver = context().declareTemporary(aliasExpression);
         assert descriptorToAlias != null;
         TranslationContext newContext =
-                contextWithAliasForThisExpression.innerContextWithThisAliased(descriptorToAlias, aliasForReceiver.reference());
+                contextWithAliasForThisExpression.innerContextWithAliased(descriptorToAlias, aliasForReceiver.reference());
         newContext.addStatementToCurrentBlock(aliasForReceiver.assignmentExpression().makeStmt());
         return newContext;
     }

@@ -55,7 +55,6 @@ public final class Namer {
 
 
     private static final String DELEGATE_POSTFIX = "$delegate";
-    private static final String PROPERTY_METADATA = "PropertyMetadata";
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -229,11 +228,6 @@ public final class Namer {
     @NotNull
     public JsExpression throwNPEFunctionRef() {
         return new JsNameRef(THROW_NPE_FUN_NAME, kotlinObject());
-    }
-
-    @NotNull
-    public JsNameRef propertyMetadataRef() {
-        return new JsNameRef(PROPERTY_METADATA, kotlinObject());
     }
 
     @NotNull

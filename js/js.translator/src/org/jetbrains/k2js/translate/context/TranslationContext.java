@@ -129,7 +129,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext innerContextWithThisAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsNameRef alias) {
+    public TranslationContext innerContextWithAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsNameRef alias) {
         return new TranslationContext(this, aliasingContext.inner(correspondingDescriptor, alias));
     }
 

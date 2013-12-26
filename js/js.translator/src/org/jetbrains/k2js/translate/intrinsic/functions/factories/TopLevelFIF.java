@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
@@ -119,6 +120,17 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
+    private static final FunctionIntrinsic PROPERTY_METADATA_IMPL = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            JsNameRef functionRef = new JsNameRef("PropertyMetadata", Namer.KOTLIN_NAME);
+            return new JsNew(functionRef, arguments);
+        }
+    };
+
     @NotNull
     public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
 
@@ -132,6 +144,7 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
         add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
+        add(pattern("jet", "PropertyMetadataImpl", "<init>"), PROPERTY_METADATA_IMPL);
         add(pattern("jet", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
 
         add(pattern("jet", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
