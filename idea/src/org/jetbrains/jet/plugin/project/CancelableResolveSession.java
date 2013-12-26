@@ -59,7 +59,7 @@ public class CancelableResolveSession implements KotlinCodeAnalyzer, Modificatio
         return computableWithProcessingCancel(new Computable<BindingContext>() {
             @Override
             public BindingContext compute() {
-                return resolveElementCache.resolveElement(element);
+                return resolveElementCache.resolveToElement(element);
             }
         });
     }

@@ -74,7 +74,7 @@ class KotlinLightClassContextCache(val project: Project) {
         }
 
         val resolveElementCache = CachedValuesManager.getManager(project).getCachedValue(project, cacheKey, provider, false)
-        return resolveElementCache?.resolveElement(classOrObject) ?: BindingContext.EMPTY
+        return resolveElementCache?.resolveToElement(classOrObject) ?: BindingContext.EMPTY
     }
 
 }

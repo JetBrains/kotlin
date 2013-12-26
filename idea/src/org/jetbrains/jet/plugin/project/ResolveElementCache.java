@@ -82,7 +82,7 @@ public class ResolveElementCache {
     }
 
     @NotNull
-    public BindingContext resolveElement(@NotNull JetElement jetElement) {
+    public BindingContext resolveToElement(@NotNull JetElement jetElement) {
         @SuppressWarnings("unchecked") JetElement elementOfAdditionalResolve = (JetElement) JetPsiUtil.getTopmostParentOfTypes(
                 jetElement,
                 JetNamedFunction.class,
