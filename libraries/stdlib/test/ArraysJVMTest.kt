@@ -60,9 +60,6 @@ class ArraysJVMTest {
     }
 
     test fun indexOf() {
-
-        println("RAZZLE - test indexOf START")
-
         expect(-1) { byteArray(1, 2, 3) indexOf 0 }
         expect(0) { byteArray(1, 2, 3) indexOf 1 }
         expect(1) { byteArray(1, 2, 3) indexOf 2 }
@@ -101,8 +98,6 @@ class ArraysJVMTest {
         expect(0) { booleanArray(true, false) indexOf true }
         expect(1) { booleanArray(true, false) indexOf false }
         expect(-1) { booleanArray(true) indexOf false }
-
-        println("RAZZLE - test indexOf FINISH")
     }
 
     test fun isEmpty() {
