@@ -59,7 +59,7 @@ public abstract class LazyJavaMemberScope(
 
     override fun getContainingDeclaration() = _containingDeclaration
 
-    private val memberIndex = c.storageManager.createLazyValue {
+    protected val memberIndex: NotNullLazyValue<MemberIndex> = c.storageManager.createLazyValue {
         computeMemberIndex()
     }
 

@@ -68,6 +68,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava("compiler/testData/codegen/boxWithJava/annotations/javaPropertyWithIntInitializer.kt");
         }
         
+        @TestMetadata("RetentionInJava.kt")
+        public void testRetentionInJava() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/annotations/RetentionInJava.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithJava/callableReference")

@@ -34,6 +34,8 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMember
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.jet.storage.get
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -146,11 +148,23 @@ public class LazyJavaClassMemberScope(
         jClass.getInnerClasses().valuesToMap { c -> c.getName() }
     }
 
+    private val enumEntryIndex = c.storageManager.createLazyValue {
+        jClass.getFields().filter { it.isEnumEntry() }.valuesToMap { f -> f.getName() }
+    }
+
     private val nestedClasses = c.storageManager.createMemoizedFunctionWithNullableValues {
         (name: Name) ->
         val jNestedClass = nestedClassIndex()[name]
-        if (jNestedClass == null)
-            null
+        if (jNestedClass == null) {
+            val field = enumEntryIndex()[name]
+            if (field != null) {
+                EnumEntrySyntheticClassDescriptor.create(c.storageManager, getContainingDeclaration(), name,
+                                                         c.storageManager.createLazyValue {
+                                                             memberIndex().getAllFieldNames() + memberIndex().getAllMetodNames()
+                                                         })
+            }
+            else null
+        }
         else {
             // TODO: this caching is a temporary workaround, should be replaced with properly caching the whole LazyJavaSubModule
             val alreadyResolved = c.javaResolverCache.getClass(jNestedClass)
@@ -164,7 +178,7 @@ public class LazyJavaClassMemberScope(
     }
 
     override fun getClassifier(name: Name): ClassifierDescriptor? = if (enumClassObject) null else nestedClasses(name)
-    override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet()
+    override fun getAllClassNames(): Collection<Name> = nestedClassIndex().keySet() + enumEntryIndex().keySet()
 
     // TODO
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
