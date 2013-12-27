@@ -47,4 +47,16 @@ public class KotlinAndJavaCheckerTest extends DaemonAnalyzerTestCase {
     public void testUsingKotlinPackageDeclarations() throws Exception {
         doTest(true, true, "UsingKotlinPackageDeclarations.java", "UsingKotlinPackageDeclarations.kt");
     }
+
+    public void testAssignKotlinClassToObjectInJava() throws Exception {
+        doTest(true, true, "AssignKotlinClassToObjectInJava.java", "AssignKotlinClassToObjectInJava.kt");
+    }
+
+    public void testAssignMappedKotlinType() throws Exception {
+        doTest(true, true, "AssignMappedKotlinType.java", "AssignMappedKotlinType.kt");
+    }
+
+    public void testUseKotlinSubclassesOfMappedTypes() throws Exception {
+        doTest(true, true, "UseKotlinSubclassesOfMappedTypes.java", "UseKotlinSubclassesOfMappedTypes.kt");
+    }
 }

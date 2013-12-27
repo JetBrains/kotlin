@@ -48,10 +48,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.ResolvePackage;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -518,19 +518,24 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
     @Override
     public boolean isInheritor(@NotNull PsiClass baseClass, boolean checkDeep) {
-        String qualifiedName;
-        if (baseClass instanceof KotlinLightClassForExplicitDeclaration) {
-            ClassDescriptor baseDescriptor = ((KotlinLightClassForExplicitDeclaration) baseClass).getDescriptor();
-            qualifiedName = baseDescriptor != null ? DescriptorUtils.getFqName(baseDescriptor).asString() : null;
-        }
-        else {
-            qualifiedName = baseClass.getQualifiedName();
+        // Java inheritor check doesn't work when trait (interface in Java) subclasses Java class and for Kotlin local classes
+        if (baseClass instanceof KotlinLightClassForExplicitDeclaration || (isInterface() && !baseClass.isInterface())) {
+            String qualifiedName;
+            if (baseClass instanceof KotlinLightClassForExplicitDeclaration) {
+                ClassDescriptor baseDescriptor = ((KotlinLightClassForExplicitDeclaration) baseClass).getDescriptor();
+                qualifiedName = baseDescriptor != null ? DescriptorUtils.getFqName(baseDescriptor).asString() : null;
+            }
+            else {
+                qualifiedName = baseClass.getQualifiedName();
+            }
+
+            ClassDescriptor thisDescriptor = getDescriptor();
+            return qualifiedName != null
+                   && thisDescriptor != null
+                   && checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep);
         }
 
-        ClassDescriptor thisDescriptor = getDescriptor();
-        return qualifiedName != null
-               && thisDescriptor != null
-               && ResolvePackage.checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep);
+        return super.isInheritor(baseClass, checkDeep);
     }
 
     @Override
@@ -615,5 +620,27 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         public boolean isInQualifiedNew() {
             return false;
         }
+    }
+
+    private static boolean checkSuperTypeByFQName(@NotNull ClassDescriptor classDescriptor, @NotNull String qualifiedName, Boolean deep) {
+        if (CommonClassNames.JAVA_LANG_OBJECT.equals(qualifiedName)) return true;
+
+        if (qualifiedName.equals(DescriptorUtils.getFqName(classDescriptor).asString())) return true;
+
+        for (JetType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
+            ClassifierDescriptor superDescriptor = superType.getConstructor().getDeclarationDescriptor();
+
+            if (superDescriptor instanceof ClassDescriptor) {
+                if (qualifiedName.equals(DescriptorUtils.getFqName(superDescriptor).asString())) return true;
+
+                if (deep) {
+                    if (checkSuperTypeByFQName((ClassDescriptor)superDescriptor, qualifiedName, true)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
