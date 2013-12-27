@@ -40,10 +40,12 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
         this.variableCall = variableCall;
     }
 
+    @NotNull
     public ResolvedCallWithTrace<FunctionDescriptor> getFunctionCall() {
         return functionCall;
     }
 
+    @NotNull
     public ResolvedCallWithTrace<VariableDescriptor> getVariableCall() {
         return variableCall;
     }
