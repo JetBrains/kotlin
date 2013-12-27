@@ -203,12 +203,16 @@ public inline fun <T, K> Array<out T>.groupByTo(result: MutableMap<K, MutableLis
  */
 public fun <T> Array<out T>.indexOf(item: T) : Int {
     if (item == null) {
-        for (i in 0..lastIndex) if (this[i] == null) {
-            return i
+        for (i in indices) {
+            if (this[i] == null) {
+                return i
+            }
         }
     } else {
-        for (i in 0..lastIndex) if (item == this[i]) {
-            return i
+        for (i in indices) {
+            if (item == this[i]) {
+                return i
+            }
         }
     }
     return -1

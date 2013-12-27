@@ -187,8 +187,10 @@ public inline fun <K> ByteArray.groupByTo(result: MutableMap<K, MutableList<Byte
  * Returns first index of item, or -1 if the array does not contain item
  */
 public fun ByteArray.indexOf(item: Byte) : Int {
-    for (i in 0..lastIndex) if (item == this[i]) {
-        return i
+    for (i in indices) {
+        if (item == this[i]) {
+            return i
+        }
     }
     return -1
 }

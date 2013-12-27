@@ -33,12 +33,16 @@ fun arrays(): List<GenericFunction> {
         body {
             """
                 if (item == null) {
-                    for (i in 0..lastIndex) if (this[i] == null) {
-                        return i
+                    for (i in indices) {
+                        if (this[i] == null) {
+                            return i
+                        }
                     }
                 } else {
-                    for (i in 0..lastIndex) if (item == this[i]) {
-                        return i
+                    for (i in indices) {
+                        if (item == this[i]) {
+                            return i
+                        }
                     }
                 }
                 return -1
@@ -46,7 +50,7 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
-    // implementation for PrimitiveArrays, because they cannot hold null elements
+    // implementation for PrimitiveArrays is separate from Arrays, because they cannot hold null elements
     templates add f("indexOf(item: T)") {
         absentFor(Arrays)
         isInline = false
@@ -54,8 +58,10 @@ fun arrays(): List<GenericFunction> {
         returns("Int")
         body {
             """
-                for (i in 0..lastIndex) if (item == this[i]) {
-                    return i
+                for (i in indices) {
+                    if (item == this[i]) {
+                        return i
+                    }
                 }
                 return -1
            """

@@ -187,8 +187,10 @@ public inline fun <K> LongArray.groupByTo(result: MutableMap<K, MutableList<Long
  * Returns first index of item, or -1 if the array does not contain item
  */
 public fun LongArray.indexOf(item: Long) : Int {
-    for (i in 0..lastIndex) if (item == this[i]) {
-        return i
+    for (i in indices) {
+        if (item == this[i]) {
+            return i
+        }
     }
     return -1
 }

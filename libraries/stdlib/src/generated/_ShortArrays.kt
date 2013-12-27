@@ -187,8 +187,10 @@ public inline fun <K> ShortArray.groupByTo(result: MutableMap<K, MutableList<Sho
  * Returns first index of item, or -1 if the array does not contain item
  */
 public fun ShortArray.indexOf(item: Short) : Int {
-    for (i in 0..lastIndex) if (item == this[i]) {
-        return i
+    for (i in indices) {
+        if (item == this[i]) {
+            return i
+        }
     }
     return -1
 }
