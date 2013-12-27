@@ -171,6 +171,7 @@ public class TranslationContext {
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        descriptorUsedInThisContext(descriptor); // TODO drop this
         return staticContext.getNameForDescriptor(descriptor);
     }
 
@@ -186,6 +187,7 @@ public class TranslationContext {
 
     @NotNull
     public JsNameRef getQualifiedReference(@NotNull DeclarationDescriptor descriptor) {
+        descriptorUsedInThisContext(descriptor); // TODO drop this
         return staticContext.getQualifiedReference(descriptor);
     }
 
@@ -261,9 +263,7 @@ public class TranslationContext {
 
     @Nullable
     public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        if (usageTracker != null) {
-            usageTracker.triggerUsed(descriptor);
-        }
+        descriptorUsedInThisContext(descriptor);
         return aliasingContext.getAliasForDescriptor(descriptor);
     }
 
@@ -278,9 +278,7 @@ public class TranslationContext {
             effectiveDescriptor = descriptor;
         }
 
-        if (usageTracker != null) {
-            usageTracker.triggerUsed(effectiveDescriptor);
-        }
+        descriptorUsedInThisContext(effectiveDescriptor);
 
         JsExpression alias = aliasingContext.getAliasForDescriptor(effectiveDescriptor);
         return alias == null ? JsLiteral.THIS : alias;
@@ -296,5 +294,11 @@ public class TranslationContext {
 
     public JsNameRef define(String name, JsExpression expression) {
         return getDefinitionPlace().define(name, expression);
+    }
+
+    private void descriptorUsedInThisContext(DeclarationDescriptor effectiveDescriptor) {
+        if (usageTracker != null) {
+            usageTracker.triggerUsed(effectiveDescriptor);
+        }
     }
 }

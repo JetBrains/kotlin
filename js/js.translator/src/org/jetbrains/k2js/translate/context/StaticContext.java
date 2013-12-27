@@ -164,7 +164,6 @@ public final class StaticContext {
                              packageFqName.isRoot() ? null : getQualifierForParentPackage(packageFqName.parent()));
     }
 
-    // TODO: usage tracker
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         JsName name = names.get(descriptor.getOriginal());

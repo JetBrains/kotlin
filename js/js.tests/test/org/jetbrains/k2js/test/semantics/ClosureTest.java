@@ -72,4 +72,16 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void testClosureThisInConstructor() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testClosureFunctionAsArgument() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureLocalFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureLocalLiteralFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
