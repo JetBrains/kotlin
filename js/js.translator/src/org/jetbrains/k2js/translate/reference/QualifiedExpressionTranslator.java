@@ -59,7 +59,7 @@ public final class QualifiedExpressionTranslator {
             @NotNull CallType callType,
             @NotNull TranslationContext context
     ) {
-        if (ReferenceTranslator.canBePropertyGetterCall(selector, context)) {
+        if (ReferenceTranslator.canBePropertyAccess(selector, context)) {
             assert selector instanceof JetSimpleNameExpression : "Selectors for properties must be simple names.";
             return new SimpleWrappedVariableAccessTranslator(context, (JetSimpleNameExpression)selector, receiver).translateAsGet();
         }

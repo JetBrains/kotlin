@@ -84,34 +84,16 @@ public final class ReferenceTranslator {
         return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }
 
-    // TODO: drop this
-    private static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,
-            @NotNull TranslationContext context) {
-        JetSimpleNameExpression selector = getSelectorAsSimpleName(expression);
-        assert selector != null : "Only names are allowed after the dot";
-        return canBePropertyGetterCall(selector, context);
-    }
-
-    private static boolean canBePropertyGetterCall(@NotNull JetSimpleNameExpression expression,
-            @NotNull TranslationContext context) {
-        return (getDescriptorForReferenceExpression
-                        (context.bindingContext(), expression) instanceof PropertyDescriptor);
-    }
-
-    public static boolean canBePropertyGetterCall(@NotNull JetExpression expression,
-            @NotNull TranslationContext context) {
+    public static boolean canBePropertyAccess(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+        JetSimpleNameExpression simpleNameExpression = null;
         if (expression instanceof JetQualifiedExpression) {
-            return canBePropertyGetterCall((JetQualifiedExpression) expression, context);
+            simpleNameExpression = getSelectorAsSimpleName((JetQualifiedExpression) expression);
         }
-        if (expression instanceof JetSimpleNameExpression) {
-            return canBePropertyGetterCall((JetSimpleNameExpression) expression, context);
+        else if (expression instanceof JetSimpleNameExpression) {
+            simpleNameExpression = (JetSimpleNameExpression) expression;
         }
-        return false;
-    }
-
-    public static boolean canBePropertyAccess(@NotNull JetExpression expression,
-            @NotNull TranslationContext context) {
-        return canBePropertyGetterCall(expression, context);
+        return simpleNameExpression != null &&
+               (getDescriptorForReferenceExpression(context.bindingContext(), simpleNameExpression) instanceof PropertyDescriptor);
     }
 
 }
