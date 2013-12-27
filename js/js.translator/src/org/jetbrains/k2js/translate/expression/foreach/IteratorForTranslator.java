@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetForExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.reference.CallBuilder;
+import org.jetbrains.k2js.translate.reference.ReferencePackage;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
@@ -73,9 +73,6 @@ public final class IteratorForTranslator extends ForTranslator {
     @NotNull
     private JsExpression translateMethodInvocation(@Nullable JsExpression receiver,
             @NotNull ResolvedCall<FunctionDescriptor> resolvedCall) {
-        return CallBuilder.build(context())
-                .resolvedCall(resolvedCall)
-                .receiver(receiver)
-                .translate();
+        return ReferencePackage.buildCall(context(), resolvedCall, receiver);
     }
 }

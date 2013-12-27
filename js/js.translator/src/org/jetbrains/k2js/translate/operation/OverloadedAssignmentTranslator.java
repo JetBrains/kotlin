@@ -20,8 +20,9 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.reference.CallBuilder;
+import org.jetbrains.k2js.translate.reference.ReferencePackage;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
@@ -33,15 +34,12 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
     }
 
     @NotNull
-    private final FunctionDescriptor operationDescriptor;
+    private final ResolvedCall<? extends FunctionDescriptor> resolvedCall;
 
     private OverloadedAssignmentTranslator(@NotNull JetBinaryExpression expression,
             @NotNull TranslationContext context) {
         super(expression, context);
-        FunctionDescriptor functionDescriptor =
-                BindingUtils.getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
-        assert functionDescriptor != null : "";
-        this.operationDescriptor = functionDescriptor;
+        resolvedCall =  BindingUtils.getFunctionResolvedCall(context.bindingContext(), expression.getOperationReference());
     }
 
     @NotNull
@@ -59,10 +57,6 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression overloadedMethodInvocation() {
-        return CallBuilder.build(context())
-                .descriptor(operationDescriptor)
-                .receiver(accessTranslator.translateAsGet())
-                .args(right)
-                .translate();
+        return ReferencePackage.buildCall(context(), resolvedCall, accessTranslator.translateAsGet());
     }
 }

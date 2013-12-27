@@ -159,7 +159,13 @@ public final class BindingUtils {
     public static ResolvedCall<? extends FunctionDescriptor> getResolvedCallForCallExpression(@NotNull BindingContext context,
             @NotNull JetCallExpression expression) {
         JetExpression calleeExpression = PsiUtils.getCallee(expression);
-        ResolvedCall<?> resolvedCall = getResolvedCall(context, calleeExpression);
+        return getFunctionResolvedCall(context, calleeExpression);
+    }
+
+    @NotNull
+    public static ResolvedCall<? extends FunctionDescriptor> getFunctionResolvedCall(@NotNull BindingContext context,
+            @NotNull JetExpression expression) {
+        ResolvedCall<?> resolvedCall = getResolvedCall(context, expression);
         assert resolvedCall.getResultingDescriptor() instanceof FunctionDescriptor
                 : message(expression, "ResolvedCall for this expression must be ResolvedCall<? extends FunctionDescriptor>");
         return (ResolvedCall<? extends FunctionDescriptor>) resolvedCall;

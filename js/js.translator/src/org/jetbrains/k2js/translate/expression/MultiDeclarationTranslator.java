@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.reference.CallBuilder;
+import org.jetbrains.k2js.translate.reference.ReferencePackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,10 +78,7 @@ public class MultiDeclarationTranslator extends AbstractTranslator {
         for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
             ResolvedCall<FunctionDescriptor> entryInitCall =  context().bindingContext().get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
             assert entryInitCall != null : "Entry init call must be not null";
-            JsExpression entryInitializer = CallBuilder.build(context())
-                    .receiver(multiObjNameRef)
-                    .resolvedCall(entryInitCall)
-                    .translate();
+            JsExpression entryInitializer = ReferencePackage.buildCall(context(), entryInitCall, multiObjNameRef);
 
             VariableDescriptor descriptor = BindingContextUtils.getNotNull( context().bindingContext(), BindingContext.VARIABLE, entry);
             JsName name =  context().getNameForDescriptor(descriptor);
