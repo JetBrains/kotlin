@@ -27,6 +27,9 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.psi.JetSuperExpression
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import com.google.dart.compiler.backend.js.ast.JsName
 
 
 open class BaseCallInfo(
@@ -38,7 +41,6 @@ open class BaseCallInfo(
         val nullableReceiverForSafeCall: JsExpression?
 ) {
     val callableDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
-    val functionName = context.getNameForDescriptor(callableDescriptor)
 
     fun isExtension(): Boolean = receiverObject != null
     fun isMemberCall(): Boolean = thisObject != null
@@ -53,10 +55,37 @@ open class BaseCallInfo(
     // TODO: toString for debug
 }
 
-class BaseFunctionCallInfo(
-        callInfo: BaseCallInfo,
-        val argumentsInfo: CallArgumentTranslator.ArgumentsInfo
-) : BaseCallInfo(callInfo.context, callInfo.resolvedCall, callInfo.thisObject, callInfo.receiverObject, callInfo.nullableReceiverForSafeCall)
+private open class CallInfoWrapper(callInfo: BaseCallInfo) :
+    BaseCallInfo(callInfo.context, callInfo.resolvedCall, callInfo.thisObject, callInfo.receiverObject, callInfo.nullableReceiverForSafeCall)
+
+// if setTo == null, it is get access
+class VariableAccessInfo(callInfo: BaseCallInfo, private val setTo: JsExpression? = null): CallInfoWrapper(callInfo) {
+    val variableDescriptor = super.callableDescriptor as VariableDescriptor
+    val propertyName : JsName
+        get() {
+            return context.getNameForDescriptor(variableDescriptor)
+        }
+
+    fun isGetAccess(): Boolean = setTo == null
+
+    fun getSetToExpression(): JsExpression {
+        if (isGetAccess()) {
+            throw IllegalStateException("This is get, setTo is null. callInfo: $this")
+        }
+        return setTo!!
+    }
+}
+
+class FunctionCallInfo(callInfo: BaseCallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfoWrapper(callInfo) {
+    val functionName : JsName
+        get() { // getter, because for several descriptors name is undefined. Example: {(a) -> a+1}(3)
+            return context.getNameForDescriptor(callableDescriptor)
+        }
+
+    fun hasSpreadOperator() : Boolean {
+        return argumentsInfo.isHasSpreadOperator()
+    }
+}
 
 private fun TranslationContext.getThisObject(receiverValue: ReceiverValue): JsExpression {
     assert(receiverValue.exists(), "receiverValue must be exist here")
@@ -117,13 +146,18 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out CallableDescri
     return mainGetCallInfo(resolvedCall, receiver, null)
 }
 
-fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver: JsExpression?): BaseFunctionCallInfo {
+fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver: JsExpression?): FunctionCallInfo {
     return getCallInfo(resolvedCall, receiver, null);
 }
 
 // two receiver need only for FunctionCall in VariableAsFunctionResolvedCall
-fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): BaseFunctionCallInfo {
+fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): FunctionCallInfo {
     val callInfo = mainGetCallInfo(resolvedCall, receiver1, receiver2)
-    val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, receiver1, this)
-    return BaseFunctionCallInfo(callInfo, argumentsInfo)
+
+    val receiverForArgsTranslator = if (resolvedCall.getExplicitReceiverKind() == BOTH_RECEIVERS) // TODO: remove this hack
+        receiver2
+    else
+        receiver1
+    val argumentsInfo = CallArgumentTranslator.translate(resolvedCall, receiverForArgsTranslator, this)
+    return FunctionCallInfo(callInfo, argumentsInfo)
 }
