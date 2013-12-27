@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.reference;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -31,7 +32,7 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
     @NotNull
     protected final JetCallExpression expression;
     @NotNull
-    protected final ResolvedCall<?> resolvedCall;
+    protected final ResolvedCall<? extends FunctionDescriptor> resolvedCall;
     @Nullable
     protected final JsExpression receiver;
     @NotNull

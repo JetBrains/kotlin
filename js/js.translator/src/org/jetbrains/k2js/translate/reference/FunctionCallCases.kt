@@ -97,6 +97,28 @@ class DelegateFunctionIntrinsic(callInfo: FunctionCallInfo) : FunctionCallCase(c
     }
 }
 
+class InvokeIntrinsic(callInfo: FunctionCallInfo) : FunctionCallCase(callInfo) {
+    class object {
+        fun canApply(callInfo: FunctionCallInfo): Boolean {
+            if (!callInfo.callableDescriptor.getName().asString().equals("invoke"))
+                return false
+            val parameterCount = callInfo.callableDescriptor.getValueParameters().size()
+            val funDeclaration = callInfo.callableDescriptor.getContainingDeclaration()
+            return funDeclaration == ((if (callInfo.callableDescriptor.getReceiverParameter() == null)
+                KotlinBuiltIns.getInstance().getFunction(parameterCount)
+            else
+                KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount)))
+        }
+    }
+
+    override fun FunctionCallInfo.thisObject(): JsExpression {
+        return JsInvocation(thisObject, argumentsInfo.getTranslateArguments())
+    }
+    override fun FunctionCallInfo.bothReceivers(): JsExpression {
+        return JsInvocation(thisObject, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
+    }
+}
+
 class ConstructorCallCase(callInfo: FunctionCallInfo) : FunctionCallCase(callInfo) {
     override fun FunctionCallInfo.noReceivers(): JsExpression {
         return JsNew(context.getQualifiedReference(callableDescriptor), argumentsInfo.getTranslateArguments())
@@ -138,6 +160,7 @@ fun createFunctionCases(): CallCaseDispatcher<FunctionCallCase, FunctionCallInfo
     val caseDispatcher = CallCaseDispatcher<FunctionCallCase, FunctionCallInfo>()
 
     caseDispatcher.addCase(::ExpressionAsFunctionDescriptorIntrinsic) {ExpressionAsFunctionDescriptorIntrinsic.canApply(it)}
+    caseDispatcher.addCase(::InvokeIntrinsic) {InvokeIntrinsic.canApply(it)}
 
     caseDispatcher.addCase { DelegateFunctionIntrinsic(it).intrinsic() }
 

@@ -156,10 +156,13 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static ResolvedCall<?> getResolvedCallForCallExpression(@NotNull BindingContext context,
+    public static ResolvedCall<? extends FunctionDescriptor> getResolvedCallForCallExpression(@NotNull BindingContext context,
             @NotNull JetCallExpression expression) {
         JetExpression calleeExpression = PsiUtils.getCallee(expression);
-        return getResolvedCall(context, calleeExpression);
+        ResolvedCall<?> resolvedCall = getResolvedCall(context, calleeExpression);
+        assert resolvedCall.getResultingDescriptor() instanceof FunctionDescriptor
+                : message(expression, "ResolvedCall for this expression must be ResolvedCall<? extends FunctionDescriptor>");
+        return (ResolvedCall<? extends FunctionDescriptor>) resolvedCall;
     }
 
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {

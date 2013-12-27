@@ -19,9 +19,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
@@ -31,12 +29,9 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
-import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
@@ -47,7 +42,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.generateInvocationArguments;
 
 public final class TopLevelFIF extends CompositeFIF {
     @NotNull
@@ -139,46 +133,6 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
         add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
         add(pattern("jet", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
-        add(new DescriptorPredicate() {
-                @Override
-                public boolean apply(@NotNull FunctionDescriptor descriptor) {
-                    if (!descriptor.getName().asString().equals("invoke")) {
-                        return false;
-                    }
-                    int parameterCount = descriptor.getValueParameters().size();
-                    DeclarationDescriptor fun = descriptor.getContainingDeclaration();
-                    return fun == (descriptor.getReceiverParameter() == null
-                                   ? KotlinBuiltIns.getInstance().getFunction(parameterCount)
-                                   : KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount));
-                }
-            }, new CallParametersAwareFunctionIntrinsic() {
-                @NotNull
-                @Override
-                public JsExpression apply(
-                        @NotNull CallTranslator callTranslator,
-                        @NotNull List<JsExpression> arguments,
-                        @NotNull TranslationContext context
-                ) {
-                    JsExpression thisExpression = callTranslator.getCallParameters().getThisObject();
-                    JsExpression functionReference = callTranslator.getCallParameters().getFunctionReference();
-                    if (thisExpression == null) {
-                        return new JsInvocation(functionReference, arguments);
-                    }
-                    else if (callTranslator.getResolvedCall().getReceiverArgument().exists()) {
-                        return callTranslator.extensionFunctionCall(false);
-                    }
-                    else {
-                        CallableDescriptor descriptor = callTranslator.getResolvedCall().getCandidateDescriptor();
-                        if (descriptor.getName().asString().equals("invoke") &&
-                            functionReference instanceof JsNameRef &&
-                            ((JsNameRef) functionReference).getIdent().startsWith("invoke")) {
-                                return callTranslator.explicitInvokeCall();
-                        }
-                        return new JsInvocation(Namer.getFunctionCallRef(functionReference), generateInvocationArguments(thisExpression, arguments));
-                    }
-                }
-            }
-        );
 
         add(pattern("jet", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
         add(pattern("js", "set").receiverExists(), NATIVE_MAP_SET);
