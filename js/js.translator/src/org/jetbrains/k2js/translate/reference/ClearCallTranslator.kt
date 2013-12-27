@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.k2js.translate.context.Namer
+import org.jetbrains.k2js.translate.utils.ErrorReportingUtils
 
 
 val functionCallCases: CallCaseDispatcher<FunctionCallCase, FunctionCallInfo> = createFunctionCases()
@@ -179,9 +180,16 @@ trait DelegateIntrinsic<I : CallInfo> : CallCase<I> {
     fun I.getArgs(): List<JsExpression>
 
     fun I.intrinsic(): JsExpression? {
-        val callType = if (resolvedCall.isSafeCall()) CallType.SAFE else CallType.NORMAL
-        val translator = CallTranslator(getReceiver(), null, getArgs(), resolvedCall, getDescriptor(), callType, context)
-        return translator.intrinsicInvocation()
+        val descriptor = getDescriptor();
+
+        // Now intrinsic support only FunctionDescriptor. See DelegatePropertyAccessIntrinsic.getDescriptor()
+        if (descriptor is FunctionDescriptor) {
+            val intrinsic = context.intrinsics().getFunctionIntrinsics().getIntrinsic(descriptor)
+            if (intrinsic.exists()) {
+                return intrinsic.apply(this, getArgs(), context)
+            }
+        }
+        return null
     }
 
     fun intrinsic(): JsExpression? {

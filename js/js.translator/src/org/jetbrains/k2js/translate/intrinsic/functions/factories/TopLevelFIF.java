@@ -34,7 +34,7 @@ import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
-import org.jetbrains.k2js.translate.reference.CallTranslator;
+import org.jetbrains.k2js.translate.reference.CallInfo;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
@@ -172,9 +172,9 @@ public final class TopLevelFIF extends CompositeFIF {
 
         @NotNull
         @Override
-        public JsExpression apply(@NotNull CallTranslator callTranslator, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
-            ExpressionReceiver expressionReceiver = getExpressionReceiver(callTranslator.getResolvedCall());
-            JsExpression thisOrReceiver = callTranslator.getCallParameters().getThisOrReceiverOrNull();
+        public JsExpression apply(@NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
+            ExpressionReceiver expressionReceiver = getExpressionReceiver(callInfo.getResolvedCall());
+            JsExpression thisOrReceiver = getThisOrReceiverOrNull(callInfo);
             assert thisOrReceiver != null;
             if (expressionReceiver != null) {
                 JetExpression expression = expressionReceiver.getExpression();
@@ -212,11 +212,11 @@ public final class TopLevelFIF extends CompositeFIF {
         @NotNull
         @Override
         public JsExpression apply(
-                @NotNull CallTranslator callTranslator,
+                @NotNull CallInfo callInfo,
                 @NotNull List<JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
-            JetType keyType = callTranslator.getResolvedCall().getTypeArguments().values().iterator().next();
+            JetType keyType = callInfo.getResolvedCall().getTypeArguments().values().iterator().next();
             Name keyTypeName = JsDescriptorUtils.getNameIfStandardType(keyType);
             String collectionClassName;
             if (keyTypeName != null &&
@@ -229,7 +229,7 @@ public final class TopLevelFIF extends CompositeFIF {
                 collectionClassName = isSet ? "ComplexHashSet" : "ComplexHashMap";
             }
 
-            return callTranslator.createConstructorCallExpression(context.namer().kotlin(collectionClassName));
+            return new JsNew(context.namer().kotlin(collectionClassName), arguments);
         }
     }
 }

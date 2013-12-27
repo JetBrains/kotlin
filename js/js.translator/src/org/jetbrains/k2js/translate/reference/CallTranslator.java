@@ -115,17 +115,17 @@ public final class CallTranslator extends AbstractTranslator {
 
     @Nullable
     public JsExpression intrinsicInvocation() {
-        if (descriptor instanceof FunctionDescriptor) {
-            try {
-                FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
-                if (intrinsic.exists()) {
-                    return intrinsic.apply(this, arguments, context());
-                }
-            }
-            catch (RuntimeException e) {
-                throw ErrorReportingUtils.reportErrorWithLocation(e, descriptor, bindingContext());
-            }
-        }
+        //if (descriptor instanceof FunctionDescriptor) {
+        //    try {
+        //        FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
+        //        if (intrinsic.exists()) {
+        //            return intrinsic.apply(this, arguments, context());
+        //        }
+        //    }
+        //    catch (RuntimeException e) {
+        //        throw ErrorReportingUtils.reportErrorWithLocation(e, descriptor, bindingContext());
+        //    }
+        //}
         return null;
     }
 
