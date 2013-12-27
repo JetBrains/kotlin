@@ -25,18 +25,18 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
-    templates add f("indexOf(item : T)") {
+    templates add f("indexOf(item: T)") {
         isInline = false
         doc = "Returns first index of item, or -1 if the array does not contain item"
         returns("Int")
         body {
             """
                 if (item == null) {
-                    for (i in 0..size - 1) if (this[i] == null) {
+                    for (i in 0..lastIndex) if (this[i] == null) {
                         return i
                     }
                 } else {
-                    for (i in 0..size - 1) if (item == this[i]) {
+                    for (i in 0..lastIndex) if (item == this[i]) {
                         return i
                     }
                 }
