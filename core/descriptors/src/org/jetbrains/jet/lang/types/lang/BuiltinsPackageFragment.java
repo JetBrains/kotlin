@@ -35,7 +35,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     public BuiltinsPackageFragment(@NotNull StorageManager storageManager, @NotNull ModuleDescriptor module) {
         super(Collections.<AnnotationDescriptor>emptyList(), KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
         this.module = module;
-        nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
+        nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(getFqName())));
 
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
@@ -45,7 +45,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
 
     @NotNull
     private ProtoBuf.Package loadPackage() {
-        String packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(this);
+        String packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(getFqName());
         InputStream stream = getStream(packageFilePath);
         try {
             return ProtoBuf.Package.parseFrom(stream);
@@ -139,7 +139,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
                 @Override
                 @NotNull
                 public Collection<Name> invoke() {
-                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsPackageFragment.this));
+                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(getFqName()));
 
                     try {
                         DataInputStream data = new DataInputStream(in);

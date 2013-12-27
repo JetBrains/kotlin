@@ -26,8 +26,8 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PackageViewDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -62,22 +62,24 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 JetTestUtils.createFile(ktFile.getName(), FileUtil.loadFile(ktFile), getProject())
         ), getEnvironment());
 
-        PackageFragmentDescriptor testPackage = DescriptorUtils.getExactlyOnePackageFragment(
-                moduleDescriptor, FqName.topLevel(TEST_PACKAGE_NAME));
+        PackageViewDescriptor testPackage = moduleDescriptor.getPackage(FqName.topLevel(TEST_PACKAGE_NAME));
+        assert testPackage != null : "Test package not found: " + TEST_PACKAGE_NAME;
 
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         PackageFragmentDescriptor deserialized = serializeAndDeserialize(javaDescriptorResolver, testPackage);
 
+        PackageViewDescriptorImpl deserializedPackageView =
+                new PackageViewDescriptorImpl(moduleDescriptor, deserialized.getFqName(), Arrays.asList(deserialized));
         RecursiveDescriptorComparator
-                .validateAndCompareDescriptors(testPackage, deserialized, RecursiveDescriptorComparator.RECURSIVE, null);
+                .validateAndCompareDescriptors(testPackage, deserializedPackageView, RecursiveDescriptorComparator.RECURSIVE, null);
     }
 
     @NotNull
     private static PackageFragmentDescriptor serializeAndDeserialize(
             @NotNull JavaDescriptorResolver javaDescriptorResolver,
-            @NotNull PackageFragmentDescriptor testPackage
+            @NotNull PackageViewDescriptor testPackage
     ) {
         List<ClassDescriptor> classesAndObjects = getAllClassesAndObjects(testPackage.getMemberScope());
 
@@ -137,9 +139,11 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
     }
 
     @NotNull
-    private static byte[] serializePackage(@NotNull PackageFragmentDescriptor descriptor) {
+    private static byte[] serializePackage(@NotNull PackageViewDescriptor descriptor) {
         DescriptorSerializer serializer = new DescriptorSerializer();
-        ProtoBuf.Package proto = serializer.packageProto(Collections.singleton(descriptor)).build();
+        List<PackageFragmentDescriptor> fragments =
+                descriptor.getModule().getPackageFragmentProvider().getPackageFragments(descriptor.getFqName());
+        ProtoBuf.Package proto = serializer.packageProto(fragments).build();
         PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), proto);
         return data.toBytes();
     }

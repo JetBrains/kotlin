@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.types.lang;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -56,20 +55,17 @@ public class BuiltInsSerializationUtil {
     }
 
     @NotNull
-    public static String getPackageFilePath(@NotNull PackageFragmentDescriptor packageFragment) {
-        FqName fqName = packageFragment.getFqName();
+    public static String getPackageFilePath(@NotNull FqName fqName) {
         return packageFqNameToPath(fqName) + "/" + PACKAGE_FILE_NAME;
     }
 
     @NotNull
-    public static String getNameTableFilePath(@NotNull PackageFragmentDescriptor packageFragment) {
-        FqName fqName = packageFragment.getFqName();
+    public static String getNameTableFilePath(@NotNull FqName fqName) {
         return packageFqNameToPath(fqName) + "/" + NAME_TABLE_FILE_NAME;
     }
 
     @NotNull
-    public static String getClassNamesFilePath(@NotNull PackageFragmentDescriptor packageFragmentDescriptor) {
-        FqName fqName = packageFragmentDescriptor.getFqName();
+    public static String getClassNamesFilePath(@NotNull FqName fqName) {
         return packageFqNameToPath(fqName) + "/" + CLASS_NAMES_FILE_NAME;
     }
 

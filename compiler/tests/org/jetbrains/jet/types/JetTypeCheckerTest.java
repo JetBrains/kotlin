@@ -29,13 +29,12 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -578,8 +577,10 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 getEnvironment()
         );
 
-        PackageFragmentDescriptor testData = DescriptorUtils.getExactlyOnePackageFragment(moduleDescriptor, new FqName("testData"));
-        return addImports(testData.getMemberScope());
+        FqName fqName = new FqName("testData");
+        PackageViewDescriptor packageView = moduleDescriptor.getPackage(fqName);
+        assertNotNull("Package " + fqName + " not found", packageView);
+        return addImports(packageView.getMemberScope());
     }
 
     @SuppressWarnings("ConstantConditions")
