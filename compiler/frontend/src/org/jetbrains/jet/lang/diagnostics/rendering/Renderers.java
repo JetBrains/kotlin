@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
@@ -32,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -47,6 +49,8 @@ import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKin
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND;
 
 public class Renderers {
+    private static final Logger LOG = Logger.getInstance(Renderers.class);
+
     public static final Renderer<Object> TO_STRING = new Renderer<Object>() {
         @NotNull
         @Override
@@ -78,7 +82,7 @@ public class Renderers {
             return element.getText();
         }
     };
-    
+
     public static final Renderer<JetClassOrObject> RENDER_CLASS_OR_OBJECT = new Renderer<JetClassOrObject>() {
         @NotNull
         @Override
@@ -169,7 +173,8 @@ public class Renderers {
 
     public static TabledDescriptorRenderer renderConflictingSubstitutionsInferenceError(InferenceErrorData inferenceErrorData,
             TabledDescriptorRenderer result) {
-        assert inferenceErrorData.constraintSystem.getStatus().hasConflictingConstraints();
+        LOG.assertTrue(inferenceErrorData.constraintSystem.getStatus().hasConflictingConstraints(), renderDebugMessage(
+                "Conflicting substitutions inference error renderer is applied for incorrect status", inferenceErrorData));
 
         Collection<CallableDescriptor> substitutedDescriptors = Lists.newArrayList();
         Collection<TypeSubstitutor> substitutors = ConstraintsUtil.getSubstitutorsForConflictingParameters(
@@ -180,7 +185,10 @@ public class Renderers {
         }
 
         TypeParameterDescriptor firstConflictingParameter = ConstraintsUtil.getFirstConflictingParameter(inferenceErrorData.constraintSystem);
-        assert firstConflictingParameter != null;
+        if (firstConflictingParameter == null) {
+            LOG.error(renderDebugMessage("There is no conflicting parameter for 'conflicting constraints' error.", inferenceErrorData));
+            return result;
+        }
 
         result.text(newText()
                             .normal("Cannot infer type parameter ")
@@ -230,8 +238,7 @@ public class Renderers {
             TabledDescriptorRenderer renderer) {
         Predicate<ConstraintPosition> isErrorPosition = new Predicate<ConstraintPosition>() {
             @Override
-            public boolean apply(@Nullable ConstraintPosition constraintPosition) {
-                assert constraintPosition != null;
+            public boolean apply(ConstraintPosition constraintPosition) {
                 return inferenceErrorData.constraintSystem.getStatus().hasTypeConstructorMismatchAt(constraintPosition);
             }
         };
@@ -245,7 +252,7 @@ public class Renderers {
     }
 
     public static TabledDescriptorRenderer renderNoInformationForParameterError(InferenceErrorData inferenceErrorData,
-            TabledDescriptorRenderer renderer) {
+            TabledDescriptorRenderer result) {
         TypeParameterDescriptor firstUnknownParameter = null;
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.constraintSystem.getTypeVariables()) {
             if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).isEmpty()) {
@@ -253,9 +260,12 @@ public class Renderers {
                 break;
             }
         }
-        assert firstUnknownParameter != null;
+        if (firstUnknownParameter == null) {
+            LOG.error(renderDebugMessage("There is no unknown parameter for 'no information for parameter error'.", inferenceErrorData));
+            return result;
+        }
 
-        return renderer
+        return result
                 .text(newText().normal("Not enough information to infer parameter ")
                               .strong(firstUnknownParameter.getName())
                               .normal(" in "))
@@ -266,12 +276,11 @@ public class Renderers {
 
     @NotNull
     public static TabledDescriptorRenderer renderUpperBoundViolatedInferenceError(InferenceErrorData inferenceErrorData, TabledDescriptorRenderer result) {
-        String errorMessage = "Rendering 'upper bound violated' error for " + inferenceErrorData.descriptor;
-
         TypeParameterDescriptor typeParameterDescriptor = null;
         ConstraintSystemImpl constraintSystem = (ConstraintSystemImpl) inferenceErrorData.constraintSystem;
         ConstraintSystemStatus status = constraintSystem.getStatus();
-        assert status.hasViolatedUpperBound();
+        LOG.assertTrue(status.hasViolatedUpperBound(), renderDebugMessage(
+                "Upper bound violated renderer is applied for incorrect status", inferenceErrorData));
 
         ConstraintSystem systemWithoutWeakConstraints = constraintSystem.getSystemWithoutWeakConstraints();
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.descriptor.getTypeParameters()) {
@@ -282,10 +291,18 @@ public class Renderers {
         if (typeParameterDescriptor == null && status.hasConflictingConstraints()) {
             return renderConflictingSubstitutionsInferenceError(inferenceErrorData, result);
         }
-        assert typeParameterDescriptor != null : errorMessage;
+        if (typeParameterDescriptor == null) {
+            LOG.error(renderDebugMessage("There is no type parameter with violated upper bound for 'upper bound violated' error",
+                                         inferenceErrorData));
+            return result;
+        }
 
         JetType inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeParameterDescriptor).getValue();
-        assert inferredValueForTypeParameter != null : errorMessage;
+        if (inferredValueForTypeParameter == null) {
+            LOG.error(renderDebugMessage("System without weak constraints is not successful, there is no value for type parameter " +
+                                         typeParameterDescriptor.getName() + "\n: " + systemWithoutWeakConstraints, inferenceErrorData));
+            return result;
+        }
 
         result.text(newText().normal("Type parameter bound for ").strong(typeParameterDescriptor.getName()).normal(" in "))
                 .table(newTable().
@@ -301,7 +318,11 @@ public class Renderers {
                 break;
             }
         }
-        assert violatedUpperBound != null : errorMessage;
+        if (violatedUpperBound == null) {
+            LOG.error(renderDebugMessage("Type parameter (chosen as violating its upper bound)" + typeParameterDescriptor.getName() +
+                                         " violates no bounds after substitution", inferenceErrorData));
+            return result;
+        }
 
         Renderer<JetType> typeRenderer = result.getTypeRenderer();
         result.text(newText()
@@ -383,6 +404,34 @@ public class Renderers {
                 return renderer.render(t);
             }
         };
+    }
+
+    @NotNull
+    private static String renderDebugMessage(String message, InferenceErrorData inferenceErrorData) {
+        StringBuilder result = new StringBuilder();
+        result.append(message);
+        result.append("\nConstraint system: \n");
+        result.append(RENDER_CONSTRAINT_SYSTEM.render(inferenceErrorData.constraintSystem));
+        result.append("\nDescriptor:\n");
+        result.append(inferenceErrorData.descriptor);
+        result.append("\nExpected type:\n");
+        if (TypeUtils.noExpectedType(inferenceErrorData.expectedType)) {
+            result.append(inferenceErrorData.expectedType);
+        }
+        else {
+            result.append(RENDER_TYPE.render(inferenceErrorData.expectedType));
+        }
+        result.append("\nArgument types:\n");
+        if (inferenceErrorData.receiverArgumentType != null) {
+            result.append(RENDER_TYPE.render(inferenceErrorData.receiverArgumentType)).append(".");
+        }
+        result.append("(").append(StringUtil.join(inferenceErrorData.valueArgumentsTypes, new Function<JetType, String>() {
+            @Override
+            public String fun(JetType type) {
+                return RENDER_TYPE.render(type);
+            }
+        }, ", ")).append(")");
+        return result.toString();
     }
 
     private Renderers() {
