@@ -20,8 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.NullableLazyValue;
@@ -35,12 +33,10 @@ import com.intellij.psi.impl.light.LightClass;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.reference.SoftReference;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -49,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
@@ -83,7 +78,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         FqName fqName = JvmClassName.byInternalName(jvmInternalName).getFqNameForClassNameWithoutDollars();
 
         if (classOrObject instanceof JetObjectDeclaration && ((JetObjectDeclaration) classOrObject).isObjectLiteral()) {
-            return new KotlinLightClassForExplicitDeclaration.Anonymous(manager, fqName, classOrObject);
+            return new KotlinLightClassForAnonymousDeclaration(manager, fqName, classOrObject);
         }
         return new KotlinLightClassForExplicitDeclaration(manager, fqName, classOrObject);
     }
@@ -205,7 +200,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         }
     };
 
-    private KotlinLightClassForExplicitDeclaration(
+    KotlinLightClassForExplicitDeclaration(
             @NotNull PsiManager manager,
             @NotNull FqName name,
             @NotNull JetClassOrObject classOrObject
@@ -558,68 +553,6 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     public List<PsiClass> getOwnInnerClasses() {
         // TODO: Should return inner class wrapper
         return Arrays.asList(getDelegate().getInnerClasses());
-    }
-
-    private static class Anonymous extends KotlinLightClassForExplicitDeclaration implements PsiAnonymousClass {
-        private static final Logger LOG = Logger.getInstance(Anonymous.class);
-
-        private SoftReference<PsiClassType> cachedBaseType = null;
-
-        private Anonymous(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject classOrObject) {
-            super(manager, name, classOrObject);
-        }
-
-        @NotNull
-        @Override
-        public PsiJavaCodeReferenceElement getBaseClassReference() {
-            Project project = classOrObject.getProject();
-            return JavaPsiFacade.getElementFactory(project).createReferenceElementByFQClassName(
-                    getFirstSupertypeFQName(), GlobalSearchScope.allScope(project)
-            );
-        }
-
-        private String getFirstSupertypeFQName() {
-            ClassDescriptor descriptor = getDescriptor();
-            if (descriptor == null) return CommonClassNames.JAVA_LANG_OBJECT;
-
-            Collection<JetType> superTypes = descriptor.getTypeConstructor().getSupertypes();
-
-            if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT;
-
-            JetType superType = superTypes.iterator().next();
-            DeclarationDescriptor superClassDescriptor = superType.getConstructor().getDeclarationDescriptor();
-
-            if (superClassDescriptor == null) {
-                LOG.error("No declaration descriptor for supertype " + superType + " of " + getDescriptor());
-                // return java.lang.Object for recovery
-                return CommonClassNames.JAVA_LANG_OBJECT;
-            }
-
-            return DescriptorUtils.getFqName(superClassDescriptor).asString();
-        }
-
-        @NotNull
-        @Override
-        public synchronized PsiClassType getBaseClassType() {
-            PsiClassType type = null;
-            if (cachedBaseType != null) type = cachedBaseType.get();
-            if (type != null && type.isValid()) return type;
-
-            type = JavaPsiFacade.getInstance(classOrObject.getProject()).getElementFactory().createType(getBaseClassReference());
-            cachedBaseType = new SoftReference<PsiClassType>(type);
-            return type;
-        }
-
-        @Nullable
-        @Override
-        public PsiExpressionList getArgumentList() {
-            return null;
-        }
-
-        @Override
-        public boolean isInQualifiedNew() {
-            return false;
-        }
     }
 
     private static boolean checkSuperTypeByFQName(@NotNull ClassDescriptor classDescriptor, @NotNull String qualifiedName, Boolean deep) {
