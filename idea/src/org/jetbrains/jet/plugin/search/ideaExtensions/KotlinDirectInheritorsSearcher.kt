@@ -29,26 +29,23 @@ import org.jetbrains.jet.lang.resolve.*
 import java.util.Collections
 
 public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
-    public override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<PsiClass>): Unit {
+    public override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<PsiClass>) {
         val baseClass = queryParameters.getClassToProcess()
         if (baseClass == null) return
 
-        fun candidates(): Iterator<JetClassOrObject> {
-            val name = baseClass.getName()
+        val name = baseClass.getName()
+        if (name == null) return
 
-            val originalScope = queryParameters.getScope()
-            val scope = if (originalScope is GlobalSearchScope)
-                originalScope
-            else baseClass.getContainingFile()?.let { file -> GlobalSearchScope.fileScope(file) }
+        val originalScope = queryParameters.getScope()
+        val scope = if (originalScope is GlobalSearchScope)
+            originalScope
+        else
+            baseClass.getContainingFile()?.let { file -> GlobalSearchScope.fileScope(file) }
 
-            if (name != null && scope != null) {
-                return JetSuperClassIndex.getInstance().get(name, baseClass.getProject(), scope).iterator()
-            }
-            return Collections.emptyList<JetClassOrObject>().iterator()
-        }
+        if (scope == null) return
 
         ApplicationManager.getApplication()?.runReadAction {
-            candidates()
+            JetSuperClassIndex.getInstance().get(name, baseClass.getProject(), scope).iterator()
                     .map { candidate -> JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate)}
                     .filterNotNull()
                     .filter { candidate -> candidate.isInheritor(baseClass, false) }
