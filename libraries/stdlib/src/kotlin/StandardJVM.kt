@@ -42,9 +42,9 @@ public fun Throwable.printStackTrace(stream: PrintStream): Unit {
  * Returns the stack trace
  */
 
-public fun Throwable.getStackTrace() : Array<StackTraceElement>? {
+public fun Throwable.getStackTrace() : Array<StackTraceElement> {
     val jlt = this as java.lang.Throwable
-    return jlt.getStackTrace()
+    return jlt.getStackTrace()!!
 }
 
 /**
