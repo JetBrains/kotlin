@@ -20,18 +20,15 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 
-trait LightClassData {
-    val jvmInternalName: String
-}
+trait LightClassData
 
 trait LightClassDataForKotlinClass: LightClassData {
     val classOrObject: JetClassOrObject
     val descriptor: ClassDescriptor?
+    val jvmInternalName: String
 }
 
-object KotlinPackageLightClassData: LightClassData {
-    override val jvmInternalName: String = ""
-}
+object KotlinPackageLightClassData: LightClassData
 
 data class InnerKotlinClassLightClassData(
         override val jvmInternalName: String,
