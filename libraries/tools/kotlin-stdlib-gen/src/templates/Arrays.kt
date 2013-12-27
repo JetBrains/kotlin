@@ -26,6 +26,7 @@ fun arrays(): List<GenericFunction> {
     }
 
     templates add f("indexOf(item: T)") {
+        absentFor(PrimitiveArrays)
         isInline = false
         doc = "Returns first index of item, or -1 if the array does not contain item"
         returns("Int")
@@ -39,6 +40,22 @@ fun arrays(): List<GenericFunction> {
                     for (i in 0..lastIndex) if (item == this[i]) {
                         return i
                     }
+                }
+                return -1
+           """
+        }
+    }
+
+    // implementation for PrimitiveArrays, because they cannot hold null elements
+    templates add f("indexOf(item: T)") {
+        absentFor(Arrays)
+        isInline = false
+        doc = "Returns first index of item, or -1 if the array does not contain item"
+        returns("Int")
+        body {
+            """
+                for (i in 0..lastIndex) if (item == this[i]) {
+                    return i
                 }
                 return -1
            """

@@ -186,15 +186,9 @@ public inline fun <K> BooleanArray.groupByTo(result: MutableMap<K, MutableList<B
 /**
  * Returns first index of item, or -1 if the array does not contain item
  */
-public fun BooleanArray.indexOf(item : Boolean) : Int {
-    if (item == null) {
-        for (i in 0..size - 1) if (this[i] == null) {
-            return i
-        }
-    } else {
-        for (i in 0..size - 1) if (item == this[i]) {
-            return i
-        }
+public fun BooleanArray.indexOf(item: Boolean) : Int {
+    for (i in 0..lastIndex) if (item == this[i]) {
+        return i
     }
     return -1
 }

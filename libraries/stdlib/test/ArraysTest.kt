@@ -163,6 +163,7 @@ class ArraysTest {
         expect(0) { array("cat", "dog", "bird").indexOf("cat") }
         expect(1) { array("cat", "dog", "bird").indexOf("dog") }
         expect(2) { array("cat", "dog", "bird").indexOf("bird") }
+        expect(0) { array(null, "dog", null).indexOf(null)}
     }
     /*
 

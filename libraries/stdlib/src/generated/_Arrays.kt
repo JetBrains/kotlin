@@ -201,13 +201,13 @@ public inline fun <T, K> Array<out T>.groupByTo(result: MutableMap<K, MutableLis
 /**
  * Returns first index of item, or -1 if the array does not contain item
  */
-public fun <T> Array<out T>.indexOf(item : T) : Int {
+public fun <T> Array<out T>.indexOf(item: T) : Int {
     if (item == null) {
-        for (i in 0..size - 1) if (this[i] == null) {
+        for (i in 0..lastIndex) if (this[i] == null) {
             return i
         }
     } else {
-        for (i in 0..size - 1) if (item == this[i]) {
+        for (i in 0..lastIndex) if (item == this[i]) {
             return i
         }
     }

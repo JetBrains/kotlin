@@ -59,6 +59,52 @@ class ArraysJVMTest {
         }
     }
 
+    test fun indexOf() {
+
+        println("RAZZLE - test indexOf START")
+
+        expect(-1) { byteArray(1, 2, 3) indexOf 0 }
+        expect(0) { byteArray(1, 2, 3) indexOf 1 }
+        expect(1) { byteArray(1, 2, 3) indexOf 2 }
+        expect(2) { byteArray(1, 2, 3) indexOf 3 }
+
+        expect(-1) { shortArray(1, 2, 3) indexOf 0 }
+        expect(0) { shortArray(1, 2, 3) indexOf 1 }
+        expect(1) { shortArray(1, 2, 3) indexOf 2 }
+        expect(2) { shortArray(1, 2, 3) indexOf 3 }
+
+        expect(-1) { intArray(1, 2, 3) indexOf 0 }
+        expect(0) { intArray(1, 2, 3) indexOf 1 }
+        expect(1) { intArray(1, 2, 3) indexOf 2 }
+        expect(2) { intArray(1, 2, 3) indexOf 3 }
+
+        expect(-1) { longArray(1, 2, 3) indexOf 0 }
+        expect(0) { longArray(1, 2, 3) indexOf 1 }
+        expect(1) { longArray(1, 2, 3) indexOf 2 }
+        expect(2) { longArray(1, 2, 3) indexOf 3 }
+
+        expect(-1) { floatArray(1.0f, 2.0f, 3.0f) indexOf 0f }
+        expect(0) { floatArray(1.0f, 2.0f, 3.0f) indexOf 1.0f }
+        expect(1) { floatArray(1.0f, 2.0f, 3.0f) indexOf 2.0f }
+        expect(2) { floatArray(1.0f, 2.0f, 3.0f) indexOf 3.0f }
+
+        expect(-1) { doubleArray(1.0, 2.0, 3.0) indexOf 0.0 }
+        expect(0) { doubleArray(1.0, 2.0, 3.0) indexOf 1.0 }
+        expect(1) { doubleArray(1.0, 2.0, 3.0) indexOf 2.0 }
+        expect(2) { doubleArray(1.0, 2.0, 3.0) indexOf 3.0 }
+
+        expect(-1) { charArray('a', 'b', 'c') indexOf 'z' }
+        expect(0) { charArray('a', 'b', 'c') indexOf 'a' }
+        expect(1) { charArray('a', 'b', 'c') indexOf 'b' }
+        expect(2) { charArray('a', 'b', 'c') indexOf 'c' }
+
+        expect(0) { booleanArray(true, false) indexOf true }
+        expect(1) { booleanArray(true, false) indexOf false }
+        expect(-1) { booleanArray(true) indexOf false }
+
+        println("RAZZLE - test indexOf FINISH")
+    }
+
     test fun isEmpty() {
         assertTrue(intArray().isEmpty())
         assertFalse(intArray(1).isEmpty())
