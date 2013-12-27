@@ -532,7 +532,7 @@ public class AsmUtil {
         JetType type = descriptor.getReturnType();
         if (type == null || isNullableType(type)) return;
 
-        Type asmType = state.getTypeMapper().mapReturnType(type);
+        Type asmType = state.getTypeMapper().mapReturnType(descriptor);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
             v.dup();
             v.visitLdcInsn(descriptor.getContainingDeclaration().getName().asString());

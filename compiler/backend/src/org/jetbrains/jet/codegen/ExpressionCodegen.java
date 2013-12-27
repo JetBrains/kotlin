@@ -2006,8 +2006,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (callable instanceof CallableMethod) {
             CallableMethod callableMethod = (CallableMethod) callable;
             invokeMethodWithArguments(callableMethod, resolvedCall, receiver);
-            //noinspection ConstantConditions
-            Type returnType = typeMapper.mapReturnType(resolvedCall.getResultingDescriptor().getReturnType());
+            Type returnType = typeMapper.mapReturnType(resolvedCall.getResultingDescriptor());
             StackValue.coerce(callableMethod.getSignature().getAsmMethod().getReturnType(), returnType, v);
             return StackValue.onStack(returnType);
         }

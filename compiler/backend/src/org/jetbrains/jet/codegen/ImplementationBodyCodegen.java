@@ -788,13 +788,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter) {
-        JetType returnType = function.getReturnType();
-        assert returnType != null : "Return type of component function should not be null: " + function;
-        final Type componentType = typeMapper.mapReturnType(returnType);
-
-        JvmMethodSignature signature = typeMapper.mapSignature(function);
-
-        functionCodegen.generateMethod(myClass, signature, function, new FunctionGenerationStrategy() {
+        functionCodegen.generateMethod(myClass, typeMapper.mapSignature(function), function, new FunctionGenerationStrategy() {
             @Override
             public void generateBody(
                     @NotNull MethodVisitor mv,
@@ -802,6 +796,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     @NotNull MethodContext context,
                     @Nullable MemberCodegen parentCodegen
             ) {
+                Type componentType = signature.getAsmMethod().getReturnType();
                 InstructionAdapter iv = new InstructionAdapter(mv);
                 if (!componentType.equals(Type.VOID_TYPE)) {
                     iv.load(0, classAsmType);

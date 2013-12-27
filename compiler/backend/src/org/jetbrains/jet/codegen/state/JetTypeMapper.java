@@ -143,19 +143,23 @@ public class JetTypeMapper extends BindingTraceAware {
     }
 
     @NotNull
-    public Type mapReturnType(@NotNull JetType jetType) {
-        return mapReturnType(jetType, null);
+    public Type mapReturnType(@NotNull CallableDescriptor descriptor) {
+        return mapReturnType(descriptor, null);
     }
 
     @NotNull
-    private Type mapReturnType(@NotNull JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
-        if (jetType.equals(KotlinBuiltIns.getInstance().getUnitType())) {
-            if (signatureVisitor != null) {
-                signatureVisitor.writeAsmType(Type.VOID_TYPE);
+    private Type mapReturnType(@NotNull CallableDescriptor descriptor, @Nullable BothSignatureWriter sw) {
+        JetType returnType = descriptor.getReturnType();
+        assert returnType != null : "Function has no return type: " + descriptor;
+        if (returnType.equals(KotlinBuiltIns.getInstance().getUnitType()) && !(descriptor instanceof PropertyGetterDescriptor)) {
+            if (sw != null) {
+                sw.writeAsmType(Type.VOID_TYPE);
             }
             return Type.VOID_TYPE;
         }
-        return mapType(jetType, signatureVisitor, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE, false);
+        else {
+            return mapType(returnType, sw, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE, false);
+        }
     }
 
     @NotNull
@@ -602,14 +606,7 @@ public class JetTypeMapper extends BindingTraceAware {
             }
 
             sw.writeReturnType();
-            JetType returnType = f.getReturnType();
-            assert returnType != null : "Function " + f + " has no return type";
-            if (f instanceof PropertyGetterDescriptor) {
-                mapType(returnType, sw, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE, false);
-            }
-            else {
-                mapReturnType(returnType, sw);
-            }
+            mapReturnType(f, sw);
             sw.writeReturnTypeEnd();
         }
 
