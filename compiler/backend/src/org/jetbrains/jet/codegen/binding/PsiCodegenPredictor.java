@@ -59,8 +59,6 @@ public final class PsiCodegenPredictor {
     }
 
     /**
-     * TODO: Finish this method for all cases. Now it's only used and tested in JetLightClass.
-     *
      * @return null if no prediction can be done.
      */
     @Nullable
