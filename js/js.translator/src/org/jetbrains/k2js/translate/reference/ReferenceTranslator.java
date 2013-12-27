@@ -21,11 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.jet.lang.psi.JetPsiUtil.isBackingFieldReference;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 
 public final class ReferenceTranslator {
 
@@ -70,7 +75,7 @@ public final class ReferenceTranslator {
         if (isBackingFieldReference(referenceExpression)) {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }
-        if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
+        if (canBePropertyAccess(referenceExpression, context)) {
             return new SimpleWrappedVariableAccessTranslator(context, referenceExpression, receiver);
         }
         if (ClassObjectAccessTranslator.isClassObjectReference(referenceExpression, context)) {
@@ -78,4 +83,35 @@ public final class ReferenceTranslator {
         }
         return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }
+
+    // TODO: drop this
+    private static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,
+            @NotNull TranslationContext context) {
+        JetSimpleNameExpression selector = getSelectorAsSimpleName(expression);
+        assert selector != null : "Only names are allowed after the dot";
+        return canBePropertyGetterCall(selector, context);
+    }
+
+    private static boolean canBePropertyGetterCall(@NotNull JetSimpleNameExpression expression,
+            @NotNull TranslationContext context) {
+        return (getDescriptorForReferenceExpression
+                        (context.bindingContext(), expression) instanceof PropertyDescriptor);
+    }
+
+    public static boolean canBePropertyGetterCall(@NotNull JetExpression expression,
+            @NotNull TranslationContext context) {
+        if (expression instanceof JetQualifiedExpression) {
+            return canBePropertyGetterCall((JetQualifiedExpression) expression, context);
+        }
+        if (expression instanceof JetSimpleNameExpression) {
+            return canBePropertyGetterCall((JetSimpleNameExpression) expression, context);
+        }
+        return false;
+    }
+
+    public static boolean canBePropertyAccess(@NotNull JetExpression expression,
+            @NotNull TranslationContext context) {
+        return canBePropertyGetterCall(expression, context);
+    }
+
 }
