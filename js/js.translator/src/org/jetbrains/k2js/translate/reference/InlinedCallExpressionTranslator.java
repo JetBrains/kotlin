@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.reference.CallArgumentTranslator.translateSingleArgument;
-import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionForDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
@@ -117,13 +116,13 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     private TranslationContext createContextWithAliasForThisExpression(@NotNull TranslationContext contextForInlining) {
         TranslationContext contextWithAliasForThisExpression = contextForInlining;
         SimpleFunctionDescriptor functionDescriptor = getFunctionDescriptor();
-        CallParameters callParameters = resolveCallParameters(receiver, null, functionDescriptor, resolvedCall, contextForInlining);
-        JsExpression receiver = callParameters.getReceiver();
+        CallInfo callInfo = ReferencePackage.getCallInfo(contextForInlining, resolvedCall, receiver);
+        JsExpression receiver = callInfo.getReceiverObject();
         if (receiver != null) {
             contextWithAliasForThisExpression =
                 contextWithAlias(contextWithAliasForThisExpression, receiver, getExpectedReceiverDescriptor(functionDescriptor));
         }
-        JsExpression thisObject = callParameters.getThisObject();
+        JsExpression thisObject = callInfo.getThisObject();
         if (thisObject != null) {
             contextWithAliasForThisExpression =
                 contextWithAlias(contextWithAliasForThisExpression, thisObject, getExpectedThisDescriptor(functionDescriptor));
