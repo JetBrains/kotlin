@@ -49,6 +49,22 @@ fun TranslationContext.buildSet(resolvedCall: ResolvedCall<out VariableDescripto
     return variableAccessCases.translate(variableAccessInfo)
 }
 
+fun TranslationContext.buildFakeCall(functionDescriptor: FunctionDescriptor, args: List<JsExpression>, thisObject: JsExpression?): JsExpression {
+    val fakeCallInfo = object: CallInfo {
+        override val context: TranslationContext = this@buildFakeCall
+        override val resolvedCall: ResolvedCall<out CallableDescriptor>
+            get() {
+                throw UnsupportedOperationException("Resolved call for direct call unsupported")
+            }
+        override val callableDescriptor: CallableDescriptor = functionDescriptor
+        override val thisObject: JsExpression? = thisObject
+        override val receiverObject: JsExpression? = null
+        override val nullableReceiverForSafeCall: JsExpression? = null
+    }
+    val fakeFunctionInfo = FunctionCallInfo(fakeCallInfo, CallArgumentTranslator.ArgumentsInfo(args, false, null));
+    return DefaultCallCase(fakeFunctionInfo).translate()
+}
+
 private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): JsExpression {
     if (resolvedCall is VariableAsFunctionResolvedCall) {
         assert(receiver2 == null, "receiver2 for VariableAsFunctionResolvedCall must be null") // TODO: add debug info

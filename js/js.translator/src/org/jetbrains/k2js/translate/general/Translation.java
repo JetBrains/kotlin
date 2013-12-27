@@ -38,7 +38,7 @@ import org.jetbrains.k2js.translate.declaration.PackageDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
-import org.jetbrains.k2js.translate.reference.CallBuilder;
+import org.jetbrains.k2js.translate.reference.ReferencePackage;
 import org.jetbrains.k2js.translate.test.JSTestGenerator;
 import org.jetbrains.k2js.translate.test.JSTester;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -46,6 +46,7 @@ import org.jetbrains.k2js.translate.utils.dangerous.DangerousData;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.plugin.JetMainDetector.getMainFunction;
@@ -174,9 +175,7 @@ public final class Translation {
             return null;
         }
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(context.bindingContext(), mainFunction);
-        return CallBuilder.build(context)
-                .args(new JsArrayLiteral(toStringLiteralList(arguments, context.program())))
-                .descriptor(functionDescriptor)
-                .translate().makeStmt();
+        JsArrayLiteral argument = new JsArrayLiteral(toStringLiteralList(arguments, context.program()));
+        return ReferencePackage.buildFakeCall(context, functionDescriptor, Collections.singletonList(argument), null).makeStmt();
     }
 }
