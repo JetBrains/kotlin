@@ -31,23 +31,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND;
+
 public class TypeBoundsImpl implements TypeBounds {
-    public static enum BoundKind {
-        LOWER_BOUND, UPPER_BOUND, EXACT_BOUND
-    }
-
-    public static class Bound {
-        public final JetType type;
-        public final BoundKind kind;
-        public final ConstraintPosition position;
-
-        public Bound(@NotNull JetType type, @NotNull BoundKind kind, @NotNull ConstraintPosition position) {
-            this.type = type;
-            this.kind = kind;
-            this.position = position;
-        }
-    }
-
     private final TypeParameterDescriptor typeVariable;
     private final Variance varianceOfPosition;
     private final Set<Bound> bounds = Sets.newLinkedHashSet();
@@ -78,6 +64,13 @@ public class TypeBoundsImpl implements TypeBounds {
         return getValues().isEmpty();
     }
 
+    @NotNull
+    @Override
+    public TypeParameterDescriptor getTypeVariable() {
+        return typeVariable;
+    }
+
+    @Override
     @NotNull
     public Collection<Bound> getBounds() {
         return bounds;
@@ -175,7 +168,7 @@ public class TypeBoundsImpl implements TypeBounds {
         values.addAll(exactBounds);
 
         Pair<Collection<JetType>, Collection<JetType>> pair =
-                TypeUtils.filterNumberTypes(filterBounds(bounds, BoundKind.LOWER_BOUND, values));
+                TypeUtils.filterNumberTypes(filterBounds(bounds, LOWER_BOUND, values));
         Collection<JetType> generalLowerBounds = pair.getFirst();
         Collection<JetType> numberLowerBounds = pair.getSecond();
 

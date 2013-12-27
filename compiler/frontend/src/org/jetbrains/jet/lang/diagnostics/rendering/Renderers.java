@@ -40,8 +40,11 @@ import org.jetbrains.jet.renderer.Renderer;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.*;
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND;
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND;
 
 public class Renderers {
     public static final Renderer<Object> TO_STRING = new Renderer<Object>() {
@@ -342,6 +345,45 @@ public class Renderers {
         }
     };
 
+    public static final Renderer<ConstraintSystem> RENDER_CONSTRAINT_SYSTEM = new Renderer<ConstraintSystem>() {
+        @NotNull
+        @Override
+        public String render(@NotNull ConstraintSystem constraintSystem) {
+            Set<TypeParameterDescriptor> typeVariables = constraintSystem.getTypeVariables();
+            Set<TypeBounds> typeBounds = Sets.newLinkedHashSet();
+            for (TypeParameterDescriptor variable : typeVariables) {
+                typeBounds.add(constraintSystem.getTypeBounds(variable));
+            }
+            Function<TypeBounds, String> renderTypeBounds = rendererToFunction(RENDER_TYPE_BOUNDS);
+            return "type parameter bounds: \n" + StringUtil.join(typeBounds, renderTypeBounds, ";\n") + "\n" +
+                   "status:\n" + ConstraintsUtil.getDebugMessageForStatus(constraintSystem.getStatus());
+        }
+    };
+
+    public static final Renderer<TypeBounds> RENDER_TYPE_BOUNDS = new Renderer<TypeBounds>() {
+        @NotNull
+        @Override
+        public String render(@NotNull TypeBounds typeBounds) {
+            Function<TypeBoundsImpl.Bound, String> renderBound = new Function<TypeBoundsImpl.Bound, String>() {
+                @Override
+                public String fun(TypeBoundsImpl.Bound bound) {
+                    String arrow = bound.kind == LOWER_BOUND ? "<: " : bound.kind == UPPER_BOUND ? ">: " : "=  ";
+                    return arrow + bound.type + '(' + bound.position + ')';
+                }
+            };
+            return typeBounds.getTypeVariable().getName() + " " + StringUtil.join(typeBounds.getBounds(), renderBound, ", ");
+        }
+    };
+
+    @NotNull
+    public static <T> Function<T, String> rendererToFunction(final @NotNull Renderer<T> renderer) {
+        return new Function<T, String>() {
+            @Override
+            public String fun(T t) {
+                return renderer.render(t);
+            }
+        };
+    }
 
     private Renderers() {
     }

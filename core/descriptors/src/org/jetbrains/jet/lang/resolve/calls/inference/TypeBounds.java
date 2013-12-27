@@ -18,15 +18,21 @@ package org.jetbrains.jet.lang.resolve.calls.inference;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.Collection;
-import java.util.Set;
 
 public interface TypeBounds {
     @NotNull
     Variance getVarianceOfPosition();
+
+    @NotNull
+    TypeParameterDescriptor getTypeVariable();
+
+    @NotNull
+    Collection<Bound> getBounds();
 
     boolean isEmpty();
 
@@ -35,4 +41,20 @@ public interface TypeBounds {
 
     @NotNull
     Collection<JetType> getValues();
+
+    enum BoundKind {
+        LOWER_BOUND, UPPER_BOUND, EXACT_BOUND
+    }
+
+    class Bound {
+        public final JetType type;
+        public final BoundKind kind;
+        public final ConstraintPosition position;
+
+        public Bound(@NotNull JetType type, @NotNull BoundKind kind, @NotNull ConstraintPosition position) {
+            this.type = type;
+            this.kind = kind;
+            this.position = position;
+        }
+    }
 }
