@@ -114,7 +114,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    private JsExpression intrinsicInvocation() {
+    public JsExpression intrinsicInvocation() {
         if (descriptor instanceof FunctionDescriptor) {
             try {
                 FunctionIntrinsic intrinsic = context().intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) descriptor);
