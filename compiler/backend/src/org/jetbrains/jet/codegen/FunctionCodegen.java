@@ -154,7 +154,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             @NotNull JvmMethodSignature jvmSignature
     ) {
         Iterator<ValueParameterDescriptor> iterator = functionDescriptor.getValueParameters().iterator();
-        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
+        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
@@ -178,7 +178,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             @NotNull JvmMethodSignature jvmSignature
     ) {
         Iterator<ValueParameterDescriptor> descriptors = functionDescriptor.getValueParameters().iterator();
-        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getKotlinParameterTypes();
+        List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
@@ -305,7 +305,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             @NotNull OwnerKind ownerKind
     ) {
         Iterator<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters().iterator();
-        List<JvmMethodParameterSignature> params = jvmMethodSignature.getKotlinParameterTypes();
+        List<JvmMethodParameterSignature> params = jvmMethodSignature.getValueParameters();
         int shift = 0;
 
         boolean isStatic = AsmUtil.isStaticMethod(ownerKind, functionDescriptor);
@@ -563,7 +563,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         int countOfExtraVarsInMethodArgs = 0;
 
-        for (JvmMethodParameterSignature parameterSignature : signature.getKotlinParameterTypes()) {
+        for (JvmMethodParameterSignature parameterSignature : signature.getValueParameters()) {
             if (parameterSignature.getKind() != JvmMethodParameterKind.VALUE) {
                 countOfExtraVarsInMethodArgs++;
                 frameMap.enterTemp(parameterSignature.getAsmType());
@@ -629,7 +629,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             var += ownerType.getSize();
         }
 
-        for (JvmMethodParameterSignature parameterSignature : signature.getKotlinParameterTypes()) {
+        for (JvmMethodParameterSignature parameterSignature : signature.getValueParameters()) {
             if (parameterSignature.getKind() != JvmMethodParameterKind.VALUE) {
                 Type type = parameterSignature.getAsmType();
                 iv.load(var, type);

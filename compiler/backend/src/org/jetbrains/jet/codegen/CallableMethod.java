@@ -22,12 +22,14 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.util.Printer;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.INVOKESPECIAL;
@@ -70,12 +72,19 @@ public class CallableMethod implements Callable {
 
     @NotNull
     public List<JvmMethodParameterSignature> getValueParameters() {
-        return signature.getKotlinParameterTypes();
+        return signature.getValueParameters();
     }
 
     @NotNull
     public List<Type> getValueParameterTypes() {
-        return signature.getValueParameterTypes();
+        List<JvmMethodParameterSignature> valueParameters = signature.getValueParameters();
+        List<Type> result = new ArrayList<Type>(valueParameters.size());
+        for (JvmMethodParameterSignature parameter : valueParameters) {
+            if (parameter.getKind() == JvmMethodParameterKind.VALUE) {
+                result.add(parameter.getAsmType());
+            }
+        }
+        return result;
     }
 
     @NotNull

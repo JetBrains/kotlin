@@ -767,10 +767,9 @@ public class JetTypeMapper extends BindingTraceAware {
                     .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
 
             if (superDescriptor instanceof ConstructorDescriptor && isAnonymousObject(descriptor.getContainingDeclaration())) {
-                List<JvmMethodParameterSignature> types = mapSignature((ConstructorDescriptor) superDescriptor).getKotlinParameterTypes();
-                for (JvmMethodParameterSignature type : types) {
+                for (JvmMethodParameterSignature parameter : mapSignature((ConstructorDescriptor) superDescriptor).getValueParameters()) {
                     signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
-                    signatureWriter.writeAsmType(type.getAsmType());
+                    signatureWriter.writeAsmType(parameter.getAsmType());
                     signatureWriter.writeParameterTypeEnd();
                 }
             }

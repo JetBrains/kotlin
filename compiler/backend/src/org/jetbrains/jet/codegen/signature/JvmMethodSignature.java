@@ -21,25 +21,21 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class JvmMethodSignature {
-    @NotNull
     private final Method asmMethod;
-    @Nullable
     private final String genericsSignature;
-    @NotNull
-    private final List<JvmMethodParameterSignature> kotlinParameterTypes;
+    private final List<JvmMethodParameterSignature> valueParameters;
 
     protected JvmMethodSignature(
             @NotNull Method asmMethod,
             @Nullable String genericsSignature,
-            @NotNull List<JvmMethodParameterSignature> kotlinParameterTypes
+            @NotNull List<JvmMethodParameterSignature> valueParameters
     ) {
         this.asmMethod = asmMethod;
         this.genericsSignature = genericsSignature;
-        this.kotlinParameterTypes = kotlinParameterTypes;
+        this.valueParameters = valueParameters;
     }
 
     @NotNull
@@ -53,8 +49,8 @@ public class JvmMethodSignature {
     }
 
     @NotNull
-    public List<JvmMethodParameterSignature> getKotlinParameterTypes() {
-        return kotlinParameterTypes;
+    public List<JvmMethodParameterSignature> getValueParameters() {
+        return valueParameters;
     }
 
     @NotNull
@@ -63,26 +59,10 @@ public class JvmMethodSignature {
     }
 
     @NotNull
-    public List<Type> getValueParameterTypes() {
-        List<Type> r = new ArrayList<Type>(kotlinParameterTypes.size());
-        for (JvmMethodParameterSignature p : kotlinParameterTypes) {
-            if (p.getKind() == JvmMethodParameterKind.VALUE) {
-                r.add(p.getAsmType());
-            }
-        }
-        return r;
-    }
-
-    @NotNull
     public JvmMethodSignature replaceName(@NotNull String newName) {
         return newName.equals(asmMethod.getName()) ?
                this :
-               new JvmMethodSignature(new Method(newName, asmMethod.getDescriptor()), genericsSignature, kotlinParameterTypes);
-    }
-
-    @NotNull
-    public String getName() {
-        return asmMethod.getName();
+               new JvmMethodSignature(new Method(newName, asmMethod.getDescriptor()), genericsSignature, valueParameters);
     }
 
     @Override
