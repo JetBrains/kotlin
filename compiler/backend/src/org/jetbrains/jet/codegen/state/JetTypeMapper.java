@@ -472,13 +472,11 @@ public class JetTypeMapper extends BindingTraceAware {
                 receiver = currentOwner;
             }
 
-            // TODO: TYPE_PARAMETER is hack here
-
             boolean isInterface = originalIsInterface && currentIsInterface;
-            owner = mapType(receiver.getDefaultType(), JetTypeMapperMode.TYPE_PARAMETER);
+            owner = mapClass(receiver);
 
             ClassDescriptor declarationOwnerForDefault = (ClassDescriptor) findBaseDeclaration(functionDescriptor).getContainingDeclaration();
-            ownerForDefaultParam = mapType(declarationOwnerForDefault.getDefaultType(), JetTypeMapperMode.TYPE_PARAMETER);
+            ownerForDefaultParam = mapClass(declarationOwnerForDefault);
             ownerForDefaultImpl = Type.getObjectType(
                     ownerForDefaultParam.getInternalName() + (isInterface(declarationOwnerForDefault) ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
             if (isInterface) {
