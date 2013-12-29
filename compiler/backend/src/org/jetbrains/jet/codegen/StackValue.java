@@ -644,7 +644,7 @@ public abstract class StackValue {
             }
             if (setter instanceof CallableMethod) {
                 CallableMethod method = (CallableMethod) setter;
-                Method asmMethod = method.getSignature().getAsmMethod();
+                Method asmMethod = method.getAsmMethod();
                 Type[] argumentTypes = asmMethod.getArgumentTypes();
                 coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
                 method.invokeWithNotNullAssertion(v, state, resolvedSetCall);
@@ -867,7 +867,7 @@ public abstract class StackValue {
                 genNotNullAssertionForField(v, state, descriptor);
             }
             else {
-                Method method = getter.getSignature().getAsmMethod();
+                Method method = getter.getAsmMethod();
                 v.visitMethodInsn(getter.getInvokeOpcode(), getter.getOwner().getInternalName(), method.getName(), method.getDescriptor());
             }
             coerceTo(type, v);
@@ -880,7 +880,7 @@ public abstract class StackValue {
                 v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, methodOwner.getInternalName(), getPropertyName(),
                                  this.type.getDescriptor()); }
             else {
-                Method method = setter.getSignature().getAsmMethod();
+                Method method = setter.getAsmMethod();
                 v.visitMethodInsn(setter.getInvokeOpcode(), setter.getOwner().getInternalName(), method.getName(), method.getDescriptor());
             }
         }

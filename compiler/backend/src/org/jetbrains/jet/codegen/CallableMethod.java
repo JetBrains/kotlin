@@ -20,7 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.util.Printer;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -32,25 +34,24 @@ import static org.jetbrains.asm4.Opcodes.INVOKESPECIAL;
 import static org.jetbrains.asm4.Opcodes.INVOKESTATIC;
 
 public class CallableMethod implements Callable {
-    @NotNull
     private final Type owner;
-    @Nullable
     private final Type defaultImplOwner;
-    @Nullable
     private final Type defaultImplParam;
     private final JvmMethodSignature signature;
     private final int invokeOpcode;
-    @Nullable
     private final Type thisClass;
-    @Nullable
     private final Type receiverParameterType;
-    @Nullable
     private final Type generateCalleeType;
 
     public CallableMethod(
-            @NotNull Type owner, @Nullable Type defaultImplOwner, @Nullable Type defaultImplParam,
-            JvmMethodSignature signature, int invokeOpcode,
-            @Nullable Type thisClass, @Nullable Type receiverParameterType, @Nullable Type generateCalleeType
+            @NotNull Type owner,
+            @Nullable Type defaultImplOwner,
+            @Nullable Type defaultImplParam,
+            @NotNull JvmMethodSignature signature,
+            int invokeOpcode,
+            @Nullable Type thisClass,
+            @Nullable Type receiverParameterType,
+            @Nullable Type generateCalleeType
     ) {
         this.owner = owner;
         this.defaultImplOwner = defaultImplOwner;
@@ -67,16 +68,23 @@ public class CallableMethod implements Callable {
         return owner;
     }
 
-    public JvmMethodSignature getSignature() {
-        return signature;
+    @NotNull
+    public List<JvmMethodParameterSignature> getValueParameters() {
+        return signature.getKotlinParameterTypes();
+    }
+
+    @NotNull
+    public List<Type> getValueParameterTypes() {
+        return signature.getValueParameterTypes();
+    }
+
+    @NotNull
+    public Method getAsmMethod() {
+        return signature.getAsmMethod();
     }
 
     public int getInvokeOpcode() {
         return invokeOpcode;
-    }
-
-    public List<Type> getValueParameterTypes() {
-        return signature.getValueParameterTypes();
     }
 
     @Nullable
@@ -90,8 +98,7 @@ public class CallableMethod implements Callable {
     }
 
     private void invoke(InstructionAdapter v) {
-        v.visitMethodInsn(getInvokeOpcode(), owner.getInternalName(), getSignature().getAsmMethod().getName(),
-                          getSignature().getAsmMethod().getDescriptor());
+        v.visitMethodInsn(getInvokeOpcode(), owner.getInternalName(), getAsmMethod().getName(), getAsmMethod().getDescriptor());
     }
 
     public void invokeWithNotNullAssertion(
@@ -117,17 +124,18 @@ public class CallableMethod implements Callable {
             throw new IllegalStateException();
         }
 
+        Method method = getAsmMethod();
+
         v.iconst(mask);
-        String desc = getSignature().getAsmMethod().getDescriptor().replace(")", "I)");
-        if ("<init>".equals(getSignature().getAsmMethod().getName())) {
+        String desc = method.getDescriptor().replace(")", "I)");
+        if ("<init>".equals(method.getName())) {
             v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc);
         }
         else {
             if (getInvokeOpcode() != INVOKESTATIC) {
                 desc = desc.replace("(", "(" + defaultImplParam.getDescriptor());
             }
-            v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(),
-                              getSignature().getAsmMethod().getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
+            v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(), method.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
         }
     }
 
@@ -145,6 +153,7 @@ public class CallableMethod implements Callable {
         return thisClass != null && generateCalleeType == null;
     }
 
+    @NotNull
     public Type getReturnType() {
         return signature.getReturnType();
     }

@@ -846,7 +846,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     parameterIndex += type.getSize();
                 }
 
-                String constructorJvmDescriptor = typeMapper.mapToCallableMethod(constructor).getSignature().getAsmMethod().getDescriptor();
+                String constructorJvmDescriptor = typeMapper.mapToCallableMethod(constructor).getAsmMethod().getDescriptor();
                 iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorJvmDescriptor);
 
                 iv.areturn(thisDescriptorType);
@@ -995,8 +995,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                         typeMapper.mapToCallableMethod((ConstructorDescriptor) functionDescriptor) :
                                         typeMapper.mapToCallableMethod(functionDescriptor, callFromAccessor, context);
 
-        Type[] argTypes = callableMethod.getSignature().getAsmMethod().getArgumentTypes();
-
         int reg = 1;
         if (isConstructor) {
             iv.anew(callableMethod.getOwner());
@@ -1007,7 +1005,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(0, OBJECT_TYPE);
         }
 
-        for (Type argType : argTypes) {
+        for (Type argType : callableMethod.getAsmMethod().getArgumentTypes()) {
             iv.load(reg, argType);
             reg += argType.getSize();
         }
@@ -1492,7 +1490,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (isAnonymousObject(descriptor) && superCall instanceof JetDelegatorToSuperCall) {
             int nextVar = findFirstSuperArgument(method);
-            for (Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
+            for (Type t : superCallable.getAsmMethod().getArgumentTypes()) {
                 iv.load(nextVar, t);
                 nextVar += t.getSize();
             }
@@ -1503,10 +1501,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private static int findFirstSuperArgument(CallableMethod method) {
-        List<JvmMethodParameterSignature> types = method.getSignature().getKotlinParameterTypes();
+    private static int findFirstSuperArgument(@NotNull CallableMethod method) {
         int i = 0;
-        for (JvmMethodParameterSignature type : types) {
+        for (JvmMethodParameterSignature type : method.getValueParameters()) {
             if (type.getKind() == JvmMethodParameterKind.SUPER_CALL_PARAM) {
                 return i + 1; // because of this
             }

@@ -1335,7 +1335,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         v.anew(type);
         v.dup();
-        Method cons = constructor.getSignature().getAsmMethod();
 
         pushClosureOnStack(closure, false);
 
@@ -1348,13 +1347,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert superConstructor != null;
             //noinspection SuspiciousMethodCalls
             CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
-            Type[] argumentTypes = superCallable.getSignature().getAsmMethod().getArgumentTypes();
+            Type[] argumentTypes = superCallable.getAsmMethod().getArgumentTypes();
             ResolvedCall resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
             assert resolvedCall != null;
             pushMethodArguments(resolvedCall, Arrays.asList(argumentTypes));
         }
 
-        v.invokespecial(type.getInternalName(), "<init>", cons.getDescriptor());
+        v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor());
         return StackValue.onStack(type);
     }
 
@@ -2007,7 +2006,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             CallableMethod callableMethod = (CallableMethod) callable;
             invokeMethodWithArguments(callableMethod, resolvedCall, receiver);
             Type returnType = typeMapper.mapReturnType(resolvedCall.getResultingDescriptor());
-            StackValue.coerce(callableMethod.getSignature().getReturnType(), returnType, v);
+            StackValue.coerce(callableMethod.getReturnType(), returnType, v);
             return StackValue.onStack(returnType);
         }
         else {
@@ -3382,7 +3381,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert resolvedCall != null : "couldn't find resolved call: " + expression.getText();
 
             Callable callable = resolveToCallable(operationDescriptor, false);
-            Method asmMethod = resolveToCallableMethod(operationDescriptor, false, context).getSignature().getAsmMethod();
+            Method asmMethod = resolveToCallableMethod(operationDescriptor, false, context).getAsmMethod();
             Type[] argumentTypes = asmMethod.getArgumentTypes();
 
             if (callable instanceof CallableMethod) {

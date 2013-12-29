@@ -479,7 +479,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             mask |= (1 << parameterDescriptor.getIndex());
         }
         v.iconst(mask);
-        String desc = method.getSignature().getAsmMethod().getDescriptor().replace(")", "I)");
+        String desc = method.getAsmMethod().getDescriptor().replace(")", "I)");
         v.invokespecial(methodOwner.getInternalName(), "<init>", desc);
         v.areturn(Type.VOID_TYPE);
         endVisit(mv, "default constructor for " + methodOwner.getInternalName(), null);
@@ -608,8 +608,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             method = typeMapper.mapToCallableMethod(functionDescriptor, false, methodContext);
         }
 
-        iv.visitMethodInsn(method.getInvokeOpcode(), method.getOwner().getInternalName(), method.getSignature().getAsmMethod().getName(),
-                           method.getSignature().getAsmMethod().getDescriptor());
+        iv.visitMethodInsn(method.getInvokeOpcode(), method.getOwner().getInternalName(), method.getAsmMethod().getName(),
+                           method.getAsmMethod().getDescriptor());
 
         iv.areturn(signature.getReturnType());
 
