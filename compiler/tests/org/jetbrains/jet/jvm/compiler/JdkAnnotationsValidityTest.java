@@ -53,9 +53,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,6 +62,8 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KO
 public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
     private static final int CLASSES_IN_CHUNK = 500;
+
+    private static final Set<String> classesToIgnore = new HashSet<String>(Arrays.asList("javax.management.openmbean.TabularDataSupport"));
 
     private static JetCoreEnvironment createEnvironment(Disposable parentDisposable) {
         CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
@@ -152,7 +152,10 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
                             String text = StreamUtil.readText(file.getInputStream());
                             Matcher matcher = Pattern.compile("<item name=['\"]([\\w\\d\\.]+)[\\s'\"]").matcher(text);
                             while (matcher.find()) {
-                                result.add(new FqName(matcher.group(1)));
+                                String className = matcher.group(1);
+                                if (!classesToIgnore.contains(className)) {
+                                    result.add(new FqName(className));
+                                }
                             }
                         }
                         catch (IOException e) {
