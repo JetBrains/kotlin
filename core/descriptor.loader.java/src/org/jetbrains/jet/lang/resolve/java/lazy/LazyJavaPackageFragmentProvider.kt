@@ -21,6 +21,8 @@ public open class LazyJavaPackageFragmentProvider(
             this,
             outerContext.storageManager,
             outerContext.finder,
+            outerContext.kotlinClassFinder,
+            outerContext.deserializedDescriptorResolver,
             FragmentClassResolver(),
             outerContext.externalAnnotationResolver,
             outerContext.externalSignatureResolver,

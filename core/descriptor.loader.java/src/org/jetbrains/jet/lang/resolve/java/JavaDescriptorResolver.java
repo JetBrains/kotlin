@@ -180,6 +180,8 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                                     return javaClassFinder.findPackage(fqName);
                                 }
                             },
+                            kotlinClassFinder,
+                            deserializedDescriptorResolver,
                             new LazyJavaClassResolver() {
                                 @Override
                                 public ClassDescriptor resolveClass(JavaClass aClass) {

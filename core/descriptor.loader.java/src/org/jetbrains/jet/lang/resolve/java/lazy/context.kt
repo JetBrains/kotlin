@@ -27,10 +27,18 @@ import org.jetbrains.jet.lang.resolve.java.resolver.MethodSignatureChecker
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaResolverCache
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
+import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 
 open class GlobalJavaResolverContext(
         val storageManager: StorageManager,
         val finder: JavaClassFinder,
+        val kotlinClassFinder: KotlinClassFinder,
+        val deserializedDescriptorResolver: DeserializedDescriptorResolver,
         val javaClassResolver: LazyJavaClassResolver,
         val externalAnnotationResolver: ExternalAnnotationResolver,
         val externalSignatureResolver: ExternalSignatureResolver,
@@ -44,6 +52,8 @@ open class LazyJavaResolverContext(
         val packageFragmentProvider: LazyJavaPackageFragmentProvider,
         storageManager: StorageManager,
         finder: JavaClassFinder,
+        kotlinClassFinder: KotlinClassFinder,
+        deserializedDescriptorResolver: DeserializedDescriptorResolver,
         javaClassResolver: LazyJavaClassResolver,
         externalAnnotationResolver: ExternalAnnotationResolver,
         externalSignatureResolver: ExternalSignatureResolver,
@@ -51,7 +61,8 @@ open class LazyJavaResolverContext(
         methodSignatureChecker: MethodSignatureChecker,
         javaResolverCache: JavaResolverCache,
         javaDescriptorResolver: JavaDescriptorResolver
-) : GlobalJavaResolverContext(storageManager, finder, javaClassResolver,
+) : GlobalJavaResolverContext(storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver,
+                              javaClassResolver,
                               externalAnnotationResolver, externalSignatureResolver,
                               errorReporter, methodSignatureChecker, javaResolverCache,
                               javaDescriptorResolver)
@@ -62,6 +73,8 @@ fun LazyJavaResolverContext.withTypes(
         packageFragmentProvider,
         storageManager,
         finder,
+        kotlinClassFinder,
+        deserializedDescriptorResolver,
         javaClassResolver,
         externalAnnotationResolver,
         externalSignatureResolver,
@@ -76,6 +89,8 @@ class LazyJavaResolverContextWithTypes(
         packageFragmentProvider: LazyJavaPackageFragmentProvider,
         storageManager: StorageManager,
         finder: JavaClassFinder,
+        kotlinClassFinder: KotlinClassFinder,
+        deserializedDescriptorResolver: DeserializedDescriptorResolver,
         javaClassResolver: LazyJavaClassResolver,
         externalAnnotationResolver: ExternalAnnotationResolver,
         externalSignatureResolver: ExternalSignatureResolver,
@@ -85,7 +100,7 @@ class LazyJavaResolverContextWithTypes(
         javaDescriptorResolver: JavaDescriptorResolver,
         val typeResolver: LazyJavaTypeResolver,
         val typeParameterResolver: TypeParameterResolver
-) : LazyJavaResolverContext(packageFragmentProvider, storageManager, finder, javaClassResolver,
+) : LazyJavaResolverContext(packageFragmentProvider, storageManager, finder, kotlinClassFinder, deserializedDescriptorResolver, javaClassResolver,
                             externalAnnotationResolver, externalSignatureResolver,
                             errorReporter, methodSignatureChecker, javaResolverCache,
                             javaDescriptorResolver)
