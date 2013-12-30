@@ -26,7 +26,6 @@
             </element>
             <element id="module-output" name="backend-common" />
           </element>
-          <element id="library" level="project" name="js-libs" />
           <element id="library" level="project" name="javax.inject" />
           <element id="directory" name="jps">
             <element id="archive" name="kotlin-jps-plugin.jar">
