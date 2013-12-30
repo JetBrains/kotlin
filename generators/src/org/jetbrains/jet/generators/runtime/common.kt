@@ -20,6 +20,18 @@ import java.io.File
 import kotlin.properties.Delegates
 import java.io.PrintWriter
 
+enum class ProgressionKind {
+    BYTE
+    CHAR
+    SHORT
+    INT
+    LONG
+    FLOAT
+    DOUBLE
+
+    val capitalized = name().toLowerCase().capitalize()
+}
+
 val OUTPUT_DIR: File by Delegates.lazy {
     val result = File("runtime/kt/")
     if (!result.exists()) {
