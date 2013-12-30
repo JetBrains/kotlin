@@ -40,7 +40,7 @@ public final class QualifiedExpressionTranslator {
     public static AccessTranslator getAccessTranslator(@NotNull JetQualifiedExpression expression,
                                                        @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(expression, context);
-        return new SimpleWrappedVariableAccessTranslator(context, getNotNullSimpleNameSelector(expression), receiver);
+        return VariableAccessTranslator.newInstance(context, getNotNullSimpleNameSelector(expression), receiver);
     }
 
     @NotNull
@@ -61,7 +61,7 @@ public final class QualifiedExpressionTranslator {
     ) {
         if (ReferenceTranslator.canBePropertyAccess(selector, context)) {
             assert selector instanceof JetSimpleNameExpression : "Selectors for properties must be simple names.";
-            return new SimpleWrappedVariableAccessTranslator(context, (JetSimpleNameExpression)selector, receiver).translateAsGet();
+            return VariableAccessTranslator.newInstance(context, (JetSimpleNameExpression)selector, receiver).translateAsGet();
         }
         if (selector instanceof JetCallExpression) {
             return invokeCallExpressionTranslator(receiver, selector, callType, context);
