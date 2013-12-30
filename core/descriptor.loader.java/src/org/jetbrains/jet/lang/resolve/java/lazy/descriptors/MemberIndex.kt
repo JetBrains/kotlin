@@ -27,7 +27,7 @@ import org.jetbrains.jet.utils.valuesToMap
 
 trait MemberIndex {
     fun findMethodsByName(name: Name): Collection<JavaMethod>
-    fun getAllMetodNames(): Collection<Name>
+    fun getAllMethodNames(): Collection<Name>
 
     fun findFieldByName(name: Name): JavaField?
     fun getAllFieldNames(): Collection<Name>
@@ -35,7 +35,7 @@ trait MemberIndex {
 
 object EMPTY_MEMBER_INDEX : MemberIndex {
     override fun findMethodsByName(name: Name) = listOf<JavaMethod>()
-    override fun getAllMetodNames() = listOf<Name>()
+    override fun getAllMethodNames() = listOf<Name>()
 
     override fun findFieldByName(name: Name): JavaField? = null
     override fun getAllFieldNames() = listOf<Name>()
@@ -62,7 +62,7 @@ open class ClassMemberIndex(val jClass: JavaClass, filter: (JavaMember) -> Boole
         return methods[name] ?: listOf()
     }
 
-    override fun getAllMetodNames(): Collection<Name> = jClass.getAllMethods().iterator().filter(methodFilter).map { m -> m.getName() }.toList()
+    override fun getAllMethodNames(): Collection<Name> = jClass.getAllMethods().iterator().filter(methodFilter).map { m -> m.getName() }.toList()
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
     override fun getAllFieldNames() = jClass.getAllFields().iterator().filter(memberFilter).map { m -> m.getName() }.toList()

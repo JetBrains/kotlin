@@ -38,9 +38,9 @@ public abstract class LazyJavaPackageFragmentScope(
     }
 
     protected fun computeMemberIndexForSamConstructors(delegate: MemberIndex): MemberIndex = object : MemberIndex by delegate {
-        override fun getAllMetodNames(): Collection<Name> {
+        override fun getAllMethodNames(): Collection<Name> {
             val jClass = c.finder.findClass(fqName)
-            return delegate.getAllMetodNames() +
+            return delegate.getAllMethodNames() +
                    // For SAM-constructors
                    getAllClassNames() +
                    jClass.inn({ jC -> jC.getInnerClasses().map { c -> c.getName() }}, listOf())
