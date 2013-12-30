@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,7 +171,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitClassObject(@NotNull JetClassObject classObject) {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, classObject.getObjectDeclaration());
-        assert classDescriptor != null;
+
+        assert classDescriptor != null : String.format("No class found in binding context for: \n---\n%s\n---\n",
+                                                       JetPsiUtil.getElementTextWithContext(classObject));
 
         String name = peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX;
         recordClosure(classObject, classDescriptor, name);

@@ -337,8 +337,12 @@ public class CodegenBinding {
         }
         for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
             if (specifier instanceof JetDelegatorToSuperCall) {
-                JetType superType = bindingContext.get(TYPE, specifier.getTypeReference());
-                assert superType != null;
+                JetTypeReference typeReference = specifier.getTypeReference();
+
+                JetType superType = bindingContext.get(TYPE, typeReference);
+                assert superType != null: String.format(
+                        "No type in binding context for  \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(specifier));
+
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 assert superClassDescriptor != null;
                 if (!isInterface(superClassDescriptor)) {
