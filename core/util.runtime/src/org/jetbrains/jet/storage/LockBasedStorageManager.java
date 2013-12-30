@@ -317,15 +317,17 @@ public class LockBasedStorageManager implements StorageManager {
         @Nullable
         public V invoke(K input) {
             Object value = cache.get(input);
-            if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
+            if (value != null && value != NotValue.COMPUTING) return WrappedValues.unescapeExceptionOrNull(value);
 
             lock.lock();
             try {
                 value = cache.get(input);
+                assert value != NotValue.COMPUTING : "Recursion detected on input: " + input;
                 if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
                 AssertionError error = null;
                 try {
+                    cache.put(input, NotValue.COMPUTING);
                     V typedValue = compute.invoke(input);
                     Object oldValue = cache.put(input, WrappedValues.escapeNull(typedValue));
 
@@ -333,8 +335,8 @@ public class LockBasedStorageManager implements StorageManager {
                     // The trickery is here because below we catch all exceptions thrown here, and this is the only exception that shouldn't be stored
                     // A seemingly obvious way to come about this case would be to declare a special exception class, but the problem is that
                     // one memoized function is likely to (indirectly) call another, and if this second one throws this exception, we are screwed
-                    if (oldValue != null) {
-                        error = new AssertionError("Race condition or recursion detected. Old value is " + oldValue);
+                    if (oldValue != NotValue.COMPUTING) {
+                        error = new AssertionError("Race condition detected on input " + input + ". Old value is " + oldValue);
                         throw error;
                     }
 
@@ -344,7 +346,7 @@ public class LockBasedStorageManager implements StorageManager {
                     if (throwable == error) throw error;
 
                     Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
-                    assert oldValue == null : "Race condition or recursion detected. Old value is " + oldValue;
+                    assert oldValue == NotValue.COMPUTING : "Race condition detected on input " + input + ". Old value is " + oldValue;
 
                     throw ExceptionUtils.rethrow(throwable);
                 }

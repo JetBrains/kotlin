@@ -130,6 +130,27 @@ public class StorageManagerTest extends TestCase {
         doTestExceptionPreserved(apply(f, ""), UnsupportedOperationException.class, counter);
     }
 
+    public void testRecursionDetection() throws Exception {
+        class C {
+            MemoizedFunctionToNotNull<String, String> rec = m.createMemoizedFunction(
+                    new Function1<String, String>() {
+                        @Override
+                        public String invoke(String s) {
+                            return rec.invoke("!!!");
+                        }
+                    }
+            );
+        }
+
+        try {
+            new C().rec.invoke("");
+            fail();
+        }
+        catch (AssertionError e) {
+            assertEquals("Recursion detected on input: !!!", e.getMessage());
+        }
+    }
+
     // Values
 
     public void testNotNullLazyComputedOnce() throws Exception {
