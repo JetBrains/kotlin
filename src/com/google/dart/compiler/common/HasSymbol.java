@@ -4,9 +4,6 @@
 
 package com.google.dart.compiler.common;
 
-/**
- * @author johnlenz@google.com (John Lenz)
- */
 public interface HasSymbol {
   /**
    * @return Return the original user visible name for a Object represented

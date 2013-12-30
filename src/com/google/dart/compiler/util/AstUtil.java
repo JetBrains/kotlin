@@ -6,9 +6,6 @@ package com.google.dart.compiler.util;
 
 import com.google.dart.compiler.backend.js.ast.*;
 
-/**
- * @author johnlenz@google.com (John Lenz)
- */
 public final class AstUtil {
     private AstUtil() {
     }
