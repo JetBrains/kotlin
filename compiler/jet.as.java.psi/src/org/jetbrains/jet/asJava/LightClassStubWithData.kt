@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,19 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 
 trait LightClassData
 
+trait WithFileStub {
+    val javaFileStub: PsiJavaFileStub
+}
+
 trait LightClassDataForKotlinClass: LightClassData {
     val classOrObject: JetClassOrObject
     val descriptor: ClassDescriptor?
     val jvmInternalName: String
 }
 
-object KotlinPackageLightClassData: LightClassData
+data class KotlinPackageLightClassData(
+        override val javaFileStub: PsiJavaFileStub
+): LightClassData, WithFileStub
 
 data class InnerKotlinClassLightClassData(
         override val jvmInternalName: String,
@@ -37,13 +43,9 @@ data class InnerKotlinClassLightClassData(
 ): LightClassDataForKotlinClass
 
 data class OutermostKotlinClassLightClassData(
+        override val javaFileStub: PsiJavaFileStub,
         override val jvmInternalName: String,
         override val classOrObject: JetClassOrObject,
         override val descriptor: ClassDescriptor?,
-        val allInnerClasses: Map<JetClassOrObject, LightClassDataForKotlinClass>
-): LightClassDataForKotlinClass
-
-data class LightClassStubWithData(
-        val javaFileStub: PsiJavaFileStub,
-        val classData: LightClassData
-)
+        val allInnerClasses: Map<JetClassOrObject, InnerKotlinClassLightClassData>
+): LightClassDataForKotlinClass, WithFileStub

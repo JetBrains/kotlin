@@ -48,7 +48,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
     private final GlobalSearchScope searchScope;
     private final Collection<JetFile> files;
     private final int hashCode;
-    private final CachedValue<LightClassStubWithData> javaFileStub;
+    private final CachedValue<KotlinPackageLightClassData> lightClassDataCache;
     private final PsiModifierList modifierList;
     private final LightEmptyImplementsList implementsList;
 
@@ -67,9 +67,9 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
         assert !files.isEmpty() : "No files for package " + packageFqName;
         this.files = Sets.newHashSet(files); // needed for hashCode
         this.hashCode = computeHashCode();
-        KotlinJavaFileStubProvider stubProvider =
+        KotlinJavaFileStubProvider<KotlinPackageLightClassData> stubProvider =
                 KotlinJavaFileStubProvider.createForPackageClass(getProject(), packageFqName, searchScope);
-        this.javaFileStub = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider, /*trackValue = */false);
+        this.lightClassDataCache = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider, /*trackValue = */false);
     }
 
     @Nullable
@@ -272,7 +272,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
     @NotNull
     @Override
     public PsiClass getDelegate() {
-        PsiClass psiClass = LightClassUtil.findClass(packageClassFqName, javaFileStub.getValue().getJavaFileStub());
+        PsiClass psiClass = LightClassUtil.findClass(packageClassFqName, lightClassDataCache.getValue().getJavaFileStub());
         if (psiClass == null) {
             throw new IllegalStateException("Package class was not found " + packageFqName);
         }
