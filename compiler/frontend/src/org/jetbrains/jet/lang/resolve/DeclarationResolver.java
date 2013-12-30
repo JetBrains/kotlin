@@ -26,7 +26,10 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilder;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -346,14 +349,24 @@ public class DeclarationResolver {
         }
     }
 
-    private Collection<PsiElement> getDeclarationsByDescriptor(DeclarationDescriptor declarationDescriptor) {
+    @NotNull
+    private Collection<PsiElement> getDeclarationsByDescriptor(@NotNull DeclarationDescriptor declarationDescriptor) {
         Collection<PsiElement> declarations;
         if (declarationDescriptor instanceof PackageViewDescriptor) {
             final PackageViewDescriptor aPackage = (PackageViewDescriptor)declarationDescriptor;
             Collection<JetFile> files = trace.get(BindingContext.PACKAGE_TO_FILES, aPackage.getFqName());
 
             if (files == null) {
-                throw new IllegalStateException("declarations corresponding to " + aPackage + " are not found");
+                // TODO: uncomment this after built-ins are fully rewritten to Kotlin
+                // At the moment, there are Java classes for ranges (e.g. IntRange.java) which contain static members. If someone tries to
+                // rewrite IntRange to Kotlin, this exception will be thrown because there are both class (from the Kotlin sources) and
+                // package (from static members of Java class present in kotlin-runtime.jar) for FQ name "jet.IntRange", but no sources
+                // correspond to the package.
+                // Will be safe to uncomment once there are no Java classes duplicating sources of Kotlin built-ins
+
+                // throw new IllegalStateException("declarations corresponding to " + aPackage + " are not found");
+
+                return Collections.emptySet();
             }
 
             declarations = Collections2.transform(files, new Function<JetFile, PsiElement>() {
