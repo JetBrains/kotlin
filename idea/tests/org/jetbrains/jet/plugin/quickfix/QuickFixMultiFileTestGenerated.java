@@ -62,6 +62,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile("idea/testData/quickfix/autoImports/classImport.before.Main.kt");
         }
         
+        @TestMetadata("divOperator.before.Main.kt")
+        public void testDivOperator() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/divOperator.before.Main.kt");
+        }
+        
         @TestMetadata("extensionFunctionImport.before.Main.kt")
         public void testExtensionFunctionImport() throws Exception {
             doTestWithExtraFile("idea/testData/quickfix/autoImports/extensionFunctionImport.before.Main.kt");
@@ -85,6 +90,16 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("importTrait.before.Main.kt")
         public void testImportTrait() throws Exception {
             doTestWithExtraFile("idea/testData/quickfix/autoImports/importTrait.before.Main.kt");
+        }
+        
+        @TestMetadata("infixCall.before.Main.kt")
+        public void testInfixCall() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/infixCall.before.Main.kt");
+        }
+        
+        @TestMetadata("minusOperator.before.Main.kt")
+        public void testMinusOperator() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/minusOperator.before.Main.kt");
         }
         
         @TestMetadata("noImportForFunInQualifiedNotFirst.before.Main.kt")
@@ -125,6 +140,31 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("packageClass.before.Main.kt")
         public void testPackageClass() throws Exception {
             doTestWithExtraFile("idea/testData/quickfix/autoImports/packageClass.before.Main.kt");
+        }
+        
+        @TestMetadata("plusOperator.before.Main.kt")
+        public void testPlusOperator() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/plusOperator.before.Main.kt");
+        }
+        
+        @TestMetadata("postfixOperator.before.Main.kt")
+        public void testPostfixOperator() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/postfixOperator.before.Main.kt");
+        }
+        
+        @TestMetadata("timesAssign.before.Main.kt")
+        public void testTimesAssign() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/timesAssign.before.Main.kt");
+        }
+        
+        @TestMetadata("unaryMinusOperator.before.Main.kt")
+        public void testUnaryMinusOperator() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/unaryMinusOperator.before.Main.kt");
+        }
+        
+        @TestMetadata("unaryPlusOperator.before.Main.kt")
+        public void testUnaryPlusOperator() throws Exception {
+            doTestWithExtraFile("idea/testData/quickfix/autoImports/unaryPlusOperator.before.Main.kt");
         }
         
     }
