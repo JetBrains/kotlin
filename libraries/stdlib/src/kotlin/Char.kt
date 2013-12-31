@@ -34,3 +34,8 @@ public fun Char.isUpperCase(): Boolean = Character.isUpperCase(this)
  * Returns true if this character is lower case
  */
 public fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
+
+/**
+ * Concatenates this Char and a String
+ */
+public fun Char.plus(string: String) : String = this.toString() + string
