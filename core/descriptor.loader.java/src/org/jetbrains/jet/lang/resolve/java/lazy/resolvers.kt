@@ -20,10 +20,11 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
-import org.jetbrains.jet.utils.valuesToMap
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 
 trait LazyJavaClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
@@ -60,4 +61,29 @@ class LazyJavaTypeParameterResolver(
     override fun resolveTypeParameter(javaTypeParameter: JavaTypeParameter): TypeParameterDescriptor? {
         return resolve(javaTypeParameter) ?: c.typeParameterResolver.resolveTypeParameter(javaTypeParameter)
     }
+}
+
+fun GlobalJavaResolverContext.findJavaClass(fqName: FqName): JavaClass? = findClassInJava(fqName).jClass
+
+data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: KotlinJvmBinaryClass? = null)
+
+fun GlobalJavaResolverContext.findClassInJava(fqName: FqName): JavaClassLookupResult {
+    // TODO: this should be governed by module separation logic
+    // Do not look for JavaClasses for Kotlin binaries & built-ins
+    if (JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName) != null) {
+        return JavaClassLookupResult()
+    }
+
+    // Do not look for Kotlin binary classes
+    val kotlinClass = kotlinClassFinder.findKotlinClass(fqName)
+    if (kotlinClass != null) return JavaClassLookupResult(kClass = kotlinClass)
+
+    val javaClass = finder.findClass(fqName)
+    if (javaClass == null) return JavaClassLookupResult()
+
+    // Light classes are not proper binaries either
+    if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) return JavaClassLookupResult()
+
+    return JavaClassLookupResult(javaClass)
+
 }

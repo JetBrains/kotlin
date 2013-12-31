@@ -29,6 +29,7 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
@@ -589,7 +590,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        ModuleDescriptor module = javaDescriptorResolver.getModule();
+        ModuleDescriptorImpl module = (ModuleDescriptorImpl) javaDescriptorResolver.getModule();
+        module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         for (ImportPath defaultImport : module.getDefaultImports()) {
             writableScope.importScope(module.getPackage(defaultImport.fqnPart()).getMemberScope());
         }

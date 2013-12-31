@@ -303,7 +303,13 @@ public abstract class LazyJavaMemberScope(
             result.addAll(getProperties(name))
         }
 
+        addExtraDescriptors(result)
+
         return result
+    }
+
+    protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>) {
+        // Do nothing
     }
 
     protected abstract fun getAllPackageNames(): Collection<Name>

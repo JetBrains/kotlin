@@ -12,6 +12,8 @@ import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 
 public open class LazyJavaPackageFragmentProvider(
         private val outerContext: GlobalJavaResolverContext,
@@ -43,7 +45,7 @@ public open class LazyJavaPackageFragmentProvider(
             LazyPackageFragmentForJavaPackage(c, _module, jPackage)
         }
         else {
-            val jClass = c.finder.findClass(fqName)
+            val jClass = c.findJavaClass(fqName)
             if (jClass != null && DescriptorResolverUtils.isJavaClassVisibleAsPackage(jClass)) {
                 LazyPackageFragmentForJavaClass(c, _module, jClass)
             }
@@ -61,14 +63,22 @@ public open class LazyJavaPackageFragmentProvider(
 
     fun getClass(fqName: FqName): ClassDescriptor? = c.javaClassResolver.resolveClassByFqName(fqName)
 
+    internal val resolveKotlinBinaryClass = c.storageManager.createMemoizedFunctionWithNullableValues {
+        (kotlinClass: KotlinJvmBinaryClass) -> c.deserializedDescriptorResolver.resolveClass(kotlinClass)
+    }
+
     private inner class FragmentClassResolver : LazyJavaClassResolver {
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
             // TODO: there's no notion of module separation here. We must refuse to resolve classes from other modules
             val fqName = javaClass.getFqName()
             if (fqName != null) {
-                // TODO: this should be handled by module seperation logic
+                // TODO: this should be handled by module separation logic
                 val builtinClass = JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName)
                 if (builtinClass != null) return builtinClass
+
+                if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
+                    return c.javaResolverCache.getClassResolvedFromSource(fqName)
+                }
             }
 
             val outer = javaClass.getOuterClass()
@@ -83,15 +93,16 @@ public open class LazyJavaPackageFragmentProvider(
                 outerPackage.getMemberScope()
             }
             return scope.getClassifier(javaClass.getName()) as? ClassDescriptor
+                        ?: outerContext.javaClassResolver.resolveClass(javaClass)
         }
 
         override fun resolveClassByFqName(fqName: FqName): ClassDescriptor? {
             val builtinClass = JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName)
             if (builtinClass != null) return builtinClass
 
-            val jClass = c.finder.findClass(fqName)
+            val (jClass, kClass) = c.findClassInJava(fqName)
             if (jClass != null) return resolveClass(jClass)
-
+            if (kClass != null) return resolveKotlinBinaryClass(kClass)
             return outerContext.javaClassResolver.resolveClassByFqName(fqName)
         }
     }

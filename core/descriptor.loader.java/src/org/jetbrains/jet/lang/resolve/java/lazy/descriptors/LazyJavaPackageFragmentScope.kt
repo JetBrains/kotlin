@@ -12,8 +12,12 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.utils.flatten
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.kotlin.util.inn
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule
 import org.jetbrains.kotlin.util.sure
+import org.jetbrains.jet.lang.resolve.java.lazy.findJavaClass
+import org.jetbrains.jet.lang.resolve.java.lazy.findClassInJava
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.storage.NotNullLazyValue
 
 public abstract class LazyJavaPackageFragmentScope(
         c: LazyJavaResolverContext,
@@ -24,22 +28,24 @@ public abstract class LazyJavaPackageFragmentScope(
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
         name ->
         val fqName = fqName.child(name)
-        val javaClass = c.finder.findClass(fqName)
-        if (javaClass == null)
-            c.javaClassResolver.resolveClassByFqName(fqName)
+        val (jClass, kClass) = c.findClassInJava(fqName)
+        if (kClass != null)
+            c.packageFragmentProvider.resolveKotlinBinaryClass(kClass)
+        else if (jClass == null)
+            null
         else {
             // TODO: this caching is a temporary workaround, should be replaced with properly caching the whole LazyJavaSubModule
-            val cached = c.javaResolverCache.getClass(javaClass)
+            val cached = c.javaResolverCache.getClass(jClass)
             if (cached != null)
                 cached
             else
-                LazyJavaClassDescriptor(c.withTypes(TypeParameterResolver.EMPTY), packageFragment, fqName, javaClass)
+                LazyJavaClassDescriptor(c.withTypes(TypeParameterResolver.EMPTY), packageFragment, fqName, jClass)
         }
     }
 
     protected fun computeMemberIndexForSamConstructors(delegate: MemberIndex): MemberIndex = object : MemberIndex by delegate {
         override fun getAllMethodNames(): Collection<Name> {
-            val jClass = c.finder.findClass(fqName)
+            val jClass = c.findJavaClass(fqName)
             return delegate.getAllMethodNames() +
                    // For SAM-constructors
                    getAllClassNames() +
@@ -66,6 +72,22 @@ public class LazyPackageFragmentScopeForJavaPackage(
         packageFragment: LazyJavaPackageFragment
 ) : LazyJavaPackageFragmentScope(c, packageFragment) {
 
+    private val deserializedPackageScope = c.storageManager.createLazyValue {
+        val packageClassFqName = PackageClassUtils.getPackageClassFqName(fqName)
+        val kotlinBinaryClass = c.kotlinClassFinder.findKotlinClass(packageClassFqName)
+        if (kotlinBinaryClass == null)
+            JetScope.EMPTY
+        else
+            c.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClass) ?: JetScope.EMPTY
+    }
+
+    override fun getProperties(name: Name) = deserializedPackageScope().getProperties(name)
+    override fun getFunctions(name: Name) = deserializedPackageScope().getFunctions(name) + super.getFunctions(name)
+
+    override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>) {
+        result.addAll(deserializedPackageScope().getAllDescriptors())
+    }
+
     override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(EMPTY_MEMBER_INDEX)
 
     override fun getAllClassNames(): Collection<Name> {
@@ -83,7 +105,6 @@ public class LazyPackageFragmentScopeForJavaPackage(
             ).flatten()
 
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> = Collections.emptyList()
     override fun getAllPropertyNames() = Collections.emptyList<Name>()
 }
 

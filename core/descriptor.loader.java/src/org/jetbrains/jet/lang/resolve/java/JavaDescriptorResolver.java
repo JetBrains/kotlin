@@ -16,31 +16,24 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 
 import javax.inject.Inject;
-import java.util.Collections;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
@@ -54,23 +47,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
-
-    private final MemoizedFunctionToNullable<FqName, ClassDescriptor> kotlinClassesFromBinaries = storageManager.createMemoizedFunctionWithNullableValues(
-            new Function1<FqName, ClassDescriptor>() {
-                @Override
-                public ClassDescriptor invoke(FqName fqName) {
-                    //TODO: correct scope
-                    KotlinJvmBinaryClass kotlinClass = kotlinClassFinder.find(fqName);
-                    if (kotlinClass != null) {
-                        ClassDescriptor deserializedDescriptor = deserializedDescriptorResolver.resolveClass(kotlinClass);
-                        if (deserializedDescriptor != null) {
-                            return deserializedDescriptor;
-                        }
-                    }
-                    return null;
-                }
-            }
-    );
 
     private JavaClassResolver classResolver;
     private JavaPackageFragmentProvider packageFragmentProvider;
@@ -150,36 +126,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(
                     new GlobalJavaResolverContext(
                             storageManager,
-                            new JavaClassFinder() {
-
-                                @Nullable
-                                @Override
-                                public JavaClass findClass(@NotNull FqName fqName) {
-                                    // Do not look for JavaClasses for Kotlin binaries & built-ins
-                                    if (kotlinClassesFromBinaries.invoke(fqName) != null
-                                        //|| kotlinNamespacesFromBinaries.invoke(fqName) != null
-                                        || JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName) != null) {
-                                        return null;
-                                    }
-
-                                    JavaClass javaClass = javaClassFinder.findClass(fqName);
-                                    if (javaClass == null) {
-                                        return null;
-                                    }
-
-                                    // Light classes are not proper binaries either
-                                    if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
-                                        return null;
-                                    }
-                                    return javaClass;
-                                }
-
-                                @Nullable
-                                @Override
-                                public JavaPackage findPackage(@NotNull FqName fqName) {
-                                    return javaClassFinder.findPackage(fqName);
-                                }
-                            },
+                            javaClassFinder,
                             kotlinClassFinder,
                             deserializedDescriptorResolver,
                             new LazyJavaClassResolver() {
@@ -195,17 +142,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
                                 @Override
                                 public ClassDescriptor resolveClassByFqName(FqName fqName) {
-                                    ClassDescriptor kotlinClassDescriptor = javaResolverCache.getClassResolvedFromSource(fqName);
-                                    if (kotlinClassDescriptor != null) {
-                                        return kotlinClassDescriptor;
-                                    }
-
-                                    ClassDescriptor classFromBinaries = kotlinClassesFromBinaries.invoke(fqName);
-                                    if (classFromBinaries != null) {
-                                        return classFromBinaries;
-                                    }
-
-                                    return null;
+                                    return javaResolverCache.getClassResolvedFromSource(fqName);
                                 }
                             },
                             externalAnnotationResolver,
