@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.LabelResolver;
+import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
@@ -364,14 +366,25 @@ public class BodyResolver {
         if (primaryConstructor != null) {
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, context.getOuterDataFlowInfo(), trace);
-                annotationResolver.resolveAnnotationsWithArguments(scopeForInitializers, anonymousInitializer.getModifierList(), trace);
+                processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
             }
         }
         else {
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
                 trace.report(ANONYMOUS_INITIALIZER_IN_TRAIT.on(anonymousInitializer));
-                annotationResolver.resolveAnnotationsWithArguments(scopeForInitializers, anonymousInitializer.getModifierList(), trace);
+                processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
             }
+        }
+    }
+
+    private void processModifiersOnInitializer(@NotNull JetModifierListOwner owner, @NotNull JetScope scope) {
+        JetModifierList modifierList = owner.getModifierList();
+        if (modifierList == null) return;
+
+        annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
+
+        for (ASTNode node : modifierList.getModifierNodes()) {
+            trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
         }
     }
 
