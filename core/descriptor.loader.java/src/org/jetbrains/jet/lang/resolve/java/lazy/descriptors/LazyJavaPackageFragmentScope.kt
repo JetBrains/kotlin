@@ -30,7 +30,7 @@ public abstract class LazyJavaPackageFragmentScope(
         val fqName = fqName.child(name)
         val (jClass, kClass) = c.findClassInJava(fqName)
         if (kClass != null)
-            c.packageFragmentProvider.resolveKotlinBinaryClass(kClass)
+            kClass
         else if (jClass == null)
             null
         else {

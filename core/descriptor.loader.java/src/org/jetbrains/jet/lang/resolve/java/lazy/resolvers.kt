@@ -24,7 +24,8 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParamete
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind
 
 trait LazyJavaClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
@@ -63,20 +64,34 @@ class LazyJavaTypeParameterResolver(
     }
 }
 
-fun GlobalJavaResolverContext.findJavaClass(fqName: FqName): JavaClass? = findClassInJava(fqName).jClass
+fun LazyJavaResolverContext.findJavaClass(fqName: FqName): JavaClass? = findClassInJava(fqName).jClass
 
-data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: KotlinJvmBinaryClass? = null)
+data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: ClassDescriptor? = null)
 
-fun GlobalJavaResolverContext.findClassInJava(fqName: FqName): JavaClassLookupResult {
+fun LazyJavaResolverContext.findClassInJava(fqName: FqName): JavaClassLookupResult {
     // TODO: this should be governed by module separation logic
     // Do not look for JavaClasses for Kotlin binaries & built-ins
     if (JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName) != null) {
         return JavaClassLookupResult()
     }
 
-    // Do not look for Kotlin binary classes
     val kotlinClass = kotlinClassFinder.findKotlinClass(fqName)
-    if (kotlinClass != null) return JavaClassLookupResult(kClass = kotlinClass)
+    val header = kotlinClass?.getClassHeader()
+    if (kotlinClass != null && header != null) {
+        if (header.getKind() == KotlinClassHeader.Kind.CLASS) {
+            val descriptor = packageFragmentProvider.resolveKotlinBinaryClass(kotlinClass)
+            if (descriptor != null) {
+                return JavaClassLookupResult(kClass = descriptor)
+            }
+        }
+        else if (header.getKind() == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
+            errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.getVersion())
+        }
+        else {
+            // This is a package or trait-impl or something like that
+            return JavaClassLookupResult()
+        }
+    }
 
     val javaClass = finder.findClass(fqName)
     if (javaClass == null) return JavaClassLookupResult()

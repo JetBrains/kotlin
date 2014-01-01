@@ -102,7 +102,7 @@ public open class LazyJavaPackageFragmentProvider(
 
             val (jClass, kClass) = c.findClassInJava(fqName)
             if (jClass != null) return resolveClass(jClass)
-            if (kClass != null) return resolveKotlinBinaryClass(kClass)
+            if (kClass != null) return kClass
             return outerContext.javaClassResolver.resolveClassByFqName(fqName)
         }
     }
