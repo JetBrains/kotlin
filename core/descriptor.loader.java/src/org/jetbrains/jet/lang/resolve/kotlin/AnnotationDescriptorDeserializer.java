@@ -112,10 +112,11 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @Nullable
     private KotlinJvmBinaryClass findKotlinClassByDescriptor(@NotNull ClassOrNamespaceDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
-            return kotlinClassFinder.find(kotlinFqNameToJavaFqName(naiveKotlinFqName((ClassDescriptor) descriptor)));
+            return kotlinClassFinder.findKotlinClass(kotlinFqNameToJavaFqName(naiveKotlinFqName((ClassDescriptor) descriptor)));
         }
         else if (descriptor instanceof PackageFragmentDescriptor) {
-            return kotlinClassFinder.find(PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) descriptor).getFqName()));
+            return kotlinClassFinder.findKotlinClass(
+                    PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) descriptor).getFqName()));
         }
         else {
             throw new IllegalStateException("Unrecognized descriptor: " + descriptor);
@@ -266,7 +267,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
             if (proto.hasExtension(JavaProtoBuf.implClassName)) {
                 Name tImplName = nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));
-                return kotlinClassFinder.find(containingPackage.getFqName().child(tImplName));
+                return kotlinClassFinder.findKotlinClass(containingPackage.getFqName().child(tImplName));
             }
             return null;
         }
@@ -283,7 +284,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         if (proto.hasExtension(JavaProtoBuf.implClassName)) {
             Name name = nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));
             FqName fqName = PackageClassUtils.getPackageClassFqName(container.getFqName()).parent().child(name);
-            return kotlinClassFinder.find(fqName);
+            return kotlinClassFinder.findKotlinClass(fqName);
         }
         return null;
     }

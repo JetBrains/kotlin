@@ -33,8 +33,8 @@ public class VirtualFileKotlinClassFinder implements KotlinClassFinder {
 
     @Nullable
     @Override
-    public KotlinJvmBinaryClass find(@NotNull FqName fqName) {
-        VirtualFile file = virtualFileFinder.find(fqName);
+    public KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName) {
+        VirtualFile file = virtualFileFinder.findVirtualFile(fqName);
         return file == null ? null : new VirtualFileKotlinClass(file);
     }
 }

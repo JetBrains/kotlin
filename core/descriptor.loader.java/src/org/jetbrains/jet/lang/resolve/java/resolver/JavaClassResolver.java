@@ -187,7 +187,7 @@ public final class JavaClassResolver {
 
     private ClassDescriptor doResolveClass(@NotNull FqName qualifiedName, @NotNull PostponedTasks tasks) {
         //TODO: correct scope
-        KotlinJvmBinaryClass kotlinClass = kotlinClassFinder.find(qualifiedName);
+        KotlinJvmBinaryClass kotlinClass = kotlinClassFinder.findKotlinClass(qualifiedName);
         if (kotlinClass != null) {
             ClassDescriptor deserializedDescriptor = deserializedDescriptorResolver.resolveClass(kotlinClass);
             if (deserializedDescriptor != null) {

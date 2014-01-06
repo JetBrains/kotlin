@@ -144,7 +144,7 @@ public final class JavaPackageFragmentProviderImpl implements JavaPackageFragmen
         JavaPackage javaPackage = javaClassFinder.findPackage(fqName);
         if (javaPackage != null) {
             FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(fqName);
-            KotlinJvmBinaryClass kotlinClass = kotlinClassFinder.find(packageClassFqName);
+            KotlinJvmBinaryClass kotlinClass = kotlinClassFinder.findKotlinClass(packageClassFqName);
 
             if (kotlinClass != null) {
                 JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinClass);

@@ -22,5 +22,5 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface KotlinClassFinder {
     @Nullable
-    KotlinJvmBinaryClass find(@NotNull FqName fqName);
+    KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName);
 }

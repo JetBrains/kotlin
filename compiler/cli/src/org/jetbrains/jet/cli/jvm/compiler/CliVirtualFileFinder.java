@@ -35,7 +35,7 @@ public class CliVirtualFileFinder implements VirtualFileFinder {
 
     @Nullable
     @Override
-    public VirtualFile find(@NotNull FqName className) {
+    public VirtualFile findVirtualFile(@NotNull FqName className) {
         for (VirtualFile root : classPath) {
             VirtualFile fileInRoot = findFileInRoot(className.asString(), root);
             if (fileInRoot != null) {
