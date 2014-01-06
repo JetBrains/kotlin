@@ -21,20 +21,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-import javax.inject.Inject;
-
-public class VirtualFileKotlinClassFinder implements KotlinClassFinder {
-    private VirtualFileFinder virtualFileFinder;
-
-    @Inject
-    public void setVirtualFileFinder(@NotNull VirtualFileFinder virtualFileFinder) {
-        this.virtualFileFinder = virtualFileFinder;
-    }
+public abstract class VirtualFileKotlinClassFinder implements VirtualFileFinder {
 
     @Nullable
     @Override
     public KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName) {
-        VirtualFile file = virtualFileFinder.findVirtualFile(fqName);
+        VirtualFile file = findVirtualFile(fqName);
         return file == null ? null : new VirtualFileKotlinClass(file);
     }
 }

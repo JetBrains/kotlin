@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProviderImpl;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
@@ -57,7 +56,6 @@ public class InjectorForJavaDescriptorResolver {
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private final JavaDescriptorResolver javaDescriptorResolver;
-    private final VirtualFileKotlinClassFinder virtualFileKotlinClassFinder;
     private final JavaPackageFragmentProviderImpl javaPackageFragmentProvider;
     private final VirtualFileFinder virtualFileFinder;
     private final ModuleDescriptorImpl module;
@@ -88,7 +86,6 @@ public class InjectorForJavaDescriptorResolver {
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
-        this.virtualFileKotlinClassFinder = new VirtualFileKotlinClassFinder();
         this.javaPackageFragmentProvider = new JavaPackageFragmentProviderImpl();
         this.virtualFileFinder = com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class);
         this.module = org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule("<fake-jdr-module>");
@@ -121,13 +118,11 @@ public class InjectorForJavaDescriptorResolver {
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
 
-        virtualFileKotlinClassFinder.setVirtualFileFinder(virtualFileFinder);
-
         javaPackageFragmentProvider.setCache(traceBasedJavaResolverCache);
         javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaPackageFragmentProvider.setJavaClassFinder(javaClassFinder);
         javaPackageFragmentProvider.setJavaDescriptorResolver(javaDescriptorResolver);
-        javaPackageFragmentProvider.setKotlinClassFinder(virtualFileKotlinClassFinder);
+        javaPackageFragmentProvider.setKotlinClassFinder(virtualFileFinder);
         javaPackageFragmentProvider.setMemberResolver(javaMemberResolver);
         javaPackageFragmentProvider.setModule(module);
 
@@ -144,7 +139,7 @@ public class InjectorForJavaDescriptorResolver {
         javaClassResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
-        javaClassResolver.setKotlinClassFinder(virtualFileKotlinClassFinder);
+        javaClassResolver.setKotlinClassFinder(virtualFileFinder);
         javaClassResolver.setMemberResolver(javaMemberResolver);
         javaClassResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
@@ -157,7 +152,7 @@ public class InjectorForJavaDescriptorResolver {
 
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
-        annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileKotlinClassFinder);
+        annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
         javaFunctionResolver.setCache(traceBasedJavaResolverCache);

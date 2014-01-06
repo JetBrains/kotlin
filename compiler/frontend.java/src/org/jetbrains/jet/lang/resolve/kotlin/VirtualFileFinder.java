@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public interface VirtualFileFinder {
+public interface VirtualFileFinder extends KotlinClassFinder {
     // TODO: support scope
     @Nullable
     VirtualFile findVirtualFile(@NotNull FqName className);

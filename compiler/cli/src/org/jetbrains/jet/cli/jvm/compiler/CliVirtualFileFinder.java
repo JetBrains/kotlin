@@ -19,12 +19,11 @@ package org.jetbrains.jet.cli.jvm.compiler;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.jet.lang.resolve.kotlin.*;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public class CliVirtualFileFinder implements VirtualFileFinder {
+public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implements VirtualFileFinder {
 
     @NotNull
     private final ClassPath classPath;

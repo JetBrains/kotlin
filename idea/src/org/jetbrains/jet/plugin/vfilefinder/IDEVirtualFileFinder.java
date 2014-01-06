@@ -24,11 +24,12 @@ import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 
-public final class IDEVirtualFileFinder implements VirtualFileFinder {
+public final class IDEVirtualFileFinder extends VirtualFileKotlinClassFinder implements VirtualFileFinder {
 
     private static final Logger LOG = Logger.getInstance(IDEVirtualFileFinder.class);
 

@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProviderImpl;
@@ -96,7 +95,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final TraceBasedErrorReporter traceBasedErrorReporter;
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
-    private final VirtualFileKotlinClassFinder virtualFileKotlinClassFinder;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final NamespaceFactoryImpl namespaceFactory;
     private final JavaPackageFragmentProviderImpl javaPackageFragmentProvider;
@@ -158,7 +156,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.traceBasedErrorReporter = new TraceBasedErrorReporter();
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
-        this.virtualFileKotlinClassFinder = new VirtualFileKotlinClassFinder();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.namespaceFactory = new NamespaceFactoryImpl();
         this.javaPackageFragmentProvider = new JavaPackageFragmentProviderImpl();
@@ -245,8 +242,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         psiBasedMethodSignatureChecker.setAnnotationResolver(javaAnnotationResolver);
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
-        virtualFileKotlinClassFinder.setVirtualFileFinder(virtualFileFinder);
-
         namespaceFactory.setModule(moduleDescriptor);
         namespaceFactory.setPackageFragmentProvider(mutablePackageFragmentProvider);
         namespaceFactory.setTrace(bindingTrace);
@@ -255,7 +250,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         this.javaPackageFragmentProvider.setJavaClassFinder(javaClassFinder);
         this.javaPackageFragmentProvider.setJavaDescriptorResolver(javaDescriptorResolver);
-        this.javaPackageFragmentProvider.setKotlinClassFinder(virtualFileKotlinClassFinder);
+        this.javaPackageFragmentProvider.setKotlinClassFinder(virtualFileFinder);
         this.javaPackageFragmentProvider.setMemberResolver(javaMemberResolver);
         this.javaPackageFragmentProvider.setModule(moduleDescriptor);
 
@@ -335,7 +330,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaClassResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
-        javaClassResolver.setKotlinClassFinder(virtualFileKotlinClassFinder);
+        javaClassResolver.setKotlinClassFinder(virtualFileFinder);
         javaClassResolver.setMemberResolver(javaMemberResolver);
         javaClassResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
@@ -358,7 +353,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorDeserializer.setJavaClassResolver(javaClassResolver);
-        annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileKotlinClassFinder);
+        annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
         javaFunctionResolver.setCache(traceBasedJavaResolverCache);
