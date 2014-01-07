@@ -25,9 +25,8 @@ import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.util.cls.ClsFormatException;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
-import org.jetbrains.jet.lang.resolve.kotlin.header.PackageFragmentClassHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 /**
@@ -46,8 +45,8 @@ public class EmptyPackageFragmentClsStubBuilderFactory extends ClsStubBuilderFac
     public boolean canBeProcessed(VirtualFile file, byte[] bytes) {
         if (file.getName().contains(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-") &&
             StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
-            KotlinJvmBinaryClass kotlinClass = new VirtualFileKotlinClass(LockBasedStorageManager.NO_LOCKS, file);
-            return kotlinClass.getClassHeader() instanceof PackageFragmentClassHeader;
+            KotlinClassHeader header = new VirtualFileKotlinClass(LockBasedStorageManager.NO_LOCKS, file).getClassHeader();
+            return header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_FRAGMENT;
         }
         return false;
     }

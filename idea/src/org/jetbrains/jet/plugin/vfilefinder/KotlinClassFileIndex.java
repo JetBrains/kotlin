@@ -24,7 +24,6 @@ import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.header.IncompatibleAnnotationHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -79,7 +78,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
                 KotlinJvmBinaryClass kotlinClass = VirtualFileFinder.SERVICE.getInstance(inputData.getProject())
                                                                             .createKotlinClass(inputData.getFile());
                 KotlinClassHeader header = kotlinClass.getClassHeader();
-                if (header != null && !(header instanceof IncompatibleAnnotationHeader)) {
+                if (header != null && header.getKind() != KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
                     return Collections.singletonMap(kotlinClass.getClassName().getFqNameForClassNameWithoutDollars(), null);
                 }
             }

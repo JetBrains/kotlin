@@ -16,15 +16,65 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-public abstract class KotlinClassHeader {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+public class KotlinClassHeader {
+
+    @NotNull
+    public static KotlinClassHeader createClassHeader(int version, @NotNull String[] annotationData) {
+        return new KotlinClassHeader(Kind.CLASS, version, annotationData);
+    }
+
+    @NotNull
+    public static KotlinClassHeader createPackageFacadeHeader(int version, @NotNull String[] annotationData) {
+        return new KotlinClassHeader(Kind.PACKAGE_FACADE, version, annotationData);
+    }
+
+    @NotNull
+    public static KotlinClassHeader createPackageFragmentHeader(int version) {
+        return new KotlinClassHeader(Kind.PACKAGE_FRAGMENT, version, null);
+    }
+
+    @NotNull
+    public static KotlinClassHeader createTraitImplHeader(int version) {
+        return new KotlinClassHeader(Kind.TRAIT_IMPL, version, null);
+    }
+
+    @NotNull
+    public static KotlinClassHeader createIncompatibleVersionErrorHeader(int version) {
+        return new KotlinClassHeader(Kind.INCOMPATIBLE_ABI_VERSION, version, null);
+    }
+
+    public enum Kind {
+        CLASS,
+        PACKAGE_FACADE,
+        PACKAGE_FRAGMENT,
+        TRAIT_IMPL,
+        INCOMPATIBLE_ABI_VERSION
+    }
+
+    private final Kind kind;
     private final int version;
+    private final String[] data;
 
-    protected KotlinClassHeader(int version) {
+    private KotlinClassHeader(@NotNull Kind kind, int version, @Nullable String[] annotationData) {
+        this.kind = kind;
         this.version = version;
+        this.data = annotationData;
+    }
+
+    @NotNull
+    public Kind getKind() {
+        return kind;
     }
 
     public int getVersion() {
         return version;
+    }
+
+    @Nullable
+    public String[] getAnnotationData() {
+        return data;
     }
 }

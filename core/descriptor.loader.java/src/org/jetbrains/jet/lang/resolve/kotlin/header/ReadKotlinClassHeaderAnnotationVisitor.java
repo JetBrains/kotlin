@@ -83,31 +83,25 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         if (!AbiVersionUtil.isAbiVersionCompatible(version)) {
-            return new IncompatibleAnnotationHeader(version);
+            return KotlinClassHeader.createIncompatibleVersionErrorHeader(version);
         }
 
         switch (foundType) {
             case CLASS:
-                return serializedDataHeader(SerializedDataHeader.Kind.CLASS);
+                // This means that the annotation is found and its ABI version is compatible, but there's no "data" string array in it.
+                // We tell the outside world that there's really no annotation at all
+                if (annotationData == null) return null;
+                return KotlinClassHeader.createClassHeader(version, annotationData);
             case PACKAGE:
-                return serializedDataHeader(SerializedDataHeader.Kind.PACKAGE);
+                if (annotationData == null) return null;
+                return KotlinClassHeader.createPackageFacadeHeader(version, annotationData);
             case PACKAGE_FRAGMENT:
-                return new PackageFragmentClassHeader(version);
+                return KotlinClassHeader.createPackageFragmentHeader(version);
             case TRAIT_IMPL:
-                return new TraitImplClassHeader(version);
+                return KotlinClassHeader.createTraitImplHeader(version);
             default:
                 throw new UnsupportedOperationException("Unknown compatible HeaderType: " + foundType);
         }
-    }
-
-    @Nullable
-    private SerializedDataHeader serializedDataHeader(@NotNull SerializedDataHeader.Kind kind) {
-        if (annotationData == null) {
-            // This means that the annotation is found and its ABI version is compatible, but there's no "data" string array in it.
-            // We tell the outside world that there's really no annotation at all
-            return null;
-        }
-        return new SerializedDataHeader(version, annotationData, kind);
     }
 
     @Nullable

@@ -22,7 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 
 public final class DecompiledUtils {
 
@@ -32,7 +32,8 @@ public final class DecompiledUtils {
         }
         //TODO: check index
         KotlinJvmBinaryClass kotlinClass = VirtualFileFinder.SERVICE.getInstance(project).createKotlinClass(file);
-        return kotlinClass.getClassHeader() instanceof SerializedDataHeader;
+        KotlinClassHeader header = kotlinClass.getClassHeader();
+        return header != null && header.getAnnotationData() != null;
     }
 
     private DecompiledUtils() {

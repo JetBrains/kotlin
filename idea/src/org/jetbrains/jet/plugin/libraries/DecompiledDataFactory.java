@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
-import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -54,7 +53,7 @@ public final class DecompiledDataFactory {
     @NotNull
     private final JavaDescriptorResolver javaDescriptorResolver;
     @NotNull
-    private final SerializedDataHeader classFileHeader;
+    private final KotlinClassHeader classFileHeader;
     @NotNull
     private final FqName classFqName;
     @NotNull
@@ -72,8 +71,8 @@ public final class DecompiledDataFactory {
         this.classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars();
 
         KotlinClassHeader header = kotlinClass.getClassHeader();
-        assert header instanceof SerializedDataHeader : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;
-        this.classFileHeader = (SerializedDataHeader) header;
+        assert header != null : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;
+        this.classFileHeader = header;
     }
 
     @NotNull
@@ -84,8 +83,8 @@ public final class DecompiledDataFactory {
     private JetDecompiledData build() {
         FqName packageFqName = classFqName.parent();
         appendDecompiledTextAndPackageName(packageFqName);
-        SerializedDataHeader.Kind kind = classFileHeader.getKind();
-        if (kind == SerializedDataHeader.Kind.PACKAGE) {
+        KotlinClassHeader.Kind kind = classFileHeader.getKind();
+        if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
             PackageFragmentDescriptor pf = javaDescriptorResolver.getPackageFragmentProvider().getPackageFragment(packageFqName);
             if (pf != null) {
                 for (DeclarationDescriptor member : sortDeclarations(pf.getMemberScope().getAllDescriptors())) {
@@ -96,7 +95,7 @@ public final class DecompiledDataFactory {
                 }
             }
         }
-        else if (kind == SerializedDataHeader.Kind.CLASS) {
+        else if (kind == KotlinClassHeader.Kind.CLASS) {
             ClassDescriptor cd = javaDescriptorResolver.resolveClass(classFqName, INCLUDE_KOTLIN_SOURCES);
             if (cd != null) {
                 appendDescriptor(cd, "");
