@@ -113,7 +113,7 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull SerializedDataHeader.Kind expectedKind) {
-        KotlinClassHeader header = KotlinClassHeader.read(kotlinClass);
+        KotlinClassHeader header = kotlinClass.getClassHeader();
         if (header instanceof SerializedDataHeader) {
             SerializedDataHeader serializedDataHeader = (SerializedDataHeader) header;
             if (serializedDataHeader.getKind() != expectedKind) return null;

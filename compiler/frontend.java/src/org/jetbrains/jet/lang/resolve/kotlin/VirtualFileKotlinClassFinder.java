@@ -21,6 +21,7 @@ import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 public abstract class VirtualFileKotlinClassFinder implements VirtualFileFinder {
 
@@ -29,7 +30,8 @@ public abstract class VirtualFileKotlinClassFinder implements VirtualFileFinder 
         @NotNull
         @Override
         public KotlinJvmBinaryClass createValue(VirtualFile virtualFile) {
-            return new VirtualFileKotlinClass(virtualFile);
+            // Operations under this lock are not supposed to involve other locks
+            return new VirtualFileKotlinClass(new LockBasedStorageManager(), virtualFile);
         }
     };
 

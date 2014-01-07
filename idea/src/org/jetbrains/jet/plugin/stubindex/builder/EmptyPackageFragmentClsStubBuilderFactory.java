@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.PackageFragmentClassHeader;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 /**
  * This class is needed to build an empty PSI stub for compiled package fragment classes. This results in these classes not showing up
@@ -46,8 +46,8 @@ public class EmptyPackageFragmentClsStubBuilderFactory extends ClsStubBuilderFac
     public boolean canBeProcessed(VirtualFile file, byte[] bytes) {
         if (file.getName().contains(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-") &&
             StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
-            KotlinJvmBinaryClass kotlinClass = new VirtualFileKotlinClass(file);
-            return KotlinClassHeader.read(kotlinClass) instanceof PackageFragmentClassHeader;
+            KotlinJvmBinaryClass kotlinClass = new VirtualFileKotlinClass(LockBasedStorageManager.NO_LOCKS, file);
+            return kotlinClass.getClassHeader() instanceof PackageFragmentClassHeader;
         }
         return false;
     }

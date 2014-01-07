@@ -78,7 +78,7 @@ public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
             try {
                 KotlinJvmBinaryClass kotlinClass = KotlinClassFinder.SERVICE.getInstance(inputData.getProject())
                                                                             .createKotlinClass(inputData.getFile());
-                KotlinClassHeader header = KotlinClassHeader.read(kotlinClass);
+                KotlinClassHeader header = kotlinClass.getClassHeader();
                 if (header != null && !(header instanceof IncompatibleAnnotationHeader)) {
                     return Collections.singletonMap(kotlinClass.getClassName().getFqNameForClassNameWithoutDollars(), null);
                 }

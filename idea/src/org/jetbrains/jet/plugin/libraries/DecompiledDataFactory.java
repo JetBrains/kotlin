@@ -71,7 +71,7 @@ public final class DecompiledDataFactory {
         KotlinJvmBinaryClass kotlinClass = KotlinClassFinder.SERVICE.getInstance(project).createKotlinClass(classFile);
         this.classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars();
 
-        KotlinClassHeader header = KotlinClassHeader.read(kotlinClass);
+        KotlinClassHeader header = kotlinClass.getClassHeader();
         assert header instanceof SerializedDataHeader : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;
         this.classFileHeader = (SerializedDataHeader) header;
     }
