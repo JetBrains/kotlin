@@ -27,6 +27,7 @@ import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.NullableLazyValue;
@@ -57,7 +58,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
                 new Function0<KotlinClassHeader>() {
                     @Override
                     public KotlinClassHeader invoke() {
-                        return KotlinClassHeader.read(VirtualFileKotlinClass.this);
+                        return ReadKotlinClassHeaderAnnotationVisitor.read(VirtualFileKotlinClass.this);
                     }
                 }
         );

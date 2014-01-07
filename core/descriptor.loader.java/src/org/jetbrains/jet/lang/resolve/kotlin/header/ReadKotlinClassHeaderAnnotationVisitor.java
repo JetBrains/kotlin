@@ -32,7 +32,7 @@ import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCom
 import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArgumentVisitor;
 import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationVisitor;
 
-/* package */ class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
+public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
     @SuppressWarnings("deprecation")
     private enum HeaderType {
         CLASS(JvmAnnotationNames.KOTLIN_CLASS),

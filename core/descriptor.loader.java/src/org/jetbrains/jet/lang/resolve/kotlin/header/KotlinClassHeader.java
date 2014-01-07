@@ -16,15 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin.header;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
-
 public abstract class KotlinClassHeader {
-    @Nullable
-    public static KotlinClassHeader read(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        return ReadKotlinClassHeaderAnnotationVisitor.read(kotlinClass);
-    }
 
     private final int version;
 
