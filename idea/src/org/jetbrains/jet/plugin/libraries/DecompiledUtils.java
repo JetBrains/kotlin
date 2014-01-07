@@ -17,20 +17,23 @@
 package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 
 public final class DecompiledUtils {
 
-    public static boolean isKotlinCompiledFile(@NotNull VirtualFile file) {
+    public static boolean isKotlinCompiledFile(@NotNull Project project, @NotNull VirtualFile file) {
         if (!StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
             return false;
         }
         //TODO: check index
-        return KotlinClassHeader.read(new VirtualFileKotlinClass(file)) instanceof SerializedDataHeader;
+        KotlinJvmBinaryClass kotlinClass = KotlinClassFinder.SERVICE.getInstance(project).createKotlinClass(file);
+        return KotlinClassHeader.read(kotlinClass) instanceof SerializedDataHeader;
     }
 
     private DecompiledUtils() {

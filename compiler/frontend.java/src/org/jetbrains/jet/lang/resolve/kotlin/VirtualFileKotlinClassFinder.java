@@ -17,16 +17,34 @@
 package org.jetbrains.jet.lang.resolve.kotlin;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public abstract class VirtualFileKotlinClassFinder implements VirtualFileFinder {
 
+    // This cache must be small: we only query the same file a few times in a row (from different places)
+    private final SLRUCache<VirtualFile, KotlinJvmBinaryClass> cache = new SLRUCache<VirtualFile, KotlinJvmBinaryClass>(2, 2) {
+        @NotNull
+        @Override
+        public KotlinJvmBinaryClass createValue(VirtualFile virtualFile) {
+            return new VirtualFileKotlinClass(virtualFile);
+        }
+    };
+
     @Nullable
     @Override
     public KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName) {
         VirtualFile file = findVirtualFile(fqName);
-        return file == null ? null : new VirtualFileKotlinClass(file);
+        return file == null ? null : createKotlinClass(file);
+    }
+
+    @Override
+    @NotNull
+    public KotlinJvmBinaryClass createKotlinClass(@NotNull VirtualFile file) {
+        synchronized (cache) {
+            return cache.get(file);
+        }
     }
 }

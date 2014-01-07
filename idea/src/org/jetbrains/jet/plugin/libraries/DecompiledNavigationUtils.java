@@ -58,7 +58,7 @@ public final class DecompiledNavigationUtils {
         DeclarationDescriptor effectiveReferencedDescriptor = getEffectiveReferencedDescriptor(referencedDescriptor);
         VirtualFile virtualFile = findVirtualFileContainingDescriptor(project, effectiveReferencedDescriptor);
 
-        if (virtualFile == null || !DecompiledUtils.isKotlinCompiledFile(virtualFile)) return null;
+        if (virtualFile == null || !DecompiledUtils.isKotlinCompiledFile(project, virtualFile)) return null;
 
         JetDecompiledData data = JetDecompiledData.getDecompiledData(virtualFile, project);
         JetDeclaration jetDeclaration = data.getDeclarationForDescriptor(effectiveReferencedDescriptor);

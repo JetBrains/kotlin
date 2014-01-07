@@ -67,7 +67,7 @@ public final class JetContentBasedFileSubstitutor implements ContentBasedClassFi
     }
 
     @Override
-    public boolean isApplicable(@Nullable Project project, @NotNull final VirtualFile file) {
+    public boolean isApplicable(@Nullable final Project project, @NotNull final VirtualFile file) {
         if (project == null) {
             return false;
         }
@@ -76,7 +76,7 @@ public final class JetContentBasedFileSubstitutor implements ContentBasedClassFi
             DumbService.getInstance(project).runWhenSmart(new Runnable() {
                 @Override
                 public void run() {
-                    if (DecompiledUtils.isKotlinCompiledFile(file)) {
+                    if (DecompiledUtils.isKotlinCompiledFile(project, file)) {
                         FileDocumentManager docManager = FileDocumentManager.getInstance();
                         docManager.getDocument(file); // force getting document because it can be collected
                         docManager.reloadFiles(file);
@@ -86,13 +86,13 @@ public final class JetContentBasedFileSubstitutor implements ContentBasedClassFi
             return false;
         }
 
-        return DecompiledUtils.isKotlinCompiledFile(file);
+        return DecompiledUtils.isKotlinCompiledFile(project, file);
     }
 
     @NotNull
     @Override
     public String obtainFileText(Project project, VirtualFile file) {
-        if (file != null && DecompiledUtils.isKotlinCompiledFile(file)) {
+        if (file != null && DecompiledUtils.isKotlinCompiledFile(project, file)) {
             JetDecompiledData data = JetDecompiledData.getDecompiledData(file, project);
             deferredDocumentBinding.put(file, data.getFile());
 

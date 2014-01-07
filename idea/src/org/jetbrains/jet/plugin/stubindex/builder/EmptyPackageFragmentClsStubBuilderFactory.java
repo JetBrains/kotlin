@@ -25,6 +25,7 @@ import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.util.cls.ClsFormatException;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.PackageFragmentClassHeader;
@@ -34,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.header.PackageFragmentClassHeader;
  * in completion, go-to-class, etc.
  */
 public class EmptyPackageFragmentClsStubBuilderFactory extends ClsStubBuilderFactory<PsiJavaFile> {
+
     @Nullable
     @Override
     public PsiFileStub<PsiJavaFile> buildFileStub(VirtualFile file, byte[] bytes) throws ClsFormatException {
@@ -44,7 +46,8 @@ public class EmptyPackageFragmentClsStubBuilderFactory extends ClsStubBuilderFac
     public boolean canBeProcessed(VirtualFile file, byte[] bytes) {
         if (file.getName().contains(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-") &&
             StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
-            return KotlinClassHeader.read(new VirtualFileKotlinClass(file)) instanceof PackageFragmentClassHeader;
+            KotlinJvmBinaryClass kotlinClass = new VirtualFileKotlinClass(file);
+            return KotlinClassHeader.read(kotlinClass) instanceof PackageFragmentClassHeader;
         }
         return false;
     }

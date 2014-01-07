@@ -46,7 +46,7 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
 
     //NOTE: copied with some changes from CoreJavaFileManager
     @Nullable
-    private static VirtualFile findFileInRoot(@NotNull String qName, @NotNull VirtualFile root) {
+    private VirtualFile findFileInRoot(@NotNull String qName, @NotNull VirtualFile root) {
         String pathRest = qName;
         VirtualFile cur = root;
 
@@ -70,7 +70,7 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
                 return null;
             }
             //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
-            if (KotlinClassHeader.read(new VirtualFileKotlinClass(vFile)) != null) {
+            if (KotlinClassHeader.read(createKotlinClass(vFile)) != null) {
                 return vFile;
             }
         }

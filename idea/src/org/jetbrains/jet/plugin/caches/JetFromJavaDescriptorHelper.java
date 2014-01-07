@@ -29,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
@@ -117,7 +119,8 @@ public class JetFromJavaDescriptorHelper {
     private static String[] getAnnotationDataForKotlinClass(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
         if (virtualFile != null) {
-            KotlinClassHeader header = KotlinClassHeader.read(new VirtualFileKotlinClass(virtualFile));
+            KotlinJvmBinaryClass kotlinClass = KotlinClassFinder.SERVICE.getInstance(psiClass.getProject()).createKotlinClass(virtualFile);
+            KotlinClassHeader header = KotlinClassHeader.read(kotlinClass);
             if (header instanceof SerializedDataHeader) {
                 return ((SerializedDataHeader) header).getAnnotationData();
             }
