@@ -25,13 +25,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface KotlinClassFinder {
 
-    class SERVICE {
-        @NotNull
-        public static KotlinClassFinder getInstance(@NotNull Project project) {
-            return ServiceManager.getService(project, KotlinClassFinder.class);
-        }
-    }
-
     @Nullable
     KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName);
 

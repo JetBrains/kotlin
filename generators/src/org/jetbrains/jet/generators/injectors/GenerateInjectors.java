@@ -138,7 +138,7 @@ public class GenerateInjectors {
         generator.addPublicField(JavaPackageFragmentProviderImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression(
-                                   "com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class)"));
+                                   VirtualFileFinder.class.getName() + ".SERVICE.getInstance(project)"));
         generator.configure("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm",
                            GenerateInjectors.class);
         return generator;
@@ -161,7 +161,7 @@ public class GenerateInjectors {
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addField(JavaPackageFragmentProviderImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
-                           new GivenExpression("com.intellij.openapi.components.ServiceManager.getService(project, VirtualFileFinder.class)"));
+                           new GivenExpression(VirtualFileFinder.class.getName() + ".SERVICE.getInstance(project)"));
         generator.addField(true, ModuleDescriptorImpl.class, "module",
                            new GivenExpression("org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule(\"<fake-jdr-module>\")"));
 

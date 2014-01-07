@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -100,7 +99,7 @@ public final class DecompiledNavigationUtils {
         if (containerFqName == null) {
             return null;
         }
-        VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
+        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
         VirtualFile virtualFile = fileFinder.findVirtualFile(containerFqName);
         if (virtualFile == null) {
             return null;
