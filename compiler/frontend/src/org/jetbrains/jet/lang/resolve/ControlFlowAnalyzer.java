@@ -16,13 +16,16 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.MainFunctionDetector;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -32,6 +35,7 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ControlFlowAnalyzer {
     private TopDownAnalysisParameters topDownAnalysisParameters;
     private BindingTrace trace;
+    private TypeResolver typeResolver;
 
     @Inject
     public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
@@ -43,14 +47,19 @@ public class ControlFlowAnalyzer {
         this.trace = trace;
     }
 
+    @Inject
+    public void setTypeResolver(TypeResolver typeResolver) {
+        this.typeResolver = typeResolver;
+    }
+
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
         for (JetFile file : bodiesResolveContext.getFiles()) {
             if (!bodiesResolveContext.completeAnalysisNeeded(file)) continue;
-            checkDeclarationContainer(file);
+            checkDeclarationContainer(file, bodiesResolveContext.getDeclaringScopes());
         }
         for (JetClassOrObject aClass : bodiesResolveContext.getClasses().keySet()) {
             if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
-            checkDeclarationContainer(aClass);
+            checkDeclarationContainer(aClass, bodiesResolveContext.getDeclaringScopes());
         }
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : bodiesResolveContext.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
@@ -61,20 +70,23 @@ public class ControlFlowAnalyzer {
                                                : functionDescriptor.getReturnType();
             assert expectedReturnType != null
                     : "functionDescriptor is not yet fully initialized or broken so return type is null " + functionDescriptor;
-            checkFunction(function, expectedReturnType);
+            checkFunction(function, bodiesResolveContext.getDeclaringScopes(), expectedReturnType);
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
             JetProperty property = entry.getKey();
             if (!bodiesResolveContext.completeAnalysisNeeded(property)) continue;
             PropertyDescriptor propertyDescriptor = entry.getValue();
-            checkProperty(property, propertyDescriptor);
+            checkProperty(property, bodiesResolveContext.getDeclaringScopes(), propertyDescriptor);
         }
     }
 
-    private void checkDeclarationContainer(JetDeclarationContainer declarationContainer) {
+    private void checkDeclarationContainer(JetDeclarationContainer declarationContainer,
+            Function<JetDeclaration, JetScope> declaringScopes) {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetElement) declarationContainer, trace);
+        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(trace, typeResolver, declaringScopes);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetElement) declarationContainer, trace,
+                                                                                            mainFunctionDetector);
         flowInformationProvider.recordInitializedVariables();
 
         if (topDownAnalysisParameters.isDeclaredLocally()) return;
@@ -82,7 +94,7 @@ public class ControlFlowAnalyzer {
         flowInformationProvider.markUninitializedVariables();
     }
 
-    private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
+    private void checkProperty(JetProperty property, Function<JetDeclaration, JetScope> declaringScopes, PropertyDescriptor propertyDescriptor) {
         for (JetPropertyAccessor accessor : property.getAccessors()) {
             PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
                                                             ? propertyDescriptor.getGetter()
@@ -90,14 +102,17 @@ public class ControlFlowAnalyzer {
             assert accessorDescriptor != null : "no property accessor descriptor " + accessor.getText();
             JetType returnType = accessorDescriptor.getReturnType();
             assert returnType != null : "property accessor has no return type " + accessorDescriptor;
-            checkFunction(accessor, returnType);
+            checkFunction(accessor, declaringScopes, returnType);
         }
     }
 
-    private void checkFunction(@NotNull JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
+    private void checkFunction(@NotNull JetDeclarationWithBody function,
+            @NotNull Function<JetDeclaration, JetScope> declaringScopes,
+            @NotNull JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
+        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(trace, typeResolver, declaringScopes);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace, mainFunctionDetector);
         flowInformationProvider.checkFunction(function, expectedReturnType, topDownAnalysisParameters.isDeclaredLocally());
     }
 }
