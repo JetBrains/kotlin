@@ -222,6 +222,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         this.controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.controlFlowAnalyzer.setTrace(bindingTrace);
+        this.controlFlowAnalyzer.setTypeResolver(typeResolver);
 
         this.declarationsChecker.setTrace(bindingTrace);
 

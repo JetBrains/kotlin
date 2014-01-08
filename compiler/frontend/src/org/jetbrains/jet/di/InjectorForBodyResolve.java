@@ -151,6 +151,7 @@ public class InjectorForBodyResolve {
 
         controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         controlFlowAnalyzer.setTrace(bindingTrace);
+        controlFlowAnalyzer.setTypeResolver(typeResolver);
 
         declarationsChecker.setTrace(bindingTrace);
 

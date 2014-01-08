@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.cfg;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -41,13 +42,14 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.plugin.MainFunctionDetector;
 
 import java.util.*;
 
@@ -65,23 +67,27 @@ public class JetFlowInformationProvider {
     private final JetElement subroutine;
     private final Pseudocode pseudocode;
     private final BindingTrace trace;
+    private final MainFunctionDetector mainFunctionDetector;
     private PseudocodeVariablesData pseudocodeVariablesData;
 
     private JetFlowInformationProvider(
             @NotNull JetElement declaration,
             @NotNull BindingTrace trace,
+            @NotNull MainFunctionDetector mainFunctionDetector,
             @NotNull Pseudocode pseudocode
     ) {
         this.subroutine = declaration;
         this.trace = trace;
+        this.mainFunctionDetector = mainFunctionDetector;
         this.pseudocode = pseudocode;
     }
 
     public JetFlowInformationProvider(
             @NotNull JetElement declaration,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            @NotNull MainFunctionDetector mainFunctionDetector
     ) {
-        this(declaration, trace, new JetControlFlowProcessor(trace).generatePseudocode(declaration));
+        this(declaration, trace, mainFunctionDetector, new JetControlFlowProcessor(trace).generatePseudocode(declaration));
     }
 
     public PseudocodeVariablesData getPseudocodeVariablesData() {
@@ -187,7 +193,7 @@ public class JetFlowInformationProvider {
                 JetType expectedType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
 
                 JetFlowInformationProvider providerForLocalDeclaration =
-                        new JetFlowInformationProvider(localFunction, trace, localDeclarationInstruction.getBody());
+                        new JetFlowInformationProvider(localFunction, trace, mainFunctionDetector, localDeclarationInstruction.getBody());
 
                 providerForLocalDeclaration.checkDefiniteReturn(expectedType != null ? expectedType : NO_EXPECTED_TYPE);
                 providerForLocalDeclaration.markTailCalls();
@@ -556,7 +562,7 @@ public class JetFlowInformationProvider {
                         else if (element instanceof JetParameter) {
                             PsiElement psiElement = element.getParent().getParent();
                             if (psiElement instanceof JetFunction) {
-                                boolean isMain = (psiElement instanceof JetNamedFunction) && JetMainDetector.isMain((JetNamedFunction) psiElement);
+                                boolean isMain = (psiElement instanceof JetNamedFunction) && mainFunctionDetector.isMain((JetNamedFunction) psiElement);
                                 if (psiElement instanceof JetFunctionLiteral) return;
                                 DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement);
                                 assert descriptor instanceof FunctionDescriptor : psiElement.getText();

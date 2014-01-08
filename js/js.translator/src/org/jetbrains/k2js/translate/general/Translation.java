@@ -25,6 +25,9 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.plugin.MainFunctionDetector;
+import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.facade.exceptions.MainFunctionNotFoundException;
@@ -48,7 +51,6 @@ import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.plugin.JetMainDetector.getMainFunction;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.dangerous.DangerousData.collect;
@@ -139,7 +141,7 @@ public final class Translation {
         defineModule(context, statements, config.getModuleId());
 
         if (mainCallParameters.shouldBeGenerated()) {
-            JsStatement statement = generateCallToMain(context, files, mainCallParameters.arguments());
+            JsStatement statement = generateCallToMain(context, config, files, mainCallParameters.arguments());
             if (statement != null) {
                 statements.add(statement);
             }
@@ -168,9 +170,12 @@ public final class Translation {
 
     //TODO: determine whether should throw exception
     @Nullable
-    private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull Collection<JetFile> files,
-            @NotNull List<String> arguments) throws MainFunctionNotFoundException {
-        JetNamedFunction mainFunction = getMainFunction(files);
+    private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull Config config,
+            @NotNull Collection<JetFile> files, @NotNull List<String> arguments) throws MainFunctionNotFoundException {
+        ResolveSession resolveSession = AnalyzerFacadeForJS.getLazyResolveSession(files, config);
+        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(resolveSession);
+
+        JetNamedFunction mainFunction = mainFunctionDetector.getMainFunction(files);
         if (mainFunction == null) {
             return null;
         }
