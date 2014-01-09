@@ -1712,7 +1712,10 @@ public class JetParsing extends AbstractJetParsing {
                 if (at(COMMA)) {
                     advance(); // COMMA
                 }
-                else if (!atSet(VALUE_PARAMETER_FIRST)) break;
+                else {
+                    if (!at(RPAR)) error("Expecting comma or ')'");
+                    if (!atSet(VALUE_PARAMETER_FIRST)) break;
+                }
             }
         }
 
