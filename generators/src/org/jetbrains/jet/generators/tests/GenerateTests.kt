@@ -36,7 +36,7 @@ import org.jetbrains.jet.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.jet.jvm.compiler.AbstractCompileKotlinAgainstKotlinTest
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRendererTest
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest
-import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveNamespaceComparingTest
+import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveRecursiveComparingTest
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest
 import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
@@ -172,10 +172,10 @@ fun main(args: Array<String>) {
             model("resolve/imports", recursive = false, extension = "resolve")
         }
 
-        testClass(javaClass<AbstractLazyResolveNamespaceComparingTest>()) {
+        testClass(javaClass<AbstractLazyResolveRecursiveComparingTest>()) {
             model("loadJava/compiledKotlin", testMethod = "doTestCheckingPrimaryConstructorsAndAccessors")
             model("loadJava/compiledJavaCompareWithKotlin", testMethod = "doTestNotCheckingPrimaryConstructors")
-            model("lazyResolve/namespaceComparator", testMethod = "doTestCheckingPrimaryConstructors")
+            model("lazyResolve/recursiveComparator", testMethod = "doTestCheckingPrimaryConstructors")
         }
 
         testClass(javaClass<AbstractModuleXmlParserTest>()) {

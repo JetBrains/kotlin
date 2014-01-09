@@ -38,7 +38,7 @@ import java.util.Map;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
 
-public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTestWithEnvironment {
+public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTestWithEnvironment {
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
@@ -73,10 +73,10 @@ public abstract class AbstractLazyResolveNamespaceComparingTest extends KotlinTe
         FqName test = new FqName("test");
 
         PackageViewDescriptor actual = lazyModule.getPackage(test);
-        Assert.assertNotNull("Namespace for name " + test + " is null after lazy resolve", actual);
+        Assert.assertNotNull("Package for name " + test + " is null after lazy resolve", actual);
 
         PackageViewDescriptor expected = eagerModule.getPackage(test);
-        Assert.assertNotNull("Namespace for name " + test + " is null after eager resolve", expected);
+        Assert.assertNotNull("Package for name " + test + " is null after eager resolve", expected);
 
         File serializeResultsTo = new File(FileUtil.getNameWithoutExtension(testFileName) + ".txt");
 
