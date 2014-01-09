@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.ide.hierarchy.method.MethodHierarchyNodeDescriptor com.intellij.psi.PsiClass getPsiClass()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

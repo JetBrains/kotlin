@@ -1,0 +1,30 @@
+<root>
+  <item name='com.intellij.ide.hierarchy.HierarchyBrowserBase myProject'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.ide.hierarchy.HierarchyBrowserBaseEx javax.swing.JTree createTree(boolean)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.ide.hierarchy.HierarchyBrowserBaseEx myBuilders'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.ide.hierarchy.HierarchyBrowserBaseEx void createTrees(java.util.Map&lt;java.lang.String,javax.swing.JTree&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun createTrees(trees: MutableMap&lt;String, JTree&gt;): Unit&quot;"/>
+    </annotation>
+  </item>
+  <item name='com.intellij.ide.hierarchy.HierarchyBrowserBaseEx void prependActions(com.intellij.openapi.actionSystem.DefaultActionGroup)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun prependActions(actionGroup: DefaultActionGroup): Unit&quot;"/>
+    </annotation>
+  </item>
+  <item name='com.intellij.ide.hierarchy.HierarchyNodeDescriptor myHighlightedText'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.ide.hierarchy.HierarchyProvider com.intellij.ide.hierarchy.HierarchyBrowser createHierarchyBrowser(com.intellij.psi.PsiElement)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun createHierarchyBrowser(target: PsiElement): HierarchyBrowser&quot;"/>
+    </annotation>
+  </item>
+</root>

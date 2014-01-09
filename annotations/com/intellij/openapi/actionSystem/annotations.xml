@@ -1,0 +1,8 @@
+<root>
+  <item name='com.intellij.openapi.actionSystem.AnAction com.intellij.openapi.actionSystem.ShortcutSet getShortcutSet()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.openapi.actionSystem.AnAction ourEmptyShortcutSet'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

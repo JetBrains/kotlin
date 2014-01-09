@@ -339,6 +339,7 @@ fun main(args: Array<String>) {
             model("hierarchy/class/sub", extension = null, recursive = false, testMethod = "doSubClassHierarchyTest")
             model("hierarchy/calls/callers", extension = null, recursive = false, testMethod = "doCallerHierarchyTest")
             model("hierarchy/calls/callees", extension = null, recursive = false, testMethod = "doCalleeHierarchyTest")
+            model("hierarchy/overrides", extension = null, recursive = false, testMethod = "doOverrideHierarchyTest")
         }
 
         testClass(javaClass<AbstractCodeMoverTest>()) {
