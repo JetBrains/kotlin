@@ -52,7 +52,6 @@ class IoTest(){
 
     test fun testForEachLine() {
         val list = ArrayList<String>()
-        val reader = sample()
 
         /* TODO would be nicer maybe to write this as
             reader.lines.forEach { ... }
@@ -65,11 +64,18 @@ class IoTest(){
 
           if thing is not an Iterable/array/Iterator but has a suitable forEach method
         */
-        reader.forEachLine{
+        sample().forEachLine {
             list.add(it)
         }
 
         assertEquals(arrayListOf("Hello", "World"), list)
+
+        var count = 0
+        sample().forEachLine {
+            count += 1
+        }
+
+        assertEquals(2, count)
     }
 
     test fun testForEachLineFile() {
