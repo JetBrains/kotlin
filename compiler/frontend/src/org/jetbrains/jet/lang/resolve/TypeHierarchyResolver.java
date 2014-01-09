@@ -90,7 +90,7 @@ public class TypeHierarchyResolver {
     }
 
     public void process(
-            @NotNull JetScope outerScope, @NotNull NamespaceLikeBuilder owner,
+            @NotNull JetScope outerScope, @NotNull PackageLikeBuilder owner,
             @NotNull Collection<? extends PsiElement> declarations
     ) {
 
@@ -148,7 +148,7 @@ public class TypeHierarchyResolver {
     @NotNull
     private Collection<JetDeclarationContainer> collectNamespacesAndClassifiers(
             @NotNull JetScope outerScope,
-            @NotNull NamespaceLikeBuilder owner,
+            @NotNull PackageLikeBuilder owner,
             @NotNull Iterable<? extends PsiElement> declarations
     ) {
         Collection<JetDeclarationContainer> forDeferredResolve = new ArrayList<JetDeclarationContainer>();
@@ -442,11 +442,11 @@ public class TypeHierarchyResolver {
 
     private class ClassifierCollector extends JetVisitorVoid {
         private final JetScope outerScope;
-        private final NamespaceLikeBuilder owner;
+        private final PackageLikeBuilder owner;
         private final Collection<JetDeclarationContainer> forDeferredResolve;
 
         public ClassifierCollector(@NotNull JetScope outerScope,
-                @NotNull NamespaceLikeBuilder owner,
+                @NotNull PackageLikeBuilder owner,
                 @NotNull Collection<JetDeclarationContainer> forDeferredResolve
         ) {
             this.outerScope = outerScope;
@@ -520,9 +520,9 @@ public class TypeHierarchyResolver {
             MutableClassDescriptor classObjectDescriptor =
                     createClassDescriptorForSingleton(objectDeclaration, getClassObjectName(container.getName()), ClassKind.CLASS_OBJECT);
 
-            NamespaceLikeBuilder.ClassObjectStatus status =
+            PackageLikeBuilder.ClassObjectStatus status =
                     isEnumEntry(container) || isObject(container) ?
-                    NamespaceLikeBuilder.ClassObjectStatus.NOT_ALLOWED :
+                    PackageLikeBuilder.ClassObjectStatus.NOT_ALLOWED :
                     owner.setClassObjectDescriptor(classObjectDescriptor);
 
             switch (status) {

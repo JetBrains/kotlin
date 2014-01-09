@@ -117,7 +117,7 @@ public class TopDownAnalyzer {
 
     public void doProcess(
             JetScope outerScope,
-            NamespaceLikeBuilder owner,
+            PackageLikeBuilder owner,
             Collection<? extends PsiElement> declarations) {
 //        context.enableDebugOutput();
         context.debug("Enter");
@@ -175,7 +175,7 @@ public class TopDownAnalyzer {
 
         injector.getTopDownAnalysisContext().setOuterDataFlowInfo(context.dataFlowInfo);
 
-        injector.getTopDownAnalyzer().doProcess(context.scope, new NamespaceLikeBuilder() {
+        injector.getTopDownAnalyzer().doProcess(context.scope, new PackageLikeBuilder() {
 
             @NotNull
             @Override
@@ -220,7 +220,7 @@ public class TopDownAnalyzer {
 
         // dummy builder is used because "root" is module descriptor,
         // namespaces added to module explicitly in
-        doProcess(rootPackage.getMemberScope(), new NamespaceLikeBuilderDummy(), files);
+        doProcess(rootPackage.getMemberScope(), new PackageLikeBuilderDummy(), files);
     }
 
 

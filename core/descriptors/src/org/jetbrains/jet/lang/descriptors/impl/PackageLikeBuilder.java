@@ -21,30 +21,22 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 
-public class NamespaceLikeBuilderDummy implements NamespaceLikeBuilder {
+public interface PackageLikeBuilder {
+
     @NotNull
-    @Override
-    public DeclarationDescriptor getOwnerForChildren() {
-        throw new IllegalStateException();
+    DeclarationDescriptor getOwnerForChildren();
+
+    void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor);
+
+    void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor);
+
+    void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor);
+
+    enum ClassObjectStatus {
+        OK,
+        DUPLICATE,
+        NOT_ALLOWED
     }
 
-    @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-        throw new IllegalStateException();
-    }
+    ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor);
 }

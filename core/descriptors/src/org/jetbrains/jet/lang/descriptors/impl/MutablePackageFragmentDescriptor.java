@@ -35,7 +35,7 @@ public class MutablePackageFragmentDescriptor extends DeclarationDescriptorImpl 
     private final ModuleDescriptor module;
     private final FqName fqName;
     private final WritableScope scope;
-    private final NamespaceLikeBuilder builder;
+    private final PackageLikeBuilder builder;
 
     public MutablePackageFragmentDescriptor(
             @NotNull PackageFragmentProvider provider,
@@ -49,7 +49,7 @@ public class MutablePackageFragmentDescriptor extends DeclarationDescriptorImpl 
 
         scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Members of " + fqName + " in " + module);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        builder = new ScopeBasedNamespaceLikeBuilder(this, scope);
+        builder = new ScopeBasedPackageLikeBuilder(this, scope);
     }
 
     @NotNull
@@ -88,7 +88,7 @@ public class MutablePackageFragmentDescriptor extends DeclarationDescriptorImpl 
     }
 
     @NotNull
-    public NamespaceLikeBuilder getBuilder() {
+    public PackageLikeBuilder getBuilder() {
         return builder;
     }
 }

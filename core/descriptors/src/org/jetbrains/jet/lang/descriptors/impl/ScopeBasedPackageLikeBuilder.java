@@ -22,11 +22,11 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
-public class ScopeBasedNamespaceLikeBuilder implements NamespaceLikeBuilder {
+public class ScopeBasedPackageLikeBuilder implements PackageLikeBuilder {
     private final DeclarationDescriptor containingDeclaration;
     private final WritableScope scope;
 
-    ScopeBasedNamespaceLikeBuilder(
+    ScopeBasedPackageLikeBuilder(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull WritableScope scope
     ) {

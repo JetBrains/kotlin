@@ -189,10 +189,10 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         this.annotations = annotations;
     }
 
-    private NamespaceLikeBuilder builder = null;
-    public NamespaceLikeBuilder getBuilder() {
+    private PackageLikeBuilder builder = null;
+    public PackageLikeBuilder getBuilder() {
         if (builder == null) {
-            builder = new NamespaceLikeBuilderDummy() {
+            builder = new PackageLikeBuilderDummy() {
                 @NotNull
                 @Override
                 public DeclarationDescriptor getOwnerForChildren() {

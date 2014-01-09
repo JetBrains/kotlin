@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilder;
+import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -164,9 +164,9 @@ public class DeclarationResolver {
         for (Map.Entry<JetFile, WritableScope> entry : context.getNamespaceScopes().entrySet()) {
             JetFile namespace = entry.getKey();
             WritableScope namespaceScope = entry.getValue();
-            NamespaceLikeBuilder namespaceDescriptor = context.getPackageFragments().get(namespace).getBuilder();
+            PackageLikeBuilder packageBuilder = context.getPackageFragments().get(namespace).getBuilder();
 
-            resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceScope, namespaceScope, namespaceDescriptor);
+            resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceScope, namespaceScope, packageBuilder);
         }
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
@@ -193,20 +193,20 @@ public class DeclarationResolver {
             @NotNull final JetScope scopeForFunctions,
             @NotNull final JetScope scopeForPropertyInitializers,
             @NotNull final JetScope scopeForPropertyAccessors,
-            @NotNull final NamespaceLikeBuilder namespaceLike)
+            @NotNull final PackageLikeBuilder packageLike)
     {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamedFunction(@NotNull JetNamedFunction function) {
                     SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(
-                            namespaceLike.getOwnerForChildren(),
+                            packageLike.getOwnerForChildren(),
                             scopeForFunctions,
                             function,
                             trace,
                             context.getOuterDataFlowInfo()
                     );
-                    namespaceLike.addFunctionDescriptor(functionDescriptor);
+                    packageLike.addFunctionDescriptor(functionDescriptor);
                     context.getFunctions().put(function, functionDescriptor);
                     context.registerDeclaringScope(function, scopeForFunctions);
                 }
@@ -214,12 +214,12 @@ public class DeclarationResolver {
                 @Override
                 public void visitProperty(@NotNull JetProperty property) {
                     PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                            namespaceLike.getOwnerForChildren(),
+                            packageLike.getOwnerForChildren(),
                             scopeForPropertyInitializers,
                             property,
                             trace,
                             context.getOuterDataFlowInfo());
-                    namespaceLike.addPropertyDescriptor(propertyDescriptor);
+                    packageLike.addPropertyDescriptor(propertyDescriptor);
                     context.getProperties().put(property, propertyDescriptor);
                     context.registerDeclaringScope(property, scopeForPropertyInitializers);
                     JetPropertyAccessor getter = property.getGetter();
