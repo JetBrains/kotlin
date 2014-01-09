@@ -101,16 +101,17 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return thisDescriptor != null;
     }
 
-    public DeclarationDescriptor getClassOrPackageDescriptor() {
+    @NotNull
+    public ClassOrPackageFragmentDescriptor getClassOrPackageDescriptor() {
         CodegenContext c = this;
         while (true) {
             assert c != null;
             DeclarationDescriptor contextDescriptor = c.getContextDescriptor();
-            if (!(contextDescriptor instanceof ClassDescriptor) && !(contextDescriptor instanceof PackageFragmentDescriptor)) {
-                c = c.getParentContext();
+            if (contextDescriptor instanceof ClassOrPackageFragmentDescriptor) {
+                return (ClassOrPackageFragmentDescriptor) contextDescriptor;
             }
             else {
-                return contextDescriptor;
+                c = c.getParentContext();
             }
         }
     }
