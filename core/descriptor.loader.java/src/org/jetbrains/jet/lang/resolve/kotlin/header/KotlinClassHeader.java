@@ -21,31 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class KotlinClassHeader {
 
-    @NotNull
-    public static KotlinClassHeader createClassHeader(int version, @NotNull String[] annotationData) {
-        return new KotlinClassHeader(Kind.CLASS, version, annotationData);
-    }
-
-    @NotNull
-    public static KotlinClassHeader createPackageFacadeHeader(int version, @NotNull String[] annotationData) {
-        return new KotlinClassHeader(Kind.PACKAGE_FACADE, version, annotationData);
-    }
-
-    @NotNull
-    public static KotlinClassHeader createPackageFragmentHeader(int version) {
-        return new KotlinClassHeader(Kind.PACKAGE_FRAGMENT, version, null);
-    }
-
-    @NotNull
-    public static KotlinClassHeader createTraitImplHeader(int version) {
-        return new KotlinClassHeader(Kind.TRAIT_IMPL, version, null);
-    }
-
-    @NotNull
-    public static KotlinClassHeader createIncompatibleVersionErrorHeader(int version) {
-        return new KotlinClassHeader(Kind.INCOMPATIBLE_ABI_VERSION, version, null);
-    }
-
     public enum Kind {
         CLASS,
         PACKAGE_FACADE,
@@ -58,7 +33,9 @@ public class KotlinClassHeader {
     private final int version;
     private final String[] data;
 
-    private KotlinClassHeader(@NotNull Kind kind, int version, @Nullable String[] annotationData) {
+    public KotlinClassHeader(@NotNull Kind kind, int version, @Nullable String[] annotationData) {
+        assert (annotationData == null) == (kind != Kind.CLASS && kind != Kind.PACKAGE_FACADE)
+                : "Annotation data should be not null only for CLASS and PACKAGE_FACADE";
         this.kind = kind;
         this.version = version;
         this.data = annotationData;
