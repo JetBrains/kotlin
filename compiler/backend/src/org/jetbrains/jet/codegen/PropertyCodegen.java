@@ -86,7 +86,7 @@ public class PropertyCodegen extends GenerationStateAware {
         assert variableDescriptor instanceof PropertyDescriptor : "Property should have a property descriptor: " + variableDescriptor;
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-        assert kind == OwnerKind.NAMESPACE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
+        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
                 : "Generating property with a wrong kind (" + kind + "): " + propertyDescriptor;
 
 
@@ -184,7 +184,7 @@ public class PropertyCodegen extends GenerationStateAware {
             modifiers |= ACC_VOLATILE;
         }
 
-        if (kind == OwnerKind.NAMESPACE) {
+        if (kind == OwnerKind.PACKAGE) {
             modifiers |= ACC_STATIC;
         }
 
@@ -204,7 +204,7 @@ public class PropertyCodegen extends GenerationStateAware {
             backingFieldContext = codegen.context;
             v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
         } else {
-            if (kind != OwnerKind.NAMESPACE || isDelegate) {
+            if (kind != OwnerKind.PACKAGE || isDelegate) {
                 modifiers |= ACC_PRIVATE;
             }
         }
@@ -318,7 +318,7 @@ public class PropertyCodegen extends GenerationStateAware {
             PropertyDescriptor propertyDescriptor = callableDescriptor.getCorrespondingProperty();
 
             int paramCode = 0;
-            if (codegen.context.getContextKind() != OwnerKind.NAMESPACE) {
+            if (codegen.context.getContextKind() != OwnerKind.PACKAGE) {
                 v.load(0, OBJECT_TYPE);
                 paramCode = 1;
             }
@@ -361,7 +361,7 @@ public class PropertyCodegen extends GenerationStateAware {
             Call call = bindingContext.get(BindingContext.DELEGATED_PROPERTY_CALL, callableDescriptor);
             assert call != null : "Call should be recorded for delegate call " + signature.toString();
 
-            if (codegen.context.getContextKind() != OwnerKind.NAMESPACE) {
+            if (codegen.context.getContextKind() != OwnerKind.PACKAGE) {
                 v.load(0, OBJECT_TYPE);
             }
 

@@ -150,7 +150,7 @@ public class AsmUtil {
     }
 
     public static boolean isStatic(OwnerKind kind) {
-        return kind == OwnerKind.NAMESPACE || kind == OwnerKind.TRAIT_IMPL;
+        return kind == OwnerKind.PACKAGE || kind == OwnerKind.TRAIT_IMPL;
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {

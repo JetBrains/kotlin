@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor> {
     
     public PackageContext(@NotNull PackageFragmentDescriptor contextDescriptor, @Nullable CodegenContext parent) {
-        super(contextDescriptor, OwnerKind.NAMESPACE, parent, null, null, null);
+        super(contextDescriptor, OwnerKind.PACKAGE, parent, null, null, null);
     }
 
     @Override

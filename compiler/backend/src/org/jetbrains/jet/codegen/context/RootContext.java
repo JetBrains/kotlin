@@ -28,7 +28,7 @@ import java.util.List;
 
 class RootContext extends CodegenContext {
     public RootContext() {
-        super(new FakeDescriptor(), OwnerKind.NAMESPACE, null, null, null, null);
+        super(new FakeDescriptor(), OwnerKind.PACKAGE, null, null, null, null);
     }
 
     @Override

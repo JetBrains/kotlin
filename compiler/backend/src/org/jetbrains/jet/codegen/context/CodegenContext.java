@@ -214,7 +214,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public FrameMap prepareFrame(JetTypeMapper mapper) {
         FrameMap frameMap = new FrameMap();
 
-        if (getContextKind() != OwnerKind.NAMESPACE) {
+        if (getContextKind() != OwnerKind.PACKAGE) {
             frameMap.enterTemp(OBJECT_TYPE);  // 0 slot for this
         }
 
