@@ -20,7 +20,7 @@ JetFile: MissingCommaInConstructorValueParameterList.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
-      PsiErrorElement:Expecting comma
+      PsiErrorElement:Expecting comma or ')'
         <empty list>
       PsiWhiteSpace(' ')
       VALUE_PARAMETER
@@ -31,7 +31,7 @@ JetFile: MissingCommaInConstructorValueParameterList.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
-      PsiErrorElement:Expecting comma
+      PsiErrorElement:Expecting comma or ')'
         <empty list>
       PsiWhiteSpace(' ')
       VALUE_PARAMETER
