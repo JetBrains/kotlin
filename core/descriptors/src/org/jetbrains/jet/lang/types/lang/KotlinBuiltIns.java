@@ -905,17 +905,17 @@ public class KotlinBuiltIns {
     }
 
     public boolean isNothingOrNullableNothing(@NotNull JetType type) {
-        return !(type instanceof NamespaceType)
+        return !(type instanceof PackageType)
                && type.getConstructor() == getNothing().getTypeConstructor();
     }
 
     public boolean isAnyOrNullableAny(@NotNull JetType type) {
-        return !(type instanceof NamespaceType) &&
+        return !(type instanceof PackageType) &&
                type.getConstructor() == getAny().getTypeConstructor();
     }
 
     public boolean isUnit(@NotNull JetType type) {
-        return !(type instanceof NamespaceType) && type.equals(getUnitType());
+        return !(type instanceof PackageType) && type.equals(getUnitType());
     }
 
     public boolean isData(@NotNull ClassDescriptor classDescriptor) {

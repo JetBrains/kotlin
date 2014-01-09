@@ -528,7 +528,7 @@ public class TypeUtils {
     private static boolean equalsOrContainsAsArgument(@Nullable JetType type, @NotNull Set<JetType> possibleArgumentTypes) {
         if (type == null) return false;
         if (possibleArgumentTypes.contains(type)) return true;
-        if (type instanceof NamespaceType) return false;
+        if (type instanceof PackageType) return false;
         for (TypeProjection projection : type.getArguments()) {
             if (equalsOrContainsAsArgument(projection.getType(), possibleArgumentTypes)) return true;
         }

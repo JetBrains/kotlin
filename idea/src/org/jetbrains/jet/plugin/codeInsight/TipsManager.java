@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
@@ -60,7 +60,7 @@ public final class TipsManager {
             JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
 
             if (expressionType != null && resolutionScope != null && !expressionType.isError()) {
-                if (!(expressionType instanceof NamespaceType)) {
+                if (!(expressionType instanceof PackageType)) {
                     ExpressionReceiver receiverValue = new ExpressionReceiver(receiverExpression, expressionType);
                     Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
 
@@ -197,7 +197,7 @@ public final class TipsManager {
     ) {
         // It's impossible to add extension function for namespace
         JetType receiverType = receiverValue.getType();
-        if (receiverType instanceof NamespaceType) {
+        if (receiverType instanceof PackageType) {
             return new HashSet<DeclarationDescriptor>(descriptors);
         }
 

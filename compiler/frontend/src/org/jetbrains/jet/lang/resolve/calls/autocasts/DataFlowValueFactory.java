@@ -156,7 +156,7 @@ public class DataFlowValueFactory {
             return getIdForThisReceiver(declarationDescriptor);
         }
         else if (expression instanceof JetRootNamespaceExpression) {
-            return createPackageInfo(JetModuleUtil.getRootNamespaceType(expression));
+            return createPackageInfo(JetModuleUtil.getRootPackageType(expression));
         }
         return NO_IDENTIFIER_INFO;
     }

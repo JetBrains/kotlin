@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -132,7 +132,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 noTypeInference = true;
             }
         }
-        if (expressionType instanceof NamespaceType) {
+        if (expressionType instanceof PackageType) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.namespace.expression"));
             return;
         }

@@ -25,15 +25,15 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import java.util.List;
 
 /**
- * This is a fake type assigned to namespace expressions. Only member lookup is
+ * This is a fake type assigned to package expressions. Only member lookup is
  * supposed to be done on these types.
  */
-public class NamespaceType implements JetType {
+public class PackageType implements JetType {
     private final Name name;
     private final JetScope memberScope;
     private final ReceiverValue receiver;
 
-    public NamespaceType(@NotNull Name name, @NotNull JetScope memberScope, @NotNull ReceiverValue receiver) {
+    public PackageType(@NotNull Name name, @NotNull JetScope memberScope, @NotNull ReceiverValue receiver) {
         this.name = name;
         this.memberScope = memberScope;
         this.receiver = receiver;
@@ -62,7 +62,7 @@ public class NamespaceType implements JetType {
     }
 
     private TypeConstructor throwException() {
-        throw new UnsupportedOperationException("Only member lookup is allowed on a namespace type " + name);
+        throw new UnsupportedOperationException("Only member lookup is allowed on a package type " + name);
     }
 
     @NotNull

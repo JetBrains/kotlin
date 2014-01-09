@@ -20,11 +20,11 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.PackageType;
 
 public class JetModuleUtil {
-    public static NamespaceType getRootNamespaceType(JetElement expression) {
+    public static PackageType getRootPackageType(JetElement expression) {
         // TODO: this is a stub: at least the modules' root namespaces must be indexed here
-        return new NamespaceType(SpecialNames.ROOT_NAMESPACE, JetScope.EMPTY, ReceiverValue.NO_RECEIVER);
+        return new PackageType(SpecialNames.ROOT_NAMESPACE, JetScope.EMPTY, ReceiverValue.NO_RECEIVER);
     }
 }
