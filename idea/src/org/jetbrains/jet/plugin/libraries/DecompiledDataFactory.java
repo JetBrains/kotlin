@@ -102,6 +102,7 @@ public final class DecompiledDataFactory {
             }
         }
         else {
+            // TODO: support other header kinds: for trait-impl show the trait, for package fragment - the whole package
             throw new UnsupportedOperationException("Unknown header kind: " + kind);
         }
 
