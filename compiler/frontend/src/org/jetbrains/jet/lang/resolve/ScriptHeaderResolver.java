@@ -52,7 +52,7 @@ public class ScriptHeaderResolver {
     public static final Key<Integer> PRIORITY_KEY = Key.create(JetScript.class.getName() + ".priority");
 
     @NotNull
-    private NamespaceFactory namespaceFactory;
+    private MutablePackageFragmentProvider packageFragmentProvider;
     @NotNull
     private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
     @NotNull
@@ -63,8 +63,8 @@ public class ScriptHeaderResolver {
     private TopDownAnalysisParameters topDownAnalysisParameters;
 
     @Inject
-    public void setNamespaceFactory(@NotNull NamespaceFactory namespaceFactory) {
-        this.namespaceFactory = namespaceFactory;
+    public void setPackageFragmentProvider(@NotNull MutablePackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
     }
 
     @Inject
@@ -121,7 +121,7 @@ public class ScriptHeaderResolver {
         JetFile file = (JetFile) script.getContainingFile();
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
         FqName fqName = namespaceHeader != null ? new FqName(namespaceHeader.getQualifiedName()) : FqName.ROOT;
-        PackageFragmentDescriptor ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(fqName);
+        PackageFragmentDescriptor ns = packageFragmentProvider.getOrCreateFragment(fqName);
 
         Integer priority = script.getUserData(PRIORITY_KEY);
         if (priority == null) {

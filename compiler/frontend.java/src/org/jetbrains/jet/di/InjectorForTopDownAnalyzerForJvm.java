@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProviderImpl;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
@@ -96,7 +95,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
-    private final NamespaceFactoryImpl namespaceFactory;
     private final JavaPackageFragmentProviderImpl javaPackageFragmentProvider;
     private final VirtualFileFinder virtualFileFinder;
     private final DeclarationResolver declarationResolver;
@@ -157,7 +155,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
-        this.namespaceFactory = new NamespaceFactoryImpl();
         this.javaPackageFragmentProvider = new JavaPackageFragmentProviderImpl();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
         this.declarationResolver = new DeclarationResolver();
@@ -242,10 +239,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         psiBasedMethodSignatureChecker.setAnnotationResolver(javaAnnotationResolver);
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
-        namespaceFactory.setModule(moduleDescriptor);
-        namespaceFactory.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        namespaceFactory.setTrace(bindingTrace);
-
         this.javaPackageFragmentProvider.setCache(traceBasedJavaResolverCache);
         this.javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         this.javaPackageFragmentProvider.setJavaClassFinder(javaClassFinder);
@@ -299,7 +292,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         scriptHeaderResolver.setContext(topDownAnalysisContext);
         scriptHeaderResolver.setDependencyClassByQualifiedNameResolver(javaDescriptorResolver);
-        scriptHeaderResolver.setNamespaceFactory(namespaceFactory);
+        scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
         scriptHeaderResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         scriptHeaderResolver.setTrace(bindingTrace);
 
@@ -313,7 +306,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         typeHierarchyResolver.setContext(topDownAnalysisContext);
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);
-        typeHierarchyResolver.setNamespaceFactory(namespaceFactory);
+        typeHierarchyResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
         typeHierarchyResolver.setScriptHeaderResolver(scriptHeaderResolver);
         typeHierarchyResolver.setTrace(bindingTrace);
 

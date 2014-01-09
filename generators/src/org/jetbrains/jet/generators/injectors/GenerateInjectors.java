@@ -104,7 +104,6 @@ public class GenerateInjectors {
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
         generator.addField(MutablePackageFragmentProvider.class);
-        generator.addField(NamespaceFactoryImpl.class);
         generator.addParameter(PlatformToKotlinClassMap.class);
         generator.configure("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic", GenerateInjectors.class);
         return generator;
@@ -115,7 +114,6 @@ public class GenerateInjectors {
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addField(DependencyClassByQualifiedNameResolverDummyImpl.class);
         generator.addField(MutablePackageFragmentProvider.class);
-        generator.addField(NamespaceFactoryImpl.class);
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("org.jetbrains.jet.lang.PlatformToKotlinClassMap.EMPTY"));
         generator.configure("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs", GenerateInjectors.class);
         return generator;
@@ -134,7 +132,6 @@ public class GenerateInjectors {
         generator.addField(PsiBasedMethodSignatureChecker.class);
         generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addField(MutablePackageFragmentProvider.class);
-        generator.addField(NamespaceFactoryImpl.class);
         generator.addPublicField(JavaPackageFragmentProviderImpl.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression(

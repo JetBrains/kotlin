@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -55,7 +56,7 @@ public class TypeHierarchyResolver {
     @NotNull
     private ScriptHeaderResolver scriptHeaderResolver;
     @NotNull
-    private NamespaceFactoryImpl namespaceFactory;
+    private MutablePackageFragmentProvider packageFragmentProvider;
     @NotNull
     private BindingTrace trace;
 
@@ -80,8 +81,8 @@ public class TypeHierarchyResolver {
     }
 
     @Inject
-    public void setNamespaceFactory(@NotNull NamespaceFactoryImpl namespaceFactory) {
-        this.namespaceFactory = namespaceFactory;
+    public void setPackageFragmentProvider(@NotNull MutablePackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
     }
 
     @Inject
@@ -456,7 +457,7 @@ public class TypeHierarchyResolver {
 
         @Override
         public void visitJetFile(@NotNull JetFile file) {
-            MutablePackageFragmentDescriptor packageFragment = namespaceFactory.createPackageFragmentIfNeeded(file);
+            MutablePackageFragmentDescriptor packageFragment = getOrCreatePackageFragmentForFile(file);
             context.getPackageFragments().put(file, packageFragment);
 
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
@@ -537,6 +538,40 @@ public class TypeHierarchyResolver {
                     break;
             }
         }
+
+        @NotNull
+        private MutablePackageFragmentDescriptor getOrCreatePackageFragmentForFile(@NotNull JetFile file) {
+            JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
+            assert namespaceHeader != null : "scripts are not supported";
+
+            MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(namespaceHeader.getFqName());
+
+            for (JetSimpleNameExpression nameExpression : namespaceHeader.getNamespaceNames()) {
+                FqName fqName = namespaceHeader.getFqName(nameExpression);
+
+                PackageViewDescriptor packageView = packageFragmentProvider.getModule().getPackage(fqName);
+                assert packageView != null : "package not found: " + fqName;
+                trace.record(REFERENCE_TARGET, nameExpression, packageView);
+
+                PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
+                assert parentPackageView != null : "package has no parent: " + packageView;
+                trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
+            }
+
+            trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, fragment);
+
+            // Register files corresponding to this namespace
+            // The trace currently does not support bi-di multimaps that would handle this task nicer
+            FqName fqName = fragment.getFqName();
+            Collection<JetFile> files = trace.get(PACKAGE_TO_FILES, fqName);
+            if (files == null) {
+                files = Sets.newIdentityHashSet();
+            }
+            files.add(file);
+            trace.record(BindingContext.PACKAGE_TO_FILES, fqName, files);
+            return fragment;
+        }
+
 
         private void createClassObjectForEnumClass(@NotNull MutableClassDescriptor mutableClassDescriptor) {
             if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
