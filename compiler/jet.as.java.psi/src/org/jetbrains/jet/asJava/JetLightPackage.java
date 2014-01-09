@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.search.GlobalSearchScope;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class JetLightPackage extends PsiPackageImpl {
@@ -33,6 +34,7 @@ public class JetLightPackage extends PsiPackageImpl {
         this.scope = scope;
     }
 
+    @NotNull
     @Override
     public PsiElement copy() {
         return new JetLightPackage(getManager(), fqName, scope);
