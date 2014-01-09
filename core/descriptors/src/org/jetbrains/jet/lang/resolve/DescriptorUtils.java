@@ -463,7 +463,7 @@ public class DescriptorUtils {
     }
 
     /**
-     * @return true iff {@code descriptor}'s first non-class container is a namespace
+     * @return true iff {@code descriptor}'s first non-class container is a package
      */
     public static boolean isTopLevelOrInnerClass(@NotNull ClassDescriptor descriptor) {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();

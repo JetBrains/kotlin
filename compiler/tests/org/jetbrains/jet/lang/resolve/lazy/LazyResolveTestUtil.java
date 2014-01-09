@@ -96,7 +96,7 @@ public class LazyResolveTestUtil {
             JetNamespaceHeader header = file.getNamespaceHeader();
             if (header != null) {
                 List<JetSimpleNameExpression> names = header.getNamespaceNames();
-                Name name = names.isEmpty() ? SpecialNames.ROOT_NAMESPACE : names.get(0).getReferencedNameAsName();
+                Name name = names.isEmpty() ? SpecialNames.ROOT_PACKAGE : names.get(0).getReferencedNameAsName();
                 shortNames.add(name);
             }
             else {
