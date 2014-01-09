@@ -66,6 +66,11 @@ public class JavaToKotlinCopyPasteConversionTestGenerated extends AbstractJavaTo
         doTest("idea/testData/copyPaste/conversion/Imports3.java");
     }
     
+    @TestMetadata("Indentation.java")
+    public void testIndentation() throws Exception {
+        doTest("idea/testData/copyPaste/conversion/Indentation.java");
+    }
+    
     @TestMetadata("MethodReferenceWithoutQualifier.java")
     public void testMethodReferenceWithoutQualifier() throws Exception {
         doTest("idea/testData/copyPaste/conversion/MethodReferenceWithoutQualifier.java");

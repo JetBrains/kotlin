@@ -31,6 +31,8 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.editor.JetEditorOptions
 import java.awt.datatransfer.Transferable
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CodeStyleManager
 
 public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
 
@@ -73,8 +75,11 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
             val text = convertCopiedCodeToKotlin(value, file.getProject())
             if (text.isNotEmpty()) {
                 ApplicationManager.getApplication()!!.runWriteAction {
-                    editor.getDocument().replaceString(bounds!!.getStartOffset(), bounds.getEndOffset(), text)
-                    editor.getCaretModel().moveToOffset(bounds.getStartOffset() + text.length())
+                    val startOffset = bounds!!.getStartOffset()
+                    editor.getDocument().replaceString(bounds.getStartOffset(), bounds.getEndOffset(), text)
+                    val endOffsetAfterCopy = startOffset + text.length()
+                    editor.getCaretModel().moveToOffset(endOffsetAfterCopy)
+                    CodeStyleManager.getInstance(project)!!.reformatText(file, startOffset, endOffsetAfterCopy)
                     PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument())
                 }
             }

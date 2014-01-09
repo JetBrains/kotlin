@@ -1,7 +1,7 @@
 class A {
     fun someOther() = false
 
-    private fun formatElement(var element : PsiElement) : String {
+    private fun formatElement(var element: PsiElement): String {
         element = JetPsiUtil.ascendIfPropertyAccessor(element)
         if (element is JetNamedFunction || element is JetProperty)
         {
@@ -18,15 +18,15 @@ class A {
             }
         }
 
-        assert(element is PsiMethod) {"Method accepts only kotlin functions/properties and java methods, but '" + element.getText() + "' was found"}
+        assert(element is PsiMethod) { "Method accepts only kotlin functions/properties and java methods, but '" + element.getText() + "' was found" }
         return JetRefactoringUtil.formatPsiMethod((element as PsiMethod), true, false)
     }
 
-    protected fun getDimensionServiceKey() : String {
+    protected fun getDimensionServiceKey(): String {
         return "#org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinOverridingDialog"
     }
 
-    public fun getSelected() : ArrayList<UsageInfo> {
+    public fun getSelected(): ArrayList<UsageInfo> {
         val result = ArrayList<UsageInfo>()
         for (i in 0..myChecked.length - 1) {
             if (myChecked[i])
