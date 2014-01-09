@@ -87,14 +87,14 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    SimpleFunctionDescriptor resolveFunctionMutely(@NotNull JavaMethod method, @NotNull ClassOrNamespaceDescriptor owner) {
+    SimpleFunctionDescriptor resolveFunctionMutely(@NotNull JavaMethod method, @NotNull ClassOrPackageFragmentDescriptor owner) {
         return resolveMethodToFunctionDescriptor(method, owner, false);
     }
 
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
             @NotNull JavaMethod method,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
+            @NotNull ClassOrPackageFragmentDescriptor ownerDescriptor,
             boolean record
     ) {
         if (!DescriptorResolverUtils.isCorrectOwnerForEnumMethod(ownerDescriptor, method)) {
@@ -179,7 +179,7 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForClass(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
+    public Set<FunctionDescriptor> resolveFunctionGroupForClass(@NotNull NamedMembers members, @NotNull ClassOrPackageFragmentDescriptor owner) {
         Name methodName = members.getName();
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = new HashSet<SimpleFunctionDescriptor>();

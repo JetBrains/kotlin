@@ -110,8 +110,8 @@ public final class DecompiledNavigationUtils {
     //TODO: navigate to inner classes
     @Nullable
     private static FqName getContainerFqName(@NotNull DeclarationDescriptor referencedDescriptor) {
-        ClassOrNamespaceDescriptor
-                containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrNamespaceDescriptor.class, false);
+        ClassOrPackageFragmentDescriptor
+                containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrPackageFragmentDescriptor.class, false);
         if (containerDescriptor instanceof PackageFragmentDescriptor) {
             return PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) containerDescriptor).getFqName());
         }

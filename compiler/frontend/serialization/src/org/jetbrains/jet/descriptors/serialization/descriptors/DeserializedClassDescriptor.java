@@ -152,7 +152,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             return fragments.iterator().next();
         }
         else {
-            ClassOrNamespaceDescriptor result = descriptorFinder.findClass(classId.getOuterClassId());
+            ClassOrPackageFragmentDescriptor result = descriptorFinder.findClass(classId.getOuterClassId());
             return result != null ? result : ErrorUtils.getErrorModule();
         }
     }

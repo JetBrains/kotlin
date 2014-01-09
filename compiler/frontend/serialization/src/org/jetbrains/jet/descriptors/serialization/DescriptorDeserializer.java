@@ -260,11 +260,11 @@ public class DescriptorDeserializer {
             @NotNull AnnotationDeserializer annotationDeserializer,
             @NotNull NameResolver nameResolver
     ) {
-        assert containingDeclaration instanceof ClassOrNamespaceDescriptor
-                : "Only members in classes or namespaces should be serialized: " + containingDeclaration;
+        assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
+                : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
         return Flags.HAS_ANNOTATIONS.get(flags)
                ? annotationDeserializer
-                       .loadCallableAnnotations((ClassOrNamespaceDescriptor) containingDeclaration, proto, nameResolver, kind)
+                       .loadCallableAnnotations((ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind)
                : Collections.<AnnotationDescriptor>emptyList();
     }
 
@@ -371,9 +371,9 @@ public class DescriptorDeserializer {
     @NotNull
     private List<ValueParameterDescriptor> valueParameters(@NotNull Callable callable, @NotNull AnnotatedCallableKind kind) {
         DeclarationDescriptor containerOfCallable = containingDeclaration.getContainingDeclaration();
-        assert containerOfCallable instanceof ClassOrNamespaceDescriptor
-                : "Only members in classes or namespaces should be serialized: " + containerOfCallable;
-        ClassOrNamespaceDescriptor classOrNamespace = (ClassOrNamespaceDescriptor) containerOfCallable;
+        assert containerOfCallable instanceof ClassOrPackageFragmentDescriptor
+                : "Only members in classes or package fragments should be serialized: " + containerOfCallable;
+        ClassOrPackageFragmentDescriptor classOrPackage = (ClassOrPackageFragmentDescriptor) containerOfCallable;
 
         List<Callable.ValueParameter> protos = callable.getValueParameterList();
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(protos.size());
@@ -382,7 +382,7 @@ public class DescriptorDeserializer {
             result.add(new ValueParameterDescriptorImpl(
                     containingDeclaration,
                     i,
-                    getAnnotations(classOrNamespace, callable, kind, proto),
+                    getAnnotations(classOrPackage, callable, kind, proto),
                     nameResolver.getName(proto.getName()),
                     typeDeserializer.type(proto.getType()),
                     Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
@@ -394,13 +394,13 @@ public class DescriptorDeserializer {
 
     @NotNull
     private List<AnnotationDescriptor> getAnnotations(
-            @NotNull ClassOrNamespaceDescriptor classOrNamespace,
+            @NotNull ClassOrPackageFragmentDescriptor classOrPackage,
             @NotNull Callable callable,
             @NotNull AnnotatedCallableKind kind,
             @NotNull Callable.ValueParameter valueParameter
     ) {
         return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())
-               ? annotationDeserializer.loadValueParameterAnnotations(classOrNamespace, callable, nameResolver, kind, valueParameter)
+               ? annotationDeserializer.loadValueParameterAnnotations(classOrPackage, callable, nameResolver, kind, valueParameter)
                : Collections.<AnnotationDescriptor>emptyList();
     }
 }

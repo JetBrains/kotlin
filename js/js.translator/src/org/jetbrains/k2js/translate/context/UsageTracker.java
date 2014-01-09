@@ -95,7 +95,7 @@ public final class UsageTracker {
             }
 
             // local named function
-            if (!(containingDeclaration instanceof ClassOrNamespaceDescriptor) &&
+            if (!(containingDeclaration instanceof ClassOrPackageFragmentDescriptor) &&
                 !isAncestor(memberDescriptor, descriptor)) {
                 addCapturedMember(callableDescriptor);
             }

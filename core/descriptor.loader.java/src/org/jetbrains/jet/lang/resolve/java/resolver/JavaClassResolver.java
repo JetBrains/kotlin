@@ -208,7 +208,7 @@ public final class JavaClassResolver {
             return alreadyResolved;
         }
 
-        ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, javaClass.getOuterClass());
+        ClassOrPackageFragmentDescriptor containingDeclaration = resolveParentDescriptor(qualifiedName, javaClass.getOuterClass());
         // class may be resolved during resolution of parent
         ClassDescriptor cachedDescriptor = classDescriptorCache.get(javaClassToKotlinFqName(qualifiedName));
         if (cachedDescriptor != null) {
@@ -242,7 +242,7 @@ public final class JavaClassResolver {
             @NotNull FqName fqName,
             @NotNull JavaClass javaClass,
             @NotNull PostponedTasks taskList,
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration
+            @NotNull ClassOrPackageFragmentDescriptor containingDeclaration
     ) {
         ClassDescriptorFromJvmBytecode classDescriptor =
                 new ClassDescriptorFromJvmBytecode(containingDeclaration, javaClass.getName(), determineClassKind(javaClass), isInnerClass(javaClass));
@@ -374,7 +374,7 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull FqName childClassFQName, JavaClass parentClass) {
+    private ClassOrPackageFragmentDescriptor resolveParentDescriptor(@NotNull FqName childClassFQName, JavaClass parentClass) {
         if (parentClass != null) {
             FqName parentFqName = parentClass.getFqName();
             ClassDescriptor parentClassDescriptor = resolveClass(parentFqName, INCLUDE_KOTLIN_SOURCES);

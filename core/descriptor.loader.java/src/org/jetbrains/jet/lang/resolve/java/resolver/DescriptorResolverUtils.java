@@ -130,7 +130,7 @@ public final class DescriptorResolverUtils {
                "valueOf(java.lang.String)".equals(signature);
     }
 
-    public static boolean isCorrectOwnerForEnumMethod(@NotNull ClassOrNamespaceDescriptor ownerDescriptor, @NotNull JavaMethod method) {
+    public static boolean isCorrectOwnerForEnumMethod(@NotNull ClassOrPackageFragmentDescriptor ownerDescriptor, @NotNull JavaMethod method) {
         return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(method);
     }
 

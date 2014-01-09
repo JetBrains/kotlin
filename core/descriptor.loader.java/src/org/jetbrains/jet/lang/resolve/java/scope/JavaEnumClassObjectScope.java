@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.scope;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 
@@ -27,7 +27,7 @@ import java.util.Collections;
 
 public class JavaEnumClassObjectScope extends JavaClassMembersScope {
     public JavaEnumClassObjectScope(
-            @NotNull ClassOrNamespaceDescriptor descriptor,
+            @NotNull ClassOrPackageFragmentDescriptor descriptor,
             @NotNull JavaClass javaClass,
             @NotNull JavaMemberResolver memberResolver
     ) {

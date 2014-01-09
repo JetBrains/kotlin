@@ -110,7 +110,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     @Nullable
-    private KotlinJvmBinaryClass findKotlinClassByDescriptor(@NotNull ClassOrNamespaceDescriptor descriptor) {
+    private KotlinJvmBinaryClass findKotlinClassByDescriptor(@NotNull ClassOrPackageFragmentDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             return kotlinClassFinder.findKotlinClass(kotlinFqNameToJavaFqName(naiveKotlinFqName((ClassDescriptor) descriptor)));
         }
@@ -218,7 +218,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @NotNull
     @Override
     public List<AnnotationDescriptor> loadCallableAnnotations(
-            @NotNull ClassOrNamespaceDescriptor container,
+            @NotNull ClassOrPackageFragmentDescriptor container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind
@@ -231,7 +231,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     @NotNull
     private List<AnnotationDescriptor> findClassAndLoadMemberAnnotations(
-            @NotNull ClassOrNamespaceDescriptor container,
+            @NotNull ClassOrPackageFragmentDescriptor container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind,
@@ -249,7 +249,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     @Nullable
     private KotlinJvmBinaryClass findClassWithMemberAnnotations(
-            @NotNull ClassOrNamespaceDescriptor container,
+            @NotNull ClassOrPackageFragmentDescriptor container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind
@@ -259,7 +259,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         }
         else if (isClassObject(container) && isStaticFieldInOuter(proto)) {
             // Backing fields of properties of a class object are generated in the outer class
-            return findKotlinClassByDescriptor((ClassOrNamespaceDescriptor) container.getContainingDeclaration());
+            return findKotlinClassByDescriptor((ClassOrPackageFragmentDescriptor) container.getContainingDeclaration());
         }
         else if (isTrait(container) && kind == AnnotatedCallableKind.PROPERTY) {
             PackageFragmentDescriptor containingPackage = DescriptorUtils.getParentOfType(container, PackageFragmentDescriptor.class);
@@ -497,7 +497,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     @NotNull
     @Override
     public List<AnnotationDescriptor> loadValueParameterAnnotations(
-            @NotNull ClassOrNamespaceDescriptor container,
+            @NotNull ClassOrPackageFragmentDescriptor container,
             @NotNull ProtoBuf.Callable callable,
             @NotNull NameResolver nameResolver,
             @NotNull AnnotatedCallableKind kind,
