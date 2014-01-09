@@ -22,49 +22,36 @@ import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*;
 import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationArgumentVisitor;
 import static org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass.AnnotationVisitor;
+import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.*;
 
 public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
-    @SuppressWarnings("deprecation")
-    private enum HeaderType {
-        CLASS(JvmAnnotationNames.KOTLIN_CLASS),
-        PACKAGE(JvmAnnotationNames.KOTLIN_PACKAGE),
-        PACKAGE_FRAGMENT(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT),
-        TRAIT_IMPL(JvmAnnotationNames.KOTLIN_TRAIT_IMPL),
-        OLD_CLASS(JvmAnnotationNames.OLD_JET_CLASS_ANNOTATION),
-        OLD_PACKAGE(JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION);
 
-        @NotNull
-        private final JvmClassName annotation;
-
-        private HeaderType(@NotNull FqName annotation) {
-            this.annotation = JvmClassName.byFqNameWithoutInnerClasses(annotation);
-        }
-
-        @Nullable
-        private static HeaderType byClassName(@NotNull JvmClassName className) {
-            for (HeaderType headerType : HeaderType.values()) {
-                if (className.equals(headerType.annotation)) {
-                    return headerType;
-                }
-            }
-            return null;
-        }
+    private static final Map<JvmClassName, KotlinClassHeader.Kind> HEADER_KINDS = new HashMap<JvmClassName, KotlinClassHeader.Kind>();
+    static {
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_CLASS), CLASS);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE), PACKAGE_FACADE);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE_FRAGMENT), PACKAGE_FRAGMENT);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_TRAIT_IMPL), TRAIT_IMPL);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_JET_CLASS_ANNOTATION), INCOMPATIBLE_ABI_VERSION);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_JET_PACKAGE_CLASS_ANNOTATION), INCOMPATIBLE_ABI_VERSION);
     }
 
     private int version = AbiVersionUtil.INVALID_VERSION;
     @Nullable
     private String[] annotationData = null;
     @Nullable
-    private HeaderType foundType = null;
+    private KotlinClassHeader.Kind headerKind = null;
 
     private ReadKotlinClassHeaderAnnotationVisitor() {
     }
@@ -78,7 +65,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     @Nullable
     public KotlinClassHeader createHeader() {
-        if (foundType == null) {
+        if (headerKind == null) {
             return null;
         }
 
@@ -86,13 +73,13 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return KotlinClassHeader.createIncompatibleVersionErrorHeader(version);
         }
 
-        switch (foundType) {
+        switch (headerKind) {
             case CLASS:
                 // This means that the annotation is found and its ABI version is compatible, but there's no "data" string array in it.
                 // We tell the outside world that there's really no annotation at all
                 if (annotationData == null) return null;
                 return KotlinClassHeader.createClassHeader(version, annotationData);
-            case PACKAGE:
+            case PACKAGE_FACADE:
                 if (annotationData == null) return null;
                 return KotlinClassHeader.createPackageFacadeHeader(version, annotationData);
             case PACKAGE_FRAGMENT:
@@ -100,27 +87,27 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             case TRAIT_IMPL:
                 return KotlinClassHeader.createTraitImplHeader(version);
             default:
-                throw new UnsupportedOperationException("Unknown compatible HeaderType: " + foundType);
+                throw new UnsupportedOperationException("Unknown compatible HeaderType: " + headerKind);
         }
     }
 
     @Nullable
     @Override
     public AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName annotationClassName) {
-        HeaderType newType = HeaderType.byClassName(annotationClassName);
-        if (newType == null) return null;
+        KotlinClassHeader.Kind newKind = HEADER_KINDS.get(annotationClassName);
+        if (newKind == null) return null;
 
-        if (foundType != null) {
+        if (this.headerKind != null) {
             // Ignore all Kotlin annotations except the first found
             return null;
         }
 
-        foundType = newType;
+        headerKind = newKind;
 
-        if (newType == HeaderType.CLASS || newType == HeaderType.PACKAGE) {
+        if (newKind == CLASS || newKind == PACKAGE_FACADE) {
             return kotlinClassOrPackageVisitor(annotationClassName);
         }
-        else if (newType == HeaderType.PACKAGE_FRAGMENT || newType == HeaderType.TRAIT_IMPL) {
+        else if (newKind == PACKAGE_FRAGMENT || newKind == TRAIT_IMPL) {
             return annotationWithAbiVersionVisitor(annotationClassName);
         }
 
