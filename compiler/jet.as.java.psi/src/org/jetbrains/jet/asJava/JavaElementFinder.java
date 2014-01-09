@@ -34,7 +34,7 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -145,7 +145,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     private void findPackageClass(FqName qualifiedName, GlobalSearchScope scope, List<PsiClass> answer) {
         Collection<JetFile> filesForPackage = lightClassGenerationSupport.findFilesForPackage(qualifiedName, scope);
 
-        if (!filesForPackage.isEmpty() && NamespaceCodegen.shouldGenerateNSClass(filesForPackage)) {
+        if (!filesForPackage.isEmpty() && PackageCodegen.shouldGeneratePackageClass(filesForPackage)) {
             KotlinLightClassForPackage lightClass = KotlinLightClassForPackage.create(psiManager, qualifiedName, scope, filesForPackage);
             if (lightClass != null) {
                 answer.add(lightClass);

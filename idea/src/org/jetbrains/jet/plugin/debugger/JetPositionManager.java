@@ -37,7 +37,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -154,7 +154,7 @@ public class JetPositionManager implements PositionManager {
                 }
 
                 if (result.isNull()) {
-                    result.set(NamespaceCodegen.getNamespacePartInternalName(namespace));
+                    result.set(PackageCodegen.getPackagePartInternalName(namespace));
                 }
             }
         });

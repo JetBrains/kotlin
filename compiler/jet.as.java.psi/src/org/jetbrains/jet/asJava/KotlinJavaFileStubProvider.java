@@ -39,7 +39,7 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
-import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
@@ -96,7 +96,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<LightClas
 
                     @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
-                        NamespaceCodegen codegen = state.getFactory().forNamespace(packageFqName, files);
+                        PackageCodegen codegen = state.getFactory().forPackage(packageFqName, files);
                         codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
                         state.getFactory().asList();
                     }
@@ -169,8 +169,8 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<LightClas
 
                     @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
-                        NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(getPackageFqName(), files);
-                        namespaceCodegen.generateClassOrObject(classOrObject);
+                        PackageCodegen packageCodegen = state.getFactory().forPackage(getPackageFqName(), files);
+                        packageCodegen.generateClassOrObject(classOrObject);
                         state.getFactory().asList();
                     }
                 }

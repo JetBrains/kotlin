@@ -149,8 +149,8 @@ public class CompileEnvironmentUtil {
             loader = new GeneratedClassLoader(factory, KotlinToJVMBytecodeCompiler.class.getClassLoader());
         }
         try {
-            Class namespaceClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
-            Method method = namespaceClass.getDeclaredMethod("project");
+            Class packageClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
+            Method method = packageClass.getDeclaredMethod("project");
             if (method == null) {
                 throw new CompileEnvironmentException("Module script " + moduleFile + " must define project() function");
             }

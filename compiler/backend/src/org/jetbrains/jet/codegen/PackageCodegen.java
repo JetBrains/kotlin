@@ -53,7 +53,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClass
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
-public class NamespaceCodegen extends MemberCodegen {
+public class PackageCodegen extends MemberCodegen {
     private final ClassBuilderOnDemand v;
 
     @NotNull
@@ -63,25 +63,25 @@ public class NamespaceCodegen extends MemberCodegen {
     private final Collection<JetFile> files;
     private final Set<PackageFragmentDescriptor> packageFragments;
 
-    public NamespaceCodegen(
+    public PackageCodegen(
             @NotNull ClassBuilderOnDemand v,
             @NotNull final FqName fqName,
             @NotNull GenerationState state,
-            @NotNull Collection<JetFile> namespaceFiles
+            @NotNull Collection<JetFile> packageFiles
     ) {
         super(state, null);
-        checkAllFilesHaveSameNamespace(namespaceFiles);
+        checkAllFilesHaveSamePackage(packageFiles);
 
         this.v = v;
         name = fqName;
-        this.files = namespaceFiles;
+        this.files = packageFiles;
 
         packageFragments = Sets.newHashSet();
-        for (JetFile file : namespaceFiles) {
+        for (JetFile file : packageFiles) {
             packageFragments.add(getPackageFragment(file));
         }
 
-        final PsiFile sourceFile = namespaceFiles.size() == 1 ? namespaceFiles.iterator().next().getContainingFile() : null;
+        final PsiFile sourceFile = packageFiles.size() == 1 ? packageFiles.iterator().next().getContainingFile() : null;
 
         v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
             @Override
@@ -93,7 +93,7 @@ public class NamespaceCodegen extends MemberCodegen {
                               "java/lang/Object",
                               ArrayUtil.EMPTY_STRING_ARRAY
                 );
-                //We don't generate any source information for namespace with multiple files
+                //We don't generate any source information for package with multiple files
                 if (sourceFile != null) {
                     v.visitSource(sourceFile.getName(), null);
                 }
@@ -103,7 +103,7 @@ public class NamespaceCodegen extends MemberCodegen {
 
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
         List<JvmSerializationBindings> bindings = new ArrayList<JvmSerializationBindings>(files.size() + 1);
-        boolean shouldGeneratePackageClass = shouldGenerateNSClass(files);
+        boolean shouldGeneratePackageClass = shouldGeneratePackageClass(files);
         if (shouldGeneratePackageClass) {
             bindings.add(v.getClassBuilder().getSerializationBindings());
         }
@@ -134,7 +134,7 @@ public class NamespaceCodegen extends MemberCodegen {
         }
 
         assert v.isActivated() == shouldGeneratePackageClass :
-                "Different algorithms for generating namespace class and for heuristics for: " + name.asString();
+                "Different algorithms for generating package class and for heuristics for: " + name.asString();
     }
 
     private void writeKotlinPackageAnnotationIfNeeded(@NotNull JvmSerializationBindings bindings) {
@@ -185,16 +185,16 @@ public class NamespaceCodegen extends MemberCodegen {
 
         if (!generateSrcClass) return null;
 
-        Type packagePartType = getNamespacePartType(getPackageClassFqName(name), file.getVirtualFile());
+        Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
         ClassBuilder builder = state.getFactory().forPackageFragment(packagePartType, file);
 
-        new NamespacePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
+        new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
-        FieldOwnerContext namespaceFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, getPackageFragment(file));
+        FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, getPackageFragment(file));
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                genFunctionOrProperty(namespaceFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                genFunctionOrProperty(packageFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
             }
         }
 
@@ -214,13 +214,13 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     /**
-     * @param namespaceFiles all files should have same package name
+     * @param packageFiles all files should have same package name
      * @return
      */
-    public static boolean shouldGenerateNSClass(@NotNull Collection<JetFile> namespaceFiles) {
-        checkAllFilesHaveSameNamespace(namespaceFiles);
+    public static boolean shouldGeneratePackageClass(@NotNull Collection<JetFile> packageFiles) {
+        checkAllFilesHaveSamePackage(packageFiles);
 
-        for (JetFile file : namespaceFiles) {
+        for (JetFile file : packageFiles) {
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
                     return true;
@@ -231,9 +231,9 @@ public class NamespaceCodegen extends MemberCodegen {
         return false;
     }
 
-    private static void checkAllFilesHaveSameNamespace(Collection<JetFile> namespaceFiles) {
+    private static void checkAllFilesHaveSamePackage(Collection<JetFile> packageFiles) {
         FqName commonFqName = null;
-        for (JetFile file : namespaceFiles) {
+        for (JetFile file : packageFiles) {
             FqName fqName = JetPsiUtil.getFQName(file);
             if (commonFqName != null) {
                 if (!commonFqName.equals(fqName)) {
@@ -251,7 +251,7 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     @NotNull
-    public static Type getNamespacePartType(@NotNull FqName facadeFqName, @NotNull VirtualFile file) {
+    public static Type getPackagePartType(@NotNull FqName facadeFqName, @NotNull VirtualFile file) {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
         // path hashCode to prevent same name / different path collision
@@ -269,8 +269,8 @@ public class NamespaceCodegen extends MemberCodegen {
     }
 
     @NotNull
-    public static String getNamespacePartInternalName(@NotNull JetFile file) {
+    public static String getPackagePartInternalName(@NotNull JetFile file) {
         FqName packageFqName = JetPsiUtil.getFQName(file);
-        return getNamespacePartType(getPackageClassFqName(packageFqName), file.getVirtualFile()).getInternalName();
+        return getPackagePartType(getPackageClassFqName(packageFqName), file.getVirtualFile()).getInternalName();
     }
 }

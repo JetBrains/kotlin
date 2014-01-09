@@ -47,7 +47,7 @@ public class JUnitUsageGenTest extends CodegenTestCase {
 
     public void testKt1592() throws Exception {
         loadFile("junit/kt1592.kt");
-        Class<?> namespaceClass = generateNamespaceClass();
+        Class<?> namespaceClass = generatePackageClass();
         Method method = namespaceClass.getMethod("foo", Method.class);
         method.setAccessible(true);
         Annotation annotation = method.getAnnotation(getCorrespondingAnnotationClass(Test.class));

@@ -22,7 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
-import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -121,7 +121,7 @@ public final class PsiCodegenPredictor {
         }
 
         // NOTE: looks like a bug - for class in getter of top level property class name will be $propertyName$ClassName but not
-        // namespace$propertyName$ClassName
+        // PackageClassName$propertyName$ClassName
         if (declaration instanceof JetProperty) {
             return parentInternalName + "$" + name.asString();
         }
@@ -134,9 +134,9 @@ public final class PsiCodegenPredictor {
     }
 
     @Nullable
-    public static JetFile getFileForNamespacePartName(@NotNull Collection<JetFile> allNamespaceFiles, @NotNull JvmClassName className) {
-        for (JetFile file : allNamespaceFiles) {
-            String internalName = NamespaceCodegen.getNamespacePartInternalName(file);
+    public static JetFile getFileForPackagePartName(@NotNull Collection<JetFile> allPackageFiles, @NotNull JvmClassName className) {
+        for (JetFile file : allPackageFiles) {
+            String internalName = PackageCodegen.getPackagePartInternalName(file);
             JvmClassName jvmClassName = JvmClassName.byInternalName(internalName);
             if (jvmClassName.equals(className)) {
                 return file;
@@ -148,7 +148,7 @@ public final class PsiCodegenPredictor {
     @Nullable
     public static JetFile getFileForCodegenNamedClass(
             @NotNull BindingContext context,
-            @NotNull Collection<JetFile> allNamespaceFiles,
+            @NotNull Collection<JetFile> allPackageFiles,
             @NotNull final String classInternalName
     ) {
         final Ref<DeclarationDescriptor> resultingDescriptor = Ref.create();
@@ -165,7 +165,7 @@ public final class PsiCodegenPredictor {
             }
         };
 
-        CodegenBinding.initTrace(trace, allNamespaceFiles);
+        CodegenBinding.initTrace(trace, allPackageFiles);
 
         return resultingDescriptor.isNull() ? null
                : BindingContextUtils.getContainingFile(trace.getBindingContext(), resultingDescriptor.get());

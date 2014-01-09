@@ -65,7 +65,7 @@ public class DebuggerUtils {
         }
 
         Collection<JetFile> allNamespaceFiles = filesProvider.allNamespaceFiles().fun(anyFile);
-        JetFile file = PsiCodegenPredictor.getFileForNamespacePartName(allNamespaceFiles, className);
+        JetFile file = PsiCodegenPredictor.getFileForPackagePartName(allNamespaceFiles, className);
         if (file != null) {
             return file;
         }

@@ -39,7 +39,7 @@ import java.util.List;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 
-public class NamespacePartCodegen extends MemberCodegen {
+public class PackagePartCodegen extends MemberCodegen {
 
     private final ClassBuilder v;
 
@@ -47,30 +47,30 @@ public class NamespacePartCodegen extends MemberCodegen {
 
     private final JetFile jetFile;
 
-    private final Type namespacePartName;
+    private final Type packagePartName;
 
     private final FieldOwnerContext context;
 
-    public NamespacePartCodegen(
+    public PackagePartCodegen(
             @NotNull ClassBuilder v,
             @NotNull JetFile jetFile,
-            @NotNull Type namespacePartName,
+            @NotNull Type packagePartName,
             @NotNull FieldOwnerContext context,
             @NotNull GenerationState state
     ) {
         super(state, null);
         this.v = v;
         this.jetFile = jetFile;
-        this.namespacePartName = namespacePartName;
+        this.packagePartName = packagePartName;
         this.context = context;
         descriptor = state.getBindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, jetFile);
-        assert descriptor != null : "No namespace found for jetFile " + jetFile + " declared package: " + jetFile.getPackageName();
+        assert descriptor != null : "No package fragment found for jetFile " + jetFile + " declared package: " + jetFile.getPackageName();
     }
 
     public void generate() {
         v.defineClass(jetFile, V1_6,
                       ACC_PUBLIC | ACC_FINAL,
-                      namespacePartName.getInternalName(),
+                      packagePartName.getInternalName(),
                       null,
                       "java/lang/Object",
                       ArrayUtil.EMPTY_STRING_ARRAY
@@ -122,7 +122,7 @@ public class NamespacePartCodegen extends MemberCodegen {
             }
 
             mv.visitInsn(RETURN);
-            FunctionCodegen.endVisit(mv, "static initializer for namespace", jetFile);
+            FunctionCodegen.endVisit(mv, "static initializer for package", jetFile);
             mv.visitEnd();
         }
     }

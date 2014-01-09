@@ -34,6 +34,6 @@ public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor>
 
     @Override
     public String toString() {
-        return "Namespace: " + getContextDescriptor().getName();
+        return "Package: " + getContextDescriptor().getName();
     }
 }

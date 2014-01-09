@@ -167,14 +167,14 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     @NotNull
-    protected Class<?> generateNamespaceClass() {
+    protected Class<?> generatePackageClass() {
         FqName packageFqName = JetPsiUtil.getFQName(myFiles.getPsiFile());
         return generateClass(getPackageClassFqName(packageFqName).asString());
     }
 
     @NotNull
-    protected Class<?> generateNamespaceSrcClass() {
-        String name = NamespaceCodegen.getNamespacePartInternalName(myFiles.getPsiFile());
+    protected Class<?> generatePackagePartClass() {
+        String name = PackageCodegen.getPackagePartInternalName(myFiles.getPsiFile());
         return generateClass(name);
     }
 
@@ -263,7 +263,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected Method generateFunction() {
-        Class<?> aClass = generateNamespaceClass();
+        Class<?> aClass = generatePackageClass();
         try {
             return findTheOnlyMethod(aClass);
         } catch (Error e) {
@@ -274,7 +274,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected Method generateFunction(@NotNull String name) {
-        Class<?> aClass = generateNamespaceClass();
+        Class<?> aClass = generatePackageClass();
         Method method = findDeclaredMethodByName(aClass, name);
         if (method == null) {
             throw new IllegalArgumentException("Couldn't find method " + name + " in class " + aClass);

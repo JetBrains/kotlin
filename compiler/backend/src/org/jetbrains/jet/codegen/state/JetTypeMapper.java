@@ -135,7 +135,7 @@ public class JetTypeMapper extends BindingTraceAware {
         // It's not a package created for Java class statics
         JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
         if (insideModule && file != null) {
-            return NamespaceCodegen.getNamespacePartInternalName(file);
+            return PackageCodegen.getPackagePartInternalName(file);
         }
         else {
             return PackageClassUtils.getPackageClassFqName(packageFragment.getFqName()).asString().replace('.', '/');

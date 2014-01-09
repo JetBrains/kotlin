@@ -76,7 +76,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testPrivatePropertyInNamespace() throws Exception {
         loadText("private val x = 239");
-        Class nsClass = generateNamespaceSrcClass();
+        Class nsClass = generatePackagePartClass();
         Field[] fields = nsClass.getDeclaredFields();
         assertEquals(1, fields.length);
         Field field = fields[0];

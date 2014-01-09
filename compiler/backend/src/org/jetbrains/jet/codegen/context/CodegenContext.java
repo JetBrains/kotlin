@@ -101,7 +101,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return thisDescriptor != null;
     }
 
-    public DeclarationDescriptor getClassOrNamespaceDescriptor() {
+    public DeclarationDescriptor getClassOrPackageDescriptor() {
         CodegenContext c = this;
         while (true) {
             assert c != null;
@@ -408,7 +408,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         CodegenContext descriptorContext = null;
-        if (!fromOutsideContext || getClassOrNamespaceDescriptor() != descriptor.getContainingDeclaration()) {
+        if (!fromOutsideContext || getClassOrPackageDescriptor() != descriptor.getContainingDeclaration()) {
             DeclarationDescriptor enclosed = descriptor.getContainingDeclaration();
             boolean isClassObjectMember = DescriptorUtils.isClassObject(enclosed);
             //go upper

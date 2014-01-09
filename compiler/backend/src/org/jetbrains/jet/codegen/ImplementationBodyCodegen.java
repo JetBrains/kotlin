@@ -246,7 +246,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
             else {
                 assert isObjectLiteral
-                        : "Function descriptor could be null only for object literal in package namespace: " + descriptor.getName();
+                        : "Function descriptor could be null only for object literal in package: " + descriptor.getName();
                 v.visitOuterClass(outerClassName, null, null);
             }
         }
@@ -261,7 +261,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         JetFile containingFile = BindingContextUtils.getContainingFile(typeMapper.getBindingContext(), classDescriptor);
         assert containingFile != null : "Containing file should be present for " + classDescriptor;
-        return NamespaceCodegen.getNamespacePartInternalName(containingFile);
+        return PackageCodegen.getPackagePartInternalName(containingFile);
     }
 
     private void writeInnerClasses() {

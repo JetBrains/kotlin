@@ -284,12 +284,12 @@ public class ReplInterpreter {
     private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull MessageCollector messageCollector) {
         WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, module,
-                new TraceBasedRedeclarationHandler(trace), "Root scope in analyzeNamespace");
+                new TraceBasedRedeclarationHandler(trace), "Root scope in analyzePackage");
 
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        // Import a scope that contains all top-level namespaces that come from dependencies
-        // This makes the namespaces visible at all, does not import themselves
+        // Import a scope that contains all top-level packages that come from dependencies
+        // This makes the packages visible at all, does not import themselves
         scope.importScope(module.getPackage(FqName.ROOT).getMemberScope());
 
         if (lastLineScope != null) {
@@ -299,7 +299,7 @@ public class ReplInterpreter {
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         // dummy builder is used because "root" is module descriptor,
-        // namespaces added to module explicitly in
+        // packages added to module explicitly in
         injector.getTopDownAnalyzer().doProcess(scope, new PackageLikeBuilderDummy(), Collections.singletonList(psiFile));
 
         boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext(), messageCollector);
@@ -349,7 +349,7 @@ public class ReplInterpreter {
         registerClassNameForScript(state.getBindingTrace(), script, classType);
 
         state.beforeCompile();
-        KotlinCodegenFacade.generateNamespace(
+        KotlinCodegenFacade.generatePackage(
                 state,
                 JetPsiUtil.getFQName((JetFile) script.getContainingFile()),
                 Collections.singleton((JetFile) script.getContainingFile()),
