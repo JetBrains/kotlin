@@ -100,10 +100,16 @@ public open class LazyJavaPackageFragmentProvider(
             val builtinClass = JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName)
             if (builtinClass != null) return builtinClass
 
+            // TODO Here we prefer sources (something outside JDR subsystem) to binaries, which should actually be driven by module dependencies separation
+            // See DeserializedDescriptorResolver.javaDescriptorFinder
+            val classFromSources = outerContext.javaClassResolver.resolveClassByFqName(fqName)
+            if (classFromSources != null) return classFromSources
+
             val (jClass, kClass) = c.findClassInJava(fqName)
             if (jClass != null) return resolveClass(jClass)
             if (kClass != null) return kClass
-            return outerContext.javaClassResolver.resolveClassByFqName(fqName)
+
+            return null
         }
     }
 }
