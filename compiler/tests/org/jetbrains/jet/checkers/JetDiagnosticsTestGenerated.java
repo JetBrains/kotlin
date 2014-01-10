@@ -4331,6 +4331,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/inner/outerSuperClassMember.kt");
             }
             
+            @TestMetadata("referenceToSelfInLocal.kt")
+            public void testReferenceToSelfInLocal() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inner/referenceToSelfInLocal.kt");
+            }
+            
             @TestMetadata("resolvePackageClassInObjects.kt")
             public void testResolvePackageClassInObjects() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inner/resolvePackageClassInObjects.kt");

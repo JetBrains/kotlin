@@ -20,6 +20,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -157,6 +158,7 @@ public class TopDownAnalyzer {
     }
 
     public static void processClassOrObject(
+            @Nullable final WritableScope scope,
             @NotNull ExpressionTypingContext context,
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetClassOrObject object
@@ -185,7 +187,9 @@ public class TopDownAnalyzer {
 
             @Override
             public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-
+                if (scope != null) {
+                    scope.addClassifierDescriptor(classDescriptor);
+                }
             }
 
             @Override

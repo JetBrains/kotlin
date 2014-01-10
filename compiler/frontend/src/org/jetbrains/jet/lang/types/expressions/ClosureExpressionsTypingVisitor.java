@@ -85,7 +85,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        TopDownAnalyzer.processClassOrObject(context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
+        TopDownAnalyzer.processClassOrObject(null, // don't need to add classifier of object literal to any scope
+                                             context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                              context.scope.getContainingDeclaration(),
                                              expression.getObjectDeclaration());
 
