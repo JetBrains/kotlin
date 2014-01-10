@@ -19,18 +19,18 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 
-public class JetRootNamespaceExpression extends JetExpressionImpl {
-    public JetRootNamespaceExpression(@NotNull ASTNode node) {
+public class JetRootPackageExpression extends JetExpressionImpl {
+    public JetRootPackageExpression(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitRootNamespaceExpression(this);
+        visitor.visitRootPackageExpression(this);
     }
 
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitRootNamespaceExpression(this, data);
+        return visitor.visitRootPackageExpression(this, data);
     }
 }

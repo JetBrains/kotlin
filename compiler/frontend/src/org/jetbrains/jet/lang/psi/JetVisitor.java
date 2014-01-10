@@ -266,7 +266,7 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression, D data) {
+    public R visitRootPackageExpression(@NotNull JetRootPackageExpression expression, D data) {
         return visitExpression(expression, data);
     }
 

@@ -266,8 +266,8 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
         super.visitObjectLiteralExpression(expression, data);
     }
 
-    public void visitRootNamespaceExpressionVoid(@NotNull JetRootNamespaceExpression expression, P data) {
-        super.visitRootNamespaceExpression(expression, data);
+    public void visitRootPackageExpressionVoid(@NotNull JetRootPackageExpression expression, P data) {
+        super.visitRootPackageExpression(expression, data);
     }
 
     public void visitBlockExpressionVoid(@NotNull JetBlockExpression expression, P data) {
@@ -772,8 +772,8 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
     }
 
     @Override
-    public final Void visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression, P data) {
-        visitRootNamespaceExpressionVoid(expression, data);
+    public final Void visitRootPackageExpression(@NotNull JetRootPackageExpression expression, P data) {
+        visitRootPackageExpressionVoid(expression, data);
     	return null;
     }
 

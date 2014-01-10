@@ -1170,7 +1170,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitRootPackageExpression(@NotNull JetRootPackageExpression expression, ExpressionTypingContext context) {
         if (JetPsiUtil.isLHSOfDot(expression)) {
             return DataFlowUtils.checkType(JetModuleUtil.getRootPackageType(expression), expression, context, context.dataFlowInfo);
         }

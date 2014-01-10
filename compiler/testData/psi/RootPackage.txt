@@ -1,4 +1,4 @@
-JetFile: RootNamespace.kt
+JetFile: RootPackage.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')
@@ -46,7 +46,7 @@ JetFile: RootNamespace.kt
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
           DOT_QUALIFIED_EXPRESSION
-            ROOT_NAMESPACE
+            ROOT_PACKAGE
               PsiElement(package)('package')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
@@ -61,7 +61,7 @@ JetFile: RootNamespace.kt
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
           DOT_QUALIFIED_EXPRESSION
-            ROOT_NAMESPACE
+            ROOT_PACKAGE
               PsiElement(package)('package')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION

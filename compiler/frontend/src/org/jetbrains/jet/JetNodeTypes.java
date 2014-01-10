@@ -137,7 +137,7 @@ public interface JetNodeTypes {
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
 
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);
-    JetNodeType ROOT_NAMESPACE            = new JetNodeType("ROOT_NAMESPACE", JetRootNamespaceExpression.class);
+    JetNodeType ROOT_PACKAGE = new JetNodeType("ROOT_PACKAGE", JetRootPackageExpression.class);
 
     JetNodeType WHEN                      = new JetNodeType("WHEN", JetWhenExpression.class);
     JetNodeType WHEN_ENTRY                = new JetNodeType("WHEN_ENTRY", JetWhenEntry.class);

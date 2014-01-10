@@ -542,7 +542,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseTupleExpression();
         }
         else if (at(PACKAGE_KEYWORD)) {
-            parseOneTokenExpression(ROOT_NAMESPACE);
+            parseOneTokenExpression(ROOT_PACKAGE);
         }
         else if (at(THIS_KEYWORD)) {
             parseThisExpression();

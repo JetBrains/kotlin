@@ -566,7 +566,7 @@ public interface Errors {
     DiagnosticFactory0<JetClassInitializer> ANONYMOUS_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetThisExpression> NO_THIS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetRootNamespaceExpression> NAMESPACE_IS_NOT_AN_EXPRESSION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetRootPackageExpression> NAMESPACE_IS_NOT_AN_EXPRESSION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ClassifierDescriptor> NO_CLASS_OBJECT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, TypeParameterDescriptor> TYPE_PARAMETER_IS_NOT_AN_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, TypeParameterDescriptor> TYPE_PARAMETER_ON_LHS_OF_DOT = DiagnosticFactory1.create(ERROR);

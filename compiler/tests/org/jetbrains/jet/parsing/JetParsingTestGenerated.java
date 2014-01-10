@@ -337,9 +337,9 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         doParsingTest("compiler/testData/psi/QuotedIdentifiers.kt");
     }
     
-    @TestMetadata("RootNamespace.kt")
-    public void testRootNamespace() throws Exception {
-        doParsingTest("compiler/testData/psi/RootNamespace.kt");
+    @TestMetadata("RootPackage.kt")
+    public void testRootPackage() throws Exception {
+        doParsingTest("compiler/testData/psi/RootPackage.kt");
     }
     
     @TestMetadata("SemicolonAfterIf.kt")

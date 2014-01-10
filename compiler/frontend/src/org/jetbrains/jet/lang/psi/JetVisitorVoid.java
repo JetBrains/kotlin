@@ -264,7 +264,7 @@ public class JetVisitorVoid extends PsiElementVisitor {
         visitExpression(expression);
     }
 
-    public void visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression) {
+    public void visitRootPackageExpression(@NotNull JetRootPackageExpression expression) {
         visitExpression(expression);
     }
 
