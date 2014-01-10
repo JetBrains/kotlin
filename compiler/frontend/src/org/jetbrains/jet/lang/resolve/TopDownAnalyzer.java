@@ -212,10 +212,10 @@ public class TopDownAnalyzer {
     public void analyzeFiles(
             @NotNull Collection<JetFile> files,
             @NotNull List<AnalyzerScriptParameter> scriptParameters) {
-        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(packageFragmentProvider);
+        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
 
         // "depend on" builtins module
-        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
         // Import a scope that contains all top-level packages that come from dependencies
         // This makes the package visible at all, does not import themselves

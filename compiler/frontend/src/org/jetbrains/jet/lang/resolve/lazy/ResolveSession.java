@@ -148,7 +148,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 return packageDescriptor.getDeclarationProvider().getAllDeclaredPackages();
             }
         };
-        rootDescriptor.addFragmentProvider(packageFragmentProvider);
+        rootDescriptor.addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
     }
 
     @NotNull

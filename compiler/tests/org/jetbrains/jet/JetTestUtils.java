@@ -48,6 +48,7 @@ import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -716,7 +717,7 @@ public class JetTestUtils {
     public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName, @NotNull String moduleName) {
         ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule(moduleName);
         MutablePackageFragmentProvider provider = new MutablePackageFragmentProvider(module);
-        module.addFragmentProvider(provider);
+        module.addFragmentProvider(DependencyKind.SOURCES, provider);
         return provider.getOrCreateFragment(FqName.topLevel(testPackageName));
     }
 

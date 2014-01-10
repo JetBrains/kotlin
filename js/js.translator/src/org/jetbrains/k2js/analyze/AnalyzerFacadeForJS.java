@@ -27,6 +27,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -93,7 +94,7 @@ public final class AnalyzerFacadeForJS {
 
         ModuleDescriptor libraryModule = config.getLibraryModule();
         if (libraryModule != null) {
-            owner.addFragmentProvider(libraryModule.getPackageFragmentProvider()); // "import" analyzed library module
+            owner.addFragmentProvider(DependencyKind.BINARIES, libraryModule.getPackageFragmentProvider()); // "import" analyzed library module
         }
 
         BindingContext libraryContext = config.getLibraryContext();
@@ -155,7 +156,7 @@ public final class AnalyzerFacadeForJS {
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
         ModuleDescriptorImpl module = createJsModule("<lazy module>");
-        module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         return new ResolveSession(config.getProject(), storageManager, module, declarationProviderFactory);
     }
 

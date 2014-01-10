@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,12 +31,13 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements ModuleDescriptor {
     private static final Logger LOG = Logger.getInstance(ModuleDescriptorImpl.class);
 
+
+    private final Map<DependencyKind, List<PackageFragmentProvider>> prioritizedFragmentProviders = Maps.newHashMap();
     private final List<PackageFragmentProvider> fragmentProviders = Lists.newArrayList();
     private final CompositePackageFragmentProvider packageFragmentProvider = new CompositePackageFragmentProvider(fragmentProviders);
     private final List<ImportPath> defaultImports;
@@ -54,11 +56,27 @@ public class ModuleDescriptorImpl extends DeclarationDescriptorImpl implements M
         this.platformToKotlinClassMap = platformToKotlinClassMap;
     }
 
-    public void addFragmentProvider(@NotNull PackageFragmentProvider provider) {
+    public void addFragmentProvider(@NotNull DependencyKind dependencyKind, @NotNull PackageFragmentProvider provider) {
         if (fragmentProviders.contains(provider)) {
             LOG.error("Trying to add already present fragment provider: " + provider);
         }
-        fragmentProviders.add(provider);
+        List<PackageFragmentProvider> providers = prioritizedFragmentProviders.get(dependencyKind);
+        if (providers == null) {
+            providers = new ArrayList<PackageFragmentProvider>(1);
+            prioritizedFragmentProviders.put(dependencyKind, providers);
+        }
+        providers.add(provider);
+        buildProvidersList();
+    }
+
+    private void buildProvidersList() {
+        fragmentProviders.clear();
+        for (DependencyKind dependencyKind : DependencyKind.values()) {
+            List<PackageFragmentProvider> providers = prioritizedFragmentProviders.get(dependencyKind);
+            if (providers != null) {
+                fragmentProviders.addAll(providers);
+            }
+        }
     }
 
     @Override

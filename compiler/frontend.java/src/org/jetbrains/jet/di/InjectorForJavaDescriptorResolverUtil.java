@@ -18,13 +18,14 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 
 public class InjectorForJavaDescriptorResolverUtil {
     @NotNull
     public static InjectorForJavaDescriptorResolver create(@NotNull Project project, @NotNull BindingTrace bindingTrace) {
         InjectorForJavaDescriptorResolver injector = new InjectorForJavaDescriptorResolver(project, bindingTrace);
-        injector.getModule().addFragmentProvider(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
+        injector.getModule().addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
         return injector;
     }
 }
