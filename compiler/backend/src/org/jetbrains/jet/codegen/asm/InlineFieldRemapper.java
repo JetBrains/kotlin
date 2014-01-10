@@ -16,9 +16,14 @@
 
 package org.jetbrains.jet.codegen.asm;
 
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.tree.AbstractInsnNode;
 import org.jetbrains.asm4.tree.FieldInsnNode;
 import org.jetbrains.asm4.tree.MethodNode;
+import org.jetbrains.asm4.tree.VarInsnNode;
+
+import static org.jetbrains.jet.codegen.asm.MethodInliner.getPreviousNoLabelNoLine;
 
 public class InlineFieldRemapper extends LambdaFieldRemapper {
 
@@ -35,8 +40,24 @@ public class InlineFieldRemapper extends LambdaFieldRemapper {
     public AbstractInsnNode doTransform(
             MethodNode node, FieldInsnNode fieldInsnNode, CapturedParamInfo capturedField
     ) {
+        AbstractInsnNode prev = getPreviousNoLabelNoLine(fieldInsnNode);
+
+        assert prev.getType() == AbstractInsnNode.VAR_INSN;
+        VarInsnNode loadThis = (VarInsnNode) prev;
+        assert /*loadThis.var == info.getCapturedVarsSize() - 1 && */loadThis.getOpcode() == Opcodes.ALOAD;
+
+        int opcode = Opcodes.GETSTATIC;
+
+        String descriptor = Type.getObjectType(newOwnerType).getDescriptor();
+
+        FieldInsnNode thisStub = new FieldInsnNode(opcode, newOwnerType, "$$$this", descriptor);
+
+        node.instructions.insertBefore(loadThis, thisStub);
+        node.instructions.remove(loadThis);
+
         fieldInsnNode.owner = newOwnerType;
         fieldInsnNode.name = LambdaTransformer.getNewFieldName(fieldInsnNode.name);
+
         return fieldInsnNode;
     }
 }

@@ -84,4 +84,13 @@ public class RemapVisitor extends InstructionAdapter {
     public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
         return null;
     }
+
+    @Override
+    public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+        if (name.equals("$$$this")) {
+            super.visitVarInsn(Opcodes.ALOAD, 0);
+        } else {
+            super.visitFieldInsn(opcode, owner, name, desc);
+        }
+    }
 }
