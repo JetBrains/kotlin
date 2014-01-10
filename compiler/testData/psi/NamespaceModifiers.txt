@@ -1,5 +1,5 @@
 JetFile: NamespaceModifiers.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     MODIFIER_LIST
       PsiElement(public)('public')
       PsiWhiteSpace(' ')

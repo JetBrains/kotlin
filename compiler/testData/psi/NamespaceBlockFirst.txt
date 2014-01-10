@@ -1,5 +1,5 @@
 JetFile: NamespaceBlockFirst.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(package)('package')

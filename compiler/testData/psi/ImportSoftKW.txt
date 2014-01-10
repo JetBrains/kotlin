@@ -1,5 +1,5 @@
 JetFile: ImportSoftKW.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
     IMPORT_DIRECTIVE

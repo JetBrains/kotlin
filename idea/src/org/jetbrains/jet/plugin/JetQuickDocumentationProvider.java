@@ -26,16 +26,12 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClass;
-import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.kdoc.psi.api.KDoc;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -45,7 +41,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         public boolean apply(PsiElement input) {
             // Skip empty namespace because there can be comments before it
             // Skip whitespaces
-            return (input instanceof JetNamespaceHeader && input.getChildren().length == 0) || input instanceof PsiWhiteSpace;
+            return (input instanceof JetPackageDirective && input.getChildren().length == 0) || input instanceof PsiWhiteSpace;
         }
     };
 

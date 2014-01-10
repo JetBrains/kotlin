@@ -259,7 +259,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
     }
 
     private static boolean isEmptyNamespaceHeader(PsiElement adjustedSibling) {
-        return adjustedSibling instanceof JetNamespaceHeader && adjustedSibling.getTextLength() == 0;
+        return adjustedSibling instanceof JetPackageDirective && adjustedSibling.getTextLength() == 0;
     }
 
     @Override

@@ -91,7 +91,7 @@ public class DeclarationResolver {
 
 
     public void process(@NotNull JetScope rootScope) {
-        checkModifiersAndAnnotationsInNamespaceHeaders();
+        checkModifiersAndAnnotationsInPackageDirectives();
         resolveAnnotationConstructors();
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
@@ -102,12 +102,12 @@ public class DeclarationResolver {
         checkRedeclarationsInInnerClassNames();
     }
 
-    private void checkModifiersAndAnnotationsInNamespaceHeaders() {
+    private void checkModifiersAndAnnotationsInPackageDirectives() {
         for (JetFile file : context.getPackageFragments().keySet()) {
-            JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
-            if (namespaceHeader == null) continue;
+            JetPackageDirective packageDirective = file.getPackageDirective();
+            if (packageDirective == null) continue;
 
-            PsiElement firstChild = namespaceHeader.getFirstChild();
+            PsiElement firstChild = packageDirective.getFirstChild();
             if (!(firstChild instanceof JetModifierList)) continue;
             JetModifierList modifierList = (JetModifierList) firstChild;
 
@@ -373,7 +373,7 @@ public class DeclarationResolver {
                 @Override
                 public PsiElement apply(@Nullable JetFile file) {
                     assert file != null : "File is null for aPackage " + aPackage;
-                    return file.getNamespaceHeader().getNameIdentifier();
+                    return file.getPackageDirective().getNameIdentifier();
                 }
             });
         }

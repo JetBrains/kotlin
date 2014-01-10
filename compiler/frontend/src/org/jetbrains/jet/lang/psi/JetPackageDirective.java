@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +27,15 @@ import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 
 import java.util.List;
 
-public class JetNamespaceHeader extends JetReferenceExpression {
+public class JetPackageDirective extends JetReferenceExpression {
     private String qualifiedNameCache = null;
 
-    public JetNamespaceHeader(@NotNull ASTNode node) {
+    public JetPackageDirective(@NotNull ASTNode node) {
         super(node);
     }
 
     @NotNull
-    public List<JetSimpleNameExpression> getNamespaceNames() {
+    public List<JetSimpleNameExpression> getPackageNames() {
         return findChildrenByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 

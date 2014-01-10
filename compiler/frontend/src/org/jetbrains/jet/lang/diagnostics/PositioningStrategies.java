@@ -204,7 +204,7 @@ public class PositioningStrategies {
             }
             else if (element instanceof JetFile) {
                 JetFile file = (JetFile) element;
-                PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
+                PsiElement nameIdentifier = file.getPackageDirective().getNameIdentifier();
                 if (nameIdentifier != null) {
                     return markElement(nameIdentifier);
                 }

@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -119,8 +119,8 @@ public class ScriptHeaderResolver {
 
     public void processScriptHierarchy(@NotNull JetScript script, @NotNull JetScope outerScope) {
         JetFile file = (JetFile) script.getContainingFile();
-        JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
-        FqName fqName = namespaceHeader != null ? new FqName(namespaceHeader.getQualifiedName()) : FqName.ROOT;
+        JetPackageDirective packageDirective = file.getPackageDirective();
+        FqName fqName = packageDirective != null ? new FqName(packageDirective.getQualifiedName()) : FqName.ROOT;
         PackageFragmentDescriptor ns = packageFragmentProvider.getOrCreateFragment(fqName);
 
         Integer priority = script.getUserData(PRIORITY_KEY);

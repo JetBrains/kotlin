@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
@@ -94,7 +94,7 @@ public final class TipsManager {
     public static Collection<DeclarationDescriptor> getVariantsNoReceiver(JetExpression expression, BindingContext context) {
         JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (resolutionScope != null) {
-            if (expression.getParent() instanceof JetImportDirective || expression.getParent() instanceof JetNamespaceHeader) {
+            if (expression.getParent() instanceof JetImportDirective || expression.getParent() instanceof JetPackageDirective) {
                 return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
             }
             else {

@@ -1,5 +1,5 @@
 JetFile: SimpleClassMembers.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   CLASS
     PsiElement(class)('class')

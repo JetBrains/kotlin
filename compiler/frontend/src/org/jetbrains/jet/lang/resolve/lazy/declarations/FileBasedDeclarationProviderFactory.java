@@ -27,7 +27,7 @@ import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -83,12 +83,12 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     private static Index computeFilesByPackage(@NotNull Collection<JetFile> files) {
         Index index = new Index();
         for (JetFile file : files) {
-            JetNamespaceHeader header = file.getNamespaceHeader();
-            if (header == null) {
+            JetPackageDirective directive = file.getPackageDirective();
+            if (directive == null) {
                 throw new IllegalArgumentException("Scripts are not supported");
             }
 
-            FqName packageFqName = new FqName(header.getQualifiedName());
+            FqName packageFqName = new FqName(directive.getQualifiedName());
             addMeAndParentPackages(index, packageFqName);
             index.filesByPackage.put(packageFqName, file);
         }

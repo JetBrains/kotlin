@@ -110,12 +110,12 @@ public class ScopeProvider {
 
     @NotNull
     private PackageViewDescriptor getFilePackageDescriptor(JetFile file) {
-        JetNamespaceHeader header = file.getNamespaceHeader();
-        if (header == null) {
+        JetPackageDirective directive = file.getPackageDirective();
+        if (directive == null) {
             throw new IllegalArgumentException("Scripts are not supported: " + file.getName());
         }
 
-        FqName fqName = new FqName(header.getQualifiedName());
+        FqName fqName = new FqName(directive.getQualifiedName());
         PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(fqName);
 
         if (packageDescriptor == null) {

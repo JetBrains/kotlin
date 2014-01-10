@@ -94,10 +94,10 @@ public class ResolveElementCache {
                 JetAnnotationEntry.class,
                 JetTypeParameter.class,
                 JetTypeConstraint.class,
-                JetNamespaceHeader.class);
+                JetPackageDirective.class);
 
         if (elementOfAdditionalResolve != null && !(elementOfAdditionalResolve instanceof JetParameter)) {
-            if (elementOfAdditionalResolve instanceof JetNamespaceHeader) {
+            if (elementOfAdditionalResolve instanceof JetPackageDirective) {
                 elementOfAdditionalResolve = jetElement;
             }
 
@@ -163,7 +163,7 @@ public class ResolveElementCache {
         else if (resolveElement instanceof JetTypeConstraint) {
             typeConstraintAdditionalResolve(resolveSession, (JetTypeConstraint) resolveElement);
         }
-        else if (PsiTreeUtil.getParentOfType(resolveElement, JetNamespaceHeader.class) != null) {
+        else if (PsiTreeUtil.getParentOfType(resolveElement, JetPackageDirective.class) != null) {
             namespaceRefAdditionalResolve(resolveSession, trace, resolveElement);
         }
         else {
@@ -175,7 +175,7 @@ public class ResolveElementCache {
 
     private static void namespaceRefAdditionalResolve(ResolveSession resolveSession, BindingTrace trace, JetElement jetElement) {
         if (jetElement instanceof JetSimpleNameExpression) {
-            JetNamespaceHeader header = PsiTreeUtil.getParentOfType(jetElement, JetNamespaceHeader.class);
+            JetPackageDirective header = PsiTreeUtil.getParentOfType(jetElement, JetPackageDirective.class);
             assert header != null;
 
             JetSimpleNameExpression packageNameExpression = (JetSimpleNameExpression) jetElement;
@@ -402,7 +402,7 @@ public class ResolveElementCache {
             }
 
             // Inside package declaration
-            JetNamespaceHeader namespaceHeader = PsiTreeUtil.getParentOfType(expression, JetNamespaceHeader.class, false);
+            JetPackageDirective namespaceHeader = PsiTreeUtil.getParentOfType(expression, JetPackageDirective.class, false);
             if (namespaceHeader != null) {
                 PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(
                         namespaceHeader.getFqName((JetSimpleNameExpression) expression).parent());

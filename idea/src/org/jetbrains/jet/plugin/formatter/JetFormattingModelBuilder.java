@@ -49,7 +49,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
 
         return new SpacingBuilder(settings, JetLanguage.INSTANCE)
                 // ============ Line breaks ==============
-                .after(NAMESPACE_HEADER).blankLines(1)
+                .after(PACKAGE_DIRECTIVE).blankLines(1)
 
                 .between(IMPORT_DIRECTIVE, IMPORT_DIRECTIVE).lineBreakInCode()
                 .after(IMPORT_LIST).blankLines(1)

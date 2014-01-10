@@ -1,5 +1,5 @@
 JetFile: kt2172.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   CLASS
     PsiElement(class)('class')

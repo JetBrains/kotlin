@@ -1,5 +1,5 @@
 JetFile: FunctionTypes.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   TYPEDEF
     PsiElement(type)('type')

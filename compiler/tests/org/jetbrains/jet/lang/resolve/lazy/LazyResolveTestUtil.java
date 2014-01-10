@@ -31,7 +31,7 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -93,9 +93,9 @@ public class LazyResolveTestUtil {
     public static Set<Name> getTopLevelPackagesFromFileList(@NotNull List<JetFile> files) {
         Set<Name> shortNames = Sets.newLinkedHashSet();
         for (JetFile file : files) {
-            JetNamespaceHeader header = file.getNamespaceHeader();
-            if (header != null) {
-                List<JetSimpleNameExpression> names = header.getNamespaceNames();
+            JetPackageDirective directive = file.getPackageDirective();
+            if (directive != null) {
+                List<JetSimpleNameExpression> names = directive.getPackageNames();
                 Name name = names.isEmpty() ? SpecialNames.ROOT_PACKAGE : names.get(0).getReferencedNameAsName();
                 shortNames.add(name);
             }

@@ -1,7 +1,7 @@
 JetFile: Shebang.ktscript
   PsiComment(SHEBANG_COMMENT)('#!/usr/bin/env kotlin')
   PsiWhiteSpace('\n\n')
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   SCRIPT
     BLOCK

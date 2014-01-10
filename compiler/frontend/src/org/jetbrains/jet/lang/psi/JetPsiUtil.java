@@ -187,8 +187,8 @@ public class JetPsiUtil {
 
     @NotNull
     public static FqName getFQName(@NotNull JetFile file) {
-        JetNamespaceHeader header = file.getNamespaceHeader();
-        return header != null ? header.getFqName() : FqName.ROOT;
+        JetPackageDirective directive = file.getPackageDirective();
+        return directive != null ? directive.getFqName() : FqName.ROOT;
     }
 
     @Nullable
@@ -908,14 +908,15 @@ public class JetPsiUtil {
     }
 
     public static NavigatablePsiElement getPackageReference(@NotNull JetFile file, int partIndex) {
-        JetNamespaceHeader header = file.getNamespaceHeader();
-        if (header == null) {
-            throw new IllegalArgumentException("Should be called only for files with namespace: " + file);
+        JetPackageDirective directive = file.getPackageDirective();
+        if (directive == null) {
+            throw new IllegalArgumentException("Should be called only for files with package directive: " + file);
         }
 
-        List<JetSimpleNameExpression> names = header.getNamespaceNames();
+        List<JetSimpleNameExpression> names = directive.getPackageNames();
         if (!(0 <= partIndex && partIndex < names.size())) {
-            throw new IndexOutOfBoundsException(String.format("%s index for file with header %s is out of range", partIndex, header.getText()));
+            throw new IndexOutOfBoundsException(String.format("%s index for file with directive %s is out of range", partIndex,
+                                                              directive.getText()));
         }
 
         return names.get(partIndex);
@@ -1002,7 +1003,7 @@ public class JetPsiUtil {
     @Nullable
     public static String getPackageName(@NotNull JetElement element) {
         JetFile file = (JetFile) element.getContainingFile();
-        JetNamespaceHeader header = PsiTreeUtil.findChildOfType(file, JetNamespaceHeader.class);
+        JetPackageDirective header = PsiTreeUtil.findChildOfType(file, JetPackageDirective.class);
 
         return header != null ? header.getQualifiedName() : null;
     }

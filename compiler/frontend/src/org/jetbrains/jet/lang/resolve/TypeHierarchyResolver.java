@@ -541,13 +541,13 @@ public class TypeHierarchyResolver {
 
         @NotNull
         private MutablePackageFragmentDescriptor getOrCreatePackageFragmentForFile(@NotNull JetFile file) {
-            JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
-            assert namespaceHeader != null : "scripts are not supported";
+            JetPackageDirective packageDirective = file.getPackageDirective();
+            assert packageDirective != null : "scripts are not supported";
 
-            MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(namespaceHeader.getFqName());
+            MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(packageDirective.getFqName());
 
-            for (JetSimpleNameExpression nameExpression : namespaceHeader.getNamespaceNames()) {
-                FqName fqName = namespaceHeader.getFqName(nameExpression);
+            for (JetSimpleNameExpression nameExpression : packageDirective.getPackageNames()) {
+                FqName fqName = packageDirective.getFqName(nameExpression);
 
                 PackageViewDescriptor packageView = packageFragmentProvider.getModule().getPackage(fqName);
                 assert packageView != null : "package not found: " + fqName;
