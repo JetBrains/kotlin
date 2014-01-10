@@ -309,16 +309,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest("compiler/testData/diagnostics/tests/NamedArgumentsAndDefaultValues.kt");
         }
         
-        @TestMetadata("NamespaceAsExpression.kt")
-        public void testNamespaceAsExpression() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/NamespaceAsExpression.kt");
-        }
-        
-        @TestMetadata("NamespaceInExpressionPosition.kt")
-        public void testNamespaceInExpressionPosition() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/NamespaceInExpressionPosition.kt");
-        }
-        
         @TestMetadata("NamespaceQualified.kt")
         public void testNamespaceQualified() throws Exception {
             doTest("compiler/testData/diagnostics/tests/NamespaceQualified.kt");
@@ -342,6 +332,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("OverridingVarByVal.kt")
         public void testOverridingVarByVal() throws Exception {
             doTest("compiler/testData/diagnostics/tests/OverridingVarByVal.kt");
+        }
+        
+        @TestMetadata("PackageAsExpression.kt")
+        public void testPackageAsExpression() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/PackageAsExpression.kt");
+        }
+        
+        @TestMetadata("PackageInExpressionPosition.kt")
+        public void testPackageInExpressionPosition() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/PackageInExpressionPosition.kt");
         }
         
         @TestMetadata("PrimaryConstructors.kt")

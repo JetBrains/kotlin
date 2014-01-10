@@ -197,7 +197,7 @@ public class CallExpressionResolver {
             result[0] = packageType;
             return true;
         }
-        context.trace.report(EXPRESSION_EXPECTED_NAMESPACE_FOUND.on(expression));
+        context.trace.report(EXPRESSION_EXPECTED_PACKAGE_FOUND.on(expression));
         result[0] = ErrorUtils.createErrorType("Type for " + expression.getReferencedNameAsName());
         return false;
     }

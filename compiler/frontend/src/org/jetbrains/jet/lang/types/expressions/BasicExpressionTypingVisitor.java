@@ -1174,7 +1174,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (JetPsiUtil.isLHSOfDot(expression)) {
             return DataFlowUtils.checkType(JetModuleUtil.getRootPackageType(expression), expression, context, context.dataFlowInfo);
         }
-        context.trace.report(NAMESPACE_IS_NOT_AN_EXPRESSION.on(expression));
+        context.trace.report(PACKAGE_IS_NOT_AN_EXPRESSION.on(expression));
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 

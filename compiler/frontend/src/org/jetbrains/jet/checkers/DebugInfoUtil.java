@@ -69,7 +69,7 @@ public class DebugInfoUtil {
                 JetSuperExpression superExpression = (JetSuperExpression) diagnostic.getPsiElement();
                 markedWithErrorElements.put(superExpression.getInstanceReference(), factory);
             }
-            else if (factory == Errors.EXPRESSION_EXPECTED_NAMESPACE_FOUND) {
+            else if (factory == Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND) {
                 markedWithErrorElements.put((JetSimpleNameExpression) diagnostic.getPsiElement(), factory);
             }
             else if (factory == Errors.UNSUPPORTED) {
@@ -134,7 +134,7 @@ public class DebugInfoUtil {
                 DiagnosticFactory factory = markedWithErrorElements.get(expression);
                 if (declarationDescriptor != null &&
                     (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))) {
-                    if (factory != Errors.EXPRESSION_EXPECTED_NAMESPACE_FOUND) {
+                    if (factory != Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND) {
                         debugInfoReporter.reportElementWithErrorType(expression);
                     }
                 }
