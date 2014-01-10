@@ -63,6 +63,22 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
     private static final int CLASSES_IN_CHUNK = 500;
 
+    // <item name='javax.management.openmbean.TabularDataSupport java.util.Set&lt;java.lang.Object&gt; keySet()'>
+    //   <annotation name='org.jetbrains.annotations.NotNull'/>
+    // </item>
+    // <item name='java.util.Map java.util.Set&lt;K&gt; keySet()'>
+    //   <annotation name='org.jetbrains.annotations.NotNull'/>
+    //   <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+    //     <val name="value" val="&quot;fun keySet() : Set&lt;K&gt;&quot;"/>
+    //   </annotation>
+    // </item>
+    // <item name='javax.management.openmbean.TabularData java.util.Set&lt;?&gt; keySet()'>
+    //   <annotation name='org.jetbrains.annotations.NotNull'/>
+    // </item>
+    //
+    // KAnnotator produces above annotations and validation of TabularDataSupport results into:
+    // public open fun keySet(): jet.MutableSet<jet.Any> defined in javax.management.openmbean.TabularDataSupport :
+    // [Incompatible types in superclasses: [Any?, Any, Any], Incompatible projection kinds in type arguments of super methods' return types: [out Any?, Any, Any]]
     private static final Set<String> classesToIgnore = new HashSet<String>(Arrays.asList("javax.management.openmbean.TabularDataSupport"));
 
     private static JetCoreEnvironment createEnvironment(Disposable parentDisposable) {
