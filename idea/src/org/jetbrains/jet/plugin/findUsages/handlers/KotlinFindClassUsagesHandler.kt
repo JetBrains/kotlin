@@ -35,12 +35,10 @@ import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions
 import org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindClassUsagesDialog
 import org.jetbrains.jet.plugin.search.declarationsSearch.HierarchySearchRequest
-import org.jetbrains.jet.plugin.search.declarationsSearch.KotlinClassInheritorsSearch
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearch
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchRequest
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchTarget
 import org.jetbrains.jet.plugin.search.declarationsSearch.searchInheritors
-import org.jetbrains.jet.plugin.search.declarationsSearch.isTraitOrInterface
 import org.jetbrains.jet.plugin.findUsages.toSearchTarget
 import org.jetbrains.jet.plugin.findUsages.toClassHelper
 import org.jetbrains.jet.plugin.findUsages.toClassDeclarationsHelper
@@ -66,13 +64,13 @@ public class KotlinFindClassUsagesHandler(
         fun processInheritors(): Boolean {
             val request = HierarchySearchRequest(element, options.searchScope!!, options.isCheckDeepInheritance)
             return request.searchInheritors().forEach(
-                    PsiElementProcessorAdapter<PsiElement>(
-                            object : PsiElementProcessor<PsiElement> {
-                                public override fun execute(element: PsiElement): Boolean {
-                                    val traitOrInterface = element.isTraitOrInterface()
+                    PsiElementProcessorAdapter<PsiClass>(
+                            object : PsiElementProcessor<PsiClass> {
+                                public override fun execute(element: PsiClass): Boolean {
+                                    val traitOrInterface = element.isInterface()
                                     return when {
                                         traitOrInterface && options.isDerivedInterfaces, !traitOrInterface && options.isDerivedClasses ->
-                                            KotlinFindUsagesHandler.processUsage(processor, element)
+                                            KotlinFindUsagesHandler.processUsage(processor, element.getNavigationElement())
                                         else -> true
                                     }
                                 }
