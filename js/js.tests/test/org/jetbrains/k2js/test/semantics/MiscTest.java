@@ -41,8 +41,8 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
-    public void testClassWithoutNamespace() throws Exception {
-        runFunctionOutputTest("classWithoutNamespace.kt", Namer.getRootPackageName(), "box", true);
+    public void testClassWithoutPackage() throws Exception {
+        runFunctionOutputTest("classWithoutPackage.kt", Namer.getRootPackageName(), "box", true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
@@ -103,15 +103,15 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
-    public void testNamespacePropertyCalledAsFun() throws Exception {
+    public void testPackagePropertyCalledAsFun() throws Exception {
         fooBoxTest();
     }
 
-    public void testExtensionLiteralCreatedAtNamespaceLevel() throws Exception {
+    public void testExtensionLiteralCreatedAtPackageLevel() throws Exception {
         fooBoxTest();
     }
 
-    public void testTemporaryVariableCreatedInNamespaceInitializer() throws Exception {
+    public void testTemporaryVariableCreatedInPackageInitializer() throws Exception {
         fooBoxTest();
     }
 
@@ -131,8 +131,8 @@ public final class MiscTest extends AbstractExpressionTest {
         checkFooBoxIsTrue("KT-1865.kt");
     }
 
-    public void testMainFunInNestedNamespace() throws Exception {
-        checkOutput("mainFunInNestedNamespace.kt", "ayee");
+    public void testMainFunInNestedPackage() throws Exception {
+        checkOutput("mainFunInNestedPackage.kt", "ayee");
     }
 
 
@@ -149,14 +149,14 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
-    public void testNamespaceLevelVarInPackage() throws Exception {
+    public void testPackageLevelVarInPackage() throws Exception {
         fooBoxIsValue("OK");
     }
 
     //TODO: see http://youtrack.jetbrains.com/issue/KT-2564
     @SuppressWarnings("UnusedDeclaration")
-    public void TODO_testNamespaceLevelVarInRoot() throws Exception {
-        runFunctionOutputTest("namespaceLevelVarInRoot.kt", Namer.getRootPackageName(), "box", "OK");
+    public void TODO_testPackageLevelVarInRoot() throws Exception {
+        runFunctionOutputTest("packageLevelVarInRoot.kt", Namer.getRootPackageName(), "box", "OK");
     }
 
     public void testLazyPropertyGetterNotCalledOnStart() throws Exception {

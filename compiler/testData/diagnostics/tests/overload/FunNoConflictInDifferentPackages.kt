@@ -1,13 +1,13 @@
-// FILE: ns1.kt
-// check no error in overload in different namespaces
+// FILE: pkg1.kt
+// check no error in overload in different packages
 
-package ns1
+package pkg1
 fun e() = 1
 
-// FILE: ns2.kt
-package ns2
+// FILE: pkg2.kt
+package pkg2
 fun e() = 1
 
-// FILE: ns3ns1.kt
-package ns3.ns1
+// FILE: pkg3pkg1.kt
+package pkg3.pkg1
 fun e() = 1

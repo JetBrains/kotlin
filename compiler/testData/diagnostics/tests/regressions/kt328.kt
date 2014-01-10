@@ -14,7 +14,7 @@ class A() {
     val x = { <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x<!> }
 }
 
-//in a namespace
+//in a package
 val x = { <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x<!> }
 
 //KT-787 AssertionError on code 'val x = x'

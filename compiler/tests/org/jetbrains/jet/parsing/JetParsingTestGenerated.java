@@ -267,16 +267,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         doParsingTest("compiler/testData/psi/MultiVariableDeclarations.kt");
     }
     
-    @TestMetadata("NamespaceBlockFirst.kt")
-    public void testNamespaceBlockFirst() throws Exception {
-        doParsingTest("compiler/testData/psi/NamespaceBlockFirst.kt");
-    }
-    
-    @TestMetadata("NamespaceModifiers.kt")
-    public void testNamespaceModifiers() throws Exception {
-        doParsingTest("compiler/testData/psi/NamespaceModifiers.kt");
-    }
-    
     @TestMetadata("NestedComments.kt")
     public void testNestedComments() throws Exception {
         doParsingTest("compiler/testData/psi/NestedComments.kt");
@@ -300,6 +290,16 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
     @TestMetadata("ObjectLiteralAsStatement.kt")
     public void testObjectLiteralAsStatement() throws Exception {
         doParsingTest("compiler/testData/psi/ObjectLiteralAsStatement.kt");
+    }
+    
+    @TestMetadata("PackageBlockFirst.kt")
+    public void testPackageBlockFirst() throws Exception {
+        doParsingTest("compiler/testData/psi/PackageBlockFirst.kt");
+    }
+    
+    @TestMetadata("PackageModifiers.kt")
+    public void testPackageModifiers() throws Exception {
+        doParsingTest("compiler/testData/psi/PackageModifiers.kt");
     }
     
     @TestMetadata("ParameterNameMising.kt")

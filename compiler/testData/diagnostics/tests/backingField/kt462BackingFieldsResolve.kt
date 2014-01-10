@@ -107,7 +107,7 @@ class TestBackingFieldsVisibility() {
         <!INACCESSIBLE_BACKING_FIELD!>a.$a<!> = 3
     }
 
-    val x = <!INACCESSIBLE_BACKING_FIELD!>$namespaceLevelVar<!>
+    val x = <!INACCESSIBLE_BACKING_FIELD!>$topLevelVar<!>
 
     inner class Inner() {
         val z = this@TestBackingFieldsVisibility.$x
@@ -117,7 +117,7 @@ class TestBackingFieldsVisibility() {
     get() = $w //test there is no second error here
 }
 
-val namespaceLevelVar = 11
+val topLevelVar = 11
 
 class T() {
     val z : Int get() = 42

@@ -46,9 +46,9 @@ public class TopLevelMembersInvocationTestGenerated extends AbstractTopLevelMemb
         doTest("compiler/testData/codegen/topLevelMemberInvocation/functionDifferentPackage");
     }
     
-    @TestMetadata("functionInMultiFileNamespace")
-    public void testFunctionInMultiFileNamespace() throws Exception {
-        doTest("compiler/testData/codegen/topLevelMemberInvocation/functionInMultiFileNamespace");
+    @TestMetadata("functionInMultiFilePackage")
+    public void testFunctionInMultiFilePackage() throws Exception {
+        doTest("compiler/testData/codegen/topLevelMemberInvocation/functionInMultiFilePackage");
     }
     
     @TestMetadata("functionSamePackage")

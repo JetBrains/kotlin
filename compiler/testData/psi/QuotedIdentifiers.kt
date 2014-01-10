@@ -1,4 +1,4 @@
-[`return`] fun `namespace`() {
+[`return`] fun `package`() {
   `class`()
 }
 

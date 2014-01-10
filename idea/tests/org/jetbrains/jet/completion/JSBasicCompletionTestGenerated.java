@@ -259,14 +259,14 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest("idea/testData/completion/basic/common/InLongDotQualifiedExpression.kt");
         }
         
-        @TestMetadata("InMiddleOfNamespace.kt")
-        public void testInMiddleOfNamespace() throws Exception {
-            doTest("idea/testData/completion/basic/common/InMiddleOfNamespace.kt");
-        }
-        
         @TestMetadata("InMiddleOfPackage.kt")
         public void testInMiddleOfPackage() throws Exception {
             doTest("idea/testData/completion/basic/common/InMiddleOfPackage.kt");
+        }
+        
+        @TestMetadata("InMiddleOfPackageDirective.kt")
+        public void testInMiddleOfPackageDirective() throws Exception {
+            doTest("idea/testData/completion/basic/common/InMiddleOfPackageDirective.kt");
         }
         
         @TestMetadata("InObjectInDelegationSpecifier.kt")
@@ -334,9 +334,9 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest("idea/testData/completion/basic/common/NoCompletionAfterLong.kt");
         }
         
-        @TestMetadata("NoEmptyNamespace.kt")
-        public void testNoEmptyNamespace() throws Exception {
-            doTest("idea/testData/completion/basic/common/NoEmptyNamespace.kt");
+        @TestMetadata("NoEmptyPackage.kt")
+        public void testNoEmptyPackage() throws Exception {
+            doTest("idea/testData/completion/basic/common/NoEmptyPackage.kt");
         }
         
         @TestMetadata("NoObjectInTypePosition.kt")

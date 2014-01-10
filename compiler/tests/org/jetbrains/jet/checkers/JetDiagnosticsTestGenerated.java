@@ -309,11 +309,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest("compiler/testData/diagnostics/tests/NamedArgumentsAndDefaultValues.kt");
         }
         
-        @TestMetadata("NamespaceQualified.kt")
-        public void testNamespaceQualified() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/NamespaceQualified.kt");
-        }
-        
         @TestMetadata("Nullability.kt")
         public void testNullability() throws Exception {
             doTest("compiler/testData/diagnostics/tests/Nullability.kt");
@@ -342,6 +337,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("PackageInExpressionPosition.kt")
         public void testPackageInExpressionPosition() throws Exception {
             doTest("compiler/testData/diagnostics/tests/PackageInExpressionPosition.kt");
+        }
+        
+        @TestMetadata("PackageQualified.kt")
+        public void testPackageQualified() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/PackageQualified.kt");
         }
         
         @TestMetadata("PrimaryConstructors.kt")
@@ -404,9 +404,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest("compiler/testData/diagnostics/tests/SafeCallNonNullReceiverReturnNull.kt");
         }
         
-        @TestMetadata("SafeCallOnFakeNamespace.kt")
-        public void testSafeCallOnFakeNamespace() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/SafeCallOnFakeNamespace.kt");
+        @TestMetadata("SafeCallOnFakePackage.kt")
+        public void testSafeCallOnFakePackage() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/SafeCallOnFakePackage.kt");
         }
         
         @TestMetadata("ShiftFunctionTypes.kt")
@@ -688,9 +688,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/backingField/kt462BackingFieldsResolve.kt");
             }
             
-            @TestMetadata("kt782namespaceLevel.kt")
-            public void testKt782namespaceLevel() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/backingField/kt782namespaceLevel.kt");
+            @TestMetadata("kt782packageLevel.kt")
+            public void testKt782packageLevel() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/backingField/kt782packageLevel.kt");
             }
             
             @TestMetadata("qualifiedWithThis.kt")
@@ -2652,9 +2652,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/enum/classObjectOfPrivateEnum.kt");
             }
             
-            @TestMetadata("dontCreateNamespaceTypeForEnumEntry.kt")
-            public void testDontCreateNamespaceTypeForEnumEntry() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/enum/dontCreateNamespaceTypeForEnumEntry.kt");
+            @TestMetadata("dontCreatePackageTypeForEnumEntry.kt")
+            public void testDontCreatePackageTypeForEnumEntry() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry.kt");
             }
             
             @TestMetadata("entryShouldBeOfEnumType.kt")

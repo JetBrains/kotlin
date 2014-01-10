@@ -28,7 +28,7 @@ public class JetInJavaCompletionTest extends JetCompletionMultiTestBase {
         doFileTest();
     }
 
-    public void testClassFromNamespace() {
+    public void testClassFromPackage() {
         doFileTest();
     }
 

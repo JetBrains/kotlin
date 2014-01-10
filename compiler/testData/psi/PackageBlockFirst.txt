@@ -1,4 +1,4 @@
-JetFile: NamespaceBlockFirst.kt
+JetFile: PackageBlockFirst.kt
   PACKAGE_DIRECTIVE
     <empty list>
   PsiErrorElement:Expecting package directive or top level declaration

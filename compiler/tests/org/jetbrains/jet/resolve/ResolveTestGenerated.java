@@ -82,11 +82,6 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         doTest("compiler/testData/resolve/LocalObjects.resolve");
     }
     
-    @TestMetadata("Namespaces.resolve")
-    public void testNamespaces() throws Exception {
-        doTest("compiler/testData/resolve/Namespaces.resolve");
-    }
-    
     @TestMetadata("NestedObjects.resolve")
     public void testNestedObjects() throws Exception {
         doTest("compiler/testData/resolve/NestedObjects.resolve");
@@ -100,6 +95,11 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     @TestMetadata("Objects.resolve")
     public void testObjects() throws Exception {
         doTest("compiler/testData/resolve/Objects.resolve");
+    }
+    
+    @TestMetadata("Packages.resolve")
+    public void testPackages() throws Exception {
+        doTest("compiler/testData/resolve/Packages.resolve");
     }
     
     @TestMetadata("PrimaryConstructorParameters.resolve")

@@ -1,4 +1,4 @@
-JetFile: NamespaceModifiers.kt
+JetFile: PackageModifiers.kt
   PACKAGE_DIRECTIVE
     MODIFIER_LIST
       PsiElement(public)('public')

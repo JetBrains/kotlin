@@ -143,16 +143,6 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest("idea/testData/checker/MultipleBounds.kt");
         }
         
-        @TestMetadata("NamespaceAsExpression.kt")
-        public void testNamespaceAsExpression() throws Exception {
-            doTest("idea/testData/checker/NamespaceAsExpression.kt");
-        }
-        
-        @TestMetadata("NamespaceQualified.kt")
-        public void testNamespaceQualified() throws Exception {
-            doTest("idea/testData/checker/NamespaceQualified.kt");
-        }
-        
         @TestMetadata("NestedObjects.kt")
         public void testNestedObjects() throws Exception {
             doTest("idea/testData/checker/NestedObjects.kt");
@@ -181,6 +171,16 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
         @TestMetadata("OverridesAndGenerics.kt")
         public void testOverridesAndGenerics() throws Exception {
             doTest("idea/testData/checker/OverridesAndGenerics.kt");
+        }
+        
+        @TestMetadata("PackageAsExpression.kt")
+        public void testPackageAsExpression() throws Exception {
+            doTest("idea/testData/checker/PackageAsExpression.kt");
+        }
+        
+        @TestMetadata("PackageQualified.kt")
+        public void testPackageQualified() throws Exception {
+            doTest("idea/testData/checker/PackageQualified.kt");
         }
         
         @TestMetadata("PrimaryConstructors.kt")

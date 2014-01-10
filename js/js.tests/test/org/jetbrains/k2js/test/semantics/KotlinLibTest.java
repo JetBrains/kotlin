@@ -29,13 +29,13 @@ public final class KotlinLibTest extends SingleFileTranslationTest {
         super("kotlinLib/");
     }
 
-    public void testNamespaceHasDeclaredFunction() throws Exception {
-        runJavascriptTest("namespace.js");
+    public void testPackageHasDeclaredFunction() throws Exception {
+        runJavascriptTest("package.js");
     }
 
 
-    public void testNamespaceHasDeclaredClasses() throws Exception {
-        runJavascriptTest("namespaceWithClasses.js");
+    public void testPackageHasDeclaredClasses() throws Exception {
+        runJavascriptTest("packageWithClasses.js");
     }
 
 

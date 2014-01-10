@@ -56,21 +56,21 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    public void testNamespacePropertyInitializer() throws Exception {
+    public void testPackagePropertyInitializer() throws Exception {
         fooBoxTest();
     }
 
 
-    public void testNamespacePropertySet() throws Exception {
+    public void testPackagePropertySet() throws Exception {
         fooBoxTest();
     }
 
-    public void testNamespaceCustomAccessors() throws Exception {
+    public void testPackageCustomAccessors() throws Exception {
         fooBoxTest();
     }
 
 
-    public void testClassUsesNamespaceProperties() throws Exception {
+    public void testClassUsesPackageProperties() throws Exception {
         fooBoxTest();
     }
 

@@ -6,7 +6,7 @@ package n {
 }
 abstract class XXX() {
     abstract val a : Int
-    abstract val a1 : namespace.Int
+    abstract val a1 : package.Int
     abstract val a2 : n.B
     abstract val a3 : (A)
     abstract val a31 : (n.B)

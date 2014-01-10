@@ -118,34 +118,32 @@ enum class MyEnum() {
 
 abstract enum class MyAbstractEnum() {}
 
-//package MyNamespace {
-    //properties
-    <error>val a: Int</error>
-    val a1: Int = 1
-    <error><error>abstract</error> val a2: Int</error>
-    <error>abstract</error> val a3: Int = 1
+//properties
+<error>val a: Int</error>
+val a1: Int = 1
+<error><error>abstract</error> val a2: Int</error>
+<error>abstract</error> val a3: Int = 1
 
-    <error>var b: Int</error>                private set
-    var b1: Int = 0;                         private set
-    <error><error>abstract</error> var b2: Int</error>      private set
-    <error>abstract</error> var b3: Int = 0; private set
+<error>var b: Int</error>                private set
+var b1: Int = 0;                         private set
+<error><error>abstract</error> var b2: Int</error>      private set
+<error>abstract</error> var b3: Int = 0; private set
 
-    <error>var c: Int</error>                set(v: Int) { $c = v }
-    var c1: Int = 0;                         set(v: Int) { $c1 = v }
-    <error><error>abstract</error> var c2: Int</error>      set(v: Int) { $c2 = v }
-    <error>abstract</error> var c3: Int = 0; set(v: Int) { $c3 = v }
+<error>var c: Int</error>                set(v: Int) { $c = v }
+var c1: Int = 0;                         set(v: Int) { $c1 = v }
+<error><error>abstract</error> var c2: Int</error>      set(v: Int) { $c2 = v }
+<error>abstract</error> var c3: Int = 0; set(v: Int) { $c3 = v }
 
-    val e: Int                               get() = a
-    val e1: Int = <error>0</error>;          get() = a
-    <error>abstract</error> val e2: Int      get() = a
-    <error>abstract</error> val e3: Int = <error>0</error>; get() = a
+val e: Int                               get() = a
+val e1: Int = <error>0</error>;          get() = a
+<error>abstract</error> val e2: Int      get() = a
+<error>abstract</error> val e3: Int = <error>0</error>; get() = a
 
-    //methods
-    <error>fun f()</error>
-    fun g() {}
-    <error>abstract</error> fun h()
-    <error>abstract</error> fun j() {}
-//}
+//methods
+<error>fun f()</error>
+fun g() {}
+<error>abstract</error> fun h()
+<error>abstract</error> fun j() {}
 
 //creating an instance
 abstract class B1(
