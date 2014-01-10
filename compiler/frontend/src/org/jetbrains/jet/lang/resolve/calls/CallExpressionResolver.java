@@ -77,7 +77,7 @@ public class CallExpressionResolver {
     }
 
     @Nullable
-    private JetType lookupNamespaceOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
+    private JetType lookupPackageOrClassObject(@NotNull JetSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
         Name referencedName = expression.getReferencedNameAsName();
         final ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
         if (classifier != null) {
@@ -91,12 +91,12 @@ public class CallExpressionResolver {
         }
         JetType[] result = new JetType[1];
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
-                context.trace, "trace for namespace/class object lookup of name", referencedName);
+                context.trace, "trace for package/class object lookup of name", referencedName);
         if (furtherNameLookup(expression, result, context.replaceBindingTrace(temporaryTrace))) {
             temporaryTrace.commit();
             return DataFlowUtils.checkType(result[0], expression, context);
         }
-        // To report NO_CLASS_OBJECT when no namespace found
+        // To report NO_CLASS_OBJECT when no package found
         if (classifier != null) {
             if (classifier instanceof TypeParameterDescriptor) {
                 if (isLHSOfDot(expression)) {
@@ -172,10 +172,10 @@ public class CallExpressionResolver {
         scopes.add(getStaticNestedClassesScope(classDescriptor));
 
         Name referencedName = expression.getReferencedNameAsName();
-        PackageViewDescriptor namespace = context.scope.getPackage(referencedName);
-        if (namespace != null) {
+        PackageViewDescriptor packageView = context.scope.getPackage(referencedName);
+        if (packageView != null) {
             //for enums loaded from java binaries
-            scopes.add(namespace.getMemberScope());
+            scopes.add(packageView.getMemberScope());
         }
 
         JetScope scope = new ChainedScope(
@@ -265,11 +265,11 @@ public class CallExpressionResolver {
         ExpressionTypingContext newContext = receiver.exists()
                                              ? context.replaceScope(receiver.getType().getMemberScope())
                                              : context;
-        TemporaryTraceAndCache temporaryForNamespaceOrClassObject = TemporaryTraceAndCache.create(
-                context, "trace to resolve as namespace or class object", nameExpression);
-        JetType jetType = lookupNamespaceOrClassObject(nameExpression, newContext.replaceTraceAndCache(temporaryForNamespaceOrClassObject));
+        TemporaryTraceAndCache temporaryForPackageOrClassObject = TemporaryTraceAndCache.create(
+                context, "trace to resolve as package or class object", nameExpression);
+        JetType jetType = lookupPackageOrClassObject(nameExpression, newContext.replaceTraceAndCache(temporaryForPackageOrClassObject));
         if (jetType != null) {
-            temporaryForNamespaceOrClassObject.commit();
+            temporaryForPackageOrClassObject.commit();
 
             // Uncommitted changes in temp context
             context.trace.record(RESOLUTION_SCOPE, nameExpression, context.scope);

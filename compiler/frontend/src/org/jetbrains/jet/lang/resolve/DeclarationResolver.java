@@ -98,7 +98,7 @@ public class DeclarationResolver {
         resolveFunctionAndPropertyHeaders();
         createFunctionsForDataClasses();
         importsResolver.processMembersImports();
-        checkRedeclarationsInNamespaces();
+        checkRedeclarationsInPackages();
         checkRedeclarationsInInnerClassNames();
     }
 
@@ -161,12 +161,12 @@ public class DeclarationResolver {
     }
 
     private void resolveFunctionAndPropertyHeaders() {
-        for (Map.Entry<JetFile, WritableScope> entry : context.getNamespaceScopes().entrySet()) {
-            JetFile namespace = entry.getKey();
-            WritableScope namespaceScope = entry.getValue();
-            PackageLikeBuilder packageBuilder = context.getPackageFragments().get(namespace).getBuilder();
+        for (Map.Entry<JetFile, WritableScope> entry : context.getFileScopes().entrySet()) {
+            JetFile file = entry.getKey();
+            WritableScope fileScope = entry.getValue();
+            PackageLikeBuilder packageBuilder = context.getPackageFragments().get(file).getBuilder();
 
-            resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceScope, namespaceScope, packageBuilder);
+            resolveFunctionAndPropertyHeaders(file.getDeclarations(), fileScope, fileScope, fileScope, packageBuilder);
         }
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
@@ -317,7 +317,7 @@ public class DeclarationResolver {
         }
     }
 
-    private void checkRedeclarationsInNamespaces() {
+    private void checkRedeclarationsInPackages() {
         for (MutablePackageFragmentDescriptor packageFragment : Sets.newHashSet(context.getPackageFragments().values())) {
             if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(packageFragment.getFqName())) {
                 // TODO: drop this after built-ins are fully rewritten to Kotlin

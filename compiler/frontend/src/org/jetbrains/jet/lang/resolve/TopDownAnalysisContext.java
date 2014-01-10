@@ -52,7 +52,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private Map<JetDeclaration, CallableMemberDescriptor> members = null;
 
     // File scopes - package scope extended with imports
-    protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
+    protected final Map<JetFile, WritableScope> fileScopes = Maps.newHashMap();
 
     public final Map<JetDeclarationContainer, DeclarationDescriptor> forDeferredResolver = Maps.newHashMap();
 
@@ -110,8 +110,8 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         return classes;
     }
 
-    public Map<JetFile, WritableScope> getNamespaceScopes() {
-        return namespaceScopes;
+    public Map<JetFile, WritableScope> getFileScopes() {
+        return fileScopes;
     }
 
     public Map<JetFile, MutablePackageFragmentDescriptor> getPackageFragments() {

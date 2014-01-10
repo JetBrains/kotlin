@@ -220,8 +220,8 @@ public class JetTestUtils {
     private JetTestUtils() {
     }
 
-    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace) {
-        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, Collections.<AnalyzerScriptParameter>emptyList());
+    public static AnalyzeExhaust analyzeFile(@NotNull JetFile file) {
+        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, Collections.<AnalyzerScriptParameter>emptyList());
     }
 
     @NotNull

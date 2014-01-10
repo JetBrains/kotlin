@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import jet.IntRange;
 import org.jetbrains.jet.ConfigurationKind;
 
 import java.awt.*;
@@ -27,7 +26,7 @@ import java.util.Arrays;
 
 import static org.jetbrains.jet.codegen.CodegenTestUtil.assertIsCurrentTime;
 
-public class NamespaceGenTest extends CodegenTestCase {
+public class PackageGenTest extends CodegenTestCase {
 
     @Override
     protected void setUp() throws Exception {

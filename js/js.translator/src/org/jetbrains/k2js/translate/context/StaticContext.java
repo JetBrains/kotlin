@@ -188,7 +188,7 @@ public final class StaticContext {
         return ContainerUtil.getOrCreate(packageNames, packageFqName, new Factory<JsName>() {
             @Override
             public JsName create() {
-                String name = Namer.generateNamespaceName(packageFqName);
+                String name = Namer.generatePackageName(packageFqName);
                 return getRootScope().declareName(name);
             }
         });
@@ -412,7 +412,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof PackageFragmentDescriptor)) {
                         return null;
                     }
-                    return getRootScope().innerScope("Namespace " + descriptor.getName());
+                    return getRootScope().innerScope("Package " + descriptor.getName());
                 }
             };
             //TODO: never get there
@@ -465,7 +465,7 @@ public final class StaticContext {
                 }
             };
             //TODO: review and refactor
-            Rule<JsNameRef> packageLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier = new Rule<JsNameRef>() {
+            Rule<JsNameRef> packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier = new Rule<JsNameRef>() {
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
                     DeclarationDescriptor containingDescriptor = getContainingDeclaration(descriptor);
@@ -525,7 +525,7 @@ public final class StaticContext {
             addRule(libraryObjectsHaveKotlinQualifier);
             addRule(constructorHaveTheSameQualifierAsTheClass);
             addRule(standardObjectsHaveKotlinQualifier);
-            addRule(packageLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier);
+            addRule(packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier);
         }
     }
 

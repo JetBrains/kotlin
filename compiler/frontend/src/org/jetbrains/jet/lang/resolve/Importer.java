@@ -48,10 +48,10 @@ public interface Importer {
     };
 
     class StandardImporter implements Importer {
-        private final WritableScope namespaceScope;
+        private final WritableScope fileScope;
 
-        public StandardImporter(WritableScope namespaceScope) {
-            this.namespaceScope = namespaceScope;
+        public StandardImporter(WritableScope fileScope) {
+            this.fileScope = fileScope;
         }
 
         @Override
@@ -101,22 +101,22 @@ public interface Importer {
             }
 
             for (JetScope scope : scopesToImport) {
-                namespaceScope.importScope(createFilteringScope(scope, descriptor, platformToKotlinClassMap));
+                fileScope.importScope(createFilteringScope(scope, descriptor, platformToKotlinClassMap));
             }
         }
 
         protected void importDeclarationAlias(@NotNull DeclarationDescriptor descriptor, @NotNull Name aliasName) {
             if (descriptor instanceof ClassifierDescriptor) {
-                namespaceScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
+                fileScope.importClassifierAlias(aliasName, (ClassifierDescriptor) descriptor);
             }
             else if (descriptor instanceof PackageViewDescriptor) {
-                namespaceScope.importPackageAlias(aliasName, (PackageViewDescriptor) descriptor);
+                fileScope.importPackageAlias(aliasName, (PackageViewDescriptor) descriptor);
             }
             else if (descriptor instanceof FunctionDescriptor) {
-                namespaceScope.importFunctionAlias(aliasName, (FunctionDescriptor) descriptor);
+                fileScope.importFunctionAlias(aliasName, (FunctionDescriptor) descriptor);
             }
             else if (descriptor instanceof VariableDescriptor) {
-                namespaceScope.importVariableAlias(aliasName, (VariableDescriptor) descriptor);
+                fileScope.importVariableAlias(aliasName, (VariableDescriptor) descriptor);
             }
         }
 
@@ -137,8 +137,8 @@ public interface Importer {
 
         private final List<DelayedImportEntry> imports = Lists.newArrayList();
 
-        public DelayedImporter(@NotNull WritableScope namespaceScope) {
-            super(namespaceScope);
+        public DelayedImporter(@NotNull WritableScope fileScope) {
+            super(fileScope);
         }
 
         @Override

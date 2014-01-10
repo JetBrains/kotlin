@@ -47,8 +47,8 @@ public class JUnitUsageGenTest extends CodegenTestCase {
 
     public void testKt1592() throws Exception {
         loadFile("junit/kt1592.kt");
-        Class<?> namespaceClass = generatePackageClass();
-        Method method = namespaceClass.getMethod("foo", Method.class);
+        Class<?> packageClass = generatePackageClass();
+        Method method = packageClass.getMethod("foo", Method.class);
         method.setAccessible(true);
         Annotation annotation = method.getAnnotation(getCorrespondingAnnotationClass(Test.class));
         assertEquals(ClassLoaderIsolationUtil.getAnnotationAttribute(annotation, "timeout"), 0l);

@@ -155,7 +155,7 @@ public final class JavaFunctionResolver {
             signatureErrors.addAll(effectiveSignature.getErrors());
         }
         else {
-            throw new IllegalStateException("Unknown class or namespace descriptor: " + ownerDescriptor);
+            throw new IllegalStateException("Unknown class or package descriptor: " + ownerDescriptor);
         }
 
         functionDescriptorImpl.initialize(

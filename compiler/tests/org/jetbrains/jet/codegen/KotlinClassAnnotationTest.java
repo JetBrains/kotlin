@@ -30,7 +30,7 @@ import java.util.Set;
 import static org.jetbrains.jet.codegen.KotlinPackageAnnotationTest.collectCallableNames;
 
 public class KotlinClassAnnotationTest extends CodegenTestCase {
-    public static final FqName NAMESPACE_NAME = new FqName("test");
+    public static final FqName PACKAGE_NAME = new FqName("test");
     public static final FqNameUnsafe CLASS_NAME = new FqNameUnsafe("A");
 
     @Override
@@ -40,13 +40,13 @@ public class KotlinClassAnnotationTest extends CodegenTestCase {
     }
 
     public void testClassKotlinInfo() throws Exception {
-        loadText("package " + NAMESPACE_NAME + "\n" +
+        loadText("package " + PACKAGE_NAME + "\n" +
                  "\n" +
                  "class " + CLASS_NAME + " {\n" +
                  "    fun foo() {}\n" +
                  "    fun bar() = 42\n" +
                  "}\n");
-        Class aClass = generateClass(NAMESPACE_NAME + "." + CLASS_NAME);
+        Class aClass = generateClass(PACKAGE_NAME + "." + CLASS_NAME);
 
         Class<? extends Annotation> annotationClass = getCorrespondingAnnotationClass(KotlinClass.class);
         assertTrue(aClass.isAnnotationPresent(annotationClass));

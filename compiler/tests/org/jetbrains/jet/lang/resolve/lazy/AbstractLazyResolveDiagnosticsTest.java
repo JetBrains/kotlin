@@ -50,7 +50,7 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends BaseDiagnostics
         String txtFileRelativePath = path.replaceAll("\\.kt$|\\.ktscript", ".txt");
         File txtFile = new File("compiler/testData/lazyResolve/diagnostics/" + txtFileRelativePath);
 
-        // Only recurse into those namespaces mentioned in the files
+        // Only recurse into those packages mentioned in the files
         // Otherwise we'll be examining the whole JDK
         final Set<Name> names = LazyResolveTestUtil.getTopLevelPackagesFromFileList(jetFiles);
         validateAndCompareDescriptors(

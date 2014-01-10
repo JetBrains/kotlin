@@ -62,7 +62,7 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getRootNamespaceName() {
+    public static String getRootPackageName() {
         return ROOT_PACKAGE;
     }
 
@@ -257,8 +257,8 @@ public final class Namer {
     }
 
     @NotNull
-    static String generateNamespaceName(@NotNull FqName packageFqName) {
-        return packageFqName.isRoot() ? getRootNamespaceName() : packageFqName.shortName().asString();
+    static String generatePackageName(@NotNull FqName packageFqName) {
+        return packageFqName.isRoot() ? getRootPackageName() : packageFqName.shortName().asString();
     }
 
     @NotNull

@@ -301,8 +301,8 @@ public class JetPsiFactory {
             importDirectiveBuilder.append(" as ").append(alias.asString());
         }
 
-        JetFile namespace = createFile(project, importDirectiveBuilder.toString());
-        return namespace.getImportDirectives().iterator().next();
+        JetFile file = createFile(project, importDirectiveBuilder.toString());
+        return file.getImportDirectives().iterator().next();
     }
 
     @NotNull

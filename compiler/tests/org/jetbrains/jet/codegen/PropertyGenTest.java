@@ -74,7 +74,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertNotNull(findDeclaredMethodByName(aClass, "setFoo"));
     }
 
-    public void testPrivatePropertyInNamespace() throws Exception {
+    public void testPrivatePropertyInPackage() throws Exception {
         loadText("private val x = 239");
         Class nsClass = generatePackagePartClass();
         Field[] fields = nsClass.getDeclaredFields();
@@ -135,7 +135,7 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(610, getFoo.invoke(instance));
     }
 
-    public void testInitializersForNamespaceProperties() throws Exception {
+    public void testInitializersForTopLevelProperties() throws Exception {
         loadText("val x = System.currentTimeMillis()");
         Method method = generateFunction("getX");
         method.setAccessible(true);

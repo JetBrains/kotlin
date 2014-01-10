@@ -56,7 +56,7 @@ import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.*;
 
 /*
-    The generated test compares namespace descriptors loaded from kotlin sources and read from compiled java.
+    The generated test compares package descriptors loaded from kotlin sources and read from compiled java.
 */
 public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
@@ -153,7 +153,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
-        assert packageView != null : "Test namespace not found";
+        assert packageView != null : "Test package not found";
 
         checkJavaPackage(expectedFile, packageView, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
     }
@@ -166,10 +166,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assertTrue(testPackageDir.mkdir());
         FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
 
-        Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndContext = loadTestPackageAndBindingContextFromJavaRoot(
+        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        checkJavaPackage(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second,
+        checkJavaPackage(expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
                          DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(ALLOW_ERROR_TYPES));
     }
 
@@ -207,7 +207,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     private static void checkForLoadErrorsAndCompare(
             @NotNull PackageViewDescriptor javaPackage,
             @NotNull BindingContext bindingContext,
-            @NotNull Runnable compareNamespacesRunnable
+            @NotNull Runnable comparePackagesRunnable
     ) {
         boolean fail = false;
         try {
@@ -225,7 +225,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             fail = true;
         }
 
-        compareNamespacesRunnable.run();
+        comparePackagesRunnable.run();
         if (fail) {
             fail("See error above");
         }

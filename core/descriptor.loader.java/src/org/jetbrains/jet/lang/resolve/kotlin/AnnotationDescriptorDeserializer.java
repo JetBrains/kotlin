@@ -263,7 +263,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
         }
         else if (isTrait(container) && kind == AnnotatedCallableKind.PROPERTY) {
             PackageFragmentDescriptor containingPackage = DescriptorUtils.getParentOfType(container, PackageFragmentDescriptor.class);
-            assert containingPackage != null : "Trait must have a namespace among his parents: " + container;
+            assert containingPackage != null : "Trait must have a package fragment among his parents: " + container;
 
             if (proto.hasExtension(JavaProtoBuf.implClassName)) {
                 Name tImplName = nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));

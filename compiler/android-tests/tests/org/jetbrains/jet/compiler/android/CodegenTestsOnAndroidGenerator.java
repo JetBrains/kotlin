@@ -180,10 +180,10 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
         }
     }
 
-    private static void generateTestMethod(Printer p, String testName, String namespace) {
+    private static void generateTestMethod(Printer p, String testName, String packageName) {
         p.println("public void test" + testName + "() throws Exception {");
         p.pushIndent();
-        p.println("invokeBoxMethod(\"" + namespace + "\", \"OK\");");
+        p.println("invokeBoxMethod(\"" + packageName + "\", \"OK\");");
         p.popIndent();
         p.println("}");
         p.println();

@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 public class KotlinPackageAnnotationTest extends CodegenTestCase {
-    public static final FqName NAMESPACE_NAME = new FqName("test");
+    public static final FqName PACKAGE_NAME = new FqName("test");
 
     @Override
     protected void setUp() throws Exception {
@@ -42,7 +42,7 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
     }
 
     public void testPackageKotlinInfo() throws Exception {
-        loadText("package " + NAMESPACE_NAME + "\n" +
+        loadText("package " + PACKAGE_NAME + "\n" +
                  "\n" +
                  "fun foo() = 42\n" +
                  "val bar = 239\n" +
@@ -50,7 +50,7 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
                  "class A\n" +
                  "class B\n" +
                  "object C\n");
-        Class aClass = generateClass(PackageClassUtils.getPackageClassFqName(NAMESPACE_NAME).asString());
+        Class aClass = generateClass(PackageClassUtils.getPackageClassFqName(PACKAGE_NAME).asString());
 
         Class<? extends Annotation> annotationClass = getCorrespondingAnnotationClass(KotlinPackage.class);
         assertTrue(aClass.isAnnotationPresent(annotationClass));

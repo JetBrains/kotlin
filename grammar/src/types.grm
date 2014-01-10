@@ -32,7 +32,7 @@ selfType
   ;
 
 userType
-  : ("namespace" ".")? simpleUserType{"."}
+  : ("package" ".")? simpleUserType{"."}
   ;
 
 simpleUserType

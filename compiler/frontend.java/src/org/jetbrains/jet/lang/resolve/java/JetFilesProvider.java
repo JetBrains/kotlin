@@ -35,7 +35,7 @@ public abstract class JetFilesProvider {
         return ServiceManager.getService(project, JetFilesProvider.class);
     }
 
-    public final Function<JetFile, Collection<JetFile>> allNamespaceFiles() {
+    public final Function<JetFile, Collection<JetFile>> allPackageFiles() {
         return new Function<JetFile, Collection<JetFile>>() {
             @Override
             public Collection<JetFile> fun(JetFile file) {

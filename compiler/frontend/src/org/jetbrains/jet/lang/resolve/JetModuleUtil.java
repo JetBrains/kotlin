@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.types.PackageType;
 
 public class JetModuleUtil {
     public static PackageType getRootPackageType(JetElement expression) {
-        // TODO: this is a stub: at least the modules' root namespaces must be indexed here
+        // TODO: this is a stub: at least the modules' root packages must be indexed here
         return new PackageType(SpecialNames.ROOT_PACKAGE, JetScope.EMPTY, ReceiverValue.NO_RECEIVER);
     }
 }

@@ -31,7 +31,7 @@ public class JetUserType extends JetTypeElement {
         super(node);
     }
 
-    public boolean isAbsoluteInRootNamespace() {
+    public boolean isAbsoluteInRootPackage() {
         return findChildByType(JetTokens.PACKAGE_KEYWORD) != null;
     }
 

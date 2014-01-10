@@ -28,13 +28,13 @@ public class SourceInfoGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testSingleFileNamespace() {
+    public void testSingleFilePackage() {
         String producer = "sourceInfo/foo1.kt";
         loadFiles(producer);
         assertEquals(producer, getProducerInfo("foo/FooPackage.class"));
     }
 
-    public void testMultiFileNamespace() {
+    public void testMultiFilePackage() {
         loadFiles("sourceInfo/foo1.kt", "sourceInfo/foo2.kt");
         assertEquals(null, getProducerInfo("foo/FooPackage.class"));
     }

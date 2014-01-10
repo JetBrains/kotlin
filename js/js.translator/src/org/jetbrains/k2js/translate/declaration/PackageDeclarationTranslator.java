@@ -32,16 +32,16 @@ import java.util.*;
 import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 import static org.jetbrains.k2js.translate.declaration.DefineInvocation.createDefineInvocation;
 
-public final class NamespaceDeclarationTranslator extends AbstractTranslator {
+public final class PackageDeclarationTranslator extends AbstractTranslator {
     private final Iterable<JetFile> files;
-    private final Map<PackageFragmentDescriptor, NamespaceTranslator> packageFragmentToTranslator =
-            new LinkedHashMap<PackageFragmentDescriptor, NamespaceTranslator>();
+    private final Map<PackageFragmentDescriptor, PackageTranslator> packageFragmentToTranslator =
+            new LinkedHashMap<PackageFragmentDescriptor, PackageTranslator>();
 
     public static List<JsStatement> translateFiles(@NotNull Collection<JetFile> files, @NotNull TranslationContext context) {
-        return new NamespaceDeclarationTranslator(files, context).translate();
+        return new PackageDeclarationTranslator(files, context).translate();
     }
 
-    private NamespaceDeclarationTranslator(@NotNull Iterable<JetFile> files, @NotNull TranslationContext context) {
+    private PackageDeclarationTranslator(@NotNull Iterable<JetFile> files, @NotNull TranslationContext context) {
         super(context);
 
         this.files = files;
@@ -55,17 +55,17 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
         for (JetFile file : files) {
             PackageFragmentDescriptor packageFragment = context().bindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
 
-            NamespaceTranslator translator = packageFragmentToTranslator.get(packageFragment);
+            PackageTranslator translator = packageFragmentToTranslator.get(packageFragment);
             if (translator == null) {
                 createRootPackageDefineInvocationIfNeeded(packageFqNameToDefineInvocation);
-                translator = new NamespaceTranslator(packageFragment, packageFqNameToDefineInvocation, context());
+                translator = new PackageTranslator(packageFragment, packageFqNameToDefineInvocation, context());
                 packageFragmentToTranslator.put(packageFragment, translator);
             }
 
             translator.translate(file);
         }
 
-        for (NamespaceTranslator translator : packageFragmentToTranslator.values()) {
+        for (PackageTranslator translator : packageFragmentToTranslator.values()) {
             translator.add(packageFqNameToDefineInvocation);
         }
 
@@ -84,6 +84,6 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
 
     private JsVar getRootPackageDeclaration(@NotNull DefineInvocation defineInvocation) {
         JsExpression rootPackageVar = new JsInvocation(context().namer().rootPackageDefinitionMethodReference(), defineInvocation.asList());
-        return new JsVar(context().scope().declareName(Namer.getRootNamespaceName()), rootPackageVar);
+        return new JsVar(context().scope().declareName(Namer.getRootPackageName()), rootPackageVar);
     }
 }

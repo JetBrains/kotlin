@@ -96,9 +96,9 @@ public class TypeHierarchyResolver {
     ) {
 
         {
-            // TODO: Very temp code - main goal is to remove recursion from collectNamespacesAndClassifiers
+            // TODO: Very temp code - main goal is to remove recursion from collectPackageFragmentsAndClassifiers
             Queue<JetDeclarationContainer> forDeferredResolve = new LinkedList<JetDeclarationContainer>();
-            forDeferredResolve.addAll(collectNamespacesAndClassifiers(outerScope, owner, declarations));
+            forDeferredResolve.addAll(collectPackageFragmentsAndClassifiers(outerScope, owner, declarations));
 
             while (!forDeferredResolve.isEmpty()) {
                 JetDeclarationContainer declarationContainer = forDeferredResolve.poll();
@@ -110,14 +110,14 @@ public class TypeHierarchyResolver {
                 // Even more temp code
                 if (descriptorForDeferredResolve instanceof MutableClassDescriptorLite) {
                     forDeferredResolve.addAll(
-                            collectNamespacesAndClassifiers(
+                            collectPackageFragmentsAndClassifiers(
                                     scope,
                                     ((MutableClassDescriptorLite) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
                 }
                 else if (descriptorForDeferredResolve instanceof MutablePackageFragmentDescriptor) {
                     forDeferredResolve.addAll(
-                            collectNamespacesAndClassifiers(
+                            collectPackageFragmentsAndClassifiers(
                                     scope,
                                     ((MutablePackageFragmentDescriptor) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
@@ -147,7 +147,7 @@ public class TypeHierarchyResolver {
     }
 
     @NotNull
-    private Collection<JetDeclarationContainer> collectNamespacesAndClassifiers(
+    private Collection<JetDeclarationContainer> collectPackageFragmentsAndClassifiers(
             @NotNull JetScope outerScope,
             @NotNull PackageLikeBuilder owner,
             @NotNull Iterable<? extends PsiElement> declarations
@@ -465,7 +465,7 @@ public class TypeHierarchyResolver {
             WriteThroughScope packageScope = new WriteThroughScope(rootPlusPackageScope, packageFragment.getMemberScope(),
                                                                      new TraceBasedRedeclarationHandler(trace), "package in file " + file.getName());
             packageScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            context.getNamespaceScopes().put(file, packageScope);
+            context.getFileScopes().put(file, packageScope);
 
             if (file.isScript()) {
                 scriptHeaderResolver.processScriptHierarchy(file.getScript(), packageScope);
@@ -560,7 +560,7 @@ public class TypeHierarchyResolver {
 
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, fragment);
 
-            // Register files corresponding to this namespace
+            // Register files corresponding to this package
             // The trace currently does not support bi-di multimaps that would handle this task nicer
             FqName fqName = fragment.getFqName();
             Collection<JetFile> files = trace.get(PACKAGE_TO_FILES, fqName);

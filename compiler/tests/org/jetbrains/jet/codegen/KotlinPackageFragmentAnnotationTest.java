@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.lang.annotation.Annotation;
 
 public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
-    public static final FqName NAMESPACE_NAME = new FqName("test");
+    public static final FqName PACKAGE_NAME = new FqName("test");
 
     @Override
     protected void setUp() throws Exception {
@@ -37,8 +37,8 @@ public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
     }
 
     public void testKotlinPackageFragmentIsWritten() throws Exception {
-        loadText("package " + NAMESPACE_NAME + "\n\nfun foo() = 42\n");
-        String facadeFileName = JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(NAMESPACE_NAME)).getInternalName() + ".class";
+        loadText("package " + PACKAGE_NAME + "\n\nfun foo() = 42\n");
+        String facadeFileName = JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(PACKAGE_NAME)).getInternalName() + ".class";
 
         OutputFileCollection outputFiles = generateClassesInFile();
         for (OutputFile outputFile : outputFiles.asList()) {

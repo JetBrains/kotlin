@@ -269,7 +269,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         context = analyzeExhaust.getBindingContext();
 
         PackageViewDescriptor packageView = analyzeExhaust.getModuleDescriptor().getPackage(PACKAGE);
-        assertNotNull("Failed to find namespace: " + PACKAGE, packageView);
+        assertNotNull("Failed to find package: " + PACKAGE, packageView);
         return packageView;
     }
 

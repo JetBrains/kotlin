@@ -42,7 +42,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testClassWithoutNamespace() throws Exception {
-        runFunctionOutputTest("classWithoutNamespace.kt", Namer.getRootNamespaceName(), "box", true);
+        runFunctionOutputTest("classWithoutNamespace.kt", Namer.getRootPackageName(), "box", true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
@@ -156,7 +156,7 @@ public final class MiscTest extends AbstractExpressionTest {
     //TODO: see http://youtrack.jetbrains.com/issue/KT-2564
     @SuppressWarnings("UnusedDeclaration")
     public void TODO_testNamespaceLevelVarInRoot() throws Exception {
-        runFunctionOutputTest("namespaceLevelVarInRoot.kt", Namer.getRootNamespaceName(), "box", "OK");
+        runFunctionOutputTest("namespaceLevelVarInRoot.kt", Namer.getRootPackageName(), "box", "OK");
     }
 
     public void testLazyPropertyGetterNotCalledOnStart() throws Exception {

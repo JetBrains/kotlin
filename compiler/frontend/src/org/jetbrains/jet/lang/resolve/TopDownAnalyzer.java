@@ -143,7 +143,7 @@ public class TopDownAnalyzer {
             mutableClassDescriptor.lockScopes();
         }
         Set<FqName> scriptFqNames = Sets.newHashSet();
-        for (JetFile file : context.getNamespaceScopes().keySet()) {
+        for (JetFile file : context.getFileScopes().keySet()) {
             if (file.isScript()) {
                 scriptFqNames.add(JetPsiUtil.getFQName(file));
             }
@@ -213,13 +213,13 @@ public class TopDownAnalyzer {
         // "depend on" builtins module
         ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
-        // Import a scope that contains all top-level namespaces that come from dependencies
-        // This makes the namespaces visible at all, does not import themselves
+        // Import a scope that contains all top-level packages that come from dependencies
+        // This makes the package visible at all, does not import themselves
         PackageViewDescriptor rootPackage = moduleDescriptor.getPackage(FqName.ROOT);
         assert rootPackage != null : "Coulnd't find root package for " + moduleDescriptor;
 
         // dummy builder is used because "root" is module descriptor,
-        // namespaces added to module explicitly in
+        // packages added to module explicitly in
         doProcess(rootPackage.getMemberScope(), new PackageLikeBuilderDummy(), files);
     }
 

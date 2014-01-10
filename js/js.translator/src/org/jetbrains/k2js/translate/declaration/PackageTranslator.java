@@ -37,7 +37,7 @@ import java.util.Map;
 import static org.jetbrains.k2js.translate.declaration.DefineInvocation.createDefineInvocation;
 import static org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator.createPlace;
 
-final class NamespaceTranslator extends AbstractTranslator {
+final class PackageTranslator extends AbstractTranslator {
     @NotNull
     private final PackageFragmentDescriptor descriptor;
 
@@ -45,7 +45,7 @@ final class NamespaceTranslator extends AbstractTranslator {
 
     private final NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>> definitionPlace;
 
-    NamespaceTranslator(
+    PackageTranslator(
             @NotNull final PackageFragmentDescriptor descriptor,
             @NotNull final Map<FqName, DefineInvocation> packageFqNameToDefineInvocation,
             @NotNull TranslationContext context

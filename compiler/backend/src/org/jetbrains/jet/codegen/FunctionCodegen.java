@@ -349,7 +349,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         InstructionAdapter iv = new InstructionAdapter(mv);
         Type[] argTypes = asmMethod.getArgumentTypes();
 
-        // The first line of some namespace file is written to the line number attribute of a static delegate to allow to 'step into' it
+        // The first line of some package file is written to the line number attribute of a static delegate to allow to 'step into' it
         // This is similar to what javac does with bridge methods
         Label label = new Label();
         iv.visitLabel(label);

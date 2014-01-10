@@ -25,8 +25,8 @@ import org.mozilla.javascript.NativeJavaObject;
  */
 public class RhinoFunctionNativeObjectResultChecker extends RhinoFunctionResultChecker {
 
-    public RhinoFunctionNativeObjectResultChecker(@Nullable String namespaceName, String functionName, Object expectedResult) {
-        super(namespaceName, functionName, expectedResult);
+    public RhinoFunctionNativeObjectResultChecker(@Nullable String packageName, String functionName, Object expectedResult) {
+        super(packageName, functionName, expectedResult);
     }
 
     public RhinoFunctionNativeObjectResultChecker(String functionName, Object expectedResult) {
