@@ -81,9 +81,9 @@ public abstract class JetTemplateContextType extends TemplateContextType {
         }
     }
 
-    public static class Namespace extends JetTemplateContextType {
-        public Namespace() {
-            super("KOTLIN_NAMESPACE", "Namespace", Generic.class);
+    public static class TopLevel extends JetTemplateContextType {
+        public TopLevel() {
+            super("KOTLIN_TOPLEVEL", "Top-level", Generic.class);
         }
 
         @Override

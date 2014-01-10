@@ -57,7 +57,7 @@ public class JetExceptionFilter implements Filter {
         // fullyQualifiedName is of format "package.Class$Inner"
         String fullyQualifiedName = element.getClassName();
 
-        // All classes except 'namespace' and its inner classes are handled correctly in the default ExceptionFilter
+        // All classes except package classes and its inner classes are handled correctly in the default ExceptionFilter
         if (!isPackageClassOrSubClass(fullyQualifiedName)) {
             return null;
         }
@@ -88,7 +88,7 @@ public class JetExceptionFilter implements Filter {
         return packageClassName.equals(className);
     }
 
-    // Matches strings like "\tat test.namespace$foo$f$1.invoke(a.kt:3)\n"
+    // Matches strings like "\tat test.TestPackage$foo$f$1.invoke(a.kt:3)\n"
     private static final Pattern STACK_TRACE_ELEMENT_PATTERN = Pattern.compile("^\\s*at\\s+(.+)\\.(.+)\\((.+):(\\d+)\\)\\s*$");
 
     @Nullable

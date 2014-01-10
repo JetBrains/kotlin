@@ -51,10 +51,10 @@ public class JetFromJavaDescriptorHelper {
     /**
      * Get java equivalents for jet top level classes.
      */
-    static Collection<PsiClass> getClassesForJetNamespaces(Project project, GlobalSearchScope scope) {
+    static Collection<PsiClass> getClassesForKotlinPackages(Project project, GlobalSearchScope scope) {
         /* Will iterate through short name caches
-           Kotlin namespaces from jar a class files will be collected from java cache
-           Kotlin namespaces classes from sources will be collected with JetShortNamesCache.getClassesByName */
+           Kotlin packages from jar a class files will be collected from java cache
+           Kotlin package classes from sources will be collected with JetShortNamesCache.getClassesByName */
         return getClassesByAnnotation(KotlinPackage.class.getSimpleName(), project, scope);
     }
 
@@ -64,8 +64,8 @@ public class JetFromJavaDescriptorHelper {
     static Collection<String> getPossiblePackageDeclarationsNames(Project project, GlobalSearchScope scope) {
         Collection<String> result = new ArrayList<String>();
 
-        for (PsiClass jetNamespaceClass : getClassesForJetNamespaces(project, scope)) {
-            for (PsiMethod psiMethod : jetNamespaceClass.getMethods()) {
+        for (PsiClass packageClass : getClassesForKotlinPackages(project, scope)) {
+            for (PsiMethod psiMethod : packageClass.getMethods()) {
                 if (psiMethod.getModifierList().hasModifierProperty(PsiModifier.STATIC)) {
                     result.add(psiMethod.getName());
                 }

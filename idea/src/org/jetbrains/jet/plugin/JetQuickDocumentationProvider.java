@@ -36,10 +36,10 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class JetQuickDocumentationProvider extends AbstractDocumentationProvider {
-    private static final Predicate<PsiElement> SKIP_WHITESPACE_AND_EMPTY_NAMESPACE = new Predicate<PsiElement>() {
+    private static final Predicate<PsiElement> SKIP_WHITESPACE_AND_EMPTY_PACKAGE = new Predicate<PsiElement>() {
         @Override
         public boolean apply(PsiElement input) {
-            // Skip empty namespace because there can be comments before it
+            // Skip empty package because there can be comments before it
             // Skip whitespaces
             return (input instanceof JetPackageDirective && input.getChildren().length == 0) || input instanceof PsiWhiteSpace;
         }
@@ -136,7 +136,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
 
     @Nullable
     private static KDoc findElementKDoc(@NotNull JetElement element) {
-        PsiElement comment = JetPsiUtil.skipSiblingsBackwardByPredicate(element, SKIP_WHITESPACE_AND_EMPTY_NAMESPACE);
+        PsiElement comment = JetPsiUtil.skipSiblingsBackwardByPredicate(element, SKIP_WHITESPACE_AND_EMPTY_PACKAGE);
         return comment instanceof KDoc ? (KDoc) comment : null;
     }
 

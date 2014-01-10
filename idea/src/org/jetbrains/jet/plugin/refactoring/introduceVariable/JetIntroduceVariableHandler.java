@@ -133,7 +133,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             }
         }
         if (expressionType instanceof PackageType) {
-            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.namespace.expression"));
+            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.package.expression"));
             return;
         }
         if (expressionType != null &&

@@ -177,7 +177,7 @@ public final class TipsManager {
             public boolean apply(DeclarationDescriptor declarationDescriptor) {
                 if (declarationDescriptor instanceof PackageViewDescriptor) {
                     // Heuristic: we don't want to complete "System" in "package java.lang.Sys",
-                    // so we find class of the same name as namespace, we exclude this namespace
+                    // so we find class of the same name as package, we exclude this package
                     PackageViewDescriptor parent = ((PackageViewDescriptor) declarationDescriptor).getContainingDeclaration();
                     if (parent != null) {
                         JetScope parentScope = parent.getMemberScope();
@@ -195,7 +195,7 @@ public final class TipsManager {
             @NotNull JetScope externalScope,
             @NotNull final ReceiverValue receiverValue
     ) {
-        // It's impossible to add extension function for namespace
+        // It's impossible to add extension function for package
         JetType receiverType = receiverValue.getType();
         if (receiverType instanceof PackageType) {
             return new HashSet<DeclarationDescriptor>(descriptors);

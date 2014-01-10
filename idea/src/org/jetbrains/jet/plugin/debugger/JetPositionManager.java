@@ -131,8 +131,8 @@ public class JetPositionManager implements PositionManager {
             @Override
             @SuppressWarnings("unchecked")
             public void run() {
-                JetFile namespace = (JetFile) sourcePosition.getFile();
-                JetTypeMapper typeMapper = prepareTypeMapper(namespace);
+                JetFile file = (JetFile) sourcePosition.getFile();
+                JetTypeMapper typeMapper = prepareTypeMapper(file);
 
                 PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteral.class, JetNamedFunction.class);
                 if (element instanceof JetClassOrObject) {
@@ -154,7 +154,7 @@ public class JetPositionManager implements PositionManager {
                 }
 
                 if (result.isNull()) {
-                    result.set(PackageCodegen.getPackagePartInternalName(namespace));
+                    result.set(PackageCodegen.getPackagePartInternalName(file));
                 }
             }
         });
@@ -186,12 +186,12 @@ public class JetPositionManager implements PositionManager {
                     AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
                     analyzeExhaust.throwIfError();
 
-                    Collection<JetFile> namespaceFiles = JetFilesProvider.getInstance(file.getProject()).allPackageFiles().fun(file);
+                    Collection<JetFile> packageFiles = JetFilesProvider.getInstance(file.getProject()).allPackageFiles().fun(file);
 
                     DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(analyzeExhaust.getBindingContext(), "trace created in JetPositionManager");
                     JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, ClassBuilderMode.FULL);
                     //noinspection unchecked
-                    CodegenBinding.initTrace(bindingTrace, namespaceFiles);
+                    CodegenBinding.initTrace(bindingTrace, packageFiles);
                     return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);
                 }
             }, false);

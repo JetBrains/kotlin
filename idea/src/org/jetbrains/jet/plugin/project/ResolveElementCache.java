@@ -164,7 +164,7 @@ public class ResolveElementCache {
             typeConstraintAdditionalResolve(resolveSession, (JetTypeConstraint) resolveElement);
         }
         else if (PsiTreeUtil.getParentOfType(resolveElement, JetPackageDirective.class) != null) {
-            namespaceRefAdditionalResolve(resolveSession, trace, resolveElement);
+            packageRefAdditionalResolve(resolveSession, trace, resolveElement);
         }
         else {
             assert false : "Invalid type of the topmost parent";
@@ -173,7 +173,7 @@ public class ResolveElementCache {
         return trace.getBindingContext();
     }
 
-    private static void namespaceRefAdditionalResolve(ResolveSession resolveSession, BindingTrace trace, JetElement jetElement) {
+    private static void packageRefAdditionalResolve(ResolveSession resolveSession, BindingTrace trace, JetElement jetElement) {
         if (jetElement instanceof JetSimpleNameExpression) {
             JetPackageDirective header = PsiTreeUtil.getParentOfType(jetElement, JetPackageDirective.class);
             assert header != null;
@@ -402,10 +402,10 @@ public class ResolveElementCache {
             }
 
             // Inside package declaration
-            JetPackageDirective namespaceHeader = PsiTreeUtil.getParentOfType(expression, JetPackageDirective.class, false);
-            if (namespaceHeader != null) {
+            JetPackageDirective packageDirective = PsiTreeUtil.getParentOfType(expression, JetPackageDirective.class, false);
+            if (packageDirective != null) {
                 PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(
-                        namespaceHeader.getFqName((JetSimpleNameExpression) expression).parent());
+                        packageDirective.getFqName((JetSimpleNameExpression) expression).parent());
                 if (packageDescriptor != null) {
                     return packageDescriptor.getMemberScope();
                 }

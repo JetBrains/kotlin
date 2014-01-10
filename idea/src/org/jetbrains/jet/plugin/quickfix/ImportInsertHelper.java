@@ -39,7 +39,7 @@ public class ImportInsertHelper {
     }
 
     /**
-     * Add import directive into the PSI tree for the given namespace.
+     * Add import directive into the PSI tree for the given package.
      *
      * @param importFqn full name of the import
      * @param file File where directive should be added.
