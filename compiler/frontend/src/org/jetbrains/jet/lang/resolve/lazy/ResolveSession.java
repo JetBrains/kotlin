@@ -214,7 +214,8 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         return (ClassDescriptor) declaration;
     }
 
-    /*package*/ LazyClassDescriptor getClassObjectDescriptor(JetClassObject classObject) {
+    @NotNull
+    /*package*/ LazyClassDescriptor getClassObjectDescriptor(@NotNull JetClassObject classObject) {
         JetClass aClass = PsiTreeUtil.getParentOfType(classObject, JetClass.class);
 
         final LazyClassDescriptor parentClassDescriptor;
@@ -237,16 +238,18 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             // It's possible that there are several class objects and another class object is taking part in lazy resolve. We still want to
             // build descriptors for such class objects.
             final JetClassLikeInfo classObjectInfo = parentClassDescriptor.getClassObjectInfo(classObject);
-            if (classObjectInfo != null) {
-                final Name name = SpecialNames.getClassObjectName(parentClassDescriptor.getName());
-                return storageManager.compute(new Function0<LazyClassDescriptor>() {
-                    @Override
-                    public LazyClassDescriptor invoke() {
-                        // Create under lock to avoid premature access to published 'this'
-                        return new LazyClassDescriptor(ResolveSession.this, parentClassDescriptor, name, classObjectInfo);
-                    }
-                });
-            }
+            assert classObjectInfo != null :
+                    String.format("Failed to find class object info for existent class object declaration: %s",
+                                  JetPsiUtil.getElementTextWithContext(classObject));
+
+            final Name name = SpecialNames.getClassObjectName(parentClassDescriptor.getName());
+            return storageManager.compute(new Function0<LazyClassDescriptor>() {
+                @Override
+                public LazyClassDescriptor invoke() {
+                    // Create under lock to avoid premature access to published 'this'
+                    return new LazyClassDescriptor(ResolveSession.this, parentClassDescriptor, name, classObjectInfo);
+                }
+            });
         }
 
         return (LazyClassDescriptor) declaration;

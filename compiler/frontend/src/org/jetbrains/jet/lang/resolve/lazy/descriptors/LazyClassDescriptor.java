@@ -258,9 +258,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
     @Nullable
     public JetClassLikeInfo getClassObjectInfo(JetClassObject classObject) {
         if (classObject != null) {
-            if (!DescriptorUtils.inStaticContext(this)) {
-                return null;
-            }
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
             if (objectDeclaration != null) {
                 return JetClassInfoUtil.createClassLikeInfo(objectDeclaration);
@@ -269,6 +266,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyDesc
         else if (getKind() == ClassKind.OBJECT || getKind() == ClassKind.ENUM_ENTRY || getKind() == ClassKind.ENUM_CLASS) {
             return new SyntheticClassObjectInfo(originalClassInfo, this);
         }
+
         return null;
     }
 

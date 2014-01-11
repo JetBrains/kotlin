@@ -310,22 +310,6 @@ public class DescriptorUtils {
         return superClassDescriptor.equals(KotlinBuiltIns.getInstance().getAny());
     }
 
-    public static boolean inStaticContext(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            return true;
-        }
-        if (containingDeclaration instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-
-            if (classDescriptor.getKind().isSingleton()) {
-                return inStaticContext(classDescriptor.getContainingDeclaration());
-            }
-
-        }
-        return false;
-    }
-
     public static boolean isEnumClassObject(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.CLASS_OBJECT) {
             DeclarationDescriptor containing = descriptor.getContainingDeclaration();

@@ -105,6 +105,11 @@ public class LazyResolveNamespaceComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObject.kt");
                 }
                 
+                @TestMetadata("ClassObjectInStaticNestedClass.kt")
+                public void testClassObjectInStaticNestedClass() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObjectInStaticNestedClass.kt");
+                }
+                
                 @TestMetadata("Deprecated.kt")
                 public void testDeprecated() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/Deprecated.kt");

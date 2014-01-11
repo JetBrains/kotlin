@@ -1577,6 +1577,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObject.kt");
                 }
                 
+                @TestMetadata("ClassObjectInStaticNestedClass.kt")
+                public void testClassObjectInStaticNestedClass() throws Exception {
+                    doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObjectInStaticNestedClass.kt");
+                }
+                
                 @TestMetadata("Deprecated.kt")
                 public void testDeprecated() throws Exception {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/Deprecated.kt");
