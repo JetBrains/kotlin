@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
@@ -134,8 +135,20 @@ public class JavaVisibilities {
     };
 
     private static boolean areInSamePackage(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        PackageFragmentDescriptor whatPackage = DescriptorUtils.getParentOfType(first, PackageFragmentDescriptor.class, false);
-        PackageFragmentDescriptor fromPackage = DescriptorUtils.getParentOfType(second, PackageFragmentDescriptor.class, false);
+        PackageFragmentDescriptor whatPackage = getPackageStaticsAware(first);
+        PackageFragmentDescriptor fromPackage = getPackageStaticsAware(second);
         return fromPackage != null && whatPackage != null && whatPackage.getFqName().equals(fromPackage.getFqName());
+    }
+
+    @Nullable
+    private static PackageFragmentDescriptor getPackageStaticsAware(@NotNull DeclarationDescriptor member) {
+        PackageFragmentDescriptor packageFragment = DescriptorUtils.getParentOfType(member, PackageFragmentDescriptor.class, false);
+        if (packageFragment instanceof JavaPackageFragmentDescriptor
+            && ((JavaPackageFragmentDescriptor) packageFragment).getKind() == JavaPackageFragmentDescriptor.Kind.CLASS_STATICS) {
+            ClassDescriptor classForPackage =
+                    ((JavaPackageFragmentDescriptor) packageFragment).getJavaDescriptorResolver().resolveClass(packageFragment.getFqName());
+            return DescriptorUtils.getParentOfType(classForPackage, PackageFragmentDescriptor.class, false);
+        }
+        return packageFragment;
     }
 }
