@@ -289,9 +289,7 @@ public class PositioningStrategies {
 
             if (element instanceof JetClassObject) {
                 JetObjectDeclaration objectDeclaration = ((JetClassObject) element).getObjectDeclaration();
-                if (objectDeclaration != null) {
-                    return ImmutableList.of(objectDeclaration.getObjectKeyword().getTextRange());
-                }
+                return ImmutableList.of(objectDeclaration.getObjectKeyword().getTextRange());
             }
 
             throw new IllegalArgumentException(

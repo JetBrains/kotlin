@@ -89,7 +89,6 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @Override
     public Void visitClassObject(@NotNull JetClassObject classObject, TranslationContext context) {
         JetObjectDeclaration declaration = classObject.getObjectDeclaration();
-        assert declaration != null : "Declaration for class object must be not null";
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
         JsExpression value = ClassTranslator.generateClassCreation(declaration, descriptor, context);
 

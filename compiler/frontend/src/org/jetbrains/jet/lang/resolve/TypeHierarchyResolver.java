@@ -514,7 +514,6 @@ public class TypeHierarchyResolver {
         @Override
         public void visitClassObject(@NotNull JetClassObject classObject) {
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
-            if (objectDeclaration == null) return;
 
             DeclarationDescriptor container = owner.getOwnerForChildren();
 
