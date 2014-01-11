@@ -41,6 +41,9 @@ public final class JavaPurePackageScope extends JavaBaseScope implements JavaPac
     private final FqName packageFQN;
     private final boolean includeCompiledKotlinClasses;
 
+    private List<FqName> subPackages = null;
+    private final Object subPackagesLock = new Object();
+
     public JavaPurePackageScope(
             @NotNull PackageFragmentDescriptor descriptor,
             @NotNull JavaPackage javaPackage,
@@ -116,6 +119,18 @@ public final class JavaPurePackageScope extends JavaBaseScope implements JavaPac
     @Override
     @NotNull
     public Collection<FqName> getSubPackages() {
+        synchronized (subPackagesLock) {
+            if (subPackages == null) {
+                subPackages = Lists.newArrayList(); // Initializing with empty list to avoid infinite recursion
+
+                subPackages = computeSubPackages();
+            }
+            return subPackages;
+        }
+    }
+
+    @NotNull
+    private List<FqName> computeSubPackages() {
         List<FqName> result = Lists.newArrayList();
         for (JavaPackage subPackage : javaPackage.getSubPackages()) {
             result.add(subPackage.getFqName());
