@@ -24,23 +24,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightFixtureTestCase {
-    private boolean autocompleteSetting;
+    private boolean autoCompleteSetting;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        autocompleteSetting = setAutocompleteSetting(false);
+        autoCompleteSetting = setAutoCompleteSetting(false);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        setAutocompleteSetting(autocompleteSetting);
+        setAutoCompleteSetting(autoCompleteSetting);
 
         super.tearDown();
     }
 
-    private boolean setAutocompleteSetting(boolean value){
+    private boolean setAutoCompleteSetting(boolean value){
         CodeInsightSettings settings = CodeInsightSettings.getInstance();
         boolean oldValue;
         if (completionType() == CompletionType.SMART){
