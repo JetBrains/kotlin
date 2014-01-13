@@ -179,7 +179,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     public PackageLikeBuilder getBuilder() {
         if (builder == null) {
             final PackageLikeBuilder superBuilder = super.getBuilder();
-            builder = new PackageLikeBuilderDummy() {
+            builder = new PackageLikeBuilder() {
                 @NotNull
                 @Override
                 public DeclarationDescriptor getOwnerForChildren() {

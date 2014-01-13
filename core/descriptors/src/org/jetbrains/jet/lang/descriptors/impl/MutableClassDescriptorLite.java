@@ -192,7 +192,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     private PackageLikeBuilder builder = null;
     public PackageLikeBuilder getBuilder() {
         if (builder == null) {
-            builder = new PackageLikeBuilderDummy() {
+            builder = new PackageLikeBuilder() {
                 @NotNull
                 @Override
                 public DeclarationDescriptor getOwnerForChildren() {
