@@ -58,7 +58,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
 
     @Override
     public final boolean isValid(){
-        return myElement != null && myElement.isValid();
+        return myElement.isValid();
     }
 
     @Override

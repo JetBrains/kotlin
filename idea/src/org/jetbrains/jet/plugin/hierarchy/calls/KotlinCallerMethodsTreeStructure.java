@@ -57,8 +57,9 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
             this.codeBlockForLocalDeclaration = codeBlockForLocalDeclaration;
         }
 
+        @NotNull
         @Override
-        protected Object[] buildChildren(HierarchyNodeDescriptor descriptor) {
+        protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
             final PsiElement element = getTargetElement(descriptor);
 
             BindingContext bindingContext =
@@ -97,8 +98,9 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
             this.javaTreeStructure = new CallerMethodsTreeStructure(project, basePsiMethod, scopeType);
         }
 
+        @NotNull
         @Override
-        protected Object[] buildChildren(HierarchyNodeDescriptor descriptor) {
+        protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
             PsiElement element = getTargetElement(descriptor);
 
             SearchScope searchScope = getSearchScope(scopeType, basePsiClass);
@@ -106,7 +108,7 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
                     new HashMap<PsiElement, HierarchyNodeDescriptor>();
 
             Object[] javaCallers = null;
-            if (element instanceof PsiMethod && javaTreeStructure != null) {
+            if (element instanceof PsiMethod) {
                 javaCallers = javaTreeStructure.getChildElements(getJavaNodeDescriptor(descriptor));
                 processPsiMethodCallers((PsiMethod) element, descriptor, methodToDescriptorMap, searchScope, true);
             }

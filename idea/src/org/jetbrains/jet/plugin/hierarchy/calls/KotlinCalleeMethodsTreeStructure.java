@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -93,8 +92,9 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         return result;
     }
 
+    @NotNull
     @Override
-    protected Object[] buildChildren(HierarchyNodeDescriptor descriptor) {
+    protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
         PsiElement targetElement = getTargetElement(descriptor);
 
         // Kotlin class constructor invoked from Java code
@@ -118,14 +118,10 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
             return buildChildrenByKotlinTarget(descriptor, (JetElement) targetElement);
         }
 
-        if (javaTreeStructure != null) {
-            CallHierarchyNodeDescriptor javaDescriptor = descriptor instanceof CallHierarchyNodeDescriptor
-                                                         ? (CallHierarchyNodeDescriptor) descriptor
-                                                         : ((KotlinCallHierarchyNodeDescriptor)descriptor).getJavaDelegate();
-            return javaTreeStructure.getChildElements(javaDescriptor);
-        }
-
-        return ArrayUtil.EMPTY_OBJECT_ARRAY;
+        CallHierarchyNodeDescriptor javaDescriptor = descriptor instanceof CallHierarchyNodeDescriptor
+                                                     ? (CallHierarchyNodeDescriptor) descriptor
+                                                     : ((KotlinCallHierarchyNodeDescriptor)descriptor).getJavaDelegate();
+        return javaTreeStructure.getChildElements(javaDescriptor);
     }
 
     private Object[] buildChildrenByKotlinTarget(HierarchyNodeDescriptor descriptor, JetElement targetElement) {
