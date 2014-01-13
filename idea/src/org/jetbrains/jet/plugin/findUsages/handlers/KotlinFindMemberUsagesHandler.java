@@ -26,7 +26,6 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.PsiElementProcessorAdapter;
-import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +38,8 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.plugin.findUsages.*;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindFunctionUsagesDialog;
 import org.jetbrains.jet.plugin.findUsages.dialogs.KotlinFindPropertyUsagesDialog;
+import org.jetbrains.jet.plugin.search.declarationsSearch.DeclarationsSearchPackage;
+import org.jetbrains.jet.plugin.search.declarationsSearch.HierarchySearchRequest;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearch;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchHelper;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchRequest;
@@ -157,26 +158,19 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
                             processUsage(processor, ref);
                         }
 
-                        Iterator<PsiMethod> lightMethods = ApplicationManager.getApplication().runReadAction(new Computable<Iterator<PsiMethod>>() {
-                            @Override
-                            public Iterator<PsiMethod> compute() {
-                                return getLightMethods((JetNamedDeclaration) element).iterator();
-                            }
-                        });
-
                         if (kotlinOptions.getSearchOverrides()) {
-                            while (lightMethods.hasNext()) {
-                                OverridingMethodsSearch.search(lightMethods.next(), options.searchScope, true).forEach(
-                                        new PsiElementProcessorAdapter<PsiMethod>(
-                                                new PsiElementProcessor<PsiMethod>() {
-                                                    @Override
-                                                    public boolean execute(@NotNull PsiMethod element) {
-                                                        return processUsage(processor, element.getNavigationElement());
-                                                    }
+                            DeclarationsSearchPackage.searchOverriders(
+                                    new HierarchySearchRequest<PsiElement>(element, options.searchScope, true)
+                            ).forEach(
+                                    new PsiElementProcessorAdapter<PsiMethod>(
+                                            new PsiElementProcessor<PsiMethod>() {
+                                                @Override
+                                                public boolean execute(@NotNull PsiMethod method) {
+                                                    return processUsage(processor, method.getNavigationElement());
                                                 }
-                                        )
-                                );
-                            }
+                                            }
+                                    )
+                            );
                         }
 
                         return true;
