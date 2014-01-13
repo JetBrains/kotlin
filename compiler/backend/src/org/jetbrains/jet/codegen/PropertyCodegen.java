@@ -26,13 +26,11 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.context.PackageFacadeContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -64,7 +62,7 @@ public class PropertyCodegen extends GenerationStateAware {
     private final FieldOwnerContext context;
 
     @Nullable
-    private MemberCodegen classBodyCodegen;
+    private final MemberCodegen classBodyCodegen;
 
     @NotNull
     private final OwnerKind kind;
@@ -316,45 +314,34 @@ public class PropertyCodegen extends GenerationStateAware {
 
         @Override
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-            generateDefaultAccessor(callableDescriptor, codegen.v, codegen);
-        }
-    }
+            InstructionAdapter v = codegen.v;
+            PropertyDescriptor propertyDescriptor = callableDescriptor.getCorrespondingProperty();
+            Type type = codegen.typeMapper.mapType(propertyDescriptor);
 
-    private static void generateDefaultAccessor(
-            @NotNull PropertyAccessorDescriptor accessorDescriptor,
-            @NotNull InstructionAdapter iv,
-            @NotNull ExpressionCodegen codegen
-    ) {
-        JetTypeMapper typeMapper = codegen.typeMapper;
-        CodegenContext context = codegen.context;
-        OwnerKind kind = context.getContextKind();
-
-        PropertyDescriptor propertyDescriptor = accessorDescriptor.getCorrespondingProperty();
-        Type type = typeMapper.mapType(propertyDescriptor);
-
-        int paramCode = 0;
-        if (kind != OwnerKind.NAMESPACE) {
-            iv.load(0, OBJECT_TYPE);
-            paramCode = 1;
-        }
-
-        StackValue property = codegen.intermediateValueForProperty(accessorDescriptor.getCorrespondingProperty(), true, null);
-
-        if (accessorDescriptor instanceof PropertyGetterDescriptor) {
-            property.put(type, iv);
-            iv.areturn(type);
-        }
-        else if (accessorDescriptor instanceof  PropertySetterDescriptor) {
-            ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getReceiverParameter();
-            if (receiverParameter != null) {
-                paramCode += typeMapper.mapType(receiverParameter.getType()).getSize();
+            int paramCode = 0;
+            if (codegen.context.getContextKind() != OwnerKind.NAMESPACE) {
+                v.load(0, OBJECT_TYPE);
+                paramCode = 1;
             }
-            iv.load(paramCode, type);
 
-            property.store(type, iv);
-            iv.visitInsn(RETURN);
-        } else {
-            assert false : "Unreachable state";
+            StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
+
+            if (callableDescriptor instanceof PropertyGetterDescriptor) {
+                property.put(type, v);
+                v.areturn(type);
+            }
+            else if (callableDescriptor instanceof PropertySetterDescriptor) {
+                ReceiverParameterDescriptor receiverParameter = propertyDescriptor.getReceiverParameter();
+                if (receiverParameter != null) {
+                    paramCode += codegen.typeMapper.mapType(receiverParameter.getType()).getSize();
+                }
+                v.load(paramCode, type);
+
+                property.store(type, v);
+                v.visitInsn(RETURN);
+            } else {
+                throw new IllegalStateException("Unknown property accessor: " + callableDescriptor);
+            }
         }
     }
 
@@ -365,33 +352,31 @@ public class PropertyCodegen extends GenerationStateAware {
 
         @Override
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-            JetTypeMapper typeMapper = codegen.typeMapper;
-            OwnerKind kind = codegen.context.getContextKind();
-            InstructionAdapter iv = codegen.v;
-            BindingContext bindingContext = state.getBindingContext();
+            InstructionAdapter v = codegen.v;
 
+            BindingContext bindingContext = state.getBindingContext();
             ResolvedCall<FunctionDescriptor> resolvedCall =
                     bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, callableDescriptor);
 
             Call call = bindingContext.get(BindingContext.DELEGATED_PROPERTY_CALL, callableDescriptor);
             assert call != null : "Call should be recorded for delegate call " + signature.toString();
 
-            PropertyDescriptor property = callableDescriptor.getCorrespondingProperty();
-            Type asmType = typeMapper.mapType(property);
-
-            if (kind != OwnerKind.NAMESPACE) {
-                iv.load(0, OBJECT_TYPE);
+            if (codegen.context.getContextKind() != OwnerKind.NAMESPACE) {
+                v.load(0, OBJECT_TYPE);
             }
 
-            StackValue delegatedProperty = codegen.intermediateValueForProperty(property, true, null);
+            PropertyDescriptor propertyDescriptor = callableDescriptor.getCorrespondingProperty();
+
+            StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
             StackValue lastValue = codegen.invokeFunction(call, delegatedProperty, resolvedCall);
 
             if (lastValue.type != Type.VOID_TYPE) {
-                lastValue.put(asmType, iv);
-                iv.areturn(asmType);
+                Type asmType = codegen.typeMapper.mapType(propertyDescriptor);
+                lastValue.put(asmType, v);
+                v.areturn(asmType);
             }
             else {
-                iv.areturn(Type.VOID_TYPE);
+                v.areturn(Type.VOID_TYPE);
             }
         }
     }
