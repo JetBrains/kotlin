@@ -42,6 +42,7 @@ import com.intellij.util.EmptyQuery
 import com.intellij.util.MergeQuery
 import com.intellij.util.UniqueResultsQuery
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.asJava.toLightMethods
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {
     is PsiMethod -> PsiUtil.canBeOverriden(this)
@@ -50,14 +51,9 @@ fun PsiElement.isOverridableElement(): Boolean = when (this) {
 }
 
 public fun HierarchySearchRequest<PsiElement>.searchOverriders(): Query<PsiMethod> {
-    val psiMethods: List<PsiMethod> = when (originalElement) {
-        is JetNamedFunction -> Collections.singletonList(LightClassUtil.getLightClassMethod(originalElement))
-        is JetProperty -> LightClassUtil.getLightClassPropertyMethods(originalElement).iterator().toArrayList()
-        is JetParameter -> LightClassUtil.getLightClassPropertyMethods(originalElement).iterator().toArrayList()
-        is JetPropertyAccessor -> Collections.singletonList(LightClassUtil.getLightClassAccessorMethod(originalElement))
-        is PsiMethod -> Collections.singletonList(originalElement)
-        else -> return EmptyQuery.getEmptyQuery()
-    }
+    val psiMethods = originalElement.toLightMethods()
+    if (psiMethods.isEmpty()) return EmptyQuery.getEmptyQuery()
+
     return psiMethods
             .map { psiMethod -> KotlinPsiMethodOverridersSearch.search(copy(psiMethod)) }
             .reduce {(query1, query2) -> MergeQuery(query1, query2)}
