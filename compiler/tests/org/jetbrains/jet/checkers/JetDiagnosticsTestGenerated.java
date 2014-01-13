@@ -5953,6 +5953,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeAsMemberExtensionToExplicitReceiver.kt");
                 }
                 
+                @TestMetadata("KT-4372.kt")
+                public void testKT_4372() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/invoke/KT-4372.kt");
+                }
+                
                 @TestMetadata("kt3772.kt")
                 public void testKt3772() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/resolve/invoke/kt3772.kt");
