@@ -59,7 +59,7 @@ public abstract class JetScopeImpl implements JetScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
         return Collections.emptyList();
     }
 

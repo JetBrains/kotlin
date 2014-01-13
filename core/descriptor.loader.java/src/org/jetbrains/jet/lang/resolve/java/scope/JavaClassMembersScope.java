@@ -37,7 +37,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
         throw new UnsupportedOperationException(); // TODO
     }
 
