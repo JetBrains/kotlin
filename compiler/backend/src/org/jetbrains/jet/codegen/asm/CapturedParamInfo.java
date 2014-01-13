@@ -26,6 +26,8 @@ public class CapturedParamInfo extends ParameterInfo {
 
     private int shift = 0;
 
+    private LambdaInfo recapturedFrom;
+
     public static final CapturedParamInfo STUB = new CapturedParamInfo("", AsmTypeConstants.OBJECT_TYPE, true, -1, -1);
 
     public CapturedParamInfo(@NotNull String fieldName, @NotNull Type type, boolean skipped, int remapIndex, int index) {
@@ -44,5 +46,13 @@ public class CapturedParamInfo extends ParameterInfo {
 
     public void setShift(int shift) {
         this.shift = shift;
+    }
+
+    public LambdaInfo getRecapturedFrom() {
+        return recapturedFrom;
+    }
+
+    public void setRecapturedFrom(LambdaInfo recapturedFrom) {
+        this.recapturedFrom = recapturedFrom;
     }
 }

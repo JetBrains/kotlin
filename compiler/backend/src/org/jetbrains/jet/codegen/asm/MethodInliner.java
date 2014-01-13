@@ -139,7 +139,7 @@ public class MethodInliner {
 
                     List<ParameterInfo> lambdaParameters = inlinableAccess.getParameters();
 
-                    Parameters params = new Parameters(lambdaParameters, Parameters.transformList(info.getCapturedVars(), lambdaParameters.size()));
+                    Parameters params = new Parameters(lambdaParameters, Parameters.transformList(capturedRemapper.markRecaptured(info.getCapturedVars(), info), lambdaParameters.size()));
 
                     MethodInliner inliner = new MethodInliner(info.getNode(), params, parent.subInline(parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
                                                               capturedRemapper);
@@ -383,18 +383,13 @@ public class MethodInliner {
                 FieldInsnNode fieldInsnNode = (FieldInsnNode) cur;
                 //TODO check closure
                 String owner = fieldInsnNode.owner;
-                if (lambdaClassType.getInternalName().equals(fieldInsnNode.owner)) {
+                if (lambdaFieldRemapper.canProcess(fieldInsnNode.owner, lambdaClassType.getInternalName())) {
                     String name = fieldInsnNode.name;
                     String desc = fieldInsnNode.desc;
 
                     Collection<CapturedParamInfo> vars = paramsToSearch.getCaptured();
-                    CapturedParamInfo result = null;
-                    for (CapturedParamInfo valueDescriptor : vars) {
-                        if (valueDescriptor.getFieldName().equals(name)) {
-                            result = valueDescriptor;
-                            break;
-                        }
-                    }
+                    CapturedParamInfo result = lambdaFieldRemapper.findField(fieldInsnNode, paramsToSearch.getCaptured());
+
                     if (result == null) {
                         throw new UnsupportedOperationException("Coudn't find field " +
                                                                 owner +

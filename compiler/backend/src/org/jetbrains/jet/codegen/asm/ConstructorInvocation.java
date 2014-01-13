@@ -33,6 +33,8 @@ public class ConstructorInvocation {
 
     private List<CapturedParamInfo> recaptured;
 
+    private Map<String, LambdaInfo> recapturedLambdas;
+
     ConstructorInvocation(String ownerInternalName, Map<Integer, InlinableAccess> access) {
         this.ownerInternalName = ownerInternalName;
         this.access = access;
@@ -73,5 +75,13 @@ public class ConstructorInvocation {
 
     public void setRecaptured(List<CapturedParamInfo> recaptured) {
         this.recaptured = recaptured;
+    }
+
+    public Map<String, LambdaInfo> getRecapturedLambdas() {
+        return recapturedLambdas;
+    }
+
+    public void setRecapturedLambdas(Map<String, LambdaInfo> recapturedLambdas) {
+        this.recapturedLambdas = recapturedLambdas;
     }
 }

@@ -16,11 +16,15 @@
 
 package org.jetbrains.jet.codegen.asm;
 
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.tree.AbstractInsnNode;
 import org.jetbrains.asm4.tree.FieldInsnNode;
 import org.jetbrains.asm4.tree.MethodNode;
 import org.jetbrains.asm4.tree.VarInsnNode;
+
+import java.util.Collection;
+import java.util.List;
 
 import static org.jetbrains.jet.codegen.asm.MethodInliner.getPreviousNoLabelNoLine;
 
@@ -43,4 +47,25 @@ public class LambdaFieldRemapper {
         return insn;
     }
 
+    public List<CapturedParamInfo> markRecaptured(List<CapturedParamInfo> originalCaptured, LambdaInfo lambda) {
+        return originalCaptured;
+    }
+
+
+    public boolean canProcess(String owner, String currentLambdaType) {
+        return owner.equals(currentLambdaType);
+    }
+
+    @Nullable
+    public CapturedParamInfo findField(FieldInsnNode fieldInsnNode, Collection<CapturedParamInfo> captured) {
+        String name = fieldInsnNode.name;
+        CapturedParamInfo result = null;
+        for (CapturedParamInfo valueDescriptor : captured) {
+            if (valueDescriptor.getFieldName().equals(name)) {
+                result = valueDescriptor;
+                break;
+            }
+        }
+        return result;
+    }
 }
