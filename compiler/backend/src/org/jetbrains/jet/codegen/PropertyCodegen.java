@@ -316,7 +316,6 @@ public class PropertyCodegen extends GenerationStateAware {
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             InstructionAdapter v = codegen.v;
             PropertyDescriptor propertyDescriptor = callableDescriptor.getCorrespondingProperty();
-            Type type = codegen.typeMapper.mapType(propertyDescriptor);
 
             int paramCode = 0;
             if (codegen.context.getContextKind() != OwnerKind.NAMESPACE) {
@@ -327,6 +326,7 @@ public class PropertyCodegen extends GenerationStateAware {
             StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
 
             if (callableDescriptor instanceof PropertyGetterDescriptor) {
+                Type type = signature.getReturnType();
                 property.put(type, v);
                 v.areturn(type);
             }
@@ -335,8 +335,8 @@ public class PropertyCodegen extends GenerationStateAware {
                 if (receiverParameter != null) {
                     paramCode += codegen.typeMapper.mapType(receiverParameter.getType()).getSize();
                 }
+                Type type = codegen.typeMapper.mapType(propertyDescriptor);
                 v.load(paramCode, type);
-
                 property.store(type, v);
                 v.visitInsn(RETURN);
             } else {
@@ -370,14 +370,9 @@ public class PropertyCodegen extends GenerationStateAware {
             StackValue delegatedProperty = codegen.intermediateValueForProperty(propertyDescriptor, true, null);
             StackValue lastValue = codegen.invokeFunction(call, delegatedProperty, resolvedCall);
 
-            if (lastValue.type != Type.VOID_TYPE) {
-                Type asmType = codegen.typeMapper.mapType(propertyDescriptor);
-                lastValue.put(asmType, v);
-                v.areturn(asmType);
-            }
-            else {
-                v.areturn(Type.VOID_TYPE);
-            }
+            Type asmType = signature.getReturnType();
+            lastValue.put(asmType, v);
+            v.areturn(asmType);
         }
     }
 

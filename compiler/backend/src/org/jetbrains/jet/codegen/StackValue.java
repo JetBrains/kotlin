@@ -865,12 +865,13 @@ public abstract class StackValue {
                 v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, methodOwner.getInternalName(), getPropertyName(),
                                  this.type.getDescriptor());
                 genNotNullAssertionForField(v, state, descriptor);
+                coerceTo(type, v);
             }
             else {
                 Method method = getter.getAsmMethod();
                 v.visitMethodInsn(getter.getInvokeOpcode(), getter.getOwner().getInternalName(), method.getName(), method.getDescriptor());
+                coerce(method.getReturnType(), type, v);
             }
-            coerceTo(type, v);
         }
 
         @Override

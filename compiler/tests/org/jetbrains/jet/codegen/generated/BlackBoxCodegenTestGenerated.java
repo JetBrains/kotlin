@@ -4470,9 +4470,29 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/properties/kt4252_2.kt");
         }
         
+        @TestMetadata("kt4373.kt")
+        public void testKt4373() throws Exception {
+            doTest("compiler/testData/codegen/box/properties/kt4373.kt");
+        }
+        
+        @TestMetadata("kt4383.kt")
+        public void testKt4383() throws Exception {
+            doTest("compiler/testData/codegen/box/properties/kt4383.kt");
+        }
+        
         @TestMetadata("kt613.kt")
         public void testKt613() throws Exception {
             doTest("compiler/testData/codegen/box/properties/kt613.kt");
+        }
+        
+        @TestMetadata("primitiveOverrideDefaultAccessor.kt")
+        public void testPrimitiveOverrideDefaultAccessor() throws Exception {
+            doTest("compiler/testData/codegen/box/properties/primitiveOverrideDefaultAccessor.kt");
+        }
+        
+        @TestMetadata("primitiveOverrideDelegateAccessor.kt")
+        public void testPrimitiveOverrideDelegateAccessor() throws Exception {
+            doTest("compiler/testData/codegen/box/properties/primitiveOverrideDelegateAccessor.kt");
         }
         
         @TestMetadata("privatePropertyWithoutBackingField.kt")
