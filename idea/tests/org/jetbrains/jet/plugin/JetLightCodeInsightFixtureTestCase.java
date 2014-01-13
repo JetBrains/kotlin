@@ -23,42 +23,42 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
-    LightProjectDescriptor projectDescriptor = JetLightProjectDescriptor.INSTANCE;
-
     @Override
     protected void setUp() throws Exception {
-        if (!getTestName(false).startsWith("AllFilesPresentIn")) {
-            String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
-            if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
-                projectDescriptor = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
-            }
-            else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
-                projectDescriptor = JetStdJSProjectDescriptor.INSTANCE;
-            }
-            else {
-                projectDescriptor = JetLightProjectDescriptor.INSTANCE;
-            }
-        }
-
         super.setUp();
-
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        projectDescriptor = null;
     }
 
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return projectDescriptor;
+        return getProjectDescriptorFromFileDirective();
+    }
+
+    protected LightProjectDescriptor getProjectDescriptorFromFileDirective() {
+        if (!getTestName(false).startsWith("AllFilesPresentIn")) {
+            try {
+                String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
+
+                if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
+                    return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+                }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
+                    return JetStdJSProjectDescriptor.INSTANCE;
+                }
+            }
+            catch (IOException e) {
+                throw ExceptionUtils.rethrow(e);
+            }
+        }
+
+        return JetLightProjectDescriptor.INSTANCE;
     }
 
     protected String fileName() {
