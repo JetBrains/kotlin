@@ -19,15 +19,12 @@ fun f() {
     } else {
     }
 
-    if (true)
-    {
+    if (true) {
     }
-    else
-    {
+    else {
     }
 
-    if (true)
-    {
+    if (true) {
     }
 
     else

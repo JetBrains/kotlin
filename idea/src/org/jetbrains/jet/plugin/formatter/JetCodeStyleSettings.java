@@ -39,6 +39,8 @@ public class JetCodeStyleSettings extends CustomCodeStyleSettings {
     public boolean SPACE_AROUND_WHEN_ARROW = true;
     public boolean SPACE_BEFORE_LAMBDA_ARROW = true;
 
+    public boolean LBRACE_ON_NEXT_LINE = false;
+
     public static JetCodeStyleSettings getInstance(Project project) {
         return CodeStyleSettingsManager.getSettings(project).getCustomSettings(JetCodeStyleSettings.class);
     }

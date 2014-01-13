@@ -112,6 +112,21 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         doTest("idea/testData/formatter/If.kt");
     }
     
+    @TestMetadata("IfElseRemoveLineBreak.kt")
+    public void testIfElseRemoveLineBreak() throws Exception {
+        doTest("idea/testData/formatter/IfElseRemoveLineBreak.kt");
+    }
+    
+    @TestMetadata("IfElseWithLineBreak.kt")
+    public void testIfElseWithLineBreak() throws Exception {
+        doTest("idea/testData/formatter/IfElseWithLineBreak.kt");
+    }
+    
+    @TestMetadata("IfElseWithTrickyComments.kt")
+    public void testIfElseWithTrickyComments() throws Exception {
+        doTest("idea/testData/formatter/IfElseWithTrickyComments.kt");
+    }
+    
     @TestMetadata("IfSpacing.kt")
     public void testIfSpacing() throws Exception {
         doTest("idea/testData/formatter/IfSpacing.kt");

@@ -22,6 +22,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -135,11 +136,15 @@ public class JetBlock extends AbstractBlock {
 
     @Override
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
-        Spacing spacing = mySpacingBuilder.getSpacing(this, child1, child2);
-        if (spacing != null) {
-            return spacing;
+        Spacing customSpacing = getCustomSpacing(child1, child2);
+        if (customSpacing != null) {
+            return customSpacing;
         }
+        return mySpacingBuilder.getSpacing(this, child1, child2);
+    }
 
+    @Nullable
+    private Spacing getCustomSpacing(@Nullable Block child1, @NotNull Block child2) {
         // TODO: extend SpacingBuilder API - afterInside(RBRACE, FUNCTION_LITERAL).spacing(...), beforeInside(RBRACE, FUNCTION_LITERAL).spacing(...)
         if (!(child1 instanceof ASTBlock && child2 instanceof ASTBlock)) {
             return null;
@@ -179,6 +184,20 @@ public class JetBlock extends AbstractBlock {
 
             return Spacing.createSpacing(spacesInSimpleMethod, spacesInSimpleMethod, 0,
                                          mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+        }
+
+        if (parentType == IF && (child2Type == THEN || child2Type == ELSE)) {
+            ASTNode blockOrExpression = ((ASTBlock) child2).getNode().getFirstChildNode();
+            if (blockOrExpression != null && blockOrExpression.getElementType() == BLOCK) {
+                ASTNode leftBrace = blockOrExpression.getFirstChildNode();
+                if (leftBrace != null && leftBrace.getElementType() == LBRACE) {
+                    ASTNode previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace);
+                    boolean isAfterEolComment = previousLeaf != null && (previousLeaf.getElementType() == EOL_COMMENT);
+                    boolean keepLineBreaks = jetSettings.LBRACE_ON_NEXT_LINE || isAfterEolComment;
+                    int minimumLF = jetSettings.LBRACE_ON_NEXT_LINE ? 1 : 0;
+                    return Spacing.createSpacing(1, 1, minimumLF, keepLineBreaks, /*don't keep blank lines*/ 0);
+                }
+            }
         }
 
         return null;
