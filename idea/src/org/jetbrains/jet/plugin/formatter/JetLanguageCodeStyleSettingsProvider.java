@@ -146,6 +146,10 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements");
                 consumer.showCustomOption(JetCodeStyleSettings.class, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align in columns 'case' branches",
                                           CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "LBRACE_ON_NEXT_LINE",
+                                          "Put left brace on new line",
+                                          CodeStyleSettingsCustomizable.WRAPPING_BRACES);
                 break;
             default:
                 consumer.showStandardOptions();
