@@ -43,11 +43,11 @@ public class MultiPackageTest extends MultipleFilesTranslationTest {
     }
 
     public void testSubpackagesWithClashingNames() throws Exception {
-        runMultiFileTest("subPackagesWithClashingNames", "a.foo", "box", true);
+        runMultiFileTest("subpackagesWithClashingNames", "a.foo", "box", true);
     }
 
     public void testSubpackagesWithClashingNamesUsingImport() throws Exception {
-        runMultiFileTest("subPackagesWithClashingNamesUsingImport", "a.foo", "box", true);
+        runMultiFileTest("subpackagesWithClashingNamesUsingImport", "a.foo", "box", true);
     }
 
     public void testCreateClassFromOtherPackage() throws Exception {
