@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -159,9 +160,10 @@ public final class JavaConstructorResolver {
                     index,
                     Collections.<AnnotationDescriptor>emptyList(),
                     method.getName(),
-                    typeTransformer.transformToType(returnType, typeVariableResolver),
+                    // Parameters of annotation constructors in Java are never nullable
+                    TypeUtils.makeNotNullable(typeTransformer.transformToType(returnType, typeVariableResolver)),
                     method.hasAnnotationParameterDefaultValue(),
-                    varargElementType));
+                    varargElementType == null ? null : TypeUtils.makeNotNullable(varargElementType)));
 
             index++;
         }

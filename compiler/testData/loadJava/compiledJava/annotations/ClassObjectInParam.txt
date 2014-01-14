@@ -4,7 +4,7 @@ public open class ClassObjectInParam : java.lang.Object {
     public constructor ClassObjectInParam()
     
     public final annotation class Anno : jet.Annotation {
-        public constructor Anno(/*0*/ value: java.lang.Class<out jet.Any?>?)
+        public constructor Anno(/*0*/ value: java.lang.Class<out jet.Any?>)
         public abstract fun value(): java.lang.Class<out jet.Any?>?
     }
     

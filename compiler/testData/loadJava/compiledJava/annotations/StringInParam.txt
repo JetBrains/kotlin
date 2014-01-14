@@ -3,7 +3,7 @@ package test
 public trait StringInParam : java.lang.Object {
     
     public final annotation class Anno : jet.Annotation {
-        public constructor Anno(/*0*/ value: jet.String?)
+        public constructor Anno(/*0*/ value: jet.String)
         public abstract fun value(): jet.String?
     }
     

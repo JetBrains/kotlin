@@ -7,7 +7,7 @@ public trait PrimitiveValueInParam : java.lang.Object {
     }
     
     public final annotation class Ann : jet.Annotation {
-        public constructor Ann(/*0*/ i: jet.Int, /*1*/ l: jet.Long, /*2*/ d: jet.Double, /*3*/ f: jet.Float, /*4*/ bool: jet.Boolean, /*5*/ str: jet.String?)
+        public constructor Ann(/*0*/ i: jet.Int, /*1*/ l: jet.Long, /*2*/ d: jet.Double, /*3*/ f: jet.Float, /*4*/ bool: jet.Boolean, /*5*/ str: jet.String)
         public abstract fun bool(): jet.Boolean
         public abstract fun d(): jet.Double
         public abstract fun f(): jet.Float
