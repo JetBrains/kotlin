@@ -521,10 +521,10 @@ public class CandidateResolver {
         if (!(callElement instanceof JetCallExpression)) return;
 
         JetCallExpression callExpression = (JetCallExpression) callElement;
-        CallableDescriptor resultingDescriptor = context.candidateCall.getResultingDescriptor();
         if (BindingContextUtils.isCallExpressionWithValidReference(callExpression, context.trace.getBindingContext())) {
+            CallableDescriptor resultingDescriptor = context.candidateCall.getResultingDescriptor();
             context.trace.record(BindingContext.EXPRESSION_TYPE, callExpression, resultingDescriptor.getReturnType());
-            context.trace.record(BindingContext.REFERENCE_TARGET, callExpression, resultingDescriptor);
+            context.trace.record(BindingContext.REFERENCE_TARGET, callExpression, context.candidateCall.getCandidateDescriptor());
         }
     }
 

@@ -27,6 +27,8 @@ package testData.libraries
 
 [public fun func(str: jet.String): jet.Unit { /* compiled code */ }]
 
+[public fun <T> genericFunc(): T { /* compiled code */ }]
+
 [public fun main(args: jet.Array<jet.String>): jet.Unit { /* compiled code */ }]
 
 [public fun processDouble(d: jet.Double): jet.Unit { /* compiled code */ }]

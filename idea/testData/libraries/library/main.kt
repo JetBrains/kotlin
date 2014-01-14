@@ -102,6 +102,8 @@ public fun func() {
 public fun func(cs : CharSequence) {
 }
 
+public fun <T> genericFunc() : T = throw Exception()
+
 public inline fun <T> T.filter(predicate: (T)-> Boolean) : T? = this
 
 

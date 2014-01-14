@@ -86,6 +86,14 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         doTest();
     }
 
+    public void testGenericFunctionWithInferredTypeArguments() {
+        doTest();
+    }
+
+    public void testGenericFunctionWithExplicitlyDeclaredTypeArguments() {
+        doTest();
+    }
+
     private void doTest() {
         myFixture.configureByFile(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
 
