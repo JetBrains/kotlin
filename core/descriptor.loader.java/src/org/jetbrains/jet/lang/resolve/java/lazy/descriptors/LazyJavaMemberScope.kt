@@ -277,14 +277,6 @@ public abstract class LazyJavaMemberScope(
     private fun computeAllDescriptors(): MutableCollection<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
 
-        for (name in getAllPackageNames()) {
-            val descriptor = getPackage(name)
-            if (descriptor != null) {
-                // Null signifies that a package found in Java is not present in Kotlin
-                result.add(descriptor)
-            }
-        }
-
         for (name in getAllClassNames()) {
             val descriptor = getClassifier(name)
             if (descriptor != null) {
@@ -310,7 +302,6 @@ public abstract class LazyJavaMemberScope(
         // Do nothing
     }
 
-    protected abstract fun getAllPackageNames(): Collection<Name>
     protected abstract fun getAllClassNames(): Collection<Name>
 
     override fun toString() = "Lazy scope for ${getContainingDeclaration()}"

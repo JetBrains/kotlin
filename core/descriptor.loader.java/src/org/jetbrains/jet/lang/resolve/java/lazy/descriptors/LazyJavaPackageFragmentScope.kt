@@ -58,7 +58,6 @@ public abstract class LazyJavaPackageFragmentScope(
 
     // Package fragments are not nested
     override fun getPackage(name: Name) = null
-    final override fun getAllPackageNames() = listOf<Name>()
     abstract fun getSubPackages(): Collection<FqName>
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()

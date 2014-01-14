@@ -189,7 +189,6 @@ public class LazyJavaClassMemberScope(
 
     // namespaces should be resolved elsewhere
     override fun getPackage(name: Name) = null
-    override fun getAllPackageNames(): Collection<Name> = listOf()
 
     override fun toString() = "Lazy java member scope for " + jClass.getFqName()
 }
