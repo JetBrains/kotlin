@@ -150,7 +150,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                         "where '+' means 'include'\n" +
                         "      '-' means 'exclude'\n" +
                         "      '!' means 'exclude everything but this'\n" +
-                        "directives are applied in the order of appearance, i.e. !FOO +BAR means inluce only FOO and BAR");
+                        "directives are applied in the order of appearance, i.e. !FOO +BAR means include only FOO and BAR");
         }
         boolean first = true;
         do {
