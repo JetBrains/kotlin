@@ -153,6 +153,7 @@ public final class FqNameUnsafe extends FqNameBase {
         return shortName;
     }
 
+    @Override
     @NotNull
     public Name shortNameOrSpecial() {
         if (isRoot()) {
