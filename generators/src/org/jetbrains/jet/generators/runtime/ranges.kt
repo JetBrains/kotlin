@@ -20,12 +20,6 @@ import org.jetbrains.jet.generators.runtime.*
 import org.jetbrains.jet.generators.runtime.ProgressionKind.*
 import java.io.PrintWriter
 
-fun hashLong(v: String) = "($v xor ($v ushr 32))"
-
-fun floatToIntBits(v: String) = "(if ($v != 0.0f) java.lang.Float.floatToIntBits($v) else 0)"
-
-fun doubleToLongBits(v: String) = "if ($v != 0.0) java.lang.Double.doubleToLongBits($v) else 0L"
-
 class GenerateRanges(val out: PrintWriter) {
     fun generate() {
         generatedBy(out, javaClass.getName())
@@ -33,10 +27,7 @@ class GenerateRanges(val out: PrintWriter) {
             val t = kind.capitalized
             val range = "${t}Range"
 
-            val incrementType = when (kind) {
-                BYTE, CHAR, SHORT -> "Int"
-                else -> kind.capitalized
-            }
+            val incrementType = progressionIncrementType(kind)
 
             val increment = when (kind) {
                 FLOAT -> "1.0f"
@@ -51,10 +42,7 @@ class GenerateRanges(val out: PrintWriter) {
                 else -> "1, 0"
             }
 
-            fun compare(v: String) = when (kind) {
-                FLOAT, DOUBLE -> "java.lang.${kind.capitalized}.compare($v, other.$v) == 0"
-                else -> "$v == other.$v"
-            }
+            fun compare(v: String) = areEqualNumbers(kind, v)
 
             val hashCode = when (kind) {
                 BYTE, CHAR, SHORT -> " = 31 * start.toInt() + end"

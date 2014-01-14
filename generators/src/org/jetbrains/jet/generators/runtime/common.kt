@@ -19,6 +19,7 @@ package org.jetbrains.jet.generators.runtime
 import java.io.File
 import kotlin.properties.Delegates
 import java.io.PrintWriter
+import org.jetbrains.jet.generators.runtime.ProgressionKind.*
 
 enum class ProgressionKind {
     BYTE
@@ -31,6 +32,23 @@ enum class ProgressionKind {
 
     val capitalized = name().toLowerCase().capitalize()
 }
+
+fun progressionIncrementType(kind: ProgressionKind) = when (kind) {
+    BYTE, CHAR, SHORT -> "Int"
+    else -> kind.capitalized
+}
+
+fun areEqualNumbers(kind: ProgressionKind, v: String) = when (kind) {
+    FLOAT, DOUBLE -> "java.lang.${kind.capitalized}.compare($v, other.$v) == 0"
+    else -> "$v == other.$v"
+}
+
+fun hashLong(v: String) = "($v xor ($v ushr 32))"
+
+fun floatToIntBits(v: String) = "(if ($v != 0.0f) java.lang.Float.floatToIntBits($v) else 0)"
+
+fun doubleToLongBits(v: String) = "if ($v != 0.0) java.lang.Double.doubleToLongBits($v) else 0L"
+
 
 val OUTPUT_DIR: File by Delegates.lazy {
     val result = File("runtime/kt/")
