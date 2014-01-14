@@ -5,7 +5,7 @@ public open class ClassObjectInParam : java.lang.Object {
     
     public final annotation class Anno : jet.Annotation {
         public constructor Anno(/*0*/ value: java.lang.Class<out jet.Any?>)
-        public abstract fun value(): java.lang.Class<out jet.Any?>?
+        public abstract fun value(): java.lang.Class<out jet.Any?>
     }
     
     test.ClassObjectInParam.Anno(value = test.ClassObjectInParam?.class: java.lang.Class<test.ClassObjectInParam?>) public open class Nested : java.lang.Object {

@@ -13,6 +13,6 @@ public trait PrimitiveValueInParam : java.lang.Object {
         public abstract fun f(): jet.Float
         public abstract fun i(): jet.Int
         public abstract fun l(): jet.Long
-        public abstract fun str(): jet.String?
+        public abstract fun str(): jet.String
     }
 }

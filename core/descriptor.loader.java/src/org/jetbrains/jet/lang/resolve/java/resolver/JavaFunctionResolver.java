@@ -251,7 +251,8 @@ public final class JavaFunctionResolver {
                               : TypeUsage.MEMBER_SIGNATURE_COVARIANT;
         JetType transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
 
-        if (annotationResolver.hasNotNullAnnotation(method)) {
+        // Annotation arguments are never null in Java
+        if (method.getContainingClass().isAnnotationType() || annotationResolver.hasNotNullAnnotation(method)) {
             return TypeUtils.makeNotNullable(transformedType);
         }
         else {

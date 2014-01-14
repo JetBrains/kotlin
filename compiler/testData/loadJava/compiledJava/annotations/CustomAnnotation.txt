@@ -4,7 +4,7 @@ public trait CustomAnnotation : java.lang.Object {
     
     public final annotation class MyAnnotation : jet.Annotation {
         public constructor MyAnnotation(/*0*/ value: test.CustomAnnotation.MyEnum)
-        public abstract fun value(): test.CustomAnnotation.MyEnum?
+        public abstract fun value(): test.CustomAnnotation.MyEnum
     }
     
     public final enum class MyEnum : jet.Enum<test.CustomAnnotation.MyEnum> {
