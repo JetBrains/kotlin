@@ -18,8 +18,6 @@
   <property name="kotlin.plugin.build.number" value="snapshot"/>
   <property name="kotlin.plugin.url" value="http://localhost/"/>
 
-  <property name="verifier.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/88722:id/plugin-verifier.jar"/>
-
   <condition property="download.eap">
     <isset property="eap"/>
   </condition>
