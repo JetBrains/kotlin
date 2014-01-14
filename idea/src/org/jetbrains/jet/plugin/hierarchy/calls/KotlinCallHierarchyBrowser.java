@@ -74,11 +74,6 @@ public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
     }
 
     @Override
-    protected PsiElement getOpenFileElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
-        return getTargetElement(descriptor);
-    }
-
-    @Override
     protected boolean isApplicableElement(@NotNull PsiElement element) {
         return element instanceof JetNamedDeclaration || element instanceof PsiMethod;
     }
