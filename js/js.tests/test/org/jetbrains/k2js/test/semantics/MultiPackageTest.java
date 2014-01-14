@@ -35,18 +35,18 @@ public class MultiPackageTest extends MultipleFilesTranslationTest {
     }
 
     public void testPackageVariableVisibleFromOtherPackage() throws Exception {
-        checkFooBoxIsTrue("PackageVariableVisibleFromOtherPackage");
+        checkFooBoxIsTrue("packageVariableVisibleFromOtherPackage");
     }
 
     public void testNestedPackageFunctionCalledFromOtherPackage() throws Exception {
         runMultiFileTest("nestedPackageFunctionCalledFromOtherPackage", "a.foo", "box", true);
     }
 
-    public void testSubPackagesWithClashingNames() throws Exception {
+    public void testSubpackagesWithClashingNames() throws Exception {
         runMultiFileTest("subPackagesWithClashingNames", "a.foo", "box", true);
     }
 
-    public void testSubPackagesWithClashingNamesUsingImport() throws Exception {
+    public void testSubpackagesWithClashingNamesUsingImport() throws Exception {
         runMultiFileTest("subPackagesWithClashingNamesUsingImport", "a.foo", "box", true);
     }
 
