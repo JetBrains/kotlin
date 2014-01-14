@@ -25,11 +25,6 @@ public class JetWhileExpression extends JetWhileExpressionBase {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitWhileExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitWhileExpression(this, data);
     }

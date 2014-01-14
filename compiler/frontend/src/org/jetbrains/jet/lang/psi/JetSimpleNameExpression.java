@@ -116,11 +116,6 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitSimpleNameExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitSimpleNameExpression(this, data);
     }

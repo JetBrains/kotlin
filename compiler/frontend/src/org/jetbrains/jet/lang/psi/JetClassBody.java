@@ -39,11 +39,6 @@ public class JetClassBody extends JetElementImpl implements JetDeclarationContai
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitClassBody(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitClassBody(this, data);
     }

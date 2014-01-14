@@ -43,11 +43,6 @@ public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationStub>
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitAnnotationEntry(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitAnnotationEntry(this, data);
     }

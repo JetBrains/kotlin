@@ -25,11 +25,6 @@ public abstract class JetStringTemplateEntryWithExpression extends JetStringTemp
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitStringTemplateEntryWithExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitStringTemplateEntryWithExpression(this, data);
     }

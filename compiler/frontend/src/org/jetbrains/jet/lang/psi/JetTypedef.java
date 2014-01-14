@@ -27,11 +27,6 @@ public class JetTypedef extends JetTypeParameterListOwnerNotStubbed {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitTypedef(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitTypedef(this, data);
     }

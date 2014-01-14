@@ -20,16 +20,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetClassInitializer extends JetDeclarationImpl implements JetStatementExpression {
     public JetClassInitializer(@NotNull ASTNode node) {
         super(node);
-    }
-
-    @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitAnonymousInitializer(this);
     }
 
     @Override

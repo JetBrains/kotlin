@@ -27,11 +27,6 @@ public class JetPrefixExpression extends JetUnaryExpression {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitPrefixExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitPrefixExpression(this, data);
     }

@@ -29,11 +29,6 @@ public class JetClassObject extends JetDeclarationImpl implements JetStatementEx
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitClassObject(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitClassObject(this, data);
     }

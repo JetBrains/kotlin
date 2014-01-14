@@ -25,11 +25,6 @@ public class JetBlockStringTemplateEntry extends JetStringTemplateEntryWithExpre
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitBlockStringTemplateEntry(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitBlockStringTemplateEntry(this, data);
     }

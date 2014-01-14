@@ -26,11 +26,6 @@ public class JetParenthesizedExpression extends JetExpressionImpl {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitParenthesizedExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitParenthesizedExpression(this, data);
     }

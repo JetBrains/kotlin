@@ -28,11 +28,6 @@ public class JetSuperExpression extends JetLabelQualifiedInstanceExpression impl
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitSuperExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitSuperExpression(this, data);
     }

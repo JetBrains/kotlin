@@ -30,11 +30,6 @@ public class JetFunctionLiteralExpression extends JetExpressionImpl {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitFunctionLiteralExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitFunctionLiteralExpression(this, data);
     }

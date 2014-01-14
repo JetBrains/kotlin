@@ -34,11 +34,6 @@ public class JetPropertyAccessor extends JetDeclarationImpl
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitPropertyAccessor(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitPropertyAccessor(this, data);
     }

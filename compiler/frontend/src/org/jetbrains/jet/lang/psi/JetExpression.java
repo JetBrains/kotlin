@@ -20,8 +20,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface JetExpression extends JetElement {
     @Override
-    void accept(@NotNull JetVisitorVoid visitor);
-
-    @Override
     <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data);
 }
