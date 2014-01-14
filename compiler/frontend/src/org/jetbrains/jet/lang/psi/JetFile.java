@@ -129,8 +129,8 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
 
     @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitorVoid) {
-            accept((JetVisitorVoid) visitor);
+        if (visitor instanceof JetVisitor) {
+            accept((JetVisitor) visitor, null);
         }
         else {
             visitor.visitFile(this);
@@ -140,11 +140,6 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     @Override
     public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
         JetPsiUtil.visitChildren(this, visitor, data);
-    }
-
-    @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitJetFile(this);
     }
 
     @Override

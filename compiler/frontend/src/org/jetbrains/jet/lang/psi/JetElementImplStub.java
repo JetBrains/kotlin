@@ -50,8 +50,8 @@ public class JetElementImplStub<T extends StubElement> extends StubBasedPsiEleme
 
     @Override
     public final void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitorVoid) {
-            accept((JetVisitorVoid) visitor);
+        if (visitor instanceof JetVisitor) {
+            accept((JetVisitor) visitor, null);
         }
         else {
             visitor.visitElement(this);
@@ -67,11 +67,6 @@ public class JetElementImplStub<T extends StubElement> extends StubBasedPsiEleme
             }
             child = child.getNextSibling();
         }
-    }
-
-    @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitJetElement(this);
     }
 
     @Override
