@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
-import org.jetbrains.kotlin.util.iif
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver

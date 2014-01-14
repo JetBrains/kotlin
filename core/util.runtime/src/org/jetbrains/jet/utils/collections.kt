@@ -63,3 +63,5 @@ public fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) bo
 public fun <T> Iterable<Iterable<T>>.flatten(): List<T> {
     return flatMapTo(ArrayList<T>(), {it})
 }
+
+public fun <T: Any> emptyOrSingletonList(item: T?): List<T> = if (item == null) listOf() else listOf(item)

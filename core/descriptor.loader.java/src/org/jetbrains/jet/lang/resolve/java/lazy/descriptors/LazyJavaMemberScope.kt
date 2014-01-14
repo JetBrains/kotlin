@@ -5,7 +5,6 @@ import org.jetbrains.jet.storage.NotNullLazyValue
 import org.jetbrains.jet.lang.resolve.name.LabelName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.utils.emptyList
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
@@ -21,7 +20,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.java.lazy.hasNotNullAnnotation
 import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeAttributes
 import org.jetbrains.jet.lang.resolve.java.lazy.hasMutableAnnotation
-import org.jetbrains.kotlin.util.iif
 import org.jetbrains.jet.lang.resolve.java.lazy.hasReadOnlyAnnotation
 import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver
@@ -172,7 +170,7 @@ public abstract class LazyJavaMemberScope(
             val (index, javaParameter) = pair
 
             val typeUsage = LazyJavaTypeAttributes(c, javaParameter, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT) {
-                    c.hasMutableAnnotation(javaParameter).iif(TypeUsage.MEMBER_SIGNATURE_COVARIANT, TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT)
+                    if (c.hasMutableAnnotation(javaParameter)) TypeUsage.MEMBER_SIGNATURE_COVARIANT else TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT
             }
 
             val (outType, varargElementType) =
@@ -269,7 +267,7 @@ public abstract class LazyJavaMemberScope(
     protected open fun getAllPropertyNames(): Collection<Name> = memberIndex().getAllFieldNames()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
-    override fun getDeclarationsByLabel(labelName: LabelName) = emptyList<DeclarationDescriptor>()
+    override fun getDeclarationsByLabel(labelName: LabelName) = listOf<DeclarationDescriptor>()
 
     override fun getClassifiers(name: Name) = emptyOrSingletonList(getClassifier(name))
 

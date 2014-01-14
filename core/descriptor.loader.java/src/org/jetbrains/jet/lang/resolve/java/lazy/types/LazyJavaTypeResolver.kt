@@ -25,8 +25,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.types.*
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.util.iif
-import org.jetbrains.kotlin.util.eq
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPrimitiveType
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType
@@ -74,7 +72,7 @@ class LazyJavaTypeResolver(
 
         val projectionKind = if (attr.howThisTypeIsUsed == MEMBER_SIGNATURE_CONTRAVARIANT && !isVararg) OUT_VARIANCE else INVARIANT
 
-        val howArgumentTypeIsUsed = isVararg.iif(MEMBER_SIGNATURE_CONTRAVARIANT, TYPE_ARGUMENT)
+        val howArgumentTypeIsUsed = if (isVararg) MEMBER_SIGNATURE_CONTRAVARIANT else TYPE_ARGUMENT
         val componentType = transformJavaType(javaComponentType, howArgumentTypeIsUsed.toAttributes())
         return TypeUtils.makeNullableAsSpecified(KotlinBuiltIns.getInstance().getArrayType(projectionKind, componentType), !attr.isMarkedNotNull)
     }
@@ -83,7 +81,7 @@ class LazyJavaTypeResolver(
             c: LazyJavaResolverContext,
             val typeParameter: TypeParameterDescriptor
     ) : TypeProjectionBase() {
-        override fun getProjectionKind() = typeParameter.getVariance().eq(OUT_VARIANCE).iif(INVARIANT, OUT_VARIANCE)
+        override fun getProjectionKind() = if (typeParameter.getVariance() == OUT_VARIANCE) INVARIANT else OUT_VARIANCE
         override fun getType() = typeParameter.getUpperBoundsAsType()
     }
 
@@ -191,7 +189,7 @@ class LazyJavaTypeResolver(
                 // Most of the time this means there is an error in the Java code
                 return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.getName().asString())) }
             }
-            var howTheProjectionIsUsed = attr.howThisTypeIsUsed.eq(SUPERTYPE).iif(SUPERTYPE_ARGUMENT, TYPE_ARGUMENT)
+            var howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
             return javaType.getTypeArguments().withIndices().map {
                 javaTypeParameter ->
                 val (i, t) = javaTypeParameter
@@ -213,7 +211,7 @@ class LazyJavaTypeResolver(
                     if (bound == null)
                         LazyStarProjection(c, typeParameter)
                     else {
-                        var projectionKind = javaType.isExtends().iif(OUT_VARIANCE, IN_VARIANCE)
+                        var projectionKind = if (javaType.isExtends()) OUT_VARIANCE else IN_VARIANCE
                         if (projectionKind == typeParameter.getVariance()) {
                             projectionKind = Variance.INVARIANT
                         }

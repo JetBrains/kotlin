@@ -16,20 +16,9 @@
 
 package org.jetbrains.kotlin.util
 
-fun Boolean.iif<T>(then: T, _else: T): T = if (this) then else _else
-
 fun <T: Any, R> T?.inn(then: (T) -> R, _else: R): R = if (this != null) then(this) else _else
 
-// These two functions are needed in conjunction with iif:
-// foo.eq(bar).iif(a, b)
-fun <T> T.eq(eq: T): Boolean = this == eq
-fun <T> T.neq(eq: T): Boolean = this != eq
-
-fun <T: Any> T?.sure(message: String): T {
-    if (this == null)
-        throw AssertionError(message)
-    return this
-}
+fun <T: Any> T?.sure(message: String): T = this ?: throw AssertionError(message)
 
 fun <T> T.printAndReturn(message: String = ""): T {
     if (!message.isEmpty()) {

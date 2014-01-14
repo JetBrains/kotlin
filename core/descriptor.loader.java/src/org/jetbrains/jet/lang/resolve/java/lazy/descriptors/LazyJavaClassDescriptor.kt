@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
-import org.jetbrains.kotlin.util.iif
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaEnumClassObjectDescriptor
 import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
