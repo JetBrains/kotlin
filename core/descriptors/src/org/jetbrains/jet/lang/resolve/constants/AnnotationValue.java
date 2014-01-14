@@ -28,6 +28,14 @@ public class AnnotationValue extends CompileTimeConstant<AnnotationDescriptor> {
         super(value);
     }
 
+    @NotNull
+    @Override
+    public AnnotationDescriptor getValue() {
+        AnnotationDescriptor value = super.getValue();
+        assert value != null : "Guaranteed by constructor";
+        return value;
+    }
+
     @Override
     @NotNull
     public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {

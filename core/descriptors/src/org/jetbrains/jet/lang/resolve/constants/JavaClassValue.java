@@ -27,6 +27,7 @@ public class JavaClassValue extends CompileTimeConstant<JetType> {
         super(value);
     }
 
+    @NotNull
     @Override
     public JetType getValue() {
         return value.getArguments().iterator().next().getType();

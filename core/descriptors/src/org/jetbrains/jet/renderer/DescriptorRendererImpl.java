@@ -19,12 +19,15 @@ package org.jetbrains.jet.renderer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.DefaultAnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -34,9 +37,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_TYPE_PARAMETER;
-import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
+import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean shortNames;
@@ -89,7 +90,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.textFormat = textFormat;
         this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
     }
-
 
     /* FORMATTING */
     @NotNull
@@ -317,13 +317,70 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             assert annotationClass != null;
 
             if (!excludedAnnotationClasses.contains(DescriptorUtils.getFqNameSafe(annotationClass))) {
-                builder.append(renderType(annotation.getType()));
-                if (verbose) {
-                    builder.append("(").append(StringUtil.join(DescriptorUtils.getSortedValueArguments(annotation, this), ", ")).append(")");
-                }
-                builder.append(" ");
+                builder.append(renderAnnotation(annotation)).append(" ");
             }
         }
+    }
+
+    @Override
+    @NotNull
+    public String renderAnnotation(@NotNull AnnotationDescriptor annotation) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(renderType(annotation.getType()));
+        if (verbose) {
+            sb.append("(").append(StringUtil.join(renderAndSortAnnotationArguments(annotation), ", ")).append(")");
+        }
+        return sb.toString();
+    }
+
+    @NotNull
+    private List<String> renderAndSortAnnotationArguments(@NotNull AnnotationDescriptor descriptor) {
+        List<String> resultList = Lists.newArrayList();
+        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : descriptor.getAllValueArguments().entrySet()) {
+            CompileTimeConstant<?> value = entry.getValue();
+            String typeSuffix = ": " + renderType(value.getType(KotlinBuiltIns.getInstance()));
+            resultList.add(entry.getKey().getName().asString() + " = " + renderConstant(value) + typeSuffix);
+        }
+        Collections.sort(resultList);
+        return resultList;
+    }
+
+    @NotNull
+    private String renderConstant(@NotNull CompileTimeConstant<?> value) {
+        return value.accept(
+                new DefaultAnnotationArgumentVisitor<String, Void>() {
+                    @Override
+                    public String visitValue(@NotNull CompileTimeConstant<?> value, Void data) {
+                        return value.toString();
+                    }
+
+                    @Override
+                    public String visitArrayValue(ArrayValue value, Void data) {
+                        return "{" +
+                               StringUtil.join(
+                                value.getValue(),
+                                new Function<CompileTimeConstant<?>, String>() {
+                                    @Override
+                                    public String fun(CompileTimeConstant<?> constant) {
+                                        return renderConstant(constant);
+                                    }
+                                },
+                                ", ") +
+                               "}";
+                    }
+
+                    @Override
+                    public String visitAnnotationValue(AnnotationValue value, Void data) {
+                        return renderAnnotation(value.getValue());
+                    }
+
+                    @Override
+                    public String visitJavaClassValue(JavaClassValue value, Void data) {
+                        return renderType(value.getValue()) + ".class";
+                    }
+                },
+                null
+        );
     }
 
     private void renderVisibility(@NotNull Visibility visibility, @NotNull StringBuilder builder) {

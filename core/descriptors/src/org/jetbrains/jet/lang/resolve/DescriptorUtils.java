@@ -23,9 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -35,9 +33,11 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
@@ -343,23 +343,6 @@ public class DescriptorUtils {
     @NotNull
     public static Visibility getSyntheticClassObjectVisibility() {
         return Visibilities.PUBLIC;
-    }
-
-    @NotNull
-    public static List<String> getSortedValueArguments(
-            @NotNull AnnotationDescriptor descriptor,
-            @Nullable DescriptorRenderer rendererForTypesIfNecessary
-    ) {
-        List<String> resultList = Lists.newArrayList();
-        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : descriptor.getAllValueArguments().entrySet()) {
-            CompileTimeConstant<?> value = entry.getValue();
-            String typeSuffix = rendererForTypesIfNecessary == null
-                                ? ""
-                                : ": " + rendererForTypesIfNecessary.renderType(value.getType(KotlinBuiltIns.getInstance()));
-            resultList.add(entry.getKey().getName().asString() + " = " + value.toString() + typeSuffix);
-        }
-        Collections.sort(resultList);
-        return resultList;
     }
 
     @Nullable

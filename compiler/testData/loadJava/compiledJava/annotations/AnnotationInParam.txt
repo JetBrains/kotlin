@@ -2,15 +2,15 @@ package test
 
 public trait AnnotationInParam : java.lang.Object {
     
-    test.AnnotationInParam.MyAnnotationWithParam(value = MyAnnotation[value = "test"]: test.AnnotationInParam.MyAnnotation) public open class A : java.lang.Object {
+    test.AnnotationInParam.MyAnnotationWithParam(value = test.AnnotationInParam.MyAnnotation(value = "test": jet.String): test.AnnotationInParam.MyAnnotation) public open class A : java.lang.Object {
         public constructor A()
     }
     
-    test.AnnotationInParam.MyAnnotationWithParam2(value = MyAnnotation2[value = ["test", "test2"]]: test.AnnotationInParam.MyAnnotation2) public open class B : java.lang.Object {
+    test.AnnotationInParam.MyAnnotationWithParam2(value = test.AnnotationInParam.MyAnnotation2(value = {"test", "test2"}: jet.Array<jet.String>?): test.AnnotationInParam.MyAnnotation2) public open class B : java.lang.Object {
         public constructor B()
     }
     
-    test.AnnotationInParam.MyAnnotationWithParam3(value = MyAnnotation3[first = "f", second = "s"]: test.AnnotationInParam.MyAnnotation3) public open class C : java.lang.Object {
+    test.AnnotationInParam.MyAnnotationWithParam3(value = test.AnnotationInParam.MyAnnotation3(first = "f": jet.String, second = "s": jet.String): test.AnnotationInParam.MyAnnotation3) public open class C : java.lang.Object {
         public constructor C()
     }
     

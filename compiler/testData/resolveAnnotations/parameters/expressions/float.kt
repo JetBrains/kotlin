@@ -9,4 +9,4 @@ annotation class Ann(
 
 Ann(1.toFloat() + 1.toFloat(), 1.toFloat() + 1, 1.toFloat() + 1.0) class MyClass
 
-// EXPECTED: Ann[d1 = 2.0.toFloat(): jet.Float, d2 = 2.0.toFloat(): jet.Float, d3 = 2.0.toDouble(): jet.Double]
+// EXPECTED: Ann(d1 = 2.0.toFloat(): Float, d2 = 2.0.toFloat(): Float, d3 = 2.0.toDouble(): Double)

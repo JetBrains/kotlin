@@ -8,7 +8,7 @@ public open class ClassObjectArrayInParam : java.lang.Object {
         public abstract fun value(): jet.Array<java.lang.Class<out jet.Any?>>?
     }
     
-    test.ClassObjectArrayInParam.Anno(value = [ClassObjectArrayInParam?.class, Nested?.class, String?.class]: jet.Array<java.lang.Class<out jet.Any?>>?) public open class Nested : java.lang.Object {
+    test.ClassObjectArrayInParam.Anno(value = {test.ClassObjectArrayInParam?.class, test.ClassObjectArrayInParam.Nested?.class, jet.String?.class}: jet.Array<java.lang.Class<out jet.Any?>>?) public open class Nested : java.lang.Object {
         public constructor Nested()
     }
 }

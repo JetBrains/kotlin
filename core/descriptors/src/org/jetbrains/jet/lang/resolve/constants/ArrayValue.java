@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -31,6 +30,14 @@ public class ArrayValue extends CompileTimeConstant<List<CompileTimeConstant<?>>
     public ArrayValue(@NotNull List<CompileTimeConstant<?>> value, @NotNull JetType type) {
         super(value);
         this.type = type;
+    }
+
+    @NotNull
+    @Override
+    public List<CompileTimeConstant<?>> getValue() {
+        List<CompileTimeConstant<?>> value = super.getValue();
+        assert value != null : "Guaranteed by constructor";
+        return value;
     }
 
     @NotNull
