@@ -158,7 +158,15 @@ public class MethodInliner {
                         List<CapturedParamInfo> recaptured = invocation.getRecaptured();
                         for (CapturedParamInfo capturedParamInfo : recaptured) {
                             Type type = capturedParamInfo.getType();
-                            super.visitVarInsn(type.getOpcode(Opcodes.ILOAD), capturedParamInfo.getIndex());
+                            List<CapturedParamInfo> contextCaptured = MethodInliner.this.parameters.getCaptured();
+                            CapturedParamInfo result = null;
+                            for (CapturedParamInfo info : contextCaptured) {
+                                //TODO more sofisticated check
+                                if (info.getFieldName().equals(capturedParamInfo.getFieldName())) {
+                                    result = info;
+                                }
+                            }
+                            super.visitVarInsn(type.getOpcode(Opcodes.ILOAD), result.getIndex());
                         }
                         super.visitMethodInsn(opcode, invocation.getNewLambdaType().getInternalName(), name, invocation.getNewConstructorDescriptor());
                     } else {
