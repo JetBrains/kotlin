@@ -27,10 +27,9 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
 import com.intellij.ui.PopupHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
 
 import javax.swing.*;
 import java.util.Comparator;
@@ -75,7 +74,7 @@ public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
 
     @Override
     protected boolean isApplicableElement(@NotNull PsiElement element) {
-        return element instanceof JetNamedDeclaration || element instanceof PsiMethod;
+        return HierarchyUtils.IS_CALL_HIERARCHY_ELEMENT.invoke(element);
     }
 
     @Override
