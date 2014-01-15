@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.*;
 
+import static org.jetbrains.jet.codegen.asm.InlineCodegenUtil.isLambdaClass;
 import static org.jetbrains.jet.codegen.asm.InlineCodegenUtil.isLambdaConstructorCall;
 import static org.jetbrains.jet.codegen.asm.InlineCodegenUtil.isInvokeOnInlinable;
 
@@ -40,7 +41,10 @@ public class MethodInliner {
 
     private final List<InlinableAccess> inlinableInvocation = new ArrayList<InlinableAccess>();
 
-    private final List<ConstructorInvocation> constructorInvocation = new ArrayList<ConstructorInvocation>();
+    //keeps order
+    private final List<ConstructorInvocation> constructorInvocationList = new ArrayList<ConstructorInvocation>();
+    //current state
+    private final Map<String, ConstructorInvocation> constructorInvocation = new LinkedHashMap<String, ConstructorInvocation>();
 
     /*
      *
@@ -100,24 +104,34 @@ public class MethodInliner {
 
         MethodNode resultNode = new MethodNode(node.access, node.name, node.desc, node.signature, null);
 
+        final Iterator<ConstructorInvocation> iterator = constructorInvocationList.iterator();
+
         //TODO add reset to counter
         InlineAdapter inliner = new InlineAdapter(resultNode, parameters.totalSize()) {
 
+            private ConstructorInvocation invocation;
             @Override
             public void anew(Type type) {
                 if (isLambdaConstructorCall(type.getInternalName(), "<init>")) {
-                    ConstructorInvocation invocation = constructorInvocation.get(0);
+                    invocation = iterator.next();
+
                     if (invocation.isInlinable()) {
                         LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(), parent.subInline(parent.nameGenerator));
                         transformer.doTransform(invocation);
-
                         super.anew(transformer.getNewLambdaType());
+                        constructorInvocation.put(invocation.getOwnerInternalName(), invocation);
                     } else {
                         super.anew(type);
                     }
                 } else {
                     super.anew(type);
                 }
+            }
+
+            //for local function support
+            @Override
+            public void checkcast(Type type) {
+                super.checkcast(changeOwnerIfLocalFun(type));
             }
 
             @Override
@@ -152,7 +166,7 @@ public class MethodInliner {
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
                 }
                 else if (isLambdaConstructorCall(owner, name)) { //TODO add method
-                    ConstructorInvocation invocation = constructorInvocation.remove(0);
+                    assert invocation != null : "<init> call not corresponds to new call" + owner + " " + name;
                     if (invocation.isInlinable()) {
                         //put additional captured parameters on stack
                         List<CapturedParamInfo> recaptured = invocation.getRecaptured();
@@ -169,12 +183,13 @@ public class MethodInliner {
                             super.visitVarInsn(type.getOpcode(Opcodes.ILOAD), result.getIndex());
                         }
                         super.visitMethodInsn(opcode, invocation.getNewLambdaType().getInternalName(), name, invocation.getNewConstructorDescriptor());
+                        invocation = null;
                     } else {
                         super.visitMethodInsn(opcode, owner, name, desc);
                     }
                 }
                 else {
-                    super.visitMethodInsn(opcode, owner, name, desc);
+                    super.visitMethodInsn(opcode, changeOwnerIfLocalFun(owner), name, desc);
                 }
             }
         };
@@ -302,7 +317,7 @@ public class MethodInliner {
                     }
 
                     ConstructorInvocation invocation = new ConstructorInvocation(owner, infos);
-                    constructorInvocation.add(invocation);
+                    constructorInvocationList.add(invocation);
                 }
             }
             cur = cur.getNext();
@@ -467,5 +482,27 @@ public class MethodInliner {
             }
             mv.visitVarInsn(next.getOpcode(Opcodes.ISTORE), shift);
         }
+    }
+
+    private Type changeOwnerIfLocalFun(Type oldType) {
+        if (isLambdaClass(oldType.getInternalName())) {
+            ConstructorInvocation invocation1 = constructorInvocation.get(oldType.getInternalName());
+            if (invocation1 != null && invocation1.isInlinable()) {
+                return invocation1.getNewLambdaType();
+            }
+        }
+
+        return oldType;
+    }
+
+    private String changeOwnerIfLocalFun(String oldType) {
+        if (isLambdaClass(oldType)) {
+            ConstructorInvocation invocation1 = constructorInvocation.get(oldType);
+            if (invocation1 != null && invocation1.isInlinable()) {
+                return invocation1.getNewLambdaType().getInternalName();
+            }
+        }
+
+        return oldType;
     }
 }
