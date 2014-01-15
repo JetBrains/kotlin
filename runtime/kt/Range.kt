@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package jet;
+package jet
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+public trait Range<in T : Comparable<T>> {
+    public val start: T
 
-@AssertInvisibleInResolver
-public interface Range<T extends Comparable<T>> {
-    T getStart();
-    T getEnd();
-    boolean contains(T item);
+    public val end: T
+
+    public fun contains(item: T): Boolean
 }

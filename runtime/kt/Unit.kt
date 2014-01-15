@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package jet;
+package jet
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+public class Unit private() {
+    fun toString() = "Unit.VALUE"
 
-@AssertInvisibleInResolver
-public interface Progression<N> extends Iterable<N> {
-    N getStart();
-    N getEnd();
-    Number getIncrement();
+    class object {
+        // TODO: remove suppression after a successful bootstrap
+        suppress("INVISIBLE_MEMBER")
+        public val VALUE: Unit = Unit()
+    }
 }
