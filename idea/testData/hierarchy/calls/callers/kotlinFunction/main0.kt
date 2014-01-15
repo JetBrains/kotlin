@@ -1,31 +1,37 @@
-class KA {
-    val name = "A"
-    fun <caret>foo(s: String): String = "A: $s"
+open class KBase {
+    open fun foo(s: String): String = s
 }
 
-fun packageFun(s: String): String = KA().foo(s)
+class KA: KBase() {
+    val name = "A"
+    override fun <caret>foo(s: String): String = "A: $s"
+}
 
-val packageVal = KA().foo("")
+fun packageFun(s: String): String = KBase().foo("") + KA().foo(s)
+
+val packageVal = KBase().foo("") + KA().foo("")
 
 class KClient {
     {
         KA().foo("")
+        KBase().foo("")
     }
 
     class object {
-        val a = KA().foo("")
+        val a = KBase().foo("") + KA().foo("")
     }
 
     val bar: String
-        get() = KA().foo("")
+        get() = KBase().foo("") + KA().foo("")
 
     fun bar() {
-        fun localFun() = KA().foo("")
+        fun localFun() = KBase().foo("") + KA().foo("")
 
         KA().foo("")
+        KBase().foo("")
     }
 }
 
 object KClientObj {
-    val a = KA().foo("")
+    val a = KBase().foo("") + KA().foo("")
 }
