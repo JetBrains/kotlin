@@ -121,28 +121,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
     val jetSettings = settings.getCustomSettings(javaClass<JetCodeStyleSettings>())!!
     val jetCommonSettings = settings.getCommonSettings(JetLanguage.INSTANCE)!!
     return rules(settings) {
-        custom {
-            val lbraceRuleForControlStructure: (ASTBlock, ASTBlock, ASTBlock) -> Spacing? = {
-                parent, left, right ->
-                val blockOrExpression = right.getNode()!!.getFirstChildNode()
-                if (blockOrExpression != null && blockOrExpression.getElementType() == BLOCK) {
-                    val leftBrace = blockOrExpression.getFirstChildNode()
-                    when {
-                        leftBrace != null && leftBrace.getElementType() == LBRACE -> {
-                            val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace)
-                            val isAfterEolComment = previousLeaf != null && (previousLeaf.getElementType() == EOL_COMMENT)
-                            val keepLineBreaks = jetSettings.LBRACE_ON_NEXT_LINE || isAfterEolComment
-                            val minimumLF = if (jetSettings.LBRACE_ON_NEXT_LINE) 1 else 0
-                            Spacing.createSpacing(1, 1, minimumLF, keepLineBreaks, 0)
-                        }
-                        else -> null
-                    }
-                }
-                else null
-            }
-            inPosition(parent = IF, right = THEN).customRule(lbraceRuleForControlStructure)
-            inPosition(parent = IF, right = ELSE).customRule(lbraceRuleForControlStructure)
-        }
         simple {
             // ============ Line breaks ==============
             after(PACKAGE_DIRECTIVE).blankLines(1)
@@ -219,12 +197,34 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_EXPRESSION, CALL_EXPRESSION).spaces(1)
 
-            aroundInside(ELSE_KEYWORD, IF).spaces(1)
-            betweenInside(RPAR, THEN, IF).spaces(1)
+            beforeInside(ELSE_KEYWORD, IF).spaces(1)
 
             between(RPAR, BODY).spaces(1)
         }
         custom {
+            val lbraceRuleForControlStructure: (ASTBlock, ASTBlock, ASTBlock) -> Spacing? = {
+                parent, left, right ->
+                val blockOrExpression = right.getNode()!!.getFirstChildNode()
+                val noBlockSpacing = Spacing.createSpacing(1, 1, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
+                if (blockOrExpression != null && blockOrExpression.getElementType() == BLOCK) {
+                    val leftBrace = blockOrExpression.getFirstChildNode()
+                    when {
+                        leftBrace != null && leftBrace.getElementType() == LBRACE -> {
+                            val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace)
+                            val isAfterEolComment = previousLeaf != null && (previousLeaf.getElementType() == EOL_COMMENT)
+                            val keepLineBreaks = jetSettings.LBRACE_ON_NEXT_LINE || isAfterEolComment
+                            val minimumLF = if (jetSettings.LBRACE_ON_NEXT_LINE) 1 else 0
+                            Spacing.createSpacing(1, 1, minimumLF, keepLineBreaks, 0)
+                        }
+                        else -> noBlockSpacing
+                    }
+                }
+                else noBlockSpacing
+            }
+            inPosition(parent = IF, right = THEN).customRule(lbraceRuleForControlStructure)
+            inPosition(parent = IF, right = ELSE).customRule(lbraceRuleForControlStructure)
+
+
             val spacesInSimpleFunction = if (jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD) 1 else 0
             inPosition(parent = FUNCTION_LITERAL,
                        left = LBRACE,
