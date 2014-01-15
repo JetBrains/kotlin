@@ -387,7 +387,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractReferenceResolveTest>()) {
-            model("resolve/references")
+            model("resolve/references", pattern = """^([^\.]+)\.kt$""")
         }
 
         testClass(javaClass<AbstractReferenceResolveWithLibTest>()) {

@@ -1,3 +1,3 @@
 package util
 
-fun H.foo(other: H) = ""
+fun h.H.foo(other: h.H) = ""

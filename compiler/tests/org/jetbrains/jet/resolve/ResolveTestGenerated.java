@@ -57,6 +57,11 @@ public class ResolveTestGenerated extends AbstractResolveTest {
         doTest("compiler/testData/resolve/DefaultParamsOfLocalFunctions.resolve");
     }
     
+    @TestMetadata("DontImportRootScope.resolve")
+    public void testDontImportRootScope() throws Exception {
+        doTest("compiler/testData/resolve/DontImportRootScope.resolve");
+    }
+    
     @TestMetadata("ErrorSupertype.resolve")
     public void testErrorSupertype() throws Exception {
         doTest("compiler/testData/resolve/ErrorSupertype.resolve");
@@ -70,6 +75,11 @@ public class ResolveTestGenerated extends AbstractResolveTest {
     @TestMetadata("FunctionVariable.resolve")
     public void testFunctionVariable() throws Exception {
         doTest("compiler/testData/resolve/FunctionVariable.resolve");
+    }
+    
+    @TestMetadata("ImportingRootScopeWhenProcessingImports.resolve")
+    public void testImportingRootScopeWhenProcessingImports() throws Exception {
+        doTest("compiler/testData/resolve/ImportingRootScopeWhenProcessingImports.resolve");
     }
     
     @TestMetadata("kt304.resolve")

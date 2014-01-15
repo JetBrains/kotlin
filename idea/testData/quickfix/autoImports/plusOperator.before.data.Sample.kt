@@ -1,3 +1,3 @@
 package util
 
-fun H?.plus(s: String) = ""
+fun h.H?.plus(s: String) = ""

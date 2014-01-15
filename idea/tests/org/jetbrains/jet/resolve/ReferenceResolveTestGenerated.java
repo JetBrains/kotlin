@@ -34,7 +34,7 @@ import org.jetbrains.jet.resolve.AbstractReferenceResolveTest;
 @InnerTestClasses({ReferenceResolveTestGenerated.DelegatedPropertyAccessors.class, ReferenceResolveTestGenerated.ForLoopIn.class, ReferenceResolveTestGenerated.Invoke.class})
 public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest {
     public void testAllFilesPresentInReferences() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references"), Pattern.compile("^(.+)\\.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
     @TestMetadata("AnnotationForClass.kt")
@@ -70,6 +70,31 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("CtrlClickResolve.kt")
     public void testCtrlClickResolve() throws Exception {
         doTest("idea/testData/resolve/references/CtrlClickResolve.kt");
+    }
+    
+    @TestMetadata("DontImportRootScope.kt")
+    public void testDontImportRootScope() throws Exception {
+        doTest("idea/testData/resolve/references/DontImportRootScope.kt");
+    }
+    
+    @TestMetadata("FakeJavaLang1.kt")
+    public void testFakeJavaLang1() throws Exception {
+        doTest("idea/testData/resolve/references/FakeJavaLang1.kt");
+    }
+    
+    @TestMetadata("FakeJavaLang2.kt")
+    public void testFakeJavaLang2() throws Exception {
+        doTest("idea/testData/resolve/references/FakeJavaLang2.kt");
+    }
+    
+    @TestMetadata("FakeJavaLang3.kt")
+    public void testFakeJavaLang3() throws Exception {
+        doTest("idea/testData/resolve/references/FakeJavaLang3.kt");
+    }
+    
+    @TestMetadata("FakeJavaLang4.kt")
+    public void testFakeJavaLang4() throws Exception {
+        doTest("idea/testData/resolve/references/FakeJavaLang4.kt");
     }
     
     @TestMetadata("GenericFunctionParameter.kt")
@@ -176,7 +201,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @InnerTestClasses({DelegatedPropertyAccessors.InSource.class, DelegatedPropertyAccessors.InStandardLibrary.class})
     public static class DelegatedPropertyAccessors extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInDelegatedPropertyAccessors() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/delegatedPropertyAccessors"), Pattern.compile("^(.+)\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/delegatedPropertyAccessors"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
         
         @TestMetadata("unresolved.kt")
@@ -187,7 +212,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         @TestMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inSource")
         public static class InSource extends AbstractReferenceResolveTest {
             public void testAllFilesPresentInInSource() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/delegatedPropertyAccessors/inSource"), Pattern.compile("^(.+)\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/delegatedPropertyAccessors/inSource"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
             }
             
             @TestMetadata("getExtension.kt")
@@ -225,7 +250,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         @TestMetadata("idea/testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary")
         public static class InStandardLibrary extends AbstractReferenceResolveTest {
             public void testAllFilesPresentInInStandardLibrary() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^(.+)\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
             }
             
             @TestMetadata("lazy.kt")
@@ -253,7 +278,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @InnerTestClasses({ForLoopIn.InBuiltIns.class, ForLoopIn.InLibrary.class, ForLoopIn.InSource.class})
     public static class ForLoopIn extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInForLoopIn() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/forLoopIn"), Pattern.compile("^(.+)\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/forLoopIn"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
         
         @TestMetadata("unresolvedIterator.kt")
@@ -264,7 +289,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         @TestMetadata("idea/testData/resolve/references/forLoopIn/inBuiltIns")
         public static class InBuiltIns extends AbstractReferenceResolveTest {
             public void testAllFilesPresentInInBuiltIns() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/forLoopIn/inBuiltIns"), Pattern.compile("^(.+)\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/forLoopIn/inBuiltIns"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
             }
             
             @TestMetadata("extension.kt")
@@ -282,7 +307,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         @TestMetadata("idea/testData/resolve/references/forLoopIn/inLibrary")
         public static class InLibrary extends AbstractReferenceResolveTest {
             public void testAllFilesPresentInInLibrary() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/forLoopIn/inLibrary"), Pattern.compile("^(.+)\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/forLoopIn/inLibrary"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
             }
             
             @TestMetadata("extension.kt")
@@ -300,7 +325,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
             }
             
             public void testAllFilesPresentInInSource() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/forLoopIn/inSource"), Pattern.compile("^(.+)\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/forLoopIn/inSource"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
             }
             
             @TestMetadata("allMembers.kt")
@@ -328,7 +353,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
     @TestMetadata("idea/testData/resolve/references/invoke")
     public static class Invoke extends AbstractReferenceResolveTest {
         public void testAllFilesPresentInInvoke() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/resolve/references/invoke"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
         
         @TestMetadata("lambdaAndParens.kt")

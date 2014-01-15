@@ -1,3 +1,3 @@
 package util
 
-fun H.plus() = ""
+fun h.H.plus() = ""

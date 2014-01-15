@@ -1,4 +1,4 @@
 package util
 
-fun H.inc(): H {
+fun h.H.inc(): h.H {
 }

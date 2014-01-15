@@ -217,14 +217,9 @@ public class TopDownAnalyzer {
         // "depend on" builtins module
         ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
-        // Import a scope that contains all top-level packages that come from dependencies
-        // This makes the package visible at all, does not import themselves
-        PackageViewDescriptor rootPackage = moduleDescriptor.getPackage(FqName.ROOT);
-        assert rootPackage != null : "Coulnd't find root package for " + moduleDescriptor;
-
         // dummy builder is used because "root" is module descriptor,
         // packages added to module explicitly in
-        doProcess(rootPackage.getMemberScope(), new PackageLikeBuilderDummy(), files);
+        doProcess(JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor), new PackageLikeBuilderDummy(), files);
     }
 
 

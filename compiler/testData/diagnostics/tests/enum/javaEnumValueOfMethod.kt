@@ -4,8 +4,6 @@ public enum A {
 }
 
 // FILE: test.kt
-package test
-
 fun main() {
     A.valueOf("ENTRY"): A
 }

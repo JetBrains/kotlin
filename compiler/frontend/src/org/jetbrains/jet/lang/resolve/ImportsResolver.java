@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -83,16 +82,16 @@ public class ImportsResolver {
     private void processImports(@NotNull LookupMode lookupMode) {
         for (JetFile file : context.getPackageFragments().keySet()) {
             WritableScope fileScope = context.getFileScopes().get(file);
-            processImportsInFile(lookupMode, fileScope, Lists.newArrayList(file.getImportDirectives()));
+            processImportsInFile(lookupMode, fileScope, Lists.newArrayList(file.getImportDirectives()), JetPsiUtil.getFQName(file).isRoot());
         }
         for (JetScript script : context.getScripts().keySet()) {
             WritableScope scriptScope = context.getScriptScopes().get(script);
-            processImportsInFile(lookupMode, scriptScope, script.getImportDirectives());
+            processImportsInFile(lookupMode, scriptScope, script.getImportDirectives(), true);
         }
     }
 
-    private void processImportsInFile(@NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives) {
-        processImportsInFile(lookupMode, scope, directives, moduleDescriptor, trace, qualifiedExpressionResolver, importsFactory);
+    private void processImportsInFile(@NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives, boolean inRootPackage) {
+        processImportsInFile(lookupMode, scope, directives, moduleDescriptor, trace, qualifiedExpressionResolver, importsFactory, inRootPackage);
     }
 
     private static void processImportsInFile(
@@ -102,9 +101,10 @@ public class ImportsResolver {
             @NotNull ModuleDescriptor module,
             @NotNull BindingTrace trace,
             @NotNull QualifiedExpressionResolver qualifiedExpressionResolver,
-            @NotNull JetImportsFactory importsFactory
+            @NotNull JetImportsFactory importsFactory,
+            boolean inRootPackage
     ) {
-        @NotNull JetScope rootScope = module.getPackage(FqName.ROOT).getMemberScope();
+        @NotNull JetScope rootScope = JetModuleUtil.getSubpackagesOfRootScope(module);
 
         Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(fileScope);
         if (lookupMode == LookupMode.EVERYTHING) {
@@ -122,10 +122,12 @@ public class ImportsResolver {
 
         Map<JetImportDirective, Collection<? extends DeclarationDescriptor>> resolvedDirectives = Maps.newHashMap();
 
+        JetScope rootScopeForFile = JetModuleUtil.getImportsResolutionScope(module, inRootPackage);
+
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
-                qualifiedExpressionResolver.processImportReference(importDirective, rootScope, fileScope, delayedImporter,
-                                                                   trace, module, lookupMode);
+                    qualifiedExpressionResolver.processImportReference(importDirective, rootScopeForFile, fileScope, delayedImporter,
+                                                                       trace, module, lookupMode);
             if (!descriptors.isEmpty()) {
                 resolvedDirectives.put(importDirective, descriptors);
             }

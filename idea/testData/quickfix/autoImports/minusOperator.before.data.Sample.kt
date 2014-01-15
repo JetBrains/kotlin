@@ -1,3 +1,3 @@
 package util
 
-fun H?.minus(s: String) = ""
+fun h.H?.minus(s: String) = ""

@@ -1,3 +1,3 @@
 package util
 
-fun H.div(i: Int) = 3
+fun h.H.div(i: Int) = 3

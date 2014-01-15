@@ -1,6 +1,8 @@
 // "Import" "true"
 // ERROR: Unresolved reference: ++
 
+package h
+
 import util.inc
 
 trait H

@@ -1,6 +1,8 @@
 // "Import" "true"
 // ERROR: Unresolved reference: foo
 
+package h
+
 import util.foo
 
 trait H

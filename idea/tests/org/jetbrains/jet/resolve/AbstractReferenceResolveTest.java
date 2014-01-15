@@ -32,6 +32,7 @@ import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
+import java.io.File;
 import java.util.List;
 
 public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -63,7 +64,14 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
     }
 
     protected void doTest(String path) {
-        myFixture.configureByFile(path);
+        assert path.endsWith(".kt") : path;
+        String extraFile = path.replace(".kt", ".Data.kt");
+        if (new File(extraFile).exists()) {
+            myFixture.configureByFiles(path, extraFile);
+        }
+        else {
+            myFixture.configureByFile(path);
+        }
 
         if (InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), MULTIRESOLVE)) {
             doMultiResolveTest();

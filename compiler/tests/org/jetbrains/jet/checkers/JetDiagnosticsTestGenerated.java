@@ -5968,6 +5968,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/scopes/AmbiguousNonExtensions.kt");
             }
             
+            @TestMetadata("DontImportRootScope.kt")
+            public void testDontImportRootScope() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/scopes/DontImportRootScope.kt");
+            }
+            
             @TestMetadata("ImportFromCurrentWithDifferentName.kt")
             public void testImportFromCurrentWithDifferentName() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/scopes/ImportFromCurrentWithDifferentName.kt");
@@ -6146,6 +6151,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt955.kt")
             public void testKt955() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/scopes/kt955.kt");
+            }
+            
+            @TestMetadata("NoAmbiguityBetweenRootAndPackage.kt")
+            public void testNoAmbiguityBetweenRootAndPackage() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/scopes/NoAmbiguityBetweenRootAndPackage.kt");
             }
             
             @TestMetadata("stopResolutionOnAmbiguity.kt")

@@ -16,7 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.SubpackagesScope;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -26,5 +31,20 @@ public class JetModuleUtil {
     public static PackageType getRootPackageType(JetElement expression) {
         // TODO: this is a stub: at least the modules' root packages must be indexed here
         return new PackageType(SpecialNames.ROOT_PACKAGE, JetScope.EMPTY, ReceiverValue.NO_RECEIVER);
+    }
+
+    public static JetScope getSubpackagesOfRootScope(@NotNull ModuleDescriptor module) {
+        return getRootPackageScope(module, /* scopeIncludingMembers = */ false);
+    }
+
+    public static JetScope getImportsResolutionScope(ModuleDescriptor module, boolean inRootPackage) {
+        return getRootPackageScope(module, /* scopeIncludingMembers = */ inRootPackage);
+    }
+
+    private static JetScope getRootPackageScope(ModuleDescriptor module, boolean scopeIncludingMembers) {
+        PackageViewDescriptor rootPackage = module.getPackage(FqName.ROOT);
+        assert rootPackage != null : "Couldn't find root package for " + module;
+
+        return scopeIncludingMembers ? rootPackage.getMemberScope() : new SubpackagesScope(rootPackage);
     }
 }
