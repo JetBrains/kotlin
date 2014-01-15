@@ -47,7 +47,7 @@ public class JetBlock extends AbstractBlock {
     private final ASTAlignmentStrategy myAlignmentStrategy;
     private final Indent myIndent;
     private final CodeStyleSettings mySettings;
-    private final SpacingBuilder mySpacingBuilder;
+    private final KotlinSpacingBuilder mySpacingBuilder;
 
     private List<Block> mySubBlocks;
 
@@ -63,7 +63,8 @@ public class JetBlock extends AbstractBlock {
             Indent indent,
             Wrap wrap,
             CodeStyleSettings settings,
-            SpacingBuilder spacingBuilder) {
+            KotlinSpacingBuilder spacingBuilder
+    ) {
 
         super(node, wrap, alignmentStrategy.getAlignment(node));
         myAlignmentStrategy = alignmentStrategy;
@@ -136,71 +137,7 @@ public class JetBlock extends AbstractBlock {
 
     @Override
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
-        Spacing customSpacing = getCustomSpacing(child1, child2);
-        if (customSpacing != null) {
-            return customSpacing;
-        }
         return mySpacingBuilder.getSpacing(this, child1, child2);
-    }
-
-    @Nullable
-    private Spacing getCustomSpacing(@Nullable Block child1, @NotNull Block child2) {
-        // TODO: extend SpacingBuilder API - afterInside(RBRACE, FUNCTION_LITERAL).spacing(...), beforeInside(RBRACE, FUNCTION_LITERAL).spacing(...)
-        if (!(child1 instanceof ASTBlock && child2 instanceof ASTBlock)) {
-            return null;
-        }
-
-        IElementType parentType = this.getNode().getElementType();
-        IElementType child1Type = ((ASTBlock) child1).getNode().getElementType();
-        IElementType child2Type = ((ASTBlock) child2).getNode().getElementType();
-
-        JetCodeStyleSettings jetSettings = mySettings.getCustomSettings(JetCodeStyleSettings.class);
-        int spacesInSimpleMethod = jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD ? 1 : 0;
-
-        if (parentType == FUNCTION_LITERAL && child1Type == LBRACE && child2Type == BLOCK) {
-            return Spacing.createDependentLFSpacing(
-                    spacesInSimpleMethod, spacesInSimpleMethod, this.getTextRange(),
-                    mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-        }
-
-        if (parentType == FUNCTION_LITERAL && child1Type == ARROW && child2Type == BLOCK) {
-            return Spacing.createDependentLFSpacing(1, 1, this.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-        }
-
-        if (parentType == FUNCTION_LITERAL && child2Type == RBRACE) {
-            return Spacing.createDependentLFSpacing(
-                    spacesInSimpleMethod, spacesInSimpleMethod, this.getTextRange(),
-                    mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-        }
-
-        if (parentType == FUNCTION_LITERAL && child1Type == LBRACE) {
-            if (child2Type == VALUE_PARAMETER_LIST) {
-                ASTNode firstParamListNode = ((ASTBlock) child2).getNode().getFirstChildNode();
-                if (firstParamListNode != null && firstParamListNode.getElementType() == LPAR) {
-                    // Don't put space for situation {<here>(a: Int) -> a }
-                    return Spacing.createSpacing(0, 0, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-                }
-            }
-
-            return Spacing.createSpacing(spacesInSimpleMethod, spacesInSimpleMethod, 0,
-                                         mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-        }
-
-        if (parentType == IF && (child2Type == THEN || child2Type == ELSE)) {
-            ASTNode blockOrExpression = ((ASTBlock) child2).getNode().getFirstChildNode();
-            if (blockOrExpression != null && blockOrExpression.getElementType() == BLOCK) {
-                ASTNode leftBrace = blockOrExpression.getFirstChildNode();
-                if (leftBrace != null && leftBrace.getElementType() == LBRACE) {
-                    ASTNode previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace);
-                    boolean isAfterEolComment = previousLeaf != null && (previousLeaf.getElementType() == EOL_COMMENT);
-                    boolean keepLineBreaks = jetSettings.LBRACE_ON_NEXT_LINE || isAfterEolComment;
-                    int minimumLF = jetSettings.LBRACE_ON_NEXT_LINE ? 1 : 0;
-                    return Spacing.createSpacing(1, 1, minimumLF, keepLineBreaks, /*don't keep blank lines*/ 0);
-                }
-            }
-        }
-
-        return null;
     }
 
     @NotNull
