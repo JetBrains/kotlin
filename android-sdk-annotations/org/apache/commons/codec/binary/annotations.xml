@@ -1,11 +1,5 @@
 <root>
-    <item name='org.apache.commons.codec.binary.Hex java.lang.Object decode(java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec java.lang.String toAsciiString(byte[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] fromAscii(char[])'>
+    <item name='org.apache.commons.codec.binary.BinaryCodec char[] toAsciiChars(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.BinaryCodec java.lang.Object decode(java.lang.Object) 0'>
@@ -14,10 +8,22 @@
     <item name='org.apache.commons.codec.binary.Hex char[] encodeHex(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.Base64 byte[] decode(byte[])'>
+    <item name='org.apache.commons.codec.binary.Hex java.lang.Object decode(java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.Base64 java.lang.Object decode(java.lang.Object)'>
+    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] toByteArray(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.codec.binary.BinaryCodec java.lang.Object encode(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] fromAscii(char[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.codec.binary.Hex char[] encodeHex(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.codec.binary.Hex byte[] decodeHex(char[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.Base64 byte[] encodeBase64Chunked(byte[]) 0'>
@@ -26,7 +32,7 @@
     <item name='org.apache.commons.codec.binary.Hex java.lang.Object encode(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.Base64 byte[] encode(byte[])'>
+    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] decode(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.Base64 byte[] decode(byte[]) 0'>
@@ -35,10 +41,16 @@
     <item name='org.apache.commons.codec.binary.BinaryCodec byte[] encode(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] toAsciiBytes(byte[])'>
+    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] encode(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.Base64 byte[] decodeBase64(byte[])'>
+    <item name='org.apache.commons.codec.binary.Hex java.lang.Object encode(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.codec.binary.Base64 byte[] encodeBase64(byte[], boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.codec.binary.BinaryCodec java.lang.Object decode(java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.BinaryCodec byte[] decode(byte[]) 0'>
@@ -47,28 +59,25 @@
     <item name='org.apache.commons.codec.binary.Hex byte[] decode(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.Base64 byte[] encodeBase64(byte[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.Hex java.lang.Object encode(java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec java.lang.Object decode(java.lang.Object)'>
+    <item name='org.apache.commons.codec.binary.BinaryCodec java.lang.String toAsciiString(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.Base64 byte[] encodeBase64Chunked(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] toByteArray(java.lang.String)'>
+    <item name='org.apache.commons.codec.binary.Base64 byte[] decodeBase64(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.Hex byte[] decodeHex(char[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] toAsciiBytes(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.codec.binary.Base64 byte[] encodeBase64(byte[], boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.Hex char[] encodeHex(byte[])'>
+    <item name='org.apache.commons.codec.binary.Base64 byte[] encodeBase64(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.Base64 byte[] encode(byte[]) 0'>
@@ -77,25 +86,16 @@
     <item name='org.apache.commons.codec.binary.Base64 java.lang.Object encode(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] decode(byte[])'>
+    <item name='org.apache.commons.codec.binary.Base64 java.lang.Object encode(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.commons.codec.binary.Base64 byte[] encode(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.Hex byte[] encode(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.Hex byte[] encode(byte[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] fromAscii(byte[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] encode(byte[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.Base64 java.lang.Object encode(java.lang.Object)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.Base64 byte[] encodeBase64(byte[], boolean)'>
+    <item name='org.apache.commons.codec.binary.Base64 java.lang.Object decode(java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.Hex byte[] decode(byte[])'>
@@ -107,19 +107,16 @@
     <item name='org.apache.commons.codec.binary.Base64 byte[] encodeBase64(byte[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec char[] toAsciiChars(byte[])'>
+    <item name='org.apache.commons.codec.binary.BinaryCodec byte[] fromAscii(byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.commons.codec.binary.Hex java.lang.Object decode(java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.commons.codec.binary.Base64 byte[] decode(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.commons.codec.binary.BinaryCodec java.lang.Object encode(java.lang.Object) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.Hex byte[] decodeHex(char[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.commons.codec.binary.BinaryCodec java.lang.Object encode(java.lang.Object)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

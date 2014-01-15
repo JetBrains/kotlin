@@ -1,0 +1,5 @@
+<root>
+    <item name='org.apache.harmony.security.pkcs8.PrivateKeyInfo ASN1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

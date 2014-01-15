@@ -1,0 +1,134 @@
+<root>
+    <item name='java.sql.ClientInfoStatus java.sql.ClientInfoStatus valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.SQLClientInfoException SQLClientInfoException(java.lang.String, java.lang.String, java.util.Map&lt;java.lang.String,java.sql.ClientInfoStatus&gt;, java.lang.Throwable) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.SQLClientInfoException SQLClientInfoException(java.lang.String, java.lang.String, int, java.util.Map&lt;java.lang.String,java.sql.ClientInfoStatus&gt;, java.lang.Throwable) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Timestamp java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Date java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.util.Properties) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.SQLClientInfoException SQLClientInfoException(java.util.Map&lt;java.lang.String,java.sql.ClientInfoStatus&gt;, java.lang.Throwable) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.ClientInfoStatus REASON_VALUE_TRUNCATED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager void registerDriver(java.sql.Driver) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.util.Properties)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Time java.sql.Time valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Timestamp int compareTo(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Time java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Timestamp int compareTo(java.util.Date) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Timestamp boolean before(java.sql.Timestamp) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.RowIdLifetime java.sql.RowIdLifetime valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Date java.sql.Date valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Timestamp java.sql.Timestamp valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.SQLClientInfoException SQLClientInfoException(java.lang.String, java.util.Map&lt;java.lang.String,java.sql.ClientInfoStatus&gt;, java.lang.Throwable) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Driver getDriver(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Date java.sql.Date valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.RowIdLifetime java.sql.RowIdLifetime valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.SQLClientInfoException SQLClientInfoException(java.util.Map&lt;java.lang.String,java.sql.ClientInfoStatus&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Timestamp int compareTo(java.sql.Timestamp) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.SQLClientInfoException SQLClientInfoException(java.lang.String, java.util.Map&lt;java.lang.String,java.sql.ClientInfoStatus&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.RowIdLifetime ROWID_VALID_SESSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.SQLException java.util.Iterator&lt;java.lang.Throwable&gt; iterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.SQLClientInfoException SQLClientInfoException(java.lang.String, java.lang.String, int, java.util.Map&lt;java.lang.String,java.sql.ClientInfoStatus&gt;) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.util.Enumeration&lt;java.sql.Driver&gt; getDrivers()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.ClientInfoStatus REASON_VALUE_INVALID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.ClientInfoStatus REASON_UNKNOWN_PROPERTY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Time java.sql.Time valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.RowIdLifetime ROWID_UNSUPPORTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.RowIdLifetime ROWID_VALID_FOREVER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.RowIdLifetime ROWID_VALID_TRANSACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.ClientInfoStatus java.sql.ClientInfoStatus valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.Timestamp boolean after(java.sql.Timestamp) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.RowIdLifetime ROWID_VALID_OTHER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.SQLClientInfoException SQLClientInfoException(java.lang.String, java.lang.String, java.util.Map&lt;java.lang.String,java.sql.ClientInfoStatus&gt;) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.DriverManager java.sql.Connection getConnection(java.lang.String, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.sql.ClientInfoStatus REASON_UNKNOWN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

@@ -5,6 +5,9 @@
     <item name='org.apache.xalan.transformer.TransformerIdentityImpl void transform(javax.xml.transform.Source, javax.xml.transform.Result) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.transformer.KeyTable org.apache.xpath.objects.XNodeSet getNodeSetDTMByKey(org.apache.xml.utils.QName, org.apache.xml.utils.XMLString)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.transformer.TransformerIdentityImpl void endEntity(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -18,6 +21,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.TransformerImpl java.util.Vector processSortKeys(org.apache.xalan.templates.ElemForEach, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.transformer.TransformerImpl org.apache.xml.serializer.SerializationHandler createSerializationHandler(javax.xml.transform.Result)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.TransformerHandlerImpl void startEntity(java.lang.String) 0'>
@@ -47,6 +53,12 @@
     <item name='org.apache.xalan.transformer.TransformerHandlerImpl void setResult(javax.xml.transform.Result) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.transformer.TransformState org.w3c.dom.traversal.NodeIterator getContextNodeList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.transformer.XalanTransformState org.w3c.dom.traversal.NodeIterator getContextNodeList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.transformer.TransformerHandlerImpl void setDocumentLocator(org.xml.sax.Locator) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -65,6 +77,9 @@
     <item name='org.apache.xalan.transformer.TransformerIdentityImpl void setParameter(java.lang.String, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.xalan.transformer.XalanProperties SOURCE_LOCATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.xalan.transformer.TransformerImpl java.lang.Object getParameter(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -80,10 +95,7 @@
     <item name='org.apache.xalan.transformer.TransformerImpl void init(org.apache.xml.serializer.ToXMLSAXHandler, javax.xml.transform.Transformer, org.xml.sax.ContentHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.transformer.TransformerImpl org.apache.xml.serializer.SerializationHandler createSerializationHandler(javax.xml.transform.Result, org.apache.xalan.templates.OutputProperties)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.transformer.TransformState org.w3c.dom.traversal.NodeIterator getContextNodeList()'>
+    <item name='org.apache.xalan.transformer.TransformerImpl javax.xml.transform.Transformer getTransformer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.TransformerImpl java.lang.Object extFunction(java.lang.String, java.lang.String, java.util.Vector, java.lang.Object) 1'>
@@ -110,9 +122,6 @@
     <item name='org.apache.xalan.transformer.TransformerIdentityImpl void setParameter(java.lang.String, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.transformer.TransformerIdentityImpl javax.xml.transform.Transformer getTransformer()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.transformer.TransformerHandlerImpl void processingInstruction(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -120,9 +129,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.TrAXFilter void setParent(org.xml.sax.XMLReader) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.transformer.TransformerImpl javax.xml.transform.Transformer getTransformer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.TransformerIdentityImpl void processingInstruction(java.lang.String, java.lang.String) 1'>
@@ -152,19 +158,16 @@
     <item name='org.apache.xalan.transformer.TransformerIdentityImpl void endElement(java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.transformer.XalanTransformState org.w3c.dom.traversal.NodeIterator getContextNodeList()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.xalan.transformer.TransformerImpl TransformerImpl(org.apache.xalan.templates.StylesheetRoot) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.TransformerHandlerImpl void startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.transformer.TransformerImpl org.apache.xml.serializer.SerializationHandler createSerializationHandler(javax.xml.transform.Result)'>
+    <item name='org.apache.xalan.transformer.TransformerImpl void executeChildTemplates(org.apache.xalan.templates.ElemTemplateElement, org.w3c.dom.Node, org.apache.xml.utils.QName, org.xml.sax.ContentHandler) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.xalan.transformer.TransformerImpl void executeChildTemplates(org.apache.xalan.templates.ElemTemplateElement, org.w3c.dom.Node, org.apache.xml.utils.QName, org.xml.sax.ContentHandler) 0'>
+    <item name='org.apache.xalan.transformer.TransformerIdentityImpl javax.xml.transform.Transformer getTransformer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.TransformerImpl java.lang.Object extFunction(java.lang.String, java.lang.String, java.util.Vector, java.lang.Object) 2'>
@@ -186,6 +189,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.NodeSorter void sort(org.apache.xml.dtm.DTMIterator, java.util.Vector, org.apache.xpath.XPathContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.xalan.transformer.TransformerImpl org.apache.xml.serializer.SerializationHandler createSerializationHandler(javax.xml.transform.Result, org.apache.xalan.templates.OutputProperties)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.TransformerIdentityImpl void setResult(javax.xml.transform.Result) 0'>
@@ -213,9 +219,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.CountersTable int countNode(org.apache.xpath.XPathContext, org.apache.xalan.templates.ElemNumber, int) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.xalan.transformer.KeyTable org.apache.xpath.objects.XNodeSet getNodeSetDTMByKey(org.apache.xml.utils.QName, org.apache.xml.utils.XMLString)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.xalan.transformer.TransformerIdentityImpl void setOutputProperty(java.lang.String, java.lang.String) 0'>

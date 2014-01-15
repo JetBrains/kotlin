@@ -2,9 +2,6 @@
     <item name='org.apache.harmony.crypto.internal.NullCipherSpi int engineDoFinal(java.nio.ByteBuffer, java.nio.ByteBuffer) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.crypto.internal.NullCipherSpi byte[] engineGetIV()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.harmony.crypto.internal.NullCipherSpi int engineDoFinal(java.nio.ByteBuffer, java.nio.ByteBuffer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -48,6 +45,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.crypto.internal.NullCipherSpi byte[] engineWrap(java.security.Key) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.crypto.internal.NullCipherSpi byte[] engineGetIV()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.crypto.internal.NullCipherSpi int engineUpdate(byte[], int, int, byte[], int) 3'>

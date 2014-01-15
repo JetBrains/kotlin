@@ -53,6 +53,9 @@
     <item name='android.test.ViewAsserts void assertRightAligned(android.view.View, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.PerformanceCollectorTestCase mPerfCollector'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.MoreAsserts void assertEquals(double[], double[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -71,7 +74,7 @@
     <item name='android.test.InstrumentationTestCase T launchActivity(java.lang.String, java.lang.Class&lt;T&gt;, android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.TestCaseUtil java.util.List&lt;java.lang.String&gt; getTestCaseNames(junit.framework.Test, boolean)'>
+    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertContainsRegex(java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragQuarterScreenUp(android.test.InstrumentationTestCase, android.app.Activity) 1'>
@@ -83,9 +86,6 @@
     <item name='android.test.ViewAsserts void assertBaselineAligned(android.view.View, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.ProviderTestCase2 android.content.ContentResolver newResolverWithContentProviderFromSql(android.content.Context, java.lang.String, java.lang.Class&lt;T&gt;, java.lang.String, java.lang.String, int, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.ViewAsserts void assertRightAligned(android.view.View, android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -95,19 +95,16 @@
     <item name='android.test.ViewAsserts void assertTopAligned(android.view.View, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertMatchesRegex(java.lang.String, java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.MoreAsserts void assertContentsInAnyOrder(java.lang.String, java.lang.Iterable&lt;?&gt;, java.lang.Object...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertEquals(java.lang.String, java.util.Set&lt;? extends java.lang.Object&gt;, java.util.Set&lt;? extends java.lang.Object&gt;) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.RenamingDelegatingContext T providerWithRenamedContext(java.lang.Class&lt;T&gt;, android.content.Context, java.lang.String)'>
+    <item name='android.test.TouchUtils int dragViewToX(android.test.ActivityInstrumentationTestCase, android.view.View, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.TouchUtils int dragViewToX(android.test.ActivityInstrumentationTestCase, android.view.View, int, int) 0'>
+    <item name='android.test.ClassPathPackageInfo java.util.Set&lt;java.lang.Class&lt;?&gt;&gt; getTopLevelClassesRecursive()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragViewToBottom(android.test.InstrumentationTestCase, android.app.Activity, android.view.View, int) 2'>
@@ -116,7 +113,7 @@
     <item name='android.test.InstrumentationTestCase T launchActivity(java.lang.String, java.lang.Class&lt;T&gt;, android.os.Bundle) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.RenamingDelegatingContext T providerWithRenamedContext(java.lang.Class&lt;T&gt;, android.content.Context, java.lang.String, boolean)'>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_STACK'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertEquals(java.lang.String, byte[], byte[]) 2'>
@@ -128,9 +125,6 @@
     <item name='android.test.TouchUtils int dragViewBy(android.test.InstrumentationTestCase, android.view.View, int, int, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.ClassPathPackageInfo java.util.Set&lt;android.test.ClassPathPackageInfo&gt; getSubpackages()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.ViewAsserts void assertOffScreenBelow(android.view.View, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -138,9 +132,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.IsolatedContext void unregisterReceiver(android.content.BroadcastReceiver) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.TestCaseUtil junit.framework.TestSuite createTestSuite(java.lang.Class&lt;? extends junit.framework.Test&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragViewToBottom(android.test.ActivityInstrumentationTestCase, android.view.View, int) 0'>
@@ -158,6 +149,12 @@
     <item name='android.test.TouchUtils int dragViewToX(android.test.ActivityInstrumentationTestCase, android.view.View, int, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertMatchesRegex(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestRunner ARGUMENT_TEST_SIZE_PREDICATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.TouchUtils void dragViewToBottom(android.test.ActivityInstrumentationTestCase, android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -167,7 +164,16 @@
     <item name='android.test.TouchUtils void dragViewToBottom(android.test.InstrumentationTestCase, android.app.Activity, android.view.View, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_NUM_TOTAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.ProviderTestCase2 android.content.ContentResolver newResolverWithContentProviderFromSql(android.content.Context, java.lang.String, java.lang.Class&lt;T&gt;, java.lang.String, java.lang.String, int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.TouchUtils int dragViewBy(android.test.InstrumentationTestCase, android.view.View, int, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertMatchesRegex(java.lang.String, java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TestRunner java.lang.String[] getTestChildren(java.lang.Class) 0'>
@@ -176,13 +182,13 @@
     <item name='android.test.TouchUtils void dragViewToBottom(android.test.InstrumentationTestCase, android.app.Activity, android.view.View, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.AndroidTestRunner junit.framework.TestResult createTestResult()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.InstrumentationTestCase T launchActivityWithIntent(java.lang.String, java.lang.Class&lt;T&gt;, android.content.Intent) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragViewToBottom(android.test.ActivityInstrumentationTestCase, android.view.View) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.ComparisonFailure java.lang.String getMessage()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragViewToTop(android.test.InstrumentationTestCase, android.view.View, int) 1'>
@@ -203,9 +209,6 @@
     <item name='android.test.IsolatedContext boolean bindService(android.content.Intent, android.content.ServiceConnection, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertMatchesRegex(java.lang.String, java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.MoreAsserts void assertNotMatchesRegex(java.lang.String, java.lang.String, java.lang.String) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -213,12 +216,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.AndroidTestCase void assertActivityRequiresPermission(java.lang.String, java.lang.String, java.lang.String) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertContainsRegex(java.lang.String, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.ProviderTestCase android.content.ContentResolver newResolverWithContentProviderFromSql(android.content.Context, java.lang.Class&lt;T&gt;, java.lang.String, java.lang.String, int, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TestRunner java.lang.String getTitle(java.lang.String) 0'>
@@ -236,22 +233,19 @@
     <item name='android.test.TouchUtils void clickView(android.test.InstrumentationTestCase, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.LaunchPerformanceBase LOG_TAG'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.TestRunner boolean isJunitTest(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils int dragViewTo(android.test.InstrumentationTestCase, android.view.View, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.MoreAsserts void assertNotContainsRegex(java.lang.String, java.lang.String, java.lang.String) 1'>
+    <item name='android.test.ProviderTestCase android.content.ContentResolver newResolverWithContentProviderFromSql(android.content.Context, java.lang.Class&lt;T&gt;, java.lang.String, java.lang.String, int, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.ProviderTestCase2 android.content.ContentResolver newResolverWithContentProviderFromSql(android.content.Context, java.lang.String, java.lang.Class&lt;T&gt;, java.lang.String, java.lang.String, int, java.lang.String) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.TestCaseUtil java.util.List&lt;? extends junit.framework.Test&gt; getTests(junit.framework.Test, boolean)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.MoreAsserts void assertNotMatchesRegex(java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertEquals(java.lang.String, java.lang.Object[], java.lang.Object[]) 2'>
@@ -275,6 +269,9 @@
     <item name='android.test.TouchUtils int dragViewToY(android.test.InstrumentationTestCase, android.view.View, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.TestRunner java.lang.String[] getTestChildren(java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.TouchUtils void longClickView(android.test.ActivityInstrumentationTestCase, android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -293,19 +290,25 @@
     <item name='android.test.MoreAsserts void assertNotEmpty(java.lang.String, java.util.Map&lt;?,?&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.RenamingDelegatingContext T providerWithRenamedContext(java.lang.Class&lt;T&gt;, android.content.Context, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.TouchUtils int dragViewTo(android.test.InstrumentationTestCase, android.view.View, int, int, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertContentsInAnyOrder(java.lang.Iterable&lt;?&gt;, java.lang.Object...) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.IsolatedContext java.io.File getFilesDir()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.RenamingDelegatingContext T providerWithRenamedContext(java.lang.Class&lt;T&gt;, android.content.Context, java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.ViewAsserts void assertOnScreen(android.view.View, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.ViewAsserts void assertHasScreenCoordinates(android.view.View, android.view.View, int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.TestRunner java.lang.String[] getTestChildren(java.lang.Class)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void touchAndCancelView(android.test.InstrumentationTestCase, android.view.View) 1'>
@@ -320,9 +323,6 @@
     <item name='android.test.InstrumentationTestCase T launchActivityWithIntent(java.lang.String, java.lang.Class&lt;T&gt;, android.content.Intent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.InstrumentationCoreTestRunner android.test.AndroidTestRunner getAndroidTestRunner()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.TouchUtils int dragViewBy(android.test.ActivityInstrumentationTestCase, android.view.View, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -330,9 +330,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void touchAndCancelView(android.test.InstrumentationTestCase, android.view.View) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.AndroidTestRunner java.lang.Class loadSuiteClass(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragViewToTop(android.test.InstrumentationTestCase, android.view.View, int) 0'>
@@ -359,10 +356,22 @@
     <item name='android.test.MoreAsserts void assertContentsInAnyOrder(java.lang.Iterable&lt;?&gt;, java.lang.Object...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.AndroidTestRunner junit.framework.TestResult createTestResult()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.RenamingDelegatingContext java.io.File getFileStreamPath(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertEquals(java.util.Set&lt;? extends java.lang.Object&gt;, java.util.Set&lt;? extends java.lang.Object&gt;) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestCase T launchActivity(java.lang.String, java.lang.Class&lt;T&gt;, android.os.Bundle)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_NUM_CURRENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.TestRunner java.lang.reflect.Method[] getAllTestMethods(java.lang.Class)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.DatabaseTestUtils void assertSchemaEquals(android.database.sqlite.SQLiteDatabase, android.database.sqlite.SQLiteDatabase) 0'>
@@ -392,7 +401,7 @@
     <item name='android.test.ViewAsserts void assertVerticalCenterAligned(android.view.View, android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertMatchesRegex(java.lang.String, java.lang.String) 0'>
+    <item name='android.test.InstrumentationTestRunner android.test.AndroidTestRunner getAndroidTestRunner()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertAssignableFrom(java.lang.Class&lt;?&gt;, java.lang.Class&lt;?&gt;) 0'>
@@ -419,6 +428,9 @@
     <item name='android.test.ProviderTestCase2 android.content.ContentResolver newResolverWithContentProviderFromSql(android.content.Context, java.lang.String, java.lang.Class&lt;T&gt;, java.lang.String, java.lang.String, int, java.lang.String) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.InstrumentationTestRunner REPORT_VALUE_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.DatabaseTestUtils void assertSchemaEquals(android.database.sqlite.SQLiteDatabase, android.database.sqlite.SQLiteDatabase) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -426,6 +438,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void scrollToTop(android.test.InstrumentationTestCase, android.app.Activity, android.view.ViewGroup) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.TestCaseUtil junit.framework.TestSuite createTestSuite(java.lang.Class&lt;? extends junit.framework.Test&gt;)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragViewToTop(android.test.InstrumentationTestCase, android.view.View) 0'>
@@ -440,19 +455,16 @@
     <item name='android.test.TouchUtils void longClickView(android.test.ActivityInstrumentationTestCase, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.MoreAsserts void assertNotMatchesRegex(java.lang.String, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.MoreAsserts void assertEquals(int[], int[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertContainsRegex(java.lang.String, java.lang.String)'>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_NAME_CLASS'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.ViewAsserts void assertGroupNotContains(android.view.ViewGroup, android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.TestRunner java.lang.String getTitle(java.lang.String)'>
+    <item name='android.test.InstrumentationTestRunner REPORT_KEY_NAME_TEST'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.ViewAsserts void assertVerticalCenterAligned(android.view.View, android.view.View) 1'>
@@ -464,28 +476,19 @@
     <item name='android.test.MoreAsserts void assertAssignableFrom(java.lang.Class&lt;?&gt;, java.lang.Class&lt;?&gt;) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.ClassPathPackageInfo java.util.Set&lt;java.lang.Class&lt;?&gt;&gt; getTopLevelClassesRecursive()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.TestRunner.JunitTestSuite void addError(junit.framework.Test, java.lang.Throwable) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.MoreAsserts void assertNotContainsRegex(java.lang.String, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.InstrumentationTestCase void sendRepeatedKeys(int...) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.ComparisonFailure java.lang.String getMessage()'>
+    <item name='android.test.InstrumentationTestCase T launchActivityWithIntent(java.lang.String, java.lang.Class&lt;T&gt;, android.content.Intent)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertNotContainsRegex(java.lang.String, java.lang.String, java.lang.String) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertEmpty(java.lang.Iterable&lt;?&gt;) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertContainsRegex(java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertEquals(java.lang.String, int[], int[]) 1'>
@@ -506,9 +509,6 @@
     <item name='android.test.MoreAsserts void assertNotContainsRegex(java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.TestRunner java.lang.reflect.Method[] getAllTestMethods(java.lang.Class)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.MoreAsserts java.util.regex.MatchResult assertContainsRegex(java.lang.String, java.lang.String, java.lang.String) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -527,9 +527,6 @@
     <item name='android.test.TouchUtils void drag(android.test.InstrumentationTestCase, float, float, float, float, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.InstrumentationTestRunner android.test.AndroidTestRunner getAndroidTestRunner()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.IsolatedContext int checkUriPermission(android.net.Uri, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -537,6 +534,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils int dragViewToX(android.test.InstrumentationTestCase, android.view.View, int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.TestRunner java.lang.String getTitle(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils int dragViewToY(android.test.ActivityInstrumentationTestCase, android.view.View, int, int) 0'>
@@ -548,16 +548,13 @@
     <item name='android.test.IsolatedContext void sendOrderedBroadcast(android.content.Intent, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.IsolatedContext java.io.File getFilesDir()'>
+    <item name='android.test.InstrumentationTestRunner ARGUMENT_TEST_PACKAGE'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertAssignableFrom(java.lang.Class&lt;?&gt;, java.lang.Object) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TestRunner.JunitTestSuite void addFailure(junit.framework.Test, junit.framework.AssertionFailedError) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertContainsRegex(java.lang.String, java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragQuarterScreenUp(android.test.ActivityInstrumentationTestCase) 0'>
@@ -608,13 +605,7 @@
     <item name='android.test.ViewAsserts void assertLeftAligned(android.view.View, android.view.View, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.InstrumentationTestCase T launchActivityWithIntent(java.lang.String, java.lang.Class&lt;T&gt;, android.content.Intent)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.test.TouchUtils void scrollToBottom(android.test.InstrumentationTestCase, android.app.Activity, android.view.ViewGroup) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertMatchesRegex(java.lang.String, java.lang.String, java.lang.String) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TestPrinter void endTest(junit.framework.Test) 0'>
@@ -624,6 +615,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts void assertEquals(byte[], byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.MoreAsserts java.util.regex.MatchResult assertContainsRegex(java.lang.String, java.lang.String, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.ViewAsserts void assertOffScreenBelow(android.view.View, android.view.View) 0'>
@@ -656,6 +650,9 @@
     <item name='android.test.TouchUtils void scrollToBottom(android.test.InstrumentationTestCase, android.app.Activity, android.view.ViewGroup) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.test.InstrumentationTestRunner ARGUMENT_DELAY_MSEC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.test.TestRunner.JunitTestSuite void addFailure(junit.framework.Test, junit.framework.AssertionFailedError) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -671,7 +668,7 @@
     <item name='android.test.MoreAsserts void assertAssignableFrom(java.lang.Class&lt;?&gt;, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.test.InstrumentationTestCase T launchActivity(java.lang.String, java.lang.Class&lt;T&gt;, android.os.Bundle)'>
+    <item name='android.test.InstrumentationTestRunner ARGUMENT_TEST_CLASS'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragViewToBottom(android.test.InstrumentationTestCase, android.app.Activity, android.view.View) 1'>
@@ -681,6 +678,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.MoreAsserts java.util.regex.MatchResult assertMatchesRegex(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.test.InstrumentationCoreTestRunner android.test.AndroidTestRunner getAndroidTestRunner()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.test.TouchUtils void dragViewToTop(android.test.ActivityInstrumentationTestCase, android.view.View, int) 0'>

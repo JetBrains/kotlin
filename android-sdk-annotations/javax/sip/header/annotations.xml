@@ -1,0 +1,707 @@
+<root>
+    <item name='javax.sip.header.ContentDispositionHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader UNKNOWN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.UserAgentHeader createUserAgentHeader(java.util.List) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.EventHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.InReplyToHeader createInReplyToHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AllowHeader createAllowHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ErrorInfoHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.MaxForwardsHeader createMaxForwardsHeader(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.MediaType void setContentType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.CSeqHeader createCSeqHeader(int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.CallInfoHeader createCallInfoHeader(javax.sip.address.URI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AcceptLanguageHeader createAcceptLanguageHeader(java.util.Locale)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AllowHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ProxyAuthorizationHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.RAckHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ReasonHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader NO_RESOURCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.RequireHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.DateHeader createDateHeader(java.util.Calendar) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.TimeStampHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ProxyAuthenticateHeader createProxyAuthenticateHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AllowEventsHeader createAllowEventsHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader GIVE_UP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SupportedHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ToHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ViaHeader void setMAddr(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ProxyAuthorizationHeader createProxyAuthorizationHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RSeqHeader createRSeqHeader(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentDispositionHeader ALERT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentTypeHeader createContentTypeHeader(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AcceptLanguageHeader void setAcceptLanguage(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContactHeader createContactHeader()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.OptionTag void setOptionTag(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ServerHeader void setProduct(java.util.List) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AuthenticationInfoHeader createAuthenticationInfoHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AllowEventsHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader REJECTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ErrorInfoHeader createErrorInfoHeader(javax.sip.address.URI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentTypeHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.WWWAuthenticateHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AcceptLanguageHeader createAcceptLanguageHeader(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.EventHeader void setEventType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.CallIdHeader createCallIdHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AcceptHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.FromHeader void setTag(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentTypeHeader createContentTypeHeader(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AllowEventsHeader createAllowEventsHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SIPIfMatchHeader createSIPIfMatchHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.PriorityHeader EMERGENCY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.CSeqHeader createCSeqHeader(int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AuthenticationInfoHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ReasonHeader void setProtocol(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.EventHeader createEventHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ViaHeader createViaHeader(java.lang.String, int, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContactHeader createContactHeader(javax.sip.address.Address) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.MediaType void setContentSubType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SIPETagHeader createSIPETagHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentLengthHeader createContentLengthHeader(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.Parameters void setParameter(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.Parameters void setParameter(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory java.util.List createHeaders(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader ACTIVE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ToHeader void setTag(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RAckHeader createRAckHeader(int, int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RAckHeader createRAckHeader(long, long, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.UnsupportedHeader createUnsupportedHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentLanguageHeader createContentLanguageHeader(java.util.Locale) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.WarningHeader createWarningHeader(java.lang.String, int, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SupportedHeader createSupportedHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.UserAgentHeader createUserAgentHeader(java.util.List)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader DEACTIVATED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.WarningHeader void setText(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ViaHeader void setHost(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.Encoding void setEncoding(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.PriorityHeader NON_URGENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ViaHeader void setBranch(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SupportedHeader createSupportedHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ReferToHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.TimeStampHeader createTimeStampHeader(float)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.RetryAfterHeader void setComment(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ReplyToHeader createReplyToHeader(javax.sip.address.Address) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.CSeqHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RecordRouteHeader createRecordRouteHeader(javax.sip.address.Address) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ExpiresHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ReasonHeader createReasonHeader(java.lang.String, int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.RetryAfterHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.InReplyToHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.CallInfoHeader createCallInfoHeader(javax.sip.address.URI)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContactHeader createContactHeader(javax.sip.address.Address)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.InReplyToHeader createInReplyToHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentEncodingHeader createContentEncodingHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubjectHeader void setSubject(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ViaHeader void setReceived(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ViaHeader createViaHeader(java.lang.String, int, java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ServerHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.CallIdHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentDispositionHeader void setHandling(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ViaHeader createViaHeader(java.lang.String, int, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentDispositionHeader createContentDispositionHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.PriorityHeader void setPriority(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.OrganizationHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.Header java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.PriorityHeader createPriorityHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RetryAfterHeader createRetryAfterHeader(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.RouteHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.CallInfoHeader void setPurpose(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.WarningHeader createWarningHeader(java.lang.String, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.DateHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.WarningHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.Header java.lang.String getName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ProxyAuthenticateHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AlertInfoHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.OrganizationHeader void setOrganization(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContactHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.DateHeader createDateHeader(java.util.Calendar)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AcceptHeader createAcceptHeader(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RouteHeader createRouteHeader(javax.sip.address.Address)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ViaHeader void setProtocol(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SIPIfMatchHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AcceptEncodingHeader createAcceptEncodingHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ReferToHeader createReferToHeader(javax.sip.address.Address)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader PENDING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.WWWAuthenticateHeader void setURI(javax.sip.address.URI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ExpiresHeader createExpiresHeader(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader PROBATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ProxyRequireHeader createProxyRequireHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentDispositionHeader SESSION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AuthorizationHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.CSeqHeader createCSeqHeader(long, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ToHeader createToHeader(javax.sip.address.Address, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentDispositionHeader ICON'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ExtensionHeader void setValue(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.PriorityHeader createPriorityHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ExtensionHeader createExtensionHeader(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader TIMEOUT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.FromHeader createFromHeader(javax.sip.address.Address, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RouteHeader createRouteHeader(javax.sip.address.Address) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.OrganizationHeader createOrganizationHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentLanguageHeader createContentLanguageHeader(java.util.Locale)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.RSeqHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SubjectHeader createSubjectHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AllowHeader createAllowHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ProxyRequireHeader createProxyRequireHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentLanguageHeader void setLanguageTag(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentEncodingHeader createContentEncodingHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AcceptLanguageHeader void setLanguageRange(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.Header createHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.Header java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentDispositionHeader createContentDispositionHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.WarningHeader createWarningHeader(java.lang.String, int, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RAckHeader createRAckHeader(int, int, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AlertInfoHeader createAlertInfoHeader(javax.sip.address.URI)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.UserAgentHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ContentTypeHeader createContentTypeHeader(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.CSeqHeader createCSeqHeader(long, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ProxyRequireHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.CallIdHeader void setCallId(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ErrorInfoHeader void setErrorMessage(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.RecordRouteHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.PriorityHeader URGENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.EventHeader createEventHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ToHeader createToHeader(javax.sip.address.Address, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AcceptEncodingHeader createAcceptEncodingHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ProxyAuthorizationHeader createProxyAuthorizationHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SIPETagHeader createSIPETagHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.MimeVersionHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentDispositionHeader void setDispositionType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AllowEventsHeader void setEventType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SIPIfMatchHeader createSIPIfMatchHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ErrorInfoHeader createErrorInfoHeader(javax.sip.address.URI)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SIPETagHeader void setETag(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RequireHeader createRequireHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentEncodingHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory java.util.List createHeaders(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SubjectHeader createSubjectHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.CallInfoHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.UserAgentHeader void setProduct(java.util.List) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.Header createHeader(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AcceptHeader createAcceptHeader(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ReplyToHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RAckHeader createRAckHeader(long, long, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.MinExpiresHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.WWWAuthenticateHeader createWWWAuthenticateHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader TERMINATED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.MaxForwardsHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AuthorizationHeader createAuthorizationHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentLengthHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RequireHeader createRequireHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AlertInfoHeader createAlertInfoHeader(javax.sip.address.URI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.PriorityHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.WarningHeader void setAgent(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ServerHeader createServerHeader(java.util.List)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ServerHeader createServerHeader(java.util.List) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubjectHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.EventHeader void setEventId(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ReasonHeader createReasonHeader(java.lang.String, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ExtensionHeader createExtensionHeader(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ReplyToHeader createReplyToHeader(javax.sip.address.Address)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.FromHeader createFromHeader(javax.sip.address.Address, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.Parameters void removeParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AcceptLanguageHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AcceptEncodingHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader void setReasonCode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AuthorizationHeader void setURI(javax.sip.address.URI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ProxyAuthenticateHeader createProxyAuthenticateHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AuthorizationHeader createAuthorizationHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.WWWAuthenticateHeader createWWWAuthenticateHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.UnsupportedHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SIPETagHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.AllowHeader void setMethod(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SubscriptionStateHeader createSubscriptionStateHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.CallIdHeader createCallIdHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentDispositionHeader RENDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.UnsupportedHeader createUnsupportedHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AuthenticationInfoHeader createAuthenticationInfoHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RecordRouteHeader createRecordRouteHeader(javax.sip.address.Address)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.RSeqHeader createRSeqHeader(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ViaHeader void setTransport(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ReasonHeader void setText(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.FromHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ViaHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderAddress void setAddress(javax.sip.address.Address) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ReasonHeader createReasonHeader(java.lang.String, int, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.AcceptHeader createAcceptHeader(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.OrganizationHeader createOrganizationHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.ContentLanguageHeader NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.MinExpiresHeader createMinExpiresHeader(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.ReferToHeader createReferToHeader(javax.sip.address.Address) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.PriorityHeader NORMAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.SubscriptionStateHeader createSubscriptionStateHeader(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.RAckHeader void setMethod(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.HeaderFactory javax.sip.header.MimeVersionHeader createMimeVersionHeader(int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.SubscriptionStateHeader void setState(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.header.Parameters java.lang.String getParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

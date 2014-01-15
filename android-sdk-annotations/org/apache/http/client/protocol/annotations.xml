@@ -2,18 +2,6 @@
     <item name='org.apache.http.client.protocol.RequestProxyAuthentication void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.client.protocol.RequestDefaultHeaders void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.client.protocol.RequestDefaultHeaders void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.client.protocol.RequestTargetAuthentication void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.client.protocol.RequestProxyAuthentication void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.client.protocol.ClientContextConfigurer ClientContextConfigurer(org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -26,10 +14,52 @@
     <item name='org.apache.http.client.protocol.RequestAddCookies void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.client.protocol.ClientContext AUTHSCHEME_REGISTRY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.client.protocol.RequestAddCookies void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.client.protocol.ResponseProcessCookies void process(org.apache.http.HttpResponse, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.ClientContext COOKIE_ORIGIN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.ClientContext USER_TOKEN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.RequestDefaultHeaders void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.RequestDefaultHeaders void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.ClientContext PROXY_AUTH_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.ClientContext AUTH_SCHEME_PREF'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.RequestTargetAuthentication void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.ClientContext TARGET_AUTH_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.RequestProxyAuthentication void process(org.apache.http.HttpRequest, org.apache.http.protocol.HttpContext) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.ClientContext CREDS_PROVIDER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.ClientContext COOKIE_SPEC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.ClientContext COOKIE_STORE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.protocol.ClientContext COOKIESPEC_REGISTRY'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -5,10 +5,13 @@
     <item name='org.apache.harmony.security.fortress.Services int insertProviderAt(java.security.Provider, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.fortress.Services java.util.List&lt;java.security.Provider&gt; getProvidersList()'>
+    <item name='org.apache.harmony.security.fortress.SecurityAccess java.security.Provider.Service getService(java.security.Provider, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.fortress.SecurityAccess java.security.Provider.Service getService(java.security.Provider, java.lang.String) 0'>
+    <item name='org.apache.harmony.security.fortress.Engine org.apache.harmony.security.fortress.Engine.SpiAndProvider getInstance(java.lang.String, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.fortress.Services java.util.List&lt;java.security.Provider&gt; getProvidersList()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.fortress.Engine java.lang.Object getInstance(java.lang.String, java.security.Provider, java.lang.Object) 1'>
@@ -17,7 +20,7 @@
     <item name='org.apache.harmony.security.fortress.Engine org.apache.harmony.security.fortress.Engine.SpiAndProvider getInstance(java.lang.String, java.lang.Object) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.fortress.Engine org.apache.harmony.security.fortress.Engine.SpiAndProvider getInstance(java.lang.String, java.lang.Object)'>
+    <item name='org.apache.harmony.security.fortress.Services java.security.Provider[] getProviders()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.fortress.Engine java.lang.Object getInstance(java.lang.String, java.security.Provider, java.lang.Object) 0'>

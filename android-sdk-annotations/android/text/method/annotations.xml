@@ -2,6 +2,9 @@
     <item name='android.text.method.BaseMovementMethod boolean pageDown(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.DateKeyListener CHARACTERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.LinkMovementMethod boolean onTouchEvent(android.widget.TextView, android.text.Spannable, android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -12,9 +15,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.ArrowKeyMovementMethod boolean lineStart(android.widget.TextView, android.text.Spannable) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.method.MovementMethod boolean onKeyDown(android.widget.TextView, android.text.Spannable, int, android.view.KeyEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.TextKeyListener boolean onKeyOther(android.view.View, android.text.Editable, android.view.KeyEvent) 2'>
@@ -44,6 +44,9 @@
     <item name='android.text.method.LinkMovementMethod boolean handleMovementKey(android.widget.TextView, android.text.Spannable, int, int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.TextKeyListener.Capitalize WORDS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.ArrowKeyMovementMethod boolean rightWord(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -63,6 +66,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.Touch int getInitialScrollX(android.widget.TextView, android.text.Spannable) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.method.DateTimeKeyListener char[] getAcceptedChars()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.TextKeyListener boolean onKeyOther(android.view.View, android.text.Editable, android.view.KeyEvent) 1'>
@@ -143,9 +149,6 @@
     <item name='android.text.method.BaseMovementMethod boolean pageDown(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.method.NumberKeyListener boolean onKeyDown(android.view.View, android.text.Editable, int, android.view.KeyEvent) 3'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.method.ScrollingMovementMethod boolean lineEnd(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -155,7 +158,7 @@
     <item name='android.text.method.BaseMovementMethod boolean down(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.method.MovementMethod boolean onKeyDown(android.widget.TextView, android.text.Spannable, int, android.view.KeyEvent) 1'>
+    <item name='android.text.method.BaseMovementMethod boolean up(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.BaseMovementMethod boolean pageUp(android.widget.TextView, android.text.Spannable) 1'>
@@ -164,13 +167,10 @@
     <item name='android.text.method.ArrowKeyMovementMethod boolean lineStart(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.method.BaseMovementMethod boolean up(android.widget.TextView, android.text.Spannable) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.method.NumberKeyListener char[] getAcceptedChars()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.method.MetaKeyKeyListener boolean onKeyUp(android.view.View, android.text.Editable, int, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.method.DigitsKeyListener android.text.method.DigitsKeyListener getInstance(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.MetaKeyKeyListener long handleKeyUp(long, int, android.view.KeyEvent) 2'>
@@ -188,6 +188,9 @@
     <item name='android.text.method.KeyListener boolean onKeyDown(android.view.View, android.text.Editable, int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.TimeKeyListener CHARACTERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.NumberKeyListener java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -195,9 +198,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.BaseMovementMethod boolean down(android.widget.TextView, android.text.Spannable) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.method.DateTimeKeyListener char[] getAcceptedChars()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.ArrowKeyMovementMethod boolean bottom(android.widget.TextView, android.text.Spannable) 1'>
@@ -263,6 +263,9 @@
     <item name='android.text.method.BaseMovementMethod boolean scrollPageUp(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.TextKeyListener.Capitalize SENTENCES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.BaseMovementMethod boolean lineStart(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -273,9 +276,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.KeyListener boolean onKeyOther(android.view.View, android.text.Editable, android.view.KeyEvent) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.method.PasswordTransformationMethod java.lang.CharSequence getTransformation(java.lang.CharSequence, android.view.View)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.BaseMovementMethod boolean scrollLineStart(android.widget.TextView, android.text.Spannable) 0'>
@@ -299,6 +299,9 @@
     <item name='android.text.method.LinkMovementMethod void onTakeFocus(android.widget.TextView, android.text.Spannable, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.TextKeyListener.Capitalize NONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.KeyListener boolean onKeyOther(android.view.View, android.text.Editable, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -317,9 +320,6 @@
     <item name='android.text.method.BaseMovementMethod boolean scrollTop(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.method.TimeKeyListener char[] getAcceptedChars()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.method.ScrollingMovementMethod boolean down(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -327,9 +327,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.ScrollingMovementMethod void onTakeFocus(android.widget.TextView, android.text.Spannable, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.method.DateKeyListener char[] getAcceptedChars()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.ArrowKeyMovementMethod boolean pageDown(android.widget.TextView, android.text.Spannable) 0'>
@@ -413,6 +410,9 @@
     <item name='android.text.method.ArrowKeyMovementMethod boolean right(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.DialerKeyListener char[] getAcceptedChars()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.BaseKeyListener boolean backspace(android.view.View, android.text.Editable, int, android.view.KeyEvent) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -438,9 +438,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.MovementMethod boolean onTouchEvent(android.widget.TextView, android.text.Spannable, android.view.MotionEvent) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.method.BaseMovementMethod boolean onKeyDown(android.widget.TextView, android.text.Spannable, int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.ScrollingMovementMethod boolean home(android.widget.TextView, android.text.Spannable) 0'>
@@ -485,9 +482,6 @@
     <item name='android.text.method.BaseMovementMethod boolean home(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.method.BaseMovementMethod boolean onKeyDown(android.widget.TextView, android.text.Spannable, int, android.view.KeyEvent) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.text.method.BaseMovementMethod boolean rightWord(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -509,6 +503,9 @@
     <item name='android.text.method.LinkMovementMethod boolean left(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.PasswordTransformationMethod java.lang.CharSequence getTransformation(java.lang.CharSequence, android.view.View)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.ArrowKeyMovementMethod boolean up(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -525,6 +522,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.BaseMovementMethod int getMovementMetaState(android.text.Spannable, android.view.KeyEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.method.CharacterPickerDialog void onItemClick(android.widget.AdapterView, android.view.View, int, long) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.QwertyKeyListener boolean onKeyDown(android.view.View, android.text.Editable, int, android.view.KeyEvent) 3'>
@@ -545,10 +545,16 @@
     <item name='android.text.method.LinkMovementMethod boolean down(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.DialerKeyListener CHARACTERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.MetaKeyKeyListener void stopSelecting(android.view.View, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.LinkMovementMethod boolean handleMovementKey(android.widget.TextView, android.text.Spannable, int, int, android.view.KeyEvent) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.method.NumberKeyListener char[] getAcceptedChars()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.ArrowKeyMovementMethod boolean pageUp(android.widget.TextView, android.text.Spannable) 1'>
@@ -578,6 +584,9 @@
     <item name='android.text.method.Touch boolean onTouchEvent(android.widget.TextView, android.text.Spannable, android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.DateTimeKeyListener CHARACTERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.BaseMovementMethod void onTakeFocus(android.widget.TextView, android.text.Spannable, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -590,10 +599,10 @@
     <item name='android.text.method.BaseMovementMethod boolean end(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.method.DigitsKeyListener android.text.method.DigitsKeyListener getInstance(java.lang.String)'>
+    <item name='android.text.method.ArrowKeyMovementMethod boolean lineEnd(android.widget.TextView, android.text.Spannable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.method.ArrowKeyMovementMethod boolean lineEnd(android.widget.TextView, android.text.Spannable) 0'>
+    <item name='android.text.method.TextKeyListener.Capitalize android.text.method.TextKeyListener.Capitalize valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.DigitsKeyListener java.lang.CharSequence filter(java.lang.CharSequence, int, int, android.text.Spanned, int, int) 0'>
@@ -629,6 +638,9 @@
     <item name='android.text.method.ArrowKeyMovementMethod boolean left(android.widget.TextView, android.text.Spannable) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.text.method.TimeKeyListener char[] getAcceptedChars()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.text.method.NumberKeyListener boolean ok(char[], char) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -638,13 +650,10 @@
     <item name='android.text.method.BaseMovementMethod boolean scrollLeft(android.widget.TextView, android.text.Spannable, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.text.method.TextKeyListener.Capitalize android.text.method.TextKeyListener.Capitalize valueOf(java.lang.String)'>
+    <item name='android.text.method.TextKeyListener.Capitalize CHARACTERS'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.ArrowKeyMovementMethod boolean leftWord(android.widget.TextView, android.text.Spannable) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.text.method.DialerKeyListener char[] getAcceptedChars()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.ScrollingMovementMethod boolean lineStart(android.widget.TextView, android.text.Spannable) 0'>
@@ -657,6 +666,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.ArrowKeyMovementMethod boolean onTouchEvent(android.widget.TextView, android.text.Spannable, android.view.MotionEvent) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.text.method.DateKeyListener char[] getAcceptedChars()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.text.method.MultiTapKeyListener android.text.method.MultiTapKeyListener getInstance(boolean, android.text.method.TextKeyListener.Capitalize) 1'>

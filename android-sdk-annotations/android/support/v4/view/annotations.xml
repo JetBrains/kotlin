@@ -2,16 +2,7 @@
     <item name='android.support.v4.view.AccessibilityDelegateCompat void onInitializeAccessibilityNodeInfo(android.view.View, android.support.v4.view.accessibility.AccessibilityNodeInfoCompat) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.ViewPager android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompatIcs.AccessibilityDelegateBridge boolean dispatchPopulateAccessibilityEvent(android.view.View, android.view.accessibility.AccessibilityEvent) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.view.ViewPager.SavedState SavedState(android.os.Parcelable) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompatJellyBean.AccessibilityDelegateBridgeJellyBean boolean onRequestSendAccessibilityEvent(android.view.ViewGroup, android.view.View, android.view.accessibility.AccessibilityEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.ViewPager void addView(android.view.View, int, android.view.ViewGroup.LayoutParams) 2'>
@@ -35,9 +26,6 @@
     <item name='android.support.v4.view.ViewPager boolean dispatchPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompatIcs.AccessibilityDelegateBridge boolean onRequestSendAccessibilityEvent(android.view.ViewGroup, android.view.View, android.view.accessibility.AccessibilityEvent) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.view.KeyEventCompat boolean hasNoModifiers(android.view.KeyEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -47,10 +35,13 @@
     <item name='android.support.v4.view.ViewParentCompatICS boolean requestSendAccessibilityEvent(android.view.ViewParent, android.view.View, android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.view.AccessibilityDelegateCompatJellyBean.AccessibilityDelegateBridgeJellyBean boolean dispatchPopulateAccessibilityEvent(android.view.View, android.view.accessibility.AccessibilityEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.view.PagerTitleStrip PagerTitleStrip(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompatJellyBean.AccessibilityDelegateBridgeJellyBean boolean dispatchPopulateAccessibilityEvent(android.view.View, android.view.accessibility.AccessibilityEvent) 0'>
+    <item name='android.support.v4.view.PagerAdapter java.lang.Object instantiateItem(android.view.ViewGroup, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.PagerTabStrip boolean onTouchEvent(android.view.MotionEvent) 0'>
@@ -74,16 +65,16 @@
     <item name='android.support.v4.view.ViewPager void removeView(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.view.ViewPager.SavedState CREATOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.view.AccessibilityDelegateCompatIcs.AccessibilityDelegateBridge void onPopulateAccessibilityEvent(android.view.View, android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.view.ViewPager android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.view.AccessibilityDelegateCompatIcs.AccessibilityDelegateBridge void sendAccessibilityEventUnchecked(android.view.View, android.view.accessibility.AccessibilityEvent) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompat boolean onRequestSendAccessibilityEvent(android.view.ViewGroup, android.view.View, android.view.accessibility.AccessibilityEvent) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompatJellyBean.AccessibilityDelegateBridgeJellyBean boolean onRequestSendAccessibilityEvent(android.view.ViewGroup, android.view.View, android.view.accessibility.AccessibilityEvent) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.PagerAdapter java.lang.Object instantiateItem(android.view.ViewGroup, int) 0'>
@@ -116,10 +107,10 @@
     <item name='android.support.v4.view.ViewPager boolean dispatchKeyEvent(android.view.KeyEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompatIcs.AccessibilityDelegateBridge void onPopulateAccessibilityEvent(android.view.View, android.view.accessibility.AccessibilityEvent) 1'>
+    <item name='android.support.v4.view.MotionEventCompat int getActionIndex(android.view.MotionEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.MotionEventCompat int getActionIndex(android.view.MotionEvent) 0'>
+    <item name='android.support.v4.view.ViewPager android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.PagerTabStrip PagerTabStrip(android.content.Context, android.util.AttributeSet) 0'>
@@ -132,12 +123,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.ViewPager.SavedState void writeToParcel(android.os.Parcel, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.view.ViewPager android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.view.ViewPager android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.PagerAdapter boolean isViewFromObject(android.view.View, java.lang.Object) 1'>
@@ -155,10 +140,13 @@
     <item name='android.support.v4.view.AccessibilityDelegateCompatIcs.AccessibilityDelegateBridge void sendAccessibilityEvent(android.view.View, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.PagerAdapter java.lang.Object instantiateItem(android.view.ViewGroup, int)'>
+    <item name='android.support.v4.view.ViewPager android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.PagerTabStrip PagerTabStrip(android.content.Context, android.util.AttributeSet) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.view.ViewPager android.os.Parcelable onSaveInstanceState()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.ViewPager boolean onInterceptTouchEvent(android.view.MotionEvent) 0'>
@@ -167,25 +155,19 @@
     <item name='android.support.v4.view.ViewPager.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompat boolean onRequestSendAccessibilityEvent(android.view.ViewGroup, android.view.View, android.view.accessibility.AccessibilityEvent) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.view.ViewPager ViewPager(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.ViewPager void addTouchables(java.util.ArrayList&lt;android.view.View&gt;) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompatJellyBean.AccessibilityDelegateBridgeJellyBean void onPopulateAccessibilityEvent(android.view.View, android.view.accessibility.AccessibilityEvent) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.view.AccessibilityDelegateCompatIcs.AccessibilityDelegateBridge boolean dispatchPopulateAccessibilityEvent(android.view.View, android.view.accessibility.AccessibilityEvent) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.ViewPager android.os.Parcelable onSaveInstanceState()'>
+    <item name='android.support.v4.view.AccessibilityDelegateCompat void onInitializeAccessibilityNodeInfo(android.view.View, android.support.v4.view.accessibility.AccessibilityNodeInfoCompat) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompat void onInitializeAccessibilityNodeInfo(android.view.View, android.support.v4.view.accessibility.AccessibilityNodeInfoCompat) 0'>
+    <item name='android.support.v4.view.ViewPager.SavedState java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.ViewPager void addFocusables(java.util.ArrayList&lt;android.view.View&gt;, int, int) 0'>
@@ -197,9 +179,6 @@
     <item name='android.support.v4.view.ViewPager ViewPager(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompatIcs.AccessibilityDelegateBridge boolean onRequestSendAccessibilityEvent(android.view.ViewGroup, android.view.View, android.view.accessibility.AccessibilityEvent) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.view.AccessibilityDelegateCompatIcs.AccessibilityDelegateBridge void onInitializeAccessibilityEvent(android.view.View, android.view.accessibility.AccessibilityEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -207,12 +186,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.ViewPager android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.view.AccessibilityDelegateCompatJellyBean.AccessibilityDelegateBridgeJellyBean boolean dispatchPopulateAccessibilityEvent(android.view.View, android.view.accessibility.AccessibilityEvent) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.view.ViewPager.SavedState java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.view.ViewPager.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 0'>

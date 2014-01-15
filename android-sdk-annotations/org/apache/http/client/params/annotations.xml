@@ -1,26 +1,83 @@
 <root>
+    <item name='org.apache.http.client.params.ClientPNames HANDLE_REDIRECTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.http.client.params.HttpClientParams boolean isRedirecting(org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.client.params.HttpClientParams void setRedirecting(org.apache.http.params.HttpParams, boolean) 0'>
+    <item name='org.apache.http.client.params.HttpClientParams java.lang.String getCookiePolicy(org.apache.http.params.HttpParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.client.params.ClientParamBean ClientParamBean(org.apache.http.params.HttpParams) 0'>
+    <item name='org.apache.http.client.params.ClientPNames ALLOW_CIRCULAR_REDIRECTS'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.client.params.HttpClientParams java.lang.String getCookiePolicy(org.apache.http.params.HttpParams) 0'>
+    <item name='org.apache.http.client.params.ClientPNames CONNECTION_MANAGER_FACTORY'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.http.client.params.HttpClientParams boolean isAuthenticating(org.apache.http.params.HttpParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.client.params.HttpClientParams void setAuthenticating(org.apache.http.params.HttpParams, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='org.apache.http.client.params.HttpClientParams void setCookiePolicy(org.apache.http.params.HttpParams, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.http.client.params.HttpClientParams java.lang.String getCookiePolicy(org.apache.http.params.HttpParams)'>
+    <item name='org.apache.http.client.params.ClientPNames COOKIE_POLICY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.HttpClientParams java.lang.String getCookiePolicy(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.HttpClientParams void setAuthenticating(org.apache.http.params.HttpParams, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.HttpClientParams void setRedirecting(org.apache.http.params.HttpParams, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.ClientPNames MAX_REDIRECTS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.AuthPolicy NTLM'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.ClientPNames DEFAULT_HOST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.ClientPNames CONNECTION_MANAGER_FACTORY_CLASS_NAME'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.AuthPolicy DIGEST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.ClientPNames VIRTUAL_HOST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.AuthPolicy BASIC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.CookiePolicy RFC_2965'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.ClientPNames HANDLE_AUTHENTICATION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.ClientPNames DEFAULT_HEADERS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.CookiePolicy BEST_MATCH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.ClientParamBean ClientParamBean(org.apache.http.params.HttpParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.CookiePolicy RFC_2109'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.CookiePolicy BROWSER_COMPATIBILITY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.CookiePolicy NETSCAPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.http.client.params.ClientPNames REJECT_RELATIVE_REDIRECT'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

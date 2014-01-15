@@ -1,0 +1,20 @@
+<root>
+    <item name='java.beans.PropertyChangeSupport PropertyChangeSupport(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.beans.PropertyChangeSupport java.beans.PropertyChangeListener[] getPropertyChangeListeners(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.beans.PropertyChangeSupport java.beans.PropertyChangeListener[] getPropertyChangeListeners()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.beans.PropertyChangeEvent PropertyChangeEvent(java.lang.Object, java.lang.String, java.lang.Object, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.beans.PropertyChangeSupport void firePropertyChange(java.beans.PropertyChangeEvent) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.beans.IndexedPropertyChangeEvent IndexedPropertyChangeEvent(java.lang.Object, java.lang.String, java.lang.Object, java.lang.Object, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

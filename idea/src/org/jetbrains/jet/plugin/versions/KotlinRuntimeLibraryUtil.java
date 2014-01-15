@@ -102,13 +102,30 @@ public class KotlinRuntimeLibraryUtil {
         addAnnotations(sdk, PathUtil.getKotlinPathsForIdeaPlugin().getAndroidSdkAnnotationsPath());
     }
 
+    public static void removeJdkAnnotations(@NotNull Sdk sdk) {
+        removeAnnotations(sdk, PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath());
+    }
+
     private static void addAnnotations(@NotNull Sdk sdk, @NotNull File annotationsPath) {
+        modifyAnnotations(sdk, annotationsPath, true);
+    }
+
+    private static void removeAnnotations(@NotNull Sdk sdk, @NotNull File annotationsPath) {
+        modifyAnnotations(sdk, annotationsPath, false);
+    }
+
+    private static void modifyAnnotations(@NotNull Sdk sdk, @NotNull File annotationsPath, boolean isAdd) {
         if (annotationsPath.exists()) {
             VirtualFile jdkAnnotationsJar = LocalFileSystem.getInstance().findFileByIoFile(annotationsPath);
             if (jdkAnnotationsJar != null) {
                 SdkModificator modificator = sdk.getSdkModificator();
-                modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(jdkAnnotationsJar),
-                                    AnnotationOrderRootType.getInstance());
+                VirtualFile jarRootForLocalFile = JarFileSystem.getInstance().getJarRootForLocalFile(jdkAnnotationsJar);
+                if (isAdd) {
+                    modificator.addRoot(jarRootForLocalFile, AnnotationOrderRootType.getInstance());
+                }
+                else {
+                    modificator.removeRoot(jarRootForLocalFile, AnnotationOrderRootType.getInstance());
+                }
                 modificator.commitChanges();
             }
         }
