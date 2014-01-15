@@ -47,12 +47,18 @@ public class SimpleTestClassModel implements TestClassModel {
     private Collection<TestClassModel> innerTestClasses;
     private Collection<TestMethodModel> testMethods;
 
-    public SimpleTestClassModel(@NotNull File rootFile, boolean recursive, @NotNull Pattern filenamePattern, @NotNull String doTestMethodName) {
+    public SimpleTestClassModel(
+            @NotNull File rootFile,
+            boolean recursive,
+            @NotNull Pattern filenamePattern,
+            @NotNull String doTestMethodName,
+            @NotNull String testClassName
+    ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
         this.filenamePattern = filenamePattern;
         this.doTestMethodName = doTestMethodName;
-        this.testClassName = StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(rootFile.getName()));
+        this.testClassName = testClassName;
     }
 
     @NotNull
@@ -69,7 +75,8 @@ public class SimpleTestClassModel implements TestClassModel {
                 for (File file : files) {
                     if (file.isDirectory()) {
                         if (dirHasFilesInside(file)) {
-                            children.add(new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName));
+                            String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
+                            children.add(new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName, innerTestClassName));
                         }
                     }
                 }

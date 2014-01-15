@@ -83,6 +83,7 @@ import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterBasicTest
 import org.jetbrains.jet.plugin.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.jet.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.jet.completion.handlers.AbstractSmartCompletionHandlerTest
+import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil
 import org.jetbrains.jet.resolve.AbstractAdditionalLazyResolveDescriptorRendererTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
 
@@ -414,7 +415,9 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractJetFormatterTest>()) {
-            model("formatter", pattern = """^([^\.]+)\.kt$""")
+            model("formatter", pattern = """^([^\.]+)\.after.kt$""")
+            model("formatter", pattern = """^([^\.]+)\.after.inv.kt$""",
+                  testMethod = "doTestInverted", testClassName = "FormatterInverted")
         }
 
         testClass(javaClass<AbstractDiagnosticMessageTest>()) {
@@ -482,14 +485,16 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 extension: String? = "kt", // null string means dir (name without dot)
                 pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
                 testMethod: String = "doTest",
-                singleClass: Boolean = false
+                singleClass: Boolean = false,
+                testClassName: String? = null
         ) {
             val rootFile = File(testDataRoot + "/" + relativeRootPath)
             val compiledPattern = Pattern.compile(pattern)
+            val className = testClassName ?: TestGeneratorUtil.fileNameToJavaIdentifier(rootFile)
             testModels.add(if (singleClass)
-                               SingleClassTestModel(rootFile, compiledPattern, testMethod)
+                               SingleClassTestModel(rootFile, compiledPattern, testMethod, className)
                            else
-                               SimpleTestClassModel(rootFile, recursive, compiledPattern, testMethod))
+                               SimpleTestClassModel(rootFile, recursive, compiledPattern, testMethod, className))
         }
     }
 
