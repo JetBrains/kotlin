@@ -154,6 +154,10 @@ public final class StaticContext {
         if (descriptor instanceof PackageViewDescriptor) {
             return getQualifiedReference(((PackageViewDescriptor) descriptor).getFqName());
         }
+        if (descriptor instanceof PackageFragmentDescriptor) {
+            return getQualifiedReference(((PackageFragmentDescriptor) descriptor).getFqName());
+        }
+
         return new JsNameRef(getNameForDescriptor(descriptor), getQualifierForDescriptor(descriptor));
     }
 
