@@ -46,7 +46,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     protected final DP declarationProvider;
     protected final D thisDescriptor;
 
-    private final MemoizedFunctionToNotNull<Name, List<ClassifierDescriptor>> classDescriptors;
+    private final MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> classDescriptors;
 
     private final MemoizedFunctionToNotNull<Name, Set<FunctionDescriptor>> functionDescriptors;
     private final MemoizedFunctionToNotNull<Name, Set<VariableDescriptor>> propertyDescriptors;
@@ -63,9 +63,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         this.thisDescriptor = thisDescriptor;
 
         StorageManager storageManager = resolveSession.getStorageManager();
-        this.classDescriptors = storageManager.createMemoizedFunction(new Function1<Name, List<ClassifierDescriptor>>() {
+        this.classDescriptors = storageManager.createMemoizedFunction(new Function1<Name, List<ClassDescriptor>>() {
             @Override
-            public List<ClassifierDescriptor> invoke(Name name) {
+            public List<ClassDescriptor> invoke(Name name) {
                 return resolveClassDescriptor(name);
             }
         });
@@ -92,12 +92,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     }
 
     @Nullable
-    private List<ClassifierDescriptor> resolveClassDescriptor(@NotNull final Name name) {
+    private List<ClassDescriptor> resolveClassDescriptor(@NotNull final Name name) {
         Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
 
-        return ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassOrObject, ClassifierDescriptor>() {
+        return ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassOrObject, ClassDescriptor>() {
             @Override
-            public ClassifierDescriptor fun(JetClassOrObject classOrObject) {
+            public ClassDescriptor fun(JetClassOrObject classOrObject) {
                 return new LazyClassDescriptor(resolveSession, thisDescriptor, name, JetClassInfoUtil.createClassLikeInfo(classOrObject));
             }
         });
@@ -106,12 +106,6 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         return first(classDescriptors.invoke(name));
-    }
-
-    @NotNull
-    @Override
-    public Collection<ClassifierDescriptor> getClassifiers(@NotNull Name name) {
-        return classDescriptors.invoke(name);
     }
 
     private static <T> T first(@NotNull List<T> list) {

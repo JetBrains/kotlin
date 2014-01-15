@@ -112,15 +112,6 @@ public class JetScopeSelectorUtil {
                 }
             };
 
-    public static final ScopeByNameMultiSelector<ClassifierDescriptor> NAMED_CLASSIFIERS_SCOPE_SELECTOR =
-            new ScopeByNameMultiSelector<ClassifierDescriptor>() {
-                @NotNull
-                @Override
-                public Collection<ClassifierDescriptor> get(@NotNull JetScope scope, @NotNull Name name) {
-                    return scope.getClassifiers(name);
-                }
-            };
-
     public static final ScopeDescriptorSelector<DeclarationDescriptor> ALL_DESCRIPTORS_SCOPE_SELECTOR =
             new ScopeDescriptorSelector<DeclarationDescriptor>() {
                 @NotNull

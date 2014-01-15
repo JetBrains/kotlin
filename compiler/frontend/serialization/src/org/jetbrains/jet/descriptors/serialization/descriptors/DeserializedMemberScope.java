@@ -160,13 +160,6 @@ public abstract class DeserializedMemberScope implements JetScope {
         return getClassDescriptor(name);
     }
 
-    @NotNull
-    @Override
-    public final Collection<ClassifierDescriptor> getClassifiers(@NotNull Name name) {
-        ClassifierDescriptor classifier = getClassifier(name);
-        return classifier != null ? Collections.singleton(classifier) : Collections.<ClassifierDescriptor>emptyList();
-    }
-
     @Nullable
     protected abstract ClassifierDescriptor getClassDescriptor(@NotNull Name name);
 

@@ -272,8 +272,6 @@ public abstract class LazyJavaMemberScope(
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
     override fun getDeclarationsByLabel(labelName: LabelName) = listOf<DeclarationDescriptor>()
 
-    override fun getClassifiers(name: Name) = emptyOrSingletonList(getClassifier(name))
-
     override fun getOwnDeclaredDescriptors() = getAllDescriptors()
     override fun getAllDescriptors() = allDescriptors()
 

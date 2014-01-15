@@ -244,12 +244,6 @@ public class LazyImportScope implements JetScope {
         return selectFirstFromImports(name, LookupMode.ONLY_CLASSES, JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR);
     }
 
-    @NotNull
-    @Override
-    public Collection<ClassifierDescriptor> getClassifiers(@NotNull Name name) {
-        return collectFromImports(name, LookupMode.ONLY_CLASSES, JetScopeSelectorUtil.NAMED_CLASSIFIERS_SCOPE_SELECTOR);
-    }
-
     @Nullable
     @Override
     public PackageViewDescriptor getPackage(@NotNull Name name) {

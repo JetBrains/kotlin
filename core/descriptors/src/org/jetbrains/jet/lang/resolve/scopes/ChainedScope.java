@@ -51,12 +51,6 @@ public class ChainedScope implements JetScope {
         return getFirstMatch(scopeChain, name, CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR);
     }
 
-    @NotNull
-    @Override
-    public Collection<ClassifierDescriptor> getClassifiers(@NotNull Name name) {
-        return getFromAllScopes(scopeChain, name, NAMED_CLASSIFIERS_SCOPE_SELECTOR);
-    }
-
     @Override
     public PackageViewDescriptor getPackage(@NotNull Name name) {
         return getFirstMatch(scopeChain, name, PACKAGE_SCOPE_SELECTOR);

@@ -57,12 +57,6 @@ public abstract class AbstractScopeAdapter implements JetScope {
 
     @NotNull
     @Override
-    public Collection<ClassifierDescriptor> getClassifiers(@NotNull Name name) {
-        return getWorkerScope().getClassifiers(name);
-    }
-
-    @NotNull
-    @Override
     public Collection<VariableDescriptor> getProperties(@NotNull Name name) {
         return getWorkerScope().getProperties(name);
     }
