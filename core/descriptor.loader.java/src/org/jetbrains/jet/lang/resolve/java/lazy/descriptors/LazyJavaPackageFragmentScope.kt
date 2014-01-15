@@ -95,14 +95,19 @@ public class LazyPackageFragmentScopeForJavaPackage(
                 .map { c -> c.getName() }.toList()
     }
 
-    override fun getSubPackages(): Collection<FqName> =
-            listOf(
-                // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
-                // and there's no harm in having some names in the result that can not be resolved
-                jPackage.getClasses().map { c -> c.getFqName().sure("Toplevel class has no fqName: $c}") },
-                jPackage.getSubPackages().map { sp -> sp.getFqName() }
-            ).flatten()
+    private val _subPackages = c.storageManager.createRecursionTolerantLazyValue(
+                                {
+                                    listOf(
+                                        // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
+                                        // and there's no harm in having some names in the result that can not be resolved
+                                        jPackage.getClasses().map { c -> c.getFqName().sure("Toplevel class has no fqName: $c}") },
+                                        jPackage.getSubPackages().map { sp -> sp.getFqName() }
+                                    ).flatten()
+                                },
+                                // This breaks infinite recursion between loading Java descriptors and building light classes
+                                onRecursiveCall = listOf())
 
+    override fun getSubPackages() = _subPackages()
 
     override fun getAllPropertyNames() = Collections.emptyList<Name>()
 }
