@@ -71,8 +71,6 @@ class GenerateRanges(val out: PrintWriter) {
 
     fun hashCode()$hashCode
 
-    fun toString() = "${"\$start..\$end"}"
-
     class object {
         public val EMPTY: $range = $range($emptyBounds)
     }

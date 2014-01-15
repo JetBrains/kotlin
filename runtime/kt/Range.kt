@@ -22,4 +22,6 @@ public trait Range<in T : Comparable<T>> {
     public val end: T
 
     public fun contains(item: T): Boolean
+
+    public fun toString(): String = "$start..$end"
 }
