@@ -133,10 +133,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             between(FUN, FUN).blankLines(1)
             between(FUN, PROPERTY).blankLines(1)
 
-            afterInside(LBRACE, BLOCK).lineBreakInCode()
-            beforeInside(RBRACE, CLASS_BODY).lineBreakInCode()
-            beforeInside(RBRACE, BLOCK).lineBreakInCode()
-
             // =============== Spacing ================
             before(COMMA).spaceIf(jetCommonSettings.SPACE_BEFORE_COMMA)
             after(COMMA).spaceIf(jetCommonSettings.SPACE_AFTER_COMMA)
@@ -198,12 +194,11 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_EXPRESSION, CALL_EXPRESSION).spaces(1)
 
             beforeInside(ELSE_KEYWORD, IF).spaces(1)
-
-            between(RPAR, BODY).spaces(1)
         }
         custom {
-            val lbraceRuleForControlStructure: (ASTBlock, ASTBlock, ASTBlock) -> Spacing? = {
-                parent, left, right ->
+
+            val leftBraceRule =  {
+                (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
                 val blockOrExpression = right.getNode()!!.getFirstChildNode()
                 val noBlockSpacing = Spacing.createSpacing(1, 1, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
                 if (blockOrExpression != null && blockOrExpression.getElementType() == BLOCK) {
@@ -221,9 +216,10 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                 }
                 else noBlockSpacing
             }
-            inPosition(parent = IF, right = THEN).customRule(lbraceRuleForControlStructure)
-            inPosition(parent = IF, right = ELSE).customRule(lbraceRuleForControlStructure)
 
+            inPosition(parent = IF, right = THEN).customRule(leftBraceRule)
+            inPosition(parent = IF, right = ELSE).customRule(leftBraceRule)
+            inPosition(parent = WHILE, right = BODY).customRule(leftBraceRule)
 
             val spacesInSimpleFunction = if (jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD) 1 else 0
             inPosition(parent = FUNCTION_LITERAL,
@@ -258,6 +254,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                 Spacing.createSpacing(numSpaces, numSpaces, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
             }
         }
+
+        simple {
+            afterInside(LBRACE, BLOCK).lineBreakInCode()
+            beforeInside(RBRACE, CLASS_BODY).lineBreakInCode()
+            beforeInside(RBRACE, BLOCK).lineBreakInCode()
+            between(RPAR, BODY).spaces(1)
+        }
     }
 }
-
