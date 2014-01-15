@@ -17,25 +17,17 @@
 package org.jetbrains.jet.codegen.forTestCompile;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.utils.Profiler;
-import org.junit.Assert;
 
-import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
 /**
- * Compile stdlib.jar that can be used in tests
+ * Compile kotlin-runtime.jar that can be used in tests
  *
  * @see #runtimeJarForTests
  */
@@ -53,67 +45,32 @@ public class ForTestCompileRuntime {
 
         @Override
         protected void doCompile(@NotNull File classesDir) throws Exception {
-            compileJavaPartOfBuiltins(classesDir);
+            compileJvmBuiltins(classesDir);
             compileStdlib(classesDir);
         }
     }
 
-    private static void compileStdlib(File destdir) throws IOException {
+    private static void compileStdlib(@NotNull File destDir) throws IOException {
         ExitCode exitCode = new K2JVMCompiler().exec(System.out,
-                "-output", destdir.getPath(),
+                "-output", destDir.getPath(),
                 "-src", "./libraries/stdlib/src",
                 "-noStdlib",
                 "-noJdkAnnotations",
                 "-suppress", "warnings",
                 "-annotations", "./jdk-annotations",
-                "-classpath", "out/production/runtime");
+                "-classpath", "out/production/builtins" + File.pathSeparator + "out/production/runtime.jvm");
         if (exitCode != ExitCode.OK) {
             throw new IllegalStateException("stdlib for test compilation failed: " + exitCode);
         }
     }
-    
-    private static List<File> javaFilesInDir(File dir) {
-        List<File> r = new ArrayList<File>();
-        Stack<File> stack = new Stack<File>();
-        stack.push(dir);
-        while (!stack.empty()) {
-            File file = stack.pop();
-            if (file.isDirectory()) {
-                stack.addAll(Arrays.asList(file.listFiles()));
-            }
-            else if (file.getName().endsWith(".java")) {
-                r.add(file);
-            }
-        }
-        return r;
+
+    private static void compileJvmBuiltins(@NotNull File destDir) throws IOException {
+        // Sources of stdlib and built-ins may diverge this way, because the former are compiled with the new compiler and the latter are
+        // just copied from the sources built by bootstrap plugin (which has an old compiler)
+        // TODO: compile Kotlin+Java built-in sources properly here, maybe reusing KotlinCompilerAdapter ant task
+        FileUtil.copyDir(new File("out/production/builtins"), destDir);
+        FileUtil.copyDir(new File("out/production/runtime.jvm"), destDir);
     }
-    
-    private static void compileJavaPartOfBuiltins(File destdir) throws IOException {
-        if (true) {
-            FileUtil.copyDir(new File("out/production/runtime"), destdir);
-        }
-        else {
-            doCompileJavaPartOfBuiltins(destdir);
-        }
-    }
-
-    private static void doCompileJavaPartOfBuiltins(File destdir) throws IOException {JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-
-        StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
-        try {
-            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(javaFilesInDir(new File("runtime/src")));
-            List<String> options = Arrays.asList(
-                    "-d", destdir.getPath()
-            );
-            JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
-
-            Assert.assertTrue(task.call());
-        }
-        finally {
-            fileManager.close();
-        }
-    }
-
 
     @NotNull
     public static File runtimeJarForTests() {

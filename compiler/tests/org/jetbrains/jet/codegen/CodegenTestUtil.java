@@ -103,7 +103,9 @@ public class CodegenTestUtil {
         try {
             File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
             JetTestUtils.mkdirs(javaClassesTempDirectory);
-            String classPath = "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
+            String classPath = "out/production/builtins" + File.pathSeparator +
+                               "out/production/runtime.jvm" + File.pathSeparator +
+                               JetTestUtils.getAnnotationsJar().getPath();
             List<String> options = Arrays.asList(
                     "-classpath", classPath,
                     "-d", javaClassesTempDirectory.getPath()

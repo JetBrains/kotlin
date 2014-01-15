@@ -48,7 +48,7 @@ class GenerateIterators(val out: PrintWriter) {
 }
 
 fun main(args: Array<String>) {
-    generateRuntimeFile("Iterators.kt") {
+    generateBuiltInFile("Iterators.kt") {
         GenerateIterators(it).generate()
     }
 }

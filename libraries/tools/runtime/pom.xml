@@ -32,8 +32,8 @@
                             <target>
                                 <delete dir="${basedir}/target/copied-sources" failonerror="false" />
                                 <copy todir="${basedir}/target/copied-sources">
-                                    <fileset dir="${basedir}/../../../runtime/src"/>
-                                    <fileset dir="${basedir}/../../../runtime/kt"/>
+                                    <fileset dir="${basedir}/../../../core/builtins/src"/>
+                                    <fileset dir="${basedir}/../../../core/runtime.jvm/src"/>
                                 </copy>
                             </target>
                         </configuration>

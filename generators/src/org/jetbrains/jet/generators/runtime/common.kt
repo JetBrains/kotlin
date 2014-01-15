@@ -50,18 +50,30 @@ fun floatToIntBits(v: String) = "java.lang.Float.floatToIntBits($v)"
 fun doubleToLongBits(v: String) = "java.lang.Double.doubleToLongBits($v)"
 
 
-val OUTPUT_DIR: File by Delegates.lazy {
-    val result = File("runtime/kt/")
+
+fun existingDirectory(path: String): File {
+    val result = File(path)
     if (!result.exists()) {
         throw IllegalStateException("Output dir does not exist: ${result.getAbsolutePath()}")
     }
-    result
+    return result
 }
 
-fun generateRuntimeFile(name: String, generate: (PrintWriter) -> Unit) {
-    val file = File(OUTPUT_DIR, name)
+val BUILT_INS_DIR: File by Delegates.lazy { existingDirectory("core/builtins/src/jet/") }
+val RUNTIME_JVM_DIR: File by Delegates.lazy { existingDirectory("core/runtime.jvm/src/jet/") }
+
+fun generateFile(dir: File, name: String, generate: (PrintWriter) -> Unit) {
+    val file = File(dir, name)
     println("generating $file")
     PrintWriter(file) use generate
+}
+
+fun generateBuiltInFile(name: String, generate: (PrintWriter) -> Unit) {
+    generateFile(BUILT_INS_DIR, name, generate)
+}
+
+fun generateRuntimeJvmFile(name: String, generate: (PrintWriter) -> Unit) {
+    generateFile(BUILT_INS_DIR, name, generate)
 }
 
 fun generatedBy(out: PrintWriter, generator: String) {

@@ -122,11 +122,11 @@ class GenerateFunctions(val out: PrintWriter, val kind: FunctionKind) {
 
 fun main(args: Array<String>) {
     for (kind in FunctionKind.values()) {
-        generateRuntimeFile(kind.getFileName()) {
+        generateBuiltInFile(kind.getFileName()) {
             GenerateFunctions(it, kind).generateFunctionClasses()
         }
 
-        generateRuntimeFile(kind.getImplFileName()) {
+        generateRuntimeJvmFile(kind.getImplFileName()) {
             GenerateFunctions(it, kind).generateFunctionImplClasses()
         }
     }

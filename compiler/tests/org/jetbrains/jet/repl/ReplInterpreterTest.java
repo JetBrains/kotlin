@@ -48,7 +48,8 @@ public class ReplInterpreterTest {
     private void testFile(@NotNull String relativePath) {
         CompilerConfiguration configuration =
                 JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("out/production/runtime"));
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("out/production/builtins"));
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("out/production/runtime.jvm"));
         ReplInterpreter repl = new ReplInterpreter(disposable, configuration);
 
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));

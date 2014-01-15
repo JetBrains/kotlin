@@ -81,7 +81,7 @@ class GenerateRanges(val out: PrintWriter) {
 }
 
 fun main(args: Array<String>) {
-    generateRuntimeFile("Ranges.kt") {
+    generateBuiltInFile("Ranges.kt") {
         GenerateRanges(it).generate()
     }
 }

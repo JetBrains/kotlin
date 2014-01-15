@@ -84,7 +84,7 @@ class GenerateProgressions(val out: PrintWriter) {
 }
 
 fun main(args: Array<String>) {
-    generateRuntimeFile("Progressions.kt") {
+    generateBuiltInFile("Progressions.kt") {
         GenerateProgressions(it).generate()
     }
 }
