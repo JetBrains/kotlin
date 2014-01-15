@@ -133,7 +133,7 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         configurator.configureSettings();
         doTextTest(originalFileText, new File(testFileName + ".after.kt"));
 
-        String afterInvertedFileName = testFileName + ".after_inv.kt";
+        String afterInvertedFileName = testFileName + ".after.inv.kt";
         if (new File(afterInvertedFileName).exists()) {
             configurator.configureInvertedSettings();
             doTextTest(originalFileText, new File(afterInvertedFileName));
