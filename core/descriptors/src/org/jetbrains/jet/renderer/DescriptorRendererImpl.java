@@ -217,6 +217,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == CANT_INFER_TYPE_PARAMETER || type == DONT_CARE) {
             return "???";
         }
+        if (type instanceof LazyType && debugMode) {
+            return type.toString();
+        }
         if (type.isError()) {
             return renderDefaultType(type);
         }

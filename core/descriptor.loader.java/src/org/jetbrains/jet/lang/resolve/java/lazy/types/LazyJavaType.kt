@@ -24,8 +24,9 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.AbstractJetType
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.kotlin.util.inn
+import org.jetbrains.jet.lang.types.LazyType
 
-abstract class LazyType(storageManager: StorageManager) : AbstractJetType() {
+abstract class LazyJavaType(storageManager: StorageManager) : AbstractJetType(), LazyType {
 
     private val _typeConstructor = storageManager.createLazyValue {computeTypeConstructor()}
     override fun getConstructor(): TypeConstructor = _typeConstructor()

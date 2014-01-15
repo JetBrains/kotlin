@@ -23,14 +23,14 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 import org.jetbrains.jet.util.Box;
+import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
 
-public class DeferredType implements JetType {
+public class DeferredType implements LazyType {
     
     public static DeferredType create(BindingTrace trace, NotNullLazyValue<JetType> lazyValue) {
         DeferredType deferredType = new DeferredType(lazyValue);

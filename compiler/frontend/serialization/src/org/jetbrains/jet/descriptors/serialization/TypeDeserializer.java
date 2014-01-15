@@ -205,7 +205,7 @@ public class TypeDeserializer {
         return debugName;
     }
 
-    private class DeserializedType extends AbstractJetType {
+    private class DeserializedType extends AbstractJetType implements LazyType {
         private final ProtoBuf.Type typeProto;
         private final NotNullLazyValue<TypeConstructor> constructor;
         private final List<TypeProjection> arguments;
