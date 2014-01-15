@@ -117,7 +117,10 @@ public abstract class LazyJavaMemberScope(
         }
 
         val returnJavaType = method.getReturnType() ?: throw IllegalStateException("Constructor passed as method: $method")
-        val returnType = c.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs)
+        val returnType = c.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs).let {
+            // Annotation arguments are never null in Java
+            if (method.getContainingClass().isAnnotationType()) TypeUtils.makeNotNullable(it) else it
+        }
 
         val signatureErrors: MutableList<String>
         val superFunctions: List<FunctionDescriptor>

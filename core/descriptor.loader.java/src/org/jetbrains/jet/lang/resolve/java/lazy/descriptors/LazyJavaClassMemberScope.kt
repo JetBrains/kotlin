@@ -30,11 +30,9 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver
 import org.jetbrains.jet.utils.*
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMember
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor
-import org.jetbrains.jet.storage.get
+import org.jetbrains.jet.lang.types.TypeUtils
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -134,9 +132,11 @@ public class LazyJavaClassMemberScope(
                     index,
                     Collections.emptyList(),
                     method.getName(),
-                    returnType,
+                    // Parameters of annotation constructors in Java are never nullable
+                    TypeUtils.makeNotNullable(returnType),
                     method.hasAnnotationParameterDefaultValue(),
-                    varargElementType
+                    // Nulls are not allowed in annotation arguments in Java
+                    varargElementType?.let { TypeUtils.makeNotNullable(it) }
             ))
         }
 
