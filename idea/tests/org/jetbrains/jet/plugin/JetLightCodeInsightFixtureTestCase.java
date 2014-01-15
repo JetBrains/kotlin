@@ -27,6 +27,7 @@ import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
     @Override
@@ -46,7 +47,11 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
             try {
                 String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
 
-                if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
+                List<String> withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:");
+                if (!withLibraryDirective.isEmpty()) {
+                    return new JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/" + withLibraryDirective.get(0), true);
+                }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
                     return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
                 }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {

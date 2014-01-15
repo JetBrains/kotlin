@@ -44,10 +44,12 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
 
@@ -205,13 +207,19 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         //     class A {} class A { fun foo(): A<completion here>}
         // and if we find the class by name only, we may b-not get the right one.
         // This call is only needed to make sure the classes are written to trace
-        resolutionScope.getClassifier(name);
-        DeclarationDescriptor declaration = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+        ClassifierDescriptor scopeDescriptor = resolutionScope.getClassifier(name);
+        DeclarationDescriptor descriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
-        if (declaration == null) {
-            throw new IllegalArgumentException("Could not find a classifier for " + classOrObject + " " + classOrObject.getText());
+        if (descriptor == null) {
+            throw new IllegalArgumentException(
+                   String.format("Could not find a classifier for %s.\n" +
+                                 "Found descriptor: %s (%s).\n",
+                                 JetPsiUtil.getElementTextWithContext(classOrObject),
+                                 scopeDescriptor != null ? DescriptorRenderer.DEBUG_TEXT.render(scopeDescriptor) : "null",
+                                 scopeDescriptor != null ? (scopeDescriptor.getContainingDeclaration().getClass()) : null));
         }
-        return (ClassDescriptor) declaration;
+
+        return (ClassDescriptor) descriptor;
     }
 
     @NotNull
