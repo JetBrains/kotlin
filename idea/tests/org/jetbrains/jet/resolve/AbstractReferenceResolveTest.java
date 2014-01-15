@@ -35,6 +35,23 @@ import org.jetbrains.jet.testing.ReferenceUtils;
 import java.util.List;
 
 public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsightFixtureTestCase {
+    public static class ExpectedResolveData {
+        private final Boolean shouldBeUnresolved;
+        private final String referenceToString;
+
+        public ExpectedResolveData(Boolean shouldBeUnresolved, String referenceToString) {
+            this.shouldBeUnresolved = shouldBeUnresolved;
+            this.referenceToString = referenceToString;
+        }
+
+        public boolean shouldBeUnresolved() {
+            return shouldBeUnresolved;
+        }
+
+        public String getReferenceString() {
+            return referenceToString;
+        }
+    }
 
     public static final String MULTIRESOLVE = "MULTIRESOLVE";
     public static final String REF_EMPTY = "REF_EMPTY";
@@ -57,52 +74,18 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
     }
 
     protected void doSingleResolveTest() {
-        boolean shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), REF_EMPTY);
-        List<String> refs = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.getFile().getText(), "REF:");
-
-        String referenceToString;
-        if (shouldBeUnresolved) {
-            Assert.assertTrue("REF: directives will be ignored for " + REF_EMPTY + " test: " + refs, refs.isEmpty());
-            referenceToString = "<empty>";
-        }
-        else {
-            assertTrue("Must be a single ref: " + refs + ".\n" +
-                       "Use " + MULTIRESOLVE + " if you need multiple refs\n" +
-                       "Use "+ REF_EMPTY + " for an unresolved reference",
-                       refs.size() == 1);
-            referenceToString = refs.get(0);
-            Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString);
-        }
+        ExpectedResolveData expectedResolveData = readResolveData(myFixture.getFile().getText());
 
         int offset = myFixture.getEditor().getCaretModel().getOffset();
         PsiReference psiReference = myFixture.getFile().findReferenceAt(offset);
-        if (psiReference != null) {
-            PsiElement resolvedTo = psiReference.resolve();
-            if (resolvedTo != null) {
-                String resolvedToElementStr = ReferenceUtils.renderAsGotoImplementation(resolvedTo);
-                String notEqualMessage = String.format("Found reference to '%s', but '%s' was expected",
-                                                       resolvedToElementStr, referenceToString);
-                assertEquals(notEqualMessage, referenceToString, resolvedToElementStr);
-            }
-            else {
-                if (!shouldBeUnresolved) {
-                    Assert.assertNull(
-                            String.format("Element %s wasn't resolved to anything, but %s was expected", psiReference, referenceToString),
-                            referenceToString);
-                }
-            }
-        }
-        else {
-            Assert.assertNull(String.format("No reference found at offset: %s, but one resolved to %s was expected", offset, referenceToString),
-                              referenceToString);
-        }
+
+        checkReferenceResolve(expectedResolveData, offset, psiReference);
     }
 
     protected void doMultiResolveTest() {
         List<String> expectedReferences = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.getFile().getText(), "REF:");
 
-        PsiReference psiReference =
-                myFixture.getFile().findReferenceAt(myFixture.getEditor().getCaretModel().getOffset());
+        PsiReference psiReference = myFixture.getFile().findReferenceAt(myFixture.getEditor().getCaretModel().getOffset());
 
         assertTrue(psiReference instanceof PsiPolyVariantReference);
 
@@ -119,6 +102,54 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
         }
 
         assertOrderedEquals(Ordering.natural().sortedCopy(actualResolvedTo), Ordering.natural().sortedCopy(expectedReferences));
+    }
+
+    @NotNull
+    public static ExpectedResolveData readResolveData(String fileText) {
+        boolean shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(fileText, REF_EMPTY);
+        List<String> refs = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "REF:");
+
+        String referenceToString;
+        if (shouldBeUnresolved) {
+            Assert.assertTrue("REF: directives will be ignored for " + REF_EMPTY + " test: " + refs, refs.isEmpty());
+            referenceToString = "<empty>";
+        }
+        else {
+            assertTrue("Must be a single ref: " + refs + ".\n" +
+                       "Use " + MULTIRESOLVE + " if you need multiple refs\n" +
+                       "Use "+ REF_EMPTY + " for an unresolved reference",
+                       refs.size() == 1);
+            referenceToString = refs.get(0);
+            Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString);
+        }
+
+        return new ExpectedResolveData(shouldBeUnresolved, referenceToString);
+    }
+
+    public static void checkReferenceResolve(ExpectedResolveData expectedResolveData, int offset, PsiReference psiReference) {
+        if (psiReference != null) {
+            PsiElement resolvedTo = psiReference.resolve();
+            if (resolvedTo != null) {
+                String resolvedToElementStr = ReferenceUtils.renderAsGotoImplementation(resolvedTo);
+                String notEqualMessage = String.format("Found reference to '%s', but '%s' was expected",
+                                                       resolvedToElementStr, expectedResolveData.getReferenceString());
+                assertEquals(notEqualMessage, expectedResolveData.getReferenceString(), resolvedToElementStr);
+            }
+            else {
+                if (!expectedResolveData.shouldBeUnresolved()) {
+                    Assert.assertNull(
+                            String.format("Element %s wasn't resolved to anything, but %s was expected",
+                                          psiReference, expectedResolveData.getReferenceString()),
+                            expectedResolveData.getReferenceString());
+                }
+            }
+        }
+        else {
+            Assert.assertNull(
+                    String.format("No reference found at offset: %s, but one resolved to %s was expected",
+                                  offset, expectedResolveData.getReferenceString()),
+                    expectedResolveData.getReferenceString());
+        }
     }
 
     @Override
