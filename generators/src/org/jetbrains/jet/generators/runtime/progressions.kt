@@ -48,9 +48,7 @@ class GenerateProgressions(val out: PrintWriter) {
                 BYTE, CHAR, SHORT -> " = 31 * (31 * start.toInt() + end) + increment"
                 INT -> " = 31 * (31 * start + end) + increment"
                 LONG -> " = (31 * (31 * ${hashLong("start")} + ${hashLong("end")}) + ${hashLong("increment")}).toInt()"
-                FLOAT -> " = (31 * (31 * ${floatToIntBits("start")} +\n" +
-                "        ${floatToIntBits("end")}) + \n" +
-                "        ${floatToIntBits("increment")}).toInt()"
+                FLOAT -> " = 31 * (31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}) + ${floatToIntBits("increment")}"
                 DOUBLE -> ": Int {\n" +
                 "        var temp = ${doubleToLongBits("start")}\n" +
                 "        var result = ${hashLong("temp")}\n" +

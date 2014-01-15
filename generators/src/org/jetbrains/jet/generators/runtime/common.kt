@@ -45,9 +45,9 @@ fun areEqualNumbers(kind: ProgressionKind, v: String) = when (kind) {
 
 fun hashLong(v: String) = "($v xor ($v ushr 32))"
 
-fun floatToIntBits(v: String) = "(if ($v != 0.0f) java.lang.Float.floatToIntBits($v) else 0)"
+fun floatToIntBits(v: String) = "java.lang.Float.floatToIntBits($v)"
 
-fun doubleToLongBits(v: String) = "if ($v != 0.0) java.lang.Double.doubleToLongBits($v) else 0L"
+fun doubleToLongBits(v: String) = "java.lang.Double.doubleToLongBits($v)"
 
 
 val OUTPUT_DIR: File by Delegates.lazy {

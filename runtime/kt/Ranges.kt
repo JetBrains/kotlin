@@ -113,8 +113,7 @@ public class FloatRange(public override val start: Float, public override val en
     fun equals(other: Any?): Boolean =
         other is FloatRange && java.lang.Float.compare(start, other.start) == 0 && java.lang.Float.compare(end, other.end) == 0
 
-    fun hashCode() = 31 * (if (start != 0.0f) java.lang.Float.floatToIntBits(start) else 0) +
-        (if (end != 0.0f) java.lang.Float.floatToIntBits(end) else 0)
+    fun hashCode() = 31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end)
 
     fun toString() = "$start..$end"
 
@@ -135,9 +134,9 @@ public class DoubleRange(public override val start: Double, public override val 
         other is DoubleRange && java.lang.Double.compare(start, other.start) == 0 && java.lang.Double.compare(end, other.end) == 0
 
     fun hashCode(): Int {
-        var temp = if (start != 0.0) java.lang.Double.doubleToLongBits(start) else 0L
+        var temp = java.lang.Double.doubleToLongBits(start)
         val result = (temp xor (temp ushr 32))
-        temp = if (end != 0.0) java.lang.Double.doubleToLongBits(end) else 0L
+        temp = java.lang.Double.doubleToLongBits(end)
         return (31 * result + (temp xor (temp ushr 32))).toInt()
     }
 

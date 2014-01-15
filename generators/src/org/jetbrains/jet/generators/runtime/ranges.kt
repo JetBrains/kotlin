@@ -48,8 +48,7 @@ class GenerateRanges(val out: PrintWriter) {
                 BYTE, CHAR, SHORT -> " = 31 * start.toInt() + end"
                 INT -> " = 31 * start + end"
                 LONG -> " = (31 * ${hashLong("start")} + ${hashLong("end")}).toInt()"
-                FLOAT -> " = 31 * ${floatToIntBits("start")} +\n" +
-                "        ${floatToIntBits("end")}"
+                FLOAT -> " = 31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}"
                 DOUBLE -> ": Int {\n" +
                 "        var temp = ${doubleToLongBits("start")}\n" +
                 "        val result = ${hashLong("temp")}\n" +
