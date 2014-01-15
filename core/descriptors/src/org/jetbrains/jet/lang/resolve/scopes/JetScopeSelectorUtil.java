@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 public class JetScopeSelectorUtil {
@@ -84,6 +85,15 @@ public class JetScopeSelectorUtil {
                 }
             };
 
+    public static final ScopeByNameSelector<VariableDescriptor> VARIABLE_DESCRIPTOR_SCOPE_SELECTOR =
+            new ScopeByNameSelector<VariableDescriptor>() {
+                @Nullable
+                @Override
+                public VariableDescriptor get(@NotNull JetScope scope, @NotNull Name name) {
+                    return scope.getLocalVariable(name);
+                }
+            };
+
     public static final ScopeByNameMultiSelector<FunctionDescriptor> NAMED_FUNCTION_SCOPE_SELECTOR =
             new ScopeByNameMultiSelector<FunctionDescriptor>() {
                 @NotNull
@@ -110,4 +120,38 @@ public class JetScopeSelectorUtil {
                     return scope.getAllDescriptors();
                 }
             };
+
+    @Nullable
+    public static <D extends DeclarationDescriptor> D getFirstMatch(
+            @NotNull JetScope[] scopes,
+            @NotNull Name name,
+            @NotNull ScopeByNameSelector<D> descriptorSelector
+    ) {
+        for (JetScope scope : scopes) {
+            D descriptor = descriptorSelector.get(scope, name);
+
+            if (descriptor != null) {
+                return descriptor;
+            }
+        }
+
+        return null;
+    }
+
+    @NotNull
+    public static <D extends DeclarationDescriptor> Set<D> getFromAllScopes(
+            @NotNull JetScope[] scopes,
+            @NotNull Name name,
+            @NotNull ScopeByNameMultiSelector<D> descriptorsSelector
+    ) {
+        if (scopes.length == 0) return Collections.emptySet();
+
+        Set<D> descriptors = Sets.newLinkedHashSet();
+
+        for (JetScope jetScope : scopes) {
+            descriptors.addAll(descriptorsSelector.get(jetScope, name));
+        }
+
+        return descriptors;
+    }
 }
