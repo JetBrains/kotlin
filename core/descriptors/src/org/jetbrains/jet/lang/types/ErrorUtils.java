@@ -87,6 +87,12 @@ public class ErrorUtils {
 
         @NotNull
         @Override
+        public Collection<ClassifierDescriptor> getClassifiers(@NotNull Name name) {
+            return ERROR_CLASSIFIER_GROUP;
+        }
+
+        @NotNull
+        @Override
         public Set<VariableDescriptor> getProperties(@NotNull Name name) {
             return ERROR_PROPERTY_GROUP;
         }
@@ -158,6 +164,12 @@ public class ErrorUtils {
         @Nullable
         @Override
         public ClassifierDescriptor getClassifier(@NotNull Name name) {
+            throw new IllegalStateException();
+        }
+
+        @NotNull
+        @Override
+        public Collection<ClassifierDescriptor> getClassifiers(@NotNull Name name) {
             throw new IllegalStateException();
         }
 
@@ -254,6 +266,7 @@ public class ErrorUtils {
             ERROR_PROPERTY_TYPE,
             CallableMemberDescriptor.Kind.DECLARATION);
     private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
+    private static final Set<ClassifierDescriptor> ERROR_CLASSIFIER_GROUP = Collections.<ClassifierDescriptor>singleton(ERROR_CLASS);
 
     @NotNull
     private static SimpleFunctionDescriptor createErrorFunction(@NotNull ErrorScope ownerScope) {
