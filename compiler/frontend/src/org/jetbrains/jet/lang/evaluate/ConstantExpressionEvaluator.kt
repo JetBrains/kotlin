@@ -386,43 +386,34 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 
     private fun createOperationArgument(expression: JetExpression, expressionType: JetType, compileTimeType: CompileTimeType<*>): OperationArgument? {
-        val evaluationResult = evaluate(expression, expressionType)?.getValue()
-        if (evaluationResult == null) return null
+        val evaluatedConstant = evaluate(expression, expressionType)
+        if (evaluatedConstant == null) return null
 
-        if (evaluationResult is IntegerValueTypeConstructor) {
-            val evaluationResultWithNewType = evaluationResult.getValueForNumberType(expressionType)
-            if (evaluationResultWithNewType != null) {
-                return OperationArgument(evaluationResultWithNewType, compileTimeType, expression)
-            }
+        if (evaluatedConstant is IntegerValueTypeConstant) {
+            val evaluationResultWithNewType = evaluatedConstant.getValue(expressionType)
+            return OperationArgument(evaluationResultWithNewType, compileTimeType, expression)
         }
+
+        val evaluationResult = evaluatedConstant.getValue()
+        if (evaluationResult == null) return null
 
         return OperationArgument(evaluationResult, compileTimeType, expression)
     }
 
     fun createCompileTimeConstant(value: Any?, expression: JetExpression, expectedType: JetType?, isPure: Boolean = true): CompileTimeConstant<*>? {
         if (isPure) {
-            val compileTimeConstant = createConvertibleCompileTimeConstant(value, expectedType)
+            val compileTimeConstant = createCompileTimeConstant(value, expectedType ?: TypeUtils.NO_EXPECTED_TYPE)
             trace.record(BindingContext.IS_PURE_CONSTANT_EXPRESSION, expression, true)
             return compileTimeConstant
         }
 
-        val compileTimeConstant = createUnconvertibleCompileTimeConstant(value)
+        val compileTimeConstant = createCompileTimeConstant(value)
         return compileTimeConstant
     }
 }
 
-public fun IntegerValueTypeConstructor.getValueForNumberType(expectedType: JetType): Any? {
-    val valueWithNewType = this.getCompileTimeConstantForNumberType(expectedType)
-    if (valueWithNewType != null) {
-        return valueWithNewType.getValue()
-    }
-    return null
-}
-
-public fun IntegerValueTypeConstructor.getCompileTimeConstantForNumberType(expectedType: JetType): CompileTimeConstant<*>? {
-    val defaultType = TypeUtils.getPrimitiveNumberType(this, expectedType)
-    return createConvertibleCompileTimeConstant(this.getValue(), defaultType)
-}
+public fun IntegerValueTypeConstant.createCompileTimeConstantWithType(expectedType: JetType): CompileTimeConstant<*>?
+        = createCompileTimeConstant(getValue(expectedType))
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
 
@@ -515,25 +506,9 @@ private fun createCompileTimeConstantForCompareTo(result: Any?, operationReferen
     return null
 }
 
-private fun createUnconvertibleCompileTimeConstant(value: Any?): CompileTimeConstant<*>? {
-    return when(value) {
-        null -> null
-        is Byte -> ByteValue(value)
-        is Short -> ShortValue(value)
-        is Int -> IntValue(value)
-        is Long -> LongValue(value)
-        is Char -> CharValue(value)
-        is Float -> FloatValue(value)
-        is Double -> DoubleValue(value)
-        is Boolean -> BooleanValue.valueOf(value)
-        else -> null
-    }
-}
-
 private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
     return when (value) {
-        null -> null
-        is IntegerValueTypeConstant -> createStringConstant(value.getValue()!!.getCompileTimeConstantForNumberType(TypeUtils.NO_EXPECTED_TYPE))
+        is IntegerValueTypeConstant -> StringValue(value.getValue(TypeUtils.NO_EXPECTED_TYPE).toString())
         is StringValue -> value
         is IntValue, is ByteValue, is ShortValue, is LongValue,
         is CharValue,
@@ -543,10 +518,22 @@ private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
     }
 }
 
-private fun createConvertibleCompileTimeConstant(value: Any?, expectedType: JetType?): CompileTimeConstant<*>? {
+private fun createCompileTimeConstant(value: Any?, expectedType: JetType? = null): CompileTimeConstant<*>? {
     return when(value) {
-        null -> null
-        is Byte, is Short, is Int, is Long-> getIntegerValue((value as Number).toLong(), expectedType ?: TypeUtils.NO_EXPECTED_TYPE)
+        is Byte, is Short, is Int, is Long -> {
+            return if (expectedType == null) {
+                when(value) {
+                    is Byte -> ByteValue(value)
+                    is Short -> ShortValue(value)
+                    is Int -> IntValue(value)
+                    is Long -> LongValue(value)
+                    else -> throw IllegalArgumentException("All cases should be catched: $value")
+                }
+            }
+            else {
+                getIntegerValue((value as Number).toLong(), expectedType)
+            }
+        }
         is Char -> CharValue(value)
         is Float -> FloatValue(value)
         is Double -> DoubleValue(value)
@@ -555,6 +542,7 @@ private fun createConvertibleCompileTimeConstant(value: Any?, expectedType: JetT
         else -> null
     }
 }
+
 
 fun isIntegerType(value: Any?) = value is Byte || value is Short || value is Int || value is Long
 
