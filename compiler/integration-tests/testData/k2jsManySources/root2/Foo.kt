@@ -1,1 +1,3 @@
+package foo
+
 class Foo
