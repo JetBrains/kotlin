@@ -2,19 +2,7 @@ package jet
 
 public trait Annotation
 
-public annotation class volatile : Annotation
-public annotation class atomic : Annotation
-public annotation class data : Annotation
-public annotation class deprecated(value: String) : Annotation
-public annotation class suppress(vararg names: String)
-public annotation class tailRecursive : Annotation
-
-public annotation class noinline
-public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
-public enum class InlineStrategy {
-    AS_FUNCTION
-    IN_PLACE
-}
+public annotation class volatile
 
 public fun <R> synchronized(lock: Any, block : () -> R) : R
 
@@ -75,13 +63,3 @@ public open class Throwable(message : String? = null, cause: Throwable? = null) 
     public fun getCause() : Throwable?
     public fun printStackTrace() : Unit
 }
-
-public trait PropertyMetadata {
-    public val name: String
-}
-
-/*
- * In front-end we need to resolve call PropertyMetadataImpl() in getter of delegated property
- * to be able generate it in back-end using ExpressionCodegen.invokeFunction
- */
-public class PropertyMetadataImpl(public override val name: String): PropertyMetadata

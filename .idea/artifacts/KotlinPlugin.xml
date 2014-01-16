@@ -22,7 +22,8 @@
             <element id="module-output" name="serialization" />
             <element id="module-output" name="serialization.java" />
             <element id="directory" name="jet">
-              <element id="dir-copy" path="$PROJECT_DIR$/idea/builtinsSrc/jet" />
+              <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/native/jet" />
+              <element id="dir-copy" path="$PROJECT_DIR$/core/builtins/src/jet" />
             </element>
             <element id="module-output" name="backend-common" />
           </element>

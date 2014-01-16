@@ -6,10 +6,10 @@ import jet.runtime.ProgressionUtil
 
 class ByteProgressionIterator(start: Byte, end: Byte, val increment: Int) : ByteIterator() {
     private var next = start.toInt()
-    private val finalElement = ProgressionUtil.getProgressionFinalElement(start.toInt(), end.toInt(), increment).toByte()
-    private var hasNext = if (increment > 0) start <= end else start >= end
+    private val finalElement: Byte = ProgressionUtil.getProgressionFinalElement(start.toInt(), end.toInt(), increment).toByte()
+    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
 
-    override fun hasNext() = hasNext
+    override fun hasNext(): Boolean = hasNext
 
     override fun nextByte(): Byte {
         val value = next
@@ -25,10 +25,10 @@ class ByteProgressionIterator(start: Byte, end: Byte, val increment: Int) : Byte
 
 class CharProgressionIterator(start: Char, end: Char, val increment: Int) : CharIterator() {
     private var next = start.toInt()
-    private val finalElement = ProgressionUtil.getProgressionFinalElement(start.toInt(), end.toInt(), increment).toChar()
-    private var hasNext = if (increment > 0) start <= end else start >= end
+    private val finalElement: Char = ProgressionUtil.getProgressionFinalElement(start.toInt(), end.toInt(), increment).toChar()
+    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
 
-    override fun hasNext() = hasNext
+    override fun hasNext(): Boolean = hasNext
 
     override fun nextChar(): Char {
         val value = next
@@ -44,10 +44,10 @@ class CharProgressionIterator(start: Char, end: Char, val increment: Int) : Char
 
 class ShortProgressionIterator(start: Short, end: Short, val increment: Int) : ShortIterator() {
     private var next = start.toInt()
-    private val finalElement = ProgressionUtil.getProgressionFinalElement(start.toInt(), end.toInt(), increment).toShort()
-    private var hasNext = if (increment > 0) start <= end else start >= end
+    private val finalElement: Short = ProgressionUtil.getProgressionFinalElement(start.toInt(), end.toInt(), increment).toShort()
+    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
 
-    override fun hasNext() = hasNext
+    override fun hasNext(): Boolean = hasNext
 
     override fun nextShort(): Short {
         val value = next
@@ -63,10 +63,10 @@ class ShortProgressionIterator(start: Short, end: Short, val increment: Int) : S
 
 class IntProgressionIterator(start: Int, end: Int, val increment: Int) : IntIterator() {
     private var next = start
-    private val finalElement = ProgressionUtil.getProgressionFinalElement(start, end, increment)
-    private var hasNext = if (increment > 0) start <= end else start >= end
+    private val finalElement: Int = ProgressionUtil.getProgressionFinalElement(start, end, increment)
+    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
 
-    override fun hasNext() = hasNext
+    override fun hasNext(): Boolean = hasNext
 
     override fun nextInt(): Int {
         val value = next
@@ -82,10 +82,10 @@ class IntProgressionIterator(start: Int, end: Int, val increment: Int) : IntIter
 
 class LongProgressionIterator(start: Long, end: Long, val increment: Long) : LongIterator() {
     private var next = start
-    private val finalElement = ProgressionUtil.getProgressionFinalElement(start, end, increment)
-    private var hasNext = if (increment > 0) start <= end else start >= end
+    private val finalElement: Long = ProgressionUtil.getProgressionFinalElement(start, end, increment)
+    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
 
-    override fun hasNext() = hasNext
+    override fun hasNext(): Boolean = hasNext
 
     override fun nextLong(): Long {
         val value = next
@@ -102,7 +102,7 @@ class LongProgressionIterator(start: Long, end: Long, val increment: Long) : Lon
 class FloatProgressionIterator(start: Float, val end: Float, val increment: Float) : FloatIterator() {
     private var next = start
 
-    override fun hasNext() = if (increment > 0) next <= end else next >= end
+    override fun hasNext(): Boolean = if (increment > 0) next <= end else next >= end
 
     override fun nextFloat(): Float {
         val value = next
@@ -114,7 +114,7 @@ class FloatProgressionIterator(start: Float, val end: Float, val increment: Floa
 class DoubleProgressionIterator(start: Double, val end: Double, val increment: Double) : DoubleIterator() {
     private var next = start
 
-    override fun hasNext() = if (increment > 0) next <= end else next >= end
+    override fun hasNext(): Boolean = if (increment > 0) next <= end else next >= end
 
     override fun nextDouble(): Double {
         val value = next

@@ -45,11 +45,11 @@ class GenerateRanges(val out: PrintWriter) {
             fun compare(v: String) = areEqualNumbers(kind, v)
 
             val hashCode = when (kind) {
-                BYTE, CHAR, SHORT -> " = 31 * start.toInt() + end"
-                INT -> " = 31 * start + end"
-                LONG -> " = (31 * ${hashLong("start")} + ${hashLong("end")}).toInt()"
-                FLOAT -> " = 31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}"
-                DOUBLE -> ": Int {\n" +
+                BYTE, CHAR, SHORT -> "= 31 * start.toInt() + end"
+                INT -> "= 31 * start + end"
+                LONG -> "= (31 * ${hashLong("start")} + ${hashLong("end")}).toInt()"
+                FLOAT -> "= 31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}"
+                DOUBLE -> "{\n" +
                 "        var temp = ${doubleToLongBits("start")}\n" +
                 "        val result = ${hashLong("temp")}\n" +
                 "        temp = ${doubleToLongBits("end")}\n" +
@@ -62,14 +62,14 @@ class GenerateRanges(val out: PrintWriter) {
     override val increment: $incrementType
         get() = $increment
 
-    override fun contains(item: $t) = start <= item && item <= end
+    override fun contains(item: $t): Boolean = start <= item && item <= end
 
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, end, $increment)
 
     fun equals(other: Any?): Boolean =
         other is $range && ${compare("start")} && ${compare("end")}
 
-    fun hashCode()$hashCode
+    fun hashCode(): Int $hashCode
 
     class object {
         public val EMPTY: $range = $range($emptyBounds)
