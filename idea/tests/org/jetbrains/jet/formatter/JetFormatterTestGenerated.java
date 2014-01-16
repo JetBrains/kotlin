@@ -74,6 +74,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/EmptyLineAfterPackage.after.kt");
         }
         
+        @TestMetadata("ForLineBreak.after.kt")
+        public void testForLineBreak() throws Exception {
+            doTest("idea/testData/formatter/ForLineBreak.after.kt");
+        }
+        
         @TestMetadata("ForNoBraces.after.kt")
         public void testForNoBraces() throws Exception {
             doTest("idea/testData/formatter/ForNoBraces.after.kt");
@@ -360,6 +365,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("DoWhileLineBreak.after.inv.kt")
         public void testDoWhileLineBreak() throws Exception {
             doTestInverted("idea/testData/formatter/DoWhileLineBreak.after.inv.kt");
+        }
+        
+        @TestMetadata("ForLineBreak.after.inv.kt")
+        public void testForLineBreak() throws Exception {
+            doTestInverted("idea/testData/formatter/ForLineBreak.after.inv.kt");
         }
         
         @TestMetadata("FunctionalType.after.inv.kt")

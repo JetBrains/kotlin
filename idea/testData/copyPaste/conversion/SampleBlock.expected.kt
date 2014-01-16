@@ -4,8 +4,7 @@ fun main(args: Array<String>) {
     val project = file.getProject()
     val converter = Converter(project, J2kPackage.getPluginSettings())
     val result = StringBuilder()
-    for (e in buffer)
-    {
+    for (e in buffer) {
         result.append(converter.elementToKotlin(e))
     }
 

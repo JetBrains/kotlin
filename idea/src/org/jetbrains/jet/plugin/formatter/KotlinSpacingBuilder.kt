@@ -225,12 +225,14 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             inPosition(parent = IF, right = THEN).customRule(leftBraceRuleIfBlockIsWrapped)
             inPosition(parent = IF, right = ELSE).customRule(leftBraceRuleIfBlockIsWrapped)
 
+            inPosition(parent = FOR, right = BODY).customRule(leftBraceRuleIfBlockIsWrapped)
             inPosition(parent = WHILE, right = BODY).customRule(leftBraceRuleIfBlockIsWrapped)
             inPosition(parent = DO_WHILE, right = BODY).customRule(leftBraceRuleIfBlockIsWrapped)
 
             inPosition(parent = TRY, right = BLOCK).customRule(leftBraceRule)
             inPosition(parent = CATCH, right = BLOCK).customRule(leftBraceRule)
             inPosition(parent = FINALLY, right = BLOCK).customRule(leftBraceRule)
+
 
             val spacesInSimpleFunction = if (jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD) 1 else 0
             inPosition(parent = FUNCTION_LITERAL,
