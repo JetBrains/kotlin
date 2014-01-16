@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -46,7 +46,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kin
 public final class DeserializedDescriptorResolver {
     private AnnotationDescriptorDeserializer annotationDeserializer;
 
-    private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
+    private StorageManager storageManager;
 
     private JavaPackageFragmentProvider javaPackageFragmentProvider;
 
@@ -87,6 +87,11 @@ public final class DeserializedDescriptorResolver {
     @Inject
     public void setErrorReporter(ErrorReporter errorReporter) {
         this.errorReporter = errorReporter;
+    }
+
+    @Inject
+    public void setStorageManager(StorageManager storageManager) {
+        this.storageManager = storageManager;
     }
 
     @Nullable

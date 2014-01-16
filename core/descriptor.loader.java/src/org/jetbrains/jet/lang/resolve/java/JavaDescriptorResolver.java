@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 
@@ -46,8 +46,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
 
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
-    private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
-
+    private StorageManager storageManager;
     private JavaClassResolver classResolver;
     private JavaPackageFragmentProvider packageFragmentProvider;
     private JavaClassFinder javaClassFinder;
@@ -60,6 +59,11 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     private DeserializedDescriptorResolver deserializedDescriptorResolver;
     private KotlinClassFinder kotlinClassFinder;
     private ModuleDescriptor module;
+
+    @Inject
+    public void setStorageManager(StorageManager storageManager) {
+        this.storageManager = storageManager;
+    }
 
     @Inject
     public void setClassResolver(JavaClassResolver classResolver) {

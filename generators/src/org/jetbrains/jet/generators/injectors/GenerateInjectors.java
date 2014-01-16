@@ -26,6 +26,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.di.DependencyInjectorGenerator;
 import org.jetbrains.jet.di.GivenExpression;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
+import org.jetbrains.jet.di.InstantiateType;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
@@ -43,6 +44,8 @@ import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -149,6 +152,7 @@ public class GenerateInjectors {
         generator.addParameter(BindingTrace.class);
 
         // Fields
+        generator.addField(false, StorageManager.class, null, new InstantiateType(LockBasedStorageManager.class));
         generator.addPublicField(JavaClassFinderImpl.class);
         generator.addField(TraceBasedExternalSignatureResolver.class);
         generator.addField(TraceBasedJavaResolverCache.class);
@@ -175,6 +179,7 @@ public class GenerateInjectors {
         generator.addPublicField(ControlFlowAnalyzer.class);
         generator.addPublicField(DeclarationsChecker.class);
         generator.addPublicField(DescriptorResolver.class);
+        generator.addField(false, StorageManager.class, null, new InstantiateType(LockBasedStorageManager.class));
         generator.addField(CallResolverExtensionProvider.class);
 
         // Parameters

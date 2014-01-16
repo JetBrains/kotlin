@@ -18,6 +18,7 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
@@ -49,6 +50,7 @@ public class InjectorForJavaDescriptorResolver {
     
     private final Project project;
     private final BindingTrace bindingTrace;
+    private final LockBasedStorageManager storageManager;
     private final JavaClassFinderImpl javaClassFinder;
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private final TraceBasedJavaResolverCache traceBasedJavaResolverCache;
@@ -79,6 +81,7 @@ public class InjectorForJavaDescriptorResolver {
     ) {
         this.project = project;
         this.bindingTrace = bindingTrace;
+        this.storageManager = new LockBasedStorageManager();
         this.javaClassFinder = new JavaClassFinderImpl();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
         this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
@@ -93,7 +96,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaAnnotationArgumentResolver = new JavaAnnotationArgumentResolver();
         this.javaClassResolver = new JavaClassResolver();
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
-        this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
+        this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer(storageManager);
         this.javaFunctionResolver = new JavaFunctionResolver();
         this.javaTypeParameterResolver = new JavaTypeParameterResolver();
         this.javaTypeTransformer = new JavaTypeTransformer();
@@ -126,6 +129,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaDescriptorResolver.setModule(module);
         this.javaDescriptorResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
         this.javaDescriptorResolver.setSignatureChecker(psiBasedMethodSignatureChecker);
+        this.javaDescriptorResolver.setStorageManager(storageManager);
 
         javaPackageFragmentProvider.setCache(traceBasedJavaResolverCache);
         javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
@@ -158,6 +162,7 @@ public class InjectorForJavaDescriptorResolver {
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
         deserializedDescriptorResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         deserializedDescriptorResolver.setJavaPackageFragmentProvider(javaPackageFragmentProvider);
+        deserializedDescriptorResolver.setStorageManager(storageManager);
 
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorDeserializer.setJavaDescriptorResolver(javaDescriptorResolver);
