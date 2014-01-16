@@ -4,6 +4,7 @@ import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
@@ -24,8 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
-
 class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements PackageFragmentDescriptor {
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
@@ -39,8 +38,9 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
 
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
-        members = new DeserializedPackageMemberScope(storageManager, this, UNSUPPORTED, new BuiltInsDescriptorFinder(storageManager),
-                                                     loadPackage(), nameResolver);
+        // TODO: support annotations
+        members = new DeserializedPackageMemberScope(storageManager, this, AnnotationDeserializer.EMPTY,
+                                                     new BuiltInsDescriptorFinder(storageManager), loadPackage(), nameResolver);
     }
 
     @NotNull
@@ -133,7 +133,8 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
         private final NotNullLazyValue<Collection<Name>> classNames;
 
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
-            super(storageManager, UNSUPPORTED, packageFragmentProvider);
+            // TODO: support annotations
+            super(storageManager, AnnotationDeserializer.EMPTY, packageFragmentProvider);
 
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override
