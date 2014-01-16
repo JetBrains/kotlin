@@ -209,6 +209,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/SpacesAroundUnaryOperations.after.kt");
         }
         
+        @TestMetadata("TryCatchLineBreak.after.kt")
+        public void testTryCatchLineBreak() throws Exception {
+            doTest("idea/testData/formatter/TryCatchLineBreak.after.kt");
+        }
+        
         @TestMetadata("UnnecessarySpacesInParametersLists.after.kt")
         public void testUnnecessarySpacesInParametersLists() throws Exception {
             doTest("idea/testData/formatter/UnnecessarySpacesInParametersLists.after.kt");
@@ -395,6 +400,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("SpacesAroundUnaryOperations.after.inv.kt")
         public void testSpacesAroundUnaryOperations() throws Exception {
             doTestInverted("idea/testData/formatter/SpacesAroundUnaryOperations.after.inv.kt");
+        }
+        
+        @TestMetadata("TryCatchLineBreak.after.inv.kt")
+        public void testTryCatchLineBreak() throws Exception {
+            doTestInverted("idea/testData/formatter/TryCatchLineBreak.after.inv.kt");
         }
         
         @TestMetadata("When.after.inv.kt")

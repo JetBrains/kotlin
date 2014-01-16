@@ -26,6 +26,7 @@ import org.jetbrains.jet.lexer.JetTokens.*
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.formatter.FormatterUtil
+import com.intellij.lang.ASTNode
 
 class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
 
@@ -197,29 +198,37 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
         }
         custom {
 
-            val leftBraceRule =  {
-                (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
-                val blockOrExpression = right.getNode()!!.getFirstChildNode()
+            fun spacingForLeftBrace(block: ASTNode?): Spacing? {
                 val noBlockSpacing = Spacing.createSpacing(1, 1, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
-                if (blockOrExpression != null && blockOrExpression.getElementType() == BLOCK) {
-                    val leftBrace = blockOrExpression.getFirstChildNode()
-                    when {
-                        leftBrace != null && leftBrace.getElementType() == LBRACE -> {
-                            val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace)
-                            val isAfterEolComment = previousLeaf != null && (previousLeaf.getElementType() == EOL_COMMENT)
-                            val keepLineBreaks = jetSettings.LBRACE_ON_NEXT_LINE || isAfterEolComment
-                            val minimumLF = if (jetSettings.LBRACE_ON_NEXT_LINE) 1 else 0
-                            Spacing.createSpacing(1, 1, minimumLF, keepLineBreaks, 0)
-                        }
-                        else -> noBlockSpacing
+                if (block != null && block.getElementType() == BLOCK) {
+                    val leftBrace = block.getFirstChildNode()
+                    if (leftBrace != null && leftBrace.getElementType() == LBRACE) {
+                        val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace)
+                        val isAfterEolComment = previousLeaf != null && (previousLeaf.getElementType() == EOL_COMMENT)
+                        val keepLineBreaks = jetSettings.LBRACE_ON_NEXT_LINE || isAfterEolComment
+                        val minimumLF = if (jetSettings.LBRACE_ON_NEXT_LINE) 1 else 0
+                        return Spacing.createSpacing(1, 1, minimumLF, keepLineBreaks, 0)
                     }
                 }
-                else noBlockSpacing
+                return noBlockSpacing
             }
 
-            inPosition(parent = IF, right = THEN).customRule(leftBraceRule)
-            inPosition(parent = IF, right = ELSE).customRule(leftBraceRule)
-            inPosition(parent = WHILE, right = BODY).customRule(leftBraceRule)
+            val leftBraceRule = {
+                (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
+                spacingForLeftBrace(right.getNode())
+            }
+
+            val leftBraceRuleIfBlockIsWrapped = {
+                (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
+                spacingForLeftBrace(right.getNode()!!.getFirstChildNode())
+            }
+
+            inPosition(parent = IF, right = THEN).customRule(leftBraceRuleIfBlockIsWrapped)
+            inPosition(parent = IF, right = ELSE).customRule(leftBraceRuleIfBlockIsWrapped)
+            inPosition(parent = WHILE, right = BODY).customRule(leftBraceRuleIfBlockIsWrapped)
+            inPosition(parent = TRY, right = BLOCK).customRule(leftBraceRule)
+            inPosition(parent = CATCH, right = BLOCK).customRule(leftBraceRule)
+            inPosition(parent = FINALLY, right = BLOCK).customRule(leftBraceRule)
 
             val spacesInSimpleFunction = if (jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD) 1 else 0
             inPosition(parent = FUNCTION_LITERAL,
