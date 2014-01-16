@@ -234,7 +234,11 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         if (functions == null) return null
 
         val (function, checker) = functions
-        val actualResult = function(receiver.value, parameter.value)
+        val actualResult = try {
+            function(receiver.value, parameter.value)
+        } catch (e: Exception) {
+            null
+        }
         if (checker == emptyBinaryFun) {
             return actualResult
         }
