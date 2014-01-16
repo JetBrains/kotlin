@@ -1,0 +1,5 @@
+<root>
+  <item name='org.jetbrains.jps.model.java.JpsJavaExtensionService org.jetbrains.jps.model.java.JpsJavaExtensionService getInstance()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

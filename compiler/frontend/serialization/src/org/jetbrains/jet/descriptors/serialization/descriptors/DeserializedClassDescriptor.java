@@ -316,6 +316,18 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         @NotNull
         @Override
         public Collection<JetType> getSupertypes() {
+            // We cannot have error supertypes because subclasses inherit error functions from them
+            // Filtering right away means copying the list every time, so we check for the rare condition first, and only then filter
+            for (JetType supertype : supertypes) {
+                if (supertype.isError()) {
+                    return KotlinPackage.filter(supertypes, new Function1<JetType, Boolean>() {
+                        @Override
+                        public Boolean invoke(JetType type) {
+                            return !type.isError();
+                        }
+                    });
+                }
+            }
             return supertypes;
         }
 
