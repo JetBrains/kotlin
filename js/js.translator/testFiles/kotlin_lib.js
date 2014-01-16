@@ -39,8 +39,8 @@ String.prototype.contains = function (s) {
             return Kotlin.arrayEquals(obj1, obj2);
         }
 
-        if (typeof obj1 == "object" && obj1.equals !== undefined) {
-            return obj1.equals(obj2);
+        if (typeof obj1 == "object" && obj1.equals_s9cetl$ !== undefined) {
+            return obj1.equals_s9cetl$(obj2);
         }
 
         return obj1 === obj2;
@@ -164,7 +164,7 @@ String.prototype.contains = function (s) {
                 }
             }
             enumEntryList.values$ = values;
-            enumEntryList.valueOf = valueOf;
+            enumEntryList.valueOf_e51dcq$ = valueOf;
             enumEntryList.values = getValues;
             return enumEntryList;
         };
@@ -193,7 +193,7 @@ String.prototype.contains = function (s) {
         iterator: function () {
             return new ArrayIterator(this.toArray());
         },
-        equals: function (o) {
+        equals_s9cetl$: function (o) {
             if (this.size() !== o.size()) return false;
 
             var iterator1 = this.iterator();
@@ -233,13 +233,13 @@ String.prototype.contains = function (s) {
         iterator: function () {
             return new ListIterator(this);
         },
-        remove: function (o) {
+        remove_s9cetl$: function (o) {
             var index = this.indexOf(o);
             if (index !== -1) {
-                this.removeAt(index);
+                this.remove_s9c8w6$(index);
             }
         },
-        contains: function (o) {
+        contains_s9cetl$: function (o) {
             return this.indexOf(o) !== -1;
         }
     });
@@ -250,11 +250,11 @@ String.prototype.contains = function (s) {
             this.array = [];
             this.$size = 0;
         }, {
-            get: function (index) {
+            get_s9c8w6$: function (index) {
                 this.checkRange(index);
                 return this.array[index];
             },
-            set: function (index, value) {
+            set_bar457$: function (index, value) {
                 this.checkRange(index);
                 this.array[index] = value;
             },
@@ -264,15 +264,15 @@ String.prototype.contains = function (s) {
             iterator: function () {
                 return Kotlin.arrayIterator(this.array);
             },
-            add: function (element) {
+            add_s9cetl$: function (element) {
                 this.array[this.$size++] = element;
                 return true;
             },
-            addAt: function (index, element) {
+            add_bar457$: function (index, element) {
                 this.array.splice(index, 0, element);
                 this.$size++;
             },
-            addAll: function (collection) {
+            addAll_5ib00d$: function (collection) {
                 var it = collection.iterator();
                 for (var i = this.$size, n = collection.size(); n-- > 0;) {
                     this.array[i++] = it.next();
@@ -280,7 +280,7 @@ String.prototype.contains = function (s) {
 
                 this.$size += collection.size();
             },
-            removeAt: function (index) {
+            remove_s9c8w6$: function (index) {
                 this.checkRange(index);
                 this.$size--;
                 return this.array.splice(index, 1)[0];
@@ -489,7 +489,7 @@ String.prototype.contains = function (s) {
         array.sort(boundComparator);
 
         for (var i = 0, n = array.length; i < n; i++) {
-            mutableList.set(i, array[i]);
+            mutableList.set_bar457$(i, array[i]);
         }
     };
 

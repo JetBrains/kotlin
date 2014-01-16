@@ -291,6 +291,12 @@ public final class StaticContext {
             Rule<JsName> predefinedObjectsHasUnobfuscatableNames = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                    // The mixing of override and rename by annotation(e.g. native) is forbidden.
+                    if (descriptor instanceof CallableMemberDescriptor &&
+                        !((CallableMemberDescriptor) descriptor).getOverriddenDescriptors().isEmpty()) {
+                        return null;
+                    }
+
                     String name = getNameForAnnotatedObject(descriptor);
                     if (name != null) return getEnclosingScope(descriptor).declareName(name);
                     return null;

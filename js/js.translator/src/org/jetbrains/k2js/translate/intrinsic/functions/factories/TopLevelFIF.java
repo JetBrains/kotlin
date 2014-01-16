@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -104,7 +105,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @NotNull
         @Override
         protected String operation() {
-            return "put";
+            return "put_5yfy9u$";
         }
 
         @Nullable
@@ -167,8 +168,11 @@ public final class TopLevelFIF extends CompositeFIF {
                         return callTranslator.extensionFunctionCall(false);
                     }
                     else {
-                        if (functionReference instanceof JsNameRef && ((JsNameRef) functionReference).getIdent().equals("invoke")) {
-                            return callTranslator.explicitInvokeCall();
+                        CallableDescriptor descriptor = callTranslator.getResolvedCall().getCandidateDescriptor();
+                        if (descriptor.getName().asString().equals("invoke") &&
+                            functionReference instanceof JsNameRef &&
+                            ((JsNameRef) functionReference).getIdent().startsWith("invoke")) {
+                                return callTranslator.explicitInvokeCall();
                         }
                         return new JsInvocation(Namer.getFunctionCallRef(functionReference), generateInvocationArguments(thisExpression, arguments));
                     }
