@@ -50,6 +50,7 @@ public class JetParameterList extends JetElementImplStub<PsiJetParameterListStub
         return visitor.visitParameterList(this, data);
     }
 
+    @NotNull
     public List<JetParameter> getParameters() {
         return Arrays.asList(getStubOrPsiChildren(JetStubElementTypes.VALUE_PARAMETER, JetParameter.ARRAY_FACTORY));
     }

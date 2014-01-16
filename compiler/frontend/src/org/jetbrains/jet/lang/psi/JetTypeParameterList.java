@@ -34,6 +34,7 @@ public class JetTypeParameterList extends JetElementImplStub<PsiJetTypeParameter
         super(stub, nodeType);
     }
 
+    @NotNull
     public List<JetTypeParameter> getParameters() {
         return Arrays.asList(getStubOrPsiChildren(JetStubElementTypes.TYPE_PARAMETER, JetTypeParameter.ARRAY_FACTORY));
     }
