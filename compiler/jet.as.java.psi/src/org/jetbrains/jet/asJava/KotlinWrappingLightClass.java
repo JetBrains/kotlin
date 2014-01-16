@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,16 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 
 import java.util.List;
 
-public abstract class KotlinWrappingLightClass extends AbstractLightClass implements PsiExtensibleClass {
+public abstract class KotlinWrappingLightClass extends AbstractLightClass implements KotlinLightClass, PsiExtensibleClass {
     private final ClassInnerStuffCache myInnersCache = new ClassInnerStuffCache(this);
 
     protected KotlinWrappingLightClass(PsiManager manager, Language language) {
         super(manager, language);
     }
+
+    @NotNull
+    @Override
+    public abstract PsiClass getDelegate();
 
     @Override
     @NotNull

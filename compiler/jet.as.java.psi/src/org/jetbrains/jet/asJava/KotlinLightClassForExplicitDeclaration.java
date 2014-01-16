@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightClass implements KotlinLightClass, JetJavaMirrorMarker {
+public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightClass implements JetJavaMirrorMarker {
     private final static Key<CachedValue<OutermostKotlinClassLightClassData>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     @Nullable
