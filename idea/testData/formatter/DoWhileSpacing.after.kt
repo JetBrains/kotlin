@@ -5,13 +5,11 @@ fun test() {
     do {
     } while (true)
 
-    do
-    {
+    do {
     }
     while (true)
 
-    do
-    {
+    do {
     }
     while (true)
 

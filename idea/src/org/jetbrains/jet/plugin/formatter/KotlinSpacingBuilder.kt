@@ -164,7 +164,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(WHILE_KEYWORD, LPAR, DO_WHILE).spacing(1, 1, 0, false, 0)
 
             aroundInside(WHILE_KEYWORD, DO_WHILE).spaces(1)
-            afterInside(DO_KEYWORD, DO_WHILE).spaces(1)
 
             // TODO: Ask for better API
             // Type of the declaration colon
@@ -225,7 +224,10 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             inPosition(parent = IF, right = THEN).customRule(leftBraceRuleIfBlockIsWrapped)
             inPosition(parent = IF, right = ELSE).customRule(leftBraceRuleIfBlockIsWrapped)
+
             inPosition(parent = WHILE, right = BODY).customRule(leftBraceRuleIfBlockIsWrapped)
+            inPosition(parent = DO_WHILE, right = BODY).customRule(leftBraceRuleIfBlockIsWrapped)
+
             inPosition(parent = TRY, right = BLOCK).customRule(leftBraceRule)
             inPosition(parent = CATCH, right = BLOCK).customRule(leftBraceRule)
             inPosition(parent = FINALLY, right = BLOCK).customRule(leftBraceRule)

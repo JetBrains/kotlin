@@ -59,6 +59,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/ConsecutiveCalls.after.kt");
         }
         
+        @TestMetadata("DoWhileLineBreak.after.kt")
+        public void testDoWhileLineBreak() throws Exception {
+            doTest("idea/testData/formatter/DoWhileLineBreak.after.kt");
+        }
+        
         @TestMetadata("DoWhileSpacing.after.kt")
         public void testDoWhileSpacing() throws Exception {
             doTest("idea/testData/formatter/DoWhileSpacing.after.kt");
@@ -350,6 +355,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     public static class FormatterInverted extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatterInverted() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after.inv.kt$"), true);
+        }
+        
+        @TestMetadata("DoWhileLineBreak.after.inv.kt")
+        public void testDoWhileLineBreak() throws Exception {
+            doTestInverted("idea/testData/formatter/DoWhileLineBreak.after.inv.kt");
         }
         
         @TestMetadata("FunctionalType.after.inv.kt")
