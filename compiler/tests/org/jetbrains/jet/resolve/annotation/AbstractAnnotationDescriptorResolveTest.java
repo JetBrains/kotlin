@@ -20,6 +20,7 @@ package org.jetbrains.jet.resolve.annotation;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -87,7 +88,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         FunctionDescriptor topFoo = getFunctionDescriptor(test, "topFoo");
         checkAnnotationsOnFunction(expectedAnnotation, topFoo);
 
-        PropertyDescriptor topProp = getPropertyDescriptor(test, "topProp");
+        PropertyDescriptor topProp = getPropertyDescriptor(test, "topProp", true);
         checkAnnotationsOnProperty(expectedAnnotation, topProp);
 
         checkDescriptor(expectedAnnotation, getClassDescriptor(test, "MyObject"));
@@ -100,7 +101,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         checkDescriptor(expectedAnnotation, getLocalClassDescriptor("LocalClass"));
         checkDescriptor(expectedAnnotation, getLocalObjectDescriptor("LocalObject"));
         checkDescriptor(expectedAnnotation, getLocalFunDescriptor("localFun"));
-        checkDescriptor(expectedAnnotation, getLocalVarDescriptor("localVar"));
+        checkDescriptor(expectedAnnotation, getLocalVarDescriptor(context, "localVar"));
     }
 
     private static void checkAnnotationsOnProperty(String expectedAnnotation, PropertyDescriptor prop) {
@@ -134,12 +135,30 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         return functions.iterator().next();
     }
 
-    @NotNull
-    protected static PropertyDescriptor getPropertyDescriptor(@NotNull PackageViewDescriptor packageView, @NotNull String name) {
+    @Nullable
+    protected static PropertyDescriptor getPropertyDescriptor(@NotNull PackageViewDescriptor packageView, @NotNull String name, boolean failOnMissing) {
         Name propertyName = Name.identifier(name);
         JetScope memberScope = packageView.getMemberScope();
         Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName);
-        assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + packageView.getName();
+        if (properties.isEmpty()) {
+            for (DeclarationDescriptor descriptor : memberScope.getAllDescriptors()) {
+                if (descriptor instanceof ClassDescriptor) {
+                    Collection<VariableDescriptor> classProperties =
+                            ((ClassDescriptor) descriptor).getMemberScope(Collections.<TypeProjection>emptyList())
+                                    .getProperties(propertyName);
+                    if (!classProperties.isEmpty()) {
+                        properties = classProperties;
+                        break;
+                    }
+                }
+            }
+        }
+        if (failOnMissing) {
+            assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + packageView.getName();
+        }
+        else if (properties.size() != 1) {
+            return null;
+        }
         return (PropertyDescriptor) properties.iterator().next();
     }
 
@@ -216,7 +235,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     @NotNull
-    private VariableDescriptor getLocalVarDescriptor(@NotNull String name) {
+    protected static VariableDescriptor getLocalVarDescriptor(@NotNull BindingContext context, @NotNull String name) {
         for (VariableDescriptor descriptor : context.getSliceContents(BindingContext.VARIABLE).values()) {
             if (descriptor.getName().asString().equals(name)) {
                 return descriptor;

@@ -2889,6 +2889,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/evaluate/parentesized.kt");
             }
             
+            @TestMetadata("qualifiedExpressions.kt")
+            public void testQualifiedExpressions() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/qualifiedExpressions.kt");
+            }
+            
             @TestMetadata("unaryMinusDepOnExpType.kt")
             public void testUnaryMinusDepOnExpType() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/evaluate/unaryMinusDepOnExpType.kt");

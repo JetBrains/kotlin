@@ -24,9 +24,18 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public abstract class CompileTimeConstant<T> {
     protected final T value;
+    private boolean canBeUsedInAnnotations = true;
 
     protected CompileTimeConstant(T value) {
         this.value = value;
+    }
+
+    public boolean canBeUsedInAnnotations() {
+        return canBeUsedInAnnotations;
+    }
+
+    public void setCanBeUsedInAnnotations(boolean canBeUsedInAnnotations) {
+        this.canBeUsedInAnnotations = canBeUsedInAnnotations;
     }
 
     @Nullable

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCacheImpl;
 import org.jetbrains.jet.lang.resolve.calls.context.SimpleResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -573,12 +572,8 @@ public class BodyResolver {
                 scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, context.getOuterDataFlowInfo(), trace);
-        if (AnnotationUtils.isPropertyCompileTimeConstant(propertyDescriptor)) {
-            CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(initializer, trace, expectedTypeForInitializer);
-            if (constant != null) {
-                trace.record(BindingContext.COMPILE_TIME_INITIALIZER, propertyDescriptor, constant);
-            }
-        }
+
+        EvaluatePackage.recordCompileTimeValueForInitializerIfNeeded(propertyDescriptor, initializer, expectedTypeForInitializer, trace);
     }
 
     @NotNull

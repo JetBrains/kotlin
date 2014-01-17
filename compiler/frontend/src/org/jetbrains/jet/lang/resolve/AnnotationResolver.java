@@ -252,7 +252,7 @@ public class AnnotationResolver {
                     JetType defaultType = ((IntegerValueTypeConstant) constant).getType(expectedType);
                     ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, trace);
                 }
-                if (constant != null) {
+                if (constant != null && constant.canBeUsedInAnnotations()) {
                     constants.add(constant);
                 }
                 else {

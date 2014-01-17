@@ -32,6 +32,7 @@ import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.jet.util.slicedmap.WritableSlice
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.resolve.constants.StringValue
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 
 abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResolveTest() {
 
@@ -72,7 +73,9 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
             val expected = InTextDirectivesUtils.findStringWithPrefixes(fileText, expectedPropertyPrefix)
             assertNotNull(expected, "Failed to find expected directive: $expectedPropertyPrefix")
 
-            val property = AbstractAnnotationDescriptorResolveTest.getPropertyDescriptor(packageView, propertyName)
+            val property = AbstractAnnotationDescriptorResolveTest.getPropertyDescriptor(packageView, propertyName, false)
+                                ?: AbstractAnnotationDescriptorResolveTest.getLocalVarDescriptor(context!!, propertyName)
+
             val jetProperty = BindingContextUtils.descriptorToDeclaration(context!!, property) as JetProperty
 
             val testedObject = getValueToTest(jetProperty, context!!)

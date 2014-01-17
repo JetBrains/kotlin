@@ -20,7 +20,6 @@ import jet.runtime.Intrinsic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -116,7 +115,7 @@ public class AnnotationUtils {
         return "kotlin.javaClass.function".equals(getIntrinsicAnnotationArgument(resolvedCall.getResultingDescriptor().getOriginal()));
     }
 
-    public static boolean isPropertyCompileTimeConstant(@NotNull PropertyDescriptor descriptor) {
+    public static boolean isPropertyCompileTimeConstant(@NotNull VariableDescriptor descriptor) {
         if (descriptor.isVar()) {
             return false;
         }
