@@ -25,7 +25,6 @@ class Test() {
 
         do {
             System.out.println("Ok")
-        }
-        while (One.myContainer.myBoolean)
+        } while (One.myContainer.myBoolean)
     }
 }

@@ -27,6 +27,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.lang.ASTNode
+import org.jetbrains.jet.plugin.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 
 class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
 
@@ -161,8 +162,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(WHILE_KEYWORD, LPAR, WHILE).spacing(1, 1, 0, false, 0)
             betweenInside(WHILE_KEYWORD, LPAR, DO_WHILE).spacing(1, 1, 0, false, 0)
 
-            aroundInside(WHILE_KEYWORD, DO_WHILE).spaces(1)
-
             // TODO: Ask for better API
             // Type of the declaration colon
             beforeInside(COLON, PROPERTY).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
@@ -188,19 +187,26 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_EXPRESSION, CALL_EXPRESSION).spaces(1)
         }
         custom {
-            if (jetCommonSettings.ELSE_ON_NEW_LINE) {
-                inPosition(parent = IF, right = ELSE_KEYWORD)
-                        .lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)
-            }
-            else {
-                inPosition(parent = IF, left = THEN, right = ELSE_KEYWORD).customRule {
-                    parent, left, right ->
-                    // do not remove linebreak if "then" expression is not a block
-                    val expressionOrBlock = left.getNode()!!.getFirstChildNode()
-                    val keepLineBreaks = expressionOrBlock == null || expressionOrBlock.getElementType() != BLOCK
-                    Spacing.createSpacing(1, 1, 0, keepLineBreaks, 0)
+
+            fun CustomSpacingBuilder.ruleForKeywordOnNewLine(shouldBeOnNewLine: Boolean, keyword: IElementType, parent: IElementType) {
+                if (shouldBeOnNewLine) {
+                    inPosition(parent = parent, right = keyword)
+                            .lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)
+                }
+                else {
+                    inPosition(parent = parent, right = keyword).customRule {
+                        parent, left, right ->
+                        // do not remove linebreak if expression to the left is not a block
+                        val previousNonWhitespaceLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(right.getNode())
+                        val keepLineBreaks = previousNonWhitespaceLeaf == null || previousNonWhitespaceLeaf.getElementType() != RBRACE
+                        Spacing.createSpacing(1, 1, 0, keepLineBreaks, 0)
+                    }
                 }
             }
+
+            ruleForKeywordOnNewLine(jetCommonSettings.ELSE_ON_NEW_LINE, keyword = ELSE_KEYWORD, parent = IF)
+            ruleForKeywordOnNewLine(jetCommonSettings.WHILE_ON_NEW_LINE, keyword = WHILE_KEYWORD, parent = DO_WHILE)
+
 
             fun spacingForLeftBrace(block: ASTNode?, blockType: IElementType = BLOCK): Spacing? {
                 if (block != null && block.getElementType() == blockType) {
