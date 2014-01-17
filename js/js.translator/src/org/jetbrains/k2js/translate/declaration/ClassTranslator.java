@@ -138,14 +138,15 @@ public final class ClassTranslator extends AbstractTranslator {
             qualifiedReference = null;
         }
         else {
+            JsScope scope = context().getScopeForDescriptor(descriptor);
             DefinitionPlace definitionPlace;
             if (descriptor.getKind().isSingleton() || isAnonymousObject(descriptor)) {
                 qualifiedReference = null;
-                definitionPlace = new DefinitionPlace(properties, context().getThisObject(descriptor));
+                definitionPlace = new DefinitionPlace(scope, context().getThisObject(descriptor), properties);
             }
             else {
                 qualifiedReference = declarationContext.getQualifiedReference(descriptor);
-                definitionPlace = new DefinitionPlace(staticProperties, qualifiedReference);
+                definitionPlace = new DefinitionPlace(scope, qualifiedReference, staticProperties);
             }
             declarationContext = declarationContext.newDeclaration(descriptor, definitionPlace);
         }

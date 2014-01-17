@@ -19,13 +19,16 @@ package org.jetbrains.k2js.translate.context
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
 import com.google.dart.compiler.backend.js.ast.JsNameRef
+import com.google.dart.compiler.backend.js.ast.JsScope
 
 class DefinitionPlace(
-        val properties: MutableList<JsPropertyInitializer>,
-        private val fqName: JsExpression
+        private val scope: JsScope,
+        private val fqName: JsExpression,
+        val properties: MutableList<JsPropertyInitializer>
 ) {
-    fun define(name: String, expression : JsExpression): JsNameRef {
-        properties.add(JsPropertyInitializer(JsNameRef(name), expression))
+    fun define(suggestedName: String, expression : JsExpression): JsNameRef {
+        val name = scope.declareFreshName(suggestedName)
+        properties.add(JsPropertyInitializer(name.makeRef(), expression))
         return JsNameRef(name, fqName)
     }
 }

@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Generator<V> {
-
-
     @NotNull
     private final Map<DeclarationDescriptor, V> values = Maps.newHashMap();
     @NotNull
@@ -50,13 +48,12 @@ public class Generator<V> {
 
     @Nullable
     private V generate(@NotNull DeclarationDescriptor descriptor) {
-        V result = null;
         for (Rule<V> rule : rules) {
-            result = rule.apply(descriptor);
+            V result = rule.apply(descriptor);
             if (result != null) {
                 return result;
             }
         }
-        return result;
+        return null;
     }
 }

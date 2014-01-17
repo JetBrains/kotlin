@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import com.google.dart.compiler.common.Symbol;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstract base class for named JavaScript objects.
@@ -25,6 +26,7 @@ public class JsName implements Symbol {
     return ident;
   }
 
+  @NotNull
   public JsNameRef makeRef() {
     return new JsNameRef(this);
   }
