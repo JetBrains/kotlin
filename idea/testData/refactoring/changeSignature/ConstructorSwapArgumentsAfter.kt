@@ -1,6 +1,6 @@
 open class C1 protected (x3: ((Int) -> Int)?,
                          var _x2: Float,
-                         val _x1: Int = 1){
+                         val _x1: Int = 1) {
     fun bar() {
         val y1 = _x1;
         val y2 = _x2;

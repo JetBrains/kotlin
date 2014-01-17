@@ -18,7 +18,8 @@ fun f() //eol comment
 {
 }
 
-class A {
+class A
+{
     fun f()
     {
     }

@@ -49,6 +49,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/Class.after.kt");
         }
         
+        @TestMetadata("ClassLineBreak.after.kt")
+        public void testClassLineBreak() throws Exception {
+            doTest("idea/testData/formatter/ClassLineBreak.after.kt");
+        }
+        
         @TestMetadata("CommentInFunctionLiteral.after.kt")
         public void testCommentInFunctionLiteral() throws Exception {
             doTest("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
@@ -360,6 +365,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     public static class FormatterInverted extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatterInverted() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after.inv.kt$"), true);
+        }
+        
+        @TestMetadata("ClassLineBreak.after.inv.kt")
+        public void testClassLineBreak() throws Exception {
+            doTestInverted("idea/testData/formatter/ClassLineBreak.after.inv.kt");
         }
         
         @TestMetadata("DoWhileLineBreak.after.inv.kt")

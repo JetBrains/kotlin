@@ -195,9 +195,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
         }
         custom {
 
-            fun spacingForLeftBrace(block: ASTNode?): Spacing? {
-                val noBlockSpacing = Spacing.createSpacing(1, 1, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
-                if (block != null && block.getElementType() == BLOCK) {
+            fun spacingForLeftBrace(block: ASTNode?, blockType: IElementType = BLOCK): Spacing? {
+                if (block != null && block.getElementType() == blockType) {
                     val leftBrace = block.getFirstChildNode()
                     if (leftBrace != null && leftBrace.getElementType() == LBRACE) {
                         val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace)
@@ -207,12 +206,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                         return Spacing.createSpacing(1, 1, minimumLF, keepLineBreaks, 0)
                     }
                 }
-                return noBlockSpacing
+                return Spacing.createSpacing(1, 1, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE)
             }
 
-            val leftBraceRule = {
+            fun leftBraceRule(blockType: IElementType = BLOCK) = {
                 (parent: ASTBlock, left: ASTBlock, right: ASTBlock) ->
-                spacingForLeftBrace(right.getNode())
+                spacingForLeftBrace(right.getNode(), blockType)
             }
 
             val leftBraceRuleIfBlockIsWrapped = {
@@ -227,12 +226,13 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             inPosition(parent = WHILE, right = BODY).customRule(leftBraceRuleIfBlockIsWrapped)
             inPosition(parent = DO_WHILE, right = BODY).customRule(leftBraceRuleIfBlockIsWrapped)
 
-            inPosition(parent = TRY, right = BLOCK).customRule(leftBraceRule)
-            inPosition(parent = CATCH, right = BLOCK).customRule(leftBraceRule)
-            inPosition(parent = FINALLY, right = BLOCK).customRule(leftBraceRule)
+            inPosition(parent = TRY, right = BLOCK).customRule(leftBraceRule())
+            inPosition(parent = CATCH, right = BLOCK).customRule(leftBraceRule())
+            inPosition(parent = FINALLY, right = BLOCK).customRule(leftBraceRule())
 
-            inPosition(parent = FUN, right = BLOCK).customRule(leftBraceRule)
+            inPosition(parent = FUN, right = BLOCK).customRule(leftBraceRule())
 
+            inPosition(right = CLASS_BODY).customRule(leftBraceRule(blockType = CLASS_BODY))
 
             val spacesInSimpleFunction = if (jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD) 1 else 0
             inPosition(parent = FUNCTION_LITERAL,
