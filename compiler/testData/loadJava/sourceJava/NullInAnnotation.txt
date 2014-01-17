@@ -1,0 +1,13 @@
+package test
+
+public /*synthesized*/ fun NullInAnnotation(/*0*/ function: () -> jet.Unit): test.NullInAnnotation
+
+public trait NullInAnnotation : java.lang.Object {
+    test.NullInAnnotation.Ann(a = null: jet.Nothing?, b = {null}: jet.Array<jet.String>) public abstract fun foo(): jet.Unit
+    
+    public final annotation class Ann : jet.Annotation {
+        public constructor Ann(/*0*/ a: jet.String, /*1*/ vararg b: jet.String /*jet.Array<jet.String>*/)
+        public abstract fun a(): jet.String
+        public abstract fun b(): jet.Array<jet.String>
+    }
+}

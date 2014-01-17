@@ -3109,6 +3109,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestSourceJava("compiler/testData/loadJava/sourceJava/ErrorTypes.java");
         }
         
+        @TestMetadata("NullInAnnotation.java")
+        public void testNullInAnnotation() throws Exception {
+            doTestSourceJava("compiler/testData/loadJava/sourceJava/NullInAnnotation.java");
+        }
+        
         @TestMetadata("ReturnInnerSubclassOfSupersInner.java")
         public void testReturnInnerSubclassOfSupersInner() throws Exception {
             doTestSourceJava("compiler/testData/loadJava/sourceJava/ReturnInnerSubclassOfSupersInner.java");
