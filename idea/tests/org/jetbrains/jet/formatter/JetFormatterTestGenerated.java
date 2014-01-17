@@ -74,6 +74,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/DoWhileSpacing.after.kt");
         }
         
+        @TestMetadata("ElseOnNewLine.after.kt")
+        public void testElseOnNewLine() throws Exception {
+            doTest("idea/testData/formatter/ElseOnNewLine.after.kt");
+        }
+        
         @TestMetadata("EmptyLineAfterPackage.after.kt")
         public void testEmptyLineAfterPackage() throws Exception {
             doTest("idea/testData/formatter/EmptyLineAfterPackage.after.kt");
@@ -380,6 +385,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("DoWhileLineBreak.after.inv.kt")
         public void testDoWhileLineBreak() throws Exception {
             doTestInverted("idea/testData/formatter/DoWhileLineBreak.after.inv.kt");
+        }
+        
+        @TestMetadata("ElseOnNewLine.after.inv.kt")
+        public void testElseOnNewLine() throws Exception {
+            doTestInverted("idea/testData/formatter/ElseOnNewLine.after.inv.kt");
         }
         
         @TestMetadata("ForLineBreak.after.inv.kt")

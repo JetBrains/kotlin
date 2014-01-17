@@ -186,10 +186,21 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             aroundInside(ARROW, FUNCTION_TYPE).spaceIf(jetSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
 
             betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_EXPRESSION, CALL_EXPRESSION).spaces(1)
-
-            beforeInside(ELSE_KEYWORD, IF).spaces(1)
         }
         custom {
+            if (jetCommonSettings.ELSE_ON_NEW_LINE) {
+                inPosition(parent = IF, right = ELSE_KEYWORD)
+                        .lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)
+            }
+            else {
+                inPosition(parent = IF, left = THEN, right = ELSE_KEYWORD).customRule {
+                    parent, left, right ->
+                    // do not remove linebreak if "then" expression is not a block
+                    val expressionOrBlock = left.getNode()!!.getFirstChildNode()
+                    val keepLineBreaks = expressionOrBlock == null || expressionOrBlock.getElementType() != BLOCK
+                    Spacing.createSpacing(1, 1, 0, keepLineBreaks, 0)
+                }
+            }
 
             fun spacingForLeftBrace(block: ASTNode?, blockType: IElementType = BLOCK): Spacing? {
                 if (block != null && block.getElementType() == blockType) {

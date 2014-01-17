@@ -14,8 +14,7 @@ public open class Test() {
             var result: Boolean = true
             if (parent?.isDirectory()!!) {
                 return true
-            }
-            else
+            } else
                 return false
         }
     }

@@ -14,8 +14,7 @@ public class Test() {
             val result = true
             if (parent.isDirectory()) {
                 return true
-            }
-            else
+            } else
                 return false
         }
     }
