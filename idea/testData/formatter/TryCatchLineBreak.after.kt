@@ -3,25 +3,10 @@ fun f()
     try
     {
 
-    }
-    catch (e: Exception)
+    } catch (e: Exception)
     {
 
-    }
-    finally
-    {
-
-    }
-
-    try
-    {
-
-    }
-    catch (e: Exception)
-    {
-
-    }
-    finally
+    } finally
     {
 
     }
@@ -29,25 +14,21 @@ fun f()
     try
     {
 
-    }
-    catch (e: Exception)
+    } catch (e: Exception)
+    {
+
+    } finally
     {
 
     }
-    finally
+
+    try
     {
 
-    }
-
-    try //eol comment
+    } catch (e: Exception)
     {
 
-    }
-    catch (e: Exception) //eol comment
-    {
-
-    }
-    finally //eol comment
+    } finally
     {
 
     }
@@ -55,12 +36,21 @@ fun f()
     try //eol comment
     {
 
-    }
-    catch (e: Exception) //eol comment
+    } catch (e: Exception) //eol comment
+    {
+
+    } finally //eol comment
     {
 
     }
-    finally //eol comment
+
+    try //eol comment
+    {
+
+    } catch (e: Exception) //eol comment
+    {
+
+    } finally //eol comment
     {
 
     }

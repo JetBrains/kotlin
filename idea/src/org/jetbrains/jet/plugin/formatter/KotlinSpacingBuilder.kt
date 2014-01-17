@@ -206,6 +206,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             ruleForKeywordOnNewLine(jetCommonSettings.ELSE_ON_NEW_LINE, keyword = ELSE_KEYWORD, parent = IF)
             ruleForKeywordOnNewLine(jetCommonSettings.WHILE_ON_NEW_LINE, keyword = WHILE_KEYWORD, parent = DO_WHILE)
+            ruleForKeywordOnNewLine(jetCommonSettings.CATCH_ON_NEW_LINE, keyword = CATCH, parent = TRY)
+            ruleForKeywordOnNewLine(jetCommonSettings.FINALLY_ON_NEW_LINE, keyword = FINALLY, parent = TRY)
 
 
             fun spacingForLeftBrace(block: ASTNode?, blockType: IElementType = BLOCK): Spacing? {

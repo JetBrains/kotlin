@@ -44,6 +44,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/BlockFor.after.kt");
         }
         
+        @TestMetadata("CatchFinallyOnNewLine.after.kt")
+        public void testCatchFinallyOnNewLine() throws Exception {
+            doTest("idea/testData/formatter/CatchFinallyOnNewLine.after.kt");
+        }
+        
         @TestMetadata("Class.after.kt")
         public void testClass() throws Exception {
             doTest("idea/testData/formatter/Class.after.kt");
@@ -380,6 +385,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     public static class FormatterInverted extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatterInverted() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after.inv.kt$"), true);
+        }
+        
+        @TestMetadata("CatchFinallyOnNewLine.after.inv.kt")
+        public void testCatchFinallyOnNewLine() throws Exception {
+            doTestInverted("idea/testData/formatter/CatchFinallyOnNewLine.after.inv.kt");
         }
         
         @TestMetadata("ClassLineBreak.after.inv.kt")
