@@ -517,7 +517,8 @@ private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
         is IntValue, is ByteValue, is ShortValue, is LongValue,
         is CharValue,
         is DoubleValue, is FloatValue,
-        is BooleanValue -> StringValue(value.getValue().toString())
+        is BooleanValue,
+        is NullValue -> StringValue(value.getValue().toString())
         else -> null
     }
 }
