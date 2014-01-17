@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -324,10 +324,7 @@ public class CodegenBinding {
         return closure != null && closure.getCaptureThis() != null;
     }
 
-    private static JetDelegatorToSuperCall findSuperCall(
-            BindingContext bindingContext,
-            JetElement classOrObject
-    ) {
+    private static JetDelegatorToSuperCall findSuperCall(BindingContext bindingContext, JetElement classOrObject) {
         if (!(classOrObject instanceof JetClassOrObject)) {
             return null;
         }
@@ -335,6 +332,7 @@ public class CodegenBinding {
         if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) {
             return null;
         }
+
         for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
             if (specifier instanceof JetDelegatorToSuperCall) {
                 JetTypeReference typeReference = specifier.getTypeReference();
