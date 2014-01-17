@@ -1,0 +1,21 @@
+trait T {
+    val a1: Byte
+    val a2: Short
+    val a3: Int
+    val a4: Long
+    val a5: Float
+    val a6: Double
+    val a7: Char
+    val a8: Boolean
+}
+
+class C : T {
+    override val a1: Byte = 0
+    override val a2: Short = 0
+    override val a3: Int = 0
+    override val a4: Long = 0
+    override val a5: Float = 0.0f
+    override val a6: Double = 0.0
+    override val a7: Char = '\u0000'
+    override val a8: Boolean = false
+}
