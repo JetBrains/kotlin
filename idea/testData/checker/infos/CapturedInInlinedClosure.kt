@@ -58,7 +58,7 @@ fun localFunctionAndClass() {
         }
     }
 
-    val <info descr="Value captured in a closure"><warning>v</warning></info> = 1 // erroneous "unused warning" is caused by KT-3501
+    val <info descr="Value captured in a closure">v</info> = 1
     class LocalClass {
         fun f() {
             run {

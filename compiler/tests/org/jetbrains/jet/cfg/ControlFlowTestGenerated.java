@@ -157,6 +157,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/LazyBooleans.kt");
     }
     
+    @TestMetadata("localClass.kt")
+    public void testLocalClass() throws Exception {
+        doTest("compiler/testData/cfg/localClass.kt");
+    }
+    
     @TestMetadata("LocalDeclarations.kt")
     public void testLocalDeclarations() throws Exception {
         doTest("compiler/testData/cfg/LocalDeclarations.kt");

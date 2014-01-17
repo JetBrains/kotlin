@@ -916,16 +916,6 @@ public class JetControlFlowProcessor {
             JetObjectDeclaration declaration = expression.getObjectDeclaration();
             generateInstructions(declaration, context);
 
-            List<JetDeclaration> declarations = declaration.getDeclarations();
-            List<JetDeclaration> functions = Lists.newArrayList();
-            for (JetDeclaration localDeclaration : declarations) {
-                if (!(localDeclaration instanceof JetProperty) && !(localDeclaration instanceof JetClassInitializer)) {
-                    functions.add(localDeclaration);
-                }
-            }
-            for (JetDeclaration function : functions) {
-                generateInstructions(function, context);
-            }
             builder.createAnonymousObject(expression);
         }
 
@@ -961,6 +951,13 @@ public class JetControlFlowProcessor {
                 generateInstructions(specifier, context);
             }
             List<JetDeclaration> declarations = classOrObject.getDeclarations();
+            if (JetPsiUtil.isLocal(classOrObject)) {
+                for (JetDeclaration declaration : declarations) {
+                    generateInstructions(declaration, context);
+                }
+                return;
+            }
+            //For top-level and inner classes and objects functions are collected and checked separately.
             for (JetDeclaration declaration : declarations) {
                 if (declaration instanceof JetProperty || declaration instanceof JetClassInitializer) {
                     generateInstructions(declaration, context);
