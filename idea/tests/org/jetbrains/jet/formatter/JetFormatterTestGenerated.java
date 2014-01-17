@@ -99,14 +99,14 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/FunctionDefParametersAlign.after.kt");
         }
         
+        @TestMetadata("FunctionLineBreak.after.kt")
+        public void testFunctionLineBreak() throws Exception {
+            doTest("idea/testData/formatter/FunctionLineBreak.after.kt");
+        }
+        
         @TestMetadata("FunctionWithInference.after.kt")
         public void testFunctionWithInference() throws Exception {
             doTest("idea/testData/formatter/FunctionWithInference.after.kt");
-        }
-        
-        @TestMetadata("FunctionWithNewLineBrace.after.kt")
-        public void testFunctionWithNewLineBrace() throws Exception {
-            doTest("idea/testData/formatter/FunctionWithNewLineBrace.after.kt");
         }
         
         @TestMetadata("FunctionalType.after.kt")
@@ -370,6 +370,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("ForLineBreak.after.inv.kt")
         public void testForLineBreak() throws Exception {
             doTestInverted("idea/testData/formatter/ForLineBreak.after.inv.kt");
+        }
+        
+        @TestMetadata("FunctionLineBreak.after.inv.kt")
+        public void testFunctionLineBreak() throws Exception {
+            doTestInverted("idea/testData/formatter/FunctionLineBreak.after.inv.kt");
         }
         
         @TestMetadata("FunctionalType.after.inv.kt")

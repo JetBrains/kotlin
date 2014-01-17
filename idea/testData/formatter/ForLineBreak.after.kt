@@ -1,4 +1,5 @@
-fun main() {
+fun main()
+{
     for (a in b)
     {
     }

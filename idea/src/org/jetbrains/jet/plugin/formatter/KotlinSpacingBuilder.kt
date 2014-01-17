@@ -147,8 +147,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             around(TokenSet.create(PLUSPLUS, MINUSMINUS, EXCLEXCL, MINUS, PLUS, EXCL)).spaceIf(jetCommonSettings.SPACE_AROUND_UNARY_OPERATOR)
             around(RANGE).spaceIf(jetSettings.SPACE_AROUND_RANGE)
 
-            beforeInside(BLOCK, FUN).spaceIf(jetCommonSettings.SPACE_BEFORE_METHOD_LBRACE)
-
             afterInside(LPAR, VALUE_PARAMETER_LIST).spaces(0)
             beforeInside(RPAR, VALUE_PARAMETER_LIST).spaces(0)
             afterInside(LT, TYPE_PARAMETER_LIST).spaces(0)
@@ -232,6 +230,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             inPosition(parent = TRY, right = BLOCK).customRule(leftBraceRule)
             inPosition(parent = CATCH, right = BLOCK).customRule(leftBraceRule)
             inPosition(parent = FINALLY, right = BLOCK).customRule(leftBraceRule)
+
+            inPosition(parent = FUN, right = BLOCK).customRule(leftBraceRule)
 
 
             val spacesInSimpleFunction = if (jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD) 1 else 0

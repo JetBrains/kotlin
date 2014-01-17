@@ -1,4 +1,5 @@
-fun main(args: Array<String>) {
+fun main(args: Array<String>)
+{
     if (true) // tricky comment
     {
     }
