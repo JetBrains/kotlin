@@ -30,3 +30,6 @@ val prop8 = "a${1.toDouble()}"
 
 // val prop9: \"ab\"
 val prop9 = "a" + "b"
+
+// val prop10: \"abb\"
+val prop10 = prop9 + "b"
