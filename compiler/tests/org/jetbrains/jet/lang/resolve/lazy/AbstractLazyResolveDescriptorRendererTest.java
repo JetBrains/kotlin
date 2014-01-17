@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageMa
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +59,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
 
         final ModuleDescriptorImpl lazyModule = AnalyzerFacadeForJVM.createJavaModule("<lazy module>");
         lazyModule.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
-        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
+        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager(new LockBasedStorageManager());
         final ResolveSession resolveSession = new ResolveSession(getProject(), storageManager, lazyModule,
                                                                  new FileBasedDeclarationProviderFactory(storageManager, files));
 

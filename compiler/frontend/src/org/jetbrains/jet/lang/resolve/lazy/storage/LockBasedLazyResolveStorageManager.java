@@ -18,7 +18,9 @@ package org.jetbrains.jet.lang.resolve.lazy.storage;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
+import jet.Function0;
 import jet.Function1;
+import jet.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -26,23 +28,27 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.storage.*;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 
-public class LockBasedLazyResolveStorageManager extends LockBasedStorageManager implements LazyResolveStorageManager {
+public class LockBasedLazyResolveStorageManager implements LazyResolveStorageManager {
+
+    private final LockBasedStorageManager storageManager;
+
+    public LockBasedLazyResolveStorageManager(@NotNull LockBasedStorageManager storageManager) {
+        this.storageManager = storageManager;
+    }
 
     @Override
     @NotNull
     public <K, V> MemoizedFunctionToNotNull<K, V> createWeaklyRetainedMemoizedFunction(
             @NotNull Function1<K, V> compute
     ) {
-        return super.createMemoizedFunction(compute, new ConcurrentWeakValueHashMap<K, Object>());
+        return storageManager.new Internals().createMemoizedFunction(compute, new ConcurrentWeakValueHashMap<K, Object>());
     }
 
     @NotNull
@@ -50,7 +56,7 @@ public class LockBasedLazyResolveStorageManager extends LockBasedStorageManager 
     public <K, V> MemoizedFunctionToNullable<K, V> createWeaklyRetainedMemoizedFunctionWithNullableValues(
             @NotNull Function1<K, V> compute
     ) {
-        return super.createMemoizedFunctionWithNullableValues(compute, new ConcurrentWeakValueHashMap<K, Object>());
+        return storageManager.new Internals().createMemoizedFunctionWithNullableValues(compute, new ConcurrentWeakValueHashMap<K, Object>());
     }
 
     @NotNull
@@ -58,7 +64,73 @@ public class LockBasedLazyResolveStorageManager extends LockBasedStorageManager 
     public BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace) {
         // It seems safe to have a separate lock for traces:
         // no other locks will be acquired inside the trace operations
-        return new LockProtectedTrace(lock, originalTrace);
+        return new LockProtectedTrace(storageManager.new Internals().getLock(), originalTrace);
+    }
+
+    @NotNull
+    @Override
+    public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(@NotNull Function1<? super K, ? extends V> compute) {
+        return storageManager.createMemoizedFunction(compute);
+    }
+
+    @NotNull
+    @Override
+    public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(@NotNull Function1<? super K, ? extends V> compute) {
+        return storageManager.createMemoizedFunctionWithNullableValues(compute);
+    }
+
+    @NotNull
+    @Override
+    public <T> NotNullLazyValue<T> createLazyValue(@NotNull Function0<? extends T> computable) {
+        return storageManager.createLazyValue(computable);
+    }
+
+    @NotNull
+    @Override
+    public <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(
+            @NotNull Function0<? extends T> computable,
+            @NotNull T onRecursiveCall
+    ) {
+        return storageManager.createRecursionTolerantLazyValue(computable, onRecursiveCall);
+    }
+
+    @NotNull
+    @Override
+    public <T> NotNullLazyValue<T> createLazyValueWithPostCompute(
+            @NotNull Function0<? extends T> computable,
+            @Nullable Function1<? super Boolean, ? extends T> onRecursiveCall,
+            @NotNull Function1<? super T, ? extends Unit> postCompute
+    ) {
+        return storageManager.createLazyValueWithPostCompute(computable, onRecursiveCall, postCompute);
+    }
+
+    @NotNull
+    @Override
+    public <T> NullableLazyValue<T> createNullableLazyValue(@NotNull Function0<? extends T> computable) {
+        return storageManager.createNullableLazyValue(computable);
+    }
+
+    @NotNull
+    @Override
+    public <T> NullableLazyValue<T> createRecursionTolerantNullableLazyValue(
+            @NotNull Function0<? extends T> computable,
+            T onRecursiveCall
+    ) {
+        return storageManager.createRecursionTolerantNullableLazyValue(computable, onRecursiveCall);
+    }
+
+    @NotNull
+    @Override
+    public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
+            @NotNull Function0<? extends T> computable,
+            @NotNull Function1<? super T, ? extends Unit> postCompute
+    ) {
+        return storageManager.createNullableLazyValueWithPostCompute(computable, postCompute);
+    }
+
+    @Override
+    public <T> T compute(@NotNull Function0<? extends T> computable) {
+        return storageManager.compute(computable);
     }
 
     private static class LockProtectedContext implements BindingContext {

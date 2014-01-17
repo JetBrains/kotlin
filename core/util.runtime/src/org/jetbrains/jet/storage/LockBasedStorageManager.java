@@ -61,7 +61,7 @@ public class LockBasedStorageManager implements StorageManager {
     }
 
     @NotNull
-    protected  <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
+    protected <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
             @NotNull Function1<? super K, ? extends V> compute,
             @NotNull ConcurrentMap<K, Object> map
     ) {
@@ -373,5 +373,30 @@ public class LockBasedStorageManager implements StorageManager {
             assert result != null : "compute() returned null";
             return result;
         }
+    }
+
+    @Deprecated // Use with care
+    public class Internals {
+        @NotNull
+        public Lock getLock() {
+            return lock;
+        }
+
+        @NotNull
+        public <K, V> MemoizedFunctionToNotNull<K, V> createMemoizedFunction(
+                @NotNull Function1<? super K, ? extends V> compute,
+                @NotNull ConcurrentMap<K, Object> map
+        ) {
+            return LockBasedStorageManager.this.createMemoizedFunction(compute, map);
+        }
+
+        @NotNull
+        public <K, V> MemoizedFunctionToNullable<K, V> createMemoizedFunctionWithNullableValues(
+                @NotNull Function1<? super K, ? extends V> compute,
+                @NotNull ConcurrentMap<K, Object> map
+        ) {
+            return LockBasedStorageManager.this.createMemoizedFunctionWithNullableValues(compute, map);
+        }
+
     }
 }

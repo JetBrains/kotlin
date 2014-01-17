@@ -100,7 +100,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         final JavaClassFinderImpl classFinder = injector.getJavaClassFinder();
 
         // TODO: Replace with stub declaration provider
-        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
+        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager(injector.getLockBasedStorageManager());
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {

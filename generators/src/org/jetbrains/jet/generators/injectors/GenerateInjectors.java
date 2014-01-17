@@ -152,7 +152,7 @@ public class GenerateInjectors {
         generator.addParameter(BindingTrace.class);
 
         // Fields
-        generator.addField(false, StorageManager.class, null, new InstantiateType(LockBasedStorageManager.class));
+        generator.addPublicField(LockBasedStorageManager.class);
         generator.addPublicField(JavaClassFinderImpl.class);
         generator.addField(TraceBasedExternalSignatureResolver.class);
         generator.addField(TraceBasedJavaResolverCache.class);
