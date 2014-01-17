@@ -183,10 +183,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_EXPRESSION).spaces(1)
             beforeInside(ARROW, FUNCTION_LITERAL).spaceIf(jetSettings.SPACE_BEFORE_LAMBDA_ARROW)
 
-            //when
-            aroundInside(ARROW, WHEN_ENTRY).spaceIf(jetSettings.SPACE_AROUND_WHEN_ARROW)
-            beforeInside(LBRACE, WHEN).spacing(1, 1, 0, true, 0)          //omit blank lines before '{' in 'when' statement
-
             aroundInside(ARROW, FUNCTION_TYPE).spaceIf(jetSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
 
             betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_EXPRESSION, CALL_EXPRESSION).spaces(1)
@@ -197,8 +193,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             fun spacingForLeftBrace(block: ASTNode?, blockType: IElementType = BLOCK): Spacing? {
                 if (block != null && block.getElementType() == blockType) {
-                    val leftBrace = block.getFirstChildNode()
-                    if (leftBrace != null && leftBrace.getElementType() == LBRACE) {
+                    val leftBrace = block.findChildByType(LBRACE)
+                    if (leftBrace != null) {
                         val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(leftBrace)
                         val isAfterEolComment = previousLeaf != null && (previousLeaf.getElementType() == EOL_COMMENT)
                         val keepLineBreaks = jetSettings.LBRACE_ON_NEXT_LINE || isAfterEolComment
@@ -233,6 +229,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             inPosition(parent = FUN, right = BLOCK).customRule(leftBraceRule())
 
             inPosition(right = CLASS_BODY).customRule(leftBraceRule(blockType = CLASS_BODY))
+
+            inPosition(parent = WHEN_ENTRY, right = BLOCK).customRule(leftBraceRule())
+            inPosition(parent = WHEN, right = LBRACE).customRule {
+                parent, left, right ->
+                spacingForLeftBrace(block = parent.getNode(), blockType = WHEN)
+            }
 
             val spacesInSimpleFunction = if (jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD) 1 else 0
             inPosition(parent = FUNCTION_LITERAL,
@@ -273,6 +275,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             beforeInside(RBRACE, CLASS_BODY).lineBreakInCode()
             beforeInside(RBRACE, BLOCK).lineBreakInCode()
             between(RPAR, BODY).spaces(1)
+
+            // if when entry has block, spacing after arrow should be set by lbrace rule
+            aroundInside(ARROW, WHEN_ENTRY).spaceIf(jetSettings.SPACE_AROUND_WHEN_ARROW)
         }
     }
 }

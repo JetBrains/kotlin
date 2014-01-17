@@ -249,6 +249,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/WhenEntryExpr.after.kt");
         }
         
+        @TestMetadata("WhenLineBreak.after.kt")
+        public void testWhenLineBreak() throws Exception {
+            doTest("idea/testData/formatter/WhenLineBreak.after.kt");
+        }
+        
         @TestMetadata("WhenLinesBeforeLbrace.after.kt")
         public void testWhenLinesBeforeLbrace() throws Exception {
             doTest("idea/testData/formatter/WhenLinesBeforeLbrace.after.kt");
@@ -450,6 +455,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("WhenArrow.after.inv.kt")
         public void testWhenArrow() throws Exception {
             doTestInverted("idea/testData/formatter/WhenArrow.after.inv.kt");
+        }
+        
+        @TestMetadata("WhenLineBreak.after.inv.kt")
+        public void testWhenLineBreak() throws Exception {
+            doTestInverted("idea/testData/formatter/WhenLineBreak.after.inv.kt");
         }
         
         @TestMetadata("WhileLineBreak.after.inv.kt")
