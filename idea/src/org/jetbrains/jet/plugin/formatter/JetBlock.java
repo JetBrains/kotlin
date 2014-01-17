@@ -290,6 +290,11 @@ public class JetBlock extends AbstractBlock {
                     .in(DOC_COMMENT)
                     .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
                     .set(Indent.getSpaceIndent(KDOC_COMMENT_INDENT)),
+
+            ASTIndentStrategy.forNode("Block in when entry")
+                    .in(WHEN_ENTRY)
+                    .notForType(BLOCK, WHEN_CONDITION_EXPRESSION, WHEN_CONDITION_IN_RANGE, WHEN_CONDITION_IS_PATTERN, ELSE_KEYWORD, ARROW)
+                    .set(Indent.getNormalIndent()),
     };
 
     @Nullable
@@ -305,14 +310,6 @@ public class JetBlock extends AbstractBlock {
         }
 
         // TODO: Try to rewrite other rules to declarative style
-
-        if (childParent != null && childParent.getElementType() == WHEN_ENTRY) {
-            ASTNode prev = getPrevWithoutWhitespace(child);
-            if (prev != null && prev.getText().equals("->")) {
-                return indentIfNotBrace(child);
-            }
-        }
-
         if (childParent != null && childParent.getElementType() == DOT_QUALIFIED_EXPRESSION) {
             if (childParent.getFirstChildNode() != child && childParent.getLastChildNode() != child) {
                 return Indent.getContinuationWithoutFirstIndent(false);
