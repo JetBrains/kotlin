@@ -21,21 +21,19 @@ import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-
-import java.util.List;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 
 public interface AnnotationDeserializer {
     AnnotationDeserializer UNSUPPORTED = new AnnotationDeserializer() {
         @NotNull
         @Override
-        public List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
+        public Annotations loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
             return notSupported();
         }
 
         @NotNull
         @Override
-        public List<AnnotationDescriptor> loadCallableAnnotations(
+        public Annotations loadCallableAnnotations(
                 @NotNull ClassOrPackageFragmentDescriptor container,
                 @NotNull ProtoBuf.Callable proto,
                 @NotNull NameResolver nameResolver,
@@ -46,7 +44,7 @@ public interface AnnotationDeserializer {
 
         @NotNull
         @Override
-        public List<AnnotationDescriptor> loadValueParameterAnnotations(
+        public Annotations loadValueParameterAnnotations(
                 @NotNull ClassOrPackageFragmentDescriptor container,
                 @NotNull ProtoBuf.Callable callable,
                 @NotNull NameResolver nameResolver,
@@ -57,7 +55,7 @@ public interface AnnotationDeserializer {
         }
 
         @NotNull
-        private List<AnnotationDescriptor> notSupported() {
+        private Annotations notSupported() {
             throw new UnsupportedOperationException("Annotations are not supported");
         }
     };
@@ -70,10 +68,10 @@ public interface AnnotationDeserializer {
     }
 
     @NotNull
-    List<AnnotationDescriptor> loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto);
+    Annotations loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto);
 
     @NotNull
-    List<AnnotationDescriptor> loadCallableAnnotations(
+    Annotations loadCallableAnnotations(
             @NotNull ClassOrPackageFragmentDescriptor container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver,
@@ -81,7 +79,7 @@ public interface AnnotationDeserializer {
     );
 
     @NotNull
-    List<AnnotationDescriptor> loadValueParameterAnnotations(
+    Annotations loadValueParameterAnnotations(
             @NotNull ClassOrPackageFragmentDescriptor container,
             @NotNull ProtoBuf.Callable callable,
             @NotNull NameResolver nameResolver,

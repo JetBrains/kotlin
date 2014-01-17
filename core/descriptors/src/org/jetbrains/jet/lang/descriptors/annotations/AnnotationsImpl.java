@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,25 @@ package org.jetbrains.jet.lang.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface Annotated {
+import java.util.Iterator;
+import java.util.List;
+
+public class AnnotationsImpl implements Annotations {
+    private final List<AnnotationDescriptor> annotations;
+
+    public AnnotationsImpl(@NotNull List<AnnotationDescriptor> annotations) {
+        this.annotations = annotations;
+    }
+
     @NotNull
-    Annotations getAnnotations();
+    @Override
+    public List<AnnotationDescriptor> getAnnotationDescriptors() {
+        return annotations;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<AnnotationDescriptor> iterator() {
+        return getAnnotationDescriptors().iterator();
+    }
 }

@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
@@ -37,7 +37,7 @@ public class IntegerValueTypeConstant extends CompileTimeConstant<IntegerValueTy
     @Override
     public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
         return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(), getValue(),
+                Annotations.EMPTY, getValue(),
                 false, Collections.<TypeProjection>emptyList(),
                 ErrorUtils.createErrorScope("Scope for number value type (" + getValue().toString() + ")", true));
     }

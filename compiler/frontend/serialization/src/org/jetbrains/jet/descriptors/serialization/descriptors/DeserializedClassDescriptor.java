@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor;
@@ -59,7 +60,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
 
     private final AnnotationDeserializer annotationDeserializer;
-    private final NotNullLazyValue<List<AnnotationDescriptor>> annotations;
+    private final NotNullLazyValue<Annotations> annotations;
 
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
@@ -114,9 +115,9 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         this.isInner = Flags.INNER.get(flags);
 
         this.annotationDeserializer = annotationResolver;
-        this.annotations = storageManager.createLazyValue(new Function0<List<AnnotationDescriptor>>() {
+        this.annotations = storageManager.createLazyValue(new Function0<Annotations>() {
             @Override
-            public List<AnnotationDescriptor> invoke() {
+            public Annotations invoke() {
                 return computeAnnotations();
             }
         });
@@ -187,16 +188,16 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         return isInner;
     }
 
-    private List<AnnotationDescriptor> computeAnnotations() {
+    private Annotations computeAnnotations() {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
-            return Collections.emptyList();
+            return Annotations.EMPTY;
         }
         return annotationDeserializer.loadClassAnnotations(this, classProto);
     }
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
+    public Annotations getAnnotations() {
         return annotations.invoke();
     }
 
@@ -349,8 +350,8 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
         @NotNull
         @Override
-        public List<AnnotationDescriptor> getAnnotations() {
-            return Collections.emptyList(); // TODO
+        public Annotations getAnnotations() {
+            return Annotations.EMPTY; // TODO
         }
 
         @Override

@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.types.ref.JetTypeName;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -114,7 +113,7 @@ public class ScriptHeaderResolver {
             int index,
             @NotNull ScriptDescriptor script) {
         JetType type = resolveTypeName(scriptParameter.getType());
-        return new ValueParameterDescriptorImpl(script, index, Collections.<AnnotationDescriptor>emptyList(), scriptParameter.getName(), type, false, null);
+        return new ValueParameterDescriptorImpl(script, index, Annotations.EMPTY, scriptParameter.getName(), type, false, null);
     }
 
     public void processScriptHierarchy(@NotNull JetScript script, @NotNull JetScope outerScope) {

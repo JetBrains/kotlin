@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -36,7 +37,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     public PropertySetterDescriptorImpl(
             @NotNull PropertyDescriptor correspondingProperty,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean hasBody,
@@ -48,7 +49,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
 
     public PropertySetterDescriptorImpl(
             @NotNull PropertyDescriptor correspondingProperty,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean hasBody,
@@ -75,7 +76,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull JetType type
     ) {
         return new ValueParameterDescriptorImpl(
-                setterDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), Name.special("<set-?>"), type, false, null
+                setterDescriptor, 0, Annotations.EMPTY, Name.special("<set-?>"), type, false, null
         );
     }
 

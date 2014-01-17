@@ -25,7 +25,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -108,7 +108,7 @@ public class PackagePartCodegen extends MemberCodegen {
             FrameMap frameMap = new FrameMap();
 
             SimpleFunctionDescriptorImpl clInit =
-                    new SimpleFunctionDescriptorImpl(this.descriptor, Collections.<AnnotationDescriptor>emptyList(),
+                    new SimpleFunctionDescriptorImpl(this.descriptor, Annotations.EMPTY,
                                                      Name.special("<clinit>"),
                                                      CallableMemberDescriptor.Kind.SYNTHESIZED);
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),

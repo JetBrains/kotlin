@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
@@ -30,8 +30,6 @@ import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageFragmentScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
-
-import java.util.Collections;
 
 public class JavaPackageFragmentDescriptorImpl extends DeclarationDescriptorImpl implements JavaPackageFragmentDescriptor {
     @Nullable
@@ -54,7 +52,7 @@ public class JavaPackageFragmentDescriptorImpl extends DeclarationDescriptorImpl
             @NotNull FqName fqName,
             @NotNull NullableFunction<JavaPackageFragmentDescriptor, JavaPackageFragmentScope> scopeFactory
     ) {
-        super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
+        super(Annotations.EMPTY, fqName.shortNameOrSpecial());
         this.provider = provider;
         this.fqName = fqName;
         this.memberScope = scopeFactory.fun(this);

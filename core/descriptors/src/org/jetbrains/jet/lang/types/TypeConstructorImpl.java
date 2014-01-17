@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +39,7 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
 
     public TypeConstructorImpl(
             @Nullable ClassifierDescriptor classifierDescriptor,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             boolean isFinal,
             @NotNull String debugName,
             @NotNull List<? extends TypeParameterDescriptor> parameters,

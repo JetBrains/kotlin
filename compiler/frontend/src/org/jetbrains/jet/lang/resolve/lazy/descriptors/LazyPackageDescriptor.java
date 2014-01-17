@@ -19,17 +19,15 @@ package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
-
-import java.util.Collections;
 
 public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements LazyDescriptor, PackageFragmentDescriptor {
     private final ResolveSession resolveSession;
@@ -44,7 +42,7 @@ public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements 
             @NotNull ResolveSession resolveSession,
             @NotNull PackageMemberDeclarationProvider declarationProvider
     ) {
-        super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
+        super(Annotations.EMPTY, fqName.shortNameOrSpecial());
         this.resolveSession = resolveSession;
         this.module = module;
         this.fqName = fqName;

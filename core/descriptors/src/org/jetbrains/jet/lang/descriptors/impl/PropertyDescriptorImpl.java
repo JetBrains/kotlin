@@ -21,7 +21,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
@@ -55,7 +55,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     private PropertyDescriptorImpl(
             @Nullable PropertyDescriptor original,
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean isVar,
@@ -72,7 +72,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
     public PropertyDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean isVar,
@@ -84,7 +84,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
     public PropertyDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean isVar,
@@ -251,7 +251,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedExpectedThisObject, substitutedReceiverType);
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
-                substitutedDescriptor, Lists.newArrayList(getter.getAnnotations()),
+                substitutedDescriptor, getter.getAnnotations(),
                 DescriptorUtils.convertModality(getter.getModality(), false), convertVisibility(getter.getVisibility(), newVisibility),
                 getter.hasBody(), getter.isDefault(), kind, getter.getOriginal());
         if (newGetter != null) {
@@ -259,7 +259,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
-                substitutedDescriptor, Lists.newArrayList(setter.getAnnotations()), DescriptorUtils.convertModality(setter.getModality(), false),
+                substitutedDescriptor, setter.getAnnotations(), DescriptorUtils.convertModality(setter.getModality(), false),
                 convertVisibility(setter.getVisibility(), newVisibility), setter.hasBody(), setter.isDefault(), kind, setter.getOriginal());
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(newSetter, setter, substitutor);

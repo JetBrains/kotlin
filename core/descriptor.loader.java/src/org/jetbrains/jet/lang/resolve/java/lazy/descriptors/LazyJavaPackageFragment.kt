@@ -15,6 +15,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
 fun LazyPackageFragmentForJavaPackage(
         c: LazyJavaResolverContext,
@@ -37,7 +38,7 @@ class LazyJavaPackageFragment(
         val _kind: JavaPackageFragmentDescriptor.Kind,
         val _fqName: FqName,
         createMemberScope: LazyJavaPackageFragment.() -> LazyJavaPackageFragmentScope
-) : DeclarationDescriptorNonRootImpl(containingDeclaration, listOf(), _fqName.shortNameOrSpecial()),
+) : DeclarationDescriptorNonRootImpl(containingDeclaration, Annotations.EMPTY, _fqName.shortNameOrSpecial()),
     JavaPackageFragmentDescriptor, LazyJavaDescriptor
 {
     private val _memberScope = createMemberScope()

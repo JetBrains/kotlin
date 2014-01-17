@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.types.error;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -37,7 +37,7 @@ public final class ErrorClassDescriptor extends ClassDescriptorImpl {
         super(getErrorModule(), Name.special("<ERROR CLASS: " + debugMessage + ">"), Modality.OPEN, Collections.<JetType>emptyList());
 
         ConstructorDescriptorImpl errorConstructor =
-                new ConstructorDescriptorImpl(this, Collections.<AnnotationDescriptor>emptyList(), true);
+                new ConstructorDescriptorImpl(this, Annotations.EMPTY, true);
 
         errorConstructor.initialize(
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO

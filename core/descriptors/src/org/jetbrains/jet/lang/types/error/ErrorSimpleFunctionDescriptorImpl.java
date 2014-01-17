@@ -18,14 +18,11 @@ package org.jetbrains.jet.lang.types.error;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-
-import java.util.Collections;
 
 public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorImpl {
     // used for diagnostic only
@@ -33,7 +30,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
     private final ErrorUtils.ErrorScope ownerScope;
 
     public ErrorSimpleFunctionDescriptorImpl(ErrorUtils.ErrorScope ownerScope) {
-        super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), Name.special("<ERROR FUNCTION>"), Kind.DECLARATION);
+        super(ErrorUtils.getErrorClass(), Annotations.EMPTY, Name.special("<ERROR FUNCTION>"), Kind.DECLARATION);
         this.ownerScope = ownerScope;
     }
 

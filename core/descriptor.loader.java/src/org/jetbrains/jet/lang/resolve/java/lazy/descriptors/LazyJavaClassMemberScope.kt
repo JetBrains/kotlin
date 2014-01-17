@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -65,7 +66,7 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor, isStaticClass: Boolean): ConstructorDescriptor {
-        val constructorDescriptor = ConstructorDescriptorImpl(classDescriptor, Collections.emptyList(), isPrimary = false)
+        val constructorDescriptor = ConstructorDescriptorImpl(classDescriptor, Annotations.EMPTY, isPrimary = false)
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
         val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
@@ -96,7 +97,7 @@ public class LazyJavaClassMemberScope(
             return null
 
         val classDescriptor = getContainingDeclaration()
-        val constructorDescriptor = ConstructorDescriptorImpl(classDescriptor, Collections.emptyList(), isPrimary = true)
+        val constructorDescriptor = ConstructorDescriptorImpl(classDescriptor, Annotations.EMPTY, isPrimary = true)
         val typeParameters = classDescriptor.getTypeConstructor().getParameters()
         val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
                               else Collections.emptyList<ValueParameterDescriptor>()
@@ -130,7 +131,7 @@ public class LazyJavaClassMemberScope(
             result.add(ValueParameterDescriptorImpl(
                     constructor,
                     index,
-                    Collections.emptyList(),
+                    Annotations.EMPTY,
                     method.getName(),
                     // Parameters of annotation constructors in Java are never nullable
                     TypeUtils.makeNotNullable(returnType),

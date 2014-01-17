@@ -216,7 +216,7 @@ public class ResolveElementCache {
             Annotated descriptor = analyzer.resolveToDescriptor(declaration);
 
             // Activate annotation resolving
-            descriptor.getAnnotations();
+            descriptor.getAnnotations().getAnnotationDescriptors();
         }
     }
 

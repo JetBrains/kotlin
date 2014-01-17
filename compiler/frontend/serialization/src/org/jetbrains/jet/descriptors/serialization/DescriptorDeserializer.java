@@ -23,6 +23,8 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpl
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -248,11 +250,11 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private List<AnnotationDescriptor> getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
+    private Annotations getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
         return getAnnotations(containingDeclaration, proto, flags, kind, annotationDeserializer, nameResolver);
     }
 
-    public static List<AnnotationDescriptor> getAnnotations(
+    public static Annotations getAnnotations(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Callable proto,
             int flags,
@@ -265,7 +267,7 @@ public class DescriptorDeserializer {
         return Flags.HAS_ANNOTATIONS.get(flags)
                ? annotationDeserializer
                        .loadCallableAnnotations((ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind)
-               : Collections.<AnnotationDescriptor>emptyList();
+               : Annotations.EMPTY;
     }
 
     public static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {
@@ -393,7 +395,7 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private List<AnnotationDescriptor> getAnnotations(
+    private Annotations getAnnotations(
             @NotNull ClassOrPackageFragmentDescriptor classOrPackage,
             @NotNull Callable callable,
             @NotNull AnnotatedCallableKind kind,
@@ -401,6 +403,6 @@ public class DescriptorDeserializer {
     ) {
         return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())
                ? annotationDeserializer.loadValueParameterAnnotations(classOrPackage, callable, nameResolver, kind, valueParameter)
-               : Collections.<AnnotationDescriptor>emptyList();
+               : Annotations.EMPTY;
     }
 }

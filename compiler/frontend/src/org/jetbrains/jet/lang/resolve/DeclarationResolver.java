@@ -154,8 +154,8 @@ public class DeclarationResolver {
             JetModifierList modifierList = entry.getKey().getModifierList();
             if (modifierList != null) {
                 MutableClassDescriptor descriptor = entry.getValue();
-                descriptor.getAnnotations().addAll(annotationResolver.resolveAnnotationsWithoutArguments(
-                        descriptor.getScopeForSupertypeResolution(), modifierList, trace));
+                descriptor.addAnnotations(annotationResolver.resolveAnnotationsWithoutArguments(
+                        descriptor.getScopeForSupertypeResolution(), modifierList, trace).getAnnotationDescriptors());
             }
         }
     }

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -677,7 +678,7 @@ public class KotlinBuiltIns {
     public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 getArray().getTypeConstructor(),
                 false,
                 types,
@@ -695,7 +696,7 @@ public class KotlinBuiltIns {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 getEnum().getTypeConstructor(),
                 false,
                 types,
@@ -720,7 +721,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getFunctionType(
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @Nullable JetType receiverType,
             @NotNull List<JetType> parameterTypes,
             @NotNull JetType returnType
@@ -735,7 +736,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getKFunctionType(
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @Nullable JetType receiverType,
             @NotNull List<JetType> parameterTypes,
             @NotNull JetType returnType,
@@ -865,7 +866,7 @@ public class KotlinBuiltIns {
         for (int i = 0; i < parameterTypes.size(); i++) {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                    functionDescriptor, i, Collections.<AnnotationDescriptor>emptyList(),
+                    functionDescriptor, i, Annotations.EMPTY,
                     Name.identifier("p" + (i + 1)), parameterType.getType(), false, null);
             valueParameters.add(valueParameterDescriptor);
         }
@@ -931,12 +932,10 @@ public class KotlinBuiltIns {
     }
 
     static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
-        List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
-        if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
-                if (annotationClass.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
-                    return true;
-                }
+        Annotations annotations = descriptor.getOriginal().getAnnotations();
+        for (AnnotationDescriptor annotation : annotations) {
+            if (annotationClass.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
+                return true;
             }
         }
         return false;

@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
@@ -86,7 +86,7 @@ public class TypeUtils {
 
         @NotNull
         @Override
-        public List<AnnotationDescriptor> getAnnotations() {
+        public Annotations getAnnotations() {
             throw new IllegalStateException(name);
         }
 
@@ -199,10 +199,7 @@ public class TypeUtils {
         }
 
 
-        List<AnnotationDescriptor> noAnnotations = Collections.<AnnotationDescriptor>emptyList();
-        TypeConstructor constructor = new IntersectionTypeConstructor(
-                noAnnotations,
-                resultingTypes);
+        TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.EMPTY, resultingTypes);
 
         JetScope[] scopes = new JetScope[resultingTypes.size()];
         int i = 0;
@@ -212,7 +209,7 @@ public class TypeUtils {
         }
 
         return new JetTypeImpl(
-                noAnnotations,
+                Annotations.EMPTY,
                 constructor,
                 allNullable,
                 Collections.<TypeProjection>emptyList(),
@@ -360,7 +357,7 @@ public class TypeUtils {
         TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
         return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 typeConstructor,
                 false,
                 arguments,
@@ -767,7 +764,7 @@ public class TypeUtils {
 
         @Override
         @NotNull
-        public List<AnnotationDescriptor> getAnnotations() {
+        public Annotations getAnnotations() {
             return delegate.getAnnotations();
         }
     }

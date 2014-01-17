@@ -22,6 +22,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
@@ -82,17 +84,17 @@ public final class JavaAnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JavaAnnotationOwner owner, @NotNull PostponedTasks tasks) {
+    public Annotations resolveAnnotations(@NotNull JavaAnnotationOwner owner, @NotNull PostponedTasks tasks) {
         List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>();
         resolveAnnotations(owner.getAnnotations(), tasks, result);
         resolveAnnotations(externalAnnotationResolver.findExternalAnnotations(owner), tasks, result);
-        return result;
+        return new AnnotationsImpl(result);
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JavaAnnotationOwner owner) {
+    public Annotations resolveAnnotations(@NotNull JavaAnnotationOwner owner) {
         PostponedTasks postponedTasks = new PostponedTasks();
-        List<AnnotationDescriptor> annotations = resolveAnnotations(owner, postponedTasks);
+        Annotations annotations = resolveAnnotations(owner, postponedTasks);
         postponedTasks.performTasks();
         return annotations;
     }

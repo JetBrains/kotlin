@@ -20,13 +20,12 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collections;
 import java.util.List;
 
 public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl implements PackageViewDescriptor {
@@ -39,7 +38,7 @@ public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl impleme
             @NotNull FqName fqName,
             @NotNull List<PackageFragmentDescriptor> fragments
     ) {
-        super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
+        super(Annotations.EMPTY, fqName.shortNameOrSpecial());
         this.module = module;
         this.fqName = fqName;
 

@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -33,12 +35,11 @@ import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
-    private List<AnnotationDescriptor> annotations = Lists.newArrayList();
+    private Annotations annotations = new AnnotationsImpl(new ArrayList<AnnotationDescriptor>(0));
 
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = Lists.newArrayList();
@@ -81,7 +82,7 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         assert typeConstructor == null : typeConstructor;
         this.typeConstructor = new TypeConstructorImpl(
                 this,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO : pass annotations from the class?
+                Annotations.EMPTY, // TODO : pass annotations from the class?
                 !getModality().isOverridable(),
                 getName().asString(),
                 typeParameters,
@@ -181,12 +182,16 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
+    public Annotations getAnnotations() {
         return annotations;
     }
 
-    public void setAnnotations(List<AnnotationDescriptor> annotations) {
+    public void setAnnotations(Annotations annotations) {
         this.annotations = annotations;
+    }
+
+    public void addAnnotations(@NotNull List<AnnotationDescriptor> annotationDescriptors) {
+        this.annotations.getAnnotationDescriptors().addAll(annotationDescriptors);
     }
 
     private PackageLikeBuilder builder = null;

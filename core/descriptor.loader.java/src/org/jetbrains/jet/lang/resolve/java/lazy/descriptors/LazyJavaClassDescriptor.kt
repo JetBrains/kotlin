@@ -9,12 +9,10 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.types.TypeConstructor
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
-import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.lang.resolve.java.lazy.child
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
@@ -33,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -95,7 +94,7 @@ class LazyJavaClassDescriptor(
     override fun getConstructors() = _scopeForMemberLookup._constructors()
 
     private val _annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass.getAnnotations()) }
-    override fun getAnnotations(): List<AnnotationDescriptor> = _annotations()
+    override fun getAnnotations() = _annotations()
 
     private val _functionTypeForSamInterface = c.storageManager.createNullableLazyValue {
         val samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(jClass);
@@ -160,7 +159,7 @@ class LazyJavaClassDescriptor(
 
         override fun getSupertypes(): Collection<JetType> = _supertypes()
 
-        override fun getAnnotations() = Collections.emptyList<AnnotationDescriptor>()
+        override fun getAnnotations() = Annotations.EMPTY
 
         override fun isFinal() = !getModality().isOverridable()
 

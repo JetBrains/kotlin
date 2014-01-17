@@ -16,18 +16,16 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
@@ -45,7 +43,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             int index,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull JetType outType,
             boolean declaresDefaultValue,
@@ -61,7 +59,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull ValueParameterDescriptor original,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull JetType outType,
             @Nullable JetType varargElementType
     ) {
@@ -140,7 +138,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner, @NotNull Name newName) {
-        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), newName, getType(), declaresDefaultValue(), varargElementType);
+        return new ValueParameterDescriptorImpl(newOwner, index, getAnnotations(), newName, getType(), declaresDefaultValue(), varargElementType);
     }
 
     @NotNull

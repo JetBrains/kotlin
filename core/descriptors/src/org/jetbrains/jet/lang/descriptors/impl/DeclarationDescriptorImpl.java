@@ -20,18 +20,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-
-import java.util.List;
 
 public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements DeclarationDescriptor {
 
     @NotNull
     private final Name name;
 
-    public DeclarationDescriptorImpl(@NotNull List<AnnotationDescriptor> annotations, @NotNull Name name) {
+    public DeclarationDescriptorImpl(@NotNull Annotations annotations, @NotNull Name name) {
         super(annotations);
         this.name = name;
     }

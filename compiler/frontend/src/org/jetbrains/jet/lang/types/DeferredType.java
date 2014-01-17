@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.types;
 
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
@@ -87,7 +87,7 @@ public class DeferredType implements LazyType {
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
+    public Annotations getAnnotations() {
         return getActualType().getAnnotations();
     }
 

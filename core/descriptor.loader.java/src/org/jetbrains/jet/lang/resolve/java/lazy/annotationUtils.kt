@@ -17,14 +17,16 @@
 package org.jetbrains.jet.lang.resolve.java.lazy
 
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaAnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaAnnotationDescriptor
 
-fun LazyJavaResolverContextWithTypes.resolveAnnotations(javaAnnotations: Collection<JavaAnnotation>): List<AnnotationDescriptor>
-        = javaAnnotations.flatMap {
+fun LazyJavaResolverContextWithTypes.resolveAnnotations(javaAnnotations: Collection<JavaAnnotation>): Annotations
+        = AnnotationsImpl(javaAnnotations.flatMap {
             jAnnotation ->
             // TODO: we resolve all annotations, which slightly compromises our laziness
             val fqName = jAnnotation.getFqName()
@@ -32,7 +34,7 @@ fun LazyJavaResolverContextWithTypes.resolveAnnotations(javaAnnotations: Collect
                 listOf<AnnotationDescriptor>()
             }
             else listOf(LazyJavaAnnotationDescriptor(this, jAnnotation))
-        }
+        })
 
 private fun GlobalJavaResolverContext.hasAnnotation(owner: JavaAnnotationOwner, annotationFqName: FqName): Boolean
         = owner.findAnnotation(annotationFqName) != null || externalAnnotationResolver.findExternalAnnotation(owner, annotationFqName) != null

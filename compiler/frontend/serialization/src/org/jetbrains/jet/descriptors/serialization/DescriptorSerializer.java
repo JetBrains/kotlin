@@ -431,7 +431,7 @@ public class DescriptorSerializer {
     }
 
     private static boolean hasAnnotations(Annotated descriptor) {
-        return !descriptor.getAnnotations().isEmpty();
+        return !descriptor.getAnnotations().getAnnotationDescriptors().isEmpty();
     }
 
     @NotNull

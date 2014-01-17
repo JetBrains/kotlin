@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.Collections;
@@ -30,9 +30,9 @@ public final class JetTypeImpl extends AbstractJetType {
     private final List<? extends TypeProjection> arguments;
     private final boolean nullable;
     private final JetScope memberScope;
-    private final List<AnnotationDescriptor> annotations;
+    private final Annotations annotations;
 
-    public JetTypeImpl(List<AnnotationDescriptor> annotations, TypeConstructor constructor, boolean nullable, @NotNull List<? extends TypeProjection> arguments, JetScope memberScope) {
+    public JetTypeImpl(Annotations annotations, TypeConstructor constructor, boolean nullable, @NotNull List<? extends TypeProjection> arguments, JetScope memberScope) {
         this.annotations = annotations;
 
         if (memberScope instanceof ErrorUtils.ErrorScope) {
@@ -46,11 +46,11 @@ public final class JetTypeImpl extends AbstractJetType {
     }
 
     public JetTypeImpl(TypeConstructor constructor, JetScope memberScope) {
-        this(Collections.<AnnotationDescriptor>emptyList(), constructor, false, Collections.<TypeProjection>emptyList(), memberScope);
+        this(Annotations.EMPTY, constructor, false, Collections.<TypeProjection>emptyList(), memberScope);
     }
 
     public JetTypeImpl(@NotNull ClassDescriptor classDescriptor) {
-        this(Collections.<AnnotationDescriptor>emptyList(),
+        this(Annotations.EMPTY,
                 classDescriptor.getTypeConstructor(),
                 false,
                 Collections.<TypeProjection>emptyList(),
@@ -59,7 +59,7 @@ public final class JetTypeImpl extends AbstractJetType {
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
+    public Annotations getAnnotations() {
         return annotations;
     }
 

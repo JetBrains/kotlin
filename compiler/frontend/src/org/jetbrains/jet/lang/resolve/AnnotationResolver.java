@@ -20,9 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.annotations.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
@@ -67,7 +65,7 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotationsWithoutArguments(
+    public Annotations resolveAnnotationsWithoutArguments(
             @NotNull JetScope scope,
             @Nullable JetModifierList modifierList,
             @NotNull BindingTrace trace
@@ -76,7 +74,7 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotationsWithArguments(
+    public Annotations resolveAnnotationsWithArguments(
             @NotNull JetScope scope,
             @Nullable JetModifierList modifierList,
             @NotNull BindingTrace trace
@@ -85,7 +83,7 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotationsWithArguments(
+    public Annotations resolveAnnotationsWithArguments(
             @NotNull JetScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntries,
             @NotNull BindingTrace trace
@@ -93,26 +91,26 @@ public class AnnotationResolver {
         return resolveAnnotationEntries(scope, annotationEntries, trace, true);
     }
 
-    private List<AnnotationDescriptor> resolveAnnotations(
+    private Annotations resolveAnnotations(
             @NotNull JetScope scope,
             @Nullable JetModifierList modifierList,
             @NotNull BindingTrace trace,
             boolean shouldResolveArguments
     ) {
         if (modifierList == null) {
-            return Collections.emptyList();
+            return Annotations.EMPTY;
         }
         List<JetAnnotationEntry> annotationEntryElements = modifierList.getAnnotationEntries();
 
         return resolveAnnotationEntries(scope, annotationEntryElements, trace, shouldResolveArguments);
     }
 
-    private List<AnnotationDescriptor> resolveAnnotationEntries(
+    private Annotations resolveAnnotationEntries(
             @NotNull JetScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntryElements, @NotNull BindingTrace trace,
             boolean shouldResolveArguments
     ) {
-        if (annotationEntryElements.isEmpty()) return Collections.emptyList();
+        if (annotationEntryElements.isEmpty()) return Annotations.EMPTY;
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptorImpl descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
@@ -128,7 +126,7 @@ public class AnnotationResolver {
 
             result.add(descriptor);
         }
-        return result;
+        return new AnnotationsImpl(result);
     }
 
     public void resolveAnnotationStub(
@@ -280,7 +278,7 @@ public class AnnotationResolver {
 
     @SuppressWarnings("MethodMayBeStatic")
     @NotNull
-    public List<AnnotationDescriptor> getResolvedAnnotations(@NotNull List<JetAnnotationEntry> annotations, @NotNull BindingTrace trace) {
+    public Annotations getResolvedAnnotations(@NotNull List<JetAnnotationEntry> annotations, @NotNull BindingTrace trace) {
         List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>(annotations.size());
         for (JetAnnotationEntry annotation : annotations) {
             AnnotationDescriptor annotationDescriptor = trace.get(BindingContext.ANNOTATION, annotation);
@@ -291,7 +289,7 @@ public class AnnotationResolver {
             result.add(annotationDescriptor);
         }
 
-        return result;
+        return new AnnotationsImpl(result);
     }
 
     public static void reportUnsupportedAnnotationForTypeParameter(@NotNull JetModifierListOwner modifierListOwner, BindingTrace trace) {

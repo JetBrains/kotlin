@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.JetType;
@@ -34,7 +34,7 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
     private static final Name RECEIVER_PARAMETER_NAME = Name.special("<this>");
 
     public AbstractReceiverParameterDescriptor() {
-        super(Collections.<AnnotationDescriptor>emptyList(), RECEIVER_PARAMETER_NAME);
+        super(Annotations.EMPTY, RECEIVER_PARAMETER_NAME);
     }
 
     @Nullable
