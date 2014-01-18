@@ -11,7 +11,7 @@ fun f9(a : A?) {
   a<info>?.</info><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
   if (a is B) {
     <info descr="Automatically cast to B">a</info>.bar()
-    <info descr="Automatically cast to B">a</info>.foo()
+    <info descr="Automatically cast to A">a</info>.foo()
   }
   a<info>?.</info>foo()
   a<info>?.</info><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
@@ -26,7 +26,7 @@ fun f9(a : A?) {
     return;
   }
   <info descr="Automatically cast to B">a</info>.bar()
-  <info descr="Automatically cast to B">a</info>.foo()
+  <info descr="Automatically cast to A">a</info>.foo()
 }
 
 fun f10(a : A?) {
@@ -80,7 +80,7 @@ fun f12(a : A?) {
 
 fun f13(a : A?) {
   if (a is B) {
-    <info descr="Automatically cast to B">a</info>.foo()
+    <info descr="Automatically cast to A">a</info>.foo()
     <info descr="Automatically cast to B">a</info>.bar()
   }
   else {
@@ -93,12 +93,12 @@ fun f13(a : A?) {
     a<info>?.</info>foo()
   }
   else {
-    <info descr="Automatically cast to B">a</info>.foo()
+    <info descr="Automatically cast to A">a</info>.foo()
   }
 
   a<info>?.</info>foo()
-  if (a is B && <info descr="Automatically cast to B">a</info>.foo() == Unit.VALUE) {
-    <info descr="Automatically cast to B">a</info>.foo()
+  if (a is B && <info descr="Automatically cast to A">a</info>.foo() == Unit.VALUE) {
+    <info descr="Automatically cast to A">a</info>.foo()
     <info descr="Automatically cast to B">a</info>.bar()
   }
   else {

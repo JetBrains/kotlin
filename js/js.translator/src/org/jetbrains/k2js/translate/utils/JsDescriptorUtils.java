@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastReceiver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
@@ -119,10 +118,6 @@ public final class JsDescriptorUtils {
 
         if (receiverParameter instanceof ThisReceiver) {
             declarationDescriptor = ((ThisReceiver) receiverParameter).getDeclarationDescriptor();
-        }
-        else if (receiverParameter instanceof AutoCastReceiver) {
-            AutoCastReceiver autoCastReceiver = ((AutoCastReceiver) receiverParameter);
-            declarationDescriptor = getDeclarationDescriptorForReceiver(autoCastReceiver.getOriginal());
         }
         else {
             throw new UnsupportedOperationException("Unsupported receiver type: " + receiverParameter);

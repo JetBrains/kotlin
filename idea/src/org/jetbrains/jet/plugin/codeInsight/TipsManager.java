@@ -69,12 +69,12 @@ public final class TipsManager {
                         info = DataFlowInfo.EMPTY;
                     }
 
-                    List<ReceiverValue> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiverValue, context, info);
+                    List<JetType> variantsForExplicitReceiver = AutoCastUtils.getAutoCastVariants(receiverValue, context, info);
 
-                    for (ReceiverValue descriptor : variantsForExplicitReceiver) {
+                    for (JetType variant : variantsForExplicitReceiver) {
                         descriptors.addAll(includeExternalCallableExtensions(
-                                excludePrivateDescriptors(descriptor.getType().getMemberScope().getAllDescriptors()),
-                                resolutionScope, descriptor));
+                                excludePrivateDescriptors(variant.getMemberScope().getAllDescriptors()),
+                                resolutionScope, receiverValue));
                     }
 
                     return descriptors;

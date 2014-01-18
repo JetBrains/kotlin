@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastReceiver;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -1060,10 +1059,6 @@ public class JetControlFlowProcessor {
             }
             else if (receiver instanceof TransientReceiver) {
                 // Do nothing
-            }
-            else if (receiver instanceof AutoCastReceiver) {
-                // No cast instruction in our CFG
-                generateReceiver(((AutoCastReceiver) receiver).getOriginal());
             }
             else {
                 throw new IllegalArgumentException("Unknown receiver kind: " + receiver);

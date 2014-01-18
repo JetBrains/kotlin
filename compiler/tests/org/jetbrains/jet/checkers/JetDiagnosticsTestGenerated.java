@@ -6433,6 +6433,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt4009.kt");
                 }
                 
+                @TestMetadata("kt4403.kt")
+                public void testKt4403() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt4403.kt");
+                }
+                
+                @TestMetadata("kt4415.kt")
+                public void testKt4415() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/smartCasts/inference/kt4415.kt");
+                }
+                
                 @TestMetadata("smartCastOnReceiver.kt")
                 public void testSmartCastOnReceiver() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/smartCasts/inference/smartCastOnReceiver.kt");

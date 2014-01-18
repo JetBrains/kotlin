@@ -46,7 +46,6 @@ import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastReceiver;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
@@ -2167,12 +2166,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ExpressionReceiver expressionReceiver = (ExpressionReceiver) descriptor;
             JetExpression expr = expressionReceiver.getExpression();
             gen(expr, type);
-        }
-        else if (descriptor instanceof AutoCastReceiver) {
-            AutoCastReceiver autoCastReceiver = (AutoCastReceiver) descriptor;
-            Type originalType = asmType(autoCastReceiver.getOriginal().getType());
-            generateFromResolvedCall(autoCastReceiver.getOriginal(), originalType);
-            StackValue.onStack(originalType).put(type, v);
         }
         else {
             throw new UnsupportedOperationException("Unsupported receiver type: " + descriptor);
