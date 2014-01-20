@@ -149,6 +149,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/implement2.kt");
         }
         
+        @TestMetadata("localFun1.kt")
+        public void testLocalFun1() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/localFun1.kt");
+        }
+        
+        @TestMetadata("localFun2.kt")
+        public void testLocalFun2() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/localFun2.kt");
+        }
+        
         @TestMetadata("noUsages.kt")
         public void testNoUsages() throws Exception {
             doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/noUsages.kt");
@@ -172,6 +182,11 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
         @TestMetadata("overrideAndImplement2.kt")
         public void testOverrideAndImplement2() throws Exception {
             doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement2.kt");
+        }
+        
+        @TestMetadata("overrideAndImplement3.kt")
+        public void testOverrideAndImplement3() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement3.kt");
         }
         
         @TestMetadata("overrideWithUsages.kt")

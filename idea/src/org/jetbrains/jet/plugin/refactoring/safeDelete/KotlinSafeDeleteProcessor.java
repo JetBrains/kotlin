@@ -40,6 +40,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -101,7 +102,14 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             return findClassOrObjectUsages(element, (JetClassOrObject) element, allElementsToDelete, result);
         }
         if (element instanceof JetNamedFunction) {
-            return findFunctionUsages((JetNamedFunction) element, allElementsToDelete, result);
+            JetNamedFunction function = (JetNamedFunction) element;
+            if (function.isLocal()) {
+                return findLocalDeclarationUsages(function, allElementsToDelete, result);
+            }
+            PsiMethod method = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
+            if (method != null) return findPsiMethodUsages(method, allElementsToDelete, result);
+
+            return getSearchInfo(element, allElementsToDelete);
         }
         if (element instanceof PsiMethod) {
             return findPsiMethodUsages((PsiMethod) element, allElementsToDelete, result);
@@ -110,7 +118,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             JetProperty property = (JetProperty) element;
 
             if (property.isLocal()) {
-                return findLocalVariableUsages(property, allElementsToDelete, result);
+                return findLocalDeclarationUsages(property, allElementsToDelete, result);
             }
             return findPropertyUsages(property, allElementsToDelete, result);
         }
@@ -198,11 +206,27 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             }
             else if (usageInfo instanceof SafeDeleteOverrideAnnotation) {
                 SafeDeleteOverrideAnnotation overrideAnnotationUsageInfo = (SafeDeleteOverrideAnnotation) usageInfo;
-                usageInfo = new KotlinSafeDeleteOverrideAnnotation(
-                        overrideAnnotationUsageInfo.getSmartPointer().getElement(), overrideAnnotationUsageInfo.getReferencedElement()
-                );
+
+                PsiElement targetElement = overrideAnnotationUsageInfo.getSmartPointer().getElement();
+                if (AsJavaPackage.getRepresentativeLightMethod(targetElement).findSuperMethods().length > 0) {
+                    usageInfo = null;
+                }
+                else {
+                    usageInfo = new KotlinSafeDeleteOverrideAnnotation(targetElement, overrideAnnotationUsageInfo.getReferencedElement());
+                }
             }
-            result.add(usageInfo);
+            else if (usageInfo instanceof SafeDeleteReferenceJavaDeleteUsageInfo) {
+                SafeDeleteReferenceJavaDeleteUsageInfo javaDeleteUsageInfo = (SafeDeleteReferenceJavaDeleteUsageInfo) usageInfo;
+                PsiElement usageElement = javaDeleteUsageInfo.getElement();
+                JetImportDirective importDirective = PsiTreeUtil.getParentOfType(usageElement, JetImportDirective.class, false);
+                if (importDirective != null) {
+                    usageInfo = SafeDeleteImportDirectiveUsageInfo.object$.create(importDirective,
+                                                                                  (JetDeclaration) method.getNavigationElement());
+                }
+            }
+            if (usageInfo != null) {
+                result.add(usageInfo);
+            }
         }
 
         return searchInfo;
@@ -236,32 +260,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
     }
 
-    @NotNull
-    protected static NonCodeUsageSearchInfo findFunctionUsages(
-            @NotNull JetNamedFunction function,
-            @NotNull PsiElement[] allElementsToDelete,
-            @NotNull List<UsageInfo> result
-    ) {
-        PsiMethod lightMethod = LightClassUtil.getLightClassMethod(function);
-        if (lightMethod == null) {
-            return getSearchInfo(function, allElementsToDelete);
-        }
-
-        Collection<PsiReference> references = ReferencesSearch.search(function).findAll();
-        List<PsiMethod> overridingMethods = difference(OverridingMethodsSearch.search(lightMethod, true).findAll(), allElementsToDelete);
-
-        processDeclarationUsages(function, allElementsToDelete, result, references, overridingMethods);
-
-        Map<PsiMethod, Collection<PsiReference>> methodToReferences = getOverridingUsagesMap(overridingMethods);
-        Set<PsiMethod> safeOverriding =
-                filterSafeOverridingMethods(lightMethod, references, overridingMethods, methodToReferences, result, allElementsToDelete);
-
-        List<PsiElement> ignoredElements = new ArrayList<PsiElement>(safeOverriding);
-        ContainerUtil.addAll(ignoredElements, allElementsToDelete);
-        return getSearchInfo(function, ignoredElements);
-    }
-
-    @NotNull
     protected static NonCodeUsageSearchInfo findPropertyUsages(
             @NotNull JetProperty property,
             @NotNull PsiElement[] allElementsToDelete,
@@ -316,23 +314,23 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     }
 
     @NotNull
-    protected static NonCodeUsageSearchInfo findLocalVariableUsages(
-            @NotNull final JetProperty property,
+    protected static NonCodeUsageSearchInfo findLocalDeclarationUsages(
+            @NotNull final JetDeclaration declaration,
             @NotNull final PsiElement[] allElementsToDelete,
             @NotNull final List<UsageInfo> result
     ) {
-        ReferencesSearch.search(property, property.getUseScope()).forEach(new Processor<PsiReference>() {
+        ReferencesSearch.search(declaration, declaration.getUseScope()).forEach(new Processor<PsiReference>() {
             @Override
             public boolean process(PsiReference reference) {
                 PsiElement element = reference.getElement();
                 if (!isInside(element, allElementsToDelete)) {
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, property, false));
+                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, declaration, false));
                 }
                 return true;
             }
         });
 
-        return getSearchInfo(property, allElementsToDelete);
+        return getSearchInfo(declaration, allElementsToDelete);
     }
 
     @NotNull
