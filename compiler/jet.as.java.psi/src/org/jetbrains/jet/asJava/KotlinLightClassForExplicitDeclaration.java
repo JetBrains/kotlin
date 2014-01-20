@@ -398,7 +398,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     @Override
     public PsiModifierList getModifierList() {
         if (modifierList == null) {
-            modifierList = new LightModifierList(getManager(), JetLanguage.INSTANCE, computeModifiers());
+            modifierList = new KotlinLightModifierList(KotlinLightClassForExplicitDeclaration.this.computeModifiers());
         }
         return modifierList;
     }
@@ -575,5 +575,39 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         }
 
         return false;
+    }
+
+    private class KotlinLightModifierList extends LightModifierList {
+        public KotlinLightModifierList(@NotNull String[] modifiers) {
+            super(KotlinLightClassForExplicitDeclaration.this.getManager(), JetLanguage.INSTANCE, modifiers);
+        }
+
+        private PsiAnnotationOwner getDelegate() {
+            return KotlinLightClassForExplicitDeclaration.this.getDelegate().getModifierList();
+        }
+
+        @Override
+        @NotNull
+        public PsiAnnotation[] getAnnotations() {
+            return getDelegate().getAnnotations();
+        }
+
+        @Override
+        @NotNull
+        public PsiAnnotation[] getApplicableAnnotations() {
+            return getDelegate().getApplicableAnnotations();
+        }
+
+        @Override
+        @Nullable
+        public PsiAnnotation findAnnotation(@NotNull @NonNls String qualifiedName) {
+            return getDelegate().findAnnotation(qualifiedName);
+        }
+
+        @Override
+        @NotNull
+        public PsiAnnotation addAnnotation(@NotNull @NonNls String qualifiedName) {
+            return getDelegate().addAnnotation(qualifiedName);
+        }
     }
 }
