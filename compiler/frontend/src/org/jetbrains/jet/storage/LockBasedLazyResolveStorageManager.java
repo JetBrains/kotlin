@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.storage;
+package org.jetbrains.jet.storage;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
@@ -28,13 +28,14 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
-import org.jetbrains.jet.storage.*;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 
+// This class is kept under the same package as LockBasedStorageManager to get access to its protected members
+// Otherwise wed have to expose the lock which is worse than have such a hackish class placement
 public class LockBasedLazyResolveStorageManager implements LazyResolveStorageManager {
 
     private final LockBasedStorageManager storageManager;
@@ -48,7 +49,7 @@ public class LockBasedLazyResolveStorageManager implements LazyResolveStorageMan
     public <K, V> MemoizedFunctionToNotNull<K, V> createWeaklyRetainedMemoizedFunction(
             @NotNull Function1<K, V> compute
     ) {
-        return storageManager.new Internals().createMemoizedFunction(compute, new ConcurrentWeakValueHashMap<K, Object>());
+        return storageManager.createMemoizedFunction(compute, new ConcurrentWeakValueHashMap<K, Object>());
     }
 
     @NotNull
@@ -56,7 +57,7 @@ public class LockBasedLazyResolveStorageManager implements LazyResolveStorageMan
     public <K, V> MemoizedFunctionToNullable<K, V> createWeaklyRetainedMemoizedFunctionWithNullableValues(
             @NotNull Function1<K, V> compute
     ) {
-        return storageManager.new Internals().createMemoizedFunctionWithNullableValues(compute, new ConcurrentWeakValueHashMap<K, Object>());
+        return storageManager.createMemoizedFunctionWithNullableValues(compute, new ConcurrentWeakValueHashMap<K, Object>());
     }
 
     @NotNull
@@ -64,7 +65,7 @@ public class LockBasedLazyResolveStorageManager implements LazyResolveStorageMan
     public BindingTrace createSafeTrace(@NotNull BindingTrace originalTrace) {
         // It seems safe to have a separate lock for traces:
         // no other locks will be acquired inside the trace operations
-        return new LockProtectedTrace(storageManager.new Internals().getLock(), originalTrace);
+        return new LockProtectedTrace(storageManager.lock, originalTrace);
     }
 
     @NotNull

@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.lazy.storage;
+package org.jetbrains.jet.storage;
 
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
-import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
-import org.jetbrains.jet.storage.StorageManager;
 
 public interface LazyResolveStorageManager extends StorageManager {
     @NotNull
