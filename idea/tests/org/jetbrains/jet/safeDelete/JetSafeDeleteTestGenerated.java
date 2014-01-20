@@ -101,6 +101,11 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/safeDelete/deleteObject/kotlinObject"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("anonymousObject.kt")
+        public void testAnonymousObject() throws Exception {
+            doObjectTest("idea/testData/safeDelete/deleteObject/kotlinObject/anonymousObject.kt");
+        }
+        
         @TestMetadata("localObject1.kt")
         public void testLocalObject1() throws Exception {
             doObjectTest("idea/testData/safeDelete/deleteObject/kotlinObject/localObject1.kt");

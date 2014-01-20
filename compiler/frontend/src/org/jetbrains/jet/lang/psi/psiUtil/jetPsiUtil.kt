@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetParameterList
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.psi.PsiNamedElement
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 
 fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
@@ -176,3 +177,5 @@ fun JetDeclaration.isOverridable(): Boolean {
 
 val PsiElement.namedNavigationElement: PsiNamedElement?
     get() = getNavigationElement()?.getParentByType(javaClass<PsiNamedElement>())
+
+fun PsiElement.isObjectLiteral(): Boolean = this is JetObjectDeclaration && isObjectLiteral()

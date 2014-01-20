@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
@@ -58,6 +59,7 @@ import java.util.*;
 
 public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     public static boolean canDeleteElement(@NotNull PsiElement element) {
+        if (PsiUtilPackage.isObjectLiteral(element)) return false;
         return element instanceof JetClassOrObject
                || element instanceof JetNamedFunction
                || element instanceof PsiMethod
