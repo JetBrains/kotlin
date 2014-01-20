@@ -67,11 +67,12 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
             return this
         }
 
-        fun lineBreakIfLineBreakInParent(numSpacesOtherwise: Int) {
+        fun lineBreakIfLineBreakInParent(numSpacesOtherwise: Int, allowBlankLines: Boolean = true) {
             newRule {
                 p, l, r ->
                 Spacing.createDependentLFSpacing(numSpacesOtherwise, numSpacesOtherwise, p.getTextRange(),
-                                                 codeStyleSettings.KEEP_LINE_BREAKS, codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+                                                 codeStyleSettings.KEEP_LINE_BREAKS,
+                                                 if (allowBlankLines) codeStyleSettings.KEEP_BLANK_LINES_IN_CODE else 0)
             }
         }
 
@@ -191,7 +192,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             fun CustomSpacingBuilder.ruleForKeywordOnNewLine(shouldBeOnNewLine: Boolean, keyword: IElementType, parent: IElementType) {
                 if (shouldBeOnNewLine) {
                     inPosition(parent = parent, right = keyword)
-                            .lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)
+                            .lineBreakIfLineBreakInParent(numSpacesOtherwise = 1, allowBlankLines = false)
                 }
                 else {
                     inPosition(parent = parent, right = keyword).customRule {

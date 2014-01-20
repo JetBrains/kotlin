@@ -8,6 +8,11 @@ fun f() {
     } catch (e: E) {
     } finally {
     }
+
+    try {
+    } catch (e: E) {
+    } finally {
+    }
 }
 
 // SET_TRUE: CATCH_ON_NEW_LINE

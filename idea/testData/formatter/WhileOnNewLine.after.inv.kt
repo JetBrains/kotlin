@@ -7,6 +7,10 @@ fun f() {
 
     } while (true)
 
+    do {
+
+    } while (true)
+
     do a += 1 while (true)
 
     do a += 1
