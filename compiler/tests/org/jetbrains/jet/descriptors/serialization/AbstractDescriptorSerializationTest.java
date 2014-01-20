@@ -37,12 +37,12 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
+import org.jetbrains.jet.utils.builtinsSerializer.ClassSerializationUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.getClassId;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
@@ -100,7 +100,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 javaDescriptorResolver, classDataMap, packageFragment.getContainingDeclaration().getPackageFragmentProvider());
 
         for (ClassDescriptor classDescriptor : classesAndObjects) {
-            ClassId classId = getClassId(classDescriptor);
+            ClassId classId = ClassSerializationUtil.instance$.getClassId(classDescriptor);
             ClassDescriptor descriptor = descriptorFinder.findClass(classId);
             assert descriptor != null : "Class not loaded: " + classId;
             packageFragment.getMemberScope().addClassifierDescriptor(descriptor);
@@ -153,7 +153,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         final Map<ClassDescriptor, byte[]> serializedClasses = new HashMap<ClassDescriptor, byte[]>();
         final DescriptorSerializer serializer = new DescriptorSerializer();
 
-        ClassSerializationUtil.serializeClasses(classes, serializer, new ClassSerializationUtil.Sink() {
+        ClassSerializationUtil.instance$.serializeClasses(classes, serializer, new ClassSerializationUtil.Sink() {
             @Override
             public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
                 ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);

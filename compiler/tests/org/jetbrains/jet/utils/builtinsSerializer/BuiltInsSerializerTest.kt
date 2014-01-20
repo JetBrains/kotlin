@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators.builtins
+package org.jetbrains.jet.utils.builtinsSerializer
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.Function
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.JetTestUtils
 import java.io.File
 import java.util.Arrays
@@ -27,12 +25,12 @@ import java.util.HashSet
 import java.util.regex.Pattern
 import junit.framework.Assert
 
-public open class BuiltInsSerializerTest() : UsefulTestCase() {
+public open class BuiltInsSerializerTest : UsefulTestCase() {
     public fun testBuiltIns() {
         val actual = JetTestUtils.tmpDir("builtins")
-        BuiltInsSerializer.serializeToDir(actual, null)
+        BuiltInsSerializer(null).serialize(actual, listOf(File(BUILT_INS_SRC_DIR)))
 
-        val expected = File(BuiltInsSerializer.DEST_DIR)
+        val expected = File(BUILT_INS_DEST_DIR)
 
         val actualFiles = getAllFiles(actual)
         val expectedFiles = getAllFiles(expected)
@@ -55,7 +53,7 @@ public open class BuiltInsSerializerTest() : UsefulTestCase() {
         println("${actualFiles.size()} files checked")
     }
 
-    private fun getAllFiles(actual: File): List<File> = FileUtil.findFilesByMask(Pattern.compile(".*"), actual)
+    private fun getAllFiles(actual: File) = FileUtil.findFilesByMask(Pattern.compile(".*"), actual)
 
-    private fun getFileNames(actualFiles: List<File>): Set<String> = HashSet(ContainerUtil.map(actualFiles, {f -> f!!.getName()}))
+    private fun getFileNames(actualFiles: List<File>) = HashSet(actualFiles map { f -> f.getName() })
 }
