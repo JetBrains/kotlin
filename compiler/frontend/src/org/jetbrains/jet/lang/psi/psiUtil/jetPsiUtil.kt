@@ -39,6 +39,8 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetParameterList
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import com.intellij.psi.PsiNamedElement
 
 fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
@@ -171,3 +173,6 @@ fun JetDeclaration.isOverridable(): Boolean {
     return klass.isTrait() ||
         hasModifier(JetTokens.ABSTRACT_KEYWORD) || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.OVERRIDE_KEYWORD)
 }
+
+val PsiElement.namedNavigationElement: PsiNamedElement?
+    get() = getNavigationElement()?.getParentByType(javaClass<PsiNamedElement>())

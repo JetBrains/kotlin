@@ -53,6 +53,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/classInString.kt");
         }
         
+        @TestMetadata("localClass1.kt")
+        public void testLocalClass1() throws Exception {
+            doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/localClass1.kt");
+        }
+        
+        @TestMetadata("localClass2.kt")
+        public void testLocalClass2() throws Exception {
+            doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/localClass2.kt");
+        }
+        
         @TestMetadata("nestedClass1.kt")
         public void testNestedClass1() throws Exception {
             doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/nestedClass1.kt");
@@ -89,6 +99,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
     public static class KotlinObject extends AbstractJetSafeDeleteTest {
         public void testAllFilesPresentInKotlinObject() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/safeDelete/deleteObject/kotlinObject"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("localObject1.kt")
+        public void testLocalObject1() throws Exception {
+            doObjectTest("idea/testData/safeDelete/deleteObject/kotlinObject/localObject1.kt");
+        }
+        
+        @TestMetadata("localObject2.kt")
+        public void testLocalObject2() throws Exception {
+            doObjectTest("idea/testData/safeDelete/deleteObject/kotlinObject/localObject2.kt");
         }
         
         @TestMetadata("nestedObject1.kt")

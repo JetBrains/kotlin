@@ -99,7 +99,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             @NotNull PsiElement element, @NotNull PsiElement[] allElementsToDelete, @NotNull List<UsageInfo> result
     ) {
         if (element instanceof JetClassOrObject) {
-            return findClassOrObjectUsages(element, (JetClassOrObject) element, allElementsToDelete, result);
+            return delegateToJavaProcessor(LightClassUtil.getPsiClass((JetClassOrObject) element), allElementsToDelete, result);
         }
         if (element instanceof JetNamedFunction) {
             JetNamedFunction function = (JetNamedFunction) element;
@@ -107,12 +107,12 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                 return findLocalDeclarationUsages(function, allElementsToDelete, result);
             }
             PsiMethod method = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
-            if (method != null) return findPsiMethodUsages(method, allElementsToDelete, result);
+            if (method != null) return delegateToJavaProcessor(method, allElementsToDelete, result);
 
             return getSearchInfo(element, allElementsToDelete);
         }
         if (element instanceof PsiMethod) {
-            return findPsiMethodUsages((PsiMethod) element, allElementsToDelete, result);
+            return delegateToJavaProcessor(element, allElementsToDelete, result);
         }
         if (element instanceof JetProperty) {
             JetProperty property = (JetProperty) element;
@@ -160,42 +160,16 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         return JavaSafeDeleteProcessor.isInside(place, ancestor);
     }
 
-    @NotNull
-    protected static NonCodeUsageSearchInfo findClassOrObjectUsages(
-            @NotNull PsiElement referencedElement,
-            @NotNull final JetClassOrObject classOrObject,
-            @NotNull final PsiElement[] allElementsToDelete,
-            @NotNull final List<UsageInfo> result
-    ) {
-        ReferencesSearch.search(referencedElement).forEach(new Processor<PsiReference>() {
-            @Override
-            public boolean process(PsiReference reference) {
-                PsiElement element = reference.getElement();
-
-                if (!isInside(element, allElementsToDelete)) {
-                    JetImportDirective importDirective = PsiTreeUtil.getParentOfType(element, JetImportDirective.class, false);
-                    if (importDirective != null) {
-                        result.add(new SafeDeleteImportDirectiveUsageInfo(importDirective, classOrObject));
-                        return true;
-                    }
-
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, classOrObject, false));
-                }
-                return true;
-            }
-        });
-
-        return getSearchInfo(referencedElement, allElementsToDelete);
-    }
-
     @Nullable
-    protected NonCodeUsageSearchInfo findPsiMethodUsages(
-            @NotNull PsiMethod method,
+    protected NonCodeUsageSearchInfo delegateToJavaProcessor(
+            @Nullable PsiElement element,
             @NotNull PsiElement[] allElementsToDelete,
             @NotNull List<UsageInfo> result
     ) {
+        if (element == null) return null;
+
         List<UsageInfo> javaUsages = new ArrayList<UsageInfo>();
-        NonCodeUsageSearchInfo searchInfo = super.findUsages(method, allElementsToDelete, javaUsages);
+        NonCodeUsageSearchInfo searchInfo = super.findUsages(element, allElementsToDelete, javaUsages);
 
         for (UsageInfo usageInfo : javaUsages) {
             if (usageInfo instanceof SafeDeleteOverridingMethodUsageInfo) {
@@ -220,8 +194,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                 PsiElement usageElement = javaDeleteUsageInfo.getElement();
                 JetImportDirective importDirective = PsiTreeUtil.getParentOfType(usageElement, JetImportDirective.class, false);
                 if (importDirective != null) {
-                    usageInfo = SafeDeleteImportDirectiveUsageInfo.object$.create(importDirective,
-                                                                                  (JetDeclaration) method.getNavigationElement());
+                    usageInfo = new SafeDeleteImportDirectiveUsageInfo(importDirective, (JetDeclaration) element.getNavigationElement());
                 }
             }
             if (usageInfo != null) {
