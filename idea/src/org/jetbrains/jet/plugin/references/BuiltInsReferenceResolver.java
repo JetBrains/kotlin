@@ -22,7 +22,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -43,7 +44,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.utils.ExceptionUtils;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,6 +55,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
+    private static final File BUILT_INS_COMPILABLE_SRC_DIR = new File("core/builtins/src", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING);
+
     private volatile BindingContext bindingContext;
     private volatile Set<JetFile> builtInsSources;
     private volatile MutablePackageFragmentDescriptor builtinsPackageFragment;
@@ -107,8 +113,28 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     }
 
+    @NotNull
     private Set<JetFile> getJetBuiltInsFiles() {
-        URL url = LightClassUtil.getBuiltInsDirUrl();
+        Set<JetFile> builtIns = getBuiltInSourceFiles(LightClassUtil.getBuiltInsDirUrl());
+
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            // In production, the above URL is enough as it contains sources for both native and compilable built-ins
+            // (it's simply "jet" directory in kotlin-plugin.jar)
+            // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:
+            // LightClassUtil.getBuiltInsDirUrl() does so for native built-ins and the code below for compilable built-ins
+            try {
+                builtIns.addAll(getBuiltInSourceFiles(BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL()));
+            }
+            catch (MalformedURLException e) {
+                throw ExceptionUtils.rethrow(e);
+            }
+        }
+
+        return builtIns;
+    }
+
+    @NotNull
+    private Set<JetFile> getBuiltInSourceFiles(@NotNull URL url) {
         VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null : "Virtual file not found by URL: " + url;
 
