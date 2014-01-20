@@ -48,10 +48,23 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "        return 0\n" +
                         "    }\n" +
                         "    private fun foo2():Int {\n" +
-                        "        return foo1(12,\n" +
-                        "                13,\n" +
-                        "                14\n" +
-                        "        )\n" +
+                        "        try {" +
+                        "            return foo1(12,\n" +
+                        "                    13,\n" +
+                        "                    14\n" +
+                        "            )\n" +
+                        "        }" +
+                        "        catch (e: Exception) {" +
+                        "            return 0" +
+                        "        }" +
+                        "        finally {" +
+                        "           if (true) {" +
+                        "               return 1" +
+                        "           }" +
+                        "           else {" +
+                        "               return 2" +
+                        "           }" +
+                        "        }" +
                         "    }\n" +
                         "    private val f = {(a: Int)->a*2}\n" +
                         "}";
