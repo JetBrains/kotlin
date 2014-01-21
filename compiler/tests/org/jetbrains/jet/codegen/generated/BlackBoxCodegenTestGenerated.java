@@ -4979,6 +4979,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/typeInfo/asInLoop.kt");
         }
         
+        @TestMetadata("implicitSmartCastedThis.kt")
+        public void testImplicitSmartCastedThis() throws Exception {
+            doTest("compiler/testData/codegen/box/typeInfo/implicitSmartCastedThis.kt");
+        }
+        
         @TestMetadata("inheritance.kt")
         public void testInheritance() throws Exception {
             doTest("compiler/testData/codegen/box/typeInfo/inheritance.kt");
@@ -4997,6 +5002,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("primitiveTypeInfo.kt")
         public void testPrimitiveTypeInfo() throws Exception {
             doTest("compiler/testData/codegen/box/typeInfo/primitiveTypeInfo.kt");
+        }
+        
+        @TestMetadata("smartCastedThis.kt")
+        public void testSmartCastedThis() throws Exception {
+            doTest("compiler/testData/codegen/box/typeInfo/smartCastedThis.kt");
         }
         
     }

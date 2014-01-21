@@ -293,7 +293,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitSuperExpression(@NotNull JetSuperExpression expression, StackValue data) {
-        return StackValue.thisOrOuter(this, getSuperCallLabelTarget(expression), true);
+        return StackValue.thisOrOuter(this, getSuperCallLabelTarget(expression), true, true);
     }
 
     private ClassDescriptor getSuperCallLabelTarget(JetSuperExpression expression) {
@@ -1720,7 +1720,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type scriptClassType = asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
             ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
             ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
-            StackValue script = StackValue.thisOrOuter(this, scriptClass, false);
+            StackValue script = StackValue.thisOrOuter(this, scriptClass, false, false);
             script.put(script.type, v);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor);
             return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false);
@@ -2152,7 +2152,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 StackValue.onStack(exprType).put(type, v);
             }
             else {
-                StackValue.thisOrOuter(this, classReceiverDeclarationDescriptor, false).put(type, v);
+                StackValue.thisOrOuter(this, classReceiverDeclarationDescriptor, false, false).put(type, v);
             }
         }
         else if (descriptor instanceof ScriptReceiver) {
@@ -3418,7 +3418,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitThisExpression(@NotNull JetThisExpression expression, StackValue receiver) {
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference());
         if (descriptor instanceof ClassDescriptor) {
-            return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false);
+            return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false, true);
         }
         else {
             if (descriptor instanceof CallableDescriptor) {
