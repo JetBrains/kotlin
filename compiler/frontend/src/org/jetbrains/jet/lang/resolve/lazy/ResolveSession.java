@@ -181,6 +181,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         return new LazyPackageDescriptor(module, fqName, this, provider);
     }
 
+    @NotNull
     @Override
     public ModuleDescriptor getModuleDescriptor() {
         return module;
