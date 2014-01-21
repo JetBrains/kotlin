@@ -37,25 +37,26 @@ public class  ParametersBuilder {
     }
 
     public ParametersBuilder addThis(Type type, boolean skipped) {
-        addParameter(new ParameterInfo(type, skipped, -1, nextIndex));
+        addParameter(new ParameterInfo(type, skipped, nextIndex, -1));
         return this;
     }
 
     public ParametersBuilder addNextParameter(Type type, boolean skipped, @Nullable ParameterInfo original) {
-        addParameter(new ParameterInfo(type, skipped, original != null ? original.getIndex() : -1 , nextIndex));
+        addParameter(new ParameterInfo(type, skipped, nextIndex, original != null ? original.getIndex() : -1));
         return this;
     }
 
     public CapturedParamInfo addCapturedParam(String fieldName, Type type, boolean skipped, @Nullable ParameterInfo original) {
-        return addCapturedParameter(new CapturedParamInfo(fieldName, type, skipped, original != null ? original.getIndex() : -1, nextCaptured));
+        return addCapturedParameter(new CapturedParamInfo(fieldName, type, skipped, nextCaptured,
+                                                          original != null ? original.getIndex() : -1));
     }
 
-    public CapturedParamInfo addAdditionalCapturedParam(String fieldName, Type type, boolean skipped, @Nullable ParameterInfo original) {
-        CapturedParamInfo capturedParamInfo =
-                new CapturedParamInfo(fieldName, type, skipped, original != null ? original.getIndex() : -1, nextCaptured);
-        additionalCapturedParams.add(capturedParamInfo);
-        return capturedParamInfo;
-    }
+    //public CapturedParamInfo addAdditionalCapturedParam(String fieldName, Type type, boolean skipped, @Nullable ParameterInfo original) {
+    //    CapturedParamInfo capturedParamInfo =
+    //            new CapturedParamInfo(fieldName, type, skipped, original != null ? original.getIndex() : -1, nextCaptured);
+    //    additionalCapturedParams.add(capturedParamInfo);
+    //    return capturedParamInfo;
+    //}
 
     private void addParameter(ParameterInfo info) {
         params.add(info);

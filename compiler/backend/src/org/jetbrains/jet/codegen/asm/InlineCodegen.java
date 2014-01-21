@@ -38,6 +38,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -191,7 +192,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
                                  codegen.getContext(), call);
         MethodInliner inliner = new MethodInliner(node, parameters, info, null, new LambdaFieldRemapper()); //with captured
 
-        VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, new VarRemapper.ShiftRemapper(initialFrameSize, null));
+        VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
 
         inliner.doTransformAndMerge(codegen.getInstructionAdapter(), remapper);
         generateClosuresBodies();
@@ -245,13 +246,13 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         if (!disabled && notSeparateInline && Type.VOID_TYPE != type) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
             boolean couldBeRemapped = !shouldPutValue(type, stackValue, codegen.getContext(), valueParameterDescriptor);
-            int remappedIndex = couldBeRemapped ? ((StackValue.Local) stackValue).getIndex() : -1;
+            StackValue remappedIndex = couldBeRemapped ? stackValue : null;
 
-            ParameterInfo info = new ParameterInfo(type, false, remappedIndex, couldBeRemapped ? -1 : codegen.getFrameMap().enterTemp(type));
+            ParameterInfo info = new ParameterInfo(type, false, couldBeRemapped ? -1 : codegen.getFrameMap().enterTemp(type), remappedIndex);
 
             if (index >= 0 && couldBeRemapped) {
                 CapturedParamInfo capturedParamInfo = activeLambda.getCapturedVars().get(index);
-                capturedParamInfo.setRemapIndex(info.getInlinedIndex());
+                capturedParamInfo.setRemapIndex(remappedIndex != null ? remappedIndex : StackValue.local(info.getIndex(), info.getType()));
             }
 
             doWithParameter(info);
@@ -267,7 +268,17 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         //        return false;
         //    }
         //}
-        return false == (stackValue != null && stackValue instanceof StackValue.Local);
+        boolean shouldPut = false == (stackValue != null && stackValue instanceof StackValue.Local);
+        if (shouldPut) {
+            //we could recapture field of anonymous objects cause they couldn't change
+            if ((stackValue instanceof StackValue.Extension || stackValue instanceof StackValue.Field) && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
+                if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor)) {
+                    //check type of context
+                    return false;
+                }
+            }
+        }
+        return shouldPut;
     }
 
     private void doWithParameter(ParameterInfo info) {
@@ -301,7 +312,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
         if (!isStaticMethod(functionDescriptor, context)) {
             Type type = AsmTypeConstants.OBJECT_TYPE;
-            ParameterInfo info = new ParameterInfo(type, false, -1, codegen.getFrameMap().enterTemp(type));
+            ParameterInfo info = new ParameterInfo(type, false, codegen.getFrameMap().enterTemp(type), -1);
             recordParamInfo(info, false);
         }
 
@@ -310,7 +321,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
                 break;
             }
             Type type = param.getAsmType();
-            ParameterInfo info = new ParameterInfo(type, false, -1, codegen.getFrameMap().enterTemp(type));
+            ParameterInfo info = new ParameterInfo(type, false, codegen.getFrameMap().enterTemp(type), -1);
             recordParamInfo(info, false);
         }
 

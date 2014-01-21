@@ -25,11 +25,9 @@ import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import java.util.*;
 
@@ -125,7 +123,7 @@ public class LambdaInfo {
 
     @NotNull
     public static CapturedParamInfo getCapturedParamInfo(@NotNull EnclosedValueDescriptor descriptor, int index) {
-        return new CapturedParamInfo(descriptor.getFieldName(), descriptor.getType(), false, -1, index);
+        return new CapturedParamInfo(descriptor.getFieldName(), descriptor.getType(), false, index, -1);
     }
 
     private void shiftParams(int shift) {

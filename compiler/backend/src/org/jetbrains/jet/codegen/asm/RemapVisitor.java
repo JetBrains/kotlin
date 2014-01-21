@@ -30,7 +30,7 @@ public class RemapVisitor extends InstructionAdapter {
 
     private final boolean remapReturn;
 
-    protected RemapVisitor(MethodVisitor mv, Label end, VarRemapper remapper, boolean remapReturn) {
+    protected RemapVisitor(MethodVisitor mv, Label end, VarRemapper.ParamRemapper remapper, boolean remapReturn) {
         super(InlineCodegenUtil.API, mv);
         this.end = end;
         this.remapper = remapper;
@@ -49,13 +49,12 @@ public class RemapVisitor extends InstructionAdapter {
 
     @Override
     public void visitIincInsn(int var, int increment) {
-        super.visitIincInsn(remapper.remap(var), increment);
+        remapper.visitIincInsn(var, increment, mv);
     }
 
     @Override
     public void visitVarInsn(int opcode, int var) {
-        int newVar = remapper.remap(var);
-        super.visitVarInsn(opcode, newVar);
+        remapper.visitVarInsn(opcode, var, new InstructionAdapter(mv));
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.asm4.tree.MethodNode;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -364,7 +365,7 @@ public abstract class StackValue {
     }
 
     public static class Local extends StackValue {
-        final int index;
+        public final int index;
 
         private Local(int index, Type type) {
             super(type);
@@ -811,9 +812,9 @@ public abstract class StackValue {
     }
 
 
-    static class Field extends StackValueWithSimpleReceiver {
-        final Type owner;
-        final String name;
+    public static class Field extends StackValueWithSimpleReceiver {
+        public final Type owner;
+        public final String name;
 
         public Field(Type type, Type owner, String name, boolean isStatic) {
             super(type, isStatic);

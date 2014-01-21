@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen.asm;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
+import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 public class CapturedParamInfo extends ParameterInfo {
@@ -30,8 +31,13 @@ public class CapturedParamInfo extends ParameterInfo {
 
     public static final CapturedParamInfo STUB = new CapturedParamInfo("", AsmTypeConstants.OBJECT_TYPE, true, -1, -1);
 
-    public CapturedParamInfo(@NotNull String fieldName, @NotNull Type type, boolean skipped, int remapIndex, int index) {
-        super(type, skipped, remapIndex, index);
+    public CapturedParamInfo(@NotNull String fieldName, @NotNull Type type, boolean skipped, int index, int remapIndex) {
+        super(type, skipped, index, remapIndex);
+        this.fieldName = fieldName;
+    }
+
+    public CapturedParamInfo(@NotNull String fieldName, @NotNull Type type, boolean skipped, int index, StackValue remapIndex) {
+        super(type, skipped, index, remapIndex);
         this.fieldName = fieldName;
     }
 
@@ -54,5 +60,28 @@ public class CapturedParamInfo extends ParameterInfo {
 
     public void setRecapturedFrom(LambdaInfo recapturedFrom) {
         this.recapturedFrom = recapturedFrom;
+    }
+
+
+    public CapturedParamInfo newRemapIndex(int newRamapIndex) {
+        return clone(index, newRamapIndex);
+    }
+
+    public CapturedParamInfo newIndex(int newIndex) {
+        return clone(newIndex, getRemapIndex());
+    }
+
+    public CapturedParamInfo clone(int newIndex, int newRamapIndex) {
+        CapturedParamInfo capturedParamInfo = new CapturedParamInfo(fieldName, type, isSkipped, newIndex, newRamapIndex);
+        capturedParamInfo.setLambda(lambda);
+        capturedParamInfo.setRecapturedFrom(recapturedFrom);
+        return capturedParamInfo;
+    }
+
+    public CapturedParamInfo clone(int newIndex, StackValue newRamapIndex) {
+        CapturedParamInfo capturedParamInfo = new CapturedParamInfo(fieldName, type, isSkipped, newIndex, newRamapIndex);
+        capturedParamInfo.setLambda(lambda);
+        capturedParamInfo.setRecapturedFrom(recapturedFrom);
+        return capturedParamInfo;
     }
 }

@@ -16,48 +16,15 @@
 
 package org.jetbrains.jet.codegen.asm;
 
-import java.util.List;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.asm4.Type;
+import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.tree.FieldInsnNode;
+import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 public abstract class VarRemapper {
-
-
-
-    public static class ShiftRemapper extends VarRemapper {
-
-        private final int shift;
-
-        public ShiftRemapper(int shift, VarRemapper remapper) {
-            super(remapper);
-            this.shift = shift;
-        }
-
-        @Override
-        public int doRemap(int index) {
-            return index + shift;
-        }
-    }
-
-    public static class ClosureRemapper extends ShiftRemapper {
-
-        private final LambdaInfo info;
-        private final List<ParameterInfo> originalParams;
-        private final int capturedSize;
-
-        public ClosureRemapper(LambdaInfo info, int valueParametersShift, List<ParameterInfo> originalParams) {
-            super(valueParametersShift, null);
-            this.info = info;
-            this.originalParams = originalParams;
-            capturedSize = info.getCapturedVarsSize();
-        }
-
-        @Override
-        public int doRemap(int index) {
-            if (index < capturedSize) {
-                return originalParams.get(info.getParamOffset() + index).getInlinedIndex();
-            }
-            return super.doRemap(index - capturedSize);
-        }
-    }
 
     public static class ParamRemapper extends VarRemapper {
 
@@ -65,23 +32,25 @@ public abstract class VarRemapper {
         private final Parameters params;
         private final int actualParamsSize;
 
-        private final int [] remapIndex;
+        private final StackValue [] remapIndex;
 
-        public ParamRemapper(Parameters params, VarRemapper parent) {
-            super(parent);
+        private int additionalShift;
+
+        public ParamRemapper(Parameters params, int additionalShift) {
+            this.additionalShift = additionalShift;
             this.allParamsSize = params.totalSize();
             this.params = params;
 
             int realSize = 0;
-            remapIndex = new int [params.totalSize()];
+            remapIndex = new StackValue [params.totalSize()];
 
             int index = 0;
             for (ParameterInfo info : params) {
                 if (!info.isSkippedOrRemapped()) {
-                    remapIndex[index] = realSize;
+                    remapIndex[index] = StackValue.local(realSize, AsmTypeConstants.OBJECT_TYPE);
                     realSize += info.getType().getSize();
                 } else {
-                    remapIndex[index] = info.isRemapped() ? info.getRemapIndex() : -1;
+                    remapIndex[index] = info.isRemapped() ? info.getRemapIndex() : null;
                 }
                 index++;
             }
@@ -90,59 +59,51 @@ public abstract class VarRemapper {
         }
 
         @Override
-        public int doRemap(int index) {
+        public StackValue doRemap(int index) {
             int remappedIndex;
 
             if (index < allParamsSize) {
                 ParameterInfo info = params.get(index);
-                remappedIndex = remapIndex[index];
-                if (info.isSkipped || remappedIndex == -1) {
+                StackValue remapped = remapIndex[index];
+                if (info.isSkipped || remapped == null) {
                     throw new RuntimeException("Trying to access skipped parameter: " + info.type + " at " +index);
                 }
                 if (info.isRemapped()) {
-                    return remappedIndex;
+                    return remapped;
+                } else {
+                    remappedIndex = ((StackValue.Local)remapped).index;
                 }
             } else {
                 remappedIndex = actualParamsSize - params.totalSize() + index; //captured params not used directly in this inlined method, they used in closure
             }
 
-            if (parent == null) {
-                return remappedIndex;
-            }
 
-            return parent.doRemap(remappedIndex);
+            return StackValue.local(remappedIndex + additionalShift, AsmTypeConstants.OBJECT_TYPE);
         }
     }
 
-    protected boolean nestedRemmapper;
-
-    protected VarRemapper parent;
-
-    public VarRemapper(VarRemapper parent) {
-        this.parent = parent;
-    }
-
-    public int remap(int index) {
-        if (nestedRemmapper) {
-            return index;
-        }
+    public StackValue remap(int index) {
         return doRemap(index);
     }
 
-    abstract public int doRemap(int index);
-
-    public void setNestedRemap(boolean nestedRemap) {
-        nestedRemmapper = nestedRemap;
+    public void visitIincInsn(int var, int increment, MethodVisitor mv) {
+        StackValue remap = remap(var);
+        assert remap instanceof StackValue.Local;
+        mv.visitIincInsn(((StackValue.Local) remap).index, increment);
     }
 
-
-    public static int getActualSize(List<ParameterInfo> params) {
-        int size = 0;
-        for (ParameterInfo paramInfo : params) {
-            if (!paramInfo.isSkippedOrRemapped()) {
-                size += paramInfo.getType().getSize();
-            }
+    public void visitVarInsn(int opcode, int var, InstructionAdapter mv) {
+        StackValue remap = remap(var);
+        if (remap instanceof StackValue.Local) {
+            mv.visitVarInsn(opcode, ((StackValue.Local) remap).index);
+        } else {
+            //Type stub = Type.getObjectType("STUB");
+            //String descriptor = stub.getDescriptor();
+            //
+            //mv.visitFieldInsn(Opcodes.GETSTATIC, stub.getInternalName(), "$$$this$skip", descriptor);
+            remap.put(remap.type, mv);
         }
-        return size;
     }
+
+    abstract public StackValue doRemap(int index);
 }

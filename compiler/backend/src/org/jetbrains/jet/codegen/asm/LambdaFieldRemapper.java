@@ -33,9 +33,10 @@ public class LambdaFieldRemapper {
     public AbstractInsnNode doTransform(MethodNode node, FieldInsnNode fieldInsnNode, CapturedParamInfo capturedField) {
         AbstractInsnNode prev = getPreviousNoLabelNoLine(fieldInsnNode);
 
-        assert prev.getType() == AbstractInsnNode.VAR_INSN;
-        VarInsnNode loadThis = (VarInsnNode) prev;
-        assert /*loadThis.var == info.getCapturedVarsSize() - 1 && */loadThis.getOpcode() == Opcodes.ALOAD;
+        assert prev.getType() == AbstractInsnNode.VAR_INSN || prev.getType() == AbstractInsnNode.FIELD_INSN;
+        AbstractInsnNode loadThis = prev;
+        int opcode1 = loadThis.getOpcode();
+        assert /*loadThis.var == info.getCapturedVarsSize() - 1 && */opcode1 == Opcodes.ALOAD || opcode1 == Opcodes.GETSTATIC;
 
         int opcode = fieldInsnNode.getOpcode() == Opcodes.GETFIELD ? capturedField.getType().getOpcode(Opcodes.ILOAD) : capturedField.getType().getOpcode(Opcodes.ISTORE);
         VarInsnNode insn = new VarInsnNode(opcode, capturedField.getIndex());

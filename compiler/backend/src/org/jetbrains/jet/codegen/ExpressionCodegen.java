@@ -32,6 +32,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.asm4.tree.MethodNode;
 import org.jetbrains.jet.codegen.asm.InlineCodegen;
 import org.jetbrains.jet.codegen.asm.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.asm.Inliner;
@@ -85,7 +86,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private int myLastLineNumber = -1;
 
-    final InstructionAdapter v;
+    InstructionAdapter v;
     final MethodVisitor methodVisitor;
     final FrameMap myFrameMap;
     final JetTypeMapper typeMapper;

@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen.asm;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
@@ -34,7 +33,6 @@ import org.jetbrains.jet.codegen.ClosureCodegen;
 import org.jetbrains.jet.codegen.FieldInfo;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
@@ -125,7 +123,7 @@ public class LambdaTransformer {
         InlineFieldRemapper remapper = new InlineFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getRecapturedLambdas());
         MethodInliner inliner = new MethodInliner(invoke, parameters, info.subInline(info.nameGenerator.subGenerator("lambda")), oldLambdaType,
                                                   remapper);
-        inliner.doTransformAndMerge(invokeVisitor, new VarRemapper.ParamRemapper(parameters, null), remapper, false);
+        inliner.doTransformAndMerge(invokeVisitor, new VarRemapper.ParamRemapper(parameters, 0), remapper, false);
         invokeVisitor.visitMaxs(-1, -1);
 
         generateConstructorAndFields(classBuilder, builder, invocation);
