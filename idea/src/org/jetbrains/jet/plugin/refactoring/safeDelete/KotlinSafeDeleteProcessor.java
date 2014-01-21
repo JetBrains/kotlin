@@ -53,6 +53,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+import org.jetbrains.jet.plugin.references.JetPsiReference;
 
 import java.util.*;
 
@@ -131,7 +132,14 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             return new NonCodeUsageSearchInfo(insideDeleted, element);
         }
         if (element instanceof JetTypeParameter) {
-            return findTypeParameterUsages((JetTypeParameter) element, allElementsToDelete, result);
+            Condition<PsiElement> insideDeleted = delegateToJavaProcessorAndCombineConditions(
+                    AsJavaPackage.toPsiTypeParameters((JetTypeParameter) element),
+                    getCondition(Arrays.asList(allElementsToDelete)),
+                    allElementsToDelete,
+                    result
+            );
+            findTypeParameterUsages((JetTypeParameter) element, result);
+            return new NonCodeUsageSearchInfo(insideDeleted, element);
         }
         if (element instanceof JetParameter) {
             JetParameter jetParameter = (JetParameter) element;
@@ -347,71 +355,27 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
     }
 
-    @NotNull
-    protected static NonCodeUsageSearchInfo findTypeParameterUsages(
+    protected static void findTypeParameterUsages(
             @NotNull final JetTypeParameter parameter,
-            @NotNull final PsiElement[] allElementsToDelete,
             @NotNull final List<UsageInfo> result
     ) {
-        NonCodeUsageSearchInfo searchInfo = getSearchInfo(parameter, allElementsToDelete);
-
-        ReferencesSearch.search(parameter).forEach(new Processor<PsiReference>() {
-            @Override
-            public boolean process(PsiReference reference) {
-                PsiElement element = reference.getElement();
-
-                if (!isInside(element, allElementsToDelete)) {
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, parameter, false));
-                }
-                return true;
-            }
-        });
-
         JetTypeParameterListOwner owner = PsiTreeUtil.getParentOfType(parameter, JetTypeParameterListOwner.class);
-        if (owner == null) return searchInfo;
+        if (owner == null) return;
 
         List<JetTypeParameter> parameterList = owner.getTypeParameters();
-        final int parameterCount = parameterList.size();
         final int parameterIndex = parameterList.indexOf(parameter);
 
         ReferencesSearch.search(owner).forEach(
                 new Processor<PsiReference>() {
                     @Override
                     public boolean process(PsiReference reference) {
-                        if (reference instanceof PsiJavaCodeReferenceElement) {
-                            processJavaTypeArgumentListCandidate(
-                                    (PsiJavaCodeReferenceElement) reference, parameterIndex, parameterCount, result, parameter
-                            );
-                        }
-                        else {
+                        if (reference instanceof JetPsiReference) {
                             processKotlinTypeArgumentListCandidate(reference, parameterIndex, result, parameter);
                         }
                         return true;
                     }
                 }
         );
-
-        return searchInfo;
-    }
-
-    private static void processJavaTypeArgumentListCandidate(
-            @NotNull PsiJavaCodeReferenceElement reference,
-            int parameterIndex,
-            int parameterCount,
-            @NotNull List<UsageInfo> result,
-            @NotNull PsiElement parameter
-    ) {
-        PsiReferenceParameterList parameterList = reference.getParameterList();
-        if (parameterList != null) {
-            PsiTypeElement[] typeArgs = parameterList.getTypeParameterElements();
-            if (typeArgs.length > parameterIndex) {
-                if (typeArgs.length == 1 && parameterCount > 1
-                    && typeArgs[0].getType() instanceof PsiDiamondType) {
-                    return;
-                }
-                result.add(new SafeDeleteReferenceJavaDeleteUsageInfo(typeArgs[parameterIndex], parameter, true));
-            }
-        }
     }
 
     private static void processKotlinTypeArgumentListCandidate(
