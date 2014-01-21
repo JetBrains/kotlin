@@ -154,7 +154,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
         ClassDescriptor descriptor = bindingContext.get(CLASS, enumEntry);
-        assert descriptor != null;
+        assert descriptor != null :
+                String.format("No descriptor for enum entry \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(enumEntry));
 
         boolean trivial = enumEntry.getDeclarations().isEmpty();
         if (!trivial) {
