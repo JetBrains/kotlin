@@ -81,7 +81,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @NotNull
         @Override
         protected String operation() {
-            return "get";
+            return "get_s9cetl$";
         }
 
         @Nullable

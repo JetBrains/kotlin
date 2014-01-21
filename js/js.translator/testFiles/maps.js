@@ -234,7 +234,7 @@
             return oldValue;
         };
 
-        this.get = function (key) {
+        this.get_s9cetl$ = function (key) {
             checkKey(key);
 
             var hash = hashingFunction(key);
@@ -252,7 +252,7 @@
             return null;
         };
 
-        this.containsKey = function (key) {
+        this.containsKey_s9cetl$ = function (key) {
             checkKey(key);
             var bucketKey = hashingFunction(key);
 
@@ -262,7 +262,7 @@
             return bucket ? bucket.containsKey_s9cetl$(key) : false;
         };
 
-        this.containsValue = function (value) {
+        this.containsValue_s9cetl$ = function (value) {
             checkValue(value);
             var i = buckets.length;
             while (i--) {
@@ -306,7 +306,7 @@
             return result;
         };
 
-        this.remove = function (key) {
+        this.remove_s9cetl$ = function (key) {
             checkKey(key);
 
             var hash = hashingFunction(key), bucketIndex, oldValue = null;
@@ -347,7 +347,7 @@
         };
 
 
-        this.putAll = function (hashtable, conflictCallback) {
+        this.putAll_s9c68p$ = function (hashtable, conflictCallback) {
             var entries = hashtable._entries();
             var entry, key, value, thisValue, i = entries.length;
             var hasConflictCallback = (typeof conflictCallback == FUNCTION);
@@ -450,7 +450,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
 
                 return false;
             },
-            get: function (key) {
+            get_s9cetl$: function (key) {
                 return this.map[key];
             },
             put_5yfy9u$: function (key, value) {
@@ -461,7 +461,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
                 }
                 return prevValue;
             },
-            remove: function (key) {
+            remove_s9cetl$: function (key) {
                 var prevValue = this.map[key];
                 if (prevValue !== undefined) {
                     delete this.map[key];
@@ -566,7 +566,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
         };
 
         this.remove = function (o) {
-            return hashTable.remove(o) ? o : null;
+            return hashTable.remove_s9cetl$(o) ? o : null;
         };
 
         this.contains = function (o) {

@@ -12,7 +12,7 @@ class MapJsTest {
     val VALUES = array(0, 1, 2, 3).toList()
 
     test fun getOrElse() {
-        val data = HashMap<String, Int>()
+        val data = emptyMap()
         val a = data.getOrElse("foo"){2}
         assertEquals(2, a)
 
@@ -22,7 +22,7 @@ class MapJsTest {
     }
 
     test fun getOrPut() {
-        val data = HashMap<String, Int>()
+        val data = emptyMutableMap()
         val a = data.getOrPut("foo"){2}
         assertEquals(2, a)
 
@@ -32,59 +32,129 @@ class MapJsTest {
         assertEquals(1, data.size())
     }
 
+    test fun emptyMapGet() {
+        val map = emptyMap()
+        assertEquals(null, map.get("foo"), """failed on map.get("foo")""")
+        assertEquals(null, map["bar"], """failed on map["bar"]""")
+    }
+
+    test fun mapGet() {
+        val map = createTestMap()
+        for (i in KEYS.indices) {
+            assertEquals(VALUES[i], map.get(KEYS[i]), """failed on map.get(KEYS[$i])""")
+            assertEquals(VALUES[i], map[KEYS[i]], """failed on map[KEYS[$i]]""")
+        }
+
+        assertEquals(null, map.get("foo"))
+    }
+
+    /* TODO: fix after switch to use compiled stdlib (need drop js.Map<K,V>.set(V))
+    test fun mapPut() {
+        val map = emptyMutableMap()
+
+        map.put("foo", 1)
+        assertEquals(1, map["foo"])
+        assertEquals(null, map["bar"])
+
+        map["bar"] = 2
+        assertEquals(1, map["foo"])
+        assertEquals(2, map["bar"])
+
+        map["foo"] = 0
+        assertEquals(0, map["foo"])
+        assertEquals(2, map["bar"])
+    }
+    */
+
+    test fun sizeAndEmptyForEmptyMap() {
+        val data = emptyMap()
+
+        assertTrue(data.isEmpty())
+        assertTrue(data.empty)
+
+        assertEquals(0, data.size())
+        assertEquals(0, data.size)
+    }
+
     test fun sizeAndEmpty() {
-        val data = HashMap<String, Int>()
-        assertTrue{ data.empty }
-        assertEquals(data.size, 0)
+        val data = createTestMap()
+
+        assertFalse(data.isEmpty())
+        assertFalse(data.empty)
+
+        assertEquals(KEYS.size, data.size())
+        assertEquals(KEYS.size, data.size)
     }
 
     // #KT-3035
-    test fun emptyHashMapValues() {
-        val emptyMap = HashMap<String, Int>()
+    test fun emptyMapValues() {
+        val emptyMap = emptyMap()
         assertTrue(emptyMap.values().isEmpty())
     }
 
-    test fun hashMapValues() {
-        val map = createTestHashMap()
+    test fun mapValues() {
+        val map = createTestMap()
         assertEquals(VALUES, map.values().toSortedList())
     }
 
-    test fun hashMapKeySet() {
-        val map = createTestHashMap()
+    test fun mapKeySet() {
+        val map = createTestMap()
         assertEquals(KEYS.toSortedList(), map.keySet().toSortedList())
     }
 
-    test fun hashMapContainsValue() {
-        val map = createTestHashMap()
+    test fun mapContainsKey() {
+        val map = createTestMap()
+
+        assertTrue(map.containsKey(KEYS[0]) &&
+                   map.containsKey(KEYS[1]) &&
+                   map.containsKey(KEYS[2]) &&
+                   map.containsKey(KEYS[3]))
+
+        assertFalse(map.containsKey("foo") ||
+                    map.containsKey(1))
+    }
+
+    test fun mapContainsValue() {
+        val map = createTestMap()
 
         assertTrue(map.containsValue(VALUES[0]) &&
-            map.containsValue(VALUES[1]) &&
-            map.containsValue(VALUES[2]) &&
-            map.containsValue(VALUES[3]))
+                   map.containsValue(VALUES[1]) &&
+                   map.containsValue(VALUES[2]) &&
+                   map.containsValue(VALUES[3]))
 
         assertFalse(map.containsValue("four") ||
-            map.containsValue("five"))
+                    map.containsValue(5))
     }
 
-    test fun hashMapSize() {
-        val map = createTestHashMap()
-        assertEquals(KEYS.size, map.size)
-    }
-
-    test fun hashMapPutAll() {
-        val map = createTestHashMap()
-        val newMap = HashMap<String, Int>()
+    test fun mapPutAll() {
+        val map = createTestMap()
+        val newMap = emptyMutableMap()
         newMap.putAll(map)
         assertEquals(KEYS.size, newMap.size)
     }
 
+    test fun mapRemove() {
+        val map = createTestMutableMap()
+        val last = KEYS.size() - 1
+        val first = 0
+        val mid = KEYS.size() / 2
 
-    fun createTestHashMap(): HashMap<String, Int> {
-        val map = HashMap<String, Int>()
-        for (i in KEYS.indices) {
-            map.put(KEYS[i], VALUES[i])
-        }
-        return map
+        assertEquals(KEYS.size(), map.size())
+
+        assertEquals(null, map.remove("foo"))
+        assertEquals(VALUES[mid], map.remove(KEYS[mid]))
+        assertEquals(null, map.remove(KEYS[mid]))
+        assertEquals(VALUES[last], map.remove(KEYS[last]))
+        assertEquals(VALUES[first], map.remove(KEYS[first]))
+
+        assertEquals(KEYS.size() - 3, map.size())
+    }
+
+    test fun mapClear() {
+        val map = createTestMutableMap()
+        assertFalse(map.isEmpty())
+        map.clear()
+        assertTrue(map.isEmpty())
     }
 
     /*
@@ -232,4 +302,19 @@ class MapJsTest {
     }
     */
 
+    // Helpers
+
+    fun emptyMap(): Map<String, Int> = HashMap<String, Int>()
+    fun emptyMutableMap(): MutableMap<String, Int> = HashMap<String, Int>()
+
+    fun createTestMap(): Map<String, Int> = createTestHashMap()
+    fun createTestMutableMap(): MutableMap<String, Int> = createTestHashMap()
+
+    fun createTestHashMap(): HashMap<String, Int> {
+        val map = HashMap<String, Int>()
+        for (i in KEYS.indices) {
+            map.put(KEYS[i], VALUES[i])
+        }
+        return map
+    }
 }
