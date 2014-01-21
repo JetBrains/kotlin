@@ -31,10 +31,9 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.editor.JetEditorOptions
 import java.awt.datatransfer.Transferable
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleManager
 
-public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
+public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTransferableData> {
 
     override fun extractTransferableData(content: Transferable?): TextBlockTransferableData? {
         try {
@@ -179,6 +178,6 @@ public class JavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBlockTran
     }
 
     class object {
-        private val LOG = Logger.getInstance("#org.jetbrains.jet.plugin.conversion.copy.JavaCopyPastePostProcessor")!!
+        private val LOG = Logger.getInstance("#org.jetbrains.jet.plugin.conversion.copy.ConvertJavaCopyPastePostProcessor")!!
     }
 }

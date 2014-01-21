@@ -25,7 +25,8 @@ import java.awt.datatransfer.DataFlavor;
 
 class CopiedCode implements TextBlockTransferableData {
     @NotNull
-    public static final DataFlavor DATA_FLAVOR = new DataFlavor(JavaCopyPastePostProcessor.class, "class: JavaCopyPastePostProcessor");
+    public static final DataFlavor DATA_FLAVOR = new DataFlavor(ConvertJavaCopyPastePostProcessor.class,
+                                                                "class: ConvertJavaCopyPastePostProcessor");
     private final PsiJavaFile file;
     private final int[] startOffsets;
     private final int[] endOffsets;
