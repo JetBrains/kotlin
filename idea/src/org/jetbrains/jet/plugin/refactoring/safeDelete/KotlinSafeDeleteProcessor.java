@@ -176,19 +176,33 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         for (UsageInfo usageInfo : javaUsages) {
             if (usageInfo instanceof SafeDeleteOverridingMethodUsageInfo) {
                 SafeDeleteOverridingMethodUsageInfo overrideUsageInfo = (SafeDeleteOverridingMethodUsageInfo) usageInfo;
-                usageInfo = new KotlinSafeDeleteOverridingUsageInfo(
-                        overrideUsageInfo.getSmartPointer().getElement(), overrideUsageInfo.getReferencedElement()
-                );
+
+                PsiElement usageElement = overrideUsageInfo.getSmartPointer().getElement();
+                usageInfo = (usageElement != null)
+                            ? new KotlinSafeDeleteOverridingUsageInfo(usageElement, overrideUsageInfo.getReferencedElement())
+                            : null;
             }
             else if (usageInfo instanceof SafeDeleteOverrideAnnotation) {
                 SafeDeleteOverrideAnnotation overrideAnnotationUsageInfo = (SafeDeleteOverrideAnnotation) usageInfo;
 
                 PsiElement targetElement = overrideAnnotationUsageInfo.getSmartPointer().getElement();
-                if (AsJavaPackage.getRepresentativeLightMethod(targetElement).findSuperMethods().length > 0) {
-                    usageInfo = null;
+                if (targetElement != null) {
+                    boolean noSuperMethods = ContainerUtil.and(
+                            AsJavaPackage.toLightMethods(targetElement),
+                            new Condition<PsiMethod>() {
+                                @Override
+                                public boolean value(PsiMethod method) {
+                                    return method.findSuperMethods().length == 0;
+                                }
+                            }
+                    );
+
+                    usageInfo = noSuperMethods
+                                ? new KotlinSafeDeleteOverrideAnnotation(targetElement, overrideAnnotationUsageInfo.getReferencedElement())
+                                : null;
                 }
                 else {
-                    usageInfo = new KotlinSafeDeleteOverrideAnnotation(targetElement, overrideAnnotationUsageInfo.getReferencedElement());
+                    usageInfo = null;
                 }
             }
             else if (usageInfo instanceof SafeDeleteReferenceJavaDeleteUsageInfo) {
