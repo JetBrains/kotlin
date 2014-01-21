@@ -54,4 +54,7 @@ public trait StorageManager {
     fun createNullableLazyValueWithPostCompute<T: Any>(computable: () -> T?, postCompute: (T?) -> Unit): NullableLazyValue<T>
 
     fun compute<T>(computable: () -> T): T
+
+    // data and computable are accessed only synchronously
+    fun <T, D> createLazyIterable(data: Iterator<D>, compute: (D) -> T): Iterable<T>
 }

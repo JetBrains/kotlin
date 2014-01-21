@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.ExceptionUtils;
 import org.jetbrains.jet.utils.WrappedValues;
 
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
@@ -166,6 +167,12 @@ public class LockBasedStorageManager implements StorageManager {
         finally {
             lock.unlock();
         }
+    }
+
+    @NotNull
+    @Override
+    public <T, D> Iterable<T> createLazyIterable(Iterator<? extends D> data, Function1<? super D, ? extends T> compute) {
+        return new MemoizingLazyIterable<T, D>(lock, data, compute);
     }
 
     @NotNull

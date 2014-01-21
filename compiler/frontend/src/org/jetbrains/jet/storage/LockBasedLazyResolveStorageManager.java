@@ -32,6 +32,7 @@ import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 
 // This class is kept under the same package as LockBasedStorageManager to get access to its protected members
@@ -132,6 +133,12 @@ public class LockBasedLazyResolveStorageManager implements LazyResolveStorageMan
     @Override
     public <T> T compute(@NotNull Function0<? extends T> computable) {
         return storageManager.compute(computable);
+    }
+
+    @NotNull
+    @Override
+    public <T, D> Iterable<T> createLazyIterable(Iterator<? extends D> data, Function1<? super D, ? extends T> compute) {
+        return storageManager.createLazyIterable(data, compute);
     }
 
     private static class LockProtectedContext implements BindingContext {

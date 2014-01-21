@@ -6,10 +6,7 @@ import jet.Unit;
 import junit.framework.TestCase;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class StorageManagerTest extends TestCase {
 
@@ -424,6 +421,64 @@ public class StorageManagerTest extends TestCase {
 
         assertEquals(2, new C().rec.invoke().intValue());
         assertEquals(2, c.getCount());
+    }
+
+    // Lazy iterable
+
+    public void testEmpty() throws Exception {
+        Iterable<Object> iterable = m.createLazyIterable(
+                Collections.emptyList().iterator(),
+                new Function1<Object, Object>() {
+                    @Override
+                    public Object invoke(Object o) {
+                        fail("Should not be called for empty data. Argument: " + o);
+                        return null;
+                    }
+                }
+        );
+        for (Object o : iterable) {
+            fail("Should be empty. Found: " + o);
+        }
+    }
+
+    public void testOne() throws Exception {
+        doTestMutableIterable("a");
+    }
+
+    public void testTwo() throws Exception {
+        doTestMutableIterable("a", "b");
+    }
+
+    public void testThree() throws Exception {
+        doTestMutableIterable("a", "b", "c");
+    }
+
+    private void doTestMutableIterable(String... items) {
+        List<String> data = Arrays.asList(items);
+        final CounterImpl c = new CounterImpl();
+        Iterable<String> iterable = m.createLazyIterable(
+                data.iterator(),
+                new Function1<String, String>() {
+                    @Override
+                    public String invoke(String s) {
+                        c.inc();
+                        return s;
+                    }
+                }
+        );
+
+        for (int i = 0; i < data.size(); i++) {
+            // iterate up to i
+            int j = 0;
+            for (String s : iterable) {
+                assertEquals("Iterating up to " + i + " at index " + j, data.get(j), s);
+                if (j == i) break;
+                j++;
+            }
+            assertEquals("Too few iterations", i, j);
+        }
+
+        assertEquals(data.size(), c.getCount());
     }
 
     // Utilities
