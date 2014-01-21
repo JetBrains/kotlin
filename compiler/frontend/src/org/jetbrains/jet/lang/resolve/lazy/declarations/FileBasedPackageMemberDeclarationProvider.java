@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
 
@@ -62,11 +61,6 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
                 index.putToIndex(declaration);
             }
         }
-    }
-
-    @Override
-    public boolean isPackageDeclared(@NotNull Name name) {
-        return factory.isPackageDeclared(fqName.child(name));
     }
 
     @Override

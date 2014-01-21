@@ -22,7 +22,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
@@ -47,11 +46,6 @@ public class StubPackageMemberDeclarationProvider extends AbstractStubDeclaratio
         this.fqName = fqName;
         this.project = project;
         this.searchScope = searchScope;
-    }
-
-    @Override
-    public boolean isPackageDeclared(@NotNull Name name) {
-        return LightClassGenerationSupport.getInstance(project).packageExists(fqName, searchScope);
     }
 
     @NotNull
