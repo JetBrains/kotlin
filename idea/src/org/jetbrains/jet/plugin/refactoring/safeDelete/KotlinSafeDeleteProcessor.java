@@ -74,19 +74,20 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
     @NotNull
     protected static NonCodeUsageSearchInfo getSearchInfo(
-            @NotNull PsiElement element, @NotNull final Collection<? extends PsiElement> ignoredElements
+            @NotNull PsiElement element, @NotNull Collection<? extends PsiElement> ignoredElements
     ) {
 
-        return new NonCodeUsageSearchInfo(
-                new Condition<PsiElement>() {
-                    @Override
-                    public boolean value(PsiElement usage) {
-                        if (usage instanceof JetFile) return false;
-                        return isInside(usage, ignoredElements);
-                    }
-                },
-                element
-        );
+        return new NonCodeUsageSearchInfo(getCondition(ignoredElements), element);
+    }
+
+    private static Condition<PsiElement> getCondition(final Collection<? extends PsiElement> ignoredElements) {
+        return new Condition<PsiElement>() {
+            @Override
+            public boolean value(PsiElement usage) {
+                if (usage instanceof JetFile) return false;
+                return isInside(usage, ignoredElements);
+            }
+        };
     }
 
     @NotNull
@@ -121,17 +122,13 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
             if (property.isLocal()) return searchInfo;
 
-            Condition<PsiElement> insideDeleted = searchInfo.getInsideDeletedCondition();
-            for (PsiMethod method: LightClassUtil.getLightClassPropertyMethods(property)) {
-                NonCodeUsageSearchInfo accessorSearchInfo = delegateToJavaProcessor(method, allElementsToDelete, result);
-                if (accessorSearchInfo == null) continue;
-
-                insideDeleted = Conditions.or(insideDeleted, accessorSearchInfo.getInsideDeletedCondition());
-            }
-
-            return insideDeleted != null
-                   ? new NonCodeUsageSearchInfo(insideDeleted, element)
-                   : getSearchInfo(element, allElementsToDelete);
+            Condition<PsiElement> insideDeleted = delegateToJavaProcessorAndCombineConditions(
+                    LightClassUtil.getLightClassPropertyMethods(property),
+                    searchInfo.getInsideDeletedCondition(),
+                    allElementsToDelete,
+                    result
+            );
+            return new NonCodeUsageSearchInfo(insideDeleted, element);
         }
         if (element instanceof JetTypeParameter) {
             return findTypeParameterUsages((JetTypeParameter) element, allElementsToDelete, result);
@@ -148,6 +145,21 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
 
         return getSearchInfo(element, allElementsToDelete);
+    }
+
+    private Condition<PsiElement> delegateToJavaProcessorAndCombineConditions(
+            Iterable<? extends PsiElement> elements,
+            Condition<PsiElement> insideDeleted,
+            PsiElement[] allElementsToDelete,
+            List<UsageInfo> result
+    ) {
+        for (PsiElement element: elements) {
+            NonCodeUsageSearchInfo accessorSearchInfo = delegateToJavaProcessor(element, allElementsToDelete, result);
+            if (accessorSearchInfo == null) continue;
+
+            insideDeleted = Conditions.or(insideDeleted, accessorSearchInfo.getInsideDeletedCondition());
+        }
+        return insideDeleted;
     }
 
     @SuppressWarnings("MethodOverridesPrivateMethodOfSuperclass")
