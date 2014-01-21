@@ -149,7 +149,7 @@ public class PropertyCodegen extends GenerationStateAware {
     // Annotations on properties without backing fields are stored in bytecode on an empty synthetic method. This way they're still
     // accessible via reflection, and 'deprecated' and 'private' flags prevent this method from being called accidentally
     private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor) {
-        if (descriptor.getAnnotations().getAnnotationDescriptors().isEmpty()) return;
+        if (descriptor.getAnnotations().isEmpty()) return;
 
         ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
         Type receiverAsmType = receiver == null ? null : typeMapper.mapType(receiver.getType());

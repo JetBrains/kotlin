@@ -39,7 +39,7 @@ import java.util.List;
 
 public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
-    private Annotations annotations = new AnnotationsImpl(new ArrayList<AnnotationDescriptor>(0));
+    private Annotations annotations;
 
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = Lists.newArrayList();
@@ -183,6 +183,9 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
     @NotNull
     @Override
     public Annotations getAnnotations() {
+        if (annotations == null) {
+            annotations = new AnnotationsImpl(new ArrayList<AnnotationDescriptor>(0));
+        }
         return annotations;
     }
 
@@ -190,8 +193,12 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
         this.annotations = annotations;
     }
 
-    public void addAnnotations(@NotNull List<AnnotationDescriptor> annotationDescriptors) {
-        this.annotations.getAnnotationDescriptors().addAll(annotationDescriptors);
+    public void addAnnotations(@NotNull Iterable<AnnotationDescriptor> annotationDescriptors) {
+
+        AnnotationsImpl annotationsImpl = (AnnotationsImpl) getAnnotations();
+        for (AnnotationDescriptor annotationDescriptor : annotationDescriptors) {
+            annotationsImpl.getAnnotationDescriptors().add(annotationDescriptor);
+        }
     }
 
     private PackageLikeBuilder builder = null;

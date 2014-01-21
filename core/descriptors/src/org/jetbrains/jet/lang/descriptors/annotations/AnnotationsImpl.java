@@ -29,9 +29,13 @@ public class AnnotationsImpl implements Annotations {
     }
 
     @NotNull
-    @Override
     public List<AnnotationDescriptor> getAnnotationDescriptors() {
         return annotations;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getAnnotationDescriptors().isEmpty();
     }
 
     @NotNull

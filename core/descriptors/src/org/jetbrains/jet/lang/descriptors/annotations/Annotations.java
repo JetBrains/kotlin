@@ -17,28 +17,23 @@
 package org.jetbrains.jet.lang.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ReadOnly;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 public interface Annotations extends Iterable<AnnotationDescriptor> {
     Annotations EMPTY = new Annotations() {
-        @NotNull
         @Override
-        public List<AnnotationDescriptor> getAnnotationDescriptors() {
-            return Collections.emptyList();
+        public boolean isEmpty() {
+            return true;
         }
 
         @NotNull
         @Override
         public Iterator<AnnotationDescriptor> iterator() {
-            return getAnnotationDescriptors().iterator();
+            return Collections.<AnnotationDescriptor>emptyList().iterator();
         }
     };
 
-    @NotNull
-    @ReadOnly
-    List<AnnotationDescriptor> getAnnotationDescriptors();
+    boolean isEmpty();
 }

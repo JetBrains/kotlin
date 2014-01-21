@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -216,7 +217,9 @@ public class ResolveElementCache {
             Annotated descriptor = analyzer.resolveToDescriptor(declaration);
 
             // Activate annotation resolving
-            descriptor.getAnnotations().getAnnotationDescriptors();
+            for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
+                // do nothing, all we need is iteration
+            }
         }
     }
 
