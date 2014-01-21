@@ -376,7 +376,7 @@ public class Renderers {
                 typeBounds.add(constraintSystem.getTypeBounds(variable));
             }
             Function<TypeBounds, String> renderTypeBounds = rendererToFunction(RENDER_TYPE_BOUNDS);
-            return "type parameter bounds: \n" + StringUtil.join(typeBounds, renderTypeBounds, ";\n") + "\n" +
+            return "type parameter bounds:\n" + StringUtil.join(typeBounds, renderTypeBounds, ";\n") + "\n" +
                    "status:\n" + ConstraintsUtil.getDebugMessageForStatus(constraintSystem.getStatus());
         }
     };

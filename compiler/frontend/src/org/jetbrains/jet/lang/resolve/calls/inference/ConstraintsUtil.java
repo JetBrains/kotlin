@@ -123,6 +123,12 @@ public class ConstraintsUtil {
                 interestingMethods.add(method);
             }
         }
+        Collections.sort(interestingMethods, new Comparator<Method>() {
+            @Override
+            public int compare(@NotNull Method method1, @NotNull Method method2) {
+                return method1.getName().compareTo(method2.getName());
+            }
+        });
         for (Iterator<Method> iterator = interestingMethods.iterator(); iterator.hasNext(); ) {
             Method method = iterator.next();
             try {
