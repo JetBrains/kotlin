@@ -22,4 +22,5 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 /** Java method created for Kotlin declaration to make it resolvable in Java */
 public interface KotlinLightMethod extends PsiMethod {
     JetDeclaration getOrigin();
+    PsiMethod getDelegate();
 }

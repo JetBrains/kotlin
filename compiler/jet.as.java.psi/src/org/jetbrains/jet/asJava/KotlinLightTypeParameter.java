@@ -20,20 +20,22 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public class KotlinLightTypeParameter extends AbstractLightClass implements PsiTypeParameter {
-
-    private final KotlinLightClassForExplicitDeclaration lightClass;
+    private final PsiTypeParameterListOwner owner;
     private final int index;
     private final String name;
 
     protected KotlinLightTypeParameter(
-            @NotNull KotlinLightClassForExplicitDeclaration lightClass,
+            @NotNull PsiTypeParameterListOwner owner,
             int index,
             @NotNull String name) {
-        super(lightClass.getManager(), JetLanguage.INSTANCE);
-        this.lightClass = lightClass;
+        super(owner.getManager(), JetLanguage.INSTANCE);
+        this.owner = owner;
         this.index = index;
         this.name = name;
     }
@@ -41,13 +43,20 @@ public class KotlinLightTypeParameter extends AbstractLightClass implements PsiT
     @NotNull
     @Override
     public PsiTypeParameter getDelegate() {
-        return lightClass.getDelegate().getTypeParameters()[index];
+        return getOwnerDelegate().getTypeParameters()[index];
+    }
+
+    @NotNull
+    private PsiTypeParameterListOwner getOwnerDelegate() {
+        if (owner instanceof KotlinLightClass) return ((KotlinLightClass) owner).getDelegate();
+        if (owner instanceof KotlinLightMethod) return ((KotlinLightMethod) owner).getDelegate();
+        return owner;
     }
 
     @NotNull
     @Override
     public PsiElement copy() {
-        return new KotlinLightTypeParameter(lightClass, index, name);
+        return new KotlinLightTypeParameter(owner, index, name);
     }
 
     @Override
@@ -68,7 +77,7 @@ public class KotlinLightTypeParameter extends AbstractLightClass implements PsiT
 
     @Override
     public PsiTypeParameterListOwner getOwner() {
-        return lightClass;
+        return owner;
     }
 
     @Override
@@ -102,5 +111,11 @@ public class KotlinLightTypeParameter extends AbstractLightClass implements PsiT
     @Override
     public String toString() {
         return "KotlinLightTypeParameter:" + getName();
+    }
+
+    @NotNull
+    @Override
+    public PsiElement getNavigationElement() {
+        return ((JetTypeParameterListOwner) owner.getNavigationElement()).getTypeParameters().get(index);
     }
 }

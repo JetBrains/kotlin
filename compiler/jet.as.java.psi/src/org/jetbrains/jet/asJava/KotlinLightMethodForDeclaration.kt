@@ -23,9 +23,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.psi.JetDeclaration
-import com.intellij.psi.PsiParameterList
-import org.jetbrains.jet.plugin.JetLanguage
-import kotlin.properties.Delegates
 import org.jetbrains.jet.asJava.light.LightParameter
 import org.jetbrains.jet.asJava.light.LightParameterListBuilder
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
@@ -35,8 +32,12 @@ import kotlin.properties.Delegates
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.CachedValueProvider
-import com.intellij.openapi.application.Result
 import com.intellij.psi.util.CachedValue
+import com.intellij.psi.PsiTypeParameterList
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.JetProperty
+import com.intellij.psi.PsiTypeParameter
 
 public class KotlinLightMethodForDeclaration(manager: PsiManager, val method: PsiMethod, val jetDeclaration: JetDeclaration, containingClass: PsiClass):
         LightMethod(manager, method, containingClass), KotlinLightMethod {
@@ -54,6 +55,18 @@ public class KotlinLightMethodForDeclaration(manager: PsiManager, val method: Ps
             CachedValueProvider.Result.create(parameterBuilder, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
         }, false)
     }
+
+    private val typeParamsList: CachedValue<PsiTypeParameterList> by Delegates.blockingLazy {
+        val cacheManager = CachedValuesManager.getManager(method.getProject())
+        cacheManager.createCachedValue<PsiTypeParameterList>({
+            val declaration =
+                 if (jetDeclaration is JetPropertyAccessor) jetDeclaration.getParentByType(javaClass<JetProperty>()) else jetDeclaration
+            val list = LightClassUtil.buildLightTypeParameterList(this@KotlinLightMethodForDeclaration, jetDeclaration)
+            CachedValueProvider.Result.create(list, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+        }, false)
+    }
+
+    override fun getDelegate(): PsiMethod = method
 
     override fun getNavigationElement() : PsiElement = jetDeclaration
     override fun getOriginalElement() : PsiElement = jetDeclaration
@@ -81,6 +94,10 @@ public class KotlinLightMethodForDeclaration(manager: PsiManager, val method: Ps
     }
 
     override fun getParameterList(): PsiParameterList = paramsList.getValue()!!
+
+    override fun getTypeParameterList(): PsiTypeParameterList? = typeParamsList.getValue()
+    override fun getTypeParameters(): Array<PsiTypeParameter> =
+            getTypeParameterList()?.let { it.getTypeParameters() } ?: PsiTypeParameter.EMPTY_ARRAY
 
     override fun copy(): PsiElement {
         return KotlinLightMethodForDeclaration(getManager()!!, method, jetDeclaration.copy() as JetDeclaration, getContainingClass()!!)
