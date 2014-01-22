@@ -1,0 +1,13 @@
+Cleaning output files:
+out/production/module/test/Foo$Boo.class
+out/production/module/test/Foo.class
+End of files
+Compiling files:
+src/Foo.kt
+End of files
+Cleaning output files:
+out/production/module/test/Bar.class
+End of files
+Compiling files:
+src/Bar.kt
+End of files

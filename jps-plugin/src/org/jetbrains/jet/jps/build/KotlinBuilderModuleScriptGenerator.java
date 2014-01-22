@@ -25,6 +25,7 @@ import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilderFactory;
 import org.jetbrains.jet.compiler.runner.KotlinModuleXmlBuilderFactory;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
+import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
@@ -52,7 +53,11 @@ public class KotlinBuilderModuleScriptGenerator {
     public static final KotlinModuleDescriptionBuilderFactory FACTORY = KotlinModuleXmlBuilderFactory.INSTANCE;
 
     @Nullable
-    public static File generateModuleDescription(CompileContext context, ModuleChunk chunk)
+    public static File generateModuleDescription(
+            CompileContext context,
+            ModuleChunk chunk,
+            List<File> sourceFiles
+    )
             throws IOException
     {
         KotlinModuleDescriptionBuilder builder = FACTORY.create();
@@ -63,11 +68,17 @@ public class KotlinBuilderModuleScriptGenerator {
         for (ModuleBuildTarget target : chunk.getTargets()) {
             outputDirs.add(getOutputDir(target));
         }
+        ProjectBuilderLogger logger = context.getLoggingManager().getProjectBuilderLogger();
         for (ModuleBuildTarget target : chunk.getTargets()) {
             File outputDir = getOutputDir(target);
 
-            List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(target);
-            noSources &= sourceFiles.isEmpty();
+            if (sourceFiles.size() > 0) {
+                noSources = false;
+
+                if (logger.isEnabled()) {
+                    logger.logCompiledFiles(sourceFiles, KotlinBuilder.KOTLIN_BUILDER_NAME, "Compiling files:");
+                }
+            }
 
             builder.addModule(
                     target.getId(),

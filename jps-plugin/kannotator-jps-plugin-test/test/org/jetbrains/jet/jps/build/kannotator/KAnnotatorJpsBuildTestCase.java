@@ -90,11 +90,6 @@ public class KAnnotatorJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         return result;
     }
 
-    @Override
-    protected File doGetProjectDir() throws IOException {
-        return workDir;
-    }
-
     private void initProject() {
         addJdk(JDK_NAME);
         loadProject(workDir.getAbsolutePath());

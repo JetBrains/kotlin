@@ -34,6 +34,7 @@ import org.jetbrains.jet.compiler.CompilerSettings;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.List;
 
 public class KotlinCompilerRunner {
@@ -65,7 +66,7 @@ public class KotlinCompilerRunner {
             MessageCollector messageCollector,
             CompilerEnvironment environment,
             OutputItemsCollector collector,
-            List<File> sourceFiles,
+            Collection<File> sourceFiles,
             List<String> libraryFiles,
             File outputFile
     ) {
@@ -151,7 +152,7 @@ public class KotlinCompilerRunner {
 
     private static void setupK2JsArguments(
             File outputFile,
-            List<File> sourceFiles,
+            Collection<File> sourceFiles,
             List<String> libraryFiles,
             K2JSCompilerArguments settings
     ) {
