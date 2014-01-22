@@ -109,7 +109,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                                        asmMethod.getName(),
                                        asmMethod.getDescriptor(),
                                        jvmSignature.getGenericsSignature(),
-                                       null);
+                                       CodegenUtil.getExceptions(functionDescriptor, typeMapper));
 
         if (owner instanceof PackageFacadeContext) {
             Type ownerType = ((PackageFacadeContext) owner).getDelegateToClassType();
@@ -462,7 +462,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             return;
         }
         int flags = getVisibilityAccessFlag(constructorDescriptor);
-        MethodVisitor mv = classBuilder.newMethod(null, flags, "<init>", "()V", null, null);
+        MethodVisitor mv = classBuilder.newMethod(null, flags, "<init>", "()V", null,
+                                                  CodegenUtil.getExceptions(constructorDescriptor, state.getTypeMapper()));
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
@@ -531,7 +532,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         }
         MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC),
                                        isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX,
-                                       descriptor, null, null);
+                                       descriptor, null,
+                                       CodegenUtil.getExceptions(functionDescriptor, typeMapper));
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             generateDefaultImpl(owner, signature, functionDescriptor, isStatic, mv, loadStrategy);
@@ -739,7 +741,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         int flags = ACC_PUBLIC;
 
-        MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null,
+                                       CodegenUtil.getExceptions(functionDescriptor, typeMapper));
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();

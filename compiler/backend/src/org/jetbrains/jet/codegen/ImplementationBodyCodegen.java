@@ -1425,7 +1425,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Method methodInTrait = typeMapper.mapSignature(fun.getOriginal()).getAsmMethod();
 
         PsiElement origin = descriptorToDeclaration(bindingContext, fun);
-        MethodVisitor mv = v.newMethod(origin, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(origin, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null,
+                                       CodegenUtil.getExceptions(fun, typeMapper));
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(fun);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {

@@ -91,7 +91,7 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     }
     
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method")
-    @InnerTestClasses({Method.PrimitiveOverride.class})
+    @InnerTestClasses({Method.PrimitiveOverride.class, Method.Throws.class})
     public static class Method extends AbstractCompileJavaAgainstKotlinTest {
         public void testAllFilesPresentInMethod() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -260,10 +260,49 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             
         }
         
+        @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method/throws")
+        public static class Throws extends AbstractCompileJavaAgainstKotlinTest {
+            public void testAllFilesPresentInThrows() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/compileJavaAgainstKotlin/method/throws"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("ClassMembers.kt")
+            public void testClassMembers() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/throws/ClassMembers.kt");
+            }
+            
+            @TestMetadata("Constructor.kt")
+            public void testConstructor() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/throws/Constructor.kt");
+            }
+            
+            @TestMetadata("DefaultArgs.kt")
+            public void testDefaultArgs() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/throws/DefaultArgs.kt");
+            }
+            
+            @TestMetadata("Delegation.kt")
+            public void testDelegation() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/throws/Delegation.kt");
+            }
+            
+            @TestMetadata("TopLevel.kt")
+            public void testTopLevel() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/throws/TopLevel.kt");
+            }
+            
+            @TestMetadata("TraitMembers.kt")
+            public void testTraitMembers() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/throws/TraitMembers.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Method");
             suite.addTestSuite(Method.class);
             suite.addTestSuite(PrimitiveOverride.class);
+            suite.addTestSuite(Throws.class);
             return suite;
         }
     }
