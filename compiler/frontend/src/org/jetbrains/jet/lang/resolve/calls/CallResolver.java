@@ -121,8 +121,21 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull JetReferenceExpression functionReference,
             @NotNull Name name) {
+        return resolveCallWithGivenName(context, functionReference, name, true);
+    }
+
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull JetReferenceExpression functionReference,
+            @NotNull Name name,
+            boolean allowVariableWithInvoke
+    ) {
+        List<CallableDescriptorCollector<? extends CallableDescriptor>> collectors =
+                allowVariableWithInvoke ? CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES :
+                Collections.<CallableDescriptorCollector<? extends CallableDescriptor>>singletonList(CallableDescriptorCollectors.FUNCTIONS);
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
-                TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
+                TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, collectors);
         return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE,
                                                context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
     }
