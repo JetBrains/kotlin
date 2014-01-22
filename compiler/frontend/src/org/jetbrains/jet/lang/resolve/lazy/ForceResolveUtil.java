@@ -25,9 +25,9 @@ public class ForceResolveUtil {
     private ForceResolveUtil() {}
 
     public static void forceResolveAllContents(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof LazyDescriptor) {
-            LazyDescriptor lazyDescriptor = (LazyDescriptor) descriptor;
-            lazyDescriptor.forceResolveAllContents();
+        if (descriptor instanceof LazyEntity) {
+            LazyEntity lazyEntity = (LazyEntity) descriptor;
+            lazyEntity.forceResolveAllContents();
         }
     }
 
@@ -38,8 +38,8 @@ public class ForceResolveUtil {
     }
 
     public static void forceResolveAllContents(@NotNull TypeConstructor typeConstructor) {
-        if (typeConstructor instanceof LazyDescriptor) {
-            LazyDescriptor lazyConstructor = (LazyDescriptor) typeConstructor;
+        if (typeConstructor instanceof LazyEntity) {
+            LazyEntity lazyConstructor = (LazyEntity) typeConstructor;
             lazyConstructor.forceResolveAllContents();
         }
     }

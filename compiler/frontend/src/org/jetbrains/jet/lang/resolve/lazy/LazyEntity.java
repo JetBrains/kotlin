@@ -16,6 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-public interface LazyDescriptor {
+public interface LazyEntity {
     void forceResolveAllContents();
 }
