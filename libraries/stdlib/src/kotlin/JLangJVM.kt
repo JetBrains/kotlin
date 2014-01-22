@@ -2,8 +2,24 @@ package kotlin
 
 import java.lang.Class
 import java.lang.Object
+import java.lang.annotation.*
 
 import jet.runtime.Intrinsic
+
+/**
+ * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method
+ *
+ * Example:
+ *
+ *      throws(javaClass<IOException>())
+ *      fun readFile(name: String): String {...}
+ *
+ * will be translated to
+ *
+ *      String readFile(String name) throws IOException {...}
+ */
+Retention(RetentionPolicy.SOURCE)
+public annotation class throws(vararg val exceptionClasses: Class<out Throwable>)
 
 [Intrinsic("kotlin.javaClass.property")] public val <T> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
