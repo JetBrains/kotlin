@@ -163,7 +163,7 @@ fun PsiReference.isPropertyReadOnlyUsage(): Boolean {
 
     val refTarget = resolve()
     if (refTarget is KotlinLightMethod) {
-        val origin = refTarget.getOrigin()
+        val origin = refTarget.origin
         val declaration: JetNamedDeclaration? = when (origin) {
             is JetPropertyAccessor -> origin.getParentByType(javaClass<JetProperty>())
             is JetProperty, is JetParameter -> origin as JetNamedDeclaration

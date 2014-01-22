@@ -198,8 +198,9 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         this.classOrObject = classOrObject;
     }
 
+    @Override
     @NotNull
-    public JetClassOrObject getJetClassOrObject() {
+    public JetClassOrObject getOrigin() {
         return classOrObject;
     }
 

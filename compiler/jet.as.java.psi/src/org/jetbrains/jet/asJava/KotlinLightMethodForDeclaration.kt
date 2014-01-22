@@ -39,15 +39,16 @@ import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.psi.PsiTypeParameter
 
-public class KotlinLightMethodForDeclaration(manager: PsiManager, val method: PsiMethod, val jetDeclaration: JetDeclaration, containingClass: PsiClass):
-        LightMethod(manager, method, containingClass), KotlinLightMethod {
+public class KotlinLightMethodForDeclaration(
+        manager: PsiManager, override val delegate: PsiMethod, override val origin: JetDeclaration, containingClass: PsiClass
+): LightMethod(manager, delegate, containingClass), KotlinLightMethod {
 
     private val paramsList: CachedValue<PsiParameterList> by Delegates.blockingLazy {
-        val cacheManager = CachedValuesManager.getManager(method.getProject())
+        val cacheManager = CachedValuesManager.getManager(delegate.getProject())
         cacheManager.createCachedValue<PsiParameterList>({
             val parameterBuilder = LightParameterListBuilder(getManager(), JetLanguage.INSTANCE)
 
-            for ((index, parameter) in method.getParameterList().getParameters().withIndices()) {
+            for ((index, parameter) in delegate.getParameterList().getParameters().withIndices()) {
                 val lightParameter = LightParameter(parameter.getName() ?: "p$index", parameter.getType(), this, JetLanguage.INSTANCE)
                 parameterBuilder.addParameter(lightParameter)
             }
@@ -57,36 +58,33 @@ public class KotlinLightMethodForDeclaration(manager: PsiManager, val method: Ps
     }
 
     private val typeParamsList: CachedValue<PsiTypeParameterList> by Delegates.blockingLazy {
-        val cacheManager = CachedValuesManager.getManager(method.getProject())
+        val cacheManager = CachedValuesManager.getManager(delegate.getProject())
         cacheManager.createCachedValue<PsiTypeParameterList>({
             val declaration =
-                 if (jetDeclaration is JetPropertyAccessor) jetDeclaration.getParentByType(javaClass<JetProperty>()) else jetDeclaration
-            val list = LightClassUtil.buildLightTypeParameterList(this@KotlinLightMethodForDeclaration, jetDeclaration)
+                 if (origin is JetPropertyAccessor) origin.getParentByType(javaClass<JetProperty>()) else origin
+            val list = LightClassUtil.buildLightTypeParameterList(this@KotlinLightMethodForDeclaration, origin)
             CachedValueProvider.Result.create(list, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
         }, false)
     }
 
-    override fun getDelegate(): PsiMethod = method
-
-    override fun getNavigationElement() : PsiElement = jetDeclaration
-    override fun getOriginalElement() : PsiElement = jetDeclaration
-    override fun getOrigin(): JetDeclaration? = jetDeclaration
+    override fun getNavigationElement() : PsiElement = origin
+    override fun getOriginalElement() : PsiElement = origin
 
     override fun getParent(): PsiElement? = getContainingClass()
 
     override fun setName(name: String): PsiElement? {
-        (jetDeclaration as PsiNamedElement).setName(name)
+        (origin as PsiNamedElement).setName(name)
         return this
     }
 
     public override fun delete() {
-        if (jetDeclaration.isValid()) {
-            jetDeclaration.delete()
+        if (origin.isValid()) {
+            origin.delete()
         }
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KotlinLightMethod && getOrigin() == another.getOrigin()) {
+        if (another is KotlinLightMethod && origin == another.origin) {
             return true
         }
 
@@ -100,6 +98,6 @@ public class KotlinLightMethodForDeclaration(manager: PsiManager, val method: Ps
             getTypeParameterList()?.let { it.getTypeParameters() } ?: PsiTypeParameter.EMPTY_ARRAY
 
     override fun copy(): PsiElement {
-        return KotlinLightMethodForDeclaration(getManager()!!, method, jetDeclaration.copy() as JetDeclaration, getContainingClass()!!)
+        return KotlinLightMethodForDeclaration(getManager()!!, delegate, origin.copy() as JetDeclaration, getContainingClass()!!)
     }
 }

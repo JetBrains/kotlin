@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java.jetAsJava;
+package org.jetbrains.jet.lang.resolve.java.jetAsJava
 
-import com.intellij.psi.PsiMethod;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.psi.JetDeclaration
 
-/** Java method created for Kotlin declaration to make it resolvable in Java */
-public interface KotlinLightMethod extends PsiMethod {
-    JetDeclaration getOrigin();
-    PsiMethod getDelegate();
+trait KotlinLightElement<T: JetDeclaration, D: PsiElement> {
+    val origin: T?
+    val delegate: D
 }

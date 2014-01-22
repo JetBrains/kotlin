@@ -19,11 +19,9 @@ package org.jetbrains.jet.asJava;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement
+import org.jetbrains.jet.lang.psi.JetClassOrObject
 
-public interface KotlinLightClass extends PsiClass {
-    @NotNull
-    FqName getFqName();
-
-    @NotNull
-    PsiClass getDelegate();
+public trait KotlinLightClass: PsiClass, KotlinLightElement<JetClassOrObject, PsiClass> {
+    val fqName: FqName
 }

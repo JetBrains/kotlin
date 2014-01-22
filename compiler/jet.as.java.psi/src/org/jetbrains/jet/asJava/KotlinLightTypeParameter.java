@@ -20,12 +20,15 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetTypeParameter;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-public class KotlinLightTypeParameter extends AbstractLightClass implements PsiTypeParameter {
+public class KotlinLightTypeParameter
+        extends AbstractLightClass implements PsiTypeParameter, KotlinLightElement<JetTypeParameter, PsiTypeParameter> {
     private final PsiTypeParameterListOwner owner;
     private final int index;
     private final String name;
@@ -44,6 +47,12 @@ public class KotlinLightTypeParameter extends AbstractLightClass implements PsiT
     @Override
     public PsiTypeParameter getDelegate() {
         return getOwnerDelegate().getTypeParameters()[index];
+    }
+
+    @NotNull
+    @Override
+    public JetTypeParameter getOrigin() {
+        return ((JetTypeParameterListOwner) owner.getNavigationElement()).getTypeParameters().get(index);
     }
 
     @NotNull
@@ -116,6 +125,6 @@ public class KotlinLightTypeParameter extends AbstractLightClass implements PsiT
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        return ((JetTypeParameterListOwner) owner.getNavigationElement()).getTypeParameters().get(index);
+        return getOrigin();
     }
 }
