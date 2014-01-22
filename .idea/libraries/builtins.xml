@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="builtins">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/dist/builtins" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
