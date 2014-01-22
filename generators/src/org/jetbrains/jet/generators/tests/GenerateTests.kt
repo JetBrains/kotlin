@@ -90,6 +90,7 @@ import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
 import org.jetbrains.jet.plugin.intentions.AbstractIntentionTest
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithStdLib
+import org.jetbrains.jet.plugin.codeInsight.AbstractInsertImportOnPasteTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -439,6 +440,11 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJavaToKotlinCopyPasteConversionTest>()) {
             model("copyPaste/conversion", extension = "java")
+        }
+
+        testClass(javaClass<AbstractInsertImportOnPasteTest>()) {
+            model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCopy", testClassName = "Copy", recursive = false)
+            model("copyPaste/imports", pattern = """^([^\.]+)\.kt$""", testMethod = "doTestCut", testClassName = "Cut", recursive = false)
         }
 
         testClass(javaClass<AbstractShortenRefsTest>()) {

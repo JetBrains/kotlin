@@ -250,6 +250,8 @@
     <backspaceHandlerDelegate implementation="org.jetbrains.jet.plugin.editor.KotlinBackspaceHandler"/>
 
     <copyPastePostProcessor implementation="org.jetbrains.jet.plugin.conversion.copy.ConvertJavaCopyPastePostProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.jet.plugin.codeInsight.KotlinCopyPasteReferenceProcessor"/>
+
     <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.jet.plugin.JetQuickDocumentationProvider" order="first"/>
     <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
     <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
