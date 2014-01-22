@@ -42,7 +42,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        File sourceFilesRoot = new File(TEST_DATA_PATH + getTestName(false));
+        File sourceFilesRoot = new File(TEST_DATA_PATH + "general/" + getTestName(false));
         workDir = copyTestDataToTmpDir(sourceFilesRoot);
         getOrCreateProjectDir();
     }
