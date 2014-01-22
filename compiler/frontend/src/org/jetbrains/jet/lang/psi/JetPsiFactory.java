@@ -96,18 +96,18 @@ public class JetPsiFactory {
     }
 
     @NotNull
-    public static PsiElement createEQ(Project project) {
-        PsiElement eq = createFunction(project, "fun foo() = foo").getEqualsToken();
-        assert eq != null;
-        return eq;
-    }
-
-    @NotNull
     public static PsiElement createColon(Project project) {
         JetProperty property = createProperty(project, "val x: Int");
         PsiElement colon = property.findElementAt(5);
         assert colon != null;
         return colon;
+    }
+
+    @NotNull
+    public static PsiElement createEQ(Project project) {
+        PsiElement eq = createFunction(project, "fun foo() = foo").getEqualsToken();
+        assert eq != null;
+        return eq;
     }
 
     @NotNull

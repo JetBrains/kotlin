@@ -88,6 +88,7 @@ import org.jetbrains.jet.resolve.AbstractAdditionalLazyResolveDescriptorRenderer
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
 import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
+import org.jetbrains.jet.plugin.intentions.AbstractIntentionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -254,6 +255,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractQuickFixTest>()) {
             model("quickfix", pattern = "^before(\\w+)\\.kt$")
+        }
+
+        testClass(javaClass<AbstractIntentionTest>(), "ConvertToExpressionBodyTestGenerated") {
+            model("intentions/convertToExpressionBody", pattern = "^before(\\w+)\\.kt$")
         }
 
         testClass(javaClass<AbstractJSBasicCompletionTest>()) {
