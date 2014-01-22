@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,13 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import com.intellij.openapi.util.Key
-import java.util.HashMap
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetClassInitializer
 import org.jetbrains.jet.plugin.project.ResolveElementCache
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
-import java.util.Collections
-import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValue
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil
@@ -66,7 +58,7 @@ class KotlinLightClassContextCache(val project: Project) {
         }
     }
 
-    public fun getLightClassContext(classOrObject: JetClassOrObject): BindingContext {
+    public fun getLightClassBindingContext(classOrObject: JetClassOrObject): BindingContext {
         if (JetPsiUtil.isLocal(classOrObject)) {
             val resolveElementCache = CachedValuesManager.getManager(project).getCachedValue(project, cacheKey, provider, false)
             return resolveElementCache?.resolveToElement(classOrObject) ?: BindingContext.EMPTY

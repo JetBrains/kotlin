@@ -132,7 +132,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             }
             else {
                 KotlinCacheManager cacheManager = KotlinCacheManager.getInstance(project);
-                return new LightClassConstructionContext(cacheManager.getLightClassContextCache().getLightClassContext(classOrObject), null);
+                return new LightClassConstructionContext(cacheManager.getLightClassContextCache().getLightClassBindingContext(classOrObject), null);
             }
         }
         finally {
