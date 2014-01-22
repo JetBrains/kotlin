@@ -1760,6 +1760,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 continue;
             }
 
+            if (CallResolverUtil.isOrOverridesSynthesized(callableMemberDescriptor)) {
+                continue;
+            }
+
             Collection<CallableMemberDescriptor> overriddenDeclarations =
                     OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
 
