@@ -4142,6 +4142,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/primitiveTypes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("comparisonWithNaN.kt")
+        public void testComparisonWithNaN() throws Exception {
+            doTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNaN.kt");
+        }
+        
         @TestMetadata("comparisonWithNullCallsFun.kt")
         public void testComparisonWithNullCallsFun() throws Exception {
             doTest("compiler/testData/codegen/box/primitiveTypes/comparisonWithNullCallsFun.kt");

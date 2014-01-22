@@ -502,10 +502,10 @@ public abstract class StackValue {
             }
             if (operandType == Type.FLOAT_TYPE || operandType == Type.DOUBLE_TYPE) {
                 if (opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
-                    v.cmpg(operandType);
+                    v.cmpl(operandType);
                 }
                 else {
-                    v.cmpl(operandType);
+                    v.cmpg(operandType);
                 }
             }
             else if (operandType == Type.LONG_TYPE) {
