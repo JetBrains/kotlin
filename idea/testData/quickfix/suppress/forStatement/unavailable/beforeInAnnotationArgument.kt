@@ -1,4 +1,6 @@
 // "class com.intellij.codeInspection.SuppressIntentionAction" "false"
 
-[suppress("FOO"<caret>!!)]
+[Ann(Integer.MAX_VALUE<caret> + 1)]
 fun foo() {}
+
+annotation class Ann(val b: Int)
