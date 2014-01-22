@@ -2369,6 +2369,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                 doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/compiledJavaCompareWithKotlin/library/LoadIterator.kt");
             }
             
+            @TestMetadata("Max.kt")
+            public void testMax() throws Exception {
+                doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/compiledJavaCompareWithKotlin/library/Max.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/loadJava/compiledJavaCompareWithKotlin/modality")

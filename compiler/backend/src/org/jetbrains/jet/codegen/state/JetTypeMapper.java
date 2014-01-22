@@ -282,7 +282,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
         if (descriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-            Type type = mapType(typeParameterDescriptor.getUpperBoundsAsType(), kind);
+            Type type = mapType(typeParameterDescriptor.getUpperBounds().iterator().next(), kind);
             if (signatureVisitor != null) {
                 signatureVisitor.writeTypeVariable(typeParameterDescriptor.getName(), type);
             }

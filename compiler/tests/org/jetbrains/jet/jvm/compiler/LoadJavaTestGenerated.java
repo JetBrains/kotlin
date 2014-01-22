@@ -1386,6 +1386,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/library/LoadIterator.java");
             }
             
+            @TestMetadata("Max.java")
+            public void testMax() throws Exception {
+                doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/library/Max.java");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/loadJava/compiledJavaCompareWithKotlin/modality")
