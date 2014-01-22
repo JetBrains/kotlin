@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
-    protected static final String TEST_DATA_PATH = "jps-plugin/testData/";
+    public static final String TEST_DATA_PATH = "jps-plugin/testData/";
 
     protected File workDir;
 
