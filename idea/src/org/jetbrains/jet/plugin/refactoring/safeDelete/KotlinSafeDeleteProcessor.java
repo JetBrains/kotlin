@@ -239,7 +239,9 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                 PsiElement usageElement = javaDeleteUsageInfo.getElement();
                 JetImportDirective importDirective = PsiTreeUtil.getParentOfType(usageElement, JetImportDirective.class, false);
                 if (importDirective != null) {
-                    usageInfo = new SafeDeleteImportDirectiveUsageInfo(importDirective, (JetDeclaration) element.getNavigationElement());
+                    usageInfo = new SafeDeleteImportDirectiveUsageInfo(
+                            importDirective, (JetDeclaration) AsJavaPackage.getUnwrapped(element)
+                    );
                 }
             }
             if (usageInfo != null) {

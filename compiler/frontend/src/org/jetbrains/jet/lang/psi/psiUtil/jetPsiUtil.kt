@@ -179,9 +179,6 @@ fun JetDeclaration.isOverridable(): Boolean {
         hasModifier(JetTokens.ABSTRACT_KEYWORD) || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.OVERRIDE_KEYWORD)
 }
 
-val PsiElement.namedNavigationElement: PsiNamedElement?
-    get() = getNavigationElement()?.getParentByType(javaClass<PsiNamedElement>())
-
 fun PsiElement.isExtensionDeclaration(): Boolean {
     val callable: JetCallableDeclaration? = when (this) {
         is JetNamedFunction, is JetProperty -> this as JetCallableDeclaration

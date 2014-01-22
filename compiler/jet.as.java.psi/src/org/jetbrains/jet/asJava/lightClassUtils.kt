@@ -34,6 +34,8 @@ import com.intellij.psi.PsiTypeParameter
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.JetTypeParameterList
 import com.intellij.psi.PsiTypeParameterListOwner
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
@@ -105,3 +107,10 @@ fun JetTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
     return lightOwners?.map { lightOwner -> (lightOwner as PsiTypeParameterListOwner).getTypeParameters()[paramIndex] }
         ?: Collections.emptyList()
 }
+
+// Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
+val PsiElement.unwrapped: PsiElement?
+    get() = if (this is KotlinLightElement<*, *>) origin else this
+
+val PsiElement.namedUnwrappedElement: PsiNamedElement?
+    get() = unwrapped?.getParentByType(javaClass<PsiNamedElement>())

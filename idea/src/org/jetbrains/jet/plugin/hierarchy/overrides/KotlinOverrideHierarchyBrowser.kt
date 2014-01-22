@@ -30,6 +30,7 @@ import java.text.MessageFormat
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.asJava.unwrapped
 
 class KotlinOverrideHierarchyBrowser(
         project: Project, baseElement: PsiElement
@@ -56,7 +57,7 @@ class KotlinOverrideHierarchyBrowser(
     }
 
     override fun getContentDisplayName(typeName: String, element: PsiElement): String? {
-        val targetElement = element.getNavigationElement()
+        val targetElement = element.unwrapped
         if (targetElement is JetDeclaration) {
             return ElementDescriptionUtil.getElementDescription(targetElement, RefactoringDescriptionLocation.WITHOUT_PARENT)
         }

@@ -21,7 +21,6 @@ import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetTypeParameter;
-import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
@@ -52,7 +51,10 @@ public class KotlinLightTypeParameter
     @NotNull
     @Override
     public JetTypeParameter getOrigin() {
-        return ((JetTypeParameterListOwner) owner.getNavigationElement()).getTypeParameters().get(index);
+        JetTypeParameterListOwner jetOwner = (JetTypeParameterListOwner) AsJavaPackage.getUnwrapped(owner);
+        assert (jetOwner != null) : "Invalid type parameter owner: " + owner;
+
+        return jetOwner.getTypeParameters().get(index);
     }
 
     @NotNull

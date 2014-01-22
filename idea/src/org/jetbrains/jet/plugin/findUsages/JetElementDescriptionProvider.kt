@@ -26,12 +26,13 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
 import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.asJava.unwrapped
 import org.jetbrains.jet.plugin.search.usagesSearch.descriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public class JetElementDescriptionProvider : ElementDescriptionProvider {
     public override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
-        val targetElement = element.getNavigationElement()
+        val targetElement = element.unwrapped
 
         fun elementKind() = when (targetElement) {
             is JetClass -> if (targetElement.isTrait()) "trait" else "class"

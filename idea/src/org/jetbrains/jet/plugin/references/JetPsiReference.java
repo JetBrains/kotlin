@@ -25,11 +25,10 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
@@ -94,8 +93,8 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         PsiElement resolvedElement = resolve();
         if (resolvedElement == null) return false;
 
-        PsiNamedElement namedDeclaration = PsiUtilPackage.getNamedNavigationElement(element);
-        PsiNamedElement namedResolvedDeclaration = PsiUtilPackage.getNamedNavigationElement(resolvedElement);
+        PsiNamedElement namedDeclaration = AsJavaPackage.getNamedUnwrappedElement(element);
+        PsiNamedElement namedResolvedDeclaration = AsJavaPackage.getNamedUnwrappedElement(resolvedElement);
 
         return namedDeclaration != null && namedDeclaration.equals(namedResolvedDeclaration);
     }
