@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
@@ -113,7 +114,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
     @Override
     public void forceResolveAllContents() {
-        getAnnotations();
+        ForceResolveUtil.forceResolveAllContents(getAnnotations());
         getClassObjectType();
         getContainingDeclaration();
         getDefaultType();

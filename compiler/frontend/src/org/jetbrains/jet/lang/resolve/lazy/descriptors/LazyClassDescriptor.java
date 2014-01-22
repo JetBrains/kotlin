@@ -319,7 +319,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
 
     @Override
     public void forceResolveAllContents() {
-        getAnnotations();
+        ForceResolveUtil.forceResolveAllContents(getAnnotations());
         getClassObjectDescriptor();
         getClassObjectType();
         getConstructors();
@@ -460,7 +460,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
 
         @Override
         public void forceResolveAllContents() {
-            getAnnotations();
+            ForceResolveUtil.forceResolveAllContents(getAnnotations());
             getSupertypes();
             getParameters();
         }

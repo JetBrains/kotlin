@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 
@@ -38,8 +39,16 @@ public class ForceResolveUtil {
     }
 
     public static void forceResolveAllContents(@NotNull TypeConstructor typeConstructor) {
-        if (typeConstructor instanceof LazyEntity) {
-            LazyEntity lazyConstructor = (LazyEntity) typeConstructor;
+        doForceResolveAllContents(typeConstructor);
+    }
+
+    public static void forceResolveAllContents(@NotNull Annotations annotations) {
+        doForceResolveAllContents(annotations);
+    }
+
+    private static void doForceResolveAllContents(Object object) {
+        if (object instanceof LazyEntity) {
+            LazyEntity lazyConstructor = (LazyEntity) object;
             lazyConstructor.forceResolveAllContents();
         }
     }
