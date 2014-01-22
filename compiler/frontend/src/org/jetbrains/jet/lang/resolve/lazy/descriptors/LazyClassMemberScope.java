@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -235,7 +235,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
                 if (parameter.getValOrVarNode() != null && name.equals(parameter.getNameAsName())) {
                     PropertyDescriptor propertyDescriptor =
-                            resolveSession.getInjector().getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
+                            resolveSession.getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
                                     thisDescriptor,
                                     valueParameterDescriptor,
                                     thisDescriptor.getScopeForClassHeaderResolution(),
@@ -271,7 +271,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             @Nullable
             @Override
             public JetType resolve(@NotNull JetTypeReference reference) {
-                return resolveSession.getInjector().getTypeResolver().resolveType(
+                return resolveSession.getTypeResolver().resolveType(
                         thisDescriptor.getScopeForClassHeaderResolution(),
                         reference,
                         resolveSession.getTrace(),
@@ -359,7 +359,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
             if (!thisDescriptor.getKind().isSingleton()) {
                 JetClass jetClass = (JetClass) classOrObject;
-                ConstructorDescriptorImpl constructor = resolveSession.getInjector().getDescriptorResolver()
+                ConstructorDescriptorImpl constructor = resolveSession.getDescriptorResolver()
                         .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),
                                                              thisDescriptor,
                                                              jetClass,

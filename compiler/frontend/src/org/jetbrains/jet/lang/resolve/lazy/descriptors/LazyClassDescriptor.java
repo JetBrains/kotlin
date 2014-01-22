@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -302,7 +302,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
         JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
         JetModifierList modifierList = classInfo.getModifierList();
         if (modifierList != null) {
-            AnnotationResolver annotationResolver = resolveSession.getInjector().getAnnotationResolver();
+            AnnotationResolver annotationResolver = resolveSession.getAnnotationResolver();
             JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(classInfo.getScopeAnchor());
             return annotationResolver.resolveAnnotationsWithArguments(scopeForDeclaration, modifierList, resolveSession.getTrace());
         }
@@ -361,7 +361,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
                             return Collections.singleton(KotlinBuiltIns.getInstance().getAnyType());
                         }
 
-                        List<JetType> allSupertypes = resolveSession.getInjector().getDescriptorResolver()
+                        List<JetType> allSupertypes = resolveSession.getDescriptorResolver()
                                 .resolveSupertypes(getScopeForClassHeaderResolution(), LazyClassDescriptor.this, classOrObject,
                                                    resolveSession.getTrace());
 
@@ -468,6 +468,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
 
     @NotNull
     private ScopeProvider getScopeProvider() {
-        return resolveSession.getInjector().getScopeProvider();
+        return resolveSession.getScopeProvider();
     }
 }
