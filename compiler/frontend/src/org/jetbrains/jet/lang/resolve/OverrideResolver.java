@@ -618,14 +618,13 @@ public class OverrideResolver {
     @NotNull
     private JetAnnotationEntry findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
         ClassDescriptor stdDataClassAnnotation = KotlinBuiltIns.getInstance().getDataClassAnnotation();
-        for (AnnotationDescriptor annotation : dataClass.getAnnotations()) {
-            if (stdDataClassAnnotation.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
-                return BindingContextUtils.getNotNull(trace.getBindingContext(),
-                                                      BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT,
-                                                      annotation);
-            }
+        AnnotationDescriptor annotation = dataClass.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(stdDataClassAnnotation));
+        if (annotation == null) {
+            throw new IllegalStateException("No data annotation is found for data class " + dataClass);
         }
-        throw new IllegalStateException("No data annotation is found for data class");
+        return BindingContextUtils.getNotNull(trace.getBindingContext(),
+                                              BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT,
+                                              annotation);
     }
 
     private CallableMemberDescriptor findInvisibleOverriddenDescriptor(CallableMemberDescriptor declared, ClassDescriptor declaringClass) {

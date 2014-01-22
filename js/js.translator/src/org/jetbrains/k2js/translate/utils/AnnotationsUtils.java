@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
 
@@ -85,20 +85,7 @@ public final class AnnotationsUtils {
 
     @Nullable
     private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor, @NotNull String fqn) {
-        for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
-            if (getAnnotationClassFQName(annotationDescriptor).equals(fqn)) {
-                return annotationDescriptor;
-            }
-        }
-        return null;
-    }
-
-    @NotNull
-    private static String getAnnotationClassFQName(@NotNull AnnotationDescriptor annotationDescriptor) {
-        DeclarationDescriptor annotationDeclaration =
-                annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        assert annotationDeclaration != null : "Annotation supposed to have a declaration";
-        return DescriptorUtils.getFqName(annotationDeclaration).asString();
+        return descriptor.getAnnotations().findAnnotation(new FqName(fqn));
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {

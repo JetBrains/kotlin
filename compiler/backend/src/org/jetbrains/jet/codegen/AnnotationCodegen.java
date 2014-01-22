@@ -34,9 +34,11 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.*;
 
@@ -288,23 +290,19 @@ public abstract class AnnotationCodegen {
 
     @NotNull
     private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
-        for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
-            String internalName = typeMapper.mapType(annotationDescriptor.getType()).getInternalName();
-            if ("java/lang/annotation/Retention".equals(internalName)) {
-                Collection<CompileTimeConstant<?>> valueArguments = annotationDescriptor.getAllValueArguments().values();
-                assert valueArguments.size() == 1 : "Retention should have an argument: " + annotationDescriptor;
-                CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
-                assert compileTimeConstant instanceof EnumValue : "Retention argument should be enum value: " + compileTimeConstant;
-                ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
-                JetType classObjectType = enumEntry.getClassObjectType();
-                assert classObjectType != null : "Enum entry should have a class object: " + enumEntry;
-                assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName()) :
-                        "Retention argument should be of type RetentionPolicy: " + enumEntry;
-                return RetentionPolicy.valueOf(enumEntry.getName().asString());
-            }
-        }
+        AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
+        if (retentionAnnotation == null) return RetentionPolicy.CLASS;
 
-        return RetentionPolicy.CLASS;
+        Collection<CompileTimeConstant<?>> valueArguments = retentionAnnotation.getAllValueArguments().values();
+        assert valueArguments.size() == 1 : "Retention should have an argument: " + retentionAnnotation + " on " + descriptor;
+        CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
+        assert compileTimeConstant instanceof EnumValue : "Retention argument should be enum value: " + compileTimeConstant;
+        ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
+        JetType classObjectType = enumEntry.getClassObjectType();
+        assert classObjectType != null : "Enum entry should have a class object: " + enumEntry;
+        assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName()) :
+                "Retention argument should be of type RetentionPolicy: " + enumEntry;
+        return RetentionPolicy.valueOf(enumEntry.getName().asString());
     }
 
     @NotNull

@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -932,13 +931,8 @@ public class KotlinBuiltIns {
     }
 
     static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
-        Annotations annotations = descriptor.getOriginal().getAnnotations();
-        for (AnnotationDescriptor annotation : annotations) {
-            if (annotationClass.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
-                return true;
-            }
-        }
-        return false;
+        FqName fqName = DescriptorUtils.getFqName(annotationClass).toSafe();
+        return descriptor.getOriginal().getAnnotations().findAnnotation(fqName) != null;
     }
 
     public boolean isVolatile(@NotNull PropertyDescriptor descriptor) {
