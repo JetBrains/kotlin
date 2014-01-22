@@ -27,12 +27,15 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.storage.LockBasedStorageManagerWithExceptionTracking;
+import org.jetbrains.jet.storage.LockBasedLazyResolveStorageManager;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +63,8 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         lazyModule.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         LockBasedStorageManagerWithExceptionTracking storageManager = LockBasedStorageManagerWithExceptionTracking.create();
         final ResolveSession resolveSession = new ResolveSession(getProject(), storageManager, lazyModule,
-                                                                 new FileBasedDeclarationProviderFactory(storageManager, files));
+                                                                 new FileBasedDeclarationProviderFactory(storageManager, files),
+                                                                 new BindingTraceContext());
 
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
         psiFile.accept(new JetVisitorVoid() {
