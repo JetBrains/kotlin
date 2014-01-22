@@ -21,20 +21,35 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaAnnotationDescriptor
 
-fun LazyJavaResolverContextWithTypes.resolveAnnotations(javaAnnotations: Collection<JavaAnnotation>): Annotations
-        = AnnotationsImpl(javaAnnotations.flatMap {
-            jAnnotation ->
-            // TODO: we resolve all annotations, which slightly compromises our laziness
-            val fqName = jAnnotation.getFqName()
-            if (fqName == null || JavaAnnotationResolver.isSpecialAnnotation(fqName)) {
-                listOf<AnnotationDescriptor>()
-            }
-            else listOf(LazyJavaAnnotationDescriptor(this, jAnnotation))
-        })
+class LazyJavaAnnotations(c: LazyJavaResolverContextWithTypes, val annotationOwner: JavaAnnotationOwner) : Annotations {
+    private val annotationDescriptors = c.storageManager.createMemoizedFunctionWithNullableValues {
+        (jAnnotation: JavaAnnotation) ->
+        val fqName = jAnnotation.getFqName()
+        if (fqName == null || JavaAnnotationResolver.isSpecialAnnotation(fqName)) {
+            null
+        }
+        else LazyJavaAnnotationDescriptor(c, jAnnotation)
+    }
+
+    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? {
+        val jAnnotation = annotationOwner.findAnnotation(fqName)
+        if (jAnnotation == null) return null
+
+        return annotationDescriptors(jAnnotation)
+    }
+
+    [suppress("UNCHECKED_CAST")] // any iterator can be cast to MutableIterator
+    override fun iterator(): MutableIterator<AnnotationDescriptor>
+            = annotationOwner.getAnnotations().iterator().map { annotationDescriptors(it) }.filterNotNull() as MutableIterator
+
+    override fun isEmpty() = iterator().hasNext()
+}
+
+fun LazyJavaResolverContextWithTypes.resolveAnnotations(annotationsOwner: JavaAnnotationOwner): Annotations
+        = LazyJavaAnnotations(this, annotationsOwner)
 
 private fun GlobalJavaResolverContext.hasAnnotation(owner: JavaAnnotationOwner, annotationFqName: FqName): Boolean
         = owner.findAnnotation(annotationFqName) != null || externalAnnotationResolver.findExternalAnnotation(owner, annotationFqName) != null

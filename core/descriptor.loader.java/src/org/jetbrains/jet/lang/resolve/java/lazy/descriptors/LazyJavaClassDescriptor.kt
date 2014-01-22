@@ -93,7 +93,7 @@ class LazyJavaClassDescriptor(
 
     override fun getConstructors() = _scopeForMemberLookup._constructors()
 
-    private val _annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass.getAnnotations()) }
+    private val _annotations = c.storageManager.createLazyValue { c.resolveAnnotations(jClass) }
     override fun getAnnotations() = _annotations()
 
     private val _functionTypeForSamInterface = c.storageManager.createNullableLazyValue {

@@ -102,7 +102,7 @@ public abstract class LazyJavaMemberScope(
 
     internal fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): SimpleFunctionDescriptor {
 
-        val functionDescriptorImpl = JavaMethodDescriptor(_containingDeclaration, c.resolveAnnotations(method.getAnnotations()), method.getName())
+        val functionDescriptorImpl = JavaMethodDescriptor(_containingDeclaration, c.resolveAnnotations(method), method.getName())
 
         val c = c.child(functionDescriptorImpl, method.getTypeParameters().toSet())
 
@@ -194,7 +194,7 @@ public abstract class LazyJavaMemberScope(
             ValueParameterDescriptorImpl(
                     function,
                     index,
-                    c.resolveAnnotations(javaParameter.getAnnotations()),
+                    c.resolveAnnotations(javaParameter),
                     // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
                     javaParameter.getName() ?: Name.identifier("p$index"),
                     outType,
@@ -251,7 +251,7 @@ public abstract class LazyJavaMemberScope(
     private fun createPropertyDescriptor(field: JavaField): PropertyDescriptorImpl {
         val isVar = !field.isFinal()
         val visibility = field.getVisibility()
-        val annotations = c.resolveAnnotations(field.getAnnotations())
+        val annotations = c.resolveAnnotations(field)
         val propertyName = field.getName()
 
         return JavaPropertyDescriptor(_containingDeclaration, annotations, visibility, isVar, propertyName)
