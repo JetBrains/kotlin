@@ -22,14 +22,9 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import kotlin.test.*
-import com.intellij.lang.java.JavaRefactoringSupportProvider
-import com.intellij.testFramework.TestDataProvider
-import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.ide.DataManager
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.LangDataKeys
 
 public class InplaceRenameTest : LightCodeInsightTestCase() {
     override fun isRunInWriteAction(): Boolean = false
@@ -80,7 +75,7 @@ public class InplaceRenameTest : LightCodeInsightTestCase() {
 
         assertNotNull(element)
 
-        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.getName(), element!!,
+        val dataContext = SimpleDataContext.getSimpleContext(LangDataKeys.PSI_ELEMENT.getName(), element!!,
                                                              LightPlatformCodeInsightTestCase.getCurrentEditorDataContext())
 
         val handler = VariableInplaceRenameHandler()

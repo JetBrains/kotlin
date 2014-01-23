@@ -36,7 +36,7 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
     }
     
     @Override
-    public String setupUIComponentPresentation(String text, int highlightStartOffset, int highlightEndOffset,
+    public void setupUIComponentPresentation(String text, int highlightStartOffset, int highlightEndOffset,
                                              boolean isDisabled, boolean strikeout,
                                              boolean isDisabledBeforeHighlight, Color background) {
         String highlightedText;
@@ -56,9 +56,6 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
                             "Strikeout: " + strikeout + ", " +
                             "Green: " + background.equals(JetFunctionParameterInfoHandler.GREEN_BACKGROUND);
         result.add(resultText);
-
-        // return value not used, just return something
-        return resultText;
     }
 
     @Override

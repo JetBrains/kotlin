@@ -40,7 +40,6 @@ import com.intellij.psi.PsiClass
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.asJava.toLightMethods
-import com.siyeh.ig.psiutils.CollectionUtils
 import com.intellij.util.containers.ContainerUtil
 import java.util.HashSet
 
@@ -51,7 +50,7 @@ class KotlinOverrideTreeStructure(project: Project, val element: PsiElement) : H
         setBaseElement(javaTreeStructures.first!!.getBaseDescriptor()!!)
     }
 
-    override fun buildChildren(descriptor: HierarchyNodeDescriptor): Array<Any> {
+    override fun buildChildren(descriptor: HierarchyNodeDescriptor?): Array<Any>? {
         fun buildChildrenByTreeStructure(javaTreeStructure: MethodHierarchyTreeStructure): Array<Any> {
             return javaTreeStructure.getChildElements(descriptor as MethodHierarchyNodeDescriptor) ?: ArrayUtil.EMPTY_OBJECT_ARRAY
         }

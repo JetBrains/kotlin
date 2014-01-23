@@ -4,6 +4,14 @@
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
+      name='com.intellij.psi.search.searches.ClassInheritorsSearch com.intellij.util.Query&lt;com.intellij.psi.PsiClass&gt; search(com.intellij.psi.PsiClass, com.intellij.psi.search.SearchScope, boolean, boolean, boolean)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.psi.search.searches.ClassInheritorsSearch com.intellij.util.Query&lt;com.intellij.psi.PsiClass&gt; search(com.intellij.psi.search.searches.ClassInheritorsSearch.SearchParameters)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.psi.search.searches.DirectClassInheritorsSearch com.intellij.util.Query&lt;com.intellij.psi.PsiClass&gt; search(com.intellij.psi.PsiClass, com.intellij.psi.search.SearchScope, boolean, boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

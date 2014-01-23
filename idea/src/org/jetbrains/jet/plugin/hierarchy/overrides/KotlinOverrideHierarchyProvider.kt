@@ -20,14 +20,14 @@ import com.intellij.ide.hierarchy.HierarchyProvider
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
 import com.intellij.ide.hierarchy.HierarchyBrowser
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils
 import com.intellij.ide.hierarchy.MethodHierarchyBrowserBase
 import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx
+import com.intellij.openapi.actionSystem.PlatformDataKeys
+import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils
 
 public class KotlinOverrideHierarchyProvider: HierarchyProvider {
     override fun getTarget(dataContext: DataContext): PsiElement? {
-        return CommonDataKeys.PROJECT.getData(dataContext)?.let { project ->
+        return PlatformDataKeys.PROJECT.getData(dataContext)?.let { project ->
             HierarchyUtils.getOverrideHierarchyElement(HierarchyUtils.getCurrentElement(dataContext, project))
         }
     }

@@ -1,15 +1,19 @@
 package org.jetbrains.jet.plugin.hierarchy;
 
 import com.intellij.codeInsight.TargetElementUtilBase;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.util.ArrayUtil;
 import jet.Function1;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 
@@ -36,7 +40,7 @@ public class HierarchyUtils {
     };
 
     public static PsiElement getCurrentElement(DataContext dataContext, Project project) {
-        Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+        Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
         if (editor != null) {
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
             if (file == null) return null;
@@ -47,7 +51,7 @@ public class HierarchyUtils {
             return TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted());
         }
 
-        return CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+        return LangDataKeys.PSI_ELEMENT.getData(dataContext);
     }
 
     public static PsiElement getCallHierarchyElement(PsiElement element) {

@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.actions;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -39,9 +39,9 @@ import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.*;
 public class JavaToKotlinAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent e) {
-        VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+        VirtualFile[] virtualFiles = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
         assert virtualFiles != null;
-        final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+        final Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
         assert project != null;
         final List<PsiFile> selectedJavaFiles = getAllJavaFiles(virtualFiles, project);
         if (selectedJavaFiles.isEmpty()) {
@@ -112,7 +112,7 @@ public class JavaToKotlinAction extends AnAction {
 
     @Override
     public void update(AnActionEvent e) {
-        boolean enabled = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) != null;
+        boolean enabled = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY) != null;
         e.getPresentation().setVisible(enabled);
         e.getPresentation().setEnabled(enabled);
     }

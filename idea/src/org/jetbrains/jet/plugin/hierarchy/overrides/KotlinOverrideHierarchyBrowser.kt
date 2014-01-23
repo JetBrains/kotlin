@@ -23,17 +23,32 @@ import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils
 import org.jetbrains.jet.plugin.JetBundle
-import com.intellij.ide.hierarchy.method.MethodHierarchyBrowser
 import org.jetbrains.jet.asJava.getRepresentativeLightMethod
-import com.intellij.psi.PsiMethod
-import java.text.MessageFormat
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import java.util.Comparator
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor
+import javax.swing.JTree
+import com.intellij.ide.util.treeView.NodeDescriptor
+import com.intellij.ide.hierarchy.method.MethodHierarchyBrowser
+import com.intellij.ide.hierarchy.method.getComparatorByExtension
+import com.intellij.ide.hierarchy.method.createTreesByExtension
+import com.intellij.ide.hierarchy.method.getElementFromDescriptorByExtension
 
 class KotlinOverrideHierarchyBrowser(
         project: Project, baseElement: PsiElement
-) : MethodHierarchyBrowser(project, baseElement.getRepresentativeLightMethod()) {
+) : MethodHierarchyBrowserBase(project, baseElement.getRepresentativeLightMethod()) {
+
+    val javaMethodHierarchyBrowser = MethodHierarchyBrowser(project, baseElement.getRepresentativeLightMethod())
+
+    override fun getElementFromDescriptor(descriptor: HierarchyNodeDescriptor): PsiElement? =
+            javaMethodHierarchyBrowser.getElementFromDescriptorByExtension(descriptor)
+
+    override fun createTrees(trees: MutableMap<String, JTree>) = javaMethodHierarchyBrowser.createTreesByExtension(trees)
+
+    override fun getComparator(): Comparator<NodeDescriptor<out Any?>>? = javaMethodHierarchyBrowser.getComparatorByExtension()
+
     override fun createLegendPanel(): JPanel? =
             MethodHierarchyBrowserBase.createStandardLegendPanel(
                     JetBundle.message("hierarchy.legend.member.is.defined.in.class"),
@@ -41,19 +56,12 @@ class KotlinOverrideHierarchyBrowser(
                     JetBundle.message("hierarchy.legend.member.should.be.defined")
             )
 
-    override fun isApplicableElement(psiElement: PsiElement): Boolean =
-            HierarchyUtils.IS_OVERRIDE_HIERARCHY_ELEMENT(psiElement)
+    override fun isApplicableElement(element: PsiElement): Boolean =
+            HierarchyUtils.IS_OVERRIDE_HIERARCHY_ELEMENT(element)
 
     [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
     override fun createHierarchyTreeStructure(typeName: String, psiElement: PsiElement): HierarchyTreeStructure? =
             if (typeName == MethodHierarchyBrowserBase.METHOD_TYPE) KotlinOverrideTreeStructure(myProject, psiElement) else null
-
-    override fun getBaseMethod(): PsiMethod? {
-        val builder = myBuilders.get(myCurrentViewType)
-        if (builder == null) return null
-
-        return (builder.getTreeStructure() as KotlinOverrideTreeStructure).javaTreeStructures.get(0).getBaseMethod()
-    }
 
     override fun getContentDisplayName(typeName: String, element: PsiElement): String? {
         val targetElement = element.getNavigationElement()
