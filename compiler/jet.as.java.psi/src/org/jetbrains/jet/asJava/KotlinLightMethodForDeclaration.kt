@@ -49,8 +49,7 @@ public class KotlinLightMethodForDeclaration(
             val parameterBuilder = LightParameterListBuilder(getManager(), JetLanguage.INSTANCE)
 
             for ((index, parameter) in delegate.getParameterList().getParameters().withIndices()) {
-                val lightParameter = LightParameter(parameter.getName() ?: "p$index", parameter.getType(), this, JetLanguage.INSTANCE)
-                parameterBuilder.addParameter(lightParameter)
+                parameterBuilder.addParameter(KotlinLightParameter(parameter, index, this))
             }
 
             CachedValueProvider.Result.create(parameterBuilder, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
