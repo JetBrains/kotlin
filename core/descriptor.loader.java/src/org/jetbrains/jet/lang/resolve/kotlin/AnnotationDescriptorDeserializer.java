@@ -249,8 +249,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             return Annotations.EMPTY;
         }
 
-        Annotations annotations = new AnnotationsImpl(memberAnnotations.invoke(kotlinClass).get(signature));
-        return annotations == null ? Annotations.EMPTY : annotations;
+        List<AnnotationDescriptor> annotations = memberAnnotations.invoke(kotlinClass).get(signature);
+        return annotations == null ? Annotations.EMPTY : new AnnotationsImpl(annotations);
     }
 
     @Nullable
