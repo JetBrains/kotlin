@@ -89,11 +89,11 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         return null;
     }
 
-    // scripts has no namespace header
+    // scripts have no package directive
     @Nullable
-    public JetNamespaceHeader getNamespaceHeader() {
-        ASTNode ast = getNode().findChildByType(JetNodeTypes.NAMESPACE_HEADER);
-        return ast != null ? (JetNamespaceHeader) ast.getPsi() : null;
+    public JetPackageDirective getPackageDirective() {
+        ASTNode ast = getNode().findChildByType(JetNodeTypes.PACKAGE_DIRECTIVE);
+        return ast != null ? (JetPackageDirective) ast.getPsi() : null;
     }
 
     @Nullable
@@ -103,8 +103,8 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
             return stub.getPackageName();
         }
 
-        JetNamespaceHeader statement = getNamespaceHeader();
-        return statement != null ? statement.getQualifiedName() : null;
+        JetPackageDirective directive = getPackageDirective();
+        return directive != null ? directive.getQualifiedName() : null;
     }
 
     @Nullable

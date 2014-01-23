@@ -26,7 +26,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
@@ -42,7 +42,7 @@ public class JetPackagesContributor extends CompletionContributor {
     static final String DUMMY_IDENTIFIER = "___package___";
 
     static final ElementPattern<? extends PsiElement> ACTIVATION_PATTERN =
-            PlatformPatterns.psiElement().inside(JetNamespaceHeader.class);
+            PlatformPatterns.psiElement().inside(JetPackageDirective.class);
 
 
     public JetPackagesContributor() {

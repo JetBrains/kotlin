@@ -16,7 +16,13 @@
 
 package org.jetbrains.jet.generators.tests.generator;
 
+import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+
 public class TestGeneratorUtil {
+    @NotNull
     public static String escapeForJavaIdentifier(String fileName) {
         // A file name may contain characters (like ".") that can't be a part of method name
         StringBuilder result = new StringBuilder();
@@ -31,5 +37,10 @@ public class TestGeneratorUtil {
             }
         }
         return result.toString();
+    }
+
+    @NotNull
+    public static String fileNameToJavaIdentifier(@NotNull File file) {
+        return StringUtil.capitalize(escapeForJavaIdentifier(file.getName()));
     }
 }

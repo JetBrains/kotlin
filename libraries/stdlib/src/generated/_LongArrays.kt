@@ -184,6 +184,18 @@ public inline fun <K> LongArray.groupByTo(result: MutableMap<K, MutableList<Long
 }
 
 /**
+ * Returns first index of item, or -1 if the array does not contain item
+ */
+public fun LongArray.indexOf(item: Long) : Int {
+    for (i in indices) {
+        if (item == this[i]) {
+            return i
+        }
+    }
+    return -1
+}
+
+/**
  * Returns true if the array is empty
  */
 public fun LongArray.isEmpty() : Boolean {

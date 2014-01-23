@@ -47,7 +47,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
     private final GlobalSearchScope searchScope;
     private final Collection<JetFile> files;
     private final int hashCode;
-    private final CachedValue<GeneratedLightClassData> javaFileStub;
+    private final CachedValue<LightClassStubWithData> javaFileStub;
     private final PsiModifierList modifierList;
     private final LightEmptyImplementsList implementsList;
 

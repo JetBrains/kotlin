@@ -78,6 +78,11 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
         for (FqName classFqName : JdkAnnotationsValidityTest.getAffectedClasses("jar://ideaSDK/lib/jdkAnnotations.jar!/")) {
             if (new FqName("org.jdom").equals(classFqName.parent())) continue; // filter unrelated jdom annotations
             if (new FqName("java.util.concurrent.TransferQueue").equals(classFqName)) continue; // filter JDK7-specific class
+            // the following idea annotation is incorrect
+            // <item name="java.io.StringWriter void write(java.lang.String) 0">
+            // <annotation name="org.jetbrains.annotations.NotNull" />
+            // </item>
+            if (new FqName("java.io.StringWriter").equals(classFqName)) continue;
 
             PsiClass psiClass = javaPsiFacade.findClass(classFqName.asString(), allScope);
             assertNotNull("Class has annotation, but it is not found: " + classFqName, psiClass);

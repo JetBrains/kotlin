@@ -26,30 +26,31 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClass
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
-import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
+import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.CLASS;
+import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.PACKAGE_FACADE;
 
 public final class DeserializedDescriptorResolver {
     private AnnotationDescriptorDeserializer annotationDeserializer;
 
-    private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
+    private StorageManager storageManager;
 
     private JavaPackageFragmentProvider javaPackageFragmentProvider;
 
-    private JavaClassResolver javaClassResolver;
+    private JavaDescriptorResolver javaDescriptorResolver;
 
     private ErrorReporter errorReporter;
 
@@ -58,7 +59,7 @@ public final class DeserializedDescriptorResolver {
         @Nullable
         @Override
         public ClassDescriptor findClass(@NotNull ClassId classId) {
-            return javaClassResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()), INCLUDE_KOTLIN_SOURCES);
+            return javaDescriptorResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()), INCLUDE_KOTLIN_SOURCES);
         }
 
         @NotNull
@@ -79,8 +80,8 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Inject
-    public void setJavaClassResolver(JavaClassResolver javaClassResolver) {
-        this.javaClassResolver = javaClassResolver;
+    public void setJavaDescriptorResolver(JavaDescriptorResolver javaDescriptorResolver) {
+        this.javaDescriptorResolver = javaDescriptorResolver;
     }
 
     @Inject
@@ -88,9 +89,14 @@ public final class DeserializedDescriptorResolver {
         this.errorReporter = errorReporter;
     }
 
+    @Inject
+    public void setStorageManager(StorageManager storageManager) {
+        this.storageManager = storageManager;
+    }
+
     @Nullable
     public ClassDescriptor resolveClass(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass);
+        String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
             ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
             return new DeserializedClassDescriptor(storageManager, annotationDeserializer, javaDescriptorFinder,
@@ -101,7 +107,7 @@ public final class DeserializedDescriptorResolver {
 
     @Nullable
     public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass);
+        String[] data = readData(kotlinClass, PACKAGE_FACADE);
         if (data != null) {
             return new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer, javaDescriptorFinder,
                                                       JavaProtoBufUtil.readPackageDataFrom(data));
@@ -110,14 +116,15 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        KotlinClassHeader header = KotlinClassHeader.read(kotlinClass);
-        if (header instanceof SerializedDataHeader) {
-            return ((SerializedDataHeader) header).getAnnotationData();
-        }
+    private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
+        KotlinClassHeader header = kotlinClass.getClassHeader();
+        if (header == null) return null;
 
-        if (header != null) {
+        if (header.getKind() == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
             errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.getVersion());
+        }
+        else if (header.getKind() == expectedKind) {
+            return header.getAnnotationData();
         }
 
         return null;

@@ -1,5 +1,14 @@
 <root>
-    <item name='android.drm.mobile1.DrmRawContent DrmRawContent(java.io.InputStream, int, java.lang.String) 0'>
+    <item name='android.drm.mobile1.DrmRawContent DRM_MIMETYPE_CONTENT_STRING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.mobile1.DrmRightsManager DRM_MIMETYPE_RIGHTS_XML_STRING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.mobile1.DrmRawContent DRM_MIMETYPE_MESSAGE_STRING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.drm.mobile1.DrmRightsManager DRM_MIMETYPE_RIGHTS_WBXML_STRING'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.drm.mobile1.DrmRawContent java.io.InputStream getContentInputStream(android.drm.mobile1.DrmRights)'>

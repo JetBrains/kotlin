@@ -28,7 +28,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
     private Map<Name, ClassDescriptor> innerClassesMap = null;
 
     protected JavaClassMembersScope(
-            @NotNull ClassOrNamespaceDescriptor descriptor,
+            @NotNull ClassOrPackageFragmentDescriptor descriptor,
             @NotNull MembersProvider membersProvider,
             @NotNull JavaMemberResolver memberResolver
     ) {
@@ -37,7 +37,7 @@ public abstract class JavaClassMembersScope extends JavaBaseScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
         throw new UnsupportedOperationException(); // TODO
     }
 

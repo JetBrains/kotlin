@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -81,8 +81,8 @@ public class IntegerValueTypeConstructor implements TypeConstructor {
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
-        return Collections.emptyList();
+    public Annotations getAnnotations() {
+        return Annotations.EMPTY;
     }
 
     public Long getValue() {

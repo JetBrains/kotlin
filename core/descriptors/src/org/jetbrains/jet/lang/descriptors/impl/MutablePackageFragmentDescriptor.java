@@ -18,11 +18,8 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
@@ -30,26 +27,33 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collections;
-
 public class MutablePackageFragmentDescriptor extends DeclarationDescriptorImpl implements PackageFragmentDescriptor {
 
+    private final PackageFragmentProvider provider;
     private final ModuleDescriptor module;
     private final FqName fqName;
     private final WritableScope scope;
-    private final NamespaceLikeBuilder builder;
+    private final PackageLikeBuilder builder;
 
     public MutablePackageFragmentDescriptor(
+            @NotNull PackageFragmentProvider provider,
             @NotNull ModuleDescriptor module,
             @NotNull FqName fqName
     ) {
-        super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
+        super(Annotations.EMPTY, fqName.shortNameOrSpecial());
+        this.provider = provider;
         this.module = module;
         this.fqName = fqName;
 
         scope = new WritableScopeImpl(JetScope.EMPTY, this, RedeclarationHandler.DO_NOTHING, "Members of " + fqName + " in " + module);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        builder = new ScopeBasedNamespaceLikeBuilder(this, scope);
+        builder = new ScopeBasedPackageLikeBuilder(this, scope);
+    }
+
+    @NotNull
+    @Override
+    public PackageFragmentProvider getProvider() {
+        return provider;
     }
 
     @NotNull
@@ -82,7 +86,7 @@ public class MutablePackageFragmentDescriptor extends DeclarationDescriptorImpl 
     }
 
     @NotNull
-    public NamespaceLikeBuilder getBuilder() {
+    public PackageLikeBuilder getBuilder() {
         return builder;
     }
 }

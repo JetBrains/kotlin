@@ -27,13 +27,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
-import org.jetbrains.jet.lang.resolve.kotlin.header.PackageFragmentClassHeader;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 /**
  * This class is needed to build an empty PSI stub for compiled package fragment classes. This results in these classes not showing up
  * in completion, go-to-class, etc.
  */
 public class EmptyPackageFragmentClsStubBuilderFactory extends ClsStubBuilderFactory<PsiJavaFile> {
+
     @Nullable
     @Override
     public PsiFileStub<PsiJavaFile> buildFileStub(VirtualFile file, byte[] bytes) throws ClsFormatException {
@@ -44,7 +45,8 @@ public class EmptyPackageFragmentClsStubBuilderFactory extends ClsStubBuilderFac
     public boolean canBeProcessed(VirtualFile file, byte[] bytes) {
         if (file.getName().contains(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-") &&
             StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
-            return KotlinClassHeader.read(new VirtualFileKotlinClass(file)) instanceof PackageFragmentClassHeader;
+            KotlinClassHeader header = new VirtualFileKotlinClass(LockBasedStorageManager.NO_LOCKS, file).getClassHeader();
+            return header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_FRAGMENT;
         }
         return false;
     }

@@ -9,3 +9,5 @@ class K {
 fun foo(){
     val k : K = <caret>
 }
+
+// ELEMENT: K.bar

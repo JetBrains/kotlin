@@ -28,9 +28,9 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
-import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -53,7 +53,7 @@ public final class DecompiledDataFactory {
     @NotNull
     private final JavaDescriptorResolver javaDescriptorResolver;
     @NotNull
-    private final SerializedDataHeader classFileHeader;
+    private final KotlinClassHeader classFileHeader;
     @NotNull
     private final FqName classFqName;
     @NotNull
@@ -67,12 +67,12 @@ public final class DecompiledDataFactory {
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, new BindingTraceContext());
         this.javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
-        VirtualFileKotlinClass kotlinClass = new VirtualFileKotlinClass(classFile);
+        KotlinJvmBinaryClass kotlinClass = VirtualFileFinder.SERVICE.getInstance(project).createKotlinClass(classFile);
         this.classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars();
 
-        KotlinClassHeader header = KotlinClassHeader.read(kotlinClass);
-        assert header instanceof SerializedDataHeader : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;
-        this.classFileHeader = (SerializedDataHeader) header;
+        KotlinClassHeader header = kotlinClass.getClassHeader();
+        assert header != null : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;
+        this.classFileHeader = header;
     }
 
     @NotNull
@@ -83,9 +83,9 @@ public final class DecompiledDataFactory {
     private JetDecompiledData build() {
         FqName packageFqName = classFqName.parent();
         appendDecompiledTextAndPackageName(packageFqName);
-        SerializedDataHeader.Kind kind = classFileHeader.getKind();
-        if (kind == SerializedDataHeader.Kind.PACKAGE) {
-            PackageFragmentDescriptor pf = javaDescriptorResolver.getPackageFragmentProvider().getOrCreatePackage(packageFqName);
+        KotlinClassHeader.Kind kind = classFileHeader.getKind();
+        if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
+            PackageFragmentDescriptor pf = javaDescriptorResolver.getPackageFragment(packageFqName);
             if (pf != null) {
                 for (DeclarationDescriptor member : sortDeclarations(pf.getMemberScope().getAllDescriptors())) {
                     if (!(member instanceof ClassDescriptor)) {
@@ -95,13 +95,14 @@ public final class DecompiledDataFactory {
                 }
             }
         }
-        else if (kind == SerializedDataHeader.Kind.CLASS) {
+        else if (kind == KotlinClassHeader.Kind.CLASS) {
             ClassDescriptor cd = javaDescriptorResolver.resolveClass(classFqName, INCLUDE_KOTLIN_SOURCES);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }
         }
         else {
+            // TODO: support other header kinds: for trait-impl show the trait, for package fragment - the whole package
             throw new UnsupportedOperationException("Unknown header kind: " + kind);
         }
 

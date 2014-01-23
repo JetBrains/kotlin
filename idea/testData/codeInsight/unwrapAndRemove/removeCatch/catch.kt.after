@@ -2,11 +2,9 @@
 fun foo(n: Int): Int {
     return try {
         n / 0
-    }
-    <caret>catch (e: Exception) {
+    } <caret>catch (e: Exception) {
         -2
-    }
-    finally {
+    } finally {
 
     }
 }

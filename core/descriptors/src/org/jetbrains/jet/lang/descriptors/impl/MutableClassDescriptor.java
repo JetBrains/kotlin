@@ -173,13 +173,13 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
         getWritableScopeForInitializers().changeLockLevel(WritableScope.LockLevel.READING);
     }
 
-    private NamespaceLikeBuilder builder = null;
+    private PackageLikeBuilder builder = null;
 
     @Override
-    public NamespaceLikeBuilder getBuilder() {
+    public PackageLikeBuilder getBuilder() {
         if (builder == null) {
-            final NamespaceLikeBuilder superBuilder = super.getBuilder();
-            builder = new NamespaceLikeBuilderDummy() {
+            final PackageLikeBuilder superBuilder = super.getBuilder();
+            builder = new PackageLikeBuilder() {
                 @NotNull
                 @Override
                 public DeclarationDescriptor getOwnerForChildren() {

@@ -89,7 +89,7 @@ public class BindingContextUtils {
     @Nullable
     public static JetFile getContainingFile(@NotNull BindingContext context, @NotNull DeclarationDescriptor declarationDescriptor) {
         // declarationDescriptor may describe a synthesized element which doesn't have PSI
-        // To workaround that, we find a top-level parent (which is inside a NamespaceDescriptor), which is guaranteed to have PSI
+        // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
         DeclarationDescriptor descriptor = DescriptorUtils.findTopLevelParent(declarationDescriptor);
         if (descriptor == null) return null;
 

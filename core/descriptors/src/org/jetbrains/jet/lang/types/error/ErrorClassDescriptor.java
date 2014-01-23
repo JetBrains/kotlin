@@ -18,14 +18,17 @@ package org.jetbrains.jet.lang.types.error;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.types.ErrorUtils.*;
 
@@ -34,7 +37,7 @@ public final class ErrorClassDescriptor extends ClassDescriptorImpl {
         super(getErrorModule(), Name.special("<ERROR CLASS: " + debugMessage + ">"), Modality.OPEN, Collections.<JetType>emptyList());
 
         ConstructorDescriptorImpl errorConstructor =
-                new ConstructorDescriptorImpl(this, Collections.<AnnotationDescriptor>emptyList(), true);
+                new ConstructorDescriptorImpl(this, Annotations.EMPTY, true);
 
         errorConstructor.initialize(
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
@@ -55,5 +58,11 @@ public final class ErrorClassDescriptor extends ClassDescriptorImpl {
     @Override
     public String toString() {
         return getName().asString();
+    }
+
+    @NotNull
+    @Override
+    public JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+        return createErrorScope("Error scope for class " + getName() + " with arguments: " + typeArguments);
     }
 }

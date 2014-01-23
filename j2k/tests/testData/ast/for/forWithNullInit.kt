@@ -1,0 +1,9 @@
+{
+while (condition())
+{
+body()
+{
+update()
+}
+}
+}

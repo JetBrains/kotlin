@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface KotlinJvmBinaryClass {
@@ -28,6 +29,9 @@ public interface KotlinJvmBinaryClass {
     void loadClassAnnotations(@NotNull AnnotationVisitor visitor);
 
     void loadMemberAnnotations(@NotNull MemberVisitor visitor);
+
+    @Nullable
+    KotlinClassHeader getClassHeader();
 
     interface MemberVisitor {
         // TODO: abstract signatures for methods and fields instead of ASM 'desc' strings?

@@ -12,10 +12,10 @@ public inline fun <T> submitNoInline(noinline action: Function1<Int, Int>?, s: (
     action?.invoke(10)
 }
 
-<!NOTHING_TO_INLINE!>public inline fun <T> <!NULLABLE_INLINE_PARAMETER!>Function1<Int, Int>?<!>.submit() {
+<!NOTHING_TO_INLINE!>public inline fun <T> <!NULLABLE_INLINE_PARAMETER!>Function1<Int, Int>?<!>.submit()<!> {
 
-}<!>
+}
 
-<!NOTHING_TO_INLINE!>public inline fun <T> submit(<!NULLABLE_INLINE_PARAMETER!>action: Function1<Int, Int>?<!>) {
+<!NOTHING_TO_INLINE!>public inline fun <T> submit(<!NULLABLE_INLINE_PARAMETER!>action: Function1<Int, Int>?<!>)<!> {
 
-}<!>
+}

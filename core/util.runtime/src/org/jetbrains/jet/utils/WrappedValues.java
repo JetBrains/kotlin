@@ -33,6 +33,11 @@ public class WrappedValues {
         public Throwable getThrowable() {
             return throwable;
         }
+
+        @Override
+        public String toString() {
+            return throwable.toString();
+        }
     }
 
     private WrappedValues() {

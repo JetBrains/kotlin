@@ -30,6 +30,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.SettingsConfigurator;
@@ -125,19 +126,26 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         JetTestUtils.assertEqualsToFile(fileAfter, file.getText());
     }
 
-    public void doTest(String testFileNameWithExtension) throws Exception {
-        String testFileName = FileUtil.getNameWithoutExtension(testFileNameWithExtension);
+    public void doTest(@NotNull String expectedFileNameWithExtension) throws Exception {
+        doTest(expectedFileNameWithExtension, false);
+    }
+
+    public void doTestInverted(@NotNull String expectedFileNameWithExtension) throws Exception {
+        doTest(expectedFileNameWithExtension, true);
+    }
+
+    public void doTest(@NotNull String expectedFileNameWithExtension, boolean inverted) throws Exception {
+        String testFileName = expectedFileNameWithExtension.substring(0, expectedFileNameWithExtension.indexOf("."));
         String originalFileText = FileUtil.loadFile(new File(testFileName + ".kt"), true);
         SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText, JetFormatSettingsUtil.getSettings());
 
-        configurator.configureSettings();
-        doTextTest(originalFileText, new File(testFileName + ".after.kt"));
-
-        String afterInvertedFileName = testFileName + ".after_inv.kt";
-        if (new File(afterInvertedFileName).exists()) {
-            configurator.configureInvertedSettings();
-            doTextTest(originalFileText, new File(afterInvertedFileName));
+        if (!inverted) {
+            configurator.configureSettings();
         }
+        else {
+            configurator.configureInvertedSettings();
+        }
+        doTextTest(originalFileText, new File(expectedFileNameWithExtension));
 
         JetFormatSettingsUtil.getSettings().clearCodeStyleSettings();
     }

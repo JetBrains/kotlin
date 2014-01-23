@@ -38,16 +38,18 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LazyResolveStorageManager;
+import org.jetbrains.jet.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
 
@@ -148,7 +150,12 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 return packageDescriptor.getDeclarationProvider().getAllDeclaredPackages();
             }
         };
-        rootDescriptor.addFragmentProvider(packageFragmentProvider);
+        rootDescriptor.addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
+    }
+
+    @NotNull
+    public PackageFragmentProvider getPackageFragmentProvider() {
+        return packageFragmentProvider;
     }
 
     @Nullable
@@ -200,16 +207,23 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         //     class A {} class A { fun foo(): A<completion here>}
         // and if we find the class by name only, we may b-not get the right one.
         // This call is only needed to make sure the classes are written to trace
-        resolutionScope.getClassifier(name);
-        DeclarationDescriptor declaration = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+        ClassifierDescriptor scopeDescriptor = resolutionScope.getClassifier(name);
+        DeclarationDescriptor descriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
-        if (declaration == null) {
-            throw new IllegalArgumentException("Could not find a classifier for " + classOrObject + " " + classOrObject.getText());
+        if (descriptor == null) {
+            throw new IllegalArgumentException(
+                   String.format("Could not find a classifier for %s.\n" +
+                                 "Found descriptor: %s (%s).\n",
+                                 JetPsiUtil.getElementTextWithContext(classOrObject),
+                                 scopeDescriptor != null ? DescriptorRenderer.DEBUG_TEXT.render(scopeDescriptor) : "null",
+                                 scopeDescriptor != null ? (scopeDescriptor.getContainingDeclaration().getClass()) : null));
         }
-        return (ClassDescriptor) declaration;
+
+        return (ClassDescriptor) descriptor;
     }
 
-    /*package*/ LazyClassDescriptor getClassObjectDescriptor(JetClassObject classObject) {
+    @NotNull
+    /*package*/ LazyClassDescriptor getClassObjectDescriptor(@NotNull JetClassObject classObject) {
         JetClass aClass = PsiTreeUtil.getParentOfType(classObject, JetClass.class);
 
         final LazyClassDescriptor parentClassDescriptor;
@@ -232,16 +246,18 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             // It's possible that there are several class objects and another class object is taking part in lazy resolve. We still want to
             // build descriptors for such class objects.
             final JetClassLikeInfo classObjectInfo = parentClassDescriptor.getClassObjectInfo(classObject);
-            if (classObjectInfo != null) {
-                final Name name = SpecialNames.getClassObjectName(parentClassDescriptor.getName());
-                return storageManager.compute(new Function0<LazyClassDescriptor>() {
-                    @Override
-                    public LazyClassDescriptor invoke() {
-                        // Create under lock to avoid premature access to published 'this'
-                        return new LazyClassDescriptor(ResolveSession.this, parentClassDescriptor, name, classObjectInfo);
-                    }
-                });
-            }
+            assert classObjectInfo != null :
+                    String.format("Failed to find class object info for existent class object declaration: %s",
+                                  JetPsiUtil.getElementTextWithContext(classObject));
+
+            final Name name = SpecialNames.getClassObjectName(parentClassDescriptor.getName());
+            return storageManager.compute(new Function0<LazyClassDescriptor>() {
+                @Override
+                public LazyClassDescriptor invoke() {
+                    // Create under lock to avoid premature access to published 'this'
+                    return new LazyClassDescriptor(ResolveSession.this, parentClassDescriptor, name, classObjectInfo);
+                }
+            });
         }
 
         return (LazyClassDescriptor) declaration;

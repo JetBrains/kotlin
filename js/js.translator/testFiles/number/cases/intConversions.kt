@@ -18,7 +18,7 @@ fun box(): Boolean {
         return false
     }
     val c2: Int = -5
-    if (c2.toShort() != -5.toShort()) {
+    if (c2.toShort() != (-5).toShort()) {
         return false
     }
     if (c2.toFloat() != -5.toFloat()) {

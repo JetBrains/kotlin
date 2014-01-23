@@ -25,16 +25,16 @@ val l3: Int = -1.toLong()
 val l4: Short = -1.toLong()
 
 
-// val b1: -1.toByte()
+// val b1: -1.toInt()
 val b1: Byte = -1.toByte()
 
-// val b2: -1.toByte()
+// val b2: -1.toInt()
 val b2: Int = -1.toByte()
 
-// val b3: -1.toByte()
+// val b3: -1.toInt()
 val b3: Long = -1.toByte()
 
-// val b4: -1.toByte()
+// val b4: -1.toInt()
 val b4: Short = -1.toByte()
 
 
@@ -50,14 +50,14 @@ val i3: Long = -1.toInt()
 // val i4: -1.toInt()
 val i4: Short = -1.toInt()
 
-// val s1: -1.toShort()
+// val s1: -1.toInt()
 val s1: Byte = -1.toShort()
 
-// val s2: -1.toShort()
+// val s2: -1.toInt()
 val s2: Int = -1.toShort()
 
-// val s3: -1.toShort()
+// val s3: -1.toInt()
 val s3: Long = -1.toShort()
 
-// val s4: -1.toShort()
+// val s4: -1.toInt()
 val s4: Short = -1.toShort()

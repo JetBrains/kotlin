@@ -16,20 +16,33 @@
 
 package org.jetbrains.jet.j2k.ast
 
-public open class Block(val statements: List<Element>, val notEmpty: Boolean = false) : Statement() {
-    public override fun isEmpty(): Boolean {
-        return !notEmpty && (statements.size() == 0 || statements.all { it == Statement.EMPTY_STATEMENT })
+import java.util.ArrayList
+
+fun Block(statements: List<Statement>, notEmpty: Boolean = false): Block {
+    val elements = ArrayList<Element>()
+    elements.add(WhiteSpace.NewLine)
+    elements.addAll(statements)
+    elements.add(WhiteSpace.NewLine)
+    return Block(StatementList(elements), notEmpty)
+}
+
+class Block(val statementList: StatementList, val notEmpty: Boolean = false) : Statement() {
+
+    val statements: List<Statement> = statementList.statements
+
+    override fun isEmpty(): Boolean {
+        return !notEmpty && statements.all { it.isEmpty() }
     }
 
-    public override fun toKotlin(): String {
+    override fun toKotlin(): String {
         if (!isEmpty()) {
-            return "{\n" + statements.toKotlin("\n") + "\n}"
+            return "{${statementList.toKotlin()}}"
         }
 
         return ""
     }
 
     class object {
-        public val EMPTY_BLOCK: Block = Block(arrayList())
+        val Empty = Block(StatementList(ArrayList()))
     }
 }

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 public enum OwnerKind {
-    NAMESPACE,
+    PACKAGE,
 
     IMPLEMENTATION,
 

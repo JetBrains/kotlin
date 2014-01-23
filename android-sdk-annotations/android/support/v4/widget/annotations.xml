@@ -1,4 +1,7 @@
 <root>
+    <item name='android.support.v4.widget.CursorAdapter android.view.View getView(int, android.view.View, android.view.ViewGroup) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.widget.ResourceCursorAdapter ResourceCursorAdapter(android.content.Context, int, android.database.Cursor, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -14,19 +17,22 @@
     <item name='android.support.v4.widget.SlidingPaneLayout.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.SlidingPaneLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.widget.DrawerLayout boolean onKeyDown(int, android.view.KeyEvent) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SimpleCursorAdapter void setViewImage(android.widget.ImageView, java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.widget.SlidingPaneLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.widget.SimpleCursorAdapter SimpleCursorAdapter(android.content.Context, int, android.database.Cursor, java.lang.String[], int[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SlidingPaneLayout android.os.Parcelable onSaveInstanceState()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.widget.ViewDragHelper android.support.v4.widget.ViewDragHelper create(android.view.ViewGroup, float, android.support.v4.widget.ViewDragHelper.Callback)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.ViewDragHelper.Callback int clampViewPositionVertical(android.view.View, int, int) 0'>
@@ -41,13 +47,16 @@
     <item name='android.support.v4.widget.SearchViewCompatIcs.MySearchView MySearchView(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.CursorAdapter java.lang.CharSequence convertToString(android.database.Cursor)'>
+    <item name='android.support.v4.widget.SlidingPaneLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SlidingPaneLayout.LayoutParams LayoutParams(android.view.ViewGroup.MarginLayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.ViewDragHelper android.support.v4.widget.ViewDragHelper create(android.view.ViewGroup, android.support.v4.widget.ViewDragHelper.Callback) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.widget.DrawerLayout android.os.Parcelable onSaveInstanceState()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.ViewDragHelper.Callback void onViewPositionChanged(android.view.View, int, int, int, int) 0'>
@@ -74,9 +83,6 @@
     <item name='android.support.v4.widget.ExploreByTouchHelper android.support.v4.view.accessibility.AccessibilityNodeProviderCompat getAccessibilityNodeProvider(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.ScrollerCompat android.support.v4.widget.ScrollerCompat create(android.content.Context, android.view.animation.Interpolator)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.widget.CursorAdapter void bindView(android.view.View, android.content.Context, android.database.Cursor) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -98,10 +104,19 @@
     <item name='android.support.v4.widget.SlidingPaneLayout.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.widget.DrawerLayout.SavedState CREATOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.widget.ScrollerCompat android.support.v4.widget.ScrollerCompat create(android.content.Context, android.view.animation.Interpolator)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.widget.SimpleCursorAdapter void bindView(android.view.View, android.content.Context, android.database.Cursor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SlidingPaneLayout.LayoutParams LayoutParams(android.view.ViewGroup.LayoutParams) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.widget.ScrollerCompat android.support.v4.widget.ScrollerCompat create(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.DrawerLayout.LayoutParams LayoutParams(android.view.ViewGroup.MarginLayoutParams) 0'>
@@ -110,7 +125,7 @@
     <item name='android.support.v4.widget.ViewDragHelper.Callback int clampViewPositionHorizontal(android.view.View, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.ViewDragHelper android.support.v4.widget.ViewDragHelper create(android.view.ViewGroup, float, android.support.v4.widget.ViewDragHelper.Callback)'>
+    <item name='android.support.v4.widget.DrawerLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SlidingPaneLayout SlidingPaneLayout(android.content.Context, android.util.AttributeSet) 0'>
@@ -128,16 +143,13 @@
     <item name='android.support.v4.widget.DrawerLayout boolean isDrawerOpen(android.view.View) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.DrawerLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.view.ViewGroup.LayoutParams)'>
+    <item name='android.support.v4.widget.CursorAdapter java.lang.CharSequence convertToString(android.database.Cursor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SearchViewCompat void setOnCloseListener(android.view.View, android.support.v4.widget.SearchViewCompat.OnCloseListenerCompat) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.ViewDragHelper android.support.v4.widget.ViewDragHelper create(android.view.ViewGroup, android.support.v4.widget.ViewDragHelper.Callback) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.widget.SlidingPaneLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.DrawerLayout boolean drawChild(android.graphics.Canvas, android.view.View, long) 1'>
@@ -149,7 +161,7 @@
     <item name='android.support.v4.widget.DrawerLayout DrawerLayout(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.DrawerLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
+    <item name='android.support.v4.widget.SimpleCursorAdapter java.lang.CharSequence convertToString(android.database.Cursor) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.DrawerLayout.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 0'>
@@ -182,22 +194,13 @@
     <item name='android.support.v4.widget.DrawerLayout.LayoutParams LayoutParams(android.content.Context, android.util.AttributeSet) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.SlidingPaneLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.widget.DrawerLayout boolean isDrawerVisible(android.view.View) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.widget.ScrollerCompat android.support.v4.widget.ScrollerCompat create(android.content.Context)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SlidingPaneLayout void onRestoreInstanceState(android.os.Parcelable) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SlidingPaneLayout.LayoutParams LayoutParams(android.support.v4.widget.SlidingPaneLayout.LayoutParams) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.widget.ViewDragHelper android.support.v4.widget.ViewDragHelper create(android.view.ViewGroup, android.support.v4.widget.ViewDragHelper.Callback)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.DrawerLayout DrawerLayout(android.content.Context, android.util.AttributeSet, int) 1'>
@@ -212,7 +215,13 @@
     <item name='android.support.v4.widget.SlidingPaneLayout SlidingPaneLayout(android.content.Context, android.util.AttributeSet, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.widget.SlidingPaneLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.widget.ViewDragHelper android.support.v4.widget.ViewDragHelper create(android.view.ViewGroup, float, android.support.v4.widget.ViewDragHelper.Callback) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.widget.DrawerLayout android.view.ViewGroup.LayoutParams generateLayoutParams(android.util.AttributeSet)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SlidingPaneLayout SlidingPaneLayout(android.content.Context) 0'>
@@ -228,6 +237,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.ExploreByTouchHelper ExploreByTouchHelper(android.view.View) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.widget.ViewDragHelper android.support.v4.widget.ViewDragHelper create(android.view.ViewGroup, android.support.v4.widget.ViewDragHelper.Callback)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.CursorAdapter void bindView(android.view.View, android.content.Context, android.database.Cursor) 0'>
@@ -251,16 +263,13 @@
     <item name='android.support.v4.widget.DrawerLayout.LayoutParams LayoutParams(android.support.v4.widget.DrawerLayout.LayoutParams) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.DrawerLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.widget.DrawerLayout DrawerLayout(android.content.Context) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.DrawerLayout android.os.Parcelable onSaveInstanceState()'>
+    <item name='android.support.v4.widget.SlidingPaneLayout void requestChildFocus(android.view.View, android.view.View) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.widget.SlidingPaneLayout void requestChildFocus(android.view.View, android.view.View) 1'>
+    <item name='android.support.v4.widget.DrawerLayout android.view.ViewGroup.LayoutParams generateDefaultLayoutParams()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.widget.SlidingPaneLayout SlidingPaneLayout(android.content.Context, android.util.AttributeSet, int) 0'>

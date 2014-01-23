@@ -24,7 +24,7 @@ import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -85,7 +85,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        TopDownAnalyzer.processClassOrObject(context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
+        TopDownAnalyzer.processClassOrObject(null, // don't need to add classifier of object literal to any scope
+                                             context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                              context.scope.getContainingDeclaration(),
                                              expression.getObjectDeclaration());
 
@@ -118,7 +119,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType receiver = DescriptorUtils.getReceiverParameterType(functionDescriptor.getReceiverParameter());
         List<JetType> valueParametersTypes = DescriptorUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
         JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
-                Collections.<AnnotationDescriptor>emptyList(), receiver, valueParametersTypes, safeReturnType);
+                Annotations.EMPTY, receiver, valueParametersTypes, safeReturnType);
         if (!noExpectedType(expectedType) && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)) {
             // all checks were done before
             return JetTypeInfo.create(resultType, context.dataFlowInfo);
@@ -175,7 +176,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
-                context.scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), CallableMemberDescriptor.Kind.DECLARATION);
+                context.scope.getContainingDeclaration(), Annotations.EMPTY, CallableMemberDescriptor.Kind.DECLARATION);
 
         List<ValueParameterDescriptor> valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral,
                                                                                                    functionDescriptor, functionTypeExpected);
@@ -223,7 +224,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (functionTypeExpected && !hasDeclaredValueParameters && expectedValueParameters.size() == 1) {
             ValueParameterDescriptor valueParameterDescriptor = expectedValueParameters.get(0);
             ValueParameterDescriptor it = new ValueParameterDescriptorImpl(
-                    functionDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("it"),
+                    functionDescriptor, 0, Annotations.EMPTY, Name.identifier("it"),
                     valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.getVarargElementType()
             );
             valueParameterDescriptors.add(it);

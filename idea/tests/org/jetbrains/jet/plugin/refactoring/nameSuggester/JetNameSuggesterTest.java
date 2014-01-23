@@ -30,10 +30,6 @@ import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 import java.util.Arrays;
 
-/**
- * User: Alefas
- * Date: 07.02.12
- */
 public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
     public void testArrayList() {
         doTest();

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -169,7 +169,7 @@ public class CommonSupertypes {
         if (declarationDescriptor instanceof ClassDescriptor) {
             newScope = ((ClassDescriptor) declarationDescriptor).getMemberScope(newProjections);
         }
-        return new JetTypeImpl(Collections.<AnnotationDescriptor>emptyList(), constructor, nullable, newProjections, newScope);
+        return new JetTypeImpl(Annotations.EMPTY, constructor, nullable, newProjections, newScope);
     }
 
     @NotNull

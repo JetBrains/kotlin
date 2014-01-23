@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -150,7 +150,7 @@ public class JetChangeFunctionSignatureAction implements QuestionAction {
                             newElement = JetPsiFactory.createFunction(project, signatureString);
                         }
                         newElement = (JetNamedFunction) element.replace(newElement);
-                        ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(newElement));
+                        ShortenReferences.instance$.process(newElement);
                     }
                 });
             }

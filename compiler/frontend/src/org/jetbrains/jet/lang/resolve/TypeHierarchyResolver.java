@@ -26,14 +26,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.*;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.SubstitutionUtils;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.DFS;
 
 import javax.inject.Inject;
@@ -57,7 +56,7 @@ public class TypeHierarchyResolver {
     @NotNull
     private ScriptHeaderResolver scriptHeaderResolver;
     @NotNull
-    private NamespaceFactoryImpl namespaceFactory;
+    private MutablePackageFragmentProvider packageFragmentProvider;
     @NotNull
     private BindingTrace trace;
 
@@ -82,8 +81,8 @@ public class TypeHierarchyResolver {
     }
 
     @Inject
-    public void setNamespaceFactory(@NotNull NamespaceFactoryImpl namespaceFactory) {
-        this.namespaceFactory = namespaceFactory;
+    public void setPackageFragmentProvider(@NotNull MutablePackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
     }
 
     @Inject
@@ -92,14 +91,14 @@ public class TypeHierarchyResolver {
     }
 
     public void process(
-            @NotNull JetScope outerScope, @NotNull NamespaceLikeBuilder owner,
+            @NotNull JetScope outerScope, @NotNull PackageLikeBuilder owner,
             @NotNull Collection<? extends PsiElement> declarations
     ) {
 
         {
-            // TODO: Very temp code - main goal is to remove recursion from collectNamespacesAndClassifiers
+            // TODO: Very temp code - main goal is to remove recursion from collectPackageFragmentsAndClassifiers
             Queue<JetDeclarationContainer> forDeferredResolve = new LinkedList<JetDeclarationContainer>();
-            forDeferredResolve.addAll(collectNamespacesAndClassifiers(outerScope, owner, declarations));
+            forDeferredResolve.addAll(collectPackageFragmentsAndClassifiers(outerScope, owner, declarations));
 
             while (!forDeferredResolve.isEmpty()) {
                 JetDeclarationContainer declarationContainer = forDeferredResolve.poll();
@@ -111,14 +110,14 @@ public class TypeHierarchyResolver {
                 // Even more temp code
                 if (descriptorForDeferredResolve instanceof MutableClassDescriptorLite) {
                     forDeferredResolve.addAll(
-                            collectNamespacesAndClassifiers(
+                            collectPackageFragmentsAndClassifiers(
                                     scope,
                                     ((MutableClassDescriptorLite) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
                 }
                 else if (descriptorForDeferredResolve instanceof MutablePackageFragmentDescriptor) {
                     forDeferredResolve.addAll(
-                            collectNamespacesAndClassifiers(
+                            collectPackageFragmentsAndClassifiers(
                                     scope,
                                     ((MutablePackageFragmentDescriptor) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
@@ -148,9 +147,9 @@ public class TypeHierarchyResolver {
     }
 
     @NotNull
-    private Collection<JetDeclarationContainer> collectNamespacesAndClassifiers(
+    private Collection<JetDeclarationContainer> collectPackageFragmentsAndClassifiers(
             @NotNull JetScope outerScope,
-            @NotNull NamespaceLikeBuilder owner,
+            @NotNull PackageLikeBuilder owner,
             @NotNull Iterable<? extends PsiElement> declarations
     ) {
         Collection<JetDeclarationContainer> forDeferredResolve = new ArrayList<JetDeclarationContainer>();
@@ -188,16 +187,24 @@ public class TypeHierarchyResolver {
 
             descriptor.createTypeConstructor();
 
-            if (classOrObject instanceof JetEnumEntry ||
-                classOrObject instanceof JetObjectDeclaration && classOrObject.getNameIdentifier() != null) {
+            ClassKind kind = descriptor.getKind();
+            if (kind == ClassKind.ENUM_ENTRY || kind == ClassKind.OBJECT || kind == ClassKind.ENUM_CLASS) {
                 MutableClassDescriptorLite classObject = descriptor.getClassObjectDescriptor();
                 assert classObject != null : "Enum entries and named objects should have class objects: " + classOrObject.getText();
 
-                // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.
-                // We make this class object inherit from the singleton here, thus allowing to use the singleton's class object where
-                // the instance of the singleton is applicable. Effectively all members of the singleton would be present in its class
-                // object as fake overrides, so you can access them via standard class object notation: ObjectName.memberName()
-                classObject.addSupertype(descriptor.getDefaultType());
+                JetType supertype;
+                if (kind == ClassKind.ENUM_CLASS) {
+                    supertype = KotlinBuiltIns.getInstance().getAnyType();
+                }
+                else {
+                    // This is a clever hack: each enum entry and object declaration (i.e. singleton) has a synthetic class object.
+                    // We make this class object inherit from the singleton here, thus allowing to use the singleton's class object where
+                    // the instance of the singleton is applicable. Effectively all members of the singleton would be present in its class
+                    // object as fake overrides, so you can access them via standard class object notation: ObjectName.memberName()
+                    supertype = descriptor.getDefaultType();
+                }
+                classObject.setSupertypes(Collections.singleton(supertype));
+                classObject.createTypeConstructor();
             }
         }
     }
@@ -436,11 +443,11 @@ public class TypeHierarchyResolver {
 
     private class ClassifierCollector extends JetVisitorVoid {
         private final JetScope outerScope;
-        private final NamespaceLikeBuilder owner;
+        private final PackageLikeBuilder owner;
         private final Collection<JetDeclarationContainer> forDeferredResolve;
 
         public ClassifierCollector(@NotNull JetScope outerScope,
-                @NotNull NamespaceLikeBuilder owner,
+                @NotNull PackageLikeBuilder owner,
                 @NotNull Collection<JetDeclarationContainer> forDeferredResolve
         ) {
             this.outerScope = outerScope;
@@ -450,15 +457,15 @@ public class TypeHierarchyResolver {
 
         @Override
         public void visitJetFile(@NotNull JetFile file) {
-            MutablePackageFragmentDescriptor packageFragment = namespaceFactory.createPackageFragmentIfNeeded(file);
+            MutablePackageFragmentDescriptor packageFragment = getOrCreatePackageFragmentForFile(file);
             context.getPackageFragments().put(file, packageFragment);
 
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
-            ChainedScope rootPlusPackageScope = new ChainedScope(packageView, packageView.getMemberScope(), outerScope);
+            ChainedScope rootPlusPackageScope = new ChainedScope(packageView, "Root scope for " + file, packageView.getMemberScope(), outerScope);
             WriteThroughScope packageScope = new WriteThroughScope(rootPlusPackageScope, packageFragment.getMemberScope(),
                                                                      new TraceBasedRedeclarationHandler(trace), "package in file " + file.getName());
             packageScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            context.getNamespaceScopes().put(file, packageScope);
+            context.getFileScopes().put(file, packageScope);
 
             if (file.isScript()) {
                 scriptHeaderResolver.processScriptHierarchy(file.getScript(), packageScope);
@@ -485,7 +492,7 @@ public class TypeHierarchyResolver {
                     createClassDescriptorForSingleton(declaration, JetPsiUtil.safeName(declaration.getName()), ClassKind.OBJECT);
 
             owner.addClassifierDescriptor(descriptor);
-            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), descriptor);
+            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getUnsafeFQName(declaration), descriptor);
 
             descriptor.getBuilder().setClassObjectDescriptor(createSyntheticClassObject(descriptor));
         }
@@ -508,16 +515,15 @@ public class TypeHierarchyResolver {
         @Override
         public void visitClassObject(@NotNull JetClassObject classObject) {
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
-            if (objectDeclaration == null) return;
 
             DeclarationDescriptor container = owner.getOwnerForChildren();
 
             MutableClassDescriptor classObjectDescriptor =
                     createClassDescriptorForSingleton(objectDeclaration, getClassObjectName(container.getName()), ClassKind.CLASS_OBJECT);
 
-            NamespaceLikeBuilder.ClassObjectStatus status =
+            PackageLikeBuilder.ClassObjectStatus status =
                     isEnumEntry(container) || isObject(container) ?
-                    NamespaceLikeBuilder.ClassObjectStatus.NOT_ALLOWED :
+                    PackageLikeBuilder.ClassObjectStatus.NOT_ALLOWED :
                     owner.setClassObjectDescriptor(classObjectDescriptor);
 
             switch (status) {
@@ -533,6 +539,40 @@ public class TypeHierarchyResolver {
             }
         }
 
+        @NotNull
+        private MutablePackageFragmentDescriptor getOrCreatePackageFragmentForFile(@NotNull JetFile file) {
+            JetPackageDirective packageDirective = file.getPackageDirective();
+            assert packageDirective != null : "scripts are not supported";
+
+            MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(packageDirective.getFqName());
+
+            for (JetSimpleNameExpression nameExpression : packageDirective.getPackageNames()) {
+                FqName fqName = packageDirective.getFqName(nameExpression);
+
+                PackageViewDescriptor packageView = packageFragmentProvider.getModule().getPackage(fqName);
+                assert packageView != null : "package not found: " + fqName;
+                trace.record(REFERENCE_TARGET, nameExpression, packageView);
+
+                PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
+                assert parentPackageView != null : "package has no parent: " + packageView;
+                trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
+            }
+
+            trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, fragment);
+
+            // Register files corresponding to this package
+            // The trace currently does not support bi-di multimaps that would handle this task nicer
+            FqName fqName = fragment.getFqName();
+            Collection<JetFile> files = trace.get(PACKAGE_TO_FILES, fqName);
+            if (files == null) {
+                files = Sets.newIdentityHashSet();
+            }
+            files.add(file);
+            trace.record(BindingContext.PACKAGE_TO_FILES, fqName, files);
+            return fragment;
+        }
+
+
         private void createClassObjectForEnumClass(@NotNull MutableClassDescriptor mutableClassDescriptor) {
             if (mutableClassDescriptor.getKind() == ClassKind.ENUM_CLASS) {
                 MutableClassDescriptor classObject = createSyntheticClassObject(mutableClassDescriptor);
@@ -546,11 +586,11 @@ public class TypeHierarchyResolver {
         private MutableClassDescriptor createSyntheticClassObject(@NotNull ClassDescriptor classDescriptor) {
             MutableClassDescriptor classObject = new MutableClassDescriptor(classDescriptor, outerScope, ClassKind.CLASS_OBJECT, false,
                                                                             getClassObjectName(classDescriptor.getName()));
+
             classObject.setModality(Modality.FINAL);
             classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
             classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
             createPrimaryConstructorForObject(null, classObject);
-            classObject.createTypeConstructor();
             return classObject;
         }
 
@@ -566,7 +606,7 @@ public class TypeHierarchyResolver {
             MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
                     containingDeclaration, outerScope, kind, isInner, JetPsiUtil.safeName(klass.getName()));
             context.getClasses().put(klass, mutableClassDescriptor);
-            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
+            trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getUnsafeFQName(klass), mutableClassDescriptor);
 
             createClassObjectForEnumClass(mutableClassDescriptor);
 

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -78,11 +78,7 @@ public class JavaTypeTransformer {
     ) {
         if (type instanceof JavaClassifierType) {
             JavaClassifierType classifierType = (JavaClassifierType) type;
-            JetType jetType = transformClassifierType(classifierType, howThisTypeIsUsed, typeVariableResolver);
-            if (jetType == null) {
-                return ErrorUtils.createErrorType("Unresolved java classifier: " + classifierType.getPresentableText());
-            }
-            return jetType;
+            return transformClassifierType(classifierType, howThisTypeIsUsed, typeVariableResolver);
         }
         else if (type instanceof JavaPrimitiveType) {
             String canonicalText = ((JavaPrimitiveType) type).getCanonicalText();
@@ -98,58 +94,55 @@ public class JavaTypeTransformer {
         }
     }
 
-    @Nullable
+    @NotNull
     private JetType transformClassifierType(
             @NotNull JavaClassifierType classifierType,
             @NotNull TypeUsage howThisTypeIsUsed,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
         JavaClassifier javaClassifier = classifierType.getClassifier();
-        if (javaClassifier == null) {
-            return null;
-        }
         if (javaClassifier instanceof JavaTypeParameter) {
-            return transformTypeParameter((JavaTypeParameter) javaClassifier, howThisTypeIsUsed, typeVariableResolver);
-        }
-        else if (javaClassifier instanceof JavaClass) {
-            FqName fqName = ((JavaClass) javaClassifier).getFqName();
-            assert fqName != null : "Class type should have a FQ name: " + javaClassifier;
-            return transformClassType(fqName, classifierType, howThisTypeIsUsed, typeVariableResolver);
+            return transformTypeParameter((JavaTypeParameter) javaClassifier, classifierType, howThisTypeIsUsed, typeVariableResolver);
         }
         else {
-            throw new UnsupportedOperationException("Unsupported classifier: " + javaClassifier);
+            return transformClassType(javaClassifier, classifierType, howThisTypeIsUsed, typeVariableResolver);
         }
     }
 
-    @Nullable
+    @NotNull
     private JetType transformTypeParameter(
             @NotNull JavaTypeParameter typeParameter,
+            @NotNull JavaClassifierType classifierType,
             @NotNull TypeUsage howThisTypeIsUsed,
             @NotNull TypeVariableResolver typeVariableResolver
     ) {
+        // In Java: ArrayList<T>
+        // In Kotlin: ArrayList<T>, not ArrayList<T?>
+        // nullability will be taken care of in individual member signatures
+        boolean nullable = !EnumSet.of(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT).contains(howThisTypeIsUsed);
+
         JavaTypeParameterListOwner owner = typeParameter.getOwner();
         if (owner instanceof JavaMethod && ((JavaMethod) owner).isConstructor()) {
             Set<JetType> supertypesJet = new HashSet<JetType>();
             for (JavaClassifierType supertype : typeParameter.getUpperBounds()) {
                 supertypesJet.add(transformToType(supertype, UPPER_BOUND, typeVariableResolver));
             }
-            return TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
+            JetType intersection = TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
+            if (intersection == null) {
+                return createErrorClassifierType(classifierType, nullable);
+            }
+            return intersection;
         }
 
         TypeParameterDescriptor descriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
-        if (descriptor == null) return null;
-
-        // In Java: ArrayList<T>
-        // In Kotlin: ArrayList<T>, not ArrayList<T?>
-        // nullability will be taken care of in individual member signatures
-        boolean nullable = !EnumSet.of(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT).contains(howThisTypeIsUsed);
+        if (descriptor == null) return createErrorClassifierType(classifierType, nullable);
 
         return TypeUtils.makeNullableIfNeeded(descriptor.getDefaultType(), nullable);
     }
 
-    @Nullable
+    @NotNull
     private JetType transformClassType(
-            @NotNull FqName fqName,
+            @Nullable JavaClassifier javaClassifier,
             @NotNull JavaClassifierType classifierType,
             @NotNull TypeUsage howThisTypeIsUsed,
             @NotNull TypeVariableResolver typeVariableResolver
@@ -157,13 +150,18 @@ public class JavaTypeTransformer {
         // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
         boolean nullable = !EnumSet.of(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
 
+        if (javaClassifier == null) return createErrorClassifierType(classifierType, nullable);
+
+        FqName fqName = ((JavaClass) javaClassifier).getFqName();
+        assert fqName != null : "Class type should have a FQ name: " + javaClassifier;
+
         ClassDescriptor classData = JavaToKotlinClassMap.getInstance().mapKotlinClass(fqName, howThisTypeIsUsed);
 
         if (classData == null) {
             classData = classResolver.resolveClass(fqName, INCLUDE_KOTLIN_SOURCES);
         }
         if (classData == null) {
-            return null;
+            return createErrorClassifierType(classifierType, nullable);
         }
 
         List<TypeProjection> arguments = new ArrayList<TypeProjection>();
@@ -214,11 +212,19 @@ public class JavaTypeTransformer {
         }
 
         return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 classData.getTypeConstructor(),
                 nullable,
                 arguments,
                 classData.getMemberScope(arguments));
+    }
+
+    @NotNull
+    private static JetType createErrorClassifierType(JavaClassifierType classifierType, boolean nullable) {
+        return TypeUtils.makeNullableAsSpecified(
+                ErrorUtils.createErrorType("Unresolved java classifier: " + classifierType.getPresentableText()),
+                nullable
+        );
     }
 
     @NotNull

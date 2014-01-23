@@ -1,0 +1,2 @@
+class KotlinClass
+trait KotlinTrait

@@ -2,40 +2,31 @@
     <item name='android.support.v4.text.BidiFormatter boolean isRtl(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String)'>
+    <item name='android.support.v4.text.TextDirectionHeuristicsCompat FIRSTSTRONG_LTR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.BidiFormatter android.support.v4.text.BidiFormatter getInstance(java.util.Locale)'>
+    <item name='android.support.v4.text.TextDirectionHeuristicsCompat LOCALE'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.support.v4.text.TextDirectionHeuristicCompat) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.text.BidiFormatter android.support.v4.text.BidiFormatter getInstance()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.text.TextDirectionHeuristicCompat boolean isRtl(char[], int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.support.v4.text.BidiFormatter.Builder android.support.v4.text.BidiFormatter.Builder stereoReset(boolean)'>
+    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.support.v4.text.TextDirectionHeuristicCompat)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.text.BidiFormatter.Builder android.support.v4.text.BidiFormatter build()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.TextDirectionHeuristicCompat boolean isRtl(java.lang.CharSequence, int, int) 0'>
+    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, boolean) 0'>
+    <item name='android.support.v4.text.TextUtilsCompat ROOT'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.TextUtilsCompat java.lang.String htmlEncode(java.lang.String) 0'>
+    <item name='android.support.v4.text.TextDirectionHeuristicsCompat RTL'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.text.BidiFormatter.Builder android.support.v4.text.BidiFormatter.Builder setTextDirectionHeuristic(android.support.v4.text.TextDirectionHeuristicCompat)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, boolean)'>
+    <item name='android.support.v4.text.BidiFormatter android.support.v4.text.BidiFormatter getInstance()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.text.BidiFormatter android.support.v4.text.BidiFormatter getInstance(boolean)'>
@@ -44,22 +35,52 @@
     <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.support.v4.text.TextDirectionHeuristicCompat, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.support.v4.text.BidiFormatter.Builder android.support.v4.text.BidiFormatter.Builder stereoReset(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.support.v4.text.TextDirectionHeuristicCompat) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.BidiFormatter android.support.v4.text.BidiFormatter getInstance(java.util.Locale)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.TextDirectionHeuristicsCompat FIRSTSTRONG_RTL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.TextDirectionHeuristicsCompat LTR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.TextDirectionHeuristicCompat boolean isRtl(char[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.TextDirectionHeuristicCompat boolean isRtl(java.lang.CharSequence, int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.TextUtilsCompat java.lang.String htmlEncode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.support.v4.text.TextDirectionHeuristicCompat, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.support.v4.text.TextDirectionHeuristicsCompat ANYRTL_LTR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.support.v4.text.TextUtilsCompat java.lang.String htmlEncode(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.support.v4.text.TextDirectionHeuristicCompat, boolean) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.support.v4.text.TextDirectionHeuristicCompat) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String) 0'>
+    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.support.v4.text.TextDirectionHeuristicCompat, boolean) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String, android.support.v4.text.TextDirectionHeuristicCompat)'>
+    <item name='android.support.v4.text.BidiFormatter java.lang.String unicodeWrap(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

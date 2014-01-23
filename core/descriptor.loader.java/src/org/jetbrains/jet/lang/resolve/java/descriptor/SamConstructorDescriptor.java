@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.SynthesizedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 
@@ -26,7 +26,7 @@ public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl
     private final JavaClassDescriptor samInterface;
 
     public SamConstructorDescriptor(
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration,
+            @NotNull ClassOrPackageFragmentDescriptor containingDeclaration,
             @NotNull JavaClassDescriptor samInterface
     ) {
         super(containingDeclaration, samInterface.getAnnotations(), samInterface.getName(), Kind.SYNTHESIZED);

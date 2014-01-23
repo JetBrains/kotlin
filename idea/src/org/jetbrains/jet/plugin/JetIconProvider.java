@@ -94,7 +94,7 @@ public class JetIconProvider extends IconProvider {
     }
 
     public static Icon getBaseIcon(PsiElement psiElement) {
-        if (psiElement instanceof JetNamespaceHeader) {
+        if (psiElement instanceof JetPackageDirective) {
             return PlatformIcons.PACKAGE_ICON;
         }
 

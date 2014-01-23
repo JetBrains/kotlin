@@ -37,7 +37,7 @@ public class JetImportDirective extends JetElementImpl {
         return visitor.visitImportDirective(this, data);
     }
 
-    public boolean isAbsoluteInRootNamespace() {
+    public boolean isAbsoluteInRootPackage() {
         return findChildByType(JetTokens.PACKAGE_KEYWORD) != null;
     }
 

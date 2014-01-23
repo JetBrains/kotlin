@@ -17,7 +17,9 @@
 package org.jetbrains.jet.generators.tests.generator;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.utils.Printer;
@@ -45,12 +47,18 @@ public class SimpleTestClassModel implements TestClassModel {
     private Collection<TestClassModel> innerTestClasses;
     private Collection<TestMethodModel> testMethods;
 
-    public SimpleTestClassModel(@NotNull File rootFile, boolean recursive, @NotNull Pattern filenamePattern, @NotNull String doTestMethodName) {
+    public SimpleTestClassModel(
+            @NotNull File rootFile,
+            boolean recursive,
+            @NotNull Pattern filenamePattern,
+            @NotNull String doTestMethodName,
+            @NotNull String testClassName
+    ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
         this.filenamePattern = filenamePattern;
         this.doTestMethodName = doTestMethodName;
-        this.testClassName = StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(rootFile.getName()));
+        this.testClassName = testClassName;
     }
 
     @NotNull
@@ -66,7 +74,10 @@ public class SimpleTestClassModel implements TestClassModel {
             if (files != null) {
                 for (File file : files) {
                     if (file.isDirectory()) {
-                        children.add(new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName));
+                        if (dirHasFilesInside(file)) {
+                            String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
+                            children.add(new SimpleTestClassModel(file, true, filenamePattern, doTestMethodName, innerTestClassName));
+                        }
                     }
                 }
             }
@@ -74,6 +85,15 @@ public class SimpleTestClassModel implements TestClassModel {
             innerTestClasses = children;
         }
         return innerTestClasses;
+    }
+
+    private static boolean dirHasFilesInside(@NotNull File dir) {
+        return !FileUtil.processFilesRecursively(dir, new Processor<File>() {
+            @Override
+            public boolean process(File file) {
+                return file.isDirectory();
+            }
+        });
     }
 
     @NotNull

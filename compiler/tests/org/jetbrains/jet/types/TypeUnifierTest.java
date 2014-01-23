@@ -27,7 +27,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeProjection;
@@ -41,7 +41,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,7 +72,7 @@ public class TypeUnifierTest extends JetLiteFixture {
 
     private static TypeParameterDescriptor createTypeVariable(String name) {
         return TypeParameterDescriptorImpl.createWithDefaultBound(
-                KotlinBuiltIns.getInstance().getBuiltInsModule(), Collections.<AnnotationDescriptor>emptyList(), false, Variance.INVARIANT,
+                KotlinBuiltIns.getInstance().getBuiltInsModule(), Annotations.EMPTY, false, Variance.INVARIANT,
                 Name.identifier(name), 0);
     }
 

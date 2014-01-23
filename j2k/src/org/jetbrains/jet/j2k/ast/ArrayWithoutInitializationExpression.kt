@@ -20,8 +20,8 @@ import org.jetbrains.jet.j2k.ast.types.ArrayType
 import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.j2k.ast.types.PrimitiveType
 
-public open class ArrayWithoutInitializationExpression(val `type`: Type, val expressions: List<Expression>) : Expression() {
-    public override fun toKotlin(): String {
+open class ArrayWithoutInitializationExpression(val `type`: Type, val expressions: List<Expression>) : Expression() {
+    override fun toKotlin(): String {
         if (`type` is ArrayType) {
             return constructInnerType(`type`, expressions)
         }

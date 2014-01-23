@@ -125,11 +125,18 @@ public abstract class LongRunningReadTask<RequestInfo, ResultData> {
         });
     }
 
-    public final void init() {
+    /**
+     * Executed in GUI Thread.
+     *
+     * @return true if new request was successfully created, false if request is invalid and shouldn't be started
+     */
+    public final boolean init() {
         ApplicationManager.getApplication().assertIsDispatchThread();
 
         requestInfo = prepareRequestInfo();
         currentState = State.INITIALIZED;
+
+        return requestInfo != null;
     }
 
     private void resultReady(ResultData resultData) {

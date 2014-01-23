@@ -22,17 +22,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public class EnumValue implements CompileTimeConstant<ClassDescriptor> {
-    private final ClassDescriptor value;
+public class EnumValue extends CompileTimeConstant<ClassDescriptor> {
 
     public EnumValue(@NotNull ClassDescriptor value) {
-        this.value = value;
-    }
-
-    @Override
-    @NotNull
-    public ClassDescriptor getValue() {
-        return value;
+        super(value);
     }
 
     @NotNull

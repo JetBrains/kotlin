@@ -34,7 +34,7 @@ import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.declaration.NamespaceDeclarationTranslator;
+import org.jetbrains.k2js.translate.declaration.PackageDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
@@ -135,7 +135,7 @@ public final class Translation {
 
         TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
         staticContext.initTranslators(context);
-        statements.addAll(NamespaceDeclarationTranslator.translateFiles(files, context));
+        statements.addAll(PackageDeclarationTranslator.translateFiles(files, context));
         defineModule(context, statements, config.getModuleId());
 
         if (mainCallParameters.shouldBeGenerated()) {
@@ -149,10 +149,10 @@ public final class Translation {
     }
 
     private static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
-        JsName rootNamespaceName = context.scope().findName(Namer.getRootNamespaceName());
-        if (rootNamespaceName != null) {
+        JsName rootPackageName = context.scope().findName(Namer.getRootPackageName());
+        if (rootPackageName != null) {
             statements.add(new JsInvocation(context.namer().kotlin("defineModule"), context.program().getStringLiteral(moduleId),
-                                            rootNamespaceName.makeRef()).makeStmt());
+                                            rootPackageName.makeRef()).makeStmt());
         }
     }
 

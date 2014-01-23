@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 
 import java.util.*;
 
@@ -30,7 +30,7 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
     private final Set<JetType> intersectedTypes;
     private final int hashCode;
 
-    public IntersectionTypeConstructor(List<AnnotationDescriptor> annotations, Collection<JetType> typesToIntersect) {
+    public IntersectionTypeConstructor(Annotations annotations, Collection<JetType> typesToIntersect) {
         super(annotations);
         this.intersectedTypes = Sets.newLinkedHashSet(typesToIntersect);
         this.hashCode = intersectedTypes.hashCode();

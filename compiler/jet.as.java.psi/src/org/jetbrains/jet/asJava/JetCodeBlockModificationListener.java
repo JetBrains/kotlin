@@ -22,6 +22,7 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.psi.impl.PsiTreeChangeEventImpl;
 import com.intellij.psi.impl.PsiTreeChangePreprocessor;
 import com.intellij.psi.util.PsiModificationTracker;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBlockExpression;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -36,7 +37,7 @@ public class JetCodeBlockModificationListener implements PsiTreeChangePreprocess
     }
 
     @Override
-    public void treeChanged(PsiTreeChangeEventImpl event) {
+    public void treeChanged(@NotNull PsiTreeChangeEventImpl event) {
         if (!(event.getFile() instanceof JetFile)) return;
         switch (event.getCode()) {
             case BEFORE_CHILDREN_CHANGE:

@@ -178,8 +178,8 @@ public abstract class ExpectedResolveData {
             else {
                 ancestorOfType = getAncestorOfType(JetDeclaration.class, element);
                 if (ancestorOfType == null) {
-                    JetNamespaceHeader header = getAncestorOfType(JetNamespaceHeader.class, element);
-                    assert header != null : "Not a declaration: " + name;
+                    JetPackageDirective directive = getAncestorOfType(JetPackageDirective.class, element);
+                    assert directive != null : "Not a declaration: " + name;
                     ancestorOfType = element;
                 }
             }
@@ -262,10 +262,10 @@ public abstract class ExpectedResolveData {
             assert expected != null : "No declaration for " + name;
 
             if (referenceTarget instanceof PackageViewDescriptor) {
-                JetNamespaceHeader expectedHeader = PsiTreeUtil.getParentOfType(expected, JetNamespaceHeader.class);
+                JetPackageDirective expectedDirective = PsiTreeUtil.getParentOfType(expected, JetPackageDirective.class);
                 FqName expectedFqName;
-                if (expectedHeader != null) {
-                    expectedFqName = expectedHeader.getFqName();
+                if (expectedDirective != null) {
+                    expectedFqName = expectedDirective.getFqName();
                 }
                 else if (expected instanceof PsiQualifiedNamedElement) {
                     String qualifiedName = ((PsiQualifiedNamedElement) expected).getQualifiedName();

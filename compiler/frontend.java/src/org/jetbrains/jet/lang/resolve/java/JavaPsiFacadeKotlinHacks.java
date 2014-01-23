@@ -101,37 +101,4 @@ public class JavaPsiFacadeKotlinHacks {
 
         return null;
     }
-
-    public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage) {
-        GlobalSearchScope scope = GlobalSearchScope.allScope(psiPackage.getProject());
-
-        LinkedHashSet<PsiPackage> result = new LinkedHashSet<PsiPackage>();
-        for (PsiElementFinder finder : extensionPsiElementFinders) {
-            PsiPackage[] packages = finder.getSubPackages(psiPackage, scope);
-            ContainerUtil.addAll(result, packages);
-        }
-        ContainerUtil.addAll(result, getDefaultSubPackages(psiPackage, scope));
-
-        return result.toArray(new PsiPackage[result.size()]);
-    }
-
-    private static PsiPackage[] getDefaultSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
-        Map<String, PsiPackage> packagesMap = new HashMap<String, PsiPackage>();
-        String qualifiedName = psiPackage.getQualifiedName();
-        for (PsiDirectory dir : psiPackage.getDirectories(scope)) {
-            PsiDirectory[] subDirs = dir.getSubdirectories();
-            for (PsiDirectory subDir : subDirs) {
-                PsiPackage aPackage = JavaDirectoryService.getInstance().getPackage(subDir);
-                if (aPackage != null) {
-                    String subQualifiedName = aPackage.getQualifiedName();
-                    if (subQualifiedName.startsWith(qualifiedName) && !packagesMap.containsKey(subQualifiedName)) {
-                        packagesMap.put(aPackage.getQualifiedName(), aPackage);
-                    }
-                }
-            }
-        }
-
-        packagesMap.remove(qualifiedName);    // avoid SOE caused by returning a package as a subpackage of itself
-        return packagesMap.values().toArray(new PsiPackage[packagesMap.size()]);
-    }
 }

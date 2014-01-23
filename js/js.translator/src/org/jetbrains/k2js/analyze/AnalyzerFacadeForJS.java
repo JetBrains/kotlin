@@ -27,16 +27,18 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
+import org.jetbrains.jet.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
@@ -93,7 +95,7 @@ public final class AnalyzerFacadeForJS {
 
         ModuleDescriptor libraryModule = config.getLibraryModule();
         if (libraryModule != null) {
-            owner.addFragmentProvider(libraryModule.getPackageFragmentProvider()); // "import" analyzed library module
+            owner.addFragmentProvider(DependencyKind.BINARIES, libraryModule.getPackageFragmentProvider()); // "import" analyzed library module
         }
 
         BindingContext libraryContext = config.getLibraryContext();
@@ -151,11 +153,11 @@ public final class AnalyzerFacadeForJS {
 
     @NotNull
     public static ResolveSession getLazyResolveSession(Collection<JetFile> files, Config config) {
-        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
+        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager(new LockBasedStorageManager());
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
         ModuleDescriptorImpl module = createJsModule("<lazy module>");
-        module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         return new ResolveSession(config.getProject(), storageManager, module, declarationProviderFactory);
     }
 

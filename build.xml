@@ -36,6 +36,7 @@
         <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
         <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
+        <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>
 
     <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml" classpath="${bootstrap.compiler.home}/lib/kotlin-ant.jar"/>
@@ -72,6 +73,7 @@
         <include name="core/util.runtime/src"/>
         <!--<include name="j2k/src"/>-->
         <include name="compiler/jet.as.java.psi/src"/>
+        <include name="compiler/builtins-serializer"/>
 
         <include name="js/js.translator/src"/>
     </dirset>
@@ -91,6 +93,7 @@
         <include name="util/**"/>
         <include name="util.runtime/**"/>
         <include name="jet.as.java.psi/**"/>
+        <include name="builtins-serializer/**"/>
 
         <include name="js.translator/**"/>
     </patternset>
@@ -152,6 +155,7 @@
             <fileset dir="compiler/util/src"/>
             <fileset dir="core/util.runtime/src"/>
             <fileset dir="compiler/jet.as.java.psi/src"/>
+            <fileset dir="compiler/builtins-serializer"/>
             <fileset dir="js/js.translator/src"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
@@ -279,6 +283,7 @@
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="jna-utils.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="oromatcher.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/lib" includes="protobuf-2.4.1.jar"/>
+              <zipgroupfileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
               <zipgroupfileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
               <zipgroupfileset dir="${dependencies.dir}" includes="jline.jar"/>
               <zipgroupfileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>

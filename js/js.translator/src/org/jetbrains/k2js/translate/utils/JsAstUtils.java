@@ -20,11 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -252,7 +247,7 @@ public final class JsAstUtils {
             JsExpression parent = qualifier.getQualifier();
             assert parent instanceof JsNameRef : "unexpected qualifier: " + parent + ", original: " + fullQualifier;
             if (((JsNameRef) parent).getQualifier() == null) {
-                assert Namer.getRootNamespaceName().equals(((JsNameRef) parent).getIdent());
+                assert Namer.getRootPackageName().equals(((JsNameRef) parent).getIdent());
                 qualifier.setQualifier(newQualifier);
                 return;
             }

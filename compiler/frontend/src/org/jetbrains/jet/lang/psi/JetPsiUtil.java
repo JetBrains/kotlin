@@ -35,6 +35,7 @@ import org.jetbrains.jet.kdoc.psi.api.KDocElement;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
@@ -186,8 +187,14 @@ public class JetPsiUtil {
 
     @NotNull
     public static FqName getFQName(@NotNull JetFile file) {
-        JetNamespaceHeader header = file.getNamespaceHeader();
-        return header != null ? header.getFqName() : FqName.ROOT;
+        JetPackageDirective directive = file.getPackageDirective();
+        return directive != null ? directive.getFqName() : FqName.ROOT;
+    }
+
+    @Nullable
+    public static FqNameUnsafe getUnsafeFQName(@NotNull JetNamedDeclaration namedDeclaration) {
+        FqName fqName = getFQName(namedDeclaration);
+        return fqName != null ? fqName.toUnsafe() : null;
     }
 
     @Nullable
@@ -858,6 +865,9 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetExpression getCalleeExpressionIfAny(@NotNull JetExpression expression) {
+        if (expression instanceof JetSimpleNameExpression) {
+            return expression;
+        }
         if (expression instanceof JetCallElement) {
             JetCallElement callExpression = (JetCallElement) expression;
             return callExpression.getCalleeExpression();
@@ -898,14 +908,15 @@ public class JetPsiUtil {
     }
 
     public static NavigatablePsiElement getPackageReference(@NotNull JetFile file, int partIndex) {
-        JetNamespaceHeader header = file.getNamespaceHeader();
-        if (header == null) {
-            throw new IllegalArgumentException("Should be called only for files with namespace: " + file);
+        JetPackageDirective directive = file.getPackageDirective();
+        if (directive == null) {
+            throw new IllegalArgumentException("Should be called only for files with package directive: " + file);
         }
 
-        List<JetSimpleNameExpression> names = header.getNamespaceNames();
+        List<JetSimpleNameExpression> names = directive.getPackageNames();
         if (!(0 <= partIndex && partIndex < names.size())) {
-            throw new IndexOutOfBoundsException(String.format("%s index for file with header %s is out of range", partIndex, header.getText()));
+            throw new IndexOutOfBoundsException(String.format("%s index for file with directive %s is out of range", partIndex,
+                                                              directive.getText()));
         }
 
         return names.get(partIndex);
@@ -992,29 +1003,35 @@ public class JetPsiUtil {
     @Nullable
     public static String getPackageName(@NotNull JetElement element) {
         JetFile file = (JetFile) element.getContainingFile();
-        JetNamespaceHeader header = PsiTreeUtil.findChildOfType(file, JetNamespaceHeader.class);
+        JetPackageDirective header = PsiTreeUtil.findChildOfType(file, JetPackageDirective.class);
 
         return header != null ? header.getQualifiedName() : null;
     }
 
     @Nullable
-    public static JetElement getEnclosingBlockForLocalDeclaration(@Nullable JetNamedDeclaration declaration) {
-        if (declaration instanceof JetTypeParameter || declaration instanceof JetParameter) {
+    public static JetElement getEnclosingElementForLocalDeclaration(@Nullable JetDeclaration declaration) {
+        if (declaration instanceof JetTypeParameter) {
             declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
+        }
+        else if (declaration instanceof JetParameter) {
+            PsiElement parent = declaration.getParent();
+            if (parent != null && parent.getParent() instanceof JetNamedFunction) {
+                declaration = (JetNamedFunction) parent.getParent();
+            }
         }
 
         //noinspection unchecked
         JetElement container = PsiTreeUtil.getParentOfType(
                 declaration,
-                JetBlockExpression.class, JetClassInitializer.class, JetProperty.class, JetFunction.class
+                JetBlockExpression.class, JetClassInitializer.class, JetProperty.class, JetFunction.class, JetParameter.class
         );
         if (container == null) return null;
 
         return (container instanceof JetClassInitializer) ? ((JetClassInitializer) container).getBody() : container;
     }
 
-    public static boolean isLocal(@NotNull JetNamedDeclaration declaration) {
-        return getEnclosingBlockForLocalDeclaration(declaration) != null;
+    public static boolean isLocal(@NotNull JetDeclaration declaration) {
+        return getEnclosingElementForLocalDeclaration(declaration) != null;
     }
 
     @Nullable

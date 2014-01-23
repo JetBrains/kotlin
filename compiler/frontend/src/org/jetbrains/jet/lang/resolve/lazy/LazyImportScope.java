@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.Importer;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.JetModuleUtil;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -123,7 +123,8 @@ public class LazyImportScope implements JetScope {
             @NotNull PackageViewDescriptor packageDescriptor,
             @NotNull List<JetImportDirective> imports,
             @NotNull BindingTrace traceForImportResolve,
-            @NotNull String debugName
+            @NotNull String debugName,
+            boolean inRootPackage
     ) {
         this.resolveSession = resolveSession;
         this.packageDescriptor = packageDescriptor;
@@ -138,11 +139,7 @@ public class LazyImportScope implements JetScope {
             }
         });
 
-        PackageViewDescriptor rootPackage = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT);
-        if (rootPackage == null) {
-            throw new IllegalStateException("Root package not found");
-        }
-        rootScope = rootPackage.getMemberScope();
+        this.rootScope = JetModuleUtil.getImportsResolutionScope(resolveSession.getModuleDescriptor(), inRootPackage);
     }
 
     public static LazyImportScope createImportScopeForFile(
@@ -157,7 +154,8 @@ public class LazyImportScope implements JetScope {
                 packageDescriptor,
                 Lists.reverse(jetFile.getImportDirectives()),
                 traceForImportResolve,
-                debugName);
+                debugName,
+                packageDescriptor.getFqName().isRoot());
     }
 
     @Nullable

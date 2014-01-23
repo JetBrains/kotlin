@@ -32,6 +32,7 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public object JetUsageTypeProvider : UsageTypeProviderEx {

@@ -1,5 +1,5 @@
 JetFile: IIterator.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   CLASS
     MODIFIER_LIST

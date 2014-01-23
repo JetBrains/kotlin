@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="1.6" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="idea" scope="TEST" />
     <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="jps-plugin" scope="TEST" />
     <orderEntry type="module" module-name="util" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kotlin-runtime" level="project" />
+    <orderEntry type="module" module-name="j2k-tests" scope="TEST" />
   </component>
 </module>
 

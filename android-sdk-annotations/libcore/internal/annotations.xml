@@ -1,5 +1,0 @@
-<root>
-    <item name='libcore.internal.StringPool java.lang.String get(char[], int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

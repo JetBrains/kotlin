@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.ArrayList;
@@ -87,10 +87,10 @@ public class TaskPrioritizer {
         List<Pair<JetScope, ReceiverValue>> variants = new ArrayList<Pair<JetScope, ReceiverValue>>(2);
 
         ReceiverValue explicitReceiver = context.call.getExplicitReceiver();
-        if (explicitReceiver.exists() && explicitReceiver.getType() instanceof NamespaceType) {
+        if (explicitReceiver.exists() && explicitReceiver.getType() instanceof PackageType) {
             JetType receiverType = explicitReceiver.getType();
             variants.add(Pair.create(receiverType.getMemberScope(), NO_RECEIVER));
-            ReceiverValue value = ((NamespaceType) receiverType).getReceiverValue();
+            ReceiverValue value = ((PackageType) receiverType).getReceiverValue();
             if (value.exists()) {
                 variants.add(Pair.create(context.scope, value));
             }

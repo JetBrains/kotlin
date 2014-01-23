@@ -38,9 +38,15 @@ public class JetClassObject extends JetDeclarationImpl implements JetStatementEx
         return visitor.visitClassObject(this, data);
     }
 
-    @Nullable @IfNotParsed
+    @NotNull
     public JetObjectDeclaration getObjectDeclaration() {
-        return (JetObjectDeclaration) findChildByType(JetNodeTypes.OBJECT_DECLARATION);
+        JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) findChildByType(JetNodeTypes.OBJECT_DECLARATION);
+
+        assert objectDeclaration != null :
+                String.format("It should be impossible to produce class object element without object child:\n %s",
+                              this.getParent().getText());
+
+        return objectDeclaration;
     }
 
     @Nullable @IfNotParsed

@@ -1,5 +1,7 @@
-fun foo(p: java.util.BitSet){}
+class X<T> {
+    fun foo(p: java.util.HashMap<java.io.File, T>){}
 
-fun f(){
-    foo(<caret>)
+    fun f(){
+        foo(<caret>)
+    }
 }

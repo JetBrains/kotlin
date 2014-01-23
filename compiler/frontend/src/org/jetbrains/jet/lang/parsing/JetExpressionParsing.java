@@ -529,7 +529,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   : functionLiteral
      *   : declaration
      *   : SimpleName
-     *   : "package" // foo the root namespace
+     *   : "package" // for the root package
      *   ;
      */
     private void parseAtomicExpression() {
@@ -542,7 +542,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseTupleExpression();
         }
         else if (at(PACKAGE_KEYWORD)) {
-            parseOneTokenExpression(ROOT_NAMESPACE);
+            parseOneTokenExpression(ROOT_PACKAGE);
         }
         else if (at(THIS_KEYWORD)) {
             parseThisExpression();

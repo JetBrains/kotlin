@@ -267,13 +267,17 @@ public class Renderers {
 
         TypeParameterDescriptor typeParameterDescriptor = null;
         ConstraintSystemImpl constraintSystem = (ConstraintSystemImpl) inferenceErrorData.constraintSystem;
-        assert constraintSystem.getStatus().hasViolatedUpperBound();
+        ConstraintSystemStatus status = constraintSystem.getStatus();
+        assert status.hasViolatedUpperBound();
 
         ConstraintSystem systemWithoutWeakConstraints = constraintSystem.getSystemWithoutWeakConstraints();
         for (TypeParameterDescriptor typeParameter : inferenceErrorData.descriptor.getTypeParameters()) {
             if (!ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, typeParameter, true)) {
                 typeParameterDescriptor = typeParameter;
             }
+        }
+        if (typeParameterDescriptor == null && status.hasConflictingConstraints()) {
+            return renderConflictingSubstitutionsInferenceError(inferenceErrorData, result);
         }
         assert typeParameterDescriptor != null : errorMessage;
 

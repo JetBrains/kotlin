@@ -1,0 +1,12 @@
+<root>
+  <item name='com.intellij.util.io.TestFileSystemBuilder com.intellij.util.io.TestFileSystemBuilder dir(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.util.io.TestFileSystemBuilder com.intellij.util.io.TestFileSystemBuilder file(java.lang.String, java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.util.io.TestFileSystemBuilder com.intellij.util.io.TestFileSystemBuilder fs()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

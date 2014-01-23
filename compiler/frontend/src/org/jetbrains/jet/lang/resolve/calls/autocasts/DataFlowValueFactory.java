@@ -89,12 +89,12 @@ public class DataFlowValueFactory {
     private static class IdentifierInfo {
         public final Object id;
         public final boolean isStable;
-        public final boolean isNamespace;
+        public final boolean isPackage;
 
-        private IdentifierInfo(Object id, boolean isStable, boolean isNamespace) {
+        private IdentifierInfo(Object id, boolean isStable, boolean isPackage) {
             this.id = id;
             this.isStable = isStable;
-            this.isNamespace = isNamespace;
+            this.isPackage = isPackage;
         }
     }
 
@@ -120,7 +120,7 @@ public class DataFlowValueFactory {
         if (selectorInfo.id == null) {
             return NO_IDENTIFIER_INFO;
         }
-        if (receiverInfo == null || receiverInfo == NO_IDENTIFIER_INFO || receiverInfo.isNamespace) {
+        if (receiverInfo == null || receiverInfo == NO_IDENTIFIER_INFO || receiverInfo.isPackage) {
             return selectorInfo;
         }
         return createInfo(Pair.create(receiverInfo.id, selectorInfo.id), receiverInfo.isStable && selectorInfo.isStable);
@@ -155,8 +155,8 @@ public class DataFlowValueFactory {
 
             return getIdForThisReceiver(declarationDescriptor);
         }
-        else if (expression instanceof JetRootNamespaceExpression) {
-            return createPackageInfo(JetModuleUtil.getRootNamespaceType(expression));
+        else if (expression instanceof JetRootPackageExpression) {
+            return createPackageInfo(JetModuleUtil.getRootPackageType(expression));
         }
         return NO_IDENTIFIER_INFO;
     }

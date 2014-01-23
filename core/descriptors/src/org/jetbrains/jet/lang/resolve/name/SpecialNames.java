@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SpecialNames {
     public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
-    public static final Name ROOT_NAMESPACE = Name.special("<root namespace>");
+    public static final Name ROOT_PACKAGE = Name.special("<root package>");
 
     private static final String CLASS_OBJECT_FOR = "<class-object-for-";
 

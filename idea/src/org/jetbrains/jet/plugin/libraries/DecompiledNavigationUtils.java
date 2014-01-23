@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -58,7 +57,7 @@ public final class DecompiledNavigationUtils {
         DeclarationDescriptor effectiveReferencedDescriptor = getEffectiveReferencedDescriptor(referencedDescriptor);
         VirtualFile virtualFile = findVirtualFileContainingDescriptor(project, effectiveReferencedDescriptor);
 
-        if (virtualFile == null || !DecompiledUtils.isKotlinCompiledFile(virtualFile)) return null;
+        if (virtualFile == null || !DecompiledUtils.isKotlinCompiledFile(project, virtualFile)) return null;
 
         JetDecompiledData data = JetDecompiledData.getDecompiledData(virtualFile, project);
         JetDeclaration jetDeclaration = data.getDeclarationForDescriptor(effectiveReferencedDescriptor);
@@ -100,8 +99,8 @@ public final class DecompiledNavigationUtils {
         if (containerFqName == null) {
             return null;
         }
-        VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
-        VirtualFile virtualFile = fileFinder.find(containerFqName);
+        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
+        VirtualFile virtualFile = fileFinder.findVirtualFile(containerFqName);
         if (virtualFile == null) {
             return null;
         }
@@ -111,14 +110,15 @@ public final class DecompiledNavigationUtils {
     //TODO: navigate to inner classes
     @Nullable
     private static FqName getContainerFqName(@NotNull DeclarationDescriptor referencedDescriptor) {
-        ClassOrNamespaceDescriptor
-                containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrNamespaceDescriptor.class, false);
+        ClassOrPackageFragmentDescriptor
+                containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrPackageFragmentDescriptor.class, false);
         if (containerDescriptor instanceof PackageFragmentDescriptor) {
             return PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) containerDescriptor).getFqName());
         }
         if (containerDescriptor instanceof ClassDescriptor) {
             ClassKind classKind = ((ClassDescriptor) containerDescriptor).getKind();
-            if (classKind == ClassKind.CLASS_OBJECT || classKind == ClassKind.ENUM_ENTRY) {
+            if (classKind == ClassKind.CLASS_OBJECT || classKind == ClassKind.ENUM_ENTRY
+                || DescriptorUtils.isLocal(containerDescriptor.getContainingDeclaration(), containerDescriptor)) {
                 return getContainerFqName(containerDescriptor.getContainingDeclaration());
             }
             return getFqNameSafe(containerDescriptor);

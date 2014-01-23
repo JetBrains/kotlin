@@ -29,12 +29,12 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +43,11 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
+    private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = new DescriptorRendererBuilder()
+                                                                                    .setVerbose(true)
+                                                                                    .setShortNames(true)
+                                                                                    .build();
+
     private static final String PATH = "compiler/testData/resolveAnnotations/testFile.kt";
 
     private static final FqName PACKAGE = new FqName("test");
@@ -264,7 +269,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         context = analyzeExhaust.getBindingContext();
 
         PackageViewDescriptor packageView = analyzeExhaust.getModuleDescriptor().getPackage(PACKAGE);
-        assertNotNull("Failed to find namespace: " + PACKAGE, packageView);
+        assertNotNull("Failed to find package: " + PACKAGE, packageView);
         return packageView;
     }
 
@@ -277,7 +282,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         String actual = StringUtil.join(member.getAnnotations(), new Function<AnnotationDescriptor, String>() {
             @Override
             public String fun(AnnotationDescriptor annotationDescriptor) {
-                return annotationDescriptor.getType().toString() + DescriptorUtils.getSortedValueArguments(annotationDescriptor, DescriptorRenderer.TEXT);
+                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor);
             }
         }, " ");
         assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
@@ -288,7 +293,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         return StringUtil.join(member.getAnnotations(), new Function<AnnotationDescriptor, String>() {
             @Override
             public String fun(AnnotationDescriptor annotationDescriptor) {
-                return annotationDescriptor.getType().toString() + DescriptorUtils.getSortedValueArguments(annotationDescriptor, DescriptorRenderer.TEXT);
+                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor);
             }
         }, " ");
     }

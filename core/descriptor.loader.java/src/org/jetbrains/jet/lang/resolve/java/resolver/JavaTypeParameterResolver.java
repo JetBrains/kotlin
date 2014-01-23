@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter;
@@ -28,7 +28,10 @@ import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 public final class JavaTypeParameterResolver {
     @NotNull
@@ -63,7 +66,7 @@ public final class JavaTypeParameterResolver {
         private void addTypeParameter(@NotNull JavaTypeParameter typeParameter) {
             TypeParameterDescriptorImpl descriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                     owner,
-                    Collections.<AnnotationDescriptor>emptyList(), // TODO
+                    Annotations.EMPTY, // TODO
                     false,
                     Variance.INVARIANT,
                     typeParameter.getName(),

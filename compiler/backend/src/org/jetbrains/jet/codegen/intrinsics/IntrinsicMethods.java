@@ -21,9 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.RangeCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.AnnotationUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -228,16 +227,9 @@ public class IntrinsicMethods {
             }
         }
 
-        for (AnnotationDescriptor annotation : descriptor.getAnnotations()) {
-            ClassifierDescriptor classifierDescriptor = annotation.getType().getConstructor().getDeclarationDescriptor();
-            assert classifierDescriptor != null;
-            if ("Intrinsic".equals(classifierDescriptor.getName().asString())) {
-                String value = (String) annotation.getAllValueArguments().values().iterator().next().getValue();
-                IntrinsicMethod result = namedMethods.get(value);
-                if (result != null) return result;
-            }
-        }
+        String value = AnnotationUtils.getIntrinsicAnnotationArgument(descriptor);
+        if (value == null) return null;
 
-        return null;
+        return namedMethods.get(value);
     }
 }

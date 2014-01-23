@@ -6,7 +6,7 @@
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <option name="MAIN_CLASS_NAME" value="org.jetbrains.jet.generators.tests.GenerateTests" />
+    <option name="MAIN_CLASS_NAME" value="org.jetbrains.jet.generators.tests.TestsPackage" />
     <option name="VM_PARAMETERS" value="-ea" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />

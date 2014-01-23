@@ -108,7 +108,7 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
         for (Module module : ConfigureKotlinInProjectUtils.getModulesWithKotlinFiles(myProject)) {
             if (ProjectStructureUtil.isJavaKotlinModule(module)) {
                 Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-                if (sdk != null && !isAnnotationsArePresent(sdk)) {
+                if (sdk != null && !areAnnotationsCorrect(sdk)) {
                     sdks.add(sdk);
                 }
             }
@@ -116,12 +116,9 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
         return sdks;
     }
 
-    private static boolean isAnnotationsArePresent(@NotNull Sdk sdk) {
-        if (!KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk)) {
-            return false;
-        }
-
-        boolean isAndroidSdk = NotificationsPackage.isAndroidSdk(sdk);
-        return !(isAndroidSdk && !KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk));
+    private static boolean areAnnotationsCorrect(@NotNull Sdk sdk) {
+        return NotificationsPackage.isAndroidSdk(sdk)
+               ? KotlinRuntimeLibraryUtil.androidSdkAnnotationsArePresent(sdk) && !KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk)
+               : KotlinRuntimeLibraryUtil.jdkAnnotationsArePresent(sdk);
     }
 }

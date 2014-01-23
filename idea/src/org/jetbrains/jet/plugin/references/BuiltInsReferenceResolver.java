@@ -138,7 +138,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             return ((ClassDescriptor) currentParent).getClassObjectDescriptor();
         }
         else {
-            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqNameSafe(originalDescriptor));
+            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(originalDescriptor));
         }
     }
 

@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
@@ -27,19 +27,17 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 
-public class IntegerValueTypeConstant implements CompileTimeConstant<IntegerValueTypeConstructor> {
-
-    private final IntegerValueTypeConstructor value;
+public class IntegerValueTypeConstant extends CompileTimeConstant<IntegerValueTypeConstructor> {
 
     public IntegerValueTypeConstant(long value) {
-        this.value = new IntegerValueTypeConstructor(value);
+        super(new IntegerValueTypeConstructor(value));
     }
 
     @NotNull
     @Override
     public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
         return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(), getValue(),
+                Annotations.EMPTY, getValue(),
                 false, Collections.<TypeProjection>emptyList(),
                 ErrorUtils.createErrorScope("Scope for number value type (" + getValue().toString() + ")", true));
     }
@@ -47,12 +45,6 @@ public class IntegerValueTypeConstant implements CompileTimeConstant<IntegerValu
     @Override
     public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
         return visitor.visitNumberTypeValue(this, data);
-    }
-
-    @NotNull
-    @Override
-    public IntegerValueTypeConstructor getValue() {
-        return value;
     }
 
     @Override

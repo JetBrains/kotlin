@@ -387,8 +387,8 @@ public class Short private () : Number, Comparable<Short> {
 
   public fun inc() : Short
   public fun dec() : Short
-  public fun plus() : Short
-  public fun minus() : Short
+  public fun plus() : Int
+  public fun minus() : Int
 
   public override fun toDouble() : Double
   public override fun toFloat() : Float
@@ -461,8 +461,8 @@ public class Byte private () : Number, Comparable<Byte> {
 
   public fun inc() : Byte
   public fun dec() : Byte
-  public fun plus() : Byte
-  public fun minus() : Byte
+  public fun plus() : Int
+  public fun minus() : Int
 
   public override fun toDouble() : Double
   public override fun toFloat() : Float

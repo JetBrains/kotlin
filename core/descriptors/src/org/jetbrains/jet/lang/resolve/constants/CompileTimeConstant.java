@@ -17,15 +17,25 @@
 package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public interface CompileTimeConstant<T> {
-    T getValue();
+public abstract class CompileTimeConstant<T> {
+    protected final T value;
+
+    protected CompileTimeConstant(T value) {
+        this.value = value;
+    }
+
+    @Nullable
+    public T getValue() {
+        return value;
+    }
 
     @NotNull
-    JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns);
+    public abstract JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns);
 
-    <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data);
+    public abstract <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data);
 }

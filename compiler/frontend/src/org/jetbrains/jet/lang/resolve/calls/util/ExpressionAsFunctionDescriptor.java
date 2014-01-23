@@ -17,20 +17,21 @@
 package org.jetbrains.jet.lang.resolve.calls.util;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.Visibility;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.name.Name;
-
-import java.util.Collections;
 
 public class ExpressionAsFunctionDescriptor extends FunctionDescriptorImpl {
 
     private final JetExpression expression;
 
     public ExpressionAsFunctionDescriptor(DeclarationDescriptor containingDeclaration, Name name, JetExpression expression) {
-        super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name, Kind.DECLARATION);
+        super(containingDeclaration, Annotations.EMPTY, name, Kind.DECLARATION);
         this.expression = expression;
     }
 

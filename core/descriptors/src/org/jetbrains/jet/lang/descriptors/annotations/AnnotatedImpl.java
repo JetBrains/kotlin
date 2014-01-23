@@ -18,18 +18,16 @@ package org.jetbrains.jet.lang.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public abstract class AnnotatedImpl implements Annotated {
-    private final List<AnnotationDescriptor> annotations;
+    private final Annotations annotations;
 
-    public AnnotatedImpl(List<AnnotationDescriptor> annotations) {
+    public AnnotatedImpl(@NotNull Annotations annotations) {
         this.annotations = annotations;
     }
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
+    public Annotations getAnnotations() {
         return annotations;
     }
 }

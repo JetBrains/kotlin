@@ -48,6 +48,7 @@ import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -220,8 +221,8 @@ public class JetTestUtils {
     private JetTestUtils() {
     }
 
-    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace) {
-        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, Collections.<AnalyzerScriptParameter>emptyList());
+    public static AnalyzeExhaust analyzeFile(@NotNull JetFile file) {
+        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, Collections.<AnalyzerScriptParameter>emptyList());
     }
 
     @NotNull
@@ -313,7 +314,8 @@ public class JetTestUtils {
         }
     }
 
-    public static JetFile createFile(@NonNls String name, String text, @NotNull Project project) {
+    @NotNull
+    public static JetFile createFile(@NotNull @NonNls String name, @NotNull String text, @NotNull Project project) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         return (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(project)).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
@@ -343,7 +345,12 @@ public class JetTestUtils {
             @NotNull TestJdkKind jdkKind, @NotNull Collection<File> extraClasspath, @NotNull Collection<File> priorityClasspath) {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.addAll(CLASSPATH_KEY, priorityClasspath);
-        configuration.add(CLASSPATH_KEY, jdkKind == TestJdkKind.MOCK_JDK ? findMockJdkRtJar() : PathUtil.findRtJar());
+        if (jdkKind == TestJdkKind.MOCK_JDK) {
+            configuration.add(CLASSPATH_KEY, findMockJdkRtJar());
+        }
+        else {
+            configuration.addAll(CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
+        }
         if (configurationKind == ALL) {
             configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
         }
@@ -710,7 +717,7 @@ public class JetTestUtils {
     public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName, @NotNull String moduleName) {
         ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule(moduleName);
         MutablePackageFragmentProvider provider = new MutablePackageFragmentProvider(module);
-        module.addFragmentProvider(provider);
+        module.addFragmentProvider(DependencyKind.SOURCES, provider);
         return provider.getOrCreateFragment(FqName.topLevel(testPackageName));
     }
 

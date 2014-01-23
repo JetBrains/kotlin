@@ -19,7 +19,6 @@ package org.jetbrains.jet.descriptors.serialization;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -67,7 +66,7 @@ public class NameTable {
         return simpleNames.intern(name.asString());
     }
 
-    public int getFqNameIndex(@NotNull ClassOrNamespaceDescriptor descriptor) {
+    public int getFqNameIndex(@NotNull ClassOrPackageFragmentDescriptor descriptor) {
         QualifiedName.Builder builder = QualifiedName.newBuilder();
         if (descriptor instanceof ClassDescriptor) {
             builder.setKind(QualifiedName.Kind.CLASS);

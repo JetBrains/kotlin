@@ -23,10 +23,9 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
-
-import java.util.List;
 
 public class InlineUtil {
 
@@ -49,7 +48,7 @@ public class InlineUtil {
     }
 
     @NotNull
-    public static InlineStrategy getInlineType(@Nullable List<AnnotationDescriptor> annotations) {
+    public static InlineStrategy getInlineType(@Nullable Annotations annotations) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         ClassDescriptor annotationClass = builtIns.getInlineClassAnnotation();
         AnnotationDescriptor annotation = getAnnotation(annotations, annotationClass);
@@ -73,7 +72,7 @@ public class InlineUtil {
     }
 
     @Nullable
-    private static AnnotationDescriptor getAnnotation(@Nullable List<AnnotationDescriptor> annotations, @NotNull ClassDescriptor annotationClass) {
+    private static AnnotationDescriptor getAnnotation(@Nullable Annotations annotations, @NotNull ClassDescriptor annotationClass) {
         if (annotations != null) {
             for (AnnotationDescriptor annotation : annotations) {
                 if (annotationClass.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {

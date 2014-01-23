@@ -66,3 +66,18 @@ abstract class IllegalModifiers5() {
     try {} catch (annotated("a text") <!ILLEGAL_MODIFIER!>abstract<!> <!ILLEGAL_MODIFIER!>public<!> e: Exception) {}
   }
 }
+
+//Check illegal modifiers on anonymous initializers
+abstract class IllegalModifiers6() {
+    <!ILLEGAL_MODIFIER!>public<!> {}
+    <!ILLEGAL_MODIFIER!>private<!> {}
+    <!ILLEGAL_MODIFIER!>protected<!> {}
+    <!ILLEGAL_MODIFIER!>vararg<!> {}
+    <!ILLEGAL_MODIFIER!>abstract<!> {}
+    <!ILLEGAL_MODIFIER!>open<!> {}
+    <!ILLEGAL_MODIFIER!>final<!> {}
+
+    <!ILLEGAL_MODIFIER!>public<!> annotated {}
+
+    <!ILLEGAL_MODIFIER!>private<!> <!NOT_AN_ANNOTATION_CLASS!>IllegalModifiers6()<!> {}
+}

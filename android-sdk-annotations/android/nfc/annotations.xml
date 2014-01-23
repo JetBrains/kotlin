@@ -1,11 +1,17 @@
 <root>
+    <item name='android.nfc.NfcAdapter ACTION_HANDOVER_TRANSFER_DONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NfcAdapter ACTION_HANDOVER_TRANSFER_STARTED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.INfcAdapterExtras.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.Tag android.nfc.Tag rediscover()'>
+    <item name='android.nfc.INfcAdapter.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createMime(java.lang.String, byte[])'>
+    <item name='android.nfc.NfcAdapter ACTION_TAG_LEFT_FIELD'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NdefRecord NdefRecord(byte[]) 0'>
@@ -14,31 +20,28 @@
     <item name='android.nfc.Tag android.nfc.Tag createMockTag(byte[], int[], android.os.Bundle[]) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.ErrorCodes java.lang.String asString(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.nfc.INdefPushCallback.Stub android.os.IBinder asBinder()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.nfc.Tag java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.nfc.NfcAdapter void dispatch(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NdefMessage NdefMessage(android.nfc.NdefRecord, android.nfc.NdefRecord...) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createUri(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.NfcAdapter void setNdefPushMessageCallback(android.nfc.NfcAdapter.CreateNdefMessageCallback, android.app.Activity, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefRecord RTD_HANDOVER_CARRIER'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NfcAdapter void disableForegroundDispatch(android.app.Activity) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.INfcAdapter.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
+    <item name='android.nfc.ApduList CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.Tag android.nfc.Tag createMockTag(byte[], int[], android.os.Bundle[])'>
+    <item name='android.nfc.INfcAdapter.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NfcAdapter void enableForegroundNdefPush(android.app.Activity, android.nfc.NdefMessage) 0'>
@@ -50,7 +53,22 @@
     <item name='android.nfc.NfcAdapter void setNdefPushMessageCallback(android.nfc.NfcAdapter.CreateNdefMessageCallback, android.app.Activity, android.app.Activity...) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createExternal(java.lang.String, java.lang.String, byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.Tag Tag(byte[], int[], android.os.Bundle[], int, android.nfc.INfcTag) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefRecord RTD_HANDOVER_REQUEST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.ErrorCodes java.lang.String asString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.Tag java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefRecord RTD_ALTERNATIVE_CARRIER'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NdefRecord android.nfc.NdefRecord createUri(java.lang.String) 0'>
@@ -59,52 +77,100 @@
     <item name='android.nfc.INdefPushCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createUri(java.lang.String)'>
+    <item name='android.nfc.NdefRecord CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NfcAdapter void setNdefPushMessage(android.nfc.NdefMessage, android.app.Activity, android.app.Activity...) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.INfcTag.Stub android.os.IBinder asBinder()'>
+    <item name='android.nfc.NdefRecord RTD_SMART_POSTER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefRecord java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NfcAdapter ACTION_ADAPTER_STATE_CHANGED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.BeamShareData CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.BeamShareData void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.Tag java.lang.String[] getTechList()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.INfcTag.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.NdefMessage java.lang.String toString()'>
+    <item name='android.nfc.NfcAdapter EXTRA_NDEF_MESSAGES'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NfcAdapter void setNdefPushMessage(android.nfc.NdefMessage, android.app.Activity, int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createExternal(java.lang.String, java.lang.String, byte[])'>
+    <item name='android.nfc.Tag android.nfc.Tag createMockTag(byte[], int[], android.os.Bundle[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.TechListParcel void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.NdefMessage java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.NdefMessage NdefMessage(android.nfc.NdefRecord[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createUri(android.net.Uri)'>
+    <item name='android.nfc.INdefPushCallback.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NfcAdapter EXTRA_HANDOVER_TRANSFER_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefMessage CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NdefRecord void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.INfcTag.Stub android.os.IBinder asBinder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefRecord RTD_TEXT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.INfcAdapterExtras java.lang.String getDriverName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.INdefPushCallback.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.INfcAdapter.Stub android.os.IBinder asBinder()'>
+    <item name='android.nfc.NfcAdapter ACTION_TECH_DISCOVERED'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NfcAdapter EXTRA_ID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createApplicationRecord(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NfcAdapter EXTRA_ADAPTER_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.Tag android.nfc.Tag rediscover()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NfcAdapter void enableForegroundDispatch(android.app.Activity, android.app.PendingIntent, android.content.IntentFilter[], java.lang.String[][]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.TechListParcel CREATOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.INfcTag.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NfcAdapter EXTRA_TAG'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NdefMessage NdefMessage(android.nfc.NdefRecord, android.nfc.NdefRecord...) 0'>
@@ -119,10 +185,13 @@
     <item name='android.nfc.NfcAdapter void setOnNdefPushCompleteCallback(android.nfc.NfcAdapter.OnNdefPushCompleteCallback, android.app.Activity, android.app.Activity...) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.NdefRecord java.lang.String toString()'>
+    <item name='android.nfc.NfcAdapter EXTRA_HANDOVER_TRANSFER_STATUS'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NdefMessage NdefMessage(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createMime(java.lang.String, byte[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.NdefRecord android.nfc.NdefRecord createApplicationRecord(java.lang.String) 0'>
@@ -131,22 +200,31 @@
     <item name='android.nfc.Tag void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createApplicationRecord(java.lang.String)'>
+    <item name='android.nfc.NfcAdapter ACTION_NDEF_DISCOVERED'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.INfcAdapterExtras.Stub android.os.IBinder asBinder()'>
+    <item name='android.nfc.NdefMessage android.nfc.NdefRecord[] getRecords()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefRecord RTD_HANDOVER_SELECT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NfcAdapter ACTION_TAG_DISCOVERED'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.INfcAdapterExtras.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.Tag java.lang.String[] getTechList()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.nfc.NfcAdapter void disableForegroundNdefPush(android.app.Activity) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.NdefRecord RTD_URI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.TransceiveResult void writeToParcel(android.os.Parcel, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.TransceiveResult CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.ApduList void writeToParcel(android.os.Parcel, int) 0'>
@@ -158,7 +236,7 @@
     <item name='android.nfc.NfcAdapter void enableForegroundDispatch(android.app.Activity, android.app.PendingIntent, android.content.IntentFilter[], java.lang.String[][]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.NdefMessage android.nfc.NdefRecord[] getRecords()'>
+    <item name='android.nfc.INfcAdapterExtras.Stub android.os.IBinder asBinder()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.INfcAdapter.Stub boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) 1'>
@@ -167,7 +245,13 @@
     <item name='android.nfc.Tag android.nfc.Tag createMockTag(byte[], int[], android.os.Bundle[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.Tag CREATOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.NfcAdapter void enableForegroundNdefPush(android.app.Activity, android.nfc.NdefMessage) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.NdefRecord android.nfc.NdefRecord createUri(android.net.Uri)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

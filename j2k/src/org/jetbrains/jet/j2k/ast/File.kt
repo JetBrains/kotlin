@@ -16,17 +16,18 @@
 
 package org.jetbrains.jet.j2k.ast
 
-public open class File(val packageName: String,
-                       val imports: MutableList<Import>,
-                       val body: MutableList<Node>,
-                       val mainFunction: String) : Node() {
+class FileMemberList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine, false)
 
-    public override fun toKotlin(): String {
-        val common: String = imports.toKotlin("\n") + "\n\n" + body.toKotlin("\n") + "\n" + mainFunction
-        if (packageName.isEmpty()) {
-            return common
-        }
+class PackageStatement(val packageName: String) : Element {
+    override fun toKotlin(): String = "package " + packageName
+}
 
-        return "package " + packageName + "\n" + common
+class File(
+        val body: FileMemberList,
+        val mainFunction: String
+) : Element {
+
+    override fun toKotlin(): String {
+        return body.toKotlin() + mainFunction
     }
 }

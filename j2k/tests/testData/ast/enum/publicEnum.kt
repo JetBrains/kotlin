@@ -1,0 +1,2 @@
+public enum class Test {
+}

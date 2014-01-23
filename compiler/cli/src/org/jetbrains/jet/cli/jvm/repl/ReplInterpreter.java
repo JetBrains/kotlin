@@ -43,9 +43,10 @@ import org.jetbrains.jet.codegen.KotlinCodegenFacade;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.NamespaceLikeBuilderDummy;
+import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilderDummy;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetScript;
@@ -73,6 +74,9 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
+import static org.jetbrains.jet.lang.descriptors.DependencyKind.BINARIES;
+import static org.jetbrains.jet.lang.descriptors.DependencyKind.BUILT_INS;
+import static org.jetbrains.jet.lang.descriptors.DependencyKind.SOURCES;
 
 public class ReplInterpreter {
 
@@ -103,9 +107,9 @@ public class ReplInterpreter {
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
-        module.addFragmentProvider(injector.getTopDownAnalyzer().getPackageFragmentProvider());
-        module.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
-        module.addFragmentProvider(injector.getJavaPackageFragmentProvider());
+        module.addFragmentProvider(SOURCES, injector.getTopDownAnalyzer().getPackageFragmentProvider());
+        module.addFragmentProvider(BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        module.addFragmentProvider(BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
         List<URL> classpath = Lists.newArrayList();
 
@@ -284,12 +288,12 @@ public class ReplInterpreter {
     private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull MessageCollector messageCollector) {
         WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, module,
-                new TraceBasedRedeclarationHandler(trace), "Root scope in analyzeNamespace");
+                new TraceBasedRedeclarationHandler(trace), "Root scope in analyzePackage");
 
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        // Import a scope that contains all top-level namespaces that come from dependencies
-        // This makes the namespaces visible at all, does not import themselves
+        // Import a scope that contains all top-level packages that come from dependencies
+        // This makes the packages visible at all, does not import themselves
         scope.importScope(module.getPackage(FqName.ROOT).getMemberScope());
 
         if (lastLineScope != null) {
@@ -299,8 +303,8 @@ public class ReplInterpreter {
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         // dummy builder is used because "root" is module descriptor,
-        // namespaces added to module explicitly in
-        injector.getTopDownAnalyzer().doProcess(scope, new NamespaceLikeBuilderDummy(), Collections.singletonList(psiFile));
+        // packages added to module explicitly in
+        injector.getTopDownAnalyzer().doProcess(scope, new PackageLikeBuilderDummy(), Collections.singletonList(psiFile));
 
         boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext(), messageCollector);
         if (hasErrors) {
@@ -349,7 +353,7 @@ public class ReplInterpreter {
         registerClassNameForScript(state.getBindingTrace(), script, classType);
 
         state.beforeCompile();
-        KotlinCodegenFacade.generateNamespace(
+        KotlinCodegenFacade.generatePackage(
                 state,
                 JetPsiUtil.getFQName((JetFile) script.getContainingFile()),
                 Collections.singleton((JetFile) script.getContainingFile()),

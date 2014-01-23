@@ -59,7 +59,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -292,7 +292,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
                     functionLiteral.addAfter(whitespaceToAdd, openBraceElement);
                 }
             }
-            ReferenceToClassesShortening.compactReferenceToClasses(functionLiteralExpression.getValueParameters());
+            ShortenReferences.instance$.process(functionLiteralExpression.getValueParameters());
         }
     }
 
@@ -332,7 +332,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         for (JetCallExpression call : callsToAddArguments) {
             call.addAfter(JetPsiFactory.createTypeArguments(containingFile.getProject(), "<" + typeArguments + ">"),
                           call.getCalleeExpression());
-            ReferenceToClassesShortening.compactReferenceToClasses(Arrays.asList(call.getTypeArgumentList()));
+            ShortenReferences.instance$.process(call.getTypeArgumentList());
         }
     }
 

@@ -8,7 +8,7 @@ open class A(x: Int) {
     }
 }
 /*
-Text: (<no parameters>), Disabled: false, Strikeout: false, Green: true
-Text: (x: Boolean), Disabled: false, Strikeout: false, Green: false
-Text: (x: String), Disabled: false, Strikeout: false, Green: false
+Text: (<highlight>x: Boolean</highlight>), Disabled: false, Strikeout: false, Green: false
+Text: (<highlight>x: String</highlight>), Disabled: false, Strikeout: false, Green: false
+Text: (<no parameters>), Disabled: true, Strikeout: false, Green: true
 */

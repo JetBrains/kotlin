@@ -1,5 +1,0 @@
-<root>
-    <item name='org.bouncycastle.jcajce.io.MacOutputStream void write(byte[], int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

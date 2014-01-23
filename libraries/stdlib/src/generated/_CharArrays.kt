@@ -184,6 +184,18 @@ public inline fun <K> CharArray.groupByTo(result: MutableMap<K, MutableList<Char
 }
 
 /**
+ * Returns first index of item, or -1 if the array does not contain item
+ */
+public fun CharArray.indexOf(item: Char) : Int {
+    for (i in indices) {
+        if (item == this[i]) {
+            return i
+        }
+    }
+    return -1
+}
+
+/**
  * Returns true if the array is empty
  */
 public fun CharArray.isEmpty() : Boolean {

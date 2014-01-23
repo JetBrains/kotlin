@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.JetPsiMatcher;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -128,7 +128,7 @@ public class DeclarationUtils {
         );
 
         if (inferredType != null) {
-            ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(property.getTypeRef()));
+            ShortenReferences.instance$.process(property.getTypeRef());
         }
 
         return newInitializer;

@@ -24,7 +24,6 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.signature.SignatureVisitor;
 import org.jetbrains.asm4.signature.SignatureWriter;
 import org.jetbrains.asm4.util.CheckSignatureAdapter;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
 
@@ -55,13 +54,9 @@ public class BothSignatureWriter {
 
     private JvmMethodParameterKind currentParameterKind;
 
-    private final boolean needGenerics;
-
     private boolean generic = false;
 
-    public BothSignatureWriter(Mode mode, boolean needGenerics) {
-        this.needGenerics = needGenerics;
-
+    public BothSignatureWriter(@NotNull Mode mode) {
         this.signatureVisitor = new CheckSignatureAdapter(mode.asmType, signatureWriter);
     }
 
@@ -97,17 +92,6 @@ public class BothSignatureWriter {
                 signatureVisitor().visitBaseType(asmType.getDescriptor().charAt(0));
                 writeAsmType0(asmType);
         }
-    }
-
-    public void writeNothing() {
-        signatureVisitor().visitBaseType('V');
-        writeAsmType0(Type.VOID_TYPE);
-    }
-
-    public void writeNullableNothing() {
-        signatureVisitor().visitClassType("java/lang/Object");
-        signatureVisitor().visitEnd();
-        writeAsmType0(AsmTypeConstants.OBJECT_TYPE);
     }
 
     private String makeArrayPrefix() {
@@ -252,27 +236,25 @@ public class BothSignatureWriter {
     }
 
 
-    @NotNull
-    private Method makeAsmMethod(String name) {
-        List<Type> jvmParameterTypes = new ArrayList<Type>(kotlinParameterTypes.size());
-        for (JvmMethodParameterSignature p : kotlinParameterTypes) {
-            jvmParameterTypes.add(p.getAsmType());
-        }
-        return new Method(name, jvmReturnType, jvmParameterTypes.toArray(new Type[jvmParameterTypes.size()]));
-    }
-
     @Nullable
     public String makeJavaGenericSignature() {
         return generic ? signatureWriter.toString() : null;
     }
 
     @NotNull
-    public JvmMethodSignature makeJvmMethodSignature(String name) {
-        return new JvmMethodSignature(
-                makeAsmMethod(name),
-                needGenerics ? makeJavaGenericSignature() : null,
-                kotlinParameterTypes
-        );
+    public JvmMethodSignature makeJvmMethodSignature(@NotNull String name) {
+        List<Type> types = new ArrayList<Type>(kotlinParameterTypes.size());
+        for (JvmMethodParameterSignature parameter : kotlinParameterTypes) {
+            types.add(parameter.getAsmType());
+        }
+        Method asmMethod = new Method(name, jvmReturnType, types.toArray(new Type[types.size()]));
+        return new JvmMethodSignature(asmMethod, makeJavaGenericSignature(), kotlinParameterTypes);
+    }
+
+
+    @Override
+    public String toString() {
+        return signatureWriter.toString();
     }
 }
 

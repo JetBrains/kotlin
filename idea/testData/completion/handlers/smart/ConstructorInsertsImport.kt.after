@@ -1,7 +1,10 @@
-import java.util.BitSet
+import java.io.File
+import java.util.HashMap
 
-fun foo(p: java.util.BitSet){}
+class X<T> {
+    fun foo(p: java.util.HashMap<java.io.File, T>){}
 
-fun f(){
-    foo(BitSet(<caret>))
+    fun f(){
+        foo(HashMap<File, T>(<caret>))
+    }
 }

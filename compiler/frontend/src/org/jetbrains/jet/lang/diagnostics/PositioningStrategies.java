@@ -35,7 +35,22 @@ import java.util.List;
 
 public class PositioningStrategies {
 
-    public static final PositioningStrategy<PsiElement> DEFAULT = new PositioningStrategy<PsiElement>();
+    public static final PositioningStrategy<PsiElement> DEFAULT = new PositioningStrategy<PsiElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull PsiElement element) {
+            if (element instanceof JetObjectLiteralExpression) {
+                JetObjectDeclaration objectDeclaration = ((JetObjectLiteralExpression) element).getObjectDeclaration();
+                PsiElement objectKeyword = objectDeclaration.getObjectKeyword();
+                JetDelegationSpecifierList delegationSpecifierList = objectDeclaration.getDelegationSpecifierList();
+                if (delegationSpecifierList == null) {
+                    return markElement(objectKeyword);
+                }
+                return markRange(objectKeyword.getTextRange().union(delegationSpecifierList.getTextRange()));
+            }
+            return super.mark(element);
+        }
+    };
 
     public static final PositioningStrategy<JetDeclaration> DECLARATION_RETURN_TYPE = new PositioningStrategy<JetDeclaration>() {
         @NotNull
@@ -189,7 +204,7 @@ public class PositioningStrategies {
             }
             else if (element instanceof JetFile) {
                 JetFile file = (JetFile) element;
-                PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
+                PsiElement nameIdentifier = file.getPackageDirective().getNameIdentifier();
                 if (nameIdentifier != null) {
                     return markElement(nameIdentifier);
                 }
@@ -274,9 +289,7 @@ public class PositioningStrategies {
 
             if (element instanceof JetClassObject) {
                 JetObjectDeclaration objectDeclaration = ((JetClassObject) element).getObjectDeclaration();
-                if (objectDeclaration != null) {
-                    return ImmutableList.of(objectDeclaration.getObjectKeyword().getTextRange());
-                }
+                return ImmutableList.of(objectDeclaration.getObjectKeyword().getTextRange());
             }
 
             throw new IllegalArgumentException(

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="jps-model">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/jps/jps-model.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-api/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-impl/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-serialization/src" />
+    </SOURCES>
+  </library>
+</component>

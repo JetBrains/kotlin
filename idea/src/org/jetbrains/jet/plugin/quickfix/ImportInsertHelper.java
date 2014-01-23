@@ -22,8 +22,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -41,7 +39,7 @@ public class ImportInsertHelper {
     }
 
     /**
-     * Add import directive into the PSI tree for the given namespace.
+     * Add import directive into the PSI tree for the given package.
      *
      * @param importFqn full name of the import
      * @param file File where directive should be added.
@@ -105,12 +103,12 @@ public class ImportInsertHelper {
         }
         else {
             JetImportList newDirective = JetPsiFactory.createImportDirectiveWithImportList(file.getProject(), importPath);
-            JetNamespaceHeader header = file.getNamespaceHeader();
-            if (header == null) {
+            JetPackageDirective packageDirective = file.getPackageDirective();
+            if (packageDirective == null) {
                 throw new IllegalStateException("Scripts are not supported: " + file.getName());
             }
 
-            header.getParent().addAfter(newDirective, header);
+            packageDirective.getParent().addAfter(newDirective, packageDirective);
         }
     }
 
@@ -169,16 +167,5 @@ public class ImportInsertHelper {
         }
 
         return true;
-    }
-
-    public static ClassDescriptor getTopLevelClass(ClassDescriptor classDescriptor) {
-        while (true) {
-            DeclarationDescriptor parent = classDescriptor.getContainingDeclaration();
-            if (parent instanceof ClassDescriptor) {
-                classDescriptor = (ClassDescriptor) parent;
-            } else {
-                return classDescriptor;
-            }
-        }
     }
 }

@@ -1,0 +1,29 @@
+// FILE: base.kt
+class java {
+    class lang {
+        class ~Fake~Fake()
+    }
+}
+
+// FILE: root1.kt
+import java.lang.* // will import Fake
+
+fun foo() {
+    `Fake`Fake()
+}
+
+// FILE: root2.kt
+fun foo() {
+    `!`Fake() // not imported within "java.lang.*" default import
+    java.lang.`Fake`Fake() // we all are in same (root) package, so it works
+}
+
+
+// FILE: nonRoot.kt
+package nonRoot
+import java.lang.* // will not import Fake
+
+fun foo() {
+    `!`Fake()
+    java.lang.`!`Fake() // qualification doesn't help, because we are in other package
+}

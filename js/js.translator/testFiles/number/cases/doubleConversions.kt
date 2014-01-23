@@ -25,13 +25,13 @@ fun box(): Boolean {
     if (cn.toFloat() != -3.6.toFloat()) {
         return false
     }
-    if (cn.toByte() != -3.toByte()) {
+    if (cn.toByte() != (-3).toByte()) {
         return false
     }
     if (cn.toInt() != -3) {
         return false
     }
-    if (cn.toShort() != -3.toShort()) {
+    if (cn.toShort() != (-3).toShort()) {
         return false
     }
 
@@ -59,13 +59,13 @@ fun box(): Boolean {
     if (fn.toFloat() != -3.6.toFloat()) {
         return false
     }
-    if (fn.toByte() != -3.toByte()) {
+    if (fn.toByte() != (-3).toByte()) {
         return false
     }
     if (fn.toInt() != -3) {
         return false
     }
-    if (fn.toShort() != -3.toShort()) {
+    if (fn.toShort() != (-3).toShort()) {
         return false
     }
     return true

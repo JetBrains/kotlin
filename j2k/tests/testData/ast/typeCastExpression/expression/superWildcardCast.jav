@@ -1,1 +1,0 @@
-(List<? super String>)list

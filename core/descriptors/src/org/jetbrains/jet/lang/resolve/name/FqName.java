@@ -109,6 +109,7 @@ public final class FqName extends FqNameBase {
         return fqName.shortName();
     }
 
+    @Override
     @NotNull
     public Name shortNameOrSpecial() {
         return fqName.shortNameOrSpecial();

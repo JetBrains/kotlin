@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.TypeProjectionImpl;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
@@ -147,7 +148,8 @@ public final class JavaAnnotationArgumentResolver {
 
     @Nullable
     private CompileTimeConstant<?> resolveFromJavaClassObjectType(@NotNull JavaType javaType) {
-        JetType type = typeTransformer.transformToType(javaType, TypeVariableResolver.EMPTY);
+        // Foo.class is never nullable
+        JetType type = TypeUtils.makeNotNullable(typeTransformer.transformToType(javaType, TypeVariableResolver.EMPTY));
 
         ClassDescriptor jlClass = classResolver.resolveClass(JL_CLASS_FQ_NAME, IGNORE_KOTLIN_SOURCES);
         if (jlClass == null) return null;

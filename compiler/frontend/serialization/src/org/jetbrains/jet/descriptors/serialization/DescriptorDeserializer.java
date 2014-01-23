@@ -23,6 +23,8 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpl
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -248,11 +250,11 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private List<AnnotationDescriptor> getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
+    private Annotations getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
         return getAnnotations(containingDeclaration, proto, flags, kind, annotationDeserializer, nameResolver);
     }
 
-    public static List<AnnotationDescriptor> getAnnotations(
+    public static Annotations getAnnotations(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Callable proto,
             int flags,
@@ -260,12 +262,12 @@ public class DescriptorDeserializer {
             @NotNull AnnotationDeserializer annotationDeserializer,
             @NotNull NameResolver nameResolver
     ) {
-        assert containingDeclaration instanceof ClassOrNamespaceDescriptor
-                : "Only members in classes or namespaces should be serialized: " + containingDeclaration;
+        assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
+                : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
         return Flags.HAS_ANNOTATIONS.get(flags)
                ? annotationDeserializer
-                       .loadCallableAnnotations((ClassOrNamespaceDescriptor) containingDeclaration, proto, nameResolver, kind)
-               : Collections.<AnnotationDescriptor>emptyList();
+                       .loadCallableAnnotations((ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind)
+               : Annotations.EMPTY;
     }
 
     public static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {
@@ -371,9 +373,9 @@ public class DescriptorDeserializer {
     @NotNull
     private List<ValueParameterDescriptor> valueParameters(@NotNull Callable callable, @NotNull AnnotatedCallableKind kind) {
         DeclarationDescriptor containerOfCallable = containingDeclaration.getContainingDeclaration();
-        assert containerOfCallable instanceof ClassOrNamespaceDescriptor
-                : "Only members in classes or namespaces should be serialized: " + containerOfCallable;
-        ClassOrNamespaceDescriptor classOrNamespace = (ClassOrNamespaceDescriptor) containerOfCallable;
+        assert containerOfCallable instanceof ClassOrPackageFragmentDescriptor
+                : "Only members in classes or package fragments should be serialized: " + containerOfCallable;
+        ClassOrPackageFragmentDescriptor classOrPackage = (ClassOrPackageFragmentDescriptor) containerOfCallable;
 
         List<Callable.ValueParameter> protos = callable.getValueParameterList();
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(protos.size());
@@ -382,7 +384,7 @@ public class DescriptorDeserializer {
             result.add(new ValueParameterDescriptorImpl(
                     containingDeclaration,
                     i,
-                    getAnnotations(classOrNamespace, callable, kind, proto),
+                    getAnnotations(classOrPackage, callable, kind, proto),
                     nameResolver.getName(proto.getName()),
                     typeDeserializer.type(proto.getType()),
                     Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
@@ -393,14 +395,14 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private List<AnnotationDescriptor> getAnnotations(
-            @NotNull ClassOrNamespaceDescriptor classOrNamespace,
+    private Annotations getAnnotations(
+            @NotNull ClassOrPackageFragmentDescriptor classOrPackage,
             @NotNull Callable callable,
             @NotNull AnnotatedCallableKind kind,
             @NotNull Callable.ValueParameter valueParameter
     ) {
         return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())
-               ? annotationDeserializer.loadValueParameterAnnotations(classOrNamespace, callable, nameResolver, kind, valueParameter)
-               : Collections.<AnnotationDescriptor>emptyList();
+               ? annotationDeserializer.loadValueParameterAnnotations(classOrPackage, callable, nameResolver, kind, valueParameter)
+               : Annotations.EMPTY;
     }
 }

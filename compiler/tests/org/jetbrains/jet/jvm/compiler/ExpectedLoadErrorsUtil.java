@@ -23,9 +23,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -81,21 +81,16 @@ public class ExpectedLoadErrorsUtil {
             }
 
             private Void visitDeclaration(@NotNull DeclarationDescriptor descriptor) {
-                for (AnnotationDescriptor annotation : descriptor.getAnnotations()) {
-                    ClassDescriptor annotationClass = (ClassDescriptor) annotation.getType().getConstructor().getDeclarationDescriptor();
-                    assert annotationClass != null;
+                AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(new FqName(ANNOTATION_CLASS_NAME));
+                if (annotation == null) return null;
 
-                    if (DescriptorUtils.getFqName(annotationClass).asString().equals(ANNOTATION_CLASS_NAME)) {
+                // we expect exactly one annotation argument
+                CompileTimeConstant<?> argument = annotation.getAllValueArguments().values().iterator().next();
 
-                        // we expect exactly one annotation argument
-                        CompileTimeConstant<?> argument = annotation.getAllValueArguments().values().iterator().next();
+                String error = (String) argument.getValue();
+                List<String> errors = Arrays.asList(error.split("\\|"));
 
-                        String error = (String) argument.getValue();
-                        List<String> errors = Arrays.asList(error.split("\\|"));
-
-                        map.put(descriptor, errors);
-                    }
-                }
+                map.put(descriptor, errors);
 
                 return null;
             }

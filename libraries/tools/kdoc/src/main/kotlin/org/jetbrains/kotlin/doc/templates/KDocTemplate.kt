@@ -91,7 +91,7 @@ abstract class KDocTemplate() : TextTemplate() {
             } else if (owner is KPackage) {
                 if (!owner.useExternalLink) {
                     // TODO how to find the function in a package???
-                    "${rootHref(owner)}${names.htmlSourceDirName}/namespace.html#${names.lineNumberLinkHref(f.sourceLine)}"
+                    "${rootHref(owner)}${names.htmlSourceDirName}/package.html#${names.lineNumberLinkHref(f.sourceLine)}"
                 } else {
                     href(owner)
                 }
@@ -114,7 +114,7 @@ abstract class KDocTemplate() : TextTemplate() {
             } else if (owner is KPackage) {
                 if (!owner.useExternalLink) {
                     // TODO how to find the function in a package???
-                    "${rootHref(owner)}${names.htmlSourceDirName}/namespace.html#${names.lineNumberLinkHref(f.sourceLine)}"
+                    "${rootHref(owner)}${names.htmlSourceDirName}/package.html#${names.lineNumberLinkHref(f.sourceLine)}"
                 } else {
                     href(owner)
                 }

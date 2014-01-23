@@ -186,10 +186,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-//    public R visitNewExpression(@NotNull JetNewExpression expression, D data) {
-//        return visitExpression(expression, data);
-//    }
-//
     public R visitReturnExpression(@NotNull JetReturnExpression expression, D data) {
         return visitLabelQualifiedExpression(expression, data);
     }
@@ -243,7 +239,7 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitCallExpression(@NotNull JetCallExpression expression, D data) {
-        return visitExpression(expression, data);
+        return visitReferenceExpression(expression, data);
     }
 
     public R visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, D data) {
@@ -270,7 +266,7 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression, D data) {
+    public R visitRootPackageExpression(@NotNull JetRootPackageExpression expression, D data) {
         return visitExpression(expression, data);
     }
 
@@ -373,15 +369,15 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     public R visitWhenConditionInRange(@NotNull JetWhenConditionInRange condition, D data) {
         return visitJetElement(condition, data);
     }
-    
-    public R visitWhenConditionExpression(@NotNull JetWhenConditionWithExpression condition, D data) {
+
+    public R visitWhenConditionWithExpression(@NotNull JetWhenConditionWithExpression condition, D data) {
         return visitJetElement(condition, data);
     }
 
     public R visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, D data) {
         return visitNamedDeclaration(declaration, data);
     }
-    
+
     public R visitObjectDeclarationName(@NotNull JetObjectDeclarationName declarationName, D data) {
         return visitExpression(declarationName, data);
     }

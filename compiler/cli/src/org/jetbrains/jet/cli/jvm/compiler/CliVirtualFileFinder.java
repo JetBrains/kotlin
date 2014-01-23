@@ -20,11 +20,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public class CliVirtualFileFinder implements VirtualFileFinder {
+public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implements VirtualFileFinder {
 
     @NotNull
     private final ClassPath classPath;
@@ -35,7 +34,7 @@ public class CliVirtualFileFinder implements VirtualFileFinder {
 
     @Nullable
     @Override
-    public VirtualFile find(@NotNull FqName className) {
+    public VirtualFile findVirtualFile(@NotNull FqName className) {
         for (VirtualFile root : classPath) {
             VirtualFile fileInRoot = findFileInRoot(className.asString(), root);
             if (fileInRoot != null) {
@@ -47,7 +46,7 @@ public class CliVirtualFileFinder implements VirtualFileFinder {
 
     //NOTE: copied with some changes from CoreJavaFileManager
     @Nullable
-    private static VirtualFile findFileInRoot(@NotNull String qName, @NotNull VirtualFile root) {
+    private VirtualFile findFileInRoot(@NotNull String qName, @NotNull VirtualFile root) {
         String pathRest = qName;
         VirtualFile cur = root;
 
@@ -71,7 +70,7 @@ public class CliVirtualFileFinder implements VirtualFileFinder {
                 return null;
             }
             //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
-            if (KotlinClassHeader.read(new VirtualFileKotlinClass(vFile)) != null) {
+            if (createKotlinClass(vFile).getClassHeader() != null) {
                 return vFile;
             }
         }

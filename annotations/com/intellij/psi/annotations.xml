@@ -1,5 +1,14 @@
 <root>
+  <item name='com.intellij.psi.JavaPsiFacade com.intellij.psi.JavaPsiFacade getInstance(com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.psi.PsiDocumentManager com.intellij.psi.PsiDocumentManager getInstance(com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElement com.intellij.psi.PsiElement copy()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElement com.intellij.psi.PsiElement replace(com.intellij.psi.PsiElement)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item

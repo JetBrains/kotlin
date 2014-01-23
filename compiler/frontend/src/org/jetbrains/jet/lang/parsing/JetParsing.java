@@ -46,7 +46,7 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
     private static final TokenSet TYPE_PARAMETER_GT_RECOVERY_SET = TokenSet.create(WHERE_KEYWORD, LPAR, COLON, LBRACE, GT);
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
-    private static final TokenSet NAMESPACE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
+    private static final TokenSet PACKAGE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     private static final TokenSet IMPORT_RECOVERY_SET = TokenSet.create(AS_KEYWORD, DOT, EOL_OR_SEMICOLON);
     /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, FUN_KEYWORD, LPAR, CAPITALIZED_THIS_KEYWORD, HASH);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
@@ -144,16 +144,16 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      *preamble
-     *  : namespaceHeader? import*
+     *  : packageDirective? import*
      *  ;
      */
     private void parsePreamble(boolean imports) {
         /*
-         * namespaceHeader
-         *   : modifiers "namespace" SimpleName{"."} SEMI?
+         * packageDirective
+         *   : modifiers "package" SimpleName{"."} SEMI?
          *   ;
          */
-        PsiBuilder.Marker namespaceHeader = mark();
+        PsiBuilder.Marker packageDirective = mark();
         PsiBuilder.Marker firstEntry = mark();
         parseModifierList(MODIFIER_LIST, true);
 
@@ -161,12 +161,12 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // PACKAGE_KEYWORD
 
 
-            parseNamespaceName();
+            parsePackageName();
 
             if (at(LBRACE)) {
-                // Because it's blocked namespace and it will be parsed as one of top level objects
+                // Because it's blocked package and it will be parsed as one of top level objects
                 firstEntry.rollbackTo();
-                namespaceHeader.done(NAMESPACE_HEADER);
+                packageDirective.done(PACKAGE_DIRECTIVE);
                 return;
             }
 
@@ -177,22 +177,22 @@ public class JetParsing extends AbstractJetParsing {
         else {
             firstEntry.rollbackTo();
         }
-        namespaceHeader.done(NAMESPACE_HEADER);
+        packageDirective.done(PACKAGE_DIRECTIVE);
 
         if(imports)
             parseImportDirectives();
     }
 
     /* SimpleName{"."} */
-    private void parseNamespaceName() {
+    private void parsePackageName() {
         while (true) {
             if (myBuilder.newlineBeforeCurrentToken()) {
-                errorWithRecovery("Package name must be a '.'-separated identifier list placed on a single line", NAMESPACE_NAME_RECOVERY_SET);
+                errorWithRecovery("Package name must be a '.'-separated identifier list placed on a single line", PACKAGE_NAME_RECOVERY_SET);
                 break;
             }
 
             PsiBuilder.Marker nsName = mark();
-            if (expect(IDENTIFIER, "Package name must be a '.'-separated identifier list", NAMESPACE_NAME_RECOVERY_SET)) {
+            if (expect(IDENTIFIER, "Package name must be a '.'-separated identifier list", PACKAGE_NAME_RECOVERY_SET)) {
                 nsName.done(REFERENCE_EXPRESSION);
             }
             else {
@@ -297,7 +297,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * toplevelObject
-     *   : namespace
+     *   : package
      *   : class
      *   : extension
      *   : function
@@ -315,7 +315,7 @@ public class JetParsing extends AbstractJetParsing {
         IElementType keywordToken = tt();
         IElementType declType = null;
 //        if (keywordToken == PACKAGE_KEYWORD) {
-//            declType = parseNamespaceBlock();
+//            declType = parsePackageBlock();
 //        }
 //        else
         if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
@@ -1481,7 +1481,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * userType
-     *   : ("namespace" ".")? simpleUserType{"."}
+     *   : ("package" ".")? simpleUserType{"."}
      *   ;
      */
     void parseUserType() {
@@ -1712,7 +1712,10 @@ public class JetParsing extends AbstractJetParsing {
                 if (at(COMMA)) {
                     advance(); // COMMA
                 }
-                else if (!atSet(VALUE_PARAMETER_FIRST)) break;
+                else {
+                    if (!at(RPAR)) error("Expecting comma or ')'");
+                    if (!atSet(VALUE_PARAMETER_FIRST)) break;
+                }
             }
         }
 

@@ -17,24 +17,36 @@
 package org.jetbrains.jet.lang.resolve.kotlin;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
-import javax.inject.Inject;
+public abstract class VirtualFileKotlinClassFinder implements VirtualFileFinder {
 
-public class VirtualFileKotlinClassFinder implements KotlinClassFinder {
-    private VirtualFileFinder virtualFileFinder;
-
-    @Inject
-    public void setVirtualFileFinder(@NotNull VirtualFileFinder virtualFileFinder) {
-        this.virtualFileFinder = virtualFileFinder;
-    }
+    // This cache must be small: we only query the same file a few times in a row (from different places)
+    private final SLRUCache<VirtualFile, KotlinJvmBinaryClass> cache = new SLRUCache<VirtualFile, KotlinJvmBinaryClass>(2, 2) {
+        @NotNull
+        @Override
+        public KotlinJvmBinaryClass createValue(VirtualFile virtualFile) {
+            // Operations under this lock are not supposed to involve other locks
+            return new VirtualFileKotlinClass(new LockBasedStorageManager(), virtualFile);
+        }
+    };
 
     @Nullable
     @Override
-    public KotlinJvmBinaryClass find(@NotNull FqName fqName) {
-        VirtualFile file = virtualFileFinder.find(fqName);
-        return file == null ? null : new VirtualFileKotlinClass(file);
+    public KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName) {
+        VirtualFile file = findVirtualFile(fqName);
+        return file == null ? null : createKotlinClass(file);
+    }
+
+    @Override
+    @NotNull
+    public KotlinJvmBinaryClass createKotlinClass(@NotNull VirtualFile file) {
+        synchronized (cache) {
+            return cache.get(file);
+        }
     }
 }

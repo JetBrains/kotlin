@@ -43,23 +43,19 @@ import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-/**
- * User: Alefas
- * Date: 25.01.12
- */
 public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
 
     private static final String INTRODUCE_VARIABLE = JetRefactoringBundle.message("introduce.variable");
@@ -136,8 +132,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 noTypeInference = true;
             }
         }
-        if (expressionType instanceof NamespaceType) {
-            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.namespace.expression"));
+        if (expressionType instanceof PackageType) {
+            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.package.expression"));
             return;
         }
         if (expressionType != null &&
@@ -392,7 +388,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 }
                 propertyRef.set(property);
                 if (noTypeInference) {
-                    ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(property));
+                    ShortenReferences.instance$.process(property);
                 }
             }
         };

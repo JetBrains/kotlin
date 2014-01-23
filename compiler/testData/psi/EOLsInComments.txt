@@ -1,5 +1,5 @@
 JetFile: EOLsInComments.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   FUN
     PsiElement(fun)('fun')

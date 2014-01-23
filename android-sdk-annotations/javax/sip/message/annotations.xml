@@ -1,0 +1,314 @@
+<root>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void addFirst(javax.sip.header.Header) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request void setMethod(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request, javax.sip.header.ContentTypeHeader, byte[]) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void setExpires(javax.sip.header.ExpiresHeader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Response void setReasonPhrase(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request void setRequestURI(javax.sip.address.URI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void addLast(javax.sip.header.Header) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request, javax.sip.header.ContentTypeHeader, byte[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request ACK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request, javax.sip.header.ContentTypeHeader, java.lang.Object) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory void setDefaultContentEncodingCharset(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request NOTIFY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void removeHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void setHeader(javax.sip.header.Header) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request, javax.sip.header.ContentTypeHeader, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void setContent(java.lang.Object, javax.sip.header.ContentTypeHeader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request BYE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request PRACK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request OPTIONS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request, javax.sip.header.ContentTypeHeader, java.lang.Object) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request PUBLISH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void setContent(java.lang.Object, javax.sip.header.ContentTypeHeader) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 9'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request, javax.sip.header.ContentTypeHeader, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request REGISTER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request MESSAGE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 9'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request, javax.sip.header.ContentTypeHeader, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 6'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request REFER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void removeLast(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void setSIPVersion(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request UPDATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request SUBSCRIBE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message java.util.ListIterator getHeaders(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 7'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request INFO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.message.Request, javax.sip.header.ContentTypeHeader, byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void setContentEncoding(javax.sip.header.ContentEncodingHeader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void setContentLanguage(javax.sip.header.ContentLanguageHeader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void removeFirst(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, java.lang.Object) 8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message void setContentDisposition(javax.sip.header.ContentDispositionHeader) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Request createRequest(javax.sip.address.URI, java.lang.String, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader, javax.sip.header.ContentTypeHeader, byte[]) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.MessageFactory javax.sip.message.Response createResponse(int, javax.sip.header.CallIdHeader, javax.sip.header.CSeqHeader, javax.sip.header.FromHeader, javax.sip.header.ToHeader, java.util.List, javax.sip.header.MaxForwardsHeader) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Message javax.sip.header.Header getHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request CANCEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.message.Request INVITE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

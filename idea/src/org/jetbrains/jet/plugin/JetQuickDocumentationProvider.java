@@ -26,26 +26,22 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.KotlinLightClass;
-import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.kdoc.lexer.KDocTokens;
 import org.jetbrains.jet.kdoc.psi.api.KDoc;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class JetQuickDocumentationProvider extends AbstractDocumentationProvider {
-    private static final Predicate<PsiElement> SKIP_WHITESPACE_AND_EMPTY_NAMESPACE = new Predicate<PsiElement>() {
+    private static final Predicate<PsiElement> SKIP_WHITESPACE_AND_EMPTY_PACKAGE = new Predicate<PsiElement>() {
         @Override
         public boolean apply(PsiElement input) {
-            // Skip empty namespace because there can be comments before it
+            // Skip empty package because there can be comments before it
             // Skip whitespaces
-            return (input instanceof JetNamespaceHeader && input.getChildren().length == 0) || input instanceof PsiWhiteSpace;
+            return (input instanceof JetPackageDirective && input.getChildren().length == 0) || input instanceof PsiWhiteSpace;
         }
     };
 
@@ -140,7 +136,7 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
 
     @Nullable
     private static KDoc findElementKDoc(@NotNull JetElement element) {
-        PsiElement comment = JetPsiUtil.skipSiblingsBackwardByPredicate(element, SKIP_WHITESPACE_AND_EMPTY_NAMESPACE);
+        PsiElement comment = JetPsiUtil.skipSiblingsBackwardByPredicate(element, SKIP_WHITESPACE_AND_EMPTY_PACKAGE);
         return comment instanceof KDoc ? (KDoc) comment : null;
     }
 

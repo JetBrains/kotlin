@@ -22,6 +22,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -46,7 +47,7 @@ public class JetBlock extends AbstractBlock {
     private final ASTAlignmentStrategy myAlignmentStrategy;
     private final Indent myIndent;
     private final CodeStyleSettings mySettings;
-    private final SpacingBuilder mySpacingBuilder;
+    private final KotlinSpacingBuilder mySpacingBuilder;
 
     private List<Block> mySubBlocks;
 
@@ -62,7 +63,8 @@ public class JetBlock extends AbstractBlock {
             Indent indent,
             Wrap wrap,
             CodeStyleSettings settings,
-            SpacingBuilder spacingBuilder) {
+            KotlinSpacingBuilder spacingBuilder
+    ) {
 
         super(node, wrap, alignmentStrategy.getAlignment(node));
         myAlignmentStrategy = alignmentStrategy;
@@ -135,53 +137,7 @@ public class JetBlock extends AbstractBlock {
 
     @Override
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
-        Spacing spacing = mySpacingBuilder.getSpacing(this, child1, child2);
-        if (spacing != null) {
-            return spacing;
-        }
-
-        // TODO: extend SpacingBuilder API - afterInside(RBRACE, FUNCTION_LITERAL).spacing(...), beforeInside(RBRACE, FUNCTION_LITERAL).spacing(...)
-        if (!(child1 instanceof ASTBlock && child2 instanceof ASTBlock)) {
-            return null;
-        }
-
-        IElementType parentType = this.getNode().getElementType();
-        IElementType child1Type = ((ASTBlock) child1).getNode().getElementType();
-        IElementType child2Type = ((ASTBlock) child2).getNode().getElementType();
-
-        JetCodeStyleSettings jetSettings = mySettings.getCustomSettings(JetCodeStyleSettings.class);
-        int spacesInSimpleMethod = jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD ? 1 : 0;
-
-        if (parentType == FUNCTION_LITERAL && child1Type == LBRACE && child2Type == BLOCK) {
-            return Spacing.createDependentLFSpacing(
-                    spacesInSimpleMethod, spacesInSimpleMethod, this.getTextRange(),
-                    mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-        }
-
-        if (parentType == FUNCTION_LITERAL && child1Type == ARROW && child2Type == BLOCK) {
-            return Spacing.createDependentLFSpacing(1, 1, this.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-        }
-
-        if (parentType == FUNCTION_LITERAL && child2Type == RBRACE) {
-            return Spacing.createDependentLFSpacing(
-                    spacesInSimpleMethod, spacesInSimpleMethod, this.getTextRange(),
-                    mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-        }
-
-        if (parentType == FUNCTION_LITERAL && child1Type == LBRACE) {
-            if (child2Type == VALUE_PARAMETER_LIST) {
-                ASTNode firstParamListNode = ((ASTBlock) child2).getNode().getFirstChildNode();
-                if (firstParamListNode != null && firstParamListNode.getElementType() == LPAR) {
-                    // Don't put space for situation {<here>(a: Int) -> a }
-                    return Spacing.createSpacing(0, 0, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-                }
-            }
-
-            return Spacing.createSpacing(spacesInSimpleMethod, spacesInSimpleMethod, 0,
-                                         mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
-        }
-
-        return null;
+        return mySpacingBuilder.getSpacing(this, child1, child2);
     }
 
     @NotNull
@@ -334,6 +290,11 @@ public class JetBlock extends AbstractBlock {
                     .in(DOC_COMMENT)
                     .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
                     .set(Indent.getSpaceIndent(KDOC_COMMENT_INDENT)),
+
+            ASTIndentStrategy.forNode("Block in when entry")
+                    .in(WHEN_ENTRY)
+                    .notForType(BLOCK, WHEN_CONDITION_EXPRESSION, WHEN_CONDITION_IN_RANGE, WHEN_CONDITION_IS_PATTERN, ELSE_KEYWORD, ARROW)
+                    .set(Indent.getNormalIndent()),
     };
 
     @Nullable
@@ -349,14 +310,6 @@ public class JetBlock extends AbstractBlock {
         }
 
         // TODO: Try to rewrite other rules to declarative style
-
-        if (childParent != null && childParent.getElementType() == WHEN_ENTRY) {
-            ASTNode prev = getPrevWithoutWhitespace(child);
-            if (prev != null && prev.getText().equals("->")) {
-                return indentIfNotBrace(child);
-            }
-        }
-
         if (childParent != null && childParent.getElementType() == DOT_QUALIFIED_EXPRESSION) {
             if (childParent.getFirstChildNode() != child && childParent.getLastChildNode() != child) {
                 return Indent.getContinuationWithoutFirstIndent(false);

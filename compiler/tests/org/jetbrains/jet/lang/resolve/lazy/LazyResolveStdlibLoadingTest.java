@@ -46,12 +46,12 @@ public class LazyResolveStdlibLoadingTest extends KotlinTestWithEnvironmentManag
     protected void doTestForGivenFiles(
             List<JetFile> files
     ) {
-        Set<Name> namespaceShortNames = LazyResolveTestUtil.getTopLevelPackagesFromFileList(files);
+        Set<Name> packageShortNames = LazyResolveTestUtil.getTopLevelPackagesFromFileList(files);
 
         ModuleDescriptor module = LazyResolveTestUtil.resolveEagerly(files, stdlibEnvironment);
         ModuleDescriptor lazyModule = LazyResolveTestUtil.resolveLazily(files, stdlibEnvironment);
 
-        for (Name name : namespaceShortNames) {
+        for (Name name : packageShortNames) {
             PackageViewDescriptor eager = module.getPackage(FqName.topLevel(name));
             PackageViewDescriptor lazy = lazyModule.getPackage(FqName.topLevel(name));
             RecursiveDescriptorComparator.validateAndCompareDescriptors(eager, lazy, RecursiveDescriptorComparator.RECURSIVE, null);

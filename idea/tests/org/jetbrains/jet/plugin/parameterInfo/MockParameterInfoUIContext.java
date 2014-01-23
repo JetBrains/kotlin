@@ -24,10 +24,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
-/**
- * User: Alexander Podkhalyuzin
- * Date: 24.01.12
- */
 public class MockParameterInfoUIContext implements ParameterInfoUIContext {
     private final PsiElement myParameterOwner;
     private final int myCurrentParameterIndex;
@@ -40,14 +36,29 @@ public class MockParameterInfoUIContext implements ParameterInfoUIContext {
     }
     
     @Override
-    public void setupUIComponentPresentation(String text, int highlightStartOffset, int highlightEndOffset,
+    public String setupUIComponentPresentation(String text, int highlightStartOffset, int highlightEndOffset,
                                              boolean isDisabled, boolean strikeout,
                                              boolean isDisabledBeforeHighlight, Color background) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Text: (").append(text).append("), Disabled: ").append(isDisabled).
-                append(", Strikeout: ").append(strikeout).append(", Green: ").
-                append(background.equals(JetFunctionParameterInfoHandler.GREEN_BACKGROUND));
-        result.add(stringBuilder.toString());
+        String highlightedText;
+        if (highlightStartOffset != -1 && highlightEndOffset != -1) {
+            highlightedText = text.substring(0, highlightStartOffset)
+                              + "<highlight>"
+                              + text.substring(highlightStartOffset, highlightEndOffset)
+                              + "</highlight>"
+                              + text.substring(highlightEndOffset);
+        }
+        else {
+            highlightedText = text;
+        }
+
+        String resultText = "Text: (" + highlightedText + "), " +
+                            "Disabled: " + isDisabled + ", " +
+                            "Strikeout: " + strikeout + ", " +
+                            "Green: " + background.equals(JetFunctionParameterInfoHandler.GREEN_BACKGROUND);
+        result.add(resultText);
+
+        // return value not used, just return something
+        return resultText;
     }
 
     @Override

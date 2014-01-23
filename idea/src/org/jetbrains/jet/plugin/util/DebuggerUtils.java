@@ -64,8 +64,8 @@ public class DebuggerUtils {
             return anyFile;
         }
 
-        Collection<JetFile> allNamespaceFiles = filesProvider.allNamespaceFiles().fun(anyFile);
-        JetFile file = PsiCodegenPredictor.getFileForNamespacePartName(allNamespaceFiles, className);
+        Collection<JetFile> allPackageFiles = filesProvider.allPackageFiles().fun(anyFile);
+        JetFile file = PsiCodegenPredictor.getFileForPackagePartName(allPackageFiles, className);
         if (file != null) {
             return file;
         }
@@ -74,7 +74,7 @@ public class DebuggerUtils {
         // we may actually need to analyze the project in order to find a file which produces this class
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(anyFile);
 
-        return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getBindingContext(), allNamespaceFiles, className.getInternalName());
+        return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getBindingContext(), allPackageFiles, className.getInternalName());
     }
 
     @NotNull

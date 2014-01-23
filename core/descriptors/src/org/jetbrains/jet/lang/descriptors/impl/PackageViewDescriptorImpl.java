@@ -20,17 +20,12 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.utils.Printer;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl implements PackageViewDescriptor {
@@ -43,7 +38,7 @@ public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl impleme
             @NotNull FqName fqName,
             @NotNull List<PackageFragmentDescriptor> fragments
     ) {
-        super(Collections.<AnnotationDescriptor>emptyList(), fqName.shortNameOrSpecial());
+        super(Annotations.EMPTY, fqName.shortNameOrSpecial());
         this.module = module;
         this.fqName = fqName;
 
@@ -52,7 +47,7 @@ public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl impleme
         for (PackageFragmentDescriptor fragment : fragments) {
             scopes.add(fragment.getMemberScope());
         }
-        scopes.add(new SubpackagesScope());
+        scopes.add(new SubpackagesScope(this));
 
         memberScope = new ChainedScope(this, "package view scope for " + fqName + " in " + module.getName(),
                                        scopes.toArray(new JetScope[scopes.size()]));
@@ -111,40 +106,5 @@ public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl impleme
         int result = module.hashCode();
         result = 31 * result + fqName.hashCode();
         return result;
-    }
-
-    private class SubpackagesScope extends JetScopeImpl {
-        @NotNull
-        @Override
-        public DeclarationDescriptor getContainingDeclaration() {
-            return PackageViewDescriptorImpl.this;
-        }
-
-        @Nullable
-        @Override
-        public PackageViewDescriptor getPackage(@NotNull Name name) {
-            return name.isSpecial() ? null : module.getPackage(fqName.child(name));
-        }
-
-        @NotNull
-        @Override
-        public Collection<DeclarationDescriptor> getAllDescriptors() {
-            List<DeclarationDescriptor> result = Lists.newArrayList();
-            for (FqName subFqName : module.getPackageFragmentProvider().getSubPackagesOf(fqName)) {
-                result.add(getPackage(subFqName.shortName()));
-            }
-            return result;
-        }
-
-        @Override
-        public void printScopeStructure(@NotNull Printer p) {
-            p.println(getClass().getSimpleName(), " {");
-            p.pushIndent();
-
-            p.println("thisDescriptor = ", PackageViewDescriptorImpl.this);
-
-            p.popIndent();
-            p.println("}");
-        }
     }
 }

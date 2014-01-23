@@ -211,17 +211,10 @@ public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
 /**
  * Iterates through each line of this reader then closing the [[Reader]] when its completed
  */
-public inline fun Reader.forEachLine(block: (String) -> Any): Unit {
-    this.use{
-        val iter = buffered().lineIterator()
-        while (iter.hasNext()) {
-            val elem = iter.next()
-            block(elem)
-        }
-    }
-}
+public inline fun Reader.forEachLine(block: (String) -> Unit): Unit = useLines { lines -> lines.forEach(block) }
 
-public inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T = this.buffered().use<BufferedReader, T>{block(it.lineIterator())}
+public inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T =
+        this.buffered().use<BufferedReader, T>{ block(it.lineIterator()) }
 
 /**
  * Returns an iterator over each line.

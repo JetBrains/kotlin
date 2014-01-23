@@ -10,8 +10,6 @@ public enum A {
 }
 
 // FILE: test.kt
-package test
-
 fun main() {
     A.ENTRY.s(): String?
 }

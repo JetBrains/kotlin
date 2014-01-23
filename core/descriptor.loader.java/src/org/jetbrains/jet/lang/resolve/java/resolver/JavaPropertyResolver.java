@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.resolveOverrides;
 
@@ -67,7 +66,7 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
+    public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrPackageFragmentDescriptor owner) {
         if (isEnumClassObject(owner)) {
             return Collections.emptySet();
         }
@@ -101,7 +100,7 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    private PropertyDescriptor resolveProperty(@NotNull ClassOrNamespaceDescriptor owner, @NotNull Name name, @NotNull JavaField field) {
+    private PropertyDescriptor resolveProperty(@NotNull ClassOrPackageFragmentDescriptor owner, @NotNull Name name, @NotNull JavaField field) {
         assert !field.isEnumEntry() : "Enum entries are resolved into classes, not into properties: " + name;
 
         boolean isVar = !field.isFinal();
@@ -146,7 +145,7 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    private static Set<PropertyDescriptor> getPropertiesFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
+    public static Set<PropertyDescriptor> getPropertiesFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
         Set<PropertyDescriptor> result = new HashSet<PropertyDescriptor>();
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             for (VariableDescriptor property : supertype.getMemberScope().getProperties(name)) {
@@ -157,7 +156,7 @@ public final class JavaPropertyResolver {
         return result;
     }
 
-    private static boolean isStaticFinalField(@NotNull JavaField field) {
+    public static boolean isStaticFinalField(@NotNull JavaField field) {
         return field.isFinal() && field.isStatic();
     }
 }

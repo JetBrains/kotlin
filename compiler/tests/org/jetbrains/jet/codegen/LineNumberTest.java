@@ -333,7 +333,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         assertNotNull(file);
         ClassReader reader = new ClassReader(file.asByteArray());
 
-        // There must be exactly one line number attribute for each static delegate in namespace.class, and it should point to the first
+        // There must be exactly one line number attribute for each static delegate in package facade class, and it should point to the first
         // line. There are two static delegates in this test, hence the [1, 1]
         List<Integer> expectedLineNumbers = Arrays.asList(1, 1);
         List<Integer> actualLineNumbers = readAllLineNumbers(reader);

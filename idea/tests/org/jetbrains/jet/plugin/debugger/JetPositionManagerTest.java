@@ -59,7 +59,7 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         return positionManager;
     }
 
-    public void testMultiFileNamespace() {
+    public void testMultiFilePackage() {
         doMultiTest();
     }
 
@@ -99,7 +99,7 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         doTest();
     }
 
-    public void testNamespaceOfPackage() {
+    public void testPackage() {
         doTest();
     }
 

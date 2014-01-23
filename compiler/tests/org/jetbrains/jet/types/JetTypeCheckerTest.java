@@ -28,14 +28,11 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.di.InjectorForTests;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -578,8 +575,10 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 getEnvironment()
         );
 
-        PackageFragmentDescriptor testData = DescriptorUtils.getExactlyOnePackageFragment(moduleDescriptor, new FqName("testData"));
-        return addImports(testData.getMemberScope());
+        FqName fqName = new FqName("testData");
+        PackageViewDescriptor packageView = moduleDescriptor.getPackage(fqName);
+        assertNotNull("Package " + fqName + " not found", packageView);
+        return addImports(packageView.getMemberScope());
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -588,7 +587,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        ModuleDescriptor module = javaDescriptorResolver.getPackageFragmentProvider().getModule();
+        ModuleDescriptorImpl module = (ModuleDescriptorImpl) javaDescriptorResolver.getModule();
+        module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         for (ImportPath defaultImport : module.getDefaultImports()) {
             writableScope.importScope(module.getPackage(defaultImport.fqnPart()).getMemberScope());
         }

@@ -33,18 +33,15 @@ import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
+import org.jetbrains.jet.lang.resolve.lazy.*;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 
 import java.util.Collection;
@@ -82,28 +79,29 @@ public class ResolveElementCache {
     }
 
     @NotNull
-    public BindingContext resolveElement(@NotNull JetElement jetElement) {
+    public BindingContext resolveToElement(@NotNull JetElement jetElement) {
         @SuppressWarnings("unchecked") JetElement elementOfAdditionalResolve = (JetElement) JetPsiUtil.getTopmostParentOfTypes(
                 jetElement,
                 JetNamedFunction.class,
                 JetClassInitializer.class,
                 JetProperty.class,
+                JetParameter.class,
                 JetDelegationSpecifierList.class,
                 JetImportDirective.class,
                 JetAnnotationEntry.class,
                 JetTypeParameter.class,
                 JetTypeConstraint.class,
-                JetNamespaceHeader.class);
+                JetPackageDirective.class);
 
-        if (elementOfAdditionalResolve != null) {
-            if (elementOfAdditionalResolve instanceof JetNamespaceHeader) {
+        if (elementOfAdditionalResolve != null && !(elementOfAdditionalResolve instanceof JetParameter)) {
+            if (elementOfAdditionalResolve instanceof JetPackageDirective) {
                 elementOfAdditionalResolve = jetElement;
             }
 
             return additionalResolveCache.getValue().invoke(elementOfAdditionalResolve);
         }
 
-        JetParameter parameter = PsiTreeUtil.getTopmostParentOfType(jetElement, JetParameter.class);
+        JetParameter parameter = (JetParameter) elementOfAdditionalResolve;
         if (parameter != null) {
             JetClass klass = PsiTreeUtil.getParentOfType(parameter, JetClass.class);
             if (klass != null && parameter.getParent() == klass.getPrimaryConstructorParameterList()) {
@@ -162,8 +160,8 @@ public class ResolveElementCache {
         else if (resolveElement instanceof JetTypeConstraint) {
             typeConstraintAdditionalResolve(resolveSession, (JetTypeConstraint) resolveElement);
         }
-        else if (PsiTreeUtil.getParentOfType(resolveElement, JetNamespaceHeader.class) != null) {
-            namespaceRefAdditionalResolve(resolveSession, trace, resolveElement);
+        else if (PsiTreeUtil.getParentOfType(resolveElement, JetPackageDirective.class) != null) {
+            packageRefAdditionalResolve(resolveSession, trace, resolveElement);
         }
         else {
             assert false : "Invalid type of the topmost parent";
@@ -172,9 +170,9 @@ public class ResolveElementCache {
         return trace.getBindingContext();
     }
 
-    private static void namespaceRefAdditionalResolve(ResolveSession resolveSession, BindingTrace trace, JetElement jetElement) {
+    private static void packageRefAdditionalResolve(ResolveSession resolveSession, BindingTrace trace, JetElement jetElement) {
         if (jetElement instanceof JetSimpleNameExpression) {
-            JetNamespaceHeader header = PsiTreeUtil.getParentOfType(jetElement, JetNamespaceHeader.class);
+            JetPackageDirective header = PsiTreeUtil.getParentOfType(jetElement, JetPackageDirective.class);
             assert header != null;
 
             JetSimpleNameExpression packageNameExpression = (JetSimpleNameExpression) jetElement;
@@ -204,8 +202,8 @@ public class ResolveElementCache {
 
         TypeConstructor constructor = ((ClassDescriptor) descriptor).getTypeConstructor();
         for (TypeParameterDescriptor parameterDescriptor : constructor.getParameters()) {
-            LazyDescriptor lazyDescriptor = (LazyDescriptor) parameterDescriptor;
-            lazyDescriptor.forceResolveAllContents();
+            LazyEntity lazyEntity = (LazyEntity) parameterDescriptor;
+            lazyEntity.forceResolveAllContents();
         }
     }
 
@@ -214,16 +212,15 @@ public class ResolveElementCache {
         if (declaration != null) {
             Annotated descriptor = analyzer.resolveToDescriptor(declaration);
 
-            // Activate annotation resolving
-            descriptor.getAnnotations();
+            ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
         }
     }
 
     private static void typeParameterAdditionalResolve(KotlinCodeAnalyzer analyzer, JetTypeParameter typeParameter) {
         DeclarationDescriptor descriptor = analyzer.resolveToDescriptor(typeParameter);
-        assert descriptor instanceof LazyDescriptor;
+        assert descriptor instanceof LazyEntity;
 
-        LazyDescriptor parameterDescriptor = (LazyDescriptor) descriptor;
+        LazyEntity parameterDescriptor = (LazyEntity) descriptor;
         parameterDescriptor.forceResolveAllContents();
     }
 
@@ -401,10 +398,10 @@ public class ResolveElementCache {
             }
 
             // Inside package declaration
-            JetNamespaceHeader namespaceHeader = PsiTreeUtil.getParentOfType(expression, JetNamespaceHeader.class, false);
-            if (namespaceHeader != null) {
+            JetPackageDirective packageDirective = PsiTreeUtil.getParentOfType(expression, JetPackageDirective.class, false);
+            if (packageDirective != null) {
                 PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(
-                        namespaceHeader.getFqName((JetSimpleNameExpression) expression).parent());
+                        packageDirective.getFqName((JetSimpleNameExpression) expression).parent());
                 if (packageDescriptor != null) {
                     return packageDescriptor.getMemberScope();
                 }

@@ -26,10 +26,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 
-/**
- * User: Alexander Podkhalyuzin
- * Date: 24.01.12
- */
 public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCase {
     public void testInheritedFunctions() {
         doTest();
@@ -83,6 +79,10 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
         doTest();
     }
     
+    public void testDeprecated() {
+        doTest();
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -110,7 +110,10 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
         MockUpdateParameterInfoContext updateContext = new MockUpdateParameterInfoContext(file, myFixture);
 
         //to update current parameter index
-        parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);
+        JetValueArgumentList elementForUpdating = parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);
+        if (elementForUpdating != null) {
+            parameterInfoHandler.updateParameterInfo(elementForUpdating, updateContext);
+        }
 
         MockParameterInfoUIContext parameterInfoUIContext =
                 new MockParameterInfoUIContext(parameterOwner, updateContext.getCurrentParameter());

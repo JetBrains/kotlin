@@ -1,5 +1,5 @@
 JetFile: MissingCommaInValueParameterList.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   FUN
     PsiElement(fun)('fun')
@@ -26,6 +26,8 @@ JetFile: MissingCommaInValueParameterList.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')
+      PsiErrorElement:Expecting comma or ')'
+        <empty list>
       PsiWhiteSpace('\n    ')
       VALUE_PARAMETER
         PsiElement(IDENTIFIER)('c')

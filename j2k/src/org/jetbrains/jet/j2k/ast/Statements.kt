@@ -17,16 +17,15 @@
 package org.jetbrains.jet.j2k.ast
 
 
-public abstract class Statement() : Element() {
-    class object {
-        public val EMPTY_STATEMENT: Statement = object : Statement() {
-            public override fun toKotlin() = ""
-        }
+abstract class Statement() : Element {
+    object Empty : Statement() {
+        override fun toKotlin() = ""
+        override fun isEmpty() = true
     }
 }
 
-public open class DeclarationStatement(val elements: List<Element>) : Statement() {
-    public override fun toKotlin(): String {
+open class DeclarationStatement(val elements: List<Element>) : Statement() {
+    override fun toKotlin(): String {
         return elements.filter { it is LocalVariable }.map { convertDeclaration(it as LocalVariable) }.makeString("\n")
     }
 
@@ -39,25 +38,27 @@ public open class DeclarationStatement(val elements: List<Element>) : Statement(
     }
 }
 
-public open class ExpressionListStatement(val expressions: List<Expression>) : Expression() {
-    public override fun toKotlin() = expressions.toKotlin("\n")
+open class ExpressionListStatement(val expressions: List<Expression>) : Expression() {
+    override fun toKotlin() = expressions.toKotlin("\n")
 }
 
-public open class LabelStatement(val name: Identifier, val statement: Element) : Statement() {
-    public override fun toKotlin(): String = "@" + name.toKotlin() + " " + statement.toKotlin()
+open class LabelStatement(val name: Identifier, val statement: Element) : Statement() {
+    override fun toKotlin(): String = "@" + name.toKotlin() + " " + statement.toKotlin()
 }
 
-public open class ReturnStatement(val expression: Expression) : Statement() {
-    public override fun toKotlin() = "return " + expression.toKotlin()
+open class ReturnStatement(val expression: Expression) : Statement() {
+    override fun toKotlin() = "return " + expression.toKotlin()
 }
 
-public open class IfStatement(val condition: Expression,
-                              val thenStatement: Element,
-                              val elseStatement: Element) : Expression() {
-    public override fun toKotlin(): String {
-        val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin() + "\n"
-        if (elseStatement != Statement.EMPTY_STATEMENT) {
-            return result + "else\n" + elseStatement.toKotlin()
+open class IfStatement(
+        val condition: Expression,
+        val thenStatement: Element,
+        val elseStatement: Element
+) : Expression() {
+    override fun toKotlin(): String {
+        val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin()
+        if (elseStatement != Statement.Empty) {
+            return result + "\nelse\n" + elseStatement.toKotlin()
         }
 
         return result
@@ -66,41 +67,43 @@ public open class IfStatement(val condition: Expression,
 
 // Loops --------------------------------------------------------------------------------------------------
 
-public open class WhileStatement(val condition: Expression, val body: Element) : Statement() {
-    public override fun toKotlin() = "while (" + condition.toKotlin() + ")\n" + body.toKotlin()
+open class WhileStatement(val condition: Expression, val body: Element) : Statement() {
+    override fun toKotlin() = "while (" + condition.toKotlin() + ")\n" + body.toKotlin()
 }
 
-public open class DoWhileStatement(condition: Expression, body: Element) : WhileStatement(condition, body) {
-    public override fun toKotlin() = "do\n" + body.toKotlin() + "\nwhile (" + condition.toKotlin() + ")"
+open class DoWhileStatement(condition: Expression, body: Element) : WhileStatement(condition, body) {
+    override fun toKotlin() = "do\n" + body.toKotlin() + "\nwhile (" + condition.toKotlin() + ")"
 }
 
-public open class ForeachStatement(val variable: Parameter,
-                                   val expression: Expression,
-                                   val body: Element) : Statement() {
-    public override fun toKotlin() = "for (" + variable.identifier.name + " in " +
+open class ForeachStatement(
+        val variable: Parameter,
+        val expression: Expression,
+        val body: Element
+) : Statement() {
+    override fun toKotlin() = "for (" + variable.identifier.name + " in " +
     expression.toKotlin() + ")\n" + body.toKotlin()
 }
 
-public open class ForeachWithRangeStatement(val identifier: Identifier,
-                                            val start: Expression,
-                                            val end: Expression,
-                                            val body: Element) : Statement() {
-    public override fun toKotlin() = "for (" + identifier.toKotlin() + " in " +
+open class ForeachWithRangeStatement(val identifier: Identifier,
+                                     val start: Expression,
+                                     val end: Expression,
+                                     val body: Element) : Statement() {
+    override fun toKotlin() = "for (" + identifier.toKotlin() + " in " +
     start.toKotlin() + ".." + end.toKotlin() + ") " + body.toKotlin()
 }
 
-public open class BreakStatement(val label: Identifier = Identifier.EMPTY_IDENTIFIER) : Statement() {
-    public override fun toKotlin() = "break" + label.withPrefix("@")
+open class BreakStatement(val label: Identifier = Identifier.Empty) : Statement() {
+    override fun toKotlin() = "break" + label.withPrefix("@")
 }
 
-public open class ContinueStatement(val label: Identifier = Identifier.EMPTY_IDENTIFIER) : Statement() {
-    public override fun toKotlin() = "continue" + label.withPrefix("@")
+open class ContinueStatement(val label: Identifier = Identifier.Empty) : Statement() {
+    override fun toKotlin() = "continue" + label.withPrefix("@")
 }
 
 // Exceptions ----------------------------------------------------------------------------------------------
 
-public open class TryStatement(val block: Block, val catches: List<CatchStatement>, val finallyBlock: Block) : Statement() {
-    public override fun toKotlin(): String {
+open class TryStatement(val block: Block, val catches: List<CatchStatement>, val finallyBlock: Block) : Statement() {
+    override fun toKotlin(): String {
         return "try\n" + block.toKotlin() + "\n" + catches.toKotlin("\n") + "\n" + (if (finallyBlock.isEmpty())
             ""
         else
@@ -108,21 +111,21 @@ public open class TryStatement(val block: Block, val catches: List<CatchStatemen
     }
 }
 
-public open class ThrowStatement(val expression: Expression) : Expression() {
-    public override fun toKotlin() = "throw " + expression.toKotlin()
+open class ThrowStatement(val expression: Expression) : Expression() {
+    override fun toKotlin() = "throw " + expression.toKotlin()
 }
 
-public open class CatchStatement(val variable: Parameter, val block: Block) : Statement() {
-    public override fun toKotlin(): String = "catch (" + variable.toKotlin() + ") " + block.toKotlin()
+open class CatchStatement(val variable: Parameter, val block: Block) : Statement() {
+    override fun toKotlin(): String = "catch (" + variable.toKotlin() + ") " + block.toKotlin()
 }
 
 // Switch --------------------------------------------------------------------------------------------------
 
-public open class SwitchContainer(val expression: Expression, val caseContainers: List<CaseContainer>) : Statement() {
-    public override fun toKotlin() = "when (" + expression.toKotlin() + ") {\n" + caseContainers.toKotlin("\n") + "\n}"
+open class SwitchContainer(val expression: Expression, val caseContainers: List<CaseContainer>) : Statement() {
+    override fun toKotlin() = "when (" + expression.toKotlin() + ") {\n" + caseContainers.toKotlin("\n") + "\n}"
 }
 
-public open class CaseContainer(val caseStatement: List<Element>, statements: List<Element>) : Statement() {
+open class CaseContainer(val caseStatement: List<Element>, statements: List<Statement>) : Statement() {
     private val myBlock: Block
 
     {
@@ -130,19 +133,24 @@ public open class CaseContainer(val caseStatement: List<Element>, statements: Li
         myBlock = Block(newStatements, true)
     }
 
-    public override fun toKotlin() = caseStatement.toKotlin(", ") + " -> " + myBlock.toKotlin()
+    override fun toKotlin() = caseStatement.toKotlin(", ") + " -> " + myBlock.toKotlin()
 }
 
-public open class SwitchLabelStatement(val expression: Expression) : Statement() {
-    public override fun toKotlin() = expression.toKotlin()
+open class SwitchLabelStatement(val expression: Expression) : Statement() {
+    override fun toKotlin() = expression.toKotlin()
 }
 
-public open class DefaultSwitchLabelStatement() : Statement() {
-    public override fun toKotlin() = "else"
+open class DefaultSwitchLabelStatement() : Statement() {
+    override fun toKotlin() = "else"
 }
 
 // Other ------------------------------------------------------------------------------------------------------
 
-public open class SynchronizedStatement(val expression: Expression, val block: Block) : Statement() {
-    public override fun toKotlin() = "synchronized (" + expression.toKotlin() + ") " + block.toKotlin()
+open class SynchronizedStatement(val expression: Expression, val block: Block) : Statement() {
+    override fun toKotlin() = "synchronized (" + expression.toKotlin() + ") " + block.toKotlin()
+}
+
+class StatementList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine) {
+    val statements: List<Statement>
+        get() = elements.filter { it is Statement }.map { it as Statement }
 }

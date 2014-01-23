@@ -14,23 +14,23 @@ fun box(): String {
     }
 
     val list2 = ArrayList<Byte>()
-    val range2 = 10.toByte()..-5.toByte()
+    val range2 = 10.toByte()..(-5).toByte()
     for (i in range2) {
         list2.add(i)
         if (list2.size() > 23) break
     }
     if (list2 != listOf<Byte>()) {
-        return "Wrong elements for 10.toByte()..-5.toByte(): $list2"
+        return "Wrong elements for 10.toByte()..(-5).toByte(): $list2"
     }
 
     val list3 = ArrayList<Short>()
-    val range3 = 10.toShort()..-5.toShort()
+    val range3 = 10.toShort()..(-5).toShort()
     for (i in range3) {
         list3.add(i)
         if (list3.size() > 23) break
     }
     if (list3 != listOf<Short>()) {
-        return "Wrong elements for 10.toShort()..-5.toShort(): $list3"
+        return "Wrong elements for 10.toShort()..(-5).toShort(): $list3"
     }
 
     val list4 = ArrayList<Long>()

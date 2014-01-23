@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
@@ -505,7 +506,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         //noinspection ConstantConditions
         JetType type = KotlinBuiltIns.getInstance().getKFunctionType(
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 receiverType,
                 DescriptorUtils.getValueParametersTypes(descriptor.getValueParameters()),
                 descriptor.getReturnType(),
@@ -514,7 +515,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(),
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 CallableMemberDescriptor.Kind.DECLARATION);
 
         FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, type, null, Modality.FINAL, Visibilities.PUBLIC);
@@ -1170,11 +1171,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitRootNamespaceExpression(@NotNull JetRootNamespaceExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitRootPackageExpression(@NotNull JetRootPackageExpression expression, ExpressionTypingContext context) {
         if (JetPsiUtil.isLHSOfDot(expression)) {
-            return DataFlowUtils.checkType(JetModuleUtil.getRootNamespaceType(expression), expression, context, context.dataFlowInfo);
+            return DataFlowUtils.checkType(JetModuleUtil.getRootPackageType(expression), expression, context, context.dataFlowInfo);
         }
-        context.trace.report(NAMESPACE_IS_NOT_AN_EXPRESSION.on(expression));
+        context.trace.report(PACKAGE_IS_NOT_AN_EXPRESSION.on(expression));
         return JetTypeInfo.create(null, context.dataFlowInfo);
     }
 

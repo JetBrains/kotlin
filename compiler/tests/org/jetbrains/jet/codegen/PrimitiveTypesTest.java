@@ -159,7 +159,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
 
     public void testCastOnStack() throws Exception {
         loadText("fun foo(): Double = System.currentTimeMillis().toDouble()");
-        Class<?> mainClass = generateNamespaceSrcClass();
+        Class<?> mainClass = generatePackagePartClass();
         Method main = mainClass.getDeclaredMethod("foo");
         double currentTimeMillis = (double) System.currentTimeMillis();
         double result = (Double) main.invoke(null);

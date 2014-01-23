@@ -1,0 +1,2 @@
+//expression
+new Foo(param);

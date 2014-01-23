@@ -138,9 +138,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
         }
         else if (myElement instanceof JetClassObject) {
             JetObjectDeclaration objectDeclaration = ((JetClassObject) myElement).getObjectDeclaration();
-            if (objectDeclaration != null) {
-                return wrapDeclarations(objectDeclaration.getDeclarations());
-            }
+            return wrapDeclarations(objectDeclaration.getDeclarations());
         }
 
         return EMPTY_ARRAY;

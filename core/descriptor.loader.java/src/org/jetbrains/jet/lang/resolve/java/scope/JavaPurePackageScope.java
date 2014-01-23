@@ -21,7 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.resolver.*;
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.ProgressChecker;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -37,6 +40,9 @@ public final class JavaPurePackageScope extends JavaBaseScope implements JavaPac
     @NotNull
     private final FqName packageFQN;
     private final boolean includeCompiledKotlinClasses;
+
+    private List<FqName> subPackages = null;
+    private final Object subPackagesLock = new Object();
 
     public JavaPurePackageScope(
             @NotNull PackageFragmentDescriptor descriptor,
@@ -113,6 +119,18 @@ public final class JavaPurePackageScope extends JavaBaseScope implements JavaPac
     @Override
     @NotNull
     public Collection<FqName> getSubPackages() {
+        synchronized (subPackagesLock) {
+            if (subPackages == null) {
+                subPackages = Lists.newArrayList(); // Initializing with empty list to avoid infinite recursion
+
+                subPackages = computeSubPackages();
+            }
+            return subPackages;
+        }
+    }
+
+    @NotNull
+    private List<FqName> computeSubPackages() {
         List<FqName> result = Lists.newArrayList();
         for (JavaPackage subPackage : javaPackage.getSubPackages()) {
             result.add(subPackage.getFqName());

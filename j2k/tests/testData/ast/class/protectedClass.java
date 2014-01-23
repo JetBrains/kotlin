@@ -1,0 +1,2 @@
+//class
+protected class Test {}

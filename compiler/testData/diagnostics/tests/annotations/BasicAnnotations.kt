@@ -1,6 +1,6 @@
 annotation class my
-annotation class my1(i : Int)
-annotation class my2(i : Int = 0)
+annotation class my1(val i : Int)
+annotation class my2(val i : Int = 0)
 
 my fun foo() {}
 <!NO_VALUE_FOR_PARAMETER!>my1<!> fun foo2() {}

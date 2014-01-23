@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +11,6 @@ import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +22,7 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
 
     public MutablePackageFragmentProvider(@NotNull ModuleDescriptor module) {
         this.module = module;
-        fqNameToPackage.put(FqName.ROOT, new MutablePackageFragmentDescriptor(module, FqName.ROOT));
+        fqNameToPackage.put(FqName.ROOT, new MutablePackageFragmentDescriptor(this, module, FqName.ROOT));
     }
 
     @NotNull
@@ -45,7 +43,7 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
             FqName parent = fqName.parent();
             getOrCreateFragment(parent); // assure that parent exists
 
-            fqNameToPackage.put(fqName, new MutablePackageFragmentDescriptor(module, fqName));
+            fqNameToPackage.put(fqName, new MutablePackageFragmentDescriptor(this, module, fqName));
             subPackages.putValue(parent, fqName);
         }
 

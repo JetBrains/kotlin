@@ -21,10 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.*;
 import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
@@ -90,14 +87,14 @@ public final class JavaFunctionResolver {
     }
 
     @Nullable
-    SimpleFunctionDescriptor resolveFunctionMutely(@NotNull JavaMethod method, @NotNull ClassOrNamespaceDescriptor owner) {
+    SimpleFunctionDescriptor resolveFunctionMutely(@NotNull JavaMethod method, @NotNull ClassOrPackageFragmentDescriptor owner) {
         return resolveMethodToFunctionDescriptor(method, owner, false);
     }
 
     @Nullable
     private SimpleFunctionDescriptor resolveMethodToFunctionDescriptor(
             @NotNull JavaMethod method,
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
+            @NotNull ClassOrPackageFragmentDescriptor ownerDescriptor,
             boolean record
     ) {
         if (!DescriptorResolverUtils.isCorrectOwnerForEnumMethod(ownerDescriptor, method)) {
@@ -158,7 +155,7 @@ public final class JavaFunctionResolver {
             signatureErrors.addAll(effectiveSignature.getErrors());
         }
         else {
-            throw new IllegalStateException("Unknown class or namespace descriptor: " + ownerDescriptor);
+            throw new IllegalStateException("Unknown class or package descriptor: " + ownerDescriptor);
         }
 
         functionDescriptorImpl.initialize(
@@ -182,7 +179,7 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForClass(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
+    public Set<FunctionDescriptor> resolveFunctionGroupForClass(@NotNull NamedMembers members, @NotNull ClassOrPackageFragmentDescriptor owner) {
         Name methodName = members.getName();
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = new HashSet<SimpleFunctionDescriptor>();
@@ -230,16 +227,16 @@ public final class JavaFunctionResolver {
     @Nullable
     public static SamConstructorDescriptor resolveSamConstructor(@NotNull JavaPackageFragmentDescriptor owner, @NotNull NamedMembers namedMembers) {
         if (namedMembers.getSamInterface() != null) {
-            JavaClassDescriptor klass = DescriptorResolverUtils.findClassInPackage(owner, namedMembers.getName());
-            if (klass != null) {
-                return createSamConstructorFunction(owner, klass);
+            ClassDescriptor klass = owner.getJavaDescriptorResolver().resolveClass(owner.getFqName().child(namedMembers.getName()));
+            if (klass instanceof JavaClassDescriptor) {
+                return createSamConstructorFunction(owner, (JavaClassDescriptor) klass);
             }
         }
         return null;
     }
 
     @Nullable
-    private static SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
+    public static SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
         return isSamAdapterNecessary(original) ? (SimpleFunctionDescriptor) createSamAdapterFunction(original) : null;
     }
 
@@ -254,7 +251,8 @@ public final class JavaFunctionResolver {
                               : TypeUsage.MEMBER_SIGNATURE_COVARIANT;
         JetType transformedType = typeTransformer.transformToType(returnType, typeUsage, typeVariableResolver);
 
-        if (annotationResolver.hasNotNullAnnotation(method)) {
+        // Annotation arguments are never null in Java
+        if (method.getContainingClass().isAnnotationType() || annotationResolver.hasNotNullAnnotation(method)) {
             return TypeUtils.makeNotNullable(transformedType);
         }
         else {
@@ -263,7 +261,7 @@ public final class JavaFunctionResolver {
     }
 
     @NotNull
-    private static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
+    public static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
         Set<SimpleFunctionDescriptor> result = new LinkedHashSet<SimpleFunctionDescriptor>();
         for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(name)) {

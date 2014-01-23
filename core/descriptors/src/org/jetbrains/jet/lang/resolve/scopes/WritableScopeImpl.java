@@ -240,8 +240,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public VariableDescriptor getLocalVariable(@NotNull Name name) {
         checkMayRead();
 
-        Map<Name, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableOrClassDescriptors();
-        DeclarationDescriptor descriptor = variableClassOrNamespaceDescriptors.get(name);
+        Map<Name, DeclarationDescriptor> variableOrClassDescriptors = getVariableOrClassDescriptors();
+        DeclarationDescriptor descriptor = variableOrClassDescriptors.get(name);
         if (descriptor instanceof VariableDescriptor && !getPropertyGroups().get(name).contains(descriptor)) {
             return (VariableDescriptor) descriptor;
         }
@@ -368,8 +368,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
         checkMayRead();
 
-        Map<Name, DeclarationDescriptor> variableClassOrNamespaceDescriptors = getVariableOrClassDescriptors();
-        DeclarationDescriptor descriptor = variableClassOrNamespaceDescriptors.get(name);
+        Map<Name, DeclarationDescriptor> variableOrClassDescriptors = getVariableOrClassDescriptors();
+        DeclarationDescriptor descriptor = variableOrClassDescriptors.get(name);
         if (descriptor instanceof ClassifierDescriptor) return (ClassifierDescriptor) descriptor;
 
         ClassifierDescriptor classifierDescriptor = getWorkerScope().getClassifier(name);

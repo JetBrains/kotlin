@@ -36,18 +36,20 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
         generateJavaScriptFiles(fullFilePaths, dirName, MainCallParameters.noCall(), ecmaVersions);
     }
 
-    protected void runMultiFileTest(@NotNull String dirName, @NotNull String namespaceName,
+    protected void runMultiFileTest(@NotNull String dirName, @NotNull String packageName,
             @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
-        runMultiFileTests(DEFAULT_ECMA_VERSIONS, dirName, namespaceName, functionName, expectedResult);
+        runMultiFileTests(DEFAULT_ECMA_VERSIONS, dirName, packageName, functionName, expectedResult);
     }
 
-    protected void runMultiFileTests(@NotNull Iterable<EcmaVersion> ecmaVersions, @NotNull String dirName,
-            @NotNull String namespaceName,
+    protected void runMultiFileTests(
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull String dirName,
+            @NotNull String packageName,
             @NotNull String functionName,
-            @NotNull Object expectedResult)
-            throws Exception {
+            @NotNull Object expectedResult
+    ) throws Exception {
         generateJsFromDir(dirName, ecmaVersions);
-        runRhinoTests(dirName + ".kt", ecmaVersions, new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+        runRhinoTests(dirName + ".kt", ecmaVersions, new RhinoFunctionResultChecker(packageName, functionName, expectedResult));
     }
 
     public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {

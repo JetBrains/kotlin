@@ -26,7 +26,7 @@ import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.psi.*;
@@ -101,7 +101,7 @@ public class DescriptorResolver {
 
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                     descriptor,
-                    Collections.<AnnotationDescriptor>emptyList(),
+                    Annotations.EMPTY,
                     typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                     typeParameter.getVariance(),
                     JetPsiUtil.safeName(typeParameter.getName()),
@@ -274,7 +274,7 @@ public class DescriptorResolver {
             @NotNull final JetNamedFunction function,
             @NotNull final BindingTrace trace,
             @NotNull final DataFlowInfo dataFlowInfo,
-            @NotNull List<AnnotationDescriptor> annotations
+            @NotNull Annotations annotations
     ) {
         final SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 containingDescriptor,
@@ -366,7 +366,7 @@ public class DescriptorResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 classDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 Name.identifier(functionName),
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
@@ -396,7 +396,7 @@ public class DescriptorResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 classDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 COPY_METHOD_NAME,
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
@@ -521,7 +521,7 @@ public class DescriptorResolver {
     private static ValueParameterDescriptorImpl resolveValueParameterDescriptor(
             DeclarationDescriptor declarationDescriptor,
             JetParameter valueParameter, int index, JetType type, BindingTrace trace,
-            List<AnnotationDescriptor> annotations
+            Annotations annotations
     ) {
         JetType varargElementType = null;
         JetType variableType = type;
@@ -574,7 +574,7 @@ public class DescriptorResolver {
 
         TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
@@ -1041,7 +1041,7 @@ public class DescriptorResolver {
         JetPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptorImpl setterDescriptor = null;
         if (setter != null) {
-            List<AnnotationDescriptor> annotations =
+            Annotations annotations =
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, setter.getModifierList(), trace);
             JetParameter parameter = setter.getParameter();
 
@@ -1109,7 +1109,7 @@ public class DescriptorResolver {
         PropertyGetterDescriptorImpl getterDescriptor;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
-            List<AnnotationDescriptor> annotations =
+            Annotations annotations =
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, getter.getModifierList(), trace);
 
             JetType outType = propertyDescriptor.getType();

@@ -1,0 +1,3 @@
+Unclassified usage (4: 12) object O1: A() {
+Unclassified usage (7: 12) open class A: X {
+Unclassified usage (9: 16) object O2: X {

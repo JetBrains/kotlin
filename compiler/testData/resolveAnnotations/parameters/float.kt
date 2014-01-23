@@ -7,4 +7,4 @@ annotation class Ann(
 
 Ann(1.toFloat(), 1.0.toFloat()) class MyClass
 
-// EXPECTED: Ann[b1 = 1.0.toFloat(): jet.Float, b2 = 1.0.toFloat(): jet.Float]
+// EXPECTED: Ann(b1 = 1.0.toFloat(): Float, b2 = 1.0.toFloat(): Float)

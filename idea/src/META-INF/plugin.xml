@@ -226,7 +226,7 @@
     <spellchecker.support implementationClass="org.jetbrains.jet.plugin.KotlinSpellcheckingStrategy" language="jet"/>
 
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Generic"/>
-    <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Namespace"/>
+    <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$TopLevel"/>
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Statement"/>
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Class"/>
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Expression"/>
@@ -299,6 +299,9 @@
         language="JAVA"
         implementationClass="org.jetbrains.jet.plugin.hierarchy.calls.KotlinCallHierarchyProvider"
         order="first" />
+    <methodHierarchyProvider
+        language="jet"
+        implementationClass="org.jetbrains.jet.plugin.hierarchy.overrides.KotlinOverrideHierarchyProvider" />
 
     <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>

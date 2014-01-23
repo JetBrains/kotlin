@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
+import com.intellij.util.containers.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -41,19 +42,33 @@ public class ResolveSessionUtils {
     // The name contains a GUID to avoid clashes, if a clash happens, it's not a big deal: the code does not compile anyway
     public static final Name NO_NAME_FOR_LAZY_RESOLVE = Name.identifier("no_name_in_PSI_for_lazy_resolve_3d19d79d_1ba9_4cd0_b7f5_b46aa3cd5d40");
 
+    public static final Predicate<ClassDescriptor> NON_SINGLETON_FILTER = new Predicate<ClassDescriptor>() {
+        @Override
+        public boolean apply(ClassDescriptor descriptor) {
+            return !descriptor.getKind().isSingleton();
+        }
+    };
+
+    public static final Predicate<ClassDescriptor> SINGLETON_FILTER = new Predicate<ClassDescriptor>() {
+        @Override
+        public boolean apply(ClassDescriptor descriptor) {
+            return descriptor.getKind().isSingleton();
+        }
+    };
+
     private ResolveSessionUtils() {
     }
 
     @NotNull
     public static Collection<ClassDescriptor> getClassDescriptorsByFqName(@NotNull KotlinCodeAnalyzer analyzer, @NotNull FqName fqName) {
-        return getClassOrObjectDescriptorsByFqName(analyzer, fqName, false);
+        return getClassOrObjectDescriptorsByFqName(analyzer, fqName, NON_SINGLETON_FILTER);
     }
 
     @NotNull
     public static Collection<ClassDescriptor> getClassOrObjectDescriptorsByFqName(
             @NotNull KotlinCodeAnalyzer analyzer,
             @NotNull FqName fqName,
-            boolean includeObjectDeclarations
+            @NotNull Predicate<ClassDescriptor> filter
     ) {
         if (fqName.isRoot()) {
             return Collections.emptyList();
@@ -66,8 +81,7 @@ public class ResolveSessionUtils {
             PackageViewDescriptor packageDescriptor = analyzer.getModuleDescriptor().getPackage(packageFqName);
             if (packageDescriptor != null) {
                 FqName classInPackagePath = new FqName(QualifiedNamesUtil.tail(packageFqName, fqName));
-                Collection<ClassDescriptor> descriptors = getClassOrObjectDescriptorsByFqName(packageDescriptor, classInPackagePath,
-                                                                                              includeObjectDeclarations);
+                Collection<ClassDescriptor> descriptors = getClassOrObjectDescriptorsByFqName(packageDescriptor, classInPackagePath, filter);
                 classDescriptors.addAll(descriptors);
             }
 
@@ -86,7 +100,7 @@ public class ResolveSessionUtils {
     private static Collection<ClassDescriptor> getClassOrObjectDescriptorsByFqName(
             @NotNull PackageViewDescriptor packageDescriptor,
             @NotNull FqName path,
-            boolean includeObjectDeclarations
+            @NotNull Predicate<ClassDescriptor> filter
     ) {
         if (path.isRoot()) {
             return Collections.emptyList();
@@ -112,8 +126,7 @@ public class ResolveSessionUtils {
         Collection<ClassDescriptor> resultClassifierDescriptors = Lists.newArrayList();
         for (JetScope scope : scopes) {
             ClassifierDescriptor classifier = scope.getClassifier(shortName);
-            if (classifier instanceof ClassDescriptor &&
-                includeObjectDeclarations == ((ClassDescriptor) classifier).getKind().isSingleton()) {
+            if (classifier instanceof ClassDescriptor && filter.apply((ClassDescriptor) classifier)) {
                 resultClassifierDescriptors.add((ClassDescriptor) classifier);
             }
         }

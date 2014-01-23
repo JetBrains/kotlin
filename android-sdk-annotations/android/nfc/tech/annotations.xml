@@ -2,16 +2,22 @@
     <item name='android.nfc.tech.Ndef java.lang.String getType()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.NfcBarcode android.nfc.tech.NfcBarcode get(android.nfc.Tag) 0'>
+    <item name='android.nfc.tech.IsoDep EXTRA_HIST_BYTES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef NFC_FORUM_TYPE_3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef NFC_FORUM_TYPE_1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.MifareClassic MifareClassic(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.MifareUltralight void writePage(int, byte[]) 1'>
+    <item name='android.nfc.tech.NfcF EXTRA_SC'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.NfcV android.nfc.tech.NfcV get(android.nfc.Tag) 0'>
+    <item name='android.nfc.tech.MifareClassic KEY_NFC_FORUM'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.IsoDep IsoDep(android.nfc.Tag) 0'>
@@ -20,13 +26,79 @@
     <item name='android.nfc.tech.IsoDep android.nfc.tech.IsoDep get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.tech.Ndef MIFARE_CLASSIC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.tech.MifareUltralight MifareUltralight(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.MifareClassic KEY_MIFARE_APPLICATION_DIRECTORY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef Ndef(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcB EXTRA_APPDATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcA android.nfc.tech.NfcA get(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.MifareUltralight android.nfc.tech.MifareUltralight get(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef EXTRA_NDEF_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcA NfcA(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef ICODE_SLI'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcF NfcF(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef EXTRA_NDEF_CARDSTATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcV EXTRA_RESP_FLAGS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcBarcode EXTRA_BARCODE_TYPE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcBarcode android.nfc.tech.NfcBarcode get(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef NFC_FORUM_TYPE_2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.MifareUltralight void writePage(int, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcV android.nfc.tech.NfcV get(android.nfc.Tag) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef UNKNOWN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef EXTRA_NDEF_MAXLENGTH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcV EXTRA_DSFID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef EXTRA_NDEF_MSG'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.NfcF android.nfc.tech.NfcF get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.Ndef Ndef(android.nfc.Tag) 0'>
+    <item name='android.nfc.tech.MifareClassic KEY_DEFAULT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.NfcF EXTRA_PMM'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.NfcB NfcB(android.nfc.Tag) 0'>
@@ -41,10 +113,7 @@
     <item name='android.nfc.tech.Ndef android.nfc.tech.Ndef get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.NfcA android.nfc.tech.NfcA get(android.nfc.Tag) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.nfc.tech.MifareUltralight android.nfc.tech.MifareUltralight get(android.nfc.Tag) 0'>
+    <item name='android.nfc.tech.NfcA EXTRA_ATQA'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.NdefFormatable android.nfc.tech.NdefFormatable get(android.nfc.Tag) 0'>
@@ -53,16 +122,25 @@
     <item name='android.nfc.tech.NfcB android.nfc.tech.NfcB get(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.NfcA NfcA(android.nfc.Tag) 0'>
+    <item name='android.nfc.tech.NfcB EXTRA_PROTINFO'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.nfc.tech.MifareClassic void writeBlock(int, byte[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.nfc.tech.MifareUltralight EXTRA_IS_UL_C'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.IsoDep EXTRA_HI_LAYER_RESP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.nfc.tech.NfcBarcode NfcBarcode(android.nfc.Tag) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.nfc.tech.NfcF NfcF(android.nfc.Tag) 0'>
+    <item name='android.nfc.tech.NfcA EXTRA_SAK'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.nfc.tech.Ndef NFC_FORUM_TYPE_4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

@@ -83,7 +83,7 @@ bq. See [Nonlocal returns and jumps]
 */
 
 /* Keywords:
-namespace
+package
 as
 type
 class

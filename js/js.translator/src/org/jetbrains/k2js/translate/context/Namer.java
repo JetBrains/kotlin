@@ -45,7 +45,7 @@ public final class Namer {
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
     private static final String SUPER_METHOD_NAME = "baseInitializer";
-    private static final String ROOT_NAMESPACE = "_";
+    private static final String ROOT_PACKAGE = "_";
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String CLASS_OBJECT_GETTER = "object";
@@ -62,8 +62,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getRootNamespaceName() {
-        return ROOT_NAMESPACE;
+    public static String getRootPackageName() {
+        return ROOT_PACKAGE;
     }
 
     @NotNull
@@ -257,8 +257,8 @@ public final class Namer {
     }
 
     @NotNull
-    static String generateNamespaceName(@NotNull FqName packageFqName) {
-        return packageFqName.isRoot() ? getRootNamespaceName() : packageFqName.shortName().asString();
+    static String generatePackageName(@NotNull FqName packageFqName) {
+        return packageFqName.isRoot() ? getRootPackageName() : packageFqName.shortName().asString();
     }
 
     @NotNull

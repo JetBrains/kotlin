@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 
 public class ScriptNameUtil {
     private ScriptNameUtil() {
@@ -40,9 +40,9 @@ public class ScriptNameUtil {
                 name = name.substring(0,index);
         }
         name = Character.toUpperCase(name.charAt(0)) + (name.length() == 0 ? "" : name.substring(1));
-        JetNamespaceHeader header = file.getNamespaceHeader();
-        if(header != null && header.getName().length() > 0) {
-            name = header.getName().replace('.','/') + "/" + name;
+        JetPackageDirective directive = file.getPackageDirective();
+        if(directive != null && directive.getName().length() > 0) {
+            name = directive.getName().replace('.','/') + "/" + name;
         }
         return name;
     }

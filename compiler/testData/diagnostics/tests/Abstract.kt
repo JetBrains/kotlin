@@ -1,5 +1,5 @@
 // FILE: b.kt
-package MyNamespace
+package MyPackage
     //properties
     <!MUST_BE_INITIALIZED!>val a: Int<!>
     val a1: Int = 1

@@ -640,6 +640,10 @@ public class CandidateResolver {
                     context.candidateCall.isSafeCall()
                     ? TypeUtils.makeNotNullable(receiverArgument.getType())
                     : receiverArgument.getType();
+            if (receiverArgument instanceof ExpressionReceiver) {
+                receiverType = updateResultTypeForSmartCasts(receiverType, ((ExpressionReceiver) receiverArgument).getExpression(),
+                                                             context.dataFlowInfo, context.trace);
+            }
             constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), ConstraintPosition.RECEIVER_POSITION);
         }
 

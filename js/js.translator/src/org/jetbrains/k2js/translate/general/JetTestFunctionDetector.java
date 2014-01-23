@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -45,15 +46,13 @@ public class JetTestFunctionDetector {
         if (functionDescriptor == null) {
             return false;
         }
-        List<AnnotationDescriptor> annotations = functionDescriptor.getAnnotations();
-        if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
-                // TODO ideally we should find the fully qualified name here...
-                JetType type = annotation.getType();
-                String name = type.toString();
-                if (name.equals("Test")) {
-                    return true;
-                }
+        Annotations annotations = functionDescriptor.getAnnotations();
+        for (AnnotationDescriptor annotation : annotations) {
+            // TODO ideally we should find the fully qualified name here...
+            JetType type = annotation.getType();
+            String name = type.toString();
+            if (name.equals("Test")) {
+                return true;
             }
         }
 

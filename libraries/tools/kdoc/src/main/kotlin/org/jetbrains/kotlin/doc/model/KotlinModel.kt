@@ -247,7 +247,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             if (packageFragment != null) {
                 allPackageFragments.add(packageFragment);
             } else {
-                warning("No NamespaceDescriptor for source $source")
+                warning("No PackageFragmentDescriptor for source $source")
             }
         }
         val allClasses = HashSet<KClass>()
@@ -847,7 +847,7 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
 
             protected fun findWritableScope(declarationDescriptor: DeclarationDescriptor) : WritableScopeImpl? {
                 val container = declarationDescriptor.getContainingDeclaration()
-                if (container is NamespaceDescriptor) {
+                if (container is PackageFragmentDescriptor) {
                     val scope = container.getMemberScope()
                     if (scope is WritableScopeImpl) {
                         return scope

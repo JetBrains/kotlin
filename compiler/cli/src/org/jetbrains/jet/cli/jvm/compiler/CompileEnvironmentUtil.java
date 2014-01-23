@@ -98,7 +98,7 @@ public class CompileEnvironmentUtil {
         if (runtimePath.exists()) {
             configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, runtimePath);
         }
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar());
+        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
         File jdkAnnotationsPath = paths.getJdkAnnotationsPath();
         if (jdkAnnotationsPath.exists()) {
             configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
@@ -149,8 +149,8 @@ public class CompileEnvironmentUtil {
             loader = new GeneratedClassLoader(factory, KotlinToJVMBytecodeCompiler.class.getClassLoader());
         }
         try {
-            Class namespaceClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
-            Method method = namespaceClass.getDeclaredMethod("project");
+            Class packageClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
+            Method method = packageClass.getDeclaredMethod("project");
             if (method == null) {
                 throw new CompileEnvironmentException("Module script " + moduleFile + " must define project() function");
             }

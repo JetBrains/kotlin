@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -30,12 +30,12 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
     private final ModuleDescriptor module;
-    final PackageFragmentProvider packageFragmentProvider;
+    private final PackageFragmentProvider packageFragmentProvider;
 
     public BuiltinsPackageFragment(@NotNull StorageManager storageManager, @NotNull ModuleDescriptor module) {
-        super(Collections.<AnnotationDescriptor>emptyList(), KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
+        super(Annotations.EMPTY, KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
         this.module = module;
-        nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
+        nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(getFqName())));
 
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
@@ -45,7 +45,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
 
     @NotNull
     private ProtoBuf.Package loadPackage() {
-        String packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(this);
+        String packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(getFqName());
         InputStream stream = getStream(packageFilePath);
         try {
             return ProtoBuf.Package.parseFrom(stream);
@@ -59,6 +59,12 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     @Override
     public JetScope getMemberScope() {
         return members;
+    }
+
+    @NotNull
+    @Override
+    public PackageFragmentProvider getProvider() {
+        return packageFragmentProvider;
     }
 
     @NotNull
@@ -99,7 +105,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     }
 
     private class BuiltinsPackageFragmentProvider implements PackageFragmentProvider {
-        private final PackageFragmentDescriptor rootPackage = new MutablePackageFragmentDescriptor(module, FqName.ROOT);
+        private final PackageFragmentDescriptor rootPackage = new MutablePackageFragmentDescriptor(this, module, FqName.ROOT);
 
         @NotNull
         @Override
@@ -133,7 +139,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
                 @Override
                 @NotNull
                 public Collection<Name> invoke() {
-                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsPackageFragment.this));
+                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(getFqName()));
 
                     try {
                         DataInputStream data = new DataInputStream(in);

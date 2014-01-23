@@ -37,6 +37,8 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import kotlin.test.assertTrue
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
+import org.jetbrains.jet.lang.psi.JetClassBody
+import org.jetbrains.jet.lang.psi.JetParameterList
 
 fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
@@ -85,7 +87,7 @@ fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
 fun JetClass.isAbstract() = isTrait() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
 
 [suppress("UNCHECKED_CAST")]
-fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newElement)!! as T
+fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newElement) as T
 
 fun JetElement.blockExpressionsOrSingle(): Iterator<JetElement> =
         if (this is JetBlockExpression) getStatements().iterator() else SingleIterator(this)
@@ -155,4 +157,17 @@ fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isIn
 
 fun JetClass.isInheritable(): Boolean {
     return isTrait() || hasModifier(JetTokens.OPEN_KEYWORD)
+}
+
+fun JetDeclaration.isOverridable(): Boolean {
+    val parent = getParent()
+    if (!(parent is JetClassBody || parent is JetParameterList)) return false
+
+    val klass = parent.getParent()
+    if (!(klass is JetClass && klass.isInheritable())) return false
+
+    if (hasModifier(JetTokens.FINAL_KEYWORD) || hasModifier(JetTokens.PRIVATE_KEYWORD)) return false
+
+    return klass.isTrait() ||
+        hasModifier(JetTokens.ABSTRACT_KEYWORD) || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.OVERRIDE_KEYWORD)
 }

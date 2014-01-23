@@ -61,8 +61,8 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
         PsiFile file = element.getContainingFile();
         if (file instanceof JetFile) {
             JetFile jetFile = (JetFile) file;
-            JetNamespaceHeader header = jetFile.getNamespaceHeader();
-            return header != null ? header.getFqName() : FqName.ROOT;
+            JetPackageDirective directive = jetFile.getPackageDirective();
+            return directive != null ? directive.getFqName() : FqName.ROOT;
         }
         throw new IllegalArgumentException("Not in a JetFile: " + element);
     }

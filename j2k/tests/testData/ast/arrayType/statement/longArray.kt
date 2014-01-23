@@ -1,1 +1,0 @@
-var a : LongArray? = longArray(1, 2, 3)

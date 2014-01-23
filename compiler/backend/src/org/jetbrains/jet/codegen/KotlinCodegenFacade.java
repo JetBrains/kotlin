@@ -16,12 +16,10 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetScript;
@@ -29,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
@@ -50,25 +47,25 @@ public class KotlinCodegenFacade {
 
         state.beforeCompile();
 
-        MultiMap<FqName, JetFile> namespaceGrouping = new MultiMap<FqName, JetFile>();
+        MultiMap<FqName, JetFile> packageFqNameToFiles = new MultiMap<FqName, JetFile>();
         for (JetFile file : state.getFiles()) {
             if (file == null) throw new IllegalArgumentException("A null file given for compilation");
-            namespaceGrouping.putValue(JetPsiUtil.getFQName(file), file);
+            packageFqNameToFiles.putValue(JetPsiUtil.getFQName(file), file);
         }
 
-        for (Map.Entry<FqName, Collection<JetFile>> entry : namespaceGrouping.entrySet()) {
-            generateNamespace(state, entry.getKey(), entry.getValue(), errorHandler);
+        for (Map.Entry<FqName, Collection<JetFile>> entry : packageFqNameToFiles.entrySet()) {
+            generatePackage(state, entry.getKey(), entry.getValue(), errorHandler);
         }
     }
 
-    public static void generateNamespace(
+    public static void generatePackage(
             @NotNull GenerationState state,
             @NotNull FqName fqName,
             @NotNull Collection<JetFile> jetFiles,
             @NotNull CompilationErrorHandler errorHandler
     ) {
-            NamespaceCodegen codegen = state.getFactory().forNamespace(fqName, jetFiles);
-            codegen.generate(errorHandler);
+        PackageCodegen codegen = state.getFactory().forPackage(fqName, jetFiles);
+        codegen.generate(errorHandler);
     }
 
     private KotlinCodegenFacade() {}

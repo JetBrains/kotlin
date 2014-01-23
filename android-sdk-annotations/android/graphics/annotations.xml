@@ -2,13 +2,13 @@
     <item name='android.graphics.RadialGradient RadialGradient(float, float, float, int[], float[], android.graphics.Shader.TileMode) 5'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Typeface android.graphics.Typeface createFromFile(java.io.File)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.util.DisplayMetrics, int[], int, int, int, int, android.graphics.Bitmap.Config) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Matrix java.lang.String toShortString()'>
+    <item name='android.graphics.Canvas.EdgeType BW'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Picture android.graphics.Picture createFromStream(java.io.InputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.SweepGradient SweepGradient(float, float, int[], float[]) 2'>
@@ -23,13 +23,16 @@
     <item name='android.graphics.Paint void getTextBounds(java.lang.String, int, int, android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.PorterDuff.Mode DST_IN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Region.Op REPLACE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Paint int getTextRunCursor(java.lang.CharSequence, int, int, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Path void addRoundRect(android.graphics.RectF, float[], android.graphics.Path.Direction) 1'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap createScaledBitmap(android.graphics.Bitmap, int, int, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.graphics.Bitmap, int, int, int, int) 0'>
@@ -38,7 +41,10 @@
     <item name='android.graphics.Canvas boolean clipRect(android.graphics.RectF, android.graphics.Region.Op) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Interpolator.Result android.graphics.Interpolator.Result valueOf(java.lang.String)'>
+    <item name='android.graphics.Point java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PorterDuffXfermode mode'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Color void colorToHSV(int, float[]) 1'>
@@ -48,6 +54,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix boolean setConcat(android.graphics.Matrix, android.graphics.Matrix) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Canvas.EdgeType AA'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas boolean clipRect(android.graphics.RectF) 0'>
@@ -62,10 +71,10 @@
     <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.util.DisplayMetrics, int, int, android.graphics.Bitmap.Config) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Matrix boolean mapRect(android.graphics.RectF, android.graphics.RectF) 1'>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.util.DisplayMetrics, int[], int, int, android.graphics.Bitmap.Config) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.util.DisplayMetrics, int[], int, int, android.graphics.Bitmap.Config) 4'>
+    <item name='android.graphics.Matrix boolean mapRect(android.graphics.RectF, android.graphics.RectF) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Path void addRoundRect(android.graphics.RectF, float[], android.graphics.Path.Direction) 0'>
@@ -74,13 +83,16 @@
     <item name='android.graphics.Canvas void drawPosText(java.lang.String, float[], android.graphics.Paint) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Interpolator android.graphics.Interpolator.Result timeToValues(int, float[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.RectF void union(android.graphics.RectF) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Region.Op UNION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas void drawVertices(android.graphics.Canvas.VertexMode, int, float[], int, float[], int, int[], int, short[], int, int, android.graphics.Paint) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint.Align android.graphics.Paint.Align valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Color int HSBtoColor(float[]) 0'>
@@ -89,7 +101,7 @@
     <item name='android.graphics.Matrix boolean mapRect(android.graphics.RectF, android.graphics.RectF) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap.Config android.graphics.Bitmap.Config valueOf(java.lang.String)'>
+    <item name='android.graphics.Shader.TileMode CLAMP'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(int[], int, int, android.graphics.Bitmap.Config) 3'>
@@ -98,13 +110,16 @@
     <item name='android.graphics.Paint int getTextWidths(java.lang.String, int, int, float[]) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.AvoidXfermode.Mode android.graphics.AvoidXfermode.Mode valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.BitmapShader mBitmap'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.NinePatch void draw(android.graphics.Canvas, android.graphics.RectF) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.TableMaskFilter android.graphics.TableMaskFilter CreateGammaTable(float)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.Rect java.lang.String toString()'>
+    <item name='android.graphics.Paint.Cap android.graphics.Paint.Cap valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Path void transform(android.graphics.Matrix, android.graphics.Path) 0'>
@@ -125,10 +140,19 @@
     <item name='android.graphics.ColorMatrix void setConcat(android.graphics.ColorMatrix, android.graphics.ColorMatrix) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Bitmap.Config ALPHA_8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Insets android.graphics.Insets of(android.graphics.Rect)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas void drawPaint(android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas boolean clipRect(android.graphics.Rect, android.graphics.Region.Op) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.RectF CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Path void addRect(android.graphics.RectF, android.graphics.Path.Direction) 1'>
@@ -138,6 +162,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Region android.graphics.Region obtain(android.graphics.Region) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.BlurMaskFilter.Blur OUTER'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint int getTextRunCursor(java.lang.String, int, int, int, int, int) 0'>
@@ -164,10 +191,16 @@
     <item name='android.graphics.Canvas void drawPosText(java.lang.String, float[], android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Path.FillType EVEN_ODD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.YuvImage boolean compressToJpeg(android.graphics.Rect, int, java.io.OutputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas boolean clipRect(android.graphics.RectF, android.graphics.Region.Op) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Shader.TileMode MIRROR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.ColorMatrix void setConcat(android.graphics.ColorMatrix, android.graphics.ColorMatrix) 0'>
@@ -182,16 +215,10 @@
     <item name='android.graphics.Region boolean op(android.graphics.Region, android.graphics.Region.Op) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Interpolator android.graphics.Interpolator.Result timeToValues(float[])'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.Matrix boolean setConcat(android.graphics.Matrix, android.graphics.Matrix) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Path void addRect(android.graphics.RectF, android.graphics.Path.Direction) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.graphics.Bitmap, int, int, int, int, android.graphics.Matrix, boolean)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint void setTextAlign(android.graphics.Paint.Align) 0'>
@@ -209,25 +236,25 @@
     <item name='android.graphics.Canvas void drawText(java.lang.String, float, float, android.graphics.Paint) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Picture android.graphics.Picture createFromStream(java.io.InputStream)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.Canvas void drawRect(android.graphics.RectF, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix boolean invert(android.graphics.Matrix) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Typeface android.graphics.Typeface create(java.lang.String, int)'>
+    <item name='android.graphics.Region boolean op(android.graphics.Region, android.graphics.Region.Op) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Region boolean op(android.graphics.Region, android.graphics.Region.Op) 1'>
+    <item name='android.graphics.TableMaskFilter android.graphics.TableMaskFilter CreateGammaTable(float)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawPatch(android.graphics.Bitmap, byte[], android.graphics.RectF, android.graphics.Paint) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint.Cap android.graphics.Paint.Cap valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint android.graphics.Paint.FontMetrics getFontMetrics()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.LinearGradient LinearGradient(float, float, float, float, int, int, android.graphics.Shader.TileMode) 6'>
@@ -248,19 +275,19 @@
     <item name='android.graphics.Region boolean op(android.graphics.Rect, android.graphics.Region, android.graphics.Region.Op) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.RectF java.lang.String toShortString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas void drawBitmap(android.graphics.Bitmap, android.graphics.Rect, android.graphics.RectF, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(int[], int, int, android.graphics.Bitmap.Config) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.Paint.Style android.graphics.Paint.Style valueOf(java.lang.String)'>
+    <item name='android.graphics.Matrix java.lang.String toShortString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.SumPathEffect SumPathEffect(android.graphics.PathEffect, android.graphics.PathEffect) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Canvas android.graphics.Matrix getMatrix()'>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(int[], int, int, android.graphics.Bitmap.Config) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.PorterDuff.Mode android.graphics.PorterDuff.Mode valueOf(java.lang.String) 0'>
@@ -269,25 +296,31 @@
     <item name='android.graphics.Canvas void drawRect(android.graphics.RectF, android.graphics.Paint) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.SumPathEffect SumPathEffect(android.graphics.PathEffect, android.graphics.PathEffect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas boolean quickReject(android.graphics.RectF, android.graphics.Canvas.EdgeType) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas boolean clipRect(android.graphics.Rect, android.graphics.Region.Op) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.SumPathEffect SumPathEffect(android.graphics.PathEffect, android.graphics.PathEffect) 0'>
+    <item name='android.graphics.Interpolator.Result android.graphics.Interpolator.Result valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Interpolator.Result android.graphics.Interpolator.Result valueOf(java.lang.String) 0'>
+    <item name='android.graphics.Paint.Align RIGHT'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.DashPathEffect DashPathEffect(float[], float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap extractAlpha(android.graphics.Paint, int[])'>
+    <item name='android.graphics.PorterDuff.Mode MULTIPLY'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.util.DisplayMetrics, int[], int, int, android.graphics.Bitmap.Config) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Path.Direction CW'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Path void addOval(android.graphics.RectF, android.graphics.Path.Direction) 0'>
@@ -317,70 +350,103 @@
     <item name='android.graphics.Paint float getTextRunAdvances(java.lang.String, int, int, int, int, int, float[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Canvas.VertexMode TRIANGLE_FAN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Matrix.ScaleToFit START'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.PointF void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Region android.graphics.Region obtain()'>
+    <item name='android.graphics.Paint.Style FILL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PorterDuff.Mode DST_ATOP'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix void mapVectors(float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Canvas android.graphics.Rect getClipBounds()'>
+    <item name='android.graphics.Paint android.graphics.Paint.FontMetricsInt getFontMetricsInt()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Rect boolean intersects(android.graphics.Rect, android.graphics.Rect) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.ColorMatrix float[] getArray()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Paint int getTextGlyphs(java.lang.String, int, int, int, int, int, char[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Interpolator.Result FREEZE_START'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawPicture(android.graphics.Picture, android.graphics.RectF) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.AvoidXfermode.Mode TARGET'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.SurfaceTexture void getTransformMatrix(float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.RectF java.lang.String toString()'>
+    <item name='android.graphics.PorterDuff.Mode LIGHTEN'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Path.FillType android.graphics.Path.FillType valueOf(java.lang.String)'>
+    <item name='android.graphics.Paint.Cap ROUND'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Canvas.EdgeType android.graphics.Canvas.EdgeType valueOf(java.lang.String)'>
+    <item name='android.graphics.Bitmap.CompressFormat JPEG'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Point java.lang.String toString()'>
+    <item name='android.graphics.Typeface android.graphics.Typeface createFromAsset(android.content.res.AssetManager, java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.LinearGradient LinearGradient(float, float, float, float, int[], float[], android.graphics.Shader.TileMode) 6'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.RectF java.lang.String toShortString(java.lang.StringBuilder)'>
+    <item name='android.graphics.PorterDuff.Mode DST_OVER'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Region boolean setPath(android.graphics.Path, android.graphics.Region) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Path.FillType android.graphics.Path.FillType valueOf(java.lang.String) 0'>
+    <item name='android.graphics.PorterDuff.Mode XOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Region boolean op(android.graphics.Region, android.graphics.Region, android.graphics.Region.Op) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Path.FillType android.graphics.Path.FillType valueOf(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas void drawRoundRect(android.graphics.RectF, float, float, android.graphics.Paint) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Shader.TileMode REPEAT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PointF java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Path.Direction CCW'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawVertices(android.graphics.Canvas.VertexMode, int, float[], int, float[], int, int[], int, short[], int, int, android.graphics.Paint) 11'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.PathDashPathEffect.Style android.graphics.PathDashPathEffect.Style valueOf(java.lang.String)'>
+    <item name='android.graphics.Region CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Typeface android.graphics.Typeface create(android.graphics.Typeface, int)'>
+    <item name='android.graphics.BlurMaskFilter.Blur INNER'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Typeface android.graphics.Typeface createFromFile(java.lang.String)'>
+    <item name='android.graphics.Insets java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Region.Op android.graphics.Region.Op valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawText(char[], int, int, float, float, android.graphics.Paint) 0'>
@@ -392,6 +458,9 @@
     <item name='android.graphics.EmbossMaskFilter EmbossMaskFilter(float[], float, float, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap extractAlpha(android.graphics.Paint, int[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Path void addOval(android.graphics.RectF, android.graphics.Path.Direction) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -399,6 +468,12 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Region boolean setPath(android.graphics.Path, android.graphics.Region) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Bitmap.Config ARGB_4444'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.TableMaskFilter android.graphics.TableMaskFilter CreateClipTable(int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint int getTextWidths(char[], int, int, float[]) 0'>
@@ -419,10 +494,10 @@
     <item name='android.graphics.Canvas void drawCircle(float, float, float, android.graphics.Paint) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Paint float measureText(java.lang.CharSequence, int, int) 0'>
+    <item name='android.graphics.Region Region(android.graphics.Region) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Region Region(android.graphics.Region) 0'>
+    <item name='android.graphics.Paint float measureText(java.lang.CharSequence, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.BitmapRegionDecoder android.graphics.BitmapRegionDecoder newInstance(byte[], int, int, boolean) 0'>
@@ -437,22 +512,28 @@
     <item name='android.graphics.Region boolean union(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.graphics.Bitmap)'>
+    <item name='android.graphics.Canvas void drawArc(android.graphics.RectF, float, float, boolean, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Canvas void drawArc(android.graphics.RectF, float, float, boolean, android.graphics.Paint) 0'>
+    <item name='android.graphics.BlurMaskFilter.Blur SOLID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Point CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawLine(float, float, float, float, android.graphics.Paint) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Matrix void mapVectors(float[], int, float[], int, int) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.Canvas void drawColor(int, android.graphics.PorterDuff.Mode) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Canvas.VertexMode android.graphics.Canvas.VertexMode valueOf(java.lang.String)'>
+    <item name='android.graphics.Matrix void mapVectors(float[], int, float[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint.Join BEVEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PorterDuff.Mode SRC_IN'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Picture void writeToStream(java.io.OutputStream) 0'>
@@ -470,19 +551,13 @@
     <item name='android.graphics.Color int HSVToColor(int, float[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.AvoidXfermode.Mode android.graphics.AvoidXfermode.Mode valueOf(java.lang.String)'>
+    <item name='android.graphics.Region boolean getBounds(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.ColorMatrixColorFilter ColorMatrixColorFilter(float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Region boolean getBounds(android.graphics.Rect) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.Bitmap boolean compress(android.graphics.Bitmap.CompressFormat, int, java.io.OutputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.Paint.Join android.graphics.Paint.Join valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.TableMaskFilter TableMaskFilter(byte[]) 0'>
@@ -497,6 +572,15 @@
     <item name='android.graphics.ColorMatrix void set(android.graphics.ColorMatrix) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Path.FillType WINDING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Region android.graphics.Region obtain()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Rect java.lang.String flattenToString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas void drawTextRun(char[], int, int, int, int, float, float, int, android.graphics.Paint) 8'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -506,19 +590,31 @@
     <item name='android.graphics.Paint void setStyle(android.graphics.Paint.Style) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Typeface android.graphics.Typeface create(android.graphics.Typeface, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.graphics.Bitmap) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap extractAlpha()'>
+    <item name='android.graphics.Paint.Align LEFT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint.Join ROUND'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint.Join android.graphics.Paint.Join valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Matrix.ScaleToFit FILL'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawBitmap(android.graphics.Bitmap, float, float, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Rect java.lang.String toShortString(java.lang.StringBuilder) 0'>
+    <item name='android.graphics.Region boolean op(android.graphics.Rect, android.graphics.Region.Op) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Region boolean op(android.graphics.Rect, android.graphics.Region.Op) 1'>
+    <item name='android.graphics.Rect java.lang.String toShortString(java.lang.StringBuilder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Path void addCircle(float, float, float, android.graphics.Path.Direction) 3'>
@@ -530,25 +626,28 @@
     <item name='android.graphics.Path void addPath(android.graphics.Path) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Paint int getTextWidths(char[], int, int, float[]) 3'>
+    <item name='android.graphics.RectF boolean intersects(android.graphics.RectF, android.graphics.RectF) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.RectF boolean intersects(android.graphics.RectF, android.graphics.RectF) 1'>
+    <item name='android.graphics.Paint int getTextWidths(char[], int, int, float[]) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.graphics.Bitmap, int, int, int, int, android.graphics.Matrix, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Bitmap.Config RGB_565'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas void drawRect(float, float, float, float, android.graphics.Paint) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Region android.graphics.Rect getBounds()'>
+    <item name='android.graphics.PorterDuff.Mode ADD'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Region boolean quickContains(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Typeface android.graphics.Typeface createFromAsset(android.content.res.AssetManager, java.lang.String)'>
+    <item name='android.graphics.PathDashPathEffect.Style ROTATE'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix void mapPoints(float[], float[]) 1'>
@@ -563,16 +662,31 @@
     <item name='android.graphics.Matrix void mapVectors(float[], int, float[], int, int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Typeface SERIF'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.graphics.Bitmap)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Picture void draw(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Region boolean op(android.graphics.Rect, android.graphics.Region.Op) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Rect java.lang.String toShortString(java.lang.StringBuilder)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Rect java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Region boolean quickReject(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.PathDashPathEffect PathDashPathEffect(android.graphics.Path, float, float, android.graphics.PathDashPathEffect.Style) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Matrix.ScaleToFit CENTER'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix void mapVectors(float[], float[]) 1'>
@@ -584,9 +698,6 @@
     <item name='android.graphics.Paint float getTextRunAdvances(char[], int, int, int, int, int, float[], int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.TemporaryBuffer char[] obtain(int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.Paint.Join android.graphics.Paint.Join valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -596,19 +707,13 @@
     <item name='android.graphics.Canvas void drawText(char[], int, int, float, float, android.graphics.Paint) 5'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Shader.TileMode android.graphics.Shader.TileMode valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.PointF java.lang.String toString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.Matrix.ScaleToFit android.graphics.Matrix.ScaleToFit valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.LinearGradient LinearGradient(float, float, float, float, int[], float[], android.graphics.Shader.TileMode) 4'>
+    <item name='android.graphics.LargeBitmap android.graphics.Bitmap decodeRegion(android.graphics.Rect, android.graphics.BitmapFactory.Options) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.LargeBitmap android.graphics.Bitmap decodeRegion(android.graphics.Rect, android.graphics.BitmapFactory.Options) 0'>
+    <item name='android.graphics.LinearGradient LinearGradient(float, float, float, float, int[], float[], android.graphics.Shader.TileMode) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawArc(android.graphics.RectF, float, float, boolean, android.graphics.Paint) 4'>
@@ -620,16 +725,19 @@
     <item name='android.graphics.Canvas void drawLines(float[], android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Rect java.lang.String toShortString()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.Paint android.graphics.Paint.FontMetrics getFontMetrics()'>
+    <item name='android.graphics.Paint.Style STROKE'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix boolean preConcat(android.graphics.Matrix) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.PorterDuff.Mode DST'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas boolean clipRect(float, float, float, float, android.graphics.Region.Op) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PorterDuff.Mode CLEAR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix void getValues(float[]) 0'>
@@ -653,6 +761,9 @@
     <item name='android.graphics.Paint int breakText(char[], int, int, float, float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.PorterDuff.Mode SRC_OUT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.RectF boolean setIntersect(android.graphics.RectF, android.graphics.RectF) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -668,6 +779,9 @@
     <item name='android.graphics.Paint Paint(android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Bitmap CREATOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Path.Direction android.graphics.Path.Direction valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -677,28 +791,28 @@
     <item name='android.graphics.Matrix boolean setRectToRect(android.graphics.RectF, android.graphics.RectF, android.graphics.Matrix.ScaleToFit) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Rect java.lang.String toShortString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.PathDashPathEffect.Style android.graphics.PathDashPathEffect.Style valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.BlurMaskFilter.Blur android.graphics.BlurMaskFilter.Blur valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Matrix.ScaleToFit android.graphics.Matrix.ScaleToFit valueOf(java.lang.String)'>
+    <item name='android.graphics.Typeface android.graphics.Typeface createFromFile(java.io.File)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Rect boolean setIntersect(android.graphics.Rect, android.graphics.Rect) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Region android.graphics.Path getBoundaryPath()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.PointF PointF(android.graphics.Point) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Matrix void mapPoints(float[]) 0'>
+    <item name='android.graphics.Canvas void drawBitmap(int[], int, int, float, float, int, int, boolean, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Canvas void drawBitmap(int[], int, int, float, float, int, int, boolean, android.graphics.Paint) 0'>
+    <item name='android.graphics.Matrix void mapPoints(float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.ComposePathEffect ComposePathEffect(android.graphics.PathEffect, android.graphics.PathEffect) 1'>
@@ -707,10 +821,16 @@
     <item name='android.graphics.ColorMatrix ColorMatrix(android.graphics.ColorMatrix) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.PathDashPathEffect.Style TRANSLATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(int, int, android.graphics.Bitmap.Config) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Camera void getMatrix(android.graphics.Matrix) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PorterDuff.Mode SRC_OVER'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix boolean setRectToRect(android.graphics.RectF, android.graphics.RectF, android.graphics.Matrix.ScaleToFit) 0'>
@@ -719,28 +839,34 @@
     <item name='android.graphics.Path void addPath(android.graphics.Path, float, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Shader.TileMode android.graphics.Shader.TileMode valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.ComposeShader ComposeShader(android.graphics.Shader, android.graphics.Shader, android.graphics.Xfermode) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix boolean mapRect(android.graphics.RectF) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap.CompressFormat android.graphics.Bitmap.CompressFormat valueOf(java.lang.String)'>
+    <item name='android.graphics.Interpolator.Result NORMAL'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Rect boolean setIntersect(android.graphics.Rect, android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Canvas void drawPicture(android.graphics.Picture) 0'>
+    <item name='android.graphics.Interpolator.Result android.graphics.Interpolator.Result valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.ComposePathEffect ComposePathEffect(android.graphics.PathEffect, android.graphics.PathEffect) 0'>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap createScaledBitmap(android.graphics.Bitmap, int, int, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Canvas void drawPicture(android.graphics.Picture) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Region boolean op(int, int, int, int, android.graphics.Region.Op) 4'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Paint.Align android.graphics.Paint.Align valueOf(java.lang.String)'>
+    <item name='android.graphics.ComposePathEffect ComposePathEffect(android.graphics.PathEffect, android.graphics.PathEffect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawTextRun(java.lang.CharSequence, int, int, int, int, float, float, int, android.graphics.Paint) 8'>
@@ -749,7 +875,13 @@
     <item name='android.graphics.Paint boolean getFillPath(android.graphics.Path, android.graphics.Path) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.PorterDuff.Mode SCREEN'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas boolean clipRegion(android.graphics.Region) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint.Style android.graphics.Paint.Style valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint float measureText(java.lang.String, int, int) 0'>
@@ -761,16 +893,22 @@
     <item name='android.graphics.Color int getHtmlColor(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Paint android.graphics.Paint.FontMetricsInt getFontMetricsInt()'>
+    <item name='android.graphics.Path.FillType android.graphics.Path.FillType valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Paint.FontMetricsInt java.lang.String toString()'>
+    <item name='android.graphics.PorterDuff.Mode DST_OUT'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Color int HSVToColor(float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Typeface DEFAULT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas void drawPosText(char[], int, int, float[], android.graphics.Paint) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PorterDuff.Mode SRC_ATOP'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint int getTextWidths(java.lang.CharSequence, int, int, float[]) 0'>
@@ -779,22 +917,22 @@
     <item name='android.graphics.Paint int getTextWidths(java.lang.String, float[]) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Matrix void printShortString(java.io.PrintWriter) 0'>
+    <item name='android.graphics.Canvas android.graphics.Matrix getMatrix()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Region boolean set(android.graphics.Region) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Matrix void printShortString(java.io.PrintWriter) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Point void readFromParcel(android.os.Parcel) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Paint.Cap android.graphics.Paint.Cap valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.Region android.graphics.Region obtain(android.graphics.Region)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.Typeface android.graphics.Typeface createFromFile(java.io.File) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Path.Direction android.graphics.Path.Direction valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawPosText(char[], int, int, float[], android.graphics.Paint) 4'>
@@ -803,22 +941,43 @@
     <item name='android.graphics.Bitmap void copyPixelsToBuffer(java.nio.Buffer) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.TemporaryBuffer char[] obtain(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas void drawTextRun(char[], int, int, int, int, float, float, int, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint int getTextWidths(java.lang.String, float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.BlurMaskFilter.Blur NORMAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Bitmap.CompressFormat WEBP'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.NinePatch void draw(android.graphics.Canvas, android.graphics.Rect, android.graphics.Paint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Rect CREATOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Bitmap.CompressFormat PNG'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawBitmap(android.graphics.Bitmap, android.graphics.Rect, android.graphics.Rect, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Canvas.EdgeType android.graphics.Canvas.EdgeType valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Path.FillType INVERSE_EVEN_ODD'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.PorterDuffXfermode PorterDuffXfermode(android.graphics.PorterDuff.Mode) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.BlurMaskFilter.Blur android.graphics.BlurMaskFilter.Blur valueOf(java.lang.String)'>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap extractAlpha()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.PointF void readFromParcel(android.os.Parcel) 0'>
@@ -833,13 +992,13 @@
     <item name='android.graphics.Region.Op android.graphics.Region.Op valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.graphics.Bitmap, int, int, int, int)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.Rect void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Rect android.graphics.Rect unflattenFromString(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Canvas android.graphics.Rect getClipBounds()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas.VertexMode android.graphics.Canvas.VertexMode valueOf(java.lang.String) 0'>
@@ -851,16 +1010,22 @@
     <item name='android.graphics.Bitmap void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Path.Direction android.graphics.Path.Direction valueOf(java.lang.String)'>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap createScaledBitmap(android.graphics.Bitmap, int, int, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap createScaledBitmap(android.graphics.Bitmap, int, int, boolean) 0'>
+    <item name='android.graphics.Matrix.ScaleToFit android.graphics.Matrix.ScaleToFit valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Bitmap.CompressFormat android.graphics.Bitmap.CompressFormat valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Path void addArc(android.graphics.RectF, float, float) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.RadialGradient RadialGradient(float, float, float, int, int, android.graphics.Shader.TileMode) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Region.Op REVERSE_DIFFERENCE'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.ColorMatrix void postConcat(android.graphics.ColorMatrix) 0'>
@@ -872,10 +1037,25 @@
     <item name='android.graphics.Canvas void drawBitmap(android.graphics.Bitmap, android.graphics.Matrix, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Canvas.VertexMode android.graphics.Canvas.VertexMode valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Paint int getTextWidths(java.lang.CharSequence, int, int, float[]) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Insets NONE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Typeface MONOSPACE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.RegionIterator RegionIterator(android.graphics.Region) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PorterDuff.Mode SRC'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Matrix java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Path void addPath(android.graphics.Path, android.graphics.Matrix) 0'>
@@ -884,16 +1064,22 @@
     <item name='android.graphics.Canvas void drawBitmap(android.graphics.Bitmap, android.graphics.Rect, android.graphics.Rect, android.graphics.Paint) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Matrix java.lang.String toString()'>
+    <item name='android.graphics.Rect void printShortString(java.io.PrintWriter) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Rect void printShortString(java.io.PrintWriter) 0'>
+    <item name='android.graphics.Interpolator android.graphics.Interpolator.Result timeToValues(float[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Typeface SANS_SERIF'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Point Point(android.graphics.Point) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas boolean clipRegion(android.graphics.Region, android.graphics.Region.Op) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Region android.graphics.Path getBoundaryPath()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.PathMeasure boolean getSegment(float, float, android.graphics.Path, boolean) 2'>
@@ -903,6 +1089,9 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawBitmapMesh(android.graphics.Bitmap, int, int, float[], int, int[], int, android.graphics.Paint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Typeface DEFAULT_BOLD'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Bitmap void copyPixelsFromBuffer(java.nio.Buffer) 0'>
@@ -932,7 +1121,16 @@
     <item name='android.graphics.Canvas void setBitmap(android.graphics.Bitmap) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Region.Op INTERSECT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Region.Op XOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas boolean clipRegion(android.graphics.Region, android.graphics.Region.Op) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PorterDuff.Mode OVERLAY'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawTextOnPath(char[], int, int, android.graphics.Path, float, float, android.graphics.Paint) 0'>
@@ -941,16 +1139,28 @@
     <item name='android.graphics.Canvas boolean clipPath(android.graphics.Path) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Typeface android.graphics.Typeface create(java.lang.String, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Region boolean getBoundaryPath(android.graphics.Path) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.RegionIterator boolean next(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.graphics.Bitmap, int, int, int, int, android.graphics.Matrix, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint.Join MITER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas void getMatrix(android.graphics.Matrix) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawTextOnPath(char[], int, int, android.graphics.Path, float, float, android.graphics.Paint) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.RectF java.lang.String toShortString(java.lang.StringBuilder)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Rect void union(android.graphics.Rect) 0'>
@@ -965,19 +1175,25 @@
     <item name='android.graphics.NinePatch NinePatch(android.graphics.NinePatch) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Rect java.lang.String flattenToString()'>
+    <item name='android.graphics.Region boolean set(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.AvoidXfermode AvoidXfermode(int, int, android.graphics.AvoidXfermode.Mode) 2'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.Region boolean set(android.graphics.Rect) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Bitmap android.graphics.Bitmap copy(android.graphics.Bitmap.Config, boolean) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawPicture(android.graphics.Picture, android.graphics.Rect) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint.Align CENTER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Region android.graphics.Region obtain(android.graphics.Region)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint.FontMetricsInt java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.ColorMatrixColorFilter ColorMatrixColorFilter(android.graphics.ColorMatrix) 0'>
@@ -989,7 +1205,13 @@
     <item name='android.graphics.RectF void printShortString(java.io.PrintWriter) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Bitmap.Config ARGB_8888'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.BitmapFactory android.graphics.Bitmap decodeByteArray(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Canvas.VertexMode TRIANGLE_STRIP'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas.EdgeType android.graphics.Canvas.EdgeType valueOf(java.lang.String) 0'>
@@ -1001,7 +1223,13 @@
     <item name='android.graphics.RectF java.lang.String toShortString(java.lang.StringBuilder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.ColorMatrix float[] getArray()'>
+    <item name='android.graphics.Path.FillType INVERSE_WINDING'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PathDashPathEffect.Style android.graphics.PathDashPathEffect.Style valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Interpolator.Result FREEZE_END'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint void getTextPath(java.lang.String, int, int, float, float, android.graphics.Path) 5'>
@@ -1034,10 +1262,13 @@
     <item name='android.graphics.RectF void set(android.graphics.RectF) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.RectF java.lang.String toShortString()'>
+    <item name='android.graphics.Paint.Cap SQUARE'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Insets java.lang.String toString()'>
+    <item name='android.graphics.AvoidXfermode.Mode AVOID'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.PorterDuff.Mode android.graphics.PorterDuff.Mode valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint void getTextPath(char[], int, int, float, float, android.graphics.Path) 0'>
@@ -1049,22 +1280,34 @@
     <item name='android.graphics.Paint void setStrokeCap(android.graphics.Paint.Cap) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Rect java.lang.String toShortString(java.lang.StringBuilder)'>
+    <item name='android.graphics.Color int parseColor(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Color int parseColor(java.lang.String) 0'>
+    <item name='android.graphics.BlurMaskFilter.Blur android.graphics.BlurMaskFilter.Blur valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawBitmap(int[], int, int, int, int, int, int, boolean, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(int[], int, int, int, int, android.graphics.Bitmap.Config) 5'>
+    <item name='android.graphics.Paint.Cap BUTT'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawOval(android.graphics.RectF, android.graphics.Paint) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(int[], int, int, int, int, android.graphics.Bitmap.Config) 5'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Canvas.VertexMode TRIANGLES'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.RectF java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Matrix void setValues(float[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Paint.Style FILL_AND_STROKE'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.ComposeShader ComposeShader(android.graphics.Shader, android.graphics.Shader, android.graphics.PorterDuff.Mode) 1'>
@@ -1073,22 +1316,34 @@
     <item name='android.graphics.Matrix void toShortString(java.lang.StringBuilder) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.PathDashPathEffect.Style MORPH'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Canvas boolean clipPath(android.graphics.Path, android.graphics.Region.Op) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Bitmap android.graphics.Bitmap createBitmap(android.graphics.Bitmap, int, int, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Paint int getTextWidths(java.lang.String, int, int, float[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.PorterDuff.Mode android.graphics.PorterDuff.Mode valueOf(java.lang.String)'>
+    <item name='android.graphics.PorterDuff.Mode DARKEN'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawVertices(android.graphics.Canvas.VertexMode, int, float[], int, float[], int, int[], int, short[], int, int, android.graphics.Paint) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Typeface android.graphics.Typeface createFromFile(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Bitmap int getScaledWidth(android.graphics.Canvas) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix boolean setPolyToPoly(float[], int, float[], int, int) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Bitmap.Config android.graphics.Bitmap.Config valueOf(java.lang.String)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Canvas void drawTextOnPath(char[], int, int, android.graphics.Path, float, float, android.graphics.Paint) 6'>
@@ -1103,6 +1358,9 @@
     <item name='android.graphics.Paint.Align android.graphics.Paint.Align valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Insets android.graphics.Insets of(int, int, int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Paint boolean getFillPath(android.graphics.Path, android.graphics.Path) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -1115,13 +1373,13 @@
     <item name='android.graphics.Region void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Region android.graphics.Rect getBounds()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.Paint.Style android.graphics.Paint.Style valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Insets android.graphics.Insets of(android.graphics.Rect)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.graphics.Region.Op android.graphics.Region.Op valueOf(java.lang.String)'>
+    <item name='android.graphics.PointF CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Interpolator void setKeyFrame(int, int, float[], float[]) 2'>
@@ -1151,19 +1409,16 @@
     <item name='android.graphics.TemporaryBuffer void recycle(char[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Canvas boolean clipPath(android.graphics.Path, android.graphics.Region.Op) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.graphics.RectF void writeToParcel(android.os.Parcel, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.Insets android.graphics.Insets of(int, int, int, int)'>
+    <item name='android.graphics.Canvas boolean clipPath(android.graphics.Path, android.graphics.Region.Op) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.ColorMatrix void preConcat(android.graphics.ColorMatrix) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.graphics.TableMaskFilter android.graphics.TableMaskFilter CreateClipTable(int, int)'>
+    <item name='android.graphics.Matrix.ScaleToFit END'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.Matrix void mapPoints(float[], int, float[], int, int) 0'>
@@ -1172,7 +1427,13 @@
     <item name='android.graphics.Paint int getTextRunCursor(char[], int, int, int, int, int) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.graphics.Region.Op DIFFERENCE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.graphics.ComposeShader ComposeShader(android.graphics.Shader, android.graphics.Shader, android.graphics.PorterDuff.Mode) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.graphics.Interpolator android.graphics.Interpolator.Result timeToValues(int, float[])'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.graphics.RadialGradient RadialGradient(float, float, float, int[], float[], android.graphics.Shader.TileMode) 3'>

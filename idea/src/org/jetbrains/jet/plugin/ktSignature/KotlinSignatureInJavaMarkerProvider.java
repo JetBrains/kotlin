@@ -167,7 +167,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             @NotNull PsiMember member
     ) {
         if (member.hasModifierProperty(PsiModifier.STATIC)) {
-            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragmentProvider().getOrCreatePackage(classFqName);
+            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragment(classFqName);
             if (packageFragment == null) {
                 return null;
             }
@@ -201,7 +201,9 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         if (member instanceof PsiMethod) {
             if (((PsiMethod) member).isConstructor()) {
                 DeclarationDescriptor container = memberScope.getContainingDeclaration();
-                assert container instanceof JavaClassDescriptor : container + "\n" + memberScope;
+                if (!(container instanceof JavaClassDescriptor)) {
+                    return null;
+                }
                 ((JavaClassDescriptor) container).getConstructors();
             }
             else {

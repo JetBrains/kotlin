@@ -93,6 +93,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         }
         typeParameters.changeLockLevel(WritableScope.LockLevel.READING);
         return new ChainedScope(module,
+                                "TypeSubstitutorTest::getContextScope()",
                                 topLevelDeclarations,
                                 typeParameters,
                                 contextClass.getDefaultType().getMemberScope(),

@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -58,10 +58,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * User: Alefas
- * Date: 25.01.12
- */
 public class JetRefactoringUtil {
 
     private JetRefactoringUtil() {
@@ -389,7 +385,7 @@ public class JetRefactoringUtil {
                     JetExpression expression = (JetExpression)element;
                     BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) expression.getContainingFile()).getBindingContext();
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
-                    if (expressionType == null || !(expressionType instanceof NamespaceType) &&
+                    if (expressionType == null || !(expressionType instanceof PackageType) &&
                                                   !JetTypeChecker.INSTANCE.equalTypes(KotlinBuiltIns.
                                                           getInstance().getUnitType(), expressionType)) {
                         expressions.add(expression);

@@ -1,0 +1,6 @@
+package test
+
+public open class Max : java.lang.Object {
+    public constructor Max()
+    public open fun </*0*/ T> max(/*0*/ p0: jet.Collection<T>?): T? where T : jet.Comparable<T>?
+}

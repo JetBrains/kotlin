@@ -20,6 +20,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -117,7 +118,7 @@ public class TopDownAnalyzer {
 
     public void doProcess(
             JetScope outerScope,
-            NamespaceLikeBuilder owner,
+            PackageLikeBuilder owner,
             Collection<? extends PsiElement> declarations) {
 //        context.enableDebugOutput();
         context.debug("Enter");
@@ -143,7 +144,7 @@ public class TopDownAnalyzer {
             mutableClassDescriptor.lockScopes();
         }
         Set<FqName> scriptFqNames = Sets.newHashSet();
-        for (JetFile file : context.getNamespaceScopes().keySet()) {
+        for (JetFile file : context.getFileScopes().keySet()) {
             if (file.isScript()) {
                 scriptFqNames.add(JetPsiUtil.getFQName(file));
             }
@@ -157,6 +158,7 @@ public class TopDownAnalyzer {
     }
 
     public static void processClassOrObject(
+            @Nullable final WritableScope scope,
             @NotNull ExpressionTypingContext context,
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetClassOrObject object
@@ -175,7 +177,7 @@ public class TopDownAnalyzer {
 
         injector.getTopDownAnalysisContext().setOuterDataFlowInfo(context.dataFlowInfo);
 
-        injector.getTopDownAnalyzer().doProcess(context.scope, new NamespaceLikeBuilder() {
+        injector.getTopDownAnalyzer().doProcess(context.scope, new PackageLikeBuilder() {
 
             @NotNull
             @Override
@@ -185,7 +187,9 @@ public class TopDownAnalyzer {
 
             @Override
             public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-
+                if (scope != null) {
+                    scope.addClassifierDescriptor(classDescriptor);
+                }
             }
 
             @Override
@@ -208,19 +212,14 @@ public class TopDownAnalyzer {
     public void analyzeFiles(
             @NotNull Collection<JetFile> files,
             @NotNull List<AnalyzerScriptParameter> scriptParameters) {
-        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(packageFragmentProvider);
+        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
 
         // "depend on" builtins module
-        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
-
-        // Import a scope that contains all top-level namespaces that come from dependencies
-        // This makes the namespaces visible at all, does not import themselves
-        PackageViewDescriptor rootPackage = moduleDescriptor.getPackage(FqName.ROOT);
-        assert rootPackage != null : "Coulnd't find root package for " + moduleDescriptor;
+        ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
         // dummy builder is used because "root" is module descriptor,
-        // namespaces added to module explicitly in
-        doProcess(rootPackage.getMemberScope(), new NamespaceLikeBuilderDummy(), files);
+        // packages added to module explicitly in
+        doProcess(JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor), new PackageLikeBuilderDummy(), files);
     }
 
 

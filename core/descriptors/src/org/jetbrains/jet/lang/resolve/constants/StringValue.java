@@ -21,17 +21,11 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class StringValue implements CompileTimeConstant<String> {
+public class StringValue extends CompileTimeConstant<String> {
 
-    private final String value;
 
     public StringValue(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String getValue() {
-        return value;
+        super(value);
     }
 
     @NotNull

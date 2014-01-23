@@ -46,7 +46,6 @@ public class FieldInfo {
         return new FieldInfo(ownerType, fieldType, fieldName, true);
     }
 
-
     public static FieldInfo createForHiddenField(@NotNull Type owner, Type fieldType, String fieldName) {
         return new FieldInfo(owner, fieldType, fieldName, false);
     }
@@ -85,5 +84,10 @@ public class FieldInfo {
 
     public boolean isStatic() {
         return isStatic;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s.%s : %s", isStatic ? "GETSTATIC" : "GETFIELD", ownerType.getInternalName(), fieldName, fieldType);
     }
 }

@@ -29,9 +29,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.FilteringProcessor;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
+import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -40,8 +41,7 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchPackage;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
     private static class WithLocalRoot extends KotlinCallerMethodsTreeStructure {
@@ -57,8 +57,9 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
             this.codeBlockForLocalDeclaration = codeBlockForLocalDeclaration;
         }
 
+        @NotNull
         @Override
-        protected Object[] buildChildren(HierarchyNodeDescriptor descriptor) {
+        protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
             final PsiElement element = getTargetElement(descriptor);
 
             BindingContext bindingContext =
@@ -97,8 +98,9 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
             this.javaTreeStructure = new CallerMethodsTreeStructure(project, basePsiMethod, scopeType);
         }
 
+        @NotNull
         @Override
-        protected Object[] buildChildren(HierarchyNodeDescriptor descriptor) {
+        protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
             PsiElement element = getTargetElement(descriptor);
 
             SearchScope searchScope = getSearchScope(scopeType, basePsiClass);
@@ -106,19 +108,20 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
                     new HashMap<PsiElement, HierarchyNodeDescriptor>();
 
             Object[] javaCallers = null;
-            if (element instanceof PsiMethod && javaTreeStructure != null) {
+            if (element instanceof PsiMethod) {
                 javaCallers = javaTreeStructure.getChildElements(getJavaNodeDescriptor(descriptor));
-                processPsiMethodCallers((PsiMethod) element, descriptor, methodToDescriptorMap, searchScope, true);
+                processPsiMethodCallers(
+                        Collections.singleton((PsiMethod) element), descriptor, methodToDescriptorMap, searchScope, true
+                );
             }
             if (element instanceof JetNamedFunction) {
                 PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
-                processPsiMethodCallers(lightMethod, descriptor, methodToDescriptorMap, searchScope, false);
+                processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
             }
             if (element instanceof JetProperty) {
                 LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
                         LightClassUtil.getLightClassPropertyMethods((JetProperty) element);
-                processPsiMethodCallers(propertyMethods.getGetter(), descriptor, methodToDescriptorMap, searchScope, false);
-                processPsiMethodCallers(propertyMethods.getSetter(), descriptor, methodToDescriptorMap, searchScope, false);
+                processPsiMethodCallers(propertyMethods, descriptor, methodToDescriptorMap, searchScope, false);
             }
             if (element instanceof JetClassOrObject) {
                 processJetClassOrObjectCallers((JetClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
@@ -129,15 +132,40 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
         }
 
         private void processPsiMethodCallers(
-                @Nullable PsiMethod lightMethod,
+                Iterable<PsiMethod> lightMethods,
                 HierarchyNodeDescriptor descriptor,
                 Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
                 SearchScope searchScope,
                 boolean kotlinOnly
         ) {
-            if (lightMethod == null) return;
-            MethodReferencesSearch.search(lightMethod, searchScope, true)
-                    .forEach(defaultQueryProcessor(descriptor, methodToDescriptorMap, kotlinOnly));
+            Set<PsiMethod> methodsToFind = new HashSet<PsiMethod>();
+            for (PsiMethod lightMethod : lightMethods) {
+                if (lightMethod == null) continue;
+
+                PsiMethod[] superMethods = lightMethod.findDeepestSuperMethods();
+                methodsToFind.add(lightMethod);
+                ContainerUtil.addAll(methodsToFind, superMethods);
+            }
+
+            if (methodsToFind.isEmpty()) return;
+
+            Set<PsiReference> references = ContainerUtil.newTroveSet(
+                    new TObjectHashingStrategy<PsiReference>() {
+                        @Override
+                        public int computeHashCode(PsiReference object) {
+                            return object.getElement().hashCode();
+                        }
+
+                        @Override
+                        public boolean equals(PsiReference o1, PsiReference o2) {
+                            return o1.getElement().equals(o2.getElement());
+                        }
+                    }
+            );
+            for (PsiMethod superMethod: methodsToFind) {
+                ContainerUtil.addAll(references, MethodReferencesSearch.search(superMethod, searchScope, true));
+            }
+            ContainerUtil.process(references, defaultQueryProcessor(descriptor, methodToDescriptorMap, kotlinOnly));
         }
 
         private void processJetClassOrObjectCallers(
@@ -215,7 +243,7 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
     }
 
     public static KotlinCallerMethodsTreeStructure newInstance(@NotNull Project project, @NotNull PsiElement element, String scopeType) {
-        JetElement codeBlockForLocalDeclaration = getEnclosingBlockForLocalDeclaration(element);
+        JetElement codeBlockForLocalDeclaration = getEnclosingElementForLocalDeclaration(element);
         if (codeBlockForLocalDeclaration != null) return new WithLocalRoot(project, element, scopeType, codeBlockForLocalDeclaration);
 
         PsiMethod representativeMethod = getRepresentativePsiMethod(element);

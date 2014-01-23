@@ -5,4 +5,4 @@ open class A(x: Int) {
         m(<caret>1, false)
     }
 }
-//Text: (x: Int, y: Boolean), Disabled: false, Strikeout: false, Green: true
+//Text: (<highlight>x: Int</highlight>, y: Boolean), Disabled: false, Strikeout: false, Green: true

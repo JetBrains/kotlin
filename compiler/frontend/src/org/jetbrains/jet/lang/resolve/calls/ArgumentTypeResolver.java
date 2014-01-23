@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
@@ -213,7 +213,7 @@ public class ArgumentTypeResolver {
     ) {
         if (expression.getFunctionLiteral().getValueParameterList() == null) {
             return expectedTypeIsUnknown ? PLACEHOLDER_FUNCTION_TYPE : KotlinBuiltIns.getInstance().getFunctionType(
-                    Collections.<AnnotationDescriptor>emptyList(), null, Collections.<JetType>emptyList(), DONT_CARE);
+                    Annotations.EMPTY, null, Collections.<JetType>emptyList(), DONT_CARE);
         }
         List<JetParameter> valueParameters = expression.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
@@ -226,7 +226,7 @@ public class ArgumentTypeResolver {
         JetType returnType = resolveTypeRefWithDefault(functionLiteral.getReturnTypeRef(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
         JetType receiverType = resolveTypeRefWithDefault(functionLiteral.getReceiverTypeRef(), scope, temporaryTrace, null);
-        return KotlinBuiltIns.getInstance().getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiverType, parameterTypes,
+        return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, parameterTypes,
                                                             returnType);
     }
 

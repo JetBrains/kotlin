@@ -28,17 +28,17 @@ import static org.junit.Assert.assertEquals;
 public class RhinoFunctionResultChecker implements RhinoResultChecker {
 
     private final String moduleId;
-    private final String namespaceName;
+    private final String packageName;
     private final String functionName;
     private final Object expectedResult;
 
-    public RhinoFunctionResultChecker(@Nullable String namespaceName, String functionName, Object expectedResult) {
-        this(Config.REWRITABLE_MODULE_NAME, namespaceName, functionName, expectedResult);
+    public RhinoFunctionResultChecker(@Nullable String packageName, String functionName, Object expectedResult) {
+        this(Config.REWRITABLE_MODULE_NAME, packageName, functionName, expectedResult);
     }
 
-    public RhinoFunctionResultChecker(@Nullable String moduleId, @Nullable String namespaceName, String functionName, Object expectedResult) {
+    public RhinoFunctionResultChecker(@Nullable String moduleId, @Nullable String packageName, String functionName, Object expectedResult) {
         this.moduleId = moduleId;
-        this.namespaceName = namespaceName;
+        this.packageName = packageName;
         this.functionName = functionName;
         this.expectedResult = expectedResult;
     }
@@ -56,8 +56,8 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
 
     protected void assertResultValid(Object result, Context context) {
         String ecmaVersion = context.getLanguageVersion() == Context.VERSION_1_8 ? "ecma5" : "ecma3";
-        assertEquals("Result of " + namespaceName + "." + functionName + "() is not what expected (" + ecmaVersion + ")!", expectedResult, result);
-        String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
+        assertEquals("Result of " + packageName + "." + functionName + "() is not what expected (" + ecmaVersion + ")!", expectedResult, result);
+        String report = packageName + "." + functionName + "() = " + Context.toString(result);
         System.out.println(report);
     }
 
@@ -67,15 +67,15 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
 
     protected String functionCallString() {
         StringBuilder sb = new StringBuilder();
-        if (namespaceName != null) {
+        if (packageName != null) {
             sb.append("Kotlin.modules");
             if (moduleId.contains(".")) {
                 sb.append("['").append(moduleId).append("']");
             } else {
                 sb.append(".").append(moduleId);
             }
-            if (namespaceName != Namer.getRootNamespaceName()) {
-                sb.append('.').append(namespaceName);
+            if (packageName != Namer.getRootPackageName()) {
+                sb.append('.').append(packageName);
             }
             sb.append('.');
         }

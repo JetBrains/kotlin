@@ -1,0 +1,224 @@
+<root>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CharsetEncoder replaceWith(byte[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder replaceWith(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.CharBuffer decode(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.ByteBuffer encode(java.nio.CharBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CoderResult decodeLoop(java.nio.ByteBuffer, java.nio.CharBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset Charset(java.lang.String, java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CoderResult java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.UnmappableCharacterException java.lang.String getMessage()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.StandardCharsets ISO_8859_1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.ModifiedUtf8 byte[] encode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.ByteBuffer encode(java.nio.CharBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.StandardCharsets UTF_16LE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.util.SortedMap&lt;java.lang.String,java.nio.charset.Charset&gt; availableCharsets()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CoderResult decodeLoop(java.nio.ByteBuffer, java.nio.CharBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder reset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CoderResult implFlush(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder replaceWith(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CoderResult encodeLoop(java.nio.CharBuffer, java.nio.ByteBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CodingErrorAction java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CoderResult implFlush(java.nio.CharBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CharsetEncoder replaceWith(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CoderResult flush(java.nio.CharBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.charset.CharsetDecoder newDecoder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.charset.Charset forNameUEE(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder onMalformedInput(java.nio.charset.CodingErrorAction)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder boolean canEncode(java.lang.CharSequence) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.ModifiedUtf8 java.lang.String decode(byte[], char[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CoderResult implFlush(java.nio.ByteBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.StandardCharsets UTF_8'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.StandardCharsets UTF_16BE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.ModifiedUtf8 void encode(byte[], int, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.ModifiedUtf8 java.lang.String decode(byte[], char[], int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.util.Set&lt;java.lang.String&gt; aliases()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.StandardCharsets US_ASCII'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CoderResult java.nio.charset.CoderResult unmappableForLength(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CoderResult implFlush(java.nio.CharBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CharsetEncoder onUnmappableCharacter(java.nio.charset.CodingErrorAction) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.charset.Charset forName(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CoderResult java.nio.charset.CoderResult malformedForLength(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.ByteBuffer encode(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder onUnmappableCharacter(java.nio.charset.CodingErrorAction) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CodingErrorAction IGNORE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charsets byte[] toBigEndianUtf16Bytes(char[], int, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CharsetEncoder onMalformedInput(java.nio.charset.CodingErrorAction) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.ByteBuffer encode(java.nio.CharBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CodingErrorAction REPORT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CharsetEncoder reset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.ByteBuffer encode(java.nio.CharBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder onMalformedInput(java.nio.charset.CodingErrorAction) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.lang.String name()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CoderResult UNDERFLOW'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CoderResult encodeLoop(java.nio.CharBuffer, java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.CharBuffer decode(java.nio.ByteBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.lang.String displayName()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset int compareTo(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CharsetEncoder onMalformedInput(java.nio.charset.CodingErrorAction)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.charset.Charset defaultCharset()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CoderResult OVERFLOW'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.ModifiedUtf8 long countBytes(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CodingErrorAction REPLACE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.MalformedInputException java.lang.String getMessage()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.lang.String displayName(java.util.Locale)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.charset.CharsetEncoder newEncoder()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder onUnmappableCharacter(java.nio.charset.CodingErrorAction)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.CharBuffer decode(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset java.nio.ByteBuffer encode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetDecoder java.nio.CharBuffer decode(java.nio.ByteBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CharsetEncoder onUnmappableCharacter(java.nio.charset.CodingErrorAction)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.StandardCharsets UTF_16'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.ModifiedUtf8 byte[] encode(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.Charset int compareTo(java.nio.charset.Charset) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder boolean isLegalReplacement(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.charset.CharsetEncoder java.nio.charset.CoderResult flush(java.nio.ByteBuffer)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

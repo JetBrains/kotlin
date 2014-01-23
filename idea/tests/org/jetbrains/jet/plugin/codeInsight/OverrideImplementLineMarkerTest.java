@@ -61,6 +61,10 @@ public class OverrideImplementLineMarkerTest extends JetLightCodeInsightFixtureT
         doTest();
     }
 
+    public void testClassObjectInStaticNestedClass() throws Exception {
+        doTest();
+    }
+
     public void testFakeOverrideProperty() throws Exception {
         doTest();
     }

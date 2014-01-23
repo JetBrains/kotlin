@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.hierarchy.calls.KotlinCalleeMethodsTreeStructure;
 import org.jetbrains.jet.plugin.hierarchy.calls.KotlinCallerMethodsTreeStructure;
+import org.jetbrains.jet.plugin.hierarchy.overrides.KotlinOverrideTreeStructure;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -76,6 +77,11 @@ public abstract class AbstractHierarchyTest extends HierarchyViewTestBase {
     protected void doCalleeHierarchyTest(@NotNull String folderName) throws Exception {
         this.folderName = folderName;
         doHierarchyTest(getCalleeHierarchyStructure(), getFilesToConfigure());
+    }
+
+    protected void doOverrideHierarchyTest(@NotNull String folderName) throws Exception {
+        this.folderName = folderName;
+        doHierarchyTest(getOverrideHierarchyStructure(), getFilesToConfigure());
     }
 
     private Computable<HierarchyTreeStructure> getSuperTypesHierarchyStructure() {
@@ -137,6 +143,18 @@ public abstract class AbstractHierarchyTest extends HierarchyViewTestBase {
                         getProject(),
                         getElementAtCaret(LanguageCallHierarchy.INSTANCE.forLanguage(getLanguage())),
                         HierarchyBrowserBaseEx.SCOPE_PROJECT
+                );
+            }
+        };
+    }
+
+    private Computable<HierarchyTreeStructure> getOverrideHierarchyStructure() {
+        return new Computable<HierarchyTreeStructure>() {
+            @Override
+            public HierarchyTreeStructure compute() {
+                return new KotlinOverrideTreeStructure(
+                        getProject(),
+                        getElementAtCaret(LanguageCallHierarchy.INSTANCE.forLanguage(getLanguage()))
                 );
             }
         };

@@ -8,8 +8,6 @@ public enum A {
 
 // FILE: test.kt
 
-package vvv
-
 fun main() {
     val c: A = A.ENTRY
     val <!UNUSED_VARIABLE!>c2<!>: String? = c.ENTRY

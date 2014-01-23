@@ -130,6 +130,27 @@ public class StorageManagerTest extends TestCase {
         doTestExceptionPreserved(apply(f, ""), UnsupportedOperationException.class, counter);
     }
 
+    public void testRecursionDetection() throws Exception {
+        class C {
+            MemoizedFunctionToNotNull<String, String> rec = m.createMemoizedFunction(
+                    new Function1<String, String>() {
+                        @Override
+                        public String invoke(String s) {
+                            return rec.invoke("!!!");
+                        }
+                    }
+            );
+        }
+
+        try {
+            new C().rec.invoke("");
+            fail();
+        }
+        catch (AssertionError e) {
+            assertEquals("Recursion detected on input: !!!", e.getMessage());
+        }
+    }
+
     // Values
 
     public void testNotNullLazyComputedOnce() throws Exception {
@@ -382,6 +403,27 @@ public class StorageManagerTest extends TestCase {
         }
 
         assertEquals("second", c.rec.invoke());
+    }
+
+    public void testFallThrough() throws Exception {
+        final CounterImpl c = new CounterImpl();
+        class C {
+            NotNullLazyValue<Integer> rec = LockBasedStorageManager.NO_LOCKS.createLazyValue(new Function0<Integer>() {
+                @Override
+                public Integer invoke() {
+                    c.inc();
+                    if (c.getCount() < 2) {
+                        return rec.invoke();
+                    }
+                    else {
+                        return c.getCount();
+                    }
+                }
+            });
+        }
+
+        assertEquals(2, new C().rec.invoke().intValue());
+        assertEquals(2, c.getCount());
     }
 
     // Utilities

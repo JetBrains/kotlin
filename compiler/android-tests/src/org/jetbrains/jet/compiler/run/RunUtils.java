@@ -160,13 +160,13 @@ public class RunUtils {
         handler.startNotify();
 
         if (settings.waitForEnd) {
-            handler.waitFor(800000);
+            handler.waitFor(1200000);
 
             if (!handler.isProcessTerminated()) {
                 System.out.println("Output before handler.isProcessTerminated() " + settings.commandLine);
                 System.out.println(stdOut);
                 System.err.println(stdErr);
-                return new RunResult(false, "Timeout exception: execution was terminated after ~7 min.");
+                return new RunResult(false, "Timeout exception: execution was terminated after ~20 min.");
             }
         }
         else {

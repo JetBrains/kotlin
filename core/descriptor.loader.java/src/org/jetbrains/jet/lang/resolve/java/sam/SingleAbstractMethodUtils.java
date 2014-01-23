@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.sam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
@@ -113,7 +113,7 @@ public class SingleAbstractMethodUtils {
             parameterTypes.add(parameter.getType());
         }
         return KotlinBuiltIns.getInstance().getFunctionType(
-                Collections.<AnnotationDescriptor>emptyList(), null, parameterTypes, returnType);
+                Annotations.EMPTY, null, parameterTypes, returnType);
     }
 
     private static boolean isSamInterface(@NotNull ClassDescriptor klass) {
@@ -133,7 +133,7 @@ public class SingleAbstractMethodUtils {
 
     @NotNull
     public static SamConstructorDescriptor createSamConstructorFunction(
-            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull ClassOrPackageFragmentDescriptor owner,
             @NotNull JavaClassDescriptor samInterface
     ) {
         assert isSamInterface(samInterface) : samInterface;
@@ -148,7 +148,7 @@ public class SingleAbstractMethodUtils {
         assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
                                        ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
-                result, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("function"), parameterType, false, null);
+                result, 0, Annotations.EMPTY, Name.identifier("function"), parameterType, false, null);
 
         JetType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + samInterface.getDefaultType() +

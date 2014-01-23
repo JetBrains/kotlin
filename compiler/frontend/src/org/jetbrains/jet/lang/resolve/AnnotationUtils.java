@@ -16,17 +16,25 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import jet.runtime.Intrinsic;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER;
@@ -88,30 +96,24 @@ public class AnnotationUtils {
         return false;
     }
 
+    @Nullable
+    public static String getIntrinsicAnnotationArgument(@NotNull Annotated annotatedDescriptor) {
+        AnnotationDescriptor intrinsicAnnotation = annotatedDescriptor.getAnnotations().findAnnotation(new FqName(Intrinsic.class.getName()));
+        if (intrinsicAnnotation == null) return null;
+
+        Collection<CompileTimeConstant<?>> values = intrinsicAnnotation.getAllValueArguments().values();
+        if (values.isEmpty()) return null;
+
+        Object value = values.iterator().next().getValue();
+        return value instanceof String ? (String) value : null;
+    }
+
     public static boolean isArrayMethodCall(@NotNull ResolvedCall resolvedCall) {
-        List<AnnotationDescriptor> annotations = resolvedCall.getResultingDescriptor().getOriginal().getAnnotations();
-        if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
-                //noinspection ConstantConditions
-                if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
-                    return "kotlin.arrays.array".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
-                }
-            }
-        }
-        return false;
+        return "kotlin.arrays.array".equals(getIntrinsicAnnotationArgument(resolvedCall.getResultingDescriptor().getOriginal()));
     }
 
     public static boolean isJavaClassMethodCall(@NotNull ResolvedCall resolvedCall) {
-        List<AnnotationDescriptor> annotations = resolvedCall.getResultingDescriptor().getOriginal().getAnnotations();
-        if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
-                //noinspection ConstantConditions
-                if ("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().asString())) {
-                    return "kotlin.javaClass.function".equals(annotation.getAllValueArguments().values().iterator().next().getValue());
-                }
-            }
-        }
-        return false;
+        return "kotlin.javaClass.function".equals(getIntrinsicAnnotationArgument(resolvedCall.getResultingDescriptor().getOriginal()));
     }
 
     public static boolean isPropertyCompileTimeConstant(@NotNull PropertyDescriptor descriptor) {

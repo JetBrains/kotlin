@@ -37,10 +37,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * User: Alefas
- * Date: 31.01.12
- */
 public class JetNameSuggester {
     private JetNameSuggester() {
     }

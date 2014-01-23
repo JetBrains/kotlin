@@ -1,4 +1,4 @@
-//namespace override
+package override
 
 trait T {
     fun foo()

@@ -32,7 +32,7 @@ public class JavaFullPackageScope extends ChainedScope implements JavaPackageFra
             @NotNull JetScope kotlinPackageScope,
             @NotNull JavaPurePackageScope purePackageScope
     ) {
-        super(packageFragment, kotlinPackageScope, purePackageScope);
+        super(packageFragment, "JavaFullPackageScope", kotlinPackageScope, purePackageScope);
         this.purePackageScope = purePackageScope;
     }
 

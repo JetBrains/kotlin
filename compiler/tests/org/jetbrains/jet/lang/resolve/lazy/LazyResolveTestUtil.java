@@ -28,10 +28,11 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -59,7 +60,7 @@ public class LazyResolveTestUtil {
 
         InjectorForTopDownAnalyzerForJvm injector =
                 new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, sharedModule);
-        sharedModule.addFragmentProvider(injector.getJavaPackageFragmentProvider());
+        sharedModule.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
         return injector;
     }
 
@@ -93,10 +94,10 @@ public class LazyResolveTestUtil {
     public static Set<Name> getTopLevelPackagesFromFileList(@NotNull List<JetFile> files) {
         Set<Name> shortNames = Sets.newLinkedHashSet();
         for (JetFile file : files) {
-            JetNamespaceHeader header = file.getNamespaceHeader();
-            if (header != null) {
-                List<JetSimpleNameExpression> names = header.getNamespaceNames();
-                Name name = names.isEmpty() ? SpecialNames.ROOT_NAMESPACE : names.get(0).getReferencedNameAsName();
+            JetPackageDirective directive = file.getPackageDirective();
+            if (directive != null) {
+                List<JetSimpleNameExpression> names = directive.getPackageNames();
+                Name name = names.isEmpty() ? SpecialNames.ROOT_PACKAGE : names.get(0).getReferencedNameAsName();
                 shortNames.add(name);
             }
             else {

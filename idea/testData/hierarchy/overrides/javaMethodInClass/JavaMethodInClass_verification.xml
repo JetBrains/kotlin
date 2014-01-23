@@ -1,0 +1,12 @@
+<node text="A  ()" base="true">
+  <node text="B  ()"/>
+  <node text="T  ()">
+    <node text="C  ()"/>
+    <node text="Y  ()"/>
+  </node>
+  <node text="X  ()">
+    <node text="Z  ()">
+      <node text="D  ()"/>
+    </node>
+  </node>
+</node>

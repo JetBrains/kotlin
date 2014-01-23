@@ -24,10 +24,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-/**
- * User: Alefas
- * Date: 31.01.12
- */
 public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
     public void testClassBody() {
         doTest();

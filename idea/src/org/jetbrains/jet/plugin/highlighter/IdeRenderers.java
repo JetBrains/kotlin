@@ -68,7 +68,7 @@ public class IdeRenderers {
                     StringBuilder stringBuilder = new StringBuilder("");
                     for (ResolvedCall<? extends CallableDescriptor> call : calls) {
                         stringBuilder.append("<li>");
-                        stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor())).append("\n");
+                        stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor()));
                         stringBuilder.append("</li>");
                     }
                     return stringBuilder.toString();

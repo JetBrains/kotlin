@@ -533,7 +533,7 @@ private fun createUnconvertibleCompileTimeConstant(value: Any?): CompileTimeCons
 private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
     return when (value) {
         null -> null
-        is IntegerValueTypeConstant -> createStringConstant(value.getValue().getCompileTimeConstantForNumberType(TypeUtils.NO_EXPECTED_TYPE))
+        is IntegerValueTypeConstant -> createStringConstant(value.getValue()!!.getCompileTimeConstantForNumberType(TypeUtils.NO_EXPECTED_TYPE))
         is StringValue -> value
         is IntValue, is ByteValue, is ShortValue, is LongValue,
         is CharValue,

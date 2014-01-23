@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor;
@@ -59,7 +60,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
 
     private final AnnotationDeserializer annotationDeserializer;
-    private final NotNullLazyValue<List<AnnotationDescriptor>> annotations;
+    private final NotNullLazyValue<Annotations> annotations;
 
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
 
@@ -114,9 +115,9 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         this.isInner = Flags.INNER.get(flags);
 
         this.annotationDeserializer = annotationResolver;
-        this.annotations = storageManager.createLazyValue(new Function0<List<AnnotationDescriptor>>() {
+        this.annotations = storageManager.createLazyValue(new Function0<Annotations>() {
             @Override
-            public List<AnnotationDescriptor> invoke() {
+            public Annotations invoke() {
                 return computeAnnotations();
             }
         });
@@ -152,7 +153,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             return fragments.iterator().next();
         }
         else {
-            ClassOrNamespaceDescriptor result = descriptorFinder.findClass(classId.getOuterClassId());
+            ClassOrPackageFragmentDescriptor result = descriptorFinder.findClass(classId.getOuterClassId());
             return result != null ? result : ErrorUtils.getErrorModule();
         }
     }
@@ -187,16 +188,16 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         return isInner;
     }
 
-    private List<AnnotationDescriptor> computeAnnotations() {
+    private Annotations computeAnnotations() {
         if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
-            return Collections.emptyList();
+            return Annotations.EMPTY;
         }
         return annotationDeserializer.loadClassAnnotations(this, classProto);
     }
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
+    public Annotations getAnnotations() {
         return annotations.invoke();
     }
 
@@ -264,6 +265,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     private MutableClassDescriptor createEnumClassObject() {
         MutableClassDescriptor classObject = new MutableClassDescriptor(this, getScopeForMemberLookup(), ClassKind.CLASS_OBJECT,
                                                                         false, getClassObjectName(getName()));
+        classObject.setSupertypes(Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
         classObject.setModality(Modality.FINAL);
         classObject.setVisibility(DescriptorUtils.getSyntheticClassObjectVisibility());
         classObject.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
@@ -294,6 +296,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
     @Override
     public String toString() {
+        // not using descriptor render to preserve laziness
         return "deserialized class " + getName().toString();
     }
 
@@ -314,6 +317,18 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         @NotNull
         @Override
         public Collection<JetType> getSupertypes() {
+            // We cannot have error supertypes because subclasses inherit error functions from them
+            // Filtering right away means copying the list every time, so we check for the rare condition first, and only then filter
+            for (JetType supertype : supertypes) {
+                if (supertype.isError()) {
+                    return KotlinPackage.filter(supertypes, new Function1<JetType, Boolean>() {
+                        @Override
+                        public Boolean invoke(JetType type) {
+                            return !type.isError();
+                        }
+                    });
+                }
+            }
             return supertypes;
         }
 
@@ -335,8 +350,8 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
         @NotNull
         @Override
-        public List<AnnotationDescriptor> getAnnotations() {
-            return Collections.emptyList(); // TODO
+        public Annotations getAnnotations() {
+            return Annotations.EMPTY; // TODO
         }
 
         @Override

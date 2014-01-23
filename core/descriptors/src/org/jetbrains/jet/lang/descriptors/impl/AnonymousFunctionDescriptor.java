@@ -18,15 +18,13 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
-
-import java.util.List;
 
 public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
     public AnonymousFunctionDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Kind kind
     ) {
         super(containingDeclaration, annotations, Name.special("<anonymous>"), kind);

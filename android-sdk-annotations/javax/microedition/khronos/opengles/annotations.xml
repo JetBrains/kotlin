@@ -332,10 +332,10 @@
     <item name='javax.microedition.khronos.opengles.GL11 void glGetBufferParameteriv(int, int, int[], int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGenFramebuffersOES(int, int[], int) 1'>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer) 7'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer) 7'>
+    <item name='javax.microedition.khronos.opengles.GL11ExtensionPack void glGenFramebuffersOES(int, int[], int) 1'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='javax.microedition.khronos.opengles.GL10 void glMaterialfv(int, int, float[], int) 2'>
