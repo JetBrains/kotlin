@@ -59,6 +59,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/ClassLineBreak.after.kt");
         }
         
+        @TestMetadata("ColonSpaces.after.kt")
+        public void testColonSpaces() throws Exception {
+            doTest("idea/testData/formatter/ColonSpaces.after.kt");
+        }
+        
         @TestMetadata("CommentInFunctionLiteral.after.kt")
         public void testCommentInFunctionLiteral() throws Exception {
             doTest("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
@@ -395,6 +400,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("ClassLineBreak.after.inv.kt")
         public void testClassLineBreak() throws Exception {
             doTestInverted("idea/testData/formatter/ClassLineBreak.after.inv.kt");
+        }
+        
+        @TestMetadata("ColonSpaces.after.inv.kt")
+        public void testColonSpaces() throws Exception {
+            doTestInverted("idea/testData/formatter/ColonSpaces.after.inv.kt");
         }
         
         @TestMetadata("DoWhileLineBreak.after.inv.kt")

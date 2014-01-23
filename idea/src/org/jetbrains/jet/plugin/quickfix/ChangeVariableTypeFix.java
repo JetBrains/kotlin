@@ -80,8 +80,8 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
         SpecifyTypeExplicitlyAction.removeTypeAnnotation(element);
         PsiElement nameIdentifier = element.getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
-        Pair<PsiElement, PsiElement> typeWhiteSpaceAndColon = JetPsiFactory.createTypeWhiteSpaceAndColon(project, renderedType);
-        element.addRangeAfter(typeWhiteSpaceAndColon.first, typeWhiteSpaceAndColon.second, nameIdentifier);
+        element.addAfter(JetPsiFactory.createType(project, renderedType), nameIdentifier);
+        element.addAfter(JetPsiFactory.createColon(project), nameIdentifier);
 
         if (element instanceof JetProperty) {
             JetPropertyAccessor getter = ((JetProperty) element).getGetter();
