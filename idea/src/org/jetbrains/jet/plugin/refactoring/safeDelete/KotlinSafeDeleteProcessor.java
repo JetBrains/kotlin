@@ -121,25 +121,13 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             JetProperty property = (JetProperty) element;
 
             if (property.isLocal()) return findKotlinDeclarationUsages(property, allElementsToDelete, result);
-            return new NonCodeUsageSearchInfo(
-                    delegateToJavaProcessorAndCombineConditions(
-                            LightClassUtil.getLightClassPropertyMethods(property),
-                            getCondition(Arrays.asList(allElementsToDelete)),
-                            allElementsToDelete,
-                            result
-                    ),
-                    element
-            );
+            return delegateToJavaProcessor(property, allElementsToDelete, result);
         }
         if (element instanceof JetTypeParameter) {
-            Condition<PsiElement> insideDeleted = delegateToJavaProcessorAndCombineConditions(
-                    AsJavaPackage.toPsiTypeParameters((JetTypeParameter) element),
-                    getCondition(Arrays.asList(allElementsToDelete)),
-                    allElementsToDelete,
-                    result
-            );
-            findTypeParameterUsages((JetTypeParameter) element, result);
-            return new NonCodeUsageSearchInfo(insideDeleted, element);
+            JetTypeParameter typeParameter = (JetTypeParameter) element;
+
+            findTypeParameterUsages(typeParameter, result);
+            return delegateToJavaProcessor(typeParameter, allElementsToDelete, result);
         }
         if (element instanceof JetParameter) {
             JetParameter jetParameter = (JetParameter) element;
@@ -153,6 +141,22 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
 
         return getSearchInfo(element, allElementsToDelete);
+    }
+
+    private NonCodeUsageSearchInfo delegateToJavaProcessor(
+            JetDeclaration jetDeclaration,
+            PsiElement[] allElementsToDelete,
+            List<UsageInfo> result
+    ) {
+        return new NonCodeUsageSearchInfo(
+                delegateToJavaProcessorAndCombineConditions(
+                        AsJavaPackage.toLightElements(jetDeclaration),
+                        getCondition(Arrays.asList(allElementsToDelete)),
+                        allElementsToDelete,
+                        result
+                ),
+                jetDeclaration
+        );
     }
 
     private Condition<PsiElement> delegateToJavaProcessorAndCombineConditions(
