@@ -737,7 +737,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         Method overriddenMethod = jvmOverriddenMethodSignature.getAsmMethod();
         Method delegateMethod = jvmDelegateMethodSignature.getAsmMethod();
 
-        int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
+        int flags = ACC_PUBLIC;
 
         MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;

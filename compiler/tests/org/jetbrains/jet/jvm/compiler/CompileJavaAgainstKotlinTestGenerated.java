@@ -112,6 +112,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             doTest("compiler/testData/compileJavaAgainstKotlin/method/ArrayOfIntegerArray.kt");
         }
         
+        @TestMetadata("Delegation.kt")
+        public void testDelegation() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/method/Delegation.kt");
+        }
+        
         @TestMetadata("GenericArray.kt")
         public void testGenericArray() throws Exception {
             doTest("compiler/testData/compileJavaAgainstKotlin/method/GenericArray.kt");
