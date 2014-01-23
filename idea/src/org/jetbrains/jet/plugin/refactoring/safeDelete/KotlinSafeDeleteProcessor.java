@@ -59,12 +59,15 @@ import java.util.*;
 public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     public static boolean canDeleteElement(@NotNull PsiElement element) {
         if (PsiUtilPackage.isObjectLiteral(element)) return false;
+        if (element instanceof JetParameter) {
+            JetDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetDeclaration.class);
+            return declaration != null && !(declaration instanceof JetPropertyAccessor && ((JetPropertyAccessor) declaration).isSetter());
+        }
         return element instanceof JetClassOrObject
                || element instanceof JetNamedFunction
                || element instanceof PsiMethod
                || element instanceof JetProperty
-               || element instanceof JetTypeParameter
-               || element instanceof JetParameter;
+               || element instanceof JetTypeParameter;
     }
 
     @Override

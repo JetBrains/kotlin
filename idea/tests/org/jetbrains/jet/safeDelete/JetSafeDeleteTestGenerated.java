@@ -823,6 +823,11 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsagesExt2.kt");
         }
         
+        @TestMetadata("setter.kt")
+        public void testSetter() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/setter.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava")
