@@ -227,7 +227,7 @@ public class AnnotationResolver {
                 if (arrayType == null) {
                     arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
                 }
-                annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType));
+                annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType, true));
             }
             else {
                 for (CompileTimeConstant<?> constant : constants) {

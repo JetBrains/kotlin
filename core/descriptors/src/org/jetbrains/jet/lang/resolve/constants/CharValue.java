@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.types.JetType;
 
 public class CharValue extends CompileTimeConstant<Character> {
 
-    public CharValue(char value) {
-        super(value);
+    public CharValue(char value, boolean canBeUsedInAnnotations) {
+        super(value, canBeUsedInAnnotations);
     }
 
     @NotNull

@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 public abstract class ErrorValue extends CompileTimeConstant<Void> {
 
     public ErrorValue() {
-        super(null);
+        super(null, true);
     }
 
     @Override

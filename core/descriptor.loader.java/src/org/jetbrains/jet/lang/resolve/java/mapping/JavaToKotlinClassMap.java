@@ -111,7 +111,7 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         ValueParameterDescriptor value = DescriptorResolverUtils.getAnnotationParameterByName(
                 JavaAnnotationResolver.DEFAULT_ANNOTATION_MEMBER_NAME, annotationClass);
         assert value != null : "jet.deprecated must have one parameter called value";
-        annotation.setValueArgument(value, new StringValue("Deprecated in Java"));
+        annotation.setValueArgument(value, new StringValue("Deprecated in Java", true));
         return annotation;
     }
 

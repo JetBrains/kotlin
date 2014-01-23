@@ -74,9 +74,9 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             return createStringConstant(this@ConstantExpressionEvaluator.evaluate(expression, KotlinBuiltIns.getInstance().getStringType()))
         }
 
-        override fun visitLiteralStringTemplateEntry(entry: JetLiteralStringTemplateEntry, data: Nothing?) = StringValue(entry.getText())
+        override fun visitLiteralStringTemplateEntry(entry: JetLiteralStringTemplateEntry, data: Nothing?) = StringValue(entry.getText(), true)
 
-        override fun visitEscapeStringTemplateEntry(entry: JetEscapeStringTemplateEntry, data: Nothing?) = StringValue(entry.getUnescapedValue())
+        override fun visitEscapeStringTemplateEntry(entry: JetEscapeStringTemplateEntry, data: Nothing?) = StringValue(entry.getUnescapedValue(), true)
     }
 
     override fun visitConstantExpression(expression: JetConstantExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -123,6 +123,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     override fun visitStringTemplateExpression(expression: JetStringTemplateExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val sb = StringBuilder()
         var interupted = false
+        var canBeUsedInAnnotation = true
         for (entry in expression.getEntries()) {
             val constant = stringExpressionEvaluator.evaluate(entry)
             if (constant == null) {
@@ -130,10 +131,11 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
                 break
             }
             else {
+                if (!constant.canBeUsedInAnnotations()) canBeUsedInAnnotation = false
                 sb.append(constant.getValue())
             }
         }
-        return if (!interupted) createCompileTimeConstant(sb.toString(), expression, expectedType) else null
+        return if (!interupted) createCompileTimeConstant(sb.toString(), expression, expectedType, true, canBeUsedInAnnotation) else null
     }
 
     override fun visitBinaryExpression(expression: JetBinaryExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -198,13 +200,15 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 
             val result = evaluateBinaryAndCheck(argumentForReceiver, argumentForParameter, resultingDescriptorName.asString(), callExpression)
 
+            val canBeUsedInAnnotation = canBeUsedInAnnotation(argumentForReceiver.expression) && canBeUsedInAnnotation(argumentForParameter.expression)
+            val context = EvaluatorContext(canBeUsedInAnnotation)
             return when(resultingDescriptorName) {
-                OperatorConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression)
-                OperatorConventions.EQUALS -> createCompileTimeConstantForEquals(result, callExpression)
+                OperatorConventions.COMPARE_TO -> createCompileTimeConstantForCompareTo(result, callExpression, context)
+                OperatorConventions.EQUALS -> createCompileTimeConstantForEquals(result, callExpression, context)
                 else -> {
                     val areArgumentsPure = trace.get(BindingContext.IS_PURE_CONSTANT_EXPRESSION, argumentForReceiver.expression) ?: false &&
                                            trace.get(BindingContext.IS_PURE_CONSTANT_EXPRESSION, argumentForParameter.expression) ?: false
-                    val canBeUsedInAnnotation = canBeUsedInAnnotation(argumentForReceiver.expression) && canBeUsedInAnnotation(argumentForParameter.expression)
+
                     createCompileTimeConstant(result, fullExpression, expectedType, areArgumentsPure, canBeUsedInAnnotation)
                 }
             }
@@ -339,7 +343,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             val varargType = resultingDescriptor.getValueParameters().first?.getVarargElementType()!!
 
             val arguments = call.getValueArguments().values().flatMap { resolveArguments(it.getArguments(), varargType) }
-            return ArrayValue(arguments, resultingDescriptor.getReturnType()!!)
+            return ArrayValue(arguments, resultingDescriptor.getReturnType()!!, true)
         }
 
         // Ann()
@@ -355,7 +359,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
 
         // javaClass()
         if (AnnotationUtils.isJavaClassMethodCall(call)) {
-            return JavaClassValue(resultingDescriptor.getReturnType())
+            return JavaClassValue(resultingDescriptor.getReturnType()!!)
         }
 
         return null
@@ -366,9 +370,9 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         for (argument in valueArguments) {
             val argumentExpression = argument.getArgumentExpression()
             if (argumentExpression != null) {
-                val constant = evaluate(argumentExpression, expectedType)
-                if (constant != null) {
-                    constants.add(constant)
+                val compileTimeConstant = evaluate(argumentExpression, expectedType)
+                if (compileTimeConstant != null) {
+                    constants.add(compileTimeConstant)
                 }
             }
         }
@@ -420,14 +424,13 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 
     fun createCompileTimeConstant(value: Any?, expression: JetExpression, expectedType: JetType?, isPure: Boolean = true, canBeUsedInAnnotation: Boolean = true): CompileTimeConstant<*>? {
+        val c = EvaluatorContext(canBeUsedInAnnotation)
         val compileTimeConstant =
                 if (isPure) {
                     trace.record(BindingContext.IS_PURE_CONSTANT_EXPRESSION, expression, true)
-                    createCompileTimeConstant(value, expectedType ?: TypeUtils.NO_EXPECTED_TYPE)
+                    createCompileTimeConstant(value, c, expectedType ?: TypeUtils.NO_EXPECTED_TYPE)
                 }
-                else createCompileTimeConstant(value)
-
-        compileTimeConstant?.setCanBeUsedInAnnotations(canBeUsedInAnnotation)
+                else createCompileTimeConstant(value, c)
 
         return compileTimeConstant
     }
@@ -450,7 +453,7 @@ public fun recordCompileTimeValueForInitializerIfNeeded(
 }
 
 public fun IntegerValueTypeConstant.createCompileTimeConstantWithType(expectedType: JetType): CompileTimeConstant<*>?
-        = createCompileTimeConstant(getValue(expectedType))
+        = createCompileTimeConstant(getValue(expectedType), EvaluatorContext(canBeUsedInAnnotations()))
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
 
@@ -507,16 +510,16 @@ private fun parseBoolean(text: String): Boolean {
 }
 
 
-private fun createCompileTimeConstantForEquals(result: Any?, operationReference: JetExpression): CompileTimeConstant<*>? {
+private fun createCompileTimeConstantForEquals(result: Any?, operationReference: JetExpression, context: EvaluatorContext): CompileTimeConstant<*>? {
     if (result is Boolean) {
         assert(operationReference is JetSimpleNameExpression, "This method should be called only for equals operations")
         val operationToken = (operationReference as JetSimpleNameExpression).getReferencedNameElementType()
         return when (operationToken) {
-            JetTokens.EQEQ -> BooleanValue.valueOf(result)
-            JetTokens.EXCLEQ -> BooleanValue.valueOf(!result)
+            JetTokens.EQEQ -> BooleanValue(result, context.canBeUsedInAnnotation)
+            JetTokens.EXCLEQ -> BooleanValue(!result, context.canBeUsedInAnnotation)
             JetTokens.IDENTIFIER -> {
                 assert ((operationReference as JetSimpleNameExpression).getReferencedNameAsName() == OperatorConventions.EQUALS, "This method should be called only for equals operations")
-                return BooleanValue.valueOf(result)
+                return BooleanValue(result, context.canBeUsedInAnnotation)
             }
             else -> throw IllegalStateException("Unknown equals operation token: $operationToken ${operationReference.getText()}")
         }
@@ -524,18 +527,18 @@ private fun createCompileTimeConstantForEquals(result: Any?, operationReference:
     return null
 }
 
-private fun createCompileTimeConstantForCompareTo(result: Any?, operationReference: JetExpression): CompileTimeConstant<*>? {
+private fun createCompileTimeConstantForCompareTo(result: Any?, operationReference: JetExpression, context: EvaluatorContext): CompileTimeConstant<*>? {
     if (result is Int) {
         assert(operationReference is JetSimpleNameExpression, "This method should be called only for compareTo operations")
         val operationToken = (operationReference as JetSimpleNameExpression).getReferencedNameElementType()
         return when (operationToken) {
-            JetTokens.LT -> BooleanValue.valueOf(result < 0)
-            JetTokens.LTEQ -> BooleanValue.valueOf(result <= 0)
-            JetTokens.GT -> BooleanValue.valueOf(result > 0)
-            JetTokens.GTEQ -> BooleanValue.valueOf(result >= 0)
+            JetTokens.LT -> BooleanValue(result < 0, context.canBeUsedInAnnotation)
+            JetTokens.LTEQ -> BooleanValue(result <= 0, context.canBeUsedInAnnotation)
+            JetTokens.GT -> BooleanValue(result > 0, context.canBeUsedInAnnotation)
+            JetTokens.GTEQ -> BooleanValue(result >= 0, context.canBeUsedInAnnotation)
             JetTokens.IDENTIFIER -> {
                 assert ((operationReference as JetSimpleNameExpression).getReferencedNameAsName() == OperatorConventions.COMPARE_TO, "This method should be called only for compareTo operations")
-                return IntValue(result)
+                return IntValue(result, context.canBeUsedInAnnotation)
             }
             else -> throw IllegalStateException("Unknown compareTo operation token: $operationToken")
         }
@@ -545,33 +548,33 @@ private fun createCompileTimeConstantForCompareTo(result: Any?, operationReferen
 
 private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
     return when (value) {
-        is IntegerValueTypeConstant -> StringValue(value.getValue(TypeUtils.NO_EXPECTED_TYPE).toString())
+        is IntegerValueTypeConstant -> StringValue(value.getValue(TypeUtils.NO_EXPECTED_TYPE).toString(), value.canBeUsedInAnnotations())
         is StringValue -> value
         is IntValue, is ByteValue, is ShortValue, is LongValue,
         is CharValue,
         is DoubleValue, is FloatValue,
         is BooleanValue,
-        is NullValue -> StringValue(value.getValue().toString())
+        is NullValue -> StringValue(value.getValue().toString(), value.canBeUsedInAnnotations())
         else -> null
     }
 }
 
-private fun createCompileTimeConstant(value: Any?, expectedType: JetType? = null): CompileTimeConstant<*>? {
+private fun createCompileTimeConstant(value: Any?, c: EvaluatorContext, expectedType: JetType? = null): CompileTimeConstant<*>? {
     if (expectedType == null) {
         when(value) {
-            is Byte -> return ByteValue(value)
-            is Short -> return ShortValue(value)
-            is Int -> return IntValue(value)
-            is Long -> return LongValue(value)
+            is Byte -> return ByteValue(value, c.canBeUsedInAnnotation)
+            is Short -> return ShortValue(value, c.canBeUsedInAnnotation)
+            is Int -> return IntValue(value, c.canBeUsedInAnnotation)
+            is Long -> return LongValue(value, c.canBeUsedInAnnotation)
         }
     }
     return when(value) {
-        is Byte, is Short, is Int, is Long -> getIntegerValue((value as Number).toLong(), expectedType)
-        is Char -> CharValue(value)
-        is Float -> FloatValue(value)
-        is Double -> DoubleValue(value)
-        is Boolean -> BooleanValue.valueOf(value)
-        is String -> StringValue(value)
+        is Byte, is Short, is Int, is Long -> getIntegerValue((value as Number).toLong(), c, expectedType)
+        is Char -> CharValue(value, c.canBeUsedInAnnotation)
+        is Float -> FloatValue(value, c.canBeUsedInAnnotation)
+        is Double -> DoubleValue(value, c.canBeUsedInAnnotation)
+        is Boolean -> BooleanValue(value, c.canBeUsedInAnnotation)
+        is String -> StringValue(value, c.canBeUsedInAnnotation)
         else -> null
     }
 }
@@ -579,29 +582,29 @@ private fun createCompileTimeConstant(value: Any?, expectedType: JetType? = null
 
 fun isIntegerType(value: Any?) = value is Byte || value is Short || value is Int || value is Long
 
-private fun getIntegerValue(value: Long, expectedType: JetType): CompileTimeConstant<*>? {
+private fun getIntegerValue(value: Long, c: EvaluatorContext, expectedType: JetType): CompileTimeConstant<*>? {
     fun defaultIntegerValue(value: Long) = when (value) {
-        value.toInt().toLong() -> IntValue(value.toInt())
-        else -> LongValue(value)
+        value.toInt().toLong() -> IntValue(value.toInt(), c.canBeUsedInAnnotation)
+        else -> LongValue(value, c.canBeUsedInAnnotation)
     }
 
     if (CompileTimeConstantChecker.noExpectedTypeOrError(expectedType)) {
-        return IntegerValueTypeConstant(value)
+        return IntegerValueTypeConstant(value, c.canBeUsedInAnnotation)
     }
 
     val builtIns = KotlinBuiltIns.getInstance()
 
     return when (TypeUtils.makeNotNullable(expectedType)) {
-        builtIns.getLongType() -> LongValue(value)
+        builtIns.getLongType() -> LongValue(value, c.canBeUsedInAnnotation)
         builtIns.getShortType() -> when (value) {
-            value.toShort().toLong() -> ShortValue(value.toShort())
+            value.toShort().toLong() -> ShortValue(value.toShort(), c.canBeUsedInAnnotation)
             else -> defaultIntegerValue(value)
         }
         builtIns.getByteType() -> when (value) {
-            value.toByte().toLong() -> ByteValue(value.toByte())
+            value.toByte().toLong() -> ByteValue(value.toByte(), c.canBeUsedInAnnotation)
             else -> defaultIntegerValue(value)
         }
-        builtIns.getCharType() -> IntValue(value.toInt())
+        builtIns.getCharType() -> IntValue(value.toInt(), c.canBeUsedInAnnotation)
         else -> defaultIntegerValue(value)
     }
 }
@@ -632,6 +635,8 @@ private fun getCompileTimeType(c: JetType): CompileTimeType<out Any>? {
         else -> null
     }
 }
+
+private class EvaluatorContext(val canBeUsedInAnnotation: Boolean)
 
 private class CompileTimeType<T>
 

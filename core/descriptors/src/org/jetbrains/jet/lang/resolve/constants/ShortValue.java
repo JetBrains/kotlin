@@ -16,24 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.constants;
 
-import com.google.common.base.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class ShortValue extends CompileTimeConstant<Short> {
-    public static final Function<Long, ShortValue> CREATE = new Function<Long, ShortValue>() {
-        @Override
-        public ShortValue apply(@Nullable Long input) {
-            assert input != null;
-            return new ShortValue(input.shortValue());
-        }
-    };
 
-    public ShortValue(short value) {
-        super(value);
+    public ShortValue(short value, boolean canBeUsedInAnnotations) {
+        super(value, canBeUsedInAnnotations);
     }
 
     @NotNull

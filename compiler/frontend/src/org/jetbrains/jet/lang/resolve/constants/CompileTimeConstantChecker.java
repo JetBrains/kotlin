@@ -167,7 +167,7 @@ public class CompileTimeConstantChecker {
         if (text.charAt(0) != '\\') {
             // No escape
             if (text.length() == 1) {
-                return new CharValue(text.charAt(0));
+                return new CharValue(text.charAt(0), true);
             }
             return createErrorValue(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.on(expression, expression));
         }
@@ -190,13 +190,13 @@ public class CompileTimeConstantChecker {
                 if (escaped == null) {
                     return illegalEscape(expression);
                 }
-                return new CharValue(escaped);
+                return new CharValue(escaped, true);
             case 5:
                 // unicode escape
                 if (escape.charAt(0) == 'u') {
                     try {
                         Integer intValue = Integer.valueOf(escape.substring(1), 16);
-                        return new CharValue((char) intValue.intValue());
+                        return new CharValue((char) intValue.intValue(), true);
                     } catch (NumberFormatException e) {
                         // Will be reported below
                     }
