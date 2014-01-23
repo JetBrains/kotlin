@@ -47,7 +47,6 @@ import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -130,14 +129,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             return delegateToJavaProcessor(typeParameter, allElementsToDelete, result);
         }
         if (element instanceof JetParameter) {
-            JetParameter jetParameter = (JetParameter) element;
-
-            PsiParameter psiParameter = getPsiParameter(jetParameter);
-            if (psiParameter != null) {
-                super.findUsages(psiParameter, allElementsToDelete, result);
-            }
-
-            return findParameterUsages(jetParameter, allElementsToDelete, result);
+            return delegateToJavaProcessor((JetParameter) element, allElementsToDelete, result);
         }
 
         return getSearchInfo(element, allElementsToDelete);
@@ -280,85 +272,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         });
 
         return getSearchInfo(declaration, allElementsToDelete);
-    }
-
-    @NotNull
-    protected static NonCodeUsageSearchInfo findParameterUsages(
-            @NotNull final JetParameter parameter,
-            @NotNull final PsiElement[] allElementsToDelete,
-            @NotNull final List<UsageInfo> result
-    ) {
-        NonCodeUsageSearchInfo searchInfo = getSearchInfo(parameter, allElementsToDelete);
-
-        final JetNamedFunction function = PsiTreeUtil.getParentOfType(parameter, JetNamedFunction.class);
-        if (function == null || parameter.getParent() != function.getValueParameterList()) return searchInfo;
-
-        final int parameterIndex = function.getValueParameters().indexOf(parameter);
-
-        ReferencesSearch.search(parameter, parameter.getUseScope()).forEach(new Processor<PsiReference>() {
-            @Override
-            public boolean process(PsiReference reference) {
-                PsiElement element = reference.getElement();
-                if (!isInside(element, allElementsToDelete)) {
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, parameter, false));
-                }
-                return true;
-            }
-        });
-
-        ReferencesSearch.search(function).forEach(
-                new Processor<PsiReference>() {
-                    @Override
-                    public boolean process(PsiReference reference) {
-                        processParameterUsageInCall(reference, function, parameterIndex, result, parameter);
-                        return true;
-                    }
-                }
-        );
-
-        return searchInfo;
-    }
-
-    static void processParameterUsageInCall(
-            @NotNull PsiReference reference,
-            @NotNull PsiElement originalDeclaration,
-            int parameterIndex,
-            @NotNull List<UsageInfo> result,
-            @NotNull PsiElement parameter
-    ) {
-        PsiElement element = reference.getElement();
-
-        JetCallExpression callExpression =
-                PsiTreeUtil.getParentOfType(reference.getElement(), JetCallExpression.class, false);
-        if (callExpression == null) return;
-
-        JetExpression calleeExpression = callExpression.getCalleeExpression();
-        if (!(calleeExpression instanceof JetReferenceExpression
-              && PsiTreeUtil.isAncestor(calleeExpression, element, false))) return;
-
-        BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
-        DeclarationDescriptor descriptor =
-                bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpression);
-        if (descriptor == null) return;
-
-        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-        if (originalDeclaration.equals(declaration)) {
-            List<? extends ValueArgument> args = callExpression.getValueArguments();
-            int argCount = args.size();
-            if (parameterIndex < argCount) {
-                result.add(
-                        new SafeDeleteValueArgumentListUsageInfo((JetValueArgument) args.get(parameterIndex), parameter)
-                );
-            }
-            else {
-                List<JetExpression> lambdaArgs = callExpression.getFunctionLiteralArguments();
-                int lambdaIndex = parameterIndex - argCount;
-                if (lambdaIndex < lambdaArgs.size()) {
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(lambdaArgs.get(lambdaIndex), parameter, true));
-                }
-            }
-        }
     }
 
     protected static void findTypeParameterUsages(
