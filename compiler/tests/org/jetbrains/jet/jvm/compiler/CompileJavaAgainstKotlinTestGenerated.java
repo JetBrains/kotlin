@@ -286,6 +286,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
                 doTest("compiler/testData/compileJavaAgainstKotlin/method/throws/Delegation.kt");
             }
             
+            @TestMetadata("GenericSubstitution.kt")
+            public void testGenericSubstitution() throws Exception {
+                doTest("compiler/testData/compileJavaAgainstKotlin/method/throws/GenericSubstitution.kt");
+            }
+            
             @TestMetadata("TopLevel.kt")
             public void testTopLevel() throws Exception {
                 doTest("compiler/testData/compileJavaAgainstKotlin/method/throws/TopLevel.kt");

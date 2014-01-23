@@ -1929,6 +1929,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
         public static class Function extends AbstractBlackBoxCodegenTest {
+            @TestMetadata("abstractClass.kt")
+            public void testAbstractClass() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/abstractClass.kt");
+            }
+            
             public void testAllFilesPresentInFunction() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/defaultArguments/function"), Pattern.compile("^(.+)\\.kt$"), true);
             }
@@ -2011,6 +2016,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("mixingNamedAndPositioned.kt")
             public void testMixingNamedAndPositioned() throws Exception {
                 doTest("compiler/testData/codegen/box/defaultArguments/function/mixingNamedAndPositioned.kt");
+            }
+            
+            @TestMetadata("trait.kt")
+            public void testTrait() throws Exception {
+                doTest("compiler/testData/codegen/box/defaultArguments/function/trait.kt");
             }
             
         }
