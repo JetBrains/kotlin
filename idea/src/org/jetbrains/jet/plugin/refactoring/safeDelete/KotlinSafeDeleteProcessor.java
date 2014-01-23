@@ -119,17 +119,17 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
         if (element instanceof JetProperty) {
             JetProperty property = (JetProperty) element;
-            NonCodeUsageSearchInfo searchInfo = findKotlinDeclarationUsages(property, allElementsToDelete, result);
 
-            if (property.isLocal()) return searchInfo;
-
-            Condition<PsiElement> insideDeleted = delegateToJavaProcessorAndCombineConditions(
-                    LightClassUtil.getLightClassPropertyMethods(property),
-                    searchInfo.getInsideDeletedCondition(),
-                    allElementsToDelete,
-                    result
+            if (property.isLocal()) return findKotlinDeclarationUsages(property, allElementsToDelete, result);
+            return new NonCodeUsageSearchInfo(
+                    delegateToJavaProcessorAndCombineConditions(
+                            LightClassUtil.getLightClassPropertyMethods(property),
+                            getCondition(Arrays.asList(allElementsToDelete)),
+                            allElementsToDelete,
+                            result
+                    ),
+                    element
             );
-            return new NonCodeUsageSearchInfo(insideDeleted, element);
         }
         if (element instanceof JetTypeParameter) {
             Condition<PsiElement> insideDeleted = delegateToJavaProcessorAndCombineConditions(
