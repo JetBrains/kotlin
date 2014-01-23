@@ -16,17 +16,26 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     @Override
@@ -44,8 +53,24 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                         .build()
         );
 
-        PackageFragmentDescriptor actualFragment = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
-        RecursiveDescriptorComparator
-                .validateAndCompareDescriptorWithFile(actualFragment, configuration, new File("compiler/testData/builtin-classes.txt"));
+        List<JetFile> files = JetTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
+                allFilesUnder("core/builtins/native"),
+                allFilesUnder("core/builtins/src")
+        ));
+        ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, getEnvironment(), false);
+        List<PackageFragmentDescriptor> fragments =
+                module.getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+        assertSize(1, fragments);
+        PackageFragmentDescriptor fromLazyResolve = fragments.iterator().next();
+        PackageFragmentDescriptor deserialized = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
+        RecursiveDescriptorComparator.validateAndCompareDescriptors(
+                fromLazyResolve, deserialized, configuration,
+                new File("compiler/testData/builtin-classes.txt")
+        );
+    }
+
+    @NotNull
+    private static List<File> allFilesUnder(@NotNull String directory) {
+        return FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), new File(directory));
     }
 }
