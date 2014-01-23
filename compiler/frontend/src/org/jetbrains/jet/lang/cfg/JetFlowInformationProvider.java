@@ -96,20 +96,14 @@ public class JetFlowInformationProvider {
             @NotNull JetType expectedReturnType,
             boolean isLocalObject
     ) {
-        boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
-        if (!isPropertyAccessor) {
-            recordInitializedVariables();
-        }
+        recordInitializedVariables();
 
         checkDefiniteReturn(expectedReturnType);
         checkLocalFunctions();
 
         if (isLocalObject) return;
 
-        if (!isPropertyAccessor) {
-            // Property accessor is checked through initialization of a class/object or package properties (at 'checkDeclarationContainer')
-            markUninitializedVariables();
-        }
+        markUninitializedVariables();
 
         markUnusedVariables();
 

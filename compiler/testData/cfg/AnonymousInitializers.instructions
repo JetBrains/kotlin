@@ -25,10 +25,7 @@ L0:
     r(12)
     w($i)
     v(val j: Int get() = 20)
-    jmp?(L2)                    NEXT:[mark({ $i = 13 }), d(get() = 20)]
-    d(get() = 20)               NEXT:[<SINK>]
-L2:
-    mark({ $i = 13 })           PREV:[jmp?(L2)]
+    mark({ $i = 13 })
     r(13)
     w($i)
 L1:
@@ -36,27 +33,5 @@ L1:
 error:
     <ERROR>                     PREV:[]
 sink:
-    <SINK>                      PREV:[<ERROR>, <END>, d(get() = 20)]
-L3:
-    <START>
-    r(20)
-L4:
-    <END>      NEXT:[<SINK>]
-error:
-    <ERROR>    PREV:[]
-sink:
-    <SINK>     PREV:[<ERROR>, <END>]
-=====================
-== get_j ==
-get() = 20
----------------------
-L3:
-    <START>
-    r(20)
-L4:
-    <END>      NEXT:[<SINK>]
-error:
-    <ERROR>    PREV:[]
-sink:
-    <SINK>     PREV:[<ERROR>, <END>]
+    <SINK>                      PREV:[<ERROR>, <END>]
 =====================

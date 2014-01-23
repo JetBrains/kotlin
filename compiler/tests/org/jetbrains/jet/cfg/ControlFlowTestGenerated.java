@@ -167,6 +167,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
         doTest("compiler/testData/cfg/LocalDeclarations.kt");
     }
     
+    @TestMetadata("localProperty.kt")
+    public void testLocalProperty() throws Exception {
+        doTest("compiler/testData/cfg/localProperty.kt");
+    }
+    
     @TestMetadata("MultiDecl.kt")
     public void testMultiDecl() throws Exception {
         doTest("compiler/testData/cfg/MultiDecl.kt");

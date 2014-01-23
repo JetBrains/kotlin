@@ -792,8 +792,10 @@ public class JetControlFlowProcessor {
             if (delegate != null) {
                 generateInstructions(delegate, NOT_IN_CONDITION);
             }
-            for (JetPropertyAccessor accessor : property.getAccessors()) {
-                generateInstructions(accessor, NOT_IN_CONDITION);
+            if (JetPsiUtil.isLocal(property)) {
+                for (JetPropertyAccessor accessor : property.getAccessors()) {
+                    generateInstructions(accessor, NOT_IN_CONDITION);
+                }
             }
         }
 
