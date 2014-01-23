@@ -1,4 +1,4 @@
-// "Add '<*, *>'" "false"
+// "class org.jetbrains.jet.plugin.quickfix.AddStarProjectionsFix" "false"
 // ERROR: Type argument expected
 class C2<T>
 

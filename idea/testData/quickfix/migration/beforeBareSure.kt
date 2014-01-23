@@ -1,4 +1,4 @@
-// "Replace sure() calls by !! in project" "false"
+// "class org.jetbrains.jet.plugin.quickfix.MigrateSureInProjectFix" "false"
 // ERROR: Unresolved reference: sure
 
 fun test() {
