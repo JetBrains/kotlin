@@ -35,6 +35,7 @@ public class DescriptorRendererBuilder {
     private boolean unitReturnType = true;
     private boolean normalizedVisibilities = false;
     private boolean showInternalKeyword = true;
+    private boolean prettyFunctionTypes = true;
     @NotNull
     private DescriptorRenderer.OverrideRenderingPolicy overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN;
     @NotNull
@@ -121,9 +122,14 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    public DescriptorRendererBuilder setPrettyFunctionTypes(boolean prettyFunctionTypes) {
+        this.prettyFunctionTypes = prettyFunctionTypes;
+        return this;
+    }
+
     public DescriptorRenderer build() {
         return new DescriptorRendererImpl(shortNames, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor,
-                                          verbose, unitReturnType, normalizedVisibilities, showInternalKeyword,
+                                          verbose, unitReturnType, normalizedVisibilities, showInternalKeyword, prettyFunctionTypes,
                                           overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses);
     }
 

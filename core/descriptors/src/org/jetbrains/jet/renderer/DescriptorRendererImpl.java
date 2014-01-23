@@ -27,7 +27,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.DefaultAnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.AnnotationValue;
+import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -50,6 +53,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean unitReturnType;
     private final boolean normalizedVisibilities;
     private final boolean showInternalKeyword;
+    private final boolean prettyFunctionTypes;
     @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
     @NotNull
@@ -70,6 +74,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean unitReturnType,
             boolean normalizedVisibilities,
             boolean showInternalKeyword,
+            boolean prettyFunctionTypes,
             @NotNull OverrideRenderingPolicy overrideRenderingPolicy,
             @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat,
@@ -89,6 +94,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.debugMode = debugMode;
         this.textFormat = textFormat;
         this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
+        this.prettyFunctionTypes = prettyFunctionTypes;
     }
 
     /* FORMATTING */
@@ -223,7 +229,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (type.isError()) {
             return renderDefaultType(type);
         }
-        if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type)) {
+        if (KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(type) && prettyFunctionTypes) {
             return renderFunctionType(type);
         }
         return renderDefaultType(type);

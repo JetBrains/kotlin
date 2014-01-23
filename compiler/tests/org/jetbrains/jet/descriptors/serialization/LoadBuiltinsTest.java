@@ -22,6 +22,8 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
@@ -33,8 +35,17 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     }
 
     public void testBuiltIns() throws Exception {
+        RecursiveDescriptorComparator.Configuration configuration = RecursiveDescriptorComparator.RECURSIVE_ALL.withRenderer(
+                new DescriptorRendererBuilder()
+                        .setWithDefinedIn(false)
+                        .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
+                        .setVerbose(true)
+                        .setPrettyFunctionTypes(false)
+                        .build()
+        );
+
         PackageFragmentDescriptor actualFragment = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
-        RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
-                actualFragment, RecursiveDescriptorComparator.RECURSIVE_ALL, new File("compiler/testData/builtin-classes.txt"));
+        RecursiveDescriptorComparator
+                .validateAndCompareDescriptorWithFile(actualFragment, configuration, new File("compiler/testData/builtin-classes.txt"));
     }
 }
