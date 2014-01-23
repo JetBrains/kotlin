@@ -508,7 +508,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         Method jvmSignature = signature.getAsmMethod();
 
-        int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
+        int flags = getVisibilityAccessFlag(functionDescriptor) | getDeprecatedAccessFlag(functionDescriptor);
 
         Type ownerType;
         if (contextClass instanceof PackageFragmentDescriptor) {
