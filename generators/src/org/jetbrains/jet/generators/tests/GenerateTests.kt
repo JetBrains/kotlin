@@ -89,6 +89,7 @@ import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
 import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
 import org.jetbrains.jet.plugin.intentions.AbstractIntentionTest
+import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithStdLib
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -99,6 +100,10 @@ fun main(args: Array<String>) {
             model("diagnostics/tests")
             model("diagnostics/tests/script", extension = "ktscript")
             model("codegen/box/functions/tailRecursion")
+        }
+
+        testClass(javaClass<AbstractJetDiagnosticsTestWithStdLib>()) {
+            model("diagnostics/testsWithStdLib")
         }
 
         testClass(javaClass<AbstractResolveTest>()) {

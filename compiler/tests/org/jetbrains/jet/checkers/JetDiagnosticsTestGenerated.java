@@ -637,19 +637,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
-                @TestMetadata("array.kt")
-                public void testArray() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/array.kt");
-                }
-                
                 @TestMetadata("booleanLocalVal.kt")
                 public void testBooleanLocalVal() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/booleanLocalVal.kt");
-                }
-                
-                @TestMetadata("classLiteral.kt")
-                public void testClassLiteral() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/classLiteral.kt");
                 }
                 
                 @TestMetadata("compareAndEquals.kt")
@@ -672,19 +662,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/kotlinProperties.kt");
                 }
                 
-                @TestMetadata("simple.kt")
-                public void testSimple() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/simple.kt");
-                }
-                
                 @TestMetadata("strings.kt")
                 public void testStrings() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/strings.kt");
-                }
-                
-                @TestMetadata("vararg.kt")
-                public void testVararg() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/vararg.kt");
                 }
                 
             }

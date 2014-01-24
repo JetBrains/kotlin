@@ -70,6 +70,16 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
 
     @Override
     protected JetCoreEnvironment createEnvironment() {
+        File javaFilesDir = createJavaFilesDir();
+        return JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
+                        ConfigurationKind.JDK_AND_ANNOTATIONS,
+                        TestJdkKind.MOCK_JDK,
+                        Arrays.asList(JetTestUtils.getAnnotationsJar()),
+                        Arrays.asList(javaFilesDir)
+                ));
+    }
+
+    protected File createJavaFilesDir() {
         File javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
         try {
             JetTestUtils.mkdirs(javaFilesDir);
@@ -77,12 +87,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
         catch (IOException e) {
             throw ExceptionUtils.rethrow(e);
         }
-        return JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
-                        ConfigurationKind.JDK_AND_ANNOTATIONS,
-                        TestJdkKind.MOCK_JDK,
-                        Arrays.asList(JetTestUtils.getAnnotationsJar()),
-                        Arrays.asList(javaFilesDir)
-                ));
+        return javaFilesDir;
     }
 
     private static boolean writeJavaFile(@NotNull String fileName, @NotNull String content, @NotNull File javaFilesDir) {

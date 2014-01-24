@@ -9,6 +9,3 @@ class Test2
 val c: Class<*> = javaClass<A>()
 
 class A
-
-// from stdlib
-fun <T> javaClass() : Class<T> = null <!CAST_NEVER_SUCCEEDS!>as<!> Class<T>

@@ -30,7 +30,3 @@ val ia: IntArray = intArray(1, 2)
 val sa: Array<String> = array("a", "b")
 
 annotation class Ann2
-
-// from stdlib
-fun <T> array(vararg t : T) : Array<T> = t
-fun intArray(vararg content : Int) : IntArray = content
