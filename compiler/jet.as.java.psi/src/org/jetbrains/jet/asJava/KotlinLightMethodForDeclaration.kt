@@ -38,6 +38,8 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.psi.PsiTypeParameter
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 
 public class KotlinLightMethodForDeclaration(
         manager: PsiManager, override val delegate: PsiMethod, override val origin: JetDeclaration, containingClass: PsiClass
@@ -59,9 +61,14 @@ public class KotlinLightMethodForDeclaration(
     private val typeParamsList: CachedValue<PsiTypeParameterList> by Delegates.blockingLazy {
         val cacheManager = CachedValuesManager.getManager(delegate.getProject())
         cacheManager.createCachedValue<PsiTypeParameterList>({
-            val declaration =
-                 if (origin is JetPropertyAccessor) origin.getParentByType(javaClass<JetProperty>()) else origin
-            val list = LightClassUtil.buildLightTypeParameterList(this@KotlinLightMethodForDeclaration, origin)
+            val declaration = if (origin is JetPropertyAccessor) origin.getParentByType(javaClass<JetProperty>()) else origin
+
+            val list = if (origin is JetClassOrObject) {
+                LightTypeParameterListBuilder(getManager(), getLanguage())
+            }
+            else {
+                LightClassUtil.buildLightTypeParameterList(this@KotlinLightMethodForDeclaration, origin)
+            }
             CachedValueProvider.Result.create(list, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
         }, false)
     }

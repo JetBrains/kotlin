@@ -1114,7 +1114,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert constructorDescriptor != null;
         final JvmMethodSignature constructorSignature = typeMapper.mapSignature(constructorDescriptor);
 
-        functionCodegen.generateMethod(null, constructorSignature, constructorDescriptor, constructorContext,
+        functionCodegen.generateMethod(myClass, constructorSignature, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
                        @NotNull
                        @Override
