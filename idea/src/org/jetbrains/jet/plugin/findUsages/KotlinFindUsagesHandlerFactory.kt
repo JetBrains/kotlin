@@ -31,8 +31,13 @@ import org.jetbrains.jet.plugin.findUsages.handlers.KotlinTypeParameterFindUsage
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.lang.psi.JetClassOrObject
+import com.intellij.find.findUsages.FindUsagesManager
+import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
+import com.intellij.psi.PsiMethod
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
+    val javaHandlerFactory = JavaFindUsagesHandlerFactory(project)
+
     val findFunctionOptions = KotlinFunctionFindUsagesOptions(project)
     val findPropertyOptions = KotlinPropertyFindUsagesOptions(project)
     val findClassOptions = KotlinClassFindUsagesOptions(project)
@@ -45,7 +50,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             element is JetParameter ||
             element is JetTypeParameter
 
-    public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
+    public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler? {
         when(element) {
             is JetClassOrObject ->
                 return KotlinFindClassUsagesHandler(element, this)
@@ -56,13 +61,21 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
                 return if (forHighlightUsages) KotlinFindMemberUsagesHandler.getInstance(declaration, this)
                 else JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
                     when (callables.size()) {
-                        0 -> null
-                        1 ->
-                            KotlinFindMemberUsagesHandler.getInstance(callables.get(0) as JetNamedDeclaration, this)
+                        0 -> FindUsagesHandler.NULL_HANDLER
+                        1 -> {
+                            val callable = callables.get(0)
+                            when (callable) {
+                                is JetNamedDeclaration ->
+                                    KotlinFindMemberUsagesHandler.getInstance(callable, this)
+                                is PsiMethod ->
+                                    javaHandlerFactory.createFindUsagesHandler(callable, forHighlightUsages)
+                                else -> null
+                            }
+                        }
                         else ->
                             KotlinFindMemberUsagesHandler.getInstance(declaration, callables, this)
                     }
-                } ?: FindUsagesHandler.NULL_HANDLER
+                }
             }
 
             is JetTypeParameter ->
