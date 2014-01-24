@@ -442,7 +442,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractShortenRefsTest>()) {
-            model("shortenRefs")
+            model("shortenRefs", pattern = """^([^\.]+)\.kt$""")
         }
 
         testClass(javaClass<AbstractCompiledKotlinInJavaCompletionTest>()) {

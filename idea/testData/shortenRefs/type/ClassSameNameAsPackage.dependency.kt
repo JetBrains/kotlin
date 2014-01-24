@@ -1,0 +1,3 @@
+package same
+
+class same() {}

@@ -44,15 +44,11 @@ public object ShortenReferences {
         }
     }
 
-    private class ResolveAllReferencesVisitor(file: JetFile) : JetVisitorVoid() {
+    private class ResolveAllReferencesVisitor(file: JetFile) : JetTreeVisitorVoid() {
         private val resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
         private val resolveMap = HashMap<JetReferenceExpression, BindingContext>()
 
         public val result: Map<JetReferenceExpression, BindingContext> = resolveMap
-
-        override fun visitJetElement(element : JetElement) {
-            element.acceptChildren(this)
-        }
 
         override fun visitUserType(userType: JetUserType) {
             userType.acceptChildren(this)
@@ -75,7 +71,7 @@ public object ShortenReferences {
         }
     }
 
-    private class ShortenTypesVisitor(val file: JetFile, val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetVisitorVoid() {
+    private class ShortenTypesVisitor(val file: JetFile, val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetTreeVisitorVoid() {
         private val resolveSession : ResolveSessionForBodies
             get() = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
 
@@ -88,10 +84,6 @@ public object ShortenReferences {
         }
 
         private fun bindingContext(expression: JetReferenceExpression): BindingContext = resolveMap[expression]!!
-
-        override fun visitJetElement(element : JetElement) {
-            element.acceptChildren(this)
-        }
 
         override fun visitUserType(userType: JetUserType) {
             userType.getTypeArgumentList()?.accept(this)
@@ -117,7 +109,7 @@ public object ShortenReferences {
             val typeReference = PsiTreeUtil.getParentOfType(userType, javaClass<JetTypeReference>())!!
             val scope = resolveSession.resolveToElement(typeReference).get(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference)!!
             val name = target.getName()
-            val targetByName = scope.getClassifier(name) ?: scope.getPackage(name)
+            val targetByName = scope.getClassifier(name)
             if (targetByName == null) {
                 addImportIfNeeded(target, file)
                 return true
@@ -141,16 +133,12 @@ public object ShortenReferences {
         }
     }
 
-    private class ShortenQualifiedExpressionsVisitor(val file: JetFile, val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetVisitorVoid() {
+    private class ShortenQualifiedExpressionsVisitor(val file: JetFile, val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetTreeVisitorVoid() {
         private val resolveSession : ResolveSessionForBodies
             get() = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
 
         private fun bindingContext(expression: JetReferenceExpression): BindingContext
                 = resolveMap[expression] ?: resolveSession.resolveToElement(expression) // binding context can be absent in the map if some references have been shortened already
-
-        override fun visitJetElement(element : JetElement) {
-            acceptChildren(element)
-        }
 
         override fun visitDotQualifiedExpression(expression: JetDotQualifiedExpression) {
             val resultElement = processDotQualifiedExpression(expression)

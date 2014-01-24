@@ -34,7 +34,7 @@ import org.jetbrains.jet.shortenRefs.AbstractShortenRefsTest;
 @InnerTestClasses({ShortenRefsTestGenerated.Constructor.class, ShortenRefsTestGenerated.Type.class})
 public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     public void testAllFilesPresentInShortenRefs() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/shortenRefs"), Pattern.compile("^(.+)\\.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/shortenRefs"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
     @TestMetadata("JavaStaticMethod.kt")
@@ -45,7 +45,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @TestMetadata("idea/testData/shortenRefs/constructor")
     public static class Constructor extends AbstractShortenRefsTest {
         public void testAllFilesPresentInConstructor() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/shortenRefs/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/shortenRefs/constructor"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
         
         @TestMetadata("Ambiguous.kt")
@@ -108,7 +108,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @TestMetadata("idea/testData/shortenRefs/type")
     public static class Type extends AbstractShortenRefsTest {
         public void testAllFilesPresentInType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/shortenRefs/type"), Pattern.compile("^(.+)\\.kt$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/shortenRefs/type"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("ClassSameNameAsPackage.kt")
+        public void testClassSameNameAsPackage() throws Exception {
+            doTest("idea/testData/shortenRefs/type/ClassSameNameAsPackage.kt");
         }
         
         @TestMetadata("FunctionType.kt")

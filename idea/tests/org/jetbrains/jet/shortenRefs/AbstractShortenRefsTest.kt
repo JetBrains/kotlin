@@ -32,6 +32,11 @@ abstract class AbstractShortenRefsTest : LightCodeInsightFixtureTestCase() {
 
     protected fun doTest(testPath: String) {
         val fixture = myFixture!!
+        val dependencyPath = testPath.replace(".kt", ".dependency.kt")
+        if (File(dependencyPath).exists()) {
+            fixture.configureByFile(dependencyPath)
+        }
+
         fixture.configureByFile(testPath)
 
         val file = fixture.getFile() as JetFile
