@@ -151,7 +151,6 @@ fun main(args: Array<String>) {
             model("codegen/defaultArguments/reflection")
         }
 
-
         testClass(javaClass<AbstractLoadJavaTest>()) {
             model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
             model("loadJava/compiledJavaAndKotlin", extension = "txt", testMethod = "doTestCompiledJavaAndKotlin")
@@ -220,17 +219,7 @@ fun main(args: Array<String>) {
             model("evaluate/constant", testMethod = "doConstantTest")
             model("evaluate/isPure", testMethod = "doIsPureTest")
         }
-
-        testClass(javaClass<AbstractAnnotationParameterTest>()) {
-            model("resolveAnnotations/parameters")
-        }
-
-        testClass(javaClass<AbstractEvaluateExpressionTest>()) {
-            model("evaluate/constant", testMethod = "doConstantTest")
-            model("evaluate/isPure", testMethod = "doIsPureTest")
-        }
     }
-
 
     testGroup("idea/tests", "idea/testData") {
         testClass(javaClass<AbstractAdditionalLazyResolveDescriptorRendererTest>()) {
