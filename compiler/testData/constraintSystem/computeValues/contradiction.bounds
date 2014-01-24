@@ -1,18 +1,18 @@
 VARIABLES T
 
-SUBTYPE T Int
-SUPERTYPE T Int !
+SUBTYPE T B
+SUPERTYPE T A
 
 type parameter bounds:
-T >: Int(SPECIAL), <: Int(SPECIAL)
+T <: B(SPECIAL), >: A(SPECIAL)
 status:
--hasConflictingConstraints: false
--hasContradiction: false
+-hasConflictingConstraints: true
+-hasContradiction: true
 -hasErrorInConstrainingTypes: false
 -hasTypeConstructorMismatch: false
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
--isSuccessful: true
+-isSuccessful: false
 
 result:
-T=Int
+T=???

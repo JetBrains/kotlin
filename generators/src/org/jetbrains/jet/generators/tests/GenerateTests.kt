@@ -87,6 +87,7 @@ import org.jetbrains.jet.completion.handlers.AbstractSmartCompletionHandlerTest
 import org.jetbrains.jet.generators.tests.generator.TestGeneratorUtil
 import org.jetbrains.jet.resolve.AbstractAdditionalLazyResolveDescriptorRendererTest
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
+import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
 import org.jetbrains.jet.plugin.intentions.AbstractIntentionTest
@@ -115,6 +116,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractResolvedCallsTest>()) {
             model("resolvedCalls")
+        }
+
+        testClass(javaClass<AbstractConstraintSystemTest>()) {
+            model("constraintSystem", extension = "bounds")
         }
 
         testClass(javaClass<AbstractJetParsingTest>()) {

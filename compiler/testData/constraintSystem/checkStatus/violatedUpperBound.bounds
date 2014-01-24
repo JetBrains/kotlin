@@ -1,0 +1,18 @@
+VARIABLES T
+
+SUBTYPE T Int
+SUBTYPE T String !
+
+type parameter bounds:
+T <: jet.Int(SPECIAL), <: jet.String(TYPE_BOUND_POSITION(0))
+status:
+-hasConflictingConstraints: true
+-hasContradiction: true
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasUnknownParameters: false
+-hasViolatedUpperBound: true
+-isSuccessful: false
+
+result:
+T=???

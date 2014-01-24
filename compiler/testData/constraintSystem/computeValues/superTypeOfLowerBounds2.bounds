@@ -1,0 +1,19 @@
+VARIABLES T
+
+SUBTYPE T A
+SUPERTYPE T B
+SUPERTYPE T C
+
+type parameter bounds:
+T <: A(SPECIAL), >: B(SPECIAL), >: C(SPECIAL)
+status:
+-hasConflictingConstraints: false
+-hasContradiction: false
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasUnknownParameters: false
+-hasViolatedUpperBound: false
+-isSuccessful: true
+
+result:
+T=B

@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -376,7 +377,7 @@ public class Renderers {
                 typeBounds.add(constraintSystem.getTypeBounds(variable));
             }
             Function<TypeBounds, String> renderTypeBounds = rendererToFunction(RENDER_TYPE_BOUNDS);
-            return "type parameter bounds:\n" + StringUtil.join(typeBounds, renderTypeBounds, ";\n") + "\n" +
+            return "type parameter bounds:\n" + StringUtil.join(typeBounds, renderTypeBounds, "\n") + "\n" +
                    "status:\n" + ConstraintsUtil.getDebugMessageForStatus(constraintSystem.getStatus());
         }
     };
@@ -388,11 +389,15 @@ public class Renderers {
             Function<TypeBoundsImpl.Bound, String> renderBound = new Function<TypeBoundsImpl.Bound, String>() {
                 @Override
                 public String fun(TypeBoundsImpl.Bound bound) {
-                    String arrow = bound.kind == LOWER_BOUND ? "<: " : bound.kind == UPPER_BOUND ? ">: " : "=  ";
-                    return arrow + bound.type + '(' + bound.position + ')';
+                    String arrow = bound.kind == LOWER_BOUND ? ">: " : bound.kind == UPPER_BOUND ? "<: " : ":= ";
+                    return arrow + RENDER_TYPE.render(bound.type) + '(' + bound.position + ')';
                 }
             };
-            return typeBounds.getTypeVariable().getName() + " " + StringUtil.join(typeBounds.getBounds(), renderBound, ", ");
+            Name typeVariableName = typeBounds.getTypeVariable().getName();
+            if (typeBounds.isEmpty()) {
+                return typeVariableName.asString();
+            }
+            return typeVariableName + " " + StringUtil.join(typeBounds.getBounds(), renderBound, ", ");
         }
     };
 

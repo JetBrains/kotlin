@@ -1,4 +1,4 @@
-fun foo<T, P, Q, R, S>() = 42
+fun foo<T, P: T>() = 42
 
 trait A
 trait B : A

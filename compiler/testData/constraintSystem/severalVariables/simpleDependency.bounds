@@ -1,0 +1,20 @@
+VARIABLES T P
+
+SUBTYPE T Int
+
+type parameter bounds:
+T <: jet.Int(SPECIAL)
+P <: ???(TYPE_BOUND_POSITION(1)), <: jet.Int(COMPOUND_CONSTRAINT_POSITION)
+status:
+-hasConflictingConstraints: false
+-hasContradiction: false
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasUnknownParameters: false
+-hasViolatedUpperBound: false
+-isSuccessful: true
+
+result:
+T=jet.Int
+P=jet.Int
+

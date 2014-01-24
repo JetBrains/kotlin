@@ -46,15 +46,16 @@ import java.util.Collections
 import com.intellij.openapi.project.Project
 import java.util.HashMap
 import java.util.regex.Pattern
-import org.jetbrains.jet.resolve.constraintSystem.ConstraintSystemTest.MyConstraintKind
-import org.jetbrains.jet.resolve.constraintSystem.ConstraintSystemTest.MyConstraint
+import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraintKind
+import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraint
 import java.util.ArrayList
 import kotlin.test.assertEquals
 import org.junit.Assert
+import java.util.LinkedHashMap
 
-public class ConstraintSystemTest() : JetLiteFixture() {
-
-    val constraintPattern = Pattern.compile("(SUBTYPE|SUPERTYPE|EQUALITY)\\s+(\\w+)\\s+(\\w+)", Pattern.MULTILINE)
+abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
+    private val typePattern = """([\w|<|>|\(|\)]+)"""
+    val constraintPattern = Pattern.compile("""(SUBTYPE|SUPERTYPE|EQUALITY)\s+${typePattern}\s+${typePattern}\s+(!)?""", Pattern.MULTILINE)
     val variablesPattern = Pattern.compile("VARIABLES\\s+(.*)")
 
     private var builtIns: KotlinBuiltIns? = null
@@ -92,10 +93,6 @@ public class ConstraintSystemTest() : JetLiteFixture() {
         return MyDeclarations(bindingContext, getProject(), typeResolver!!)
     }
 
-    public fun testSimpleSuccessful() {
-        doTest("compiler/testData/constraintSystem/simpleSuccessful.bounds")
-    }
-
     public fun doTest(filePath: String) {
         val file = File(filePath)
         val fileText = JetTestUtils.doLoadFile(file)!!
@@ -103,7 +100,7 @@ public class ConstraintSystemTest() : JetLiteFixture() {
         val constraintSystem = ConstraintSystemImpl()
         val myDeclarations = analyzeDeclarations()
 
-        val typeParameterDescriptors = HashMap<TypeParameterDescriptor, Variance>()
+        val typeParameterDescriptors = LinkedHashMap<TypeParameterDescriptor, Variance>()
         val variables = parseVariables(fileText)
         for (variable in variables) {
             typeParameterDescriptors.put(myDeclarations.getParameterDescriptor(variable), Variance.INVARIANT)
@@ -120,20 +117,18 @@ public class ConstraintSystemTest() : JetLiteFixture() {
                 MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, position)
             }
         }
+        constraintSystem.processDeclaredBoundConstraints()
 
-        val expectedStatus = parseStatus(fileText)
         val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM.render(constraintSystem)
-        Assert.assertEquals("Constraint system status mismatch", expectedStatus, resultingStatus)
 
         val resultingSubstitutor = constraintSystem.getResultingSubstitutor()
         val result = StringBuilder() append "result:\n"
         for ((typeParameter, variance) in typeParameterDescriptors) {
             val resultForTypeParameter = resultingSubstitutor.substitute(myDeclarations.getType(typeParameter.getName().asString()), variance)
-            result append "${typeParameter.getName()}=${resultForTypeParameter}"
+            result append "${typeParameter.getName()}=${resultForTypeParameter?.let{ Renderers.RENDER_TYPE.render(it) }}\n"
         }
 
-        val expectedResult = parseResult(fileText)
-        Assert.assertEquals("Constraint system substitution mismatch", expectedResult, result.toString())
+        JetTestUtils.assertEqualsToFile(file, "${getConstraintsText(fileText)}${resultingStatus}\n\n${result}\n")
     }
 
     class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String, val isWeak: Boolean)
@@ -164,9 +159,7 @@ public class ConstraintSystemTest() : JetLiteFixture() {
         return constraints
     }
 
-    private fun parseStatus(text: String) = text.substring(text.indexOf("type parameter bounds"), text.indexOf("result")).trim()
-
-    private fun parseResult(text: String) = text.substring(text.indexOf("result"), text.length())
+    private fun getConstraintsText(text: String) = text.substring(0, text.indexOf("type parameter bounds"))
 }
 
 

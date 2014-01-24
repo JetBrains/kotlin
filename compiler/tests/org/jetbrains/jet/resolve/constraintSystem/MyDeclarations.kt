@@ -44,6 +44,9 @@ import java.io.File
 import java.io.IOException
 import java.util.Collections
 import com.intellij.openapi.project.Project
+import java.util.regex.Pattern
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor
+import org.jetbrains.jet.lang.types.JetTypeImpl
 
 public class MyDeclarations(
         private val context: BindingContext,
@@ -70,7 +73,16 @@ public class MyDeclarations(
         throw AssertionError("Unsupported type parameter name: " + name + ".")
     }
 
-    fun getType(name: String) = typeResolver.resolveType(
+    fun getType(name: String): JetType {
+        val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
+        if (matcher.find()) {
+            val number = matcher.group(1)!!
+            return JetTypeImpl(IntegerValueTypeConstructor(number.toLong()), JetScope.EMPTY)
+        }
+        return typeResolver.resolveType(
             scopeToResolveTypeParameters, JetPsiFactory.createType(project, name),
             JetTestUtils.DUMMY_TRACE, true)
+    }
 }
+
+private val INTEGER_VALUE_TYPE_PATTERN = Pattern.compile("""IntegerValueType\((\d*)\)""")
