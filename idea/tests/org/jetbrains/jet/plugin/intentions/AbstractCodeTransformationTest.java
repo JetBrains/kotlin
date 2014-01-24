@@ -110,6 +110,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new RemoveUnnecessaryParenthesesIntention());
     }
 
+    public void doTestReplaceGetWithBrackets(@NotNull String path) throws Exception {
+        doTestIntention(path, new ReplaceGetWithBracketsIntention());
+    }
+
     public void doTestConvertMemberToExtension(@NotNull String path) throws Exception {
         doTestIntention(path, new ConvertMemberToExtension());
     }
