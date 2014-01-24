@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 
@@ -51,18 +52,21 @@ import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisitor {
+    private final StorageManager storageManager;
     private final WritableScope scope;
     private final BasicExpressionTypingVisitor basic;
     private final ControlStructureTypingVisitor controlStructures;
     private final PatternMatchingTypingVisitor patterns;
 
     public ExpressionTypingVisitorForStatements(
+            @NotNull StorageManager storageManager,
             @NotNull ExpressionTypingInternals facade,
             @NotNull WritableScope scope,
             BasicExpressionTypingVisitor basic,
             @NotNull ControlStructureTypingVisitor controlStructures,
             @NotNull PatternMatchingTypingVisitor patterns) {
         super(facade);
+        this.storageManager = storageManager;
         this.scope = scope;
         this.basic = basic;
         this.controlStructures = controlStructures;
@@ -86,6 +90,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
+                storageManager,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration);
         return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);
     }
@@ -180,6 +185,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitClass(@NotNull JetClass klass, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
+                storageManager,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass);
         return DataFlowUtils.checkStatementType(klass, context, context.dataFlowInfo);
     }

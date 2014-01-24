@@ -27,11 +27,13 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Map;
 
 public interface BodiesResolveContext {
+    StorageManager getStorageManager();
     Collection<JetFile> getFiles();
     Map<JetClassOrObject, MutableClassDescriptor> getClasses();
     Map<JetProperty, PropertyDescriptor> getProperties();

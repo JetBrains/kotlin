@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +54,7 @@ public class LazyResolveTestUtil {
         JetTestUtils.newTrace(environment);
 
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
-                Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
+                new LockBasedStorageManager(), Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
         BindingTrace sharedTrace = support.getTrace();
         ModuleDescriptorImpl sharedModule = support.getModule();

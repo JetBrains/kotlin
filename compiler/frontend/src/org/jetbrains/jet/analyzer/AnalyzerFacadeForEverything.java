@@ -38,7 +38,7 @@ public class AnalyzerFacadeForEverything {
             @NotNull ModuleDescriptor module) {
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                filesToAnalyzeCompletely, false, false, scriptParameters);
+                bodiesResolveContext.getStorageManager(), filesToAnalyzeCompletely, false, false, scriptParameters);
 
         bodiesResolveContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
 

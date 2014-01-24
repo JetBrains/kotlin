@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
@@ -42,6 +43,7 @@ public class InjectorForTests {
     private final TypeResolver typeResolver;
     private final CallResolver callResolver;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
+    private final LockBasedStorageManager lockBasedStorageManager;
     private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
@@ -58,12 +60,13 @@ public class InjectorForTests {
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.descriptorResolver = new DescriptorResolver();
-        this.expressionTypingServices = new ExpressionTypingServices();
+        this.lockBasedStorageManager = new LockBasedStorageManager();
+        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.expressionTypingServices = new ExpressionTypingServices(lockBasedStorageManager, platformToKotlinClassMap);
         this.typeResolver = new TypeResolver();
         this.callResolver = new CallResolver();
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
-        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
         this.annotationResolver = new AnnotationResolver();
@@ -76,6 +79,7 @@ public class InjectorForTests {
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
         this.descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
+        this.descriptorResolver.setStorageManager(lockBasedStorageManager);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
         this.expressionTypingServices.setAnnotationResolver(annotationResolver);
@@ -83,7 +87,6 @@ public class InjectorForTests {
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
         this.expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
-        this.expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 

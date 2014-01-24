@@ -48,6 +48,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
         return new ExpressionTypingVisitorDispatcher(storageManager, platformToKotlinClassMap, writableScope);
     }
 
+    private final StorageManager storageManager;
     private final BasicExpressionTypingVisitor basic;
     private final ExpressionTypingVisitorForStatements statements;
     private final ClosureExpressionsTypingVisitor closures;
@@ -55,14 +56,15 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     private final PatternMatchingTypingVisitor patterns = new PatternMatchingTypingVisitor(this);
 
     private ExpressionTypingVisitorDispatcher(StorageManager storageManager, PlatformToKotlinClassMap platformToKotlinClassMap, WritableScope writableScope) {
+        this.storageManager = storageManager;
         this.basic = new BasicExpressionTypingVisitor(this, platformToKotlinClassMap);
         if (writableScope != null) {
-            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns);
+            this.statements = new ExpressionTypingVisitorForStatements(storageManager, this, writableScope, basic, controlStructures, patterns);
         }
         else {
             this.statements = null;
         }
-        closures = new ClosureExpressionsTypingVisitor(this, storageManager);
+        this.closures = new ClosureExpressionsTypingVisitor(this, storageManager);
     }
 
     @NotNull
@@ -98,7 +100,9 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
     
     private ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
-        return new ExpressionTypingVisitorForStatements(this, ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"), basic, controlStructures, patterns);
+        return new ExpressionTypingVisitorForStatements(storageManager, this,
+                                                        ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"),
+                                                        basic, controlStructures, patterns);
     }
 
     @Override

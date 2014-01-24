@@ -26,7 +26,6 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.di.DependencyInjectorGenerator;
 import org.jetbrains.jet.di.GivenExpression;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
-import org.jetbrains.jet.di.InstantiateType;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
@@ -98,6 +97,7 @@ public class GenerateInjectors {
         generator.addPublicField(JetImportsFactory.class);
         generator.addField(CallResolverExtensionProvider.class);
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"));
+        generator.addField(false, StorageManager.class, null, new GivenExpression("resolveSession.getStorageManager()"));
         generator.configure("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyResolve", GenerateInjectors.class);
         return generator;
     }
@@ -179,7 +179,7 @@ public class GenerateInjectors {
         generator.addPublicField(ControlFlowAnalyzer.class);
         generator.addPublicField(DeclarationsChecker.class);
         generator.addPublicField(DescriptorResolver.class);
-        generator.addField(false, StorageManager.class, null, new InstantiateType(LockBasedStorageManager.class));
+        generator.addField(false, StorageManager.class, null, new GivenExpression("topDownAnalysisParameters.getStorageManager()"));
         generator.addField(CallResolverExtensionProvider.class);
 
         // Parameters
@@ -196,6 +196,7 @@ public class GenerateInjectors {
         // Fields
         generator.addPublicField(ExpressionTypingServices.class);
         generator.addField(CallResolverExtensionProvider.class);
+        generator.addField(LockBasedStorageManager.class);
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"));
 
         // Parameters
@@ -215,6 +216,7 @@ public class GenerateInjectors {
         generator.addPublicField(TypeResolver.class);
         generator.addPublicField(CallResolver.class);
         generator.addField(CallResolverExtensionProvider.class);
+        generator.addField(LockBasedStorageManager.class);
         generator.addField(true, KotlinBuiltIns.class, null, new GivenExpression("KotlinBuiltIns.getInstance()"));
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"));
 
@@ -256,6 +258,7 @@ public class GenerateInjectors {
         generator.addField(CallResolverExtensionProvider.class);
         generator.addField(false, PlatformToKotlinClassMap.class, null, new GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"));
         generator.addField(FunctionAnalyzerExtension.class);
+        generator.addField(false, StorageManager.class, null, new GivenExpression("topDownAnalysisParameters.getStorageManager()"));
 
         // Parameters
         generator.addPublicParameter(Project.class);

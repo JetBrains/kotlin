@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
@@ -84,6 +85,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             @Override
             public void run() {
                 TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                        new LockBasedStorageManager(),
                         Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
                 ModuleDescriptorImpl module = new ModuleDescriptorImpl(
                         Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);

@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -158,6 +159,7 @@ public class TopDownAnalyzer {
     }
 
     public static void processClassOrObject(
+            @NotNull StorageManager storageManager,
             @Nullable final WritableScope scope,
             @NotNull ExpressionTypingContext context,
             @NotNull final DeclarationDescriptor containingDeclaration,
@@ -168,7 +170,7 @@ public class TopDownAnalyzer {
                                                                          PlatformToKotlinClassMap.EMPTY);
 
         TopDownAnalysisParameters topDownAnalysisParameters =
-                new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()),
+                new TopDownAnalysisParameters(storageManager, Predicates.equalTo(object.getContainingFile()),
                 false, true, Collections.<AnalyzerScriptParameter>emptyList());
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(

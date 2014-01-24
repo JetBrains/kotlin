@@ -137,12 +137,6 @@ public class ExpressionTypingServices {
         this.annotationResolver = annotationResolver;
     }
 
-    @Inject
-    public void setPlatformToKotlinClassMap(@NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-        this.platformToKotlinClassMap = platformToKotlinClassMap;
-        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(storageManager, platformToKotlinClassMap);
-    }
-
     @NotNull
     public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
         return platformToKotlinClassMap;
@@ -153,9 +147,13 @@ public class ExpressionTypingServices {
         this.extensionProvider = extensionProvider;
     }
 
-    @Inject
-    public void setStorageManager(@NotNull StorageManager storageManager) {
+    public ExpressionTypingServices(
+            @NotNull StorageManager storageManager,
+            @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
+    ) {
         this.storageManager = storageManager;
+        this.platformToKotlinClassMap = platformToKotlinClassMap;
+        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(storageManager, platformToKotlinClassMap);
     }
 
     @NotNull

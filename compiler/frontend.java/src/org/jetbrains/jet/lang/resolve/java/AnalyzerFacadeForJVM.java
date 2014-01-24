@@ -40,6 +40,7 @@ import org.jetbrains.jet.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -200,7 +201,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             ModuleDescriptorImpl module
     ) {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                filesToAnalyzeCompletely, false, false, scriptParameters);
+                new LockBasedStorageManager(), filesToAnalyzeCompletely, false, false, scriptParameters);
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         try {

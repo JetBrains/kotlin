@@ -18,6 +18,7 @@ package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -38,6 +39,7 @@ public class InjectorForMacros {
     
     private final ExpressionTypingServices expressionTypingServices;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
+    private final LockBasedStorageManager lockBasedStorageManager;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
@@ -55,9 +57,10 @@ public class InjectorForMacros {
         @NotNull Project project,
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
-        this.expressionTypingServices = new ExpressionTypingServices();
-        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
+        this.lockBasedStorageManager = new LockBasedStorageManager();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.expressionTypingServices = new ExpressionTypingServices(lockBasedStorageManager, platformToKotlinClassMap);
+        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
         this.annotationResolver = new AnnotationResolver();
@@ -75,7 +78,6 @@ public class InjectorForMacros {
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
         this.expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
-        this.expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 
@@ -101,6 +103,7 @@ public class InjectorForMacros {
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
+        descriptorResolver.setStorageManager(lockBasedStorageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);

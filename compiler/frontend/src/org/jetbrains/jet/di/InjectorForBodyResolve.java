@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
+import org.jetbrains.jet.storage.StorageManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -49,6 +50,7 @@ public class InjectorForBodyResolve {
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final FunctionAnalyzerExtension functionAnalyzerExtension;
+    private final StorageManager storageManager;
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
@@ -80,6 +82,7 @@ public class InjectorForBodyResolve {
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
+        this.storageManager = topDownAnalysisParameters.getStorageManager();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
@@ -88,7 +91,7 @@ public class InjectorForBodyResolve {
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices();
+        this.expressionTypingServices = new ExpressionTypingServices(storageManager, platformToKotlinClassMap);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
@@ -130,7 +133,6 @@ public class InjectorForBodyResolve {
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
         expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
-        expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
@@ -139,6 +141,7 @@ public class InjectorForBodyResolve {
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
+        descriptorResolver.setStorageManager(storageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
