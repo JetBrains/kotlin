@@ -1,0 +1,9 @@
+package test;
+
+class A {
+    void bar() {
+        TestPackage.foo(
+                "", 10
+        );
+    }
+}
