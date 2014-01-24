@@ -466,11 +466,9 @@ public class CallExpressionResolver {
         }
 
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
-        if (Boolean.TRUE.equals(context.trace.get(BindingContext.IS_PURE_CONSTANT_EXPRESSION, expression))) {
-            if (value != null) {
+            if (value != null && value.isPure()) {
                 return BasicExpressionTypingVisitor.createCompileTimeConstantTypeInfo(value, expression, context);
             }
-        }
 
         JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
         if (context.contextDependency == INDEPENDENT) {

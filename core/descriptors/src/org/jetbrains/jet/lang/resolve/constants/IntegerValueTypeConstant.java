@@ -31,7 +31,7 @@ public class IntegerValueTypeConstant extends CompileTimeConstant<Number> {
     private final IntegerValueTypeConstructor typeConstructor;
 
     public IntegerValueTypeConstant(@NotNull Number value, boolean canBeUsedInAnnotations) {
-        super(value, canBeUsedInAnnotations);
+        super(value, canBeUsedInAnnotations, true);
         this.typeConstructor = new IntegerValueTypeConstructor(value.longValue());
     }
 

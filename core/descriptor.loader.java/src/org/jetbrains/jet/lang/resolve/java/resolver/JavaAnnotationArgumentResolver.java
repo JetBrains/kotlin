@@ -172,30 +172,30 @@ public final class JavaAnnotationArgumentResolver {
             return new StringValue((String) value, canBeUseInAnnotation);
         }
         else if (value instanceof Byte) {
-            return new ByteValue((Byte) value, canBeUseInAnnotation);
+            return new ByteValue((Byte) value, canBeUseInAnnotation, false);
         }
         else if (value instanceof Short) {
-            return new ShortValue((Short) value, canBeUseInAnnotation);
+            return new ShortValue((Short) value, canBeUseInAnnotation, false);
         }
         else if (value instanceof Character) {
-            return new CharValue((Character) value, canBeUseInAnnotation);
+            return new CharValue((Character) value, canBeUseInAnnotation, false);
         }
         else if (value instanceof Integer) {
             KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
             Integer integer = (Integer) value;
             if (builtIns.getShortType().equals(expectedType)) {
-                return new ShortValue(integer.shortValue(), canBeUseInAnnotation);
+                return new ShortValue(integer.shortValue(), canBeUseInAnnotation, false);
             }
             else if (builtIns.getByteType().equals(expectedType)) {
-                return new ByteValue(integer.byteValue(), canBeUseInAnnotation);
+                return new ByteValue(integer.byteValue(), canBeUseInAnnotation, false);
             }
             else if (builtIns.getCharType().equals(expectedType)) {
-                return new CharValue((char) integer.intValue(), canBeUseInAnnotation);
+                return new CharValue((char) integer.intValue(), canBeUseInAnnotation, false);
             }
-            return new IntValue(integer, canBeUseInAnnotation);
+            return new IntValue(integer, canBeUseInAnnotation, false);
         }
         else if (value instanceof Long) {
-            return new LongValue((Long) value, canBeUseInAnnotation);
+            return new LongValue((Long) value, canBeUseInAnnotation, false);
         }
         else if (value instanceof Float) {
             return new FloatValue((Float) value, canBeUseInAnnotation);

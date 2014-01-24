@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.types.JetType;
 public class FloatValue extends CompileTimeConstant<Float> {
 
     public FloatValue(float value, boolean canBeUsedInAnnotations) {
-        super(value, canBeUsedInAnnotations);
+        super(value, canBeUsedInAnnotations, false);
     }
 
     @NotNull

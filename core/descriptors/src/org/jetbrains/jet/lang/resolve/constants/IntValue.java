@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class IntValue extends CompileTimeConstant<Integer> {
 
-    public IntValue(int value, boolean canBeUsedInAnnotations) {
-        super(value, canBeUsedInAnnotations);
+    public IntValue(int value, boolean canBeUsedInAnnotations, boolean pure) {
+        super(value, canBeUsedInAnnotations, pure);
     }
 
     @NotNull

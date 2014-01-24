@@ -54,8 +54,8 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
     fun doIsPureTest(path: String) {
         doTest(path) {
             property, context ->
-            val isPureKey = context.get(BindingContext.IS_PURE_CONSTANT_EXPRESSION, property.getInitializer())
-            isPureKey.toString()
+            val compileTimeConstant = context.get(BindingContext.COMPILE_TIME_VALUE, property.getInitializer())
+            compileTimeConstant?.isPure().toString()
         }
     }
 

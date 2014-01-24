@@ -75,7 +75,6 @@ public interface BindingContext {
     WritableSlice<JetAnnotationEntry, AnnotationDescriptorImpl> ANNOTATION =
             Slices.<JetAnnotationEntry, AnnotationDescriptorImpl>sliceBuilder().setOpposite(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT).build();
 
-    WritableSlice<JetExpression, Boolean> IS_PURE_CONSTANT_EXPRESSION = Slices.createSimpleSlice();
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
     WritableSlice<VariableDescriptor, CompileTimeConstant<?>> COMPILE_TIME_INITIALIZER = Slices.createSimpleSlice();
 

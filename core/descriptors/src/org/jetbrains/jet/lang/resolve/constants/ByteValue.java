@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class ByteValue extends CompileTimeConstant<Byte> {
 
-    public ByteValue(byte value, boolean canBeUsedInAnnotations) {
-        super(value, canBeUsedInAnnotations);
+    public ByteValue(byte value, boolean canBeUsedInAnnotations, boolean pure) {
+        super(value, canBeUsedInAnnotations, pure);
     }
 
     @NotNull

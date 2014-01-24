@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class ShortValue extends CompileTimeConstant<Short> {
 
-    public ShortValue(short value, boolean canBeUsedInAnnotations) {
-        super(value, canBeUsedInAnnotations);
+    public ShortValue(short value, boolean canBeUsedInAnnotations, boolean pure) {
+        super(value, canBeUsedInAnnotations, pure);
     }
 
     @NotNull
