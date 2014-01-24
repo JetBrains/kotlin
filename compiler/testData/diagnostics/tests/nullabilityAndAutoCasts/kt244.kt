@@ -16,7 +16,7 @@ class A(a: String?) {
     val b = if (a != null) <!DEBUG_INFO_AUTOCAST!>a<!>.length else 1
     {
         if (a != null) {
-            val c = <!DEBUG_INFO_AUTOCAST!>a<!>.length
+            val <!UNUSED_VARIABLE!>c<!> = <!DEBUG_INFO_AUTOCAST!>a<!>.length
         }
     }
 

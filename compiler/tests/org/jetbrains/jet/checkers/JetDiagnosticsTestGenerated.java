@@ -1618,6 +1618,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt3501.kt");
             }
             
+            @TestMetadata("kt4405.kt")
+            public void testKt4405() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt4405.kt");
+            }
+            
             @TestMetadata("kt510.kt")
             public void testKt510() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt510.kt");

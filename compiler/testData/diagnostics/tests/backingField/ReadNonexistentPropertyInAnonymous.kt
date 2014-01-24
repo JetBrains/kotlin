@@ -1,5 +1,5 @@
 class Cl() {
     {
-        val x = <!UNRESOLVED_REFERENCE!>$a<!>
+        val <!UNUSED_VARIABLE!>x<!> = <!UNRESOLVED_REFERENCE!>$a<!>
     }
 }

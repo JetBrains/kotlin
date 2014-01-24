@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -59,8 +60,6 @@ public class ControlFlowAnalyzer {
             JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
-            assert expectedReturnType != null
-                    : "functionDescriptor is not yet fully initialized or broken so return type is null " + functionDescriptor;
             checkFunction(function, expectedReturnType);
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
@@ -75,11 +74,11 @@ public class ControlFlowAnalyzer {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetElement) declarationContainer, trace);
-        flowInformationProvider.recordInitializedVariables();
-
-        if (topDownAnalysisParameters.isDeclaredLocally()) return;
-
-        flowInformationProvider.markUninitializedVariables();
+        if (topDownAnalysisParameters.isDeclaredLocally()) {
+            flowInformationProvider.checkForLocalClassOrObjectMode();
+            return;
+        }
+        flowInformationProvider.checkDeclaration();
     }
 
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
@@ -89,15 +88,19 @@ public class ControlFlowAnalyzer {
                                                             : propertyDescriptor.getSetter();
             assert accessorDescriptor != null : "no property accessor descriptor " + accessor.getText();
             JetType returnType = accessorDescriptor.getReturnType();
-            assert returnType != null : "property accessor has no return type " + accessorDescriptor;
             checkFunction(accessor, returnType);
         }
     }
 
-    private void checkFunction(@NotNull JetDeclarationWithBody function, @NotNull JetType expectedReturnType) {
+    private void checkFunction(@NotNull JetDeclarationWithBody function, @Nullable JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
-        flowInformationProvider.checkFunction(function, expectedReturnType, topDownAnalysisParameters.isDeclaredLocally());
+        if (topDownAnalysisParameters.isDeclaredLocally()) {
+            flowInformationProvider.checkForLocalClassOrObjectMode();
+            return;
+        }
+        flowInformationProvider.checkDeclaration();
+        flowInformationProvider.checkFunction(expectedReturnType);
     }
 }

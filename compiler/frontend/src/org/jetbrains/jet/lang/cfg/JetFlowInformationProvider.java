@@ -91,23 +91,29 @@ public class JetFlowInformationProvider {
         return pseudocodeVariablesData;
     }
 
-    public void checkFunction(
-            @NotNull JetDeclarationWithBody function,
-            @NotNull JetType expectedReturnType,
-            boolean isLocalObject
-    ) {
+    public void checkForLocalClassOrObjectMode() {
+        // Local classes and objects are analyzed twice: when TopDownAnalyzer processes it and as a part of its container.
+        // Almost all checks can be done when the container is analyzed
+        // except recording initialized variables (this information is needed for DeclarationChecker).
+        recordInitializedVariables();
+    }
+
+    public void checkDeclaration() {
+
         recordInitializedVariables();
 
-        checkDefiniteReturn(expectedReturnType);
         checkLocalFunctions();
-
-        if (isLocalObject) return;
 
         markUninitializedVariables();
 
         markUnusedVariables();
 
         markUnusedLiteralsInBlock();
+    }
+
+    public void checkFunction(@Nullable JetType expectedReturnType) {
+
+        checkDefiniteReturn(expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE);
 
         markTailCalls();
     }
@@ -175,16 +181,17 @@ public class JetFlowInformationProvider {
     private void checkLocalFunctions() {
         for (LocalFunctionDeclarationInstruction localDeclarationInstruction : pseudocode.getLocalDeclarations()) {
             JetElement element = localDeclarationInstruction.getElement();
-            if (element instanceof JetNamedFunction) {
-                JetNamedFunction localFunction = (JetNamedFunction) element;
-                SimpleFunctionDescriptor functionDescriptor = trace.getBindingContext().get(BindingContext.FUNCTION, localFunction);
+            if (element instanceof JetDeclarationWithBody) {
+                JetDeclarationWithBody localDeclaration = (JetDeclarationWithBody) element;
+                if (localDeclaration instanceof JetFunctionLiteral) continue;
+                CallableDescriptor functionDescriptor =
+                        (CallableDescriptor) trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, localDeclaration);
                 JetType expectedType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
 
                 JetFlowInformationProvider providerForLocalDeclaration =
-                        new JetFlowInformationProvider(localFunction, trace, localDeclarationInstruction.getBody());
+                        new JetFlowInformationProvider(localDeclaration, trace, localDeclarationInstruction.getBody());
 
-                providerForLocalDeclaration.checkDefiniteReturn(expectedType != null ? expectedType : NO_EXPECTED_TYPE);
-                providerForLocalDeclaration.markTailCalls();
+                providerForLocalDeclaration.checkFunction(expectedType);
             }
         }
     }
