@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.util.Iterator;
@@ -73,6 +74,8 @@ public class ExpressionTypingServices {
     private PlatformToKotlinClassMap platformToKotlinClassMap;
     @NotNull
     private CallResolverExtensionProvider extensionProvider;
+    @NotNull
+    private StorageManager storageManager;
 
     @NotNull
     public Project getProject() {
@@ -137,7 +140,7 @@ public class ExpressionTypingServices {
     @Inject
     public void setPlatformToKotlinClassMap(@NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
         this.platformToKotlinClassMap = platformToKotlinClassMap;
-        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(platformToKotlinClassMap);
+        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(storageManager, platformToKotlinClassMap);
     }
 
     @NotNull
@@ -148,6 +151,11 @@ public class ExpressionTypingServices {
     @Inject
     public void setExtensionProvider(@NotNull CallResolverExtensionProvider extensionProvider) {
         this.extensionProvider = extensionProvider;
+    }
+
+    @Inject
+    public void setStorageManager(@NotNull StorageManager storageManager) {
+        this.storageManager = storageManager;
     }
 
     @NotNull
@@ -276,7 +284,7 @@ public class ExpressionTypingServices {
             return JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
         }
 
-        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(platformToKotlinClassMap, scope);
+        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(storageManager, platformToKotlinClassMap, scope);
         ExpressionTypingContext newContext = createContext(context, trace, scope, context.dataFlowInfo, NO_EXPECTED_TYPE);
 
         JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
@@ -300,7 +308,7 @@ public class ExpressionTypingServices {
             if (newDataFlowInfo != context.dataFlowInfo) {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
             }
-            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(platformToKotlinClassMap, scope);
+            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(storageManager, platformToKotlinClassMap, scope);
         }
         return result;
     }

@@ -17,12 +17,13 @@
 package org.jetbrains.jet.lang.types;
 
 import jet.Function0;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
@@ -31,20 +32,52 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DEFERRED_TYPE;
 
 public class DeferredType implements LazyType {
-    
-    public static DeferredType create(BindingTrace trace, NotNullLazyValue<JetType> lazyValue) {
-        DeferredType deferredType = new DeferredType(lazyValue);
+
+    private static final Function1 EMPTY_CONSUMER = new Function1<Object, Void>() {
+        @Override
+        public Void invoke(Object t) {
+            return null;
+        }
+    };
+
+    private static final Function1<Boolean,JetType> RECURSION_PREVENTER = new Function1<Boolean, JetType>() {
+        @Override
+        public JetType invoke(Boolean firstTime) {
+            if (firstTime) throw new ReenteringLazyValueComputationException();
+            return ErrorUtils.createErrorType("Recursive dependency");
+        }
+    };
+
+    @NotNull
+    public static DeferredType create(
+            @NotNull StorageManager storageManager,
+            @NotNull BindingTrace trace,
+            @NotNull Function0<JetType> compute
+    ) {
+        DeferredType deferredType = new DeferredType(storageManager.createLazyValue(compute));
         trace.record(DEFERRED_TYPE, new Box<DeferredType>(deferredType));
         return deferredType;
     }
     
-    public static DeferredType create(BindingTrace trace, Function0<JetType> compute) {
-        return create(trace, LockBasedStorageManager.NO_LOCKS.createLazyValue(compute));
+    @NotNull
+    public static DeferredType createRecursionIntolerant(
+            @NotNull StorageManager storageManager,
+            @NotNull BindingTrace trace,
+            @NotNull Function0<JetType> compute
+    ) {
+        //noinspection unchecked
+        DeferredType deferredType = new DeferredType(storageManager.createLazyValueWithPostCompute(
+                compute,
+                RECURSION_PREVENTER,
+                EMPTY_CONSUMER
+        ));
+        trace.record(DEFERRED_TYPE, new Box<DeferredType>(deferredType));
+        return deferredType;
     }
 
     private final NotNullLazyValue<JetType> lazyValue;
 
-    private DeferredType(NotNullLazyValue<JetType> lazyValue) {
+    private DeferredType(@NotNull NotNullLazyValue<JetType> lazyValue) {
         this.lazyValue = lazyValue;
     }
 
