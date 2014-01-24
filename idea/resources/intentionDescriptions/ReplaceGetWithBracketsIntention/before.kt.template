@@ -1,0 +1,1 @@
+fun getFirst<T>(list: List<T>) = <spot>list.get(0)</spot>
