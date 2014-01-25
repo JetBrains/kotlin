@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.forTestCompile;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
@@ -25,6 +26,9 @@ import org.jetbrains.jet.utils.Profiler;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Compile kotlin-runtime.jar that can be used in tests
@@ -32,6 +36,8 @@ import java.io.IOException;
  * @see #runtimeJarForTests
  */
 public class ForTestCompileRuntime {
+    private static final String BUILT_INS_SRC_PATH = "core/builtins/src";
+    private static final String RUNTIME_JVM_SRC_PATH = "core/runtime.jvm/src";
 
     private ForTestCompileRuntime() {
     }
@@ -45,31 +51,52 @@ public class ForTestCompileRuntime {
 
         @Override
         protected void doCompile(@NotNull File classesDir) throws Exception {
-            compileJvmBuiltins(classesDir);
+            compileBuiltIns(classesDir);
             compileStdlib(classesDir);
         }
     }
 
+    private static void compileBuiltIns(@NotNull File destDir) throws IOException {
+        String src = BUILT_INS_SRC_PATH + File.pathSeparator + RUNTIME_JVM_SRC_PATH;
+        compileKotlinToJvm("built-ins", destDir, src, src);
+
+        JetTestUtils.compileJavaFiles(
+                ContainerUtil.concat(javaFilesUnder(BUILT_INS_SRC_PATH), javaFilesUnder(RUNTIME_JVM_SRC_PATH)),
+                Arrays.asList(
+                        "-classpath", destDir.getPath(),
+                        "-d", destDir.getPath()
+                )
+        );
+    }
+
+    @NotNull
+    private static List<File> javaFilesUnder(@NotNull String path) {
+        return FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), new File(path));
+    }
+
     private static void compileStdlib(@NotNull File destDir) throws IOException {
-        ExitCode exitCode = new K2JVMCompiler().exec(System.out,
+        compileKotlinToJvm("stdlib", destDir, "libraries/stdlib/src", destDir.getPath());
+    }
+
+    private static void compileKotlinToJvm(
+            @NotNull String debugName,
+            @NotNull File destDir,
+            @NotNull String src,
+            @NotNull String classPath
+    ) {
+        ExitCode exitCode = new K2JVMCompiler().exec(
+                System.out,
                 "-output", destDir.getPath(),
-                "-src", "./libraries/stdlib/src",
+                "-src", src,
                 "-noStdlib",
                 "-noJdkAnnotations",
                 "-suppress", "warnings",
                 "-annotations", "./jdk-annotations",
-                "-classpath", "out/production/builtins" + File.pathSeparator + "out/production/runtime.jvm");
+                "-classpath", classPath
+        );
         if (exitCode != ExitCode.OK) {
-            throw new IllegalStateException("stdlib for test compilation failed: " + exitCode);
+            throw new IllegalStateException("Compilation of " + debugName + " failed: " + exitCode);
         }
-    }
-
-    private static void compileJvmBuiltins(@NotNull File destDir) throws IOException {
-        // Sources of stdlib and built-ins may diverge this way, because the former are compiled with the new compiler and the latter are
-        // just copied from the sources built by bootstrap plugin (which has an old compiler)
-        // TODO: compile Kotlin+Java built-in sources properly here, maybe reusing KotlinCompilerAdapter ant task
-        FileUtil.copyDir(new File("out/production/builtins"), destDir);
-        FileUtil.copyDir(new File("out/production/runtime.jvm"), destDir);
     }
 
     @NotNull
@@ -79,8 +106,14 @@ public class ForTestCompileRuntime {
 
     // This method is very convenient when you have trouble compiling runtime in tests
     public static void main(String[] args) throws IOException {
+        File destDir = JetTestUtils.tmpDir("runtime");
+
+        Profiler builtIns = Profiler.create("compileBuiltIns").start();
+        compileBuiltIns(destDir);
+        builtIns.end();
+
         Profiler stdlib = Profiler.create("compileStdlib").start();
-        compileStdlib(JetTestUtils.tmpDir("runtime"));
+        compileStdlib(destDir);
         stdlib.end();
     }
 
