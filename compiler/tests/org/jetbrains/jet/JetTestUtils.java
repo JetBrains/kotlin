@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -28,6 +29,7 @@ import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
@@ -221,8 +223,17 @@ public class JetTestUtils {
     private JetTestUtils() {
     }
 
+    @NotNull
     public static AnalyzeExhaust analyzeFile(@NotNull JetFile file) {
         return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, Collections.<AnalyzerScriptParameter>emptyList());
+    }
+
+    @NotNull
+    public static AnalyzeExhaust analyzeFileWithoutBody(@NotNull JetFile file) {
+        return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(file.getProject(),
+                                                                    Collections.singleton(file),
+                                                                    Collections.<AnalyzerScriptParameter>emptyList(),
+                                                                    Predicates.<PsiFile>alwaysFalse());
     }
 
     @NotNull

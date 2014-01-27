@@ -117,6 +117,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         return new ResolveSession(project, storageManager, module, declarationProviderFactory, trace);
     }
 
+    @NotNull
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
             JetFile file, List<AnalyzerScriptParameter> scriptParameters) {
         AnalyzingUtils.checkForSyntacticErrors(file);
@@ -128,12 +129,14 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         return analyzeExhaust;
     }
 
+    @NotNull
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(
             JetFile file, List<AnalyzerScriptParameter> scriptParameters) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), scriptParameters,
                                                Predicates.<PsiFile>alwaysTrue());
     }
 
+    @NotNull
     public static AnalyzeExhaust analyzeFilesWithJavaIntegrationAndCheckForErrors(
             Project project,
             Collection<JetFile> files,
@@ -152,6 +155,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         return analyzeExhaust;
     }
 
+    @NotNull
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project,
             Collection<JetFile> files,
@@ -162,6 +166,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                 project, files, scriptParameters, filesToAnalyzeCompletely, false);
     }
 
+    @NotNull
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve) {
@@ -171,6 +176,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                                                storeContextForBodiesResolve);
     }
 
+    @NotNull
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project,
             Collection<JetFile> files,
@@ -183,6 +189,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                                                storeContextForBodiesResolve, createJavaModule("<module>"));
     }
 
+    @NotNull
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project,
             Collection<JetFile> files,
