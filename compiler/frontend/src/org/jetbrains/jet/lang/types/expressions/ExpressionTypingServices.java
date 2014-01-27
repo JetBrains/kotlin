@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -372,13 +371,16 @@ public class ExpressionTypingServices {
             @NotNull List<ValueParameterDescriptor> valueParameterDescriptors,
             @NotNull JetScope declaringScope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull BindingTrace trace
+            @NotNull BindingTrace trace,
+            boolean needCompleteAnalysis
     ) {
         for (int i = 0; i < valueParameters.size(); i++) {
             ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
             JetParameter jetParameter = valueParameters.get(i);
 
             annotationResolver.resolveAnnotationsArguments(declaringScope, jetParameter.getModifierList(), trace);
+
+            if (!needCompleteAnalysis) continue;
 
             resolveDefaultValue(declaringScope, valueParameterDescriptor, jetParameter, dataFlowInfo, trace);
         }
