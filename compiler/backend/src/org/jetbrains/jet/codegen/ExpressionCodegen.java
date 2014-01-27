@@ -1717,6 +1717,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         StackValue value = context.lookupInContext(descriptor, StackValue.local(0, OBJECT_TYPE), state, false);
         if (value != null) {
+            if (context.isSpecialStackValue(value) != null) {
+                return value;
+            }
 
             if (value instanceof StackValue.Composed) {
                 StackValue.Composed composed = (StackValue.Composed) value;

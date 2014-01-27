@@ -212,6 +212,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         MethodContext parentContext = codegen.getContext();
 
         MethodContext context = parentContext.intoClosure(descriptor, codegen, typeMapper).intoFunction(descriptor);
+        context.setInlineClosure(true);
 
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(descriptor);
         Method asmMethod = jvmMethodSignature.getAsmMethod();
@@ -271,7 +272,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         boolean shouldPut = false == (stackValue != null && stackValue instanceof StackValue.Local);
         if (shouldPut) {
             //we could recapture field of anonymous objects cause they couldn't change
-            if ((stackValue instanceof StackValue.Extension || stackValue instanceof StackValue.Field) && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
+            if ((stackValue instanceof StackValue.Composed || stackValue instanceof StackValue.Field) && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
                 if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor)) {
                     //check type of context
                     return false;
