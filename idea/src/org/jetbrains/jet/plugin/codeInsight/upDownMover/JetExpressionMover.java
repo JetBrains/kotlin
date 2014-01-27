@@ -219,6 +219,13 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
     @Nullable
     private static LineRange getExpressionTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
+        if (sibling instanceof JetIfExpression && !down) {
+            JetExpression elseBranch = ((JetIfExpression) sibling).getElse();
+            if (elseBranch instanceof JetBlockExpression) {
+                sibling = elseBranch;
+            }
+        }
+
         PsiElement start = sibling;
         PsiElement end = sibling;
 
