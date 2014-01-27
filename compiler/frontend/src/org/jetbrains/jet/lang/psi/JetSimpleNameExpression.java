@@ -35,10 +35,6 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
         super(node);
     }
 
-    /**
-     * null if it's not a code expression
-     * @return receiver expression
-     */
     @Nullable
     public JetExpression getReceiverExpression() {
         PsiElement parent = getParent();
@@ -55,10 +51,24 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
             parent = callExpression.getParent();
             if (parent instanceof JetQualifiedExpression) {
                 JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
-                return qualifiedExpression.getReceiverExpression();
+                JetExpression parentsReceiver = qualifiedExpression.getReceiverExpression();
+                if (parentsReceiver != callExpression) {
+                    return parentsReceiver;
+                }
             }
         }
-
+        else if (parent instanceof JetBinaryExpression && ((JetBinaryExpression) parent).getOperationReference() == this) {
+            return ((JetBinaryExpression) parent).getLeft();
+        }
+        else if (parent instanceof JetUnaryExpression && ((JetUnaryExpression) parent).getOperationReference() == this) {
+            return ((JetUnaryExpression) parent).getBaseExpression();
+        }
+        else if (parent instanceof JetUserType) {
+            JetUserType qualifier = ((JetUserType) parent).getQualifier();
+            if (qualifier != null) {
+                return qualifier.getReferenceExpression();
+            }
+        }
         return null;
     }
 

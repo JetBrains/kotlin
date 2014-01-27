@@ -292,8 +292,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull GlobalSearchScope searchScope
     ) {
         BindingContext context = resolveSession.resolveToElement(expression);
-        JetExpression receiverExpression = getReceiverForExtensionCall(expression);
-
+        JetExpression receiverExpression = expression.getReceiverExpression();
         if (receiverExpression == null) {
             return Collections.emptyList();
         }
@@ -323,18 +322,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         return resultDescriptors;
-    }
-
-    @Nullable
-    private static JetExpression getReceiverForExtensionCall(@NotNull JetSimpleNameExpression expression) {
-        PsiElement parent = expression.getParent();
-        if (parent instanceof JetBinaryExpression && ((JetBinaryExpression) parent).getOperationReference() == expression) {
-            return ((JetBinaryExpression) parent).getLeft();
-        }
-        else if (parent instanceof JetUnaryExpression && ((JetUnaryExpression) parent).getOperationReference() == expression) {
-            return ((JetUnaryExpression) parent).getBaseExpression();
-        }
-        return expression.getReceiverExpression();
     }
 
     @NotNull
