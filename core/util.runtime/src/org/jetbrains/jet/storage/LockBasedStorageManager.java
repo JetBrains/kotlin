@@ -31,27 +31,36 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LockBasedStorageManager implements StorageManager {
 
-    public static final StorageManager NO_LOCKS = new LockBasedStorageManager(NoLock.INSTANCE) {
+    public static final StorageManager NO_LOCKS = new LockBasedStorageManager("NO_LOCKS", NoLock.INSTANCE) {
         @NotNull
         @Override
         protected <T> RecursionDetectedResult<T> recursionDetectedDefault() {
             return RecursionDetectedResult.fallThrough();
         }
-
-        @Override
-        public String toString() {
-            return "NO_LOCKS";
-        }
     };
 
     protected final Lock lock;
+    private final String debugText;
 
     public LockBasedStorageManager() {
-        this(new ReentrantLock());
+        this(getPointOfConstruction(), new ReentrantLock());
     }
 
-    private LockBasedStorageManager(@NotNull Lock lock) {
+    private static String getPointOfConstruction() {
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+        // we need to skip frames for getStackTrace(), this method and the constructor that's calling it
+        if (trace.length <= 3) return "<unknown creating class>";
+        return trace[3].toString();
+    }
+
+    private LockBasedStorageManager(@NotNull String debugText, @NotNull Lock lock) {
         this.lock = lock;
+        this.debugText = debugText;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " (" + debugText + ')';
     }
 
     @NotNull

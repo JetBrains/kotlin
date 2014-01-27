@@ -426,6 +426,13 @@ public class StorageManagerTest extends TestCase {
         assertEquals(2, c.getCount());
     }
 
+    // toString()
+
+    public void testToString() throws Exception {
+        assertTrue("Should mention the setUp() method of this class: " + m.toString(),
+                   m.toString().contains(getClass().getSimpleName() + ".setUp("));
+    }
+
     // Utilities
 
     private static <K, V> Function0<V> apply(final Function1<K, V> f, final K x) {
