@@ -205,49 +205,45 @@ public class MethodInliner {
 
     @NotNull
     public MethodNode prepareNode(@NotNull MethodNode node) {
-        if (parameters.getCaptured().size() != 0) {
-            final int capturedParamsSize = parameters.getCaptured().size();
-            final int realParametersSize = parameters.getReal().size();
-            Type[] types = Type.getArgumentTypes(node.desc);
-            Type returnType = Type.getReturnType(node.desc);
+        final int capturedParamsSize = parameters.getCaptured().size();
+        final int realParametersSize = parameters.getReal().size();
+        Type[] types = Type.getArgumentTypes(node.desc);
+        Type returnType = Type.getReturnType(node.desc);
 
-            ArrayList<Type> capturedTypes = parameters.getCapturedTypes();
-            Type[] allTypes = ArrayUtil.mergeArrays(types, capturedTypes.toArray(new Type[capturedTypes.size()]));
+        ArrayList<Type> capturedTypes = parameters.getCapturedTypes();
+        Type[] allTypes = ArrayUtil.mergeArrays(types, capturedTypes.toArray(new Type[capturedTypes.size()]));
 
-            MethodNode transformedNode = new MethodNode(node.access, node.name, Type.getMethodDescriptor(returnType, allTypes), node.signature, null) {
+        MethodNode transformedNode = new MethodNode(node.access, node.name, Type.getMethodDescriptor(returnType, allTypes), node.signature, null) {
 
-                @Override
-                public void visitVarInsn(int opcode, int var) {
-                    int newIndex;
-                    if (var < realParametersSize) {
-                        newIndex = var;
-                    } else {
-                        newIndex = var + capturedParamsSize;
-                    }
-                    super.visitVarInsn(opcode, newIndex);
+            @Override
+            public void visitVarInsn(int opcode, int var) {
+                int newIndex;
+                if (var < realParametersSize) {
+                    newIndex = var;
+                } else {
+                    newIndex = var + capturedParamsSize;
                 }
-
-                @Override
-                public void visitIincInsn(int var, int increment) {
-                    int newIndex;
-                    if (var < realParametersSize) {
-                        newIndex = var;
-                    } else {
-                        newIndex = var + capturedParamsSize;
-                    }
-                    super.visitIincInsn(newIndex, increment);
-                }
-            };
-            node.accept(transformedNode);
-            transformedNode.visitMaxs(30, 30);
-
-            if (lambdaInfo != null) {
-                transformCaptured(transformedNode, parameters, lambdaInfo, lambdaFieldRemapper);
+                super.visitVarInsn(opcode, newIndex);
             }
-            return transformedNode;
-        }
 
-        return node;
+            @Override
+            public void visitIincInsn(int var, int increment) {
+                int newIndex;
+                if (var < realParametersSize) {
+                    newIndex = var;
+                } else {
+                    newIndex = var + capturedParamsSize;
+                }
+                super.visitIincInsn(newIndex, increment);
+            }
+        };
+        node.accept(transformedNode);
+        transformedNode.visitMaxs(30, 30);
+
+        if (lambdaInfo != null) {
+            transformCaptured(transformedNode, parameters, lambdaInfo, lambdaFieldRemapper);
+        }
+        return transformedNode;
     }
 
     protected MethodNode markPlacesForInlineAndRemoveInlinable(@NotNull MethodNode node) throws AnalyzerException {
