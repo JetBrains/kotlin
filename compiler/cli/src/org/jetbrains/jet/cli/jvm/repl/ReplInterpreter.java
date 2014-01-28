@@ -43,6 +43,7 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.KotlinCodegenFacade;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -75,9 +76,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
-import static org.jetbrains.jet.lang.descriptors.DependencyKind.BINARIES;
-import static org.jetbrains.jet.lang.descriptors.DependencyKind.BUILT_INS;
-import static org.jetbrains.jet.lang.descriptors.DependencyKind.SOURCES;
+import static org.jetbrains.jet.lang.descriptors.DependencyKind.*;
 
 public class ReplInterpreter {
 
@@ -111,7 +110,7 @@ public class ReplInterpreter {
                 false,
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
-        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
+        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module, MemberFilter.ALWAYS_TRUE);
         topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         module.addFragmentProvider(SOURCES, injector.getTopDownAnalyzer().getPackageFragmentProvider());
         module.addFragmentProvider(BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());

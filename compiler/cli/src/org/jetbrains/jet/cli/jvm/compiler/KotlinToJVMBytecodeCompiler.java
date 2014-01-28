@@ -275,8 +275,8 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS),
                                 Predicates.<PsiFile>alwaysTrue(),
                                 false,
-                                sharedModule
-                        );
+                                sharedModule,
+                                new CliSourcesMemberFilter(environment));
                     }
                 }, environment.getSourceFiles()
         );

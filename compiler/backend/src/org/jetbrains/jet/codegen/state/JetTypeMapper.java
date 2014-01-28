@@ -29,6 +29,7 @@ import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
@@ -126,13 +127,16 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         // It's not a package created for Java class statics
-        JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
-        if (insideModule && file != null) {
-            return PackageCodegen.getPackagePartInternalName(file);
+        if (insideModule) {
+            JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
+            if (file != null) {
+                return PackageCodegen.getPackagePartInternalName(file);
+            }
+            if (descriptor instanceof DeserializedSimpleFunctionDescriptor) {
+                return PackageCodegen.getPackagePartInternalName((DeserializedSimpleFunctionDescriptor) descriptor);
+            }
         }
-        else {
-            return PackageClassUtils.getPackageClassFqName(packageFragment.getFqName()).asString().replace('.', '/');
-        }
+        return PackageClassUtils.getPackageClassFqName(packageFragment.getFqName()).asString().replace('.', '/');
     }
 
     @NotNull

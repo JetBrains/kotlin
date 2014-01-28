@@ -28,6 +28,7 @@ import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.GlobalContextImpl;
+import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
@@ -195,7 +196,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             boolean storeContextForBodiesResolve
     ) {
         return analyzeFilesWithJavaIntegration(project, files, trace, scriptParameters, filesToAnalyzeCompletely,
-                                               storeContextForBodiesResolve, createJavaModule("<module>"));
+                                               storeContextForBodiesResolve, createJavaModule("<module>"), MemberFilter.ALWAYS_TRUE);
     }
 
     @NotNull
@@ -206,11 +207,12 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             List<AnalyzerScriptParameter> scriptParameters,
             Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve,
-            ModuleDescriptorImpl module
+            ModuleDescriptorImpl module,
+            MemberFilter memberFilter
     ) {
         GlobalContext globalContext = ContextPackage.GlobalContext();
         return analyzeFilesWithJavaIntegrationInGlobalContext(project, files, trace, scriptParameters, filesToAnalyzeCompletely,
-                                                              storeContextForBodiesResolve, module, globalContext);
+                                                              storeContextForBodiesResolve, module, globalContext, memberFilter);
     }
 
     @NotNull
@@ -222,7 +224,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             Predicate<PsiFile> filesToAnalyzeCompletely,
             boolean storeContextForBodiesResolve,
             ModuleDescriptorImpl module,
-            GlobalContext globalContext
+            GlobalContext globalContext,
+            MemberFilter memberFilter
     ) {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 globalContext.getStorageManager(),
@@ -233,7 +236,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                 scriptParameters
         );
 
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
+        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module,
+                                                                                         memberFilter);
         try {
             module.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
             TopDownAnalysisContext topDownAnalysisContext = injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files);

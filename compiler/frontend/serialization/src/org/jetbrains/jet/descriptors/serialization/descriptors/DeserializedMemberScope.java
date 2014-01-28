@@ -60,11 +60,11 @@ public abstract class DeserializedMemberScope implements JetScope {
     private final MemoizedFunctionToNotNull<Name, Collection<VariableDescriptor>> properties;
     private final NotNullLazyValue<Collection<DeclarationDescriptor>> allDescriptors;
 
-    public DeserializedMemberScope(
+    protected DeserializedMemberScope(
             @NotNull StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull DescriptorDeserializer deserializer,
-            @NotNull List<ProtoBuf.Callable> membersList
+            @NotNull Collection<ProtoBuf.Callable> membersList
     ) {
         this.containingDeclaration = containingDeclaration;
         this.deserializer = deserializer;

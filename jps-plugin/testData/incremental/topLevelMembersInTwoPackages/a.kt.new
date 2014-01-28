@@ -1,0 +1,9 @@
+package test
+
+fun foo() {
+    bar(4)
+    baz()
+}
+
+fun baz() {
+}

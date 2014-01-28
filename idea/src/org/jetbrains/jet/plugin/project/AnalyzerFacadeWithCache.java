@@ -37,6 +37,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -201,7 +202,8 @@ public final class AnalyzerFacadeWithCache {
                                 Predicates.<PsiFile>alwaysFalse(),
                                 true,
                                 AnalyzerFacadeForJVM.createJavaModule("<module>"),
-                                globalContext
+                                globalContext,
+                                MemberFilter.ALWAYS_TRUE
                         );
             }
 

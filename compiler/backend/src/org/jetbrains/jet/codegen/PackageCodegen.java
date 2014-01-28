@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.io.FileUtil;
@@ -27,23 +29,32 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
+import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
+import org.jetbrains.jet.codegen.context.MethodContext;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragmentScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -52,6 +63,7 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.codegen.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
@@ -62,6 +74,7 @@ public class PackageCodegen extends GenerationStateAware {
     @NotNull
     private final Collection<JetFile> files;
     private final PackageFragmentDescriptor packageFragment;
+    private final PackageFragmentDescriptor compiledPackageFragment;
 
     public PackageCodegen(
             @NotNull ClassBuilderOnDemand v,
@@ -74,8 +87,10 @@ public class PackageCodegen extends GenerationStateAware {
         this.v = v;
         this.files = packageFiles;
         this.packageFragment = getOnlyPackageFragment();
+        this.compiledPackageFragment = getCompiledPackageFragment();
 
-        final PsiFile sourceFile = packageFiles.size() == 1 ? packageFiles.iterator().next().getContainingFile() : null;
+        final PsiFile sourceFile = packageFiles.size() == 1 && getAlreadyCompiledCallables().isEmpty()
+                                   ? packageFiles.iterator().next().getContainingFile() : null;
 
         v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
             @Override
@@ -95,6 +110,69 @@ public class PackageCodegen extends GenerationStateAware {
         });
     }
 
+    @Nullable
+    private PackageFragmentDescriptor getCompiledPackageFragment() {
+        // TODO rewrite it to something more robust when module system is implemented
+        for (PackageFragmentDescriptor anotherFragment : packageFragment.getContainingDeclaration().getPackageFragmentProvider()
+                .getPackageFragments(packageFragment.getFqName())) {
+            if (anotherFragment.getMemberScope() instanceof LazyJavaPackageFragmentScope) {
+                return anotherFragment;
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    private List<CallableMemberDescriptor> getAlreadyCompiledCallables() {
+        List<CallableMemberDescriptor> callables = Lists.newArrayList();
+        if (compiledPackageFragment != null) {
+            for (DeclarationDescriptor member : compiledPackageFragment.getMemberScope().getAllDescriptors()) {
+                if (member instanceof DeserializedSimpleFunctionDescriptor) {
+                    callables.add((DeserializedSimpleFunctionDescriptor) member);
+                }
+            }
+        }
+        return callables;
+    }
+
+    private void generateDelegationsToAlreadyCompiled(Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
+        for (final CallableMemberDescriptor member : getAlreadyCompiledCallables()) {
+            generateCallableMemberTasks.put(member, new Runnable() {
+                @Override
+                public void run() {
+                    DeserializedSimpleFunctionDescriptor deserializedFunction = (DeserializedSimpleFunctionDescriptor) member;
+
+                    FieldOwnerContext context = CodegenContext.STATIC.intoPackageFacade(
+                            Type.getObjectType(getPackagePartInternalName(deserializedFunction)),
+                            compiledPackageFragment);
+
+                    FunctionCodegen fuCo = new FunctionCodegen(
+                            context,
+                            v.getClassBuilder(),
+                            state,
+                            getMemberCodegen(context)
+                    );
+
+                    JvmMethodSignature signature = typeMapper.mapSignature(deserializedFunction, OwnerKind.PACKAGE);
+                    fuCo.generateMethod(null, signature, deserializedFunction,
+                                        new FunctionGenerationStrategy() {
+                                            @Override
+                                            public void generateBody(
+                                                    @NotNull MethodVisitor mv,
+                                                    @NotNull JvmMethodSignature signature,
+                                                    @NotNull MethodContext context,
+                                                    @Nullable MemberCodegen parentCodegen
+                                            ) {
+                                                throw new IllegalStateException("shouldn't be called");
+                                            }
+                                        });
+
+                    v.getClassBuilder().getSerializationBindings().put(METHOD_FOR_FUNCTION, deserializedFunction, signature.getAsmMethod());
+                }
+            });
+        }
+    }
+
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
         List<JvmSerializationBindings> bindings = new ArrayList<JvmSerializationBindings>(files.size() + 1);
         boolean shouldGeneratePackageClass = shouldGeneratePackageClass(files);
@@ -102,9 +180,11 @@ public class PackageCodegen extends GenerationStateAware {
             bindings.add(v.getClassBuilder().getSerializationBindings());
         }
 
+        Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks = new HashMap<CallableMemberDescriptor, Runnable>();
+
         for (JetFile file : files) {
             try {
-                ClassBuilder builder = generate(file);
+                ClassBuilder builder = generate(file, generateCallableMemberTasks);
                 if (builder != null) {
                     bindings.add(builder.getSerializationBindings());
                 }
@@ -121,6 +201,15 @@ public class PackageCodegen extends GenerationStateAware {
                     e.printStackTrace();
                 }
             }
+        }
+
+        if (shouldGeneratePackageClass) {
+            // Shouldn't generate delegations to previously compiled if we compile only "classes" part of a package.
+            generateDelegationsToAlreadyCompiled(generateCallableMemberTasks);
+        }
+
+        for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(generateCallableMemberTasks.keySet())) {
+            generateCallableMemberTasks.get(member).run();
         }
 
         if (shouldGeneratePackageClass) {
@@ -142,7 +231,10 @@ public class PackageCodegen extends GenerationStateAware {
         }
 
         DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(bindings));
-        ProtoBuf.Package packageProto = serializer.packageProto(Collections.singleton(packageFragment)).build();
+        Collection<PackageFragmentDescriptor> packageFragments = compiledPackageFragment == null
+                                                                 ? Collections.singleton(packageFragment)
+                                                                 : Arrays.asList(packageFragment, compiledPackageFragment);
+        ProtoBuf.Package packageProto = serializer.packageProto(packageFragments).build();
 
         if (packageProto.getMemberCount() == 0) return;
 
@@ -160,7 +252,7 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     @Nullable
-    private ClassBuilder generate(@NotNull JetFile file) {
+    private ClassBuilder generate(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         boolean generateSrcClass = false;
         Type packagePartType = getPackagePartType(getPackageClassFqName(packageFragment.getFqName()), file.getVirtualFile());
         PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
@@ -187,22 +279,40 @@ public class PackageCodegen extends GenerationStateAware {
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
-        FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, packageFragment);
-        //TODO: FIX: Default method generated at facade without delegation
-        MemberCodegen memberCodegen = new MemberCodegen(state, null, packageFacade, null) {
+        final FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, packageFragment);
+        
+        final MemberCodegen memberCodegen = getMemberCodegen(packageFacade);
+
+        for (final JetDeclaration declaration : file.getDeclarations()) {
+            if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
+                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+                assert descriptor instanceof CallableMemberDescriptor :
+                        "Expected callable member, was " + descriptor + " for " + declaration.getText();
+                generateCallableMemberTasks.put(
+                        (CallableMemberDescriptor) descriptor,
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                memberCodegen.genFunctionOrProperty(
+                                        packageFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                            }
+                        }
+                );
+            }
+        }
+
+        return builder;
+    }
+
+    //TODO: FIX: Default method generated at facade without delegation
+    private MemberCodegen getMemberCodegen(@NotNull FieldOwnerContext packageFacade) {
+        return new MemberCodegen(state, null, packageFacade, null) {
             @NotNull
             @Override
             public ClassBuilder getBuilder() {
                 return v.getClassBuilder();
             }
         };
-        for (JetDeclaration declaration : file.getDeclarations()) {
-            if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                memberCodegen.genFunctionOrProperty(packageFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
-            }
-        }
-
-        return builder;
     }
 
     @NotNull
@@ -257,9 +367,11 @@ public class PackageCodegen extends GenerationStateAware {
         String srcName = facadeFqName.shortName().asString() + "-" + replaceSpecialSymbols(fileName) + "-" + Integer.toHexString(
                 CodegenUtil.getPathHashCode(file));
 
-        FqName srcFqName = facadeFqName.parent().child(Name.identifier(srcName));
+        return getPackagePartType(facadeFqName, Name.identifier(srcName));
+    }
 
-        return asmTypeByFqNameWithoutInnerClasses(srcFqName);
+    public static Type getPackagePartType(FqName facadeFqName, Name packagePartName) {
+        return asmTypeByFqNameWithoutInnerClasses(facadeFqName.parent().child(packagePartName));
     }
 
     @NotNull
@@ -271,5 +383,18 @@ public class PackageCodegen extends GenerationStateAware {
     public static String getPackagePartInternalName(@NotNull JetFile file) {
         FqName packageFqName = file.getPackageFqName();
         return getPackagePartType(getPackageClassFqName(packageFqName), file.getVirtualFile()).getInternalName();
+    }
+
+    @NotNull
+    public static String getPackagePartInternalName(@NotNull DeserializedSimpleFunctionDescriptor deserializedFunction) {
+        DeclarationDescriptor parent = deserializedFunction.getContainingDeclaration();
+        assert parent instanceof PackageFragmentDescriptor : "parent should be package, but was: " + parent;
+
+        assert deserializedFunction.getFunctionProto().hasExtension(JavaProtoBuf.implClassName)
+                : "implClassName extension is absent for " + deserializedFunction;
+        Name shortName = deserializedFunction.getNameResolver()
+                .getName(deserializedFunction.getFunctionProto().getExtension(JavaProtoBuf.implClassName));
+        FqName packagePartFqName = ((PackageFragmentDescriptor) parent).getFqName().child(shortName);
+        return JvmClassName.byFqNameWithoutInnerClasses(packagePartFqName).getInternalName();
     }
 }

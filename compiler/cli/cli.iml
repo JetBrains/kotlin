@@ -18,6 +18,8 @@
     <orderEntry type="module" module-name="descriptor.loader.java" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend-common" />
+    <orderEntry type="module" module-name="serialization" />
+    <orderEntry type="module" module-name="serialization.java" />
   </component>
 </module>
 
