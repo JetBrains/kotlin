@@ -20,8 +20,6 @@ public class Unit private() {
     fun toString() = "Unit.VALUE"
 
     class object {
-        // TODO: remove suppression after a successful bootstrap
-        suppress("INVISIBLE_MEMBER")
         public val VALUE: Unit = Unit()
     }
 }
