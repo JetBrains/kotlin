@@ -41,6 +41,11 @@ Bar.prototype.test = function (order, dummy /*, args */) {
     Bar.checkOrder(order);
     return dummy === 1 && (arguments.length - 2) === this.size;
 };
+Bar.prototype.test2 = Bar.prototype.test;
+
+function test3(bar, dummy  /*, args */) {
+    return dummy === 1 && (arguments.length - 2) === bar.size;
+}
 
 var obj = {
     test : function (size /*, args */) {

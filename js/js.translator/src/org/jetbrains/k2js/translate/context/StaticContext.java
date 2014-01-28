@@ -505,7 +505,7 @@ public final class StaticContext {
                     return null;
                 }
             };
-            //TODO: hack!
+            //TODO: hack!  it seems like needed, only for Inheritance from native class
             Rule<Boolean> nativeObjectsHaveNoQualifiers = new Rule<Boolean>() {
                 @Override
                 public Boolean apply(@NotNull DeclarationDescriptor descriptor) {

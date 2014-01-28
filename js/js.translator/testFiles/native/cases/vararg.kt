@@ -15,6 +15,12 @@ fun count(vararg a : Int) = paramCount(*a)
 fun anotherCount(vararg a : Int) = anotherParamCount(*a)
 
 native
+fun test3(bar:Bar, dummy: Int, vararg args: Int): Boolean = js.noImpl
+
+native
+fun Bar.test2(order: Int, dummy: Int, vararg args: Int): Boolean = js.noImpl
+
+native
 class Bar(val size: Int, order: Int = 0) {
   fun test(order: Int, dummy: Int, vararg args: Int): Boolean = js.noImpl
   class object {
@@ -31,6 +37,10 @@ object obj {
 fun spreadInMethodCall(size: Int, vararg args: Int) = Bar(size).test(0, 1, *args)
 
 fun spreadInObjectMethodCall(size: Int, vararg args: Int) = obj.test(size, *args)
+
+fun spreadInMethodCallWithReceiver(size: Int, vararg args: Int) = Bar(size).test2(0, 1, *args)
+
+fun spreadInPackageMethodCall(size: Int, vararg args: Int) = test3(Bar(size), 1, *args)
 
 native
 fun testNativeVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = js.noImpl
@@ -78,6 +88,12 @@ fun box(): String {
 
   if (!(spreadInObjectMethodCall(2, 1, 2)))
     return "failed when call method of object using spread operator"
+
+  if (!spreadInMethodCallWithReceiver(2, 1, 2))
+    return "failed when call method using spread operator with receiver"
+
+  if (!spreadInPackageMethodCall(2, 1, 2))
+    return "failed when call package method using spread operator"
 
   if (!(testNativeVarargWithFunLit(1, 2, 3) { args -> args.size == 3 }))
     return "failed when call native function with vararg and fun literal"

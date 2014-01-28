@@ -33,6 +33,7 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils
 import org.jetbrains.k2js.translate.general.Translation
 import org.jetbrains.k2js.translate.utils.PsiUtils
 import com.google.dart.compiler.backend.js.ast.JsLiteral
+import com.google.dart.compiler.backend.js.ast.JsName
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>) : List<JsExpression> {
     if (arguments.isEmpty())
@@ -53,35 +54,41 @@ class DefaultCallCase(callInfo: FunctionCallInfo): FunctionCallCase(callInfo) { 
         return JsInvocation(functionRef, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }
 
+    // TODO: refactor after fix ArgumentsInfo - duplicate code
+    private fun nativeSpreadFunWithThisObjectOrReceiver(argumentsInfo: CallArgumentTranslator.ArgumentsInfo, functionName: JsName): JsExpression {
+        val cachedReceiver = argumentsInfo.getCachedReceiver()!!
+        val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(functionName, cachedReceiver.assignmentExpression()))
+        return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
+    }
+
     override fun FunctionCallInfo.thisObject(): JsExpression {
         if (isNative() && hasSpreadOperator()) {
-            val cachedReceiver = argumentsInfo.getCachedReceiver()!!
-            val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, cachedReceiver.assignmentExpression()))
-            return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
+            return nativeSpreadFunWithThisObjectOrReceiver(argumentsInfo, functionName)
         }
         val functionRef = JsNameRef(functionName, thisObject!!)
         return JsInvocation(functionRef, argumentsInfo.getTranslateArguments())
     }
 
-    // TODO: refactor after fix ArgumentsInfo - duplicate code
     override fun FunctionCallInfo.receiverArgument(): JsExpression {
-        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
         if (isNative() && hasSpreadOperator()) {
-            val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, qualifierForFunction))
-            return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
+            return nativeSpreadFunWithThisObjectOrReceiver(argumentsInfo, functionName)
         }
         if (isNative()) {
             return JsInvocation(JsNameRef(functionName, receiverObject), argumentsInfo.getTranslateArguments())
         }
+        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
         val functionCall = JsNameRef(functionName, qualifierForFunction) // TODO: remake to call
         return JsInvocation(functionCall, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }
     override fun FunctionCallInfo.noReceivers(): JsExpression {
-        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
         if (isNative() && hasSpreadOperator()) {
-            val functionCallRef = Namer.getFunctionCallRef(JsNameRef(functionName, qualifierForFunction))
+            val functionCallRef = Namer.getFunctionApplyRef(JsNameRef(functionName))
             return JsInvocation(functionCallRef, argumentsInfo.getTranslateArguments())
         }
+        if (isNative()) {
+            return JsInvocation(JsNameRef(functionName), argumentsInfo.getTranslateArguments())
+        }
+        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
         val functionCall = JsNameRef(functionName, qualifierForFunction)
         return JsInvocation(functionCall, argumentsInfo.getTranslateArguments())
     }
@@ -121,6 +128,9 @@ class InvokeIntrinsic(callInfo: FunctionCallInfo) : FunctionCallCase(callInfo) {
 
 class ConstructorCallCase(callInfo: FunctionCallInfo) : FunctionCallCase(callInfo) {
     override fun FunctionCallInfo.noReceivers(): JsExpression {
+        if (isNative()) {
+            return JsNew(JsNameRef(functionName), argumentsInfo.getTranslateArguments())
+        }
         return JsNew(context.getQualifiedReference(callableDescriptor), argumentsInfo.getTranslateArguments())
     }
 }
