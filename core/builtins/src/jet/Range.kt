@@ -16,7 +16,7 @@
 
 package jet
 
-public trait Range<in T : Comparable<T>> {
+public trait Range<T : Comparable<T>> {
     public val start: T
 
     public val end: T

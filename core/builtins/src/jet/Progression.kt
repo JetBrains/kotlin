@@ -16,7 +16,7 @@
 
 package jet
 
-public trait Progression<N : Any> : Iterable<N> {
+public trait Progression<out N : Any> : Iterable<N> {
     public val start: N
 
     public val end: N

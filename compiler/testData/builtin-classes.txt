@@ -1567,7 +1567,7 @@ public abstract class Number : jet.Hashable {
     public abstract fun toShort(): jet.Short
 }
 
-public trait Progression</*0*/ N : jet.Any> : jet.Iterable<N> {
+public trait Progression</*0*/ out N : jet.Any> : jet.Iterable<N> {
     public abstract val end: N
         public abstract fun <get-end>(): N
     public abstract val increment: jet.Number
@@ -1588,7 +1588,7 @@ public final class PropertyMetadataImpl : jet.PropertyMetadata {
         public open override /*1*/ fun <get-name>(): jet.String
 }
 
-public trait Range</*0*/ in T : jet.Comparable<T>> {
+public trait Range</*0*/ T : jet.Comparable<T>> {
     public abstract val end: T
         public abstract fun <get-end>(): T
     public abstract val start: T
