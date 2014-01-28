@@ -191,6 +191,10 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         }
 
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
+            // TODO this is a hack: we don't remove
+            if (outputItem.getOutputFile().getName().endsWith("Package.class")) {
+                continue;
+            }
             BuildTarget<?> target = null;
             Collection<File> sourceFiles = outputItem.getSourceFiles();
             if (sourceFiles != null && !sourceFiles.isEmpty()) {
@@ -200,7 +204,8 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 messageCollector.report(EXCEPTION, "KotlinBuilder: outputItem.sourceFiles is null or empty, outputItem = " + outputItem, NO_LOCATION);
             }
 
-            outputConsumer.registerOutputFile(target != null ? target : representativeTarget, outputItem.getOutputFile(), paths(sourceFiles));
+            outputConsumer.registerOutputFile(target != null ? target : representativeTarget, outputItem.getOutputFile(),
+                                              paths(sourceFiles));
         }
 
         // TODO should mark dependencies as dirty, as well
