@@ -1169,7 +1169,7 @@ public class DescriptorResolver {
                 resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)),
                 DescriptorUtils.isConstructorOfStaticNestedClass(constructorDescriptor));
         if (isAnnotationClass(classDescriptor)) {
-            AnnotationUtils.checkConstructorParametersType(valueParameters, trace);
+            CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace);
         }
         return constructor;
     }

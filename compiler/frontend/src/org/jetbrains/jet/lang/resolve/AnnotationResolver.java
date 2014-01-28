@@ -44,7 +44,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -268,7 +267,7 @@ public class AnnotationResolver {
         if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
             trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression));
         }
-        else if (descriptor instanceof ClassDescriptor && AnnotationUtils.isJavaLangClass((ClassDescriptor) descriptor)) {
+        else if (descriptor instanceof ClassDescriptor && CompileTimeConstantUtils.isJavaLangClass((ClassDescriptor) descriptor)) {
             trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL.on(argumentExpression));
         }
         else {
@@ -282,7 +281,7 @@ public class AnnotationResolver {
             @NotNull BindingTrace trace
     ) {
         ResolvedCall<?> resolvedCall = trace.get(BindingContext.RESOLVED_CALL, (expression).getCalleeExpression());
-        if (resolvedCall == null || !AnnotationUtils.isArrayMethodCall(resolvedCall)) {
+        if (resolvedCall == null || !CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
             return null;
         }
 

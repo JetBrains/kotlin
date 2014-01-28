@@ -41,7 +41,7 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.NULLABLE_TYPE_OF_ANNOTAT
 import static org.jetbrains.jet.lang.resolve.BindingContext.VALUE_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 
-public class AnnotationUtils {
+public class CompileTimeConstantUtils {
 
     public static void checkConstructorParametersType(@NotNull List<JetParameter> parameters, @NotNull BindingTrace trace) {
         for (JetParameter parameter : parameters) {
@@ -130,6 +130,6 @@ public class AnnotationUtils {
         return "java.lang.Class".equals(DescriptorUtils.getFqName(descriptor).asString());
     }
 
-    private AnnotationUtils() {
+    private CompileTimeConstantUtils() {
     }
 }

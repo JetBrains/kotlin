@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.AnnotationUtils;
+import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -95,7 +95,8 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
             Object evaluatedExpression = JavaConstantExpressionEvaluator.computeConstantExpression(initializer, false);
             if (evaluatedExpression != null) {
                 CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver.
-                        resolveCompileTimeConstantValue(evaluatedExpression, AnnotationUtils.isPropertyCompileTimeConstant(descriptor), descriptor.getType());
+                        resolveCompileTimeConstantValue(evaluatedExpression, CompileTimeConstantUtils
+                                .isPropertyCompileTimeConstant(descriptor), descriptor.getType());
                 if (constant != null) {
                     trace.record(COMPILE_TIME_INITIALIZER, descriptor, constant);
                 }

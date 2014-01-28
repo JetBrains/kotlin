@@ -297,7 +297,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
                         else
                             compileTimeConstant.getValue()
                 return createCompileTimeConstant(value, expectedType, isPure = false,
-                                                 canBeUsedInAnnotation = AnnotationUtils.isPropertyCompileTimeConstant(callableDescriptor))
+                                                 canBeUsedInAnnotation = CompileTimeConstantUtils.isPropertyCompileTimeConstant(callableDescriptor))
             }
         }
         return null
@@ -332,7 +332,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         if (resultingDescriptor == null) return null
 
         // array()
-        if (AnnotationUtils.isArrayMethodCall(call)) {
+        if (CompileTimeConstantUtils.isArrayMethodCall(call)) {
             val varargType = resultingDescriptor.getValueParameters().first?.getVarargElementType()!!
 
             val arguments = call.getValueArguments().values().flatMap { resolveArguments(it.getArguments(), varargType) }
@@ -351,7 +351,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         }
 
         // javaClass()
-        if (AnnotationUtils.isJavaClassMethodCall(call)) {
+        if (CompileTimeConstantUtils.isJavaClassMethodCall(call)) {
             return JavaClassValue(resultingDescriptor.getReturnType()!!)
         }
 
