@@ -1,0 +1,8 @@
+<root>
+  <item name='com.intellij.usageView.UsageInfo com.intellij.psi.SmartPsiElementPointer&lt;?&gt; getSmartPointer()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.usageView.UsageInfo mySmartPointer'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

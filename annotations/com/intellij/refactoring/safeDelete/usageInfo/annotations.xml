@@ -1,0 +1,8 @@
+<root>
+  <item name='com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo com.intellij.psi.PsiElement getReferencedElement()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo myReferencedElement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

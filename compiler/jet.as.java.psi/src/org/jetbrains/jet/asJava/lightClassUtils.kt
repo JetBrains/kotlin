@@ -39,6 +39,9 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
+import com.intellij.psi.PsiClass
+
+fun JetClassOrObject.toLightClass(): PsiClass? = LightClassUtil.getPsiClass(this)
 
 fun JetDeclaration.toLightElements(): List<PsiElement> =
         when (this) {

@@ -26,6 +26,27 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.jet.asJava.unwrapped
 import java.util.ArrayList
+import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lang.psi.JetTypeParameter
+import org.jetbrains.jet.lang.psi.psiUtil.*
+
+public fun PsiElement.canDeleteElement(): Boolean {
+    if (isObjectLiteral()) return false
+
+    if (this is JetParameter) {
+        val declaration = getParentByType(javaClass<JetDeclaration>(), true)
+        return declaration != null && !(declaration is JetPropertyAccessor && declaration.isSetter())
+    }
+
+    return this is JetClassOrObject
+        || this is JetNamedFunction
+        || this is PsiMethod
+        || this is JetProperty
+        || this is JetTypeParameter
+}
 
 fun PsiElement.removeOverrideModifier() {
     val modifier = when (this) {

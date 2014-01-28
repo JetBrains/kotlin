@@ -34,6 +34,7 @@ import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.AsJavaPackage;
@@ -117,6 +118,8 @@ public class JetRefactoringUtil {
         return markAsJava ? "[Java] " + description : description;
     }
 
+    @KotlinSignature(
+            "fun checkSuperMethods(declaration: JetDeclaration, ignore: Collection<PsiElement>?, actionStringKey: String): MutableList<out PsiElement>?")
     @Nullable
     public static List<? extends PsiElement> checkSuperMethods(
             @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore, @NotNull String actionStringKey
@@ -287,6 +290,7 @@ public class JetRefactoringUtil {
         return "class " + classOrObject.getName();
     }
 
+    @KotlinSignature("fun checkParametersInMethodHierarchy(parameter: PsiParameter): MutableCollection<out PsiElement>?")
     @Nullable
     public static Collection<? extends PsiElement> checkParametersInMethodHierarchy(@NotNull PsiParameter parameter) {
         PsiMethod method = (PsiMethod)parameter.getDeclarationScope();

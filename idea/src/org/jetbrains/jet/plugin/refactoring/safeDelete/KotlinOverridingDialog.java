@@ -30,6 +30,7 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.table.JBTable;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.impl.UsagePreviewPanel;
+import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -116,6 +117,7 @@ class KotlinOverridingDialog extends DialogWrapper {
         return "#org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinOverridingDialog";
     }
 
+    @KotlinSignature("fun getSelected(): ArrayList<UsageInfo>")
     public ArrayList<UsageInfo> getSelected() {
         ArrayList<UsageInfo> result = new ArrayList<UsageInfo>();
         for (int i = 0; i < myChecked.length; i++) {
