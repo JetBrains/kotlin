@@ -184,10 +184,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
     @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
     public static boolean isInside(@NotNull PsiElement place, @NotNull PsiElement ancestor) {
-        if (ancestor instanceof KotlinLightMethod) {
-            ancestor = ((KotlinLightMethod) ancestor).getOrigin();
-        }
-        return JavaSafeDeleteProcessor.isInside(place, ancestor);
+        return JavaSafeDeleteProcessor.isInside(place, AsJavaPackage.getUnwrapped(ancestor));
     }
 
     @Nullable
