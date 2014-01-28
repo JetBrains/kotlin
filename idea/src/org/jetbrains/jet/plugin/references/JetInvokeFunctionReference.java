@@ -37,7 +37,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
-class JetInvokeFunctionReference extends JetPsiReference implements MultiRangeReference {
+class JetInvokeFunctionReference extends AbstractJetReference<JetCallExpression> implements MultiRangeReference {
 
     public static PsiReference[] create(@NotNull JetCallExpression expression) {
         return new PsiReference[] { new JetInvokeFunctionReference(expression) };
@@ -54,22 +54,19 @@ class JetInvokeFunctionReference extends JetPsiReference implements MultiRangeRe
 
     @Nullable
     @Override
-    protected Collection<? extends DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
-        JetExpression calleeExpression = ((JetCallExpression) myExpression).getCalleeExpression();
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(RESOLVED_CALL, calleeExpression);
+    protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(RESOLVED_CALL, getExpression().getCalleeExpression());
 
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            return Collections.singleton(((VariableAsFunctionResolvedCall) resolvedCall).getResultingDescriptor());
+            return Collections.<DeclarationDescriptor>singleton(((VariableAsFunctionResolvedCall) resolvedCall).getResultingDescriptor());
         }
         return null;
     }
 
     @Override
     public List<TextRange> getRanges() {
-        JetCallExpression callExpression = (JetCallExpression) myExpression;
-
         List<TextRange> list = new ArrayList<TextRange>();
-        JetValueArgumentList valueArgumentList = callExpression.getValueArgumentList();
+        JetValueArgumentList valueArgumentList = getExpression().getValueArgumentList();
         if (valueArgumentList != null) {
             if (valueArgumentList.getArguments().size() > 0) {
                 ASTNode valueArgumentListNode = valueArgumentList.getNode();
@@ -88,7 +85,7 @@ class JetInvokeFunctionReference extends JetPsiReference implements MultiRangeRe
             }
         }
 
-        List<JetExpression> functionLiteralArguments = callExpression.getFunctionLiteralArguments();
+        List<JetExpression> functionLiteralArguments = getExpression().getFunctionLiteralArguments();
         for (JetExpression functionLiteralArgument : functionLiteralArguments) {
             while (functionLiteralArgument instanceof JetPrefixExpression) {
                 functionLiteralArgument = ((JetPrefixExpression) functionLiteralArgument).getBaseExpression();
@@ -109,6 +106,6 @@ class JetInvokeFunctionReference extends JetPsiReference implements MultiRangeRe
 
     private TextRange getRange(ASTNode node) {
         TextRange textRange = node.getTextRange();
-        return textRange.shiftRight(-myExpression.getTextOffset());
+        return textRange.shiftRight(-getExpression().getTextOffset());
     }
 }

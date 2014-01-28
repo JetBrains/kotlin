@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.hierarchy.HierarchyUtils;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.references.JetPsiReference;
+import org.jetbrains.jet.plugin.references.JetReference;
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchPackage;
 
 import java.util.*;
@@ -196,7 +196,7 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
                 @Override
                 public boolean processInReadAction(PsiReference ref) {
                     // copied from Java
-                    if (!(ref instanceof PsiReferenceExpression || ref instanceof JetPsiReference)) {
+                    if (!(ref instanceof PsiReferenceExpression || ref instanceof JetReference)) {
                         if (!(ref instanceof PsiElement)) {
                             return true;
                         }

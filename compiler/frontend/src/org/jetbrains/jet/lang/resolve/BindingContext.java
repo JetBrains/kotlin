@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.psi.PsiElement;
+import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -92,6 +93,7 @@ public interface BindingContext {
     WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
     WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);
 
+    @KotlinSignature("val AMBIGUOUS_REFERENCE_TARGET: WritableSlice<JetReferenceExpression, Collection<DeclarationDescriptor>>")
     WritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET =
             new BasicWritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
 
@@ -235,6 +237,7 @@ public interface BindingContext {
             .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS).build();
 
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
+    @KotlinSignature("val AMBIGUOUS_LABEL_TARGET: WritableSlice<JetReferenceExpression, Collection<PsiElement>>")
     WritableSlice<JetReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET =
             Slices.<JetReferenceExpression, Collection<? extends PsiElement>>sliceBuilder().build();
     WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY =

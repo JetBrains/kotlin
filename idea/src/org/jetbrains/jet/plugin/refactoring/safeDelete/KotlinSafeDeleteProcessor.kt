@@ -41,7 +41,7 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil
-import org.jetbrains.jet.plugin.references.JetPsiReference
+import org.jetbrains.jet.plugin.references.JetReference
 import java.util.*
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.deleteElementAndCleanParent
@@ -142,7 +142,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             val parameterIndex = parameterList.indexOf(parameter)
 
             for (reference in ReferencesSearch.search(owner)) {
-                if (reference !is JetPsiReference) continue
+                if (reference !is JetReference) continue
 
                 val referencedElement = reference.getElement()
 

@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.jet.lang.psi.JetThisReferenceExpression;
 
-public class JetThisReference extends JetPsiReference {
+public class JetThisReference extends AbstractJetReference<JetThisReferenceExpression> {
     public JetThisReference(JetThisReferenceExpression expression) {
         super(expression);
     }

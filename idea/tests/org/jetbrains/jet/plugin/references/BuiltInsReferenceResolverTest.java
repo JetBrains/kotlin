@@ -104,7 +104,7 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
     }
 
     private void doTest() throws Exception {
-        JetPsiReference reference = (JetPsiReference) configureByFile(getTestName(true) + ".kt");
+        JetReference reference = (JetReference) configureByFile(getTestName(true) + ".kt");
         PsiElement resolved = reference.resolve();
         assertNotNull(resolved);
         assertEquals(1, reference.multiResolve(false).length);

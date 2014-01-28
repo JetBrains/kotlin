@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
-import org.jetbrains.jet.plugin.references.JetPsiReference;
+import org.jetbrains.jet.plugin.references.JetReference;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
@@ -50,7 +50,7 @@ public class ImportInsertHelper {
 
     public static void addImportDirectiveOrChangeToFqName(@NotNull FqName importFqn, @NotNull JetFile file, int refOffset, @NotNull PsiElement targetElement) {
         PsiReference reference = file.findReferenceAt(refOffset);
-        if (reference instanceof JetPsiReference) {
+        if (reference instanceof JetReference) {
             PsiElement target = reference.resolve();
             if (target != null) {
                 boolean same = file.getManager().areElementsEquivalent(target, targetElement);

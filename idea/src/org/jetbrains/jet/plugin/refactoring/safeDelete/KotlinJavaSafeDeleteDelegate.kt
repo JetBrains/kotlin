@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.plugin.references.JetPsiReference
+import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import org.jetbrains.jet.lang.psi.psiUtil.parameterIndex
@@ -39,7 +39,7 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
     override fun createUsageInfoForParameter(
             reference: PsiReference, usages: MutableList<UsageInfo>, parameter: PsiParameter, method: PsiMethod
     ) {
-        if (reference !is JetPsiReference) return
+        if (reference !is JetReference) return
 
         val element = reference.getElement() as JetElement
 
