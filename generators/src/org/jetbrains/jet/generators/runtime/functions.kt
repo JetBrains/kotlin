@@ -42,7 +42,7 @@ enum class FunctionKind(
 
 class GenerateFunctions(val out: PrintWriter, val kind: FunctionKind) {
     fun generateFunctionClasses() {
-        generatedBy(out, javaClass.getName())
+        generatedBy(out)
         for (i in 0..MAX_PARAM_COUNT) {
             out.print("public trait " + kind.getClassName(i))
             generateTypeParameters(i, true)
@@ -52,7 +52,7 @@ class GenerateFunctions(val out: PrintWriter, val kind: FunctionKind) {
     }
 
     fun generateFunctionImplClasses() {
-        generatedBy(out, javaClass.getName())
+        generatedBy(out)
         for (i in 0..MAX_PARAM_COUNT) {
             out.print("public abstract class " + kind.getImplClassName(i))
             generateTypeParameters(i, true)

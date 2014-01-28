@@ -68,7 +68,7 @@ fun floatingPointProgressionIterator(kind: ProgressionKind): String {
 
 class GenerateProgressionIterators(val out: PrintWriter) {
     fun generate() {
-        generatedBy(out, javaClass.getName())
+        generatedBy(out)
         out.println("import jet.runtime.ProgressionUtil")
         out.println()
         for (kind in ProgressionKind.values()) {

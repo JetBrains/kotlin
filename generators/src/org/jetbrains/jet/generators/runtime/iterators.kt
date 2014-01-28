@@ -34,7 +34,7 @@ enum class IteratorKind {
 
 class GenerateIterators(val out: PrintWriter) {
     fun generate() {
-        generatedBy(out, javaClass.getName())
+        generatedBy(out)
         for (kind in IteratorKind.values()) {
             val s = kind.capitalized
             out.println("public abstract class ${s}Iterator : Iterator<$s> {")

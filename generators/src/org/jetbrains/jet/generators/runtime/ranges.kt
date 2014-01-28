@@ -22,7 +22,7 @@ import java.io.PrintWriter
 
 class GenerateRanges(val out: PrintWriter) {
     fun generate() {
-        generatedBy(out, javaClass.getName())
+        generatedBy(out)
         for (kind in ProgressionKind.values()) {
             val t = kind.capitalized
             val range = "${t}Range"
