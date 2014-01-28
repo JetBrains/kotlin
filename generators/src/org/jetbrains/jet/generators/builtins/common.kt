@@ -18,10 +18,6 @@ package org.jetbrains.jet.generators.builtins
 
 import org.jetbrains.jet.generators.builtins.ProgressionKind.*
 
-trait BuiltInsSourceGenerator {
-    fun generate(): Unit
-}
-
 enum class ProgressionKind {
     BYTE
     CHAR

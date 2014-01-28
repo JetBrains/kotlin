@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators.builtins
+package org.jetbrains.jet.generators.builtins.generateBuiltIns
 
 import org.jetbrains.jet.generators.builtins.functions.*
 import org.jetbrains.jet.generators.builtins.iterators.*
@@ -23,55 +23,49 @@ import org.jetbrains.jet.generators.builtins.progressions.*
 import org.jetbrains.jet.generators.builtins.ranges.*
 import java.io.PrintWriter
 import java.io.File
-import kotlin.properties.Delegates
 
-fun existingDirectory(path: String): File {
-    val result = File(path)
-    if (!result.exists()) {
-        throw IllegalStateException("Output dir does not exist: ${result.getAbsolutePath()}")
+fun assertExists(file: File): Unit =
+        if (!file.exists()) error("Output dir does not exist: ${file.getAbsolutePath()}")
+
+val BUILT_INS_DIR = File("core/builtins/src/jet/")
+val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/jet/")
+
+abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
+    protected abstract fun generateBody(): Unit
+
+    final fun generate() {
+        out.println(File("injector-generator/copyright.txt").readText())
+        // Don't include generator class name in the message: these are built-in sources,
+        // and we don't want to scare users with any internal information about our project
+        out.println("// Auto-generated file. DO NOT EDIT!")
+        out.println()
+        out.println("package jet")
+        out.println()
+
+        generateBody()
     }
-    return result
 }
 
-val BUILT_INS_DIR: File by Delegates.lazy { existingDirectory("core/builtins/src/jet/") }
-val RUNTIME_JVM_DIR: File by Delegates.lazy { existingDirectory("core/runtime.jvm/src/jet/") }
-
-fun generateFile(dir: File, name: String, generator: (PrintWriter) -> BuiltInsSourceGenerator) {
-    val file = File(dir, name)
-    println("generating $file")
-    PrintWriter(file) use {
-        fileHeader(it)
-        generator(it).generate()
-    }
-}
-
-fun fileHeader(out: PrintWriter) {
-    out.println(File("injector-generator/copyright.txt").readText())
-    // Don't include generator class name in the message: these are built-in sources,
-    // and we don't want to scare users with any internal information about our project
-    out.println("// Auto-generated file. DO NOT EDIT!")
-    out.println()
-    out.println("package jet")
-    out.println()
-}
-
-
-fun main(args: Array<String>) {
-    fun generateBuiltInFile(name: String, generator: (PrintWriter) -> BuiltInsSourceGenerator) {
-        generateFile(BUILT_INS_DIR, name, generator)
-    }
-
-    fun generateRuntimeJvmFile(name: String, generator: (PrintWriter) -> BuiltInsSourceGenerator) {
-        generateFile(RUNTIME_JVM_DIR, name, generator)
-    }
+fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit) {
+    assertExists(BUILT_INS_DIR)
+    assertExists(RUNTIME_JVM_DIR)
 
     for (kind in FunctionKind.values()) {
-        generateBuiltInFile(kind.getFileName()) { GenerateFunctions(it, kind) }
-        generateRuntimeJvmFile(kind.getImplFileName()) { GenerateFunctionsImpl(it, kind) }
+        generate(File(BUILT_INS_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
+        generate(File(RUNTIME_JVM_DIR, kind.getImplFileName()), { GenerateFunctionsImpl(it, kind) })
     }
 
-    generateBuiltInFile("Iterators.kt") { GenerateIterators(it) }
-    generateBuiltInFile("ProgressionIterators.kt") { GenerateProgressionIterators(it) }
-    generateBuiltInFile("Progressions.kt") { GenerateProgressions(it) }
-    generateBuiltInFile("Ranges.kt") { GenerateRanges(it) }
+    generate(File(BUILT_INS_DIR, "Iterators.kt")) { GenerateIterators(it) }
+    generate(File(BUILT_INS_DIR, "ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
+    generate(File(BUILT_INS_DIR, "Progressions.kt")) { GenerateProgressions(it) }
+    generate(File(BUILT_INS_DIR, "Ranges.kt")) { GenerateRanges(it) }
+}
+
+fun main(args: Array<String>) {
+    generateBuiltIns { file, generator ->
+        println("generating $file")
+        PrintWriter(file) use {
+            generator(it).generate()
+        }
+    }
 }

@@ -18,7 +18,7 @@ package org.jetbrains.jet.generators.builtins.functions
 
 import java.io.PrintWriter
 import org.jetbrains.jet.generators.builtins.functions.FunctionKind.*
-import org.jetbrains.jet.generators.builtins.*
+import org.jetbrains.jet.generators.builtins.generateBuiltIns.*
 
 val MAX_PARAM_COUNT = 22
 
@@ -40,7 +40,7 @@ enum class FunctionKind(
     fun getSuperClassName(i: Int) = superClassNamePrefix?.plus(i)
 }
 
-abstract class GenerateFunctionsBase(val out: PrintWriter, val kind: FunctionKind): BuiltInsSourceGenerator {
+abstract class GenerateFunctionsBase(out: PrintWriter, val kind: FunctionKind): BuiltInsSourceGenerator(out) {
     fun generateTypeParameters(i: Int, variance: Boolean) {
         out.print("<")
         if (kind.hasReceiverParameter) {
@@ -59,7 +59,7 @@ abstract class GenerateFunctionsBase(val out: PrintWriter, val kind: FunctionKin
 }
 
 class GenerateFunctions(out: PrintWriter, kind: FunctionKind) : GenerateFunctionsBase(out, kind) {
-    override fun generate() {
+    override fun generateBody() {
         for (i in 0..MAX_PARAM_COUNT) {
             out.print("public trait " + kind.getClassName(i))
             generateTypeParameters(i, true)
@@ -103,7 +103,7 @@ class GenerateFunctions(out: PrintWriter, kind: FunctionKind) : GenerateFunction
 }
 
 class GenerateFunctionsImpl(out: PrintWriter, kind: FunctionKind) : GenerateFunctionsBase(out, kind) {
-    override fun generate() {
+    override fun generateBody() {
         for (i in 0..MAX_PARAM_COUNT) {
             out.print("public abstract class " + kind.getImplClassName(i))
             generateTypeParameters(i, true)

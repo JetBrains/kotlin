@@ -17,11 +17,12 @@
 package org.jetbrains.jet.generators.builtins.progressions
 
 import org.jetbrains.jet.generators.builtins.*
+import org.jetbrains.jet.generators.builtins.generateBuiltIns.*
 import org.jetbrains.jet.generators.builtins.ProgressionKind.*
 import java.io.PrintWriter
 
-class GenerateProgressions(val out: PrintWriter) : BuiltInsSourceGenerator {
-    override fun generate() {
+class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun generateBody() {
         for (kind in ProgressionKind.values()) {
             val t = kind.capitalized
             val progression = "${t}Progression"

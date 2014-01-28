@@ -17,6 +17,7 @@
 package org.jetbrains.jet.generators.builtins.progressionIterators
 
 import org.jetbrains.jet.generators.builtins.*
+import org.jetbrains.jet.generators.builtins.generateBuiltIns.*
 import org.jetbrains.jet.generators.builtins.ProgressionKind.*
 import java.io.PrintWriter
 
@@ -66,8 +67,8 @@ fun floatingPointProgressionIterator(kind: ProgressionKind): String {
 }"""
 }
 
-class GenerateProgressionIterators(val out: PrintWriter) : BuiltInsSourceGenerator {
-    override fun generate() {
+class GenerateProgressionIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun generateBody() {
         out.println("import jet.runtime.ProgressionUtil")
         out.println()
         for (kind in ProgressionKind.values()) {
