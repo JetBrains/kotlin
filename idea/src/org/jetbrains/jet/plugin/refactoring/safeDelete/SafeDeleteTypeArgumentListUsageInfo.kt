@@ -16,15 +16,14 @@
 
 package org.jetbrains.jet.plugin.refactoring.safeDelete
 
-import com.intellij.psi.PsiElement
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.jet.lang.psi.psiUtil.deleteElementAndCleanParent
 
 public class SafeDeleteTypeArgumentListUsageInfo(
         typeProjection: JetTypeProjection, parameter: JetTypeParameter
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(typeProjection, parameter, true) {
     public override fun deleteElement() {
-        getElement()?.let { element -> KotlinSafeDeleteProcessor.deleteElementAndCleanParent(element) }
+        getElement()?.deleteElementAndCleanParent()
     }
 }

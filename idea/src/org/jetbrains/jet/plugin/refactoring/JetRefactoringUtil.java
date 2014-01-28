@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.refactoring;
 
 import com.intellij.codeInsight.unwrap.ScopeHighlighter;
 import com.intellij.ide.IdeBundle;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -27,6 +28,7 @@ import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.ui.components.JBList;
@@ -37,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
@@ -281,6 +284,77 @@ public class JetRefactoringUtil {
 
         if (descriptor instanceof ClassDescriptor) return formatClassDescriptor(descriptor);
         return "class " + classOrObject.getName();
+    }
+
+    @Nullable
+    public static Collection<? extends PsiElement> checkParametersInMethodHierarchy(@NotNull PsiParameter parameter) {
+        PsiMethod method = (PsiMethod)parameter.getDeclarationScope();
+        int parameterIndex = method.getParameterList().getParameterIndex(parameter);
+
+        Set<PsiElement> parametersToDelete = collectParametersHierarchy(method, parameterIndex);
+        if (parametersToDelete.size() > 1) {
+            if (ApplicationManager.getApplication().isUnitTestMode()) {
+                return parametersToDelete;
+            }
+
+            String message =
+                    JetBundle.message("delete.param.in.method.hierarchy", formatJavaOrLightMethod(method));
+            int exitCode = Messages.showOkCancelDialog(
+                    parameter.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
+            );
+            if (exitCode == Messages.OK) {
+                return parametersToDelete;
+            }
+            else {
+                return null;
+            }
+        }
+
+        return parametersToDelete;
+    }
+
+    // TODO: generalize breadth-first search
+    @NotNull
+    private static Set<PsiElement> collectParametersHierarchy(@NotNull PsiMethod method, int parameterIndex) {
+        Deque<PsiMethod> queue = new ArrayDeque<PsiMethod>();
+        Set<PsiMethod> visited = new HashSet<PsiMethod>();
+        Set<PsiElement> parametersToDelete = new HashSet<PsiElement>();
+
+        queue.add(method);
+        while (!queue.isEmpty()) {
+            PsiMethod currentMethod = queue.poll();
+
+            visited.add(currentMethod);
+            addParameter(currentMethod, parametersToDelete, parameterIndex);
+
+            for (PsiMethod superMethod : currentMethod.findSuperMethods(true)) {
+                if (!visited.contains(superMethod)) {
+                    queue.offer(superMethod);
+                }
+            }
+            for (PsiMethod overrider : OverridingMethodsSearch.search(currentMethod)) {
+                if (!visited.contains(overrider)) {
+                    queue.offer(overrider);
+                }
+            }
+        }
+        return parametersToDelete;
+    }
+
+    private static void addParameter(@NotNull PsiMethod method, @NotNull Set<PsiElement> result, int parameterIndex) {
+        if (method instanceof KotlinLightMethod) {
+            JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
+            int jetParameterIndex = PsiUtilPackage.isExtensionDeclaration(declaration) ? parameterIndex - 1 : parameterIndex;
+            if (declaration instanceof JetNamedFunction) {
+                result.add(((JetNamedFunction) declaration).getValueParameters().get(jetParameterIndex));
+            }
+            else if (declaration instanceof JetClass) {
+                result.add(((JetClass) declaration).getPrimaryConstructorParameters().get(jetParameterIndex));
+            }
+        }
+        else {
+            result.add(method.getParameterList().getParameters()[parameterIndex]);
+        }
     }
 
     public interface SelectExpressionCallback {

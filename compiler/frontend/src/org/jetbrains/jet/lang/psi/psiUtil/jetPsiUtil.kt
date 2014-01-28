@@ -190,3 +190,11 @@ fun PsiElement.isExtensionDeclaration(): Boolean {
 }
 
 fun PsiElement.isObjectLiteral(): Boolean = this is JetObjectDeclaration && isObjectLiteral()
+
+fun PsiElement.deleteElementAndCleanParent() {
+    val parent = getParent()
+
+    JetPsiUtil.deleteElementWithDelimiters(this)
+    [suppress("UNCHECKED_CAST")]
+    JetPsiUtil.deleteChildlessElement(parent, this.getClass() as Class<PsiElement>)
+}

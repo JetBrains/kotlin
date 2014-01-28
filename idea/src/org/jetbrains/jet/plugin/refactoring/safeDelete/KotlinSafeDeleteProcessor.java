@@ -16,15 +16,15 @@
 
 package org.jetbrains.jet.plugin.refactoring.safeDelete;
 
-import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
-import com.intellij.psi.*;
-import com.intellij.psi.search.searches.OverridingMethodsSearch;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor;
@@ -400,49 +400,10 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         return result.toArray(new UsageInfo[result.size()]);
     }
 
-    public static void removeOverrideModifier(@NotNull PsiElement element) {
-        if (element instanceof JetNamedFunction || element instanceof JetProperty) {
-            JetModifierList modifierList = ((JetModifierListOwner) element).getModifierList();
-            if (modifierList == null) return;
-
-            PsiElement overrideModifier = modifierList.getModifier(JetTokens.OVERRIDE_KEYWORD);
-            if (overrideModifier != null) {
-                overrideModifier.delete();
-            }
-        }
-        else if (element instanceof PsiMethod) {
-            PsiMethod method = (PsiMethod) element;
-
-            PsiAnnotation overrideAnnotation = null;
-            for (PsiAnnotation annotation : method.getModifierList().getAnnotations()) {
-                if ("java.lang.Override".equals(annotation.getQualifiedName())) {
-                    overrideAnnotation = annotation;
-                    break;
-                }
-            }
-
-            if (overrideAnnotation != null) {
-                overrideAnnotation.delete();
-            }
-        }
-    }
-
-    @Nullable
-    private static PsiParameter getPsiParameter(@NotNull JetParameter parameter) {
-        JetNamedFunction function = PsiTreeUtil.getParentOfType(parameter, JetNamedFunction.class);
-        if (function == null || parameter.getParent() != function.getValueParameterList()) return null;
-
-        PsiMethod lightMethod = LightClassUtil.getLightClassMethod(function);
-        if (lightMethod == null) return null;
-
-        int parameterIndex = function.getValueParameters().indexOf(parameter);
-        return lightMethod.getParameterList().getParameters()[parameterIndex];
-    }
-
     @Override
     public void prepareForDeletion(@NotNull PsiElement element) throws IncorrectOperationException {
         if (element instanceof PsiMethod) {
-            cleanUpOverrides((PsiMethod) element);
+            SafeDeletePackage.cleanUpOverrides((PsiMethod) element);
         }
         else if (element instanceof JetNamedFunction) {
             PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
@@ -450,7 +411,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                 return;
             }
 
-            cleanUpOverrides(lightMethod);
+            SafeDeletePackage.cleanUpOverrides(lightMethod);
         }
         else if (element instanceof JetProperty) {
             LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
@@ -459,50 +420,17 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             PsiMethod setter = propertyMethods.getSetter();
 
             if (getter != null) {
-                cleanUpOverrides(getter);
+                SafeDeletePackage.cleanUpOverrides(getter);
             }
             if (setter != null) {
-                cleanUpOverrides(setter);
+                SafeDeletePackage.cleanUpOverrides(setter);
             }
         }
         else if (element instanceof JetTypeParameter) {
-            deleteElementAndCleanParent(element);
+            PsiUtilPackage.deleteElementAndCleanParent(element);
         }
         else if (element instanceof JetParameter) {
             JetPsiUtil.deleteElementWithDelimiters(element);
-        }
-    }
-
-    public static void deleteElementAndCleanParent(@NotNull PsiElement element) {
-        PsiElement parent = element.getParent();
-        JetPsiUtil.deleteElementWithDelimiters(element);
-        JetPsiUtil.deleteChildlessElement(parent, element.getClass());
-    }
-
-    private static boolean checkPsiMethodEquality(@NotNull PsiMethod method1, @NotNull PsiMethod method2) {
-        if (method1 instanceof KotlinLightMethod && method2 instanceof KotlinLightMethod) {
-            return ((KotlinLightMethod) method1).getOrigin().equals(((KotlinLightMethod) method2).getOrigin());
-        }
-        return method1.equals(method2);
-    }
-
-    public static void cleanUpOverrides(@NotNull PsiMethod method) {
-        Collection<PsiMethod> superMethods = Arrays.asList(method.findSuperMethods(true));
-        Collection<PsiMethod> overridingMethods = OverridingMethodsSearch.search(method, true).findAll();
-        overrideLoop:
-        for (PsiMethod overridingMethod : overridingMethods) {
-            PsiElement overridingElement = overridingMethod instanceof KotlinLightMethod
-                                           ? ((KotlinLightMethod) overridingMethod).getOrigin()
-                                           : overridingMethod;
-
-            Collection<PsiMethod> currentSuperMethods = new ArrayList<PsiMethod>();
-            ContainerUtil.addAll(currentSuperMethods, overridingMethod.findSuperMethods(true));
-            currentSuperMethods.addAll(superMethods);
-            for (PsiMethod superMethod : currentSuperMethods) {
-                if (!checkPsiMethodEquality(superMethod, method)) continue overrideLoop;
-            }
-
-            removeOverrideModifier(overridingElement);
         }
     }
 
@@ -512,12 +440,12 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             @NotNull PsiElement element, @Nullable Module module, @NotNull Collection<PsiElement> allElementsToDelete
     ) {
         if (element instanceof JetParameter) {
-            PsiParameter psiParameter = getPsiParameter((JetParameter) element);
-            if (psiParameter != null) return checkParametersInMethodHierarchy(psiParameter);
+            PsiParameter psiParameter = AsJavaPackage.toPsiParameter((JetParameter) element);
+            if (psiParameter != null) return JetRefactoringUtil.checkParametersInMethodHierarchy(psiParameter);
         }
 
         if (element instanceof PsiParameter) {
-            return checkParametersInMethodHierarchy((PsiParameter) element);
+            return JetRefactoringUtil.checkParametersInMethodHierarchy((PsiParameter) element);
         }
 
         if (ApplicationManager.getApplication().isUnitTestMode()) {
@@ -531,72 +459,5 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         }
 
         return super.getElementsToSearch(element, module, allElementsToDelete);
-    }
-
-    @Nullable
-    private static Collection<? extends PsiElement> checkParametersInMethodHierarchy(@NotNull PsiParameter parameter) {
-        PsiMethod method = (PsiMethod)parameter.getDeclarationScope();
-        int parameterIndex = method.getParameterList().getParameterIndex(parameter);
-
-        Set<PsiElement> parametersToDelete = collectParametersToDelete(method, parameterIndex);
-        if (parametersToDelete.size() > 1) {
-            if (ApplicationManager.getApplication().isUnitTestMode()) {
-                return parametersToDelete;
-            }
-
-            String message =
-                    JetBundle.message("delete.param.in.method.hierarchy", JetRefactoringUtil.formatJavaOrLightMethod(method));
-            int exitCode = Messages.showOkCancelDialog(
-                    parameter.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
-            );
-            if (exitCode == Messages.OK) {
-                return parametersToDelete;
-            }
-            else {
-                return null;
-            }
-        }
-
-        return parametersToDelete;
-    }
-
-    // TODO: generalize breadth-first search
-    @NotNull
-    private static Set<PsiElement> collectParametersToDelete(@NotNull PsiMethod method, int parameterIndex) {
-        Deque<PsiMethod> queue = new ArrayDeque<PsiMethod>();
-        Set<PsiMethod> visited = new HashSet<PsiMethod>();
-        Set<PsiElement> parametersToDelete = new HashSet<PsiElement>();
-
-        queue.add(method);
-        while (!queue.isEmpty()) {
-            PsiMethod currentMethod = queue.poll();
-
-            visited.add(currentMethod);
-            addParameter(currentMethod, parametersToDelete, parameterIndex);
-
-            for (PsiMethod superMethod : currentMethod.findSuperMethods(true)) {
-                if (!visited.contains(superMethod)) {
-                    queue.offer(superMethod);
-                }
-            }
-            for (PsiMethod overrider : OverridingMethodsSearch.search(currentMethod)) {
-                if (!visited.contains(overrider)) {
-                    queue.offer(overrider);
-                }
-            }
-        }
-        return parametersToDelete;
-    }
-
-    private static void addParameter(@NotNull PsiMethod method, @NotNull Set<PsiElement> result, int parameterIndex) {
-        if (method instanceof KotlinLightMethod) {
-            JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-            if (declaration instanceof JetNamedFunction) {
-                result.add(((JetNamedFunction) declaration).getValueParameters().get(parameterIndex));
-            }
-        }
-        else {
-            result.add(method.getParameterList().getParameters()[parameterIndex]);
-        }
     }
 }
