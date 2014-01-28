@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators.runtime.iterators
+package org.jetbrains.jet.generators.builtins.iterators
 
-import org.jetbrains.jet.generators.runtime.*
+import org.jetbrains.jet.generators.builtins.*
 import java.io.PrintWriter
 
 enum class IteratorKind {

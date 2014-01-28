@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators.runtime
+package org.jetbrains.jet.generators.builtins
 
 import java.io.File
 import kotlin.properties.Delegates
 import java.io.PrintWriter
-import org.jetbrains.jet.generators.runtime.ProgressionKind.*
+import org.jetbrains.jet.generators.builtins.ProgressionKind.*
 
 enum class ProgressionKind {
     BYTE

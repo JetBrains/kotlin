@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators.runtime.ranges
+package org.jetbrains.jet.generators.builtins.ranges
 
-import org.jetbrains.jet.generators.runtime.*
-import org.jetbrains.jet.generators.runtime.ProgressionKind.*
+import org.jetbrains.jet.generators.builtins.*
+import org.jetbrains.jet.generators.builtins.ProgressionKind.*
 import java.io.PrintWriter
 
 class GenerateRanges(val out: PrintWriter) {

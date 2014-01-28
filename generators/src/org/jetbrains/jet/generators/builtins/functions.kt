@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators.runtime.functions
+package org.jetbrains.jet.generators.builtins.functions
 
 import java.io.PrintWriter
-import org.jetbrains.jet.generators.runtime.functions.FunctionKind.*
-import org.jetbrains.jet.generators.runtime.*
+import org.jetbrains.jet.generators.builtins.functions.FunctionKind.*
+import org.jetbrains.jet.generators.builtins.*
 
 val MAX_PARAM_COUNT = 22
 
