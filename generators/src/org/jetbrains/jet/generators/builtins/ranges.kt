@@ -20,9 +20,8 @@ import org.jetbrains.jet.generators.builtins.*
 import org.jetbrains.jet.generators.builtins.ProgressionKind.*
 import java.io.PrintWriter
 
-class GenerateRanges(val out: PrintWriter) {
-    fun generate() {
-        generatedBy(out)
+class GenerateRanges(val out: PrintWriter) : BuiltInsSourceGenerator {
+    override fun generate() {
         for (kind in ProgressionKind.values()) {
             val t = kind.capitalized
             val range = "${t}Range"
@@ -77,11 +76,5 @@ class GenerateRanges(val out: PrintWriter) {
 }""")
             out.println()
         }
-    }
-}
-
-fun main(args: Array<String>) {
-    generateBuiltInFile("Ranges.kt") {
-        GenerateRanges(it).generate()
     }
 }

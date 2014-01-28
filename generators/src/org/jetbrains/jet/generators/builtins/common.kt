@@ -16,10 +16,11 @@
 
 package org.jetbrains.jet.generators.builtins
 
-import java.io.File
-import kotlin.properties.Delegates
-import java.io.PrintWriter
 import org.jetbrains.jet.generators.builtins.ProgressionKind.*
+
+trait BuiltInsSourceGenerator {
+    fun generate(): Unit
+}
 
 enum class ProgressionKind {
     BYTE
@@ -49,39 +50,3 @@ fun floatToIntBits(v: String) = "java.lang.Float.floatToIntBits($v)"
 
 fun doubleToLongBits(v: String) = "java.lang.Double.doubleToLongBits($v)"
 
-
-
-fun existingDirectory(path: String): File {
-    val result = File(path)
-    if (!result.exists()) {
-        throw IllegalStateException("Output dir does not exist: ${result.getAbsolutePath()}")
-    }
-    return result
-}
-
-val BUILT_INS_DIR: File by Delegates.lazy { existingDirectory("core/builtins/src/jet/") }
-val RUNTIME_JVM_DIR: File by Delegates.lazy { existingDirectory("core/runtime.jvm/src/jet/") }
-
-fun generateFile(dir: File, name: String, generate: (PrintWriter) -> Unit) {
-    val file = File(dir, name)
-    println("generating $file")
-    PrintWriter(file) use generate
-}
-
-fun generateBuiltInFile(name: String, generate: (PrintWriter) -> Unit) {
-    generateFile(BUILT_INS_DIR, name, generate)
-}
-
-fun generateRuntimeJvmFile(name: String, generate: (PrintWriter) -> Unit) {
-    generateFile(RUNTIME_JVM_DIR, name, generate)
-}
-
-fun generatedBy(out: PrintWriter) {
-    out.println(File("injector-generator/copyright.txt").readText())
-    // Don't include generator class name in the message: these are built-in sources,
-    // and we don't want to scare users with any internal information about our project
-    out.println("// Auto-generated file. DO NOT EDIT!")
-    out.println()
-    out.println("package jet")
-    out.println()
-}

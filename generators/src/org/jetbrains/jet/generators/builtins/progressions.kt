@@ -20,9 +20,8 @@ import org.jetbrains.jet.generators.builtins.*
 import org.jetbrains.jet.generators.builtins.ProgressionKind.*
 import java.io.PrintWriter
 
-class GenerateProgressions(val out: PrintWriter) {
-    fun generate() {
-        generatedBy(out)
+class GenerateProgressions(val out: PrintWriter) : BuiltInsSourceGenerator {
+    override fun generate() {
         for (kind in ProgressionKind.values()) {
             val t = kind.capitalized
             val progression = "${t}Progression"
@@ -80,11 +79,5 @@ class GenerateProgressions(val out: PrintWriter) {
 }""")
             out.println()
         }
-    }
-}
-
-fun main(args: Array<String>) {
-    generateBuiltInFile("Progressions.kt") {
-        GenerateProgressions(it).generate()
     }
 }

@@ -32,9 +32,8 @@ enum class IteratorKind {
     val capitalized: String get() = name().toLowerCase().capitalize()
 }
 
-class GenerateIterators(val out: PrintWriter) {
-    fun generate() {
-        generatedBy(out)
+class GenerateIterators(val out: PrintWriter) : BuiltInsSourceGenerator {
+    override fun generate() {
         for (kind in IteratorKind.values()) {
             val s = kind.capitalized
             out.println("public abstract class ${s}Iterator : Iterator<$s> {")
@@ -44,11 +43,5 @@ class GenerateIterators(val out: PrintWriter) {
             out.println("}")
             out.println()
         }
-    }
-}
-
-fun main(args: Array<String>) {
-    generateBuiltInFile("Iterators.kt") {
-        GenerateIterators(it).generate()
     }
 }
