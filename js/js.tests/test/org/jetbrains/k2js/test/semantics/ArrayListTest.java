@@ -76,4 +76,20 @@ public final class ArrayListTest extends JavaClassesTest {
     public void testConstructWithSideEffectParam() throws Exception {
         fooBoxTest();
     }
+
+    public void testIndexOf() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testContainsAll() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testRemoveAll() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testRetainAll() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

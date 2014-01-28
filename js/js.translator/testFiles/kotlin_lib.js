@@ -104,17 +104,16 @@ String.prototype.contains = function (s) {
     var ArrayIterator = Kotlin.createClassNow(Kotlin.Iterator,
         function (array) {
             this.array = array;
-            this.size = array.length;
             this.index = 0;
         }, {
             next: function () {
                 return this.array[this.index++];
             },
             hasNext: function () {
-                return this.index < this.size;
+                return this.index < this.array.length;
             },
             remove: function () {
-                if (this.index < 0 || this.index > this.size) throw new RangeError();
+                if (this.index < 0 || this.index > this.array.length) throw new RangeError();
                 this.index--;
                 this.array.splice(this.index, 1);
             }
@@ -182,9 +181,6 @@ String.prototype.contains = function (s) {
     );
 
     Kotlin.AbstractCollection = Kotlin.createClassNow(Kotlin.Collection, null, {
-        size: function () {
-            return this.$size;
-        },
         addAll_5ib00d$: function (collection) {
             var modified = false;
             var it = collection.iterator();
@@ -247,7 +243,7 @@ String.prototype.contains = function (s) {
             var builder = "[";
             var iterator = this.iterator();
             var first = true;
-            var i = this.$size;
+            var i = this.size();
             while (i-- > 0) {
                 if (first) {
                     first = false;
@@ -270,13 +266,15 @@ String.prototype.contains = function (s) {
             return new ListIterator(this);
         },
         remove_s9cetl$: function (o) {
-            var index = this.indexOf(o);
+            var index = this.indexOf_s9cetl$(o);
             if (index !== -1) {
                 this.remove_s9c8w6$(index);
+                return true;
             }
+            return false;
         },
         contains_s9cetl$: function (o) {
-            return this.indexOf(o) !== -1;
+            return this.indexOf_s9cetl$(o) !== -1;
         }
     });
 
@@ -284,7 +282,6 @@ String.prototype.contains = function (s) {
     Kotlin.ArrayList = Kotlin.createClassNow(Kotlin.AbstractList,
         function () {
             this.array = [];
-            this.$size = 0;
         }, {
             get_s9c8w6$: function (index) {
                 this.checkRange(index);
@@ -295,38 +292,41 @@ String.prototype.contains = function (s) {
                 this.array[index] = value;
             },
             size: function () {
-                return this.$size;
+                return this.array.length;
             },
             iterator: function () {
                 return Kotlin.arrayIterator(this.array);
             },
             add_s9cetl$: function (element) {
-                this.array[this.$size++] = element;
+                this.array.push(element);
                 return true;
             },
             add_bar457$: function (index, element) {
                 this.array.splice(index, 0, element);
-                this.$size++;
             },
             addAll_5ib00d$: function (collection) {
                 var it = collection.iterator();
-                for (var i = this.$size, n = collection.size(); n-- > 0;) {
+                for (var i = this.array.length, n = collection.size(); n-- > 0;) {
                     this.array[i++] = it.next();
                 }
-
-                this.$size += collection.size();
             },
             remove_s9c8w6$: function (index) {
                 this.checkRange(index);
-                this.$size--;
                 return this.array.splice(index, 1)[0];
             },
             clear: function () {
                 this.array.length = 0;
-                this.$size = 0;
             },
-            indexOf: function (o) {
-                for (var i = 0, n = this.$size; i < n; ++i) {
+            indexOf_s9cetl$: function (o) {
+                for (var i = 0; i < this.array.length; i++) {
+                    if (Kotlin.equals(this.array[i], o)) {
+                        return i;
+                    }
+                }
+                return -1;
+            },
+            lastIndexOf_s9cetl$: function (o) {
+                for (var i = this.array.length - 1; i >= 0; i--) {
                     if (Kotlin.equals(this.array[i], o)) {
                         return i;
                     }
@@ -334,7 +334,7 @@ String.prototype.contains = function (s) {
                 return -1;
             },
             toArray: function () {
-                return this.array.slice(0, this.$size);
+                return this.array.slice(0);
             },
             toString: function () {
                 return "[" + this.array.join(", ") + "]";
@@ -343,11 +343,11 @@ String.prototype.contains = function (s) {
                 return this.array;
             },
             checkRange: function(index) {
-                if (index < 0 || index >= this.$size) {
+                if (index < 0 || index >= this.array.length) {
                     throw new RangeError();
                 }
             }
-    });
+        });
 
     Kotlin.Runnable = Kotlin.createClassNow(null, null, {
         run: throwAbstractFunctionInvocationError("Runnable#run")
