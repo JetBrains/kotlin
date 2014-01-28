@@ -28,10 +28,7 @@ public class KotlinJavaSafeDeleteDelegate implements JavaSafeDeleteDelegate {
             PsiElement originalDeclaration = AsJavaPackage.getUnwrapped(method);
             if (!(originalDeclaration instanceof PsiMethod || originalDeclaration instanceof JetDeclaration)) return;
 
-            int parameterIndex = method.getParameterList().getParameterIndex(parameter);
-            if (PsiUtilPackage.isExtensionDeclaration(originalDeclaration)) {
-                parameterIndex--;
-            }
+            int parameterIndex = PsiUtilPackage.parameterIndex(AsJavaPackage.getUnwrapped(parameter));
             if (parameterIndex < 0) return;
 
             JetCallExpression callExpression = PsiTreeUtil.getParentOfType(reference.getElement(), JetCallExpression.class, false);

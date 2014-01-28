@@ -36,6 +36,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -289,9 +290,8 @@ public class JetRefactoringUtil {
     @Nullable
     public static Collection<? extends PsiElement> checkParametersInMethodHierarchy(@NotNull PsiParameter parameter) {
         PsiMethod method = (PsiMethod)parameter.getDeclarationScope();
-        int parameterIndex = method.getParameterList().getParameterIndex(parameter);
 
-        Set<PsiElement> parametersToDelete = collectParametersHierarchy(method, parameterIndex);
+        Set<PsiElement> parametersToDelete = collectParametersHierarchy(method, parameter);
         if (parametersToDelete.size() > 1) {
             if (ApplicationManager.getApplication().isUnitTestMode()) {
                 return parametersToDelete;
@@ -315,7 +315,7 @@ public class JetRefactoringUtil {
 
     // TODO: generalize breadth-first search
     @NotNull
-    private static Set<PsiElement> collectParametersHierarchy(@NotNull PsiMethod method, int parameterIndex) {
+    private static Set<PsiElement> collectParametersHierarchy(@NotNull PsiMethod method, @NotNull PsiParameter parameter) {
         Deque<PsiMethod> queue = new ArrayDeque<PsiMethod>();
         Set<PsiMethod> visited = new HashSet<PsiMethod>();
         Set<PsiElement> parametersToDelete = new HashSet<PsiElement>();
@@ -325,7 +325,7 @@ public class JetRefactoringUtil {
             PsiMethod currentMethod = queue.poll();
 
             visited.add(currentMethod);
-            addParameter(currentMethod, parametersToDelete, parameterIndex);
+            addParameter(currentMethod, parametersToDelete, parameter);
 
             for (PsiMethod superMethod : currentMethod.findSuperMethods(true)) {
                 if (!visited.contains(superMethod)) {
@@ -341,15 +341,16 @@ public class JetRefactoringUtil {
         return parametersToDelete;
     }
 
-    private static void addParameter(@NotNull PsiMethod method, @NotNull Set<PsiElement> result, int parameterIndex) {
+    private static void addParameter(@NotNull PsiMethod method, @NotNull Set<PsiElement> result, @NotNull PsiParameter parameter) {
+        int parameterIndex = PsiUtilPackage.parameterIndex(AsJavaPackage.getUnwrapped(parameter));
+
         if (method instanceof KotlinLightMethod) {
             JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-            int jetParameterIndex = PsiUtilPackage.isExtensionDeclaration(declaration) ? parameterIndex - 1 : parameterIndex;
             if (declaration instanceof JetNamedFunction) {
-                result.add(((JetNamedFunction) declaration).getValueParameters().get(jetParameterIndex));
+                result.add(((JetNamedFunction) declaration).getValueParameters().get(parameterIndex));
             }
             else if (declaration instanceof JetClass) {
-                result.add(((JetClass) declaration).getPrimaryConstructorParameters().get(jetParameterIndex));
+                result.add(((JetClass) declaration).getPrimaryConstructorParameters().get(parameterIndex));
             }
         }
         else {
