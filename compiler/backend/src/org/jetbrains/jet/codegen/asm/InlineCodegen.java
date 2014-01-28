@@ -51,8 +51,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-
-import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 
 public class InlineCodegen implements ParentCodegenAware, Inliner {
 
@@ -272,8 +272,20 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         boolean shouldPut = false == (stackValue != null && stackValue instanceof StackValue.Local);
         if (shouldPut) {
             //we could recapture field of anonymous objects cause they couldn't change
-            if ((stackValue instanceof StackValue.Composed || stackValue instanceof StackValue.Field) && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
-                if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor)) {
+            if (codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
+                Type internalName = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) codegen.getContext().getContextDescriptor());
+
+                String owner = null;
+                if (stackValue instanceof StackValue.Field) {
+                    owner = ((StackValue.Field) stackValue).owner.getInternalName();
+                }
+
+                if (stackValue instanceof StackValue.Composed) {
+                    //go through aload 0
+                    owner = internalName.getInternalName();
+                }
+
+                if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor) && internalName.getInternalName().equals(owner)) {
                     //check type of context
                     return false;
                 }
