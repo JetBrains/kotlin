@@ -319,15 +319,6 @@ public class DeclarationResolver {
 
     private void checkRedeclarationsInPackages() {
         for (MutablePackageFragmentDescriptor packageFragment : Sets.newHashSet(context.getPackageFragments().values())) {
-            if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(packageFragment.getFqName())) {
-                // TODO: drop this after built-ins are fully rewritten to Kotlin
-                // At the moment, there are Java classes for ranges (e.g. IntRange.java) which contain static members. If someone tries to
-                // rewrite IntRange to Kotlin, redeclaration will be reported because there are both class (from the Kotlin sources) and
-                // package (from static members of Java class present in kotlin-runtime.jar) for FQ name "jet.IntRange".
-                // Will be safe to drop once there are no Java classes duplicating sources of Kotlin built-ins
-                continue;
-            }
-
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
             JetScope packageViewScope = packageView.getMemberScope();
             Multimap<Name, DeclarationDescriptor> simpleNameDescriptors = packageFragment.getMemberScope().getDeclaredDescriptorsAccessibleBySimpleName();
