@@ -504,13 +504,33 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
 
 Kotlin.Set = Kotlin.createClassNow(Kotlin.Collection);
 
+var SetIterator = Kotlin.createClassNow(Kotlin.Iterator,
+    function (set) {
+        this.set = set;
+        this.keys = set.toArray();
+        this.index = 0;
+    }, {
+        next: function() {
+            return this.keys[this.index++];
+        },
+        hasNext: function() {
+            return this.index < this.keys.length;
+        },
+        remove: function() {
+            this.set.remove_s9cetl$(this.keys[this.index - 1]);
+        }
+});
+
 Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
     function () {
         this.$size = 0;
         this.map = {};
     }, {
-        contains: function (key) {
+        contains_s9cetl$: function (key) {
             return this.map[key] === true;
+        },
+        iterator: function() {
+            return new SetIterator(this);
         },
         add_s9cetl$: function (element) {
             var prevElement = this.map[element];
@@ -523,7 +543,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
                 return true;
             }
         },
-        remove: function (element) {
+        remove_s9cetl$: function (element) {
             if (this.map[element] === true) {
                 delete this.map[element];
                 this.$size--;
@@ -546,30 +566,28 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
     function HashSet(hashingFunction, equalityFunction) {
         var hashTable = new Kotlin.HashTable(hashingFunction, equalityFunction);
 
+        this.addAll_5ib00d$ = Kotlin.AbstractCollection.prototype.addAll_5ib00d$;
+        this.removeAll_5ib00d$ = Kotlin.AbstractCollection.prototype.removeAll_5ib00d$;
+        this.retainAll_5ib00d$ = Kotlin.AbstractCollection.prototype.retainAll_5ib00d$;
+        this.containsAll_5ib00d$ = Kotlin.AbstractCollection.prototype.containsAll_5ib00d$;
+
         this.add_s9cetl$ = function (o) {
-            hashTable.put_5yfy9u$(o, true);
+            return !hashTable.put_5yfy9u$(o, true);
         };
 
-        this.addAll = function (arr) {
-            var i = arr.length;
-            while (i--) {
-                hashTable.put_5yfy9u$(arr[i], true);
-            }
-        };
-
-        this.values = function () {
+        this.toArray = function () {
             return hashTable._keys();
         };
 
         this.iterator = function () {
-            return Kotlin.arrayIterator(this.values());
+            return new SetIterator(this);
         };
 
-        this.remove = function (o) {
-            return hashTable.remove_s9cetl$(o) ? o : null;
+        this.remove_s9cetl$ = function (o) {
+            return hashTable.remove_s9cetl$(o) != null;
         };
 
-        this.contains = function (o) {
+        this.contains_s9cetl$ = function (o) {
             return hashTable.containsKey_s9cetl$(o);
         };
 
@@ -587,7 +605,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
 
         this.clone = function () {
             var h = new HashSet(hashingFunction, equalityFunction);
-            h.addAll(hashTable.keys());
+            h.addAll_5ib00d$(hashTable.keys());
             return h;
         };
 
@@ -654,7 +672,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
         this.isSubsetOf = function (hashSet) {
             var values = hashTable.keys(), i = values.length;
             while (i--) {
-                if (!hashSet.contains(values[i])) {
+                if (!hashSet.contains_s9cetl$(values[i])) {
                     return false;
                 }
             }

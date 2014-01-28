@@ -112,6 +112,11 @@ String.prototype.contains = function (s) {
             },
             hasNext: function () {
                 return this.index < this.size;
+            },
+            remove: function () {
+                if (this.index < 0 || this.index > this.size) throw new RangeError();
+                this.index--;
+                this.array.splice(this.index, 1);
             }
     });
 
@@ -180,12 +185,43 @@ String.prototype.contains = function (s) {
         size: function () {
             return this.$size;
         },
-        addAll: function (collection) {
+        addAll_5ib00d$: function (collection) {
+            var modified = false;
             var it = collection.iterator();
-            var i = this.size();
-            while (i-- > 0) {
-                this.add(it.next());
+            while (it.hasNext()) {
+                if(this.add_s9cetl$(it.next()))
+                    modified = true;
             }
+            return modified
+        },
+        removeAll_5ib00d$: function (c) {
+            var modified = false;
+            var it = this.iterator();
+            while (it.hasNext()) {
+                if(c.contains_s9cetl$(it.next())) {
+                    it.remove();
+                    modified = true;
+                }
+            }
+            return modified
+        },
+        retainAll_5ib00d$: function (c) {
+            var modified = false;
+            var it = this.iterator();
+            while (it.hasNext()) {
+                if(!c.contains_s9cetl$(it.next())) {
+                    it.remove();
+                    modified = true;
+                }
+            }
+            return modified
+        },
+        containsAll_5ib00d$ : function (c) {
+            var it = c.iterator();
+            while (it.hasNext()) {
+                if (!this.contains_s9cetl$(it.next())) return false;
+            }
+            return true;
         },
         isEmpty: function () {
             return this.size() === 0;
