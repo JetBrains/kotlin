@@ -100,6 +100,10 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         this.isInlineClosure = isInlineClosure;
     }
 
+    public boolean isInlineClosure() {
+        return isInlineClosure;
+    }
+
     public StackValue isSpecialStackValue(StackValue stackValue) {
         if (isInlineClosure && stackValue instanceof StackValue.Composed) {
             StackValue prefix = ((StackValue.Composed) stackValue).prefix;

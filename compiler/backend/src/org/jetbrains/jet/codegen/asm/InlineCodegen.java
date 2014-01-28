@@ -272,7 +272,8 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         boolean shouldPut = false == (stackValue != null && stackValue instanceof StackValue.Local);
         if (shouldPut) {
             //we could recapture field of anonymous objects cause they couldn't change
-            if (codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
+            boolean isInlineClosure = codegen.getContext().isInlineClosure();
+            if (isInlineClosure && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
                 Type internalName = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) codegen.getContext().getContextDescriptor());
 
                 String owner = null;
