@@ -61,9 +61,10 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
         @Override
         protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
             final PsiElement element = getTargetElement(descriptor);
+            assert element instanceof JetElement :
+                    "JetElement must be passed by KotlinCallerMethodsTreeStructure.newInstance(): " + element.getText();
 
-            BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
 
             final ArrayList<PsiElement> result = new ArrayList<PsiElement>();
             codeBlockForLocalDeclaration.accept(new CalleeReferenceVisitorBase(bindingContext, true) {

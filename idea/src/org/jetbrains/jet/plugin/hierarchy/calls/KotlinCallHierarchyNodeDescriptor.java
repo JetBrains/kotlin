@@ -141,8 +141,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
             elementText = ((JetFile) element).getName();
         }
         else if (element instanceof JetNamedDeclaration) {
-            BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
 
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (descriptor == null) return null;
