@@ -20,9 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
-import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
@@ -38,11 +36,7 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
 
-class JetArrayAccessReference extends AbstractJetReference<JetArrayAccessExpression> implements MultiRangeReference {
-
-    public static PsiReference[] create(JetArrayAccessExpression expression) {
-        return new PsiReference[] { new JetArrayAccessReference(expression) };
-    }
+class JetArrayAccessReference extends JetSimpleReference<JetArrayAccessExpression> implements MultiRangeReference {
 
     public JetArrayAccessReference(@NotNull JetArrayAccessExpression expression) {
         super(expression);
@@ -53,19 +47,19 @@ class JetArrayAccessReference extends AbstractJetReference<JetArrayAccessExpress
         return getElement().getTextRange().shiftRight(-getElement().getTextOffset());
     }
 
-    @Nullable
     @Override
+    @NotNull
     protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
         List<DeclarationDescriptor> result = Lists.newArrayList();
 
         ResolvedCall<FunctionDescriptor> getFunction = context.get(INDEXED_LVALUE_GET, getExpression());
         if (getFunction != null) {
-            result.add(getFunction.getResultingDescriptor());
+            result.add(getFunction.getCandidateDescriptor());
         }
 
         ResolvedCall<FunctionDescriptor> setFunction = context.get(INDEXED_LVALUE_SET, getExpression());
         if (setFunction != null) {
-            result.add(setFunction.getResultingDescriptor());
+            result.add(setFunction.getCandidateDescriptor());
         }
 
         return result;

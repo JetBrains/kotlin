@@ -19,9 +19,7 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
-import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -37,11 +35,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
-class JetInvokeFunctionReference extends AbstractJetReference<JetCallExpression> implements MultiRangeReference {
-
-    public static PsiReference[] create(@NotNull JetCallExpression expression) {
-        return new PsiReference[] { new JetInvokeFunctionReference(expression) };
-    }
+class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> implements MultiRangeReference {
 
     public JetInvokeFunctionReference(@NotNull JetCallExpression expression) {
         super(expression);
@@ -52,15 +46,14 @@ class JetInvokeFunctionReference extends AbstractJetReference<JetCallExpression>
         return getElement().getTextRange().shiftRight(-getElement().getTextOffset());
     }
 
-    @Nullable
     @Override
+    @NotNull
     protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(RESOLVED_CALL, getExpression().getCalleeExpression());
-
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            return Collections.<DeclarationDescriptor>singleton(((VariableAsFunctionResolvedCall) resolvedCall).getResultingDescriptor());
+            return Collections.<DeclarationDescriptor>singleton(((VariableAsFunctionResolvedCall) resolvedCall).getCandidateDescriptor());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

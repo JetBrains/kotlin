@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetSimpleNameReference extends AbstractJetReference<JetSimpleNameExpression> {
+public class JetSimpleNameReference extends JetSimpleReference<JetSimpleNameExpression> {
 
     public JetSimpleNameReference(@NotNull JetSimpleNameExpression jetSimpleNameExpression) {
         super(jetSimpleNameExpression);

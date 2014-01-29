@@ -31,7 +31,7 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                 @NotNull
                                                 @Override
                                                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
-                                                    return new PsiReference[] { new JetSimpleNameReference((JetSimpleNameExpression) element) };
+                                                    return toArray(new JetSimpleNameReference((JetSimpleNameExpression) element));
                                                 }
                                             });
 
@@ -40,7 +40,7 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                 @NotNull
                                                 @Override
                                                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
-                                                    return new PsiReference[] { new JetThisReference((JetThisReferenceExpression) element) };
+                                                    return toArray(new JetThisReference((JetThisReferenceExpression) element));
                                                 }
                                             });
 
@@ -49,7 +49,7 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                 @NotNull
                                                 @Override
                                                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
-                                                    return JetArrayAccessReference.create((JetArrayAccessExpression) element);
+                                                    return toArray(new JetArrayAccessReference((JetArrayAccessExpression) element));
                                                 }
                                             });
 
@@ -58,7 +58,7 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                 @NotNull
                                                 @Override
                                                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
-                                                    return JetInvokeFunctionReference.create((JetCallExpression) element);
+                                                    return toArray(new JetInvokeFunctionReference((JetCallExpression) element));
                                                 }
                                             });
 
@@ -67,7 +67,8 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                 @NotNull
                                                 @Override
                                                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
-                                                    return JetPropertyDelegationMethodsReference.create((JetPropertyDelegate) element);
+                                                    return toArray(
+                                                            new JetPropertyDelegationMethodsReference((JetPropertyDelegate) element));
                                                 }
                                             });
 
@@ -76,8 +77,13 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                 @NotNull
                                                 @Override
                                                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
-                                                    return JetForLoopInReference.create((JetForExpression) element);
+                                                    return toArray(new JetForLoopInReference((JetForExpression) element));
                                                 }
                                             });
+    }
+
+    @NotNull
+    private static JetReference[] toArray(@NotNull JetReference reference) {
+        return new JetReference[] {reference};
     }
 }

@@ -36,13 +36,20 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.asJava.*
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.utils.keysToMap
 
 public trait JetReference : PsiPolyVariantReference {
     public fun resolveToDescriptors(): Collection<DeclarationDescriptor>
+    public fun resolveMap(): Map<DeclarationDescriptor, Collection<PsiElement>>
 }
 
-abstract class AbstractJetReference<T : JetReferenceExpression>(val expression: T)
-: PsiPolyVariantReferenceBase<T>(expression), JetReference {
+abstract class AbstractJetReference<T : JetElement>(element: T)
+: PsiPolyVariantReferenceBase<T>(element), JetReference {
+
+    val expression: T
+        get() = getElement()!!
+
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
         return PsiElementResolveResult.createResults(resolveToPsiElements())
     }
@@ -61,13 +68,7 @@ abstract class AbstractJetReference<T : JetReferenceExpression>(val expression: 
 
     override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()
 
-    public override fun isReferenceTo(element: PsiElement?): Boolean {
-        val resolvedElement = resolve()
-        if (resolvedElement == null) {
-            return false
-        }
-        return element?.namedUnwrappedElement == resolvedElement.namedUnwrappedElement
-    }
+    protected fun areElementsEquivalent(el1: PsiElement, el2: PsiElement): Boolean = el1.namedUnwrappedElement == el2.namedUnwrappedElement
 
     [suppress("CAST_NEVER_SUCCEEDS")]
     override fun getVariants(): Array<Any> = PsiReference.EMPTY_ARRAY as Array<Any>
@@ -81,27 +82,17 @@ abstract class AbstractJetReference<T : JetReferenceExpression>(val expression: 
 
     override fun resolveToDescriptors(): Collection<DeclarationDescriptor> {
         val context = AnalyzerFacadeWithCache.getContextForElement(expression)
-        val targetDescriptors = getTargetDescriptors(context)
-        return targetDescriptors ?: Collections.emptyList<DeclarationDescriptor>()
+        return getTargetDescriptors(context)
     }
 
-    private fun resolveToPsiElements(context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>?): Collection<PsiElement> {
-        if (targetDescriptors != null) {
-            assert(!(targetDescriptors.isEmpty())) { "targetDescriptors is not null, but empty, for " + expression.getText() }
-            val result = HashSet<PsiElement>()
-            val project = expression.getProject()
-            for (target in targetDescriptors) {
-                result.addAll(BindingContextUtils.descriptorToDeclarations(context, target))
-                result.addAll(DescriptorToDeclarationUtil.findDeclarationsForDescriptorWithoutTrace(project, target))
+    override fun resolveMap(): Map<DeclarationDescriptor, Collection<PsiElement>> {
+        val context = AnalyzerFacadeWithCache.getContextForElement(expression)
+        return getTargetDescriptors(context) keysToMap { resolveToPsiElements(context, it) }
+    }
 
-                if (target is PackageViewDescriptor) {
-                    val psiFacade = JavaPsiFacade.getInstance(project)
-                    val fqName = (target as PackageViewDescriptor).getFqName().asString()
-                    ContainerUtil.addIfNotNull(result, psiFacade.findPackage(fqName))
-                    ContainerUtil.addIfNotNull(result, psiFacade.findClass(fqName, GlobalSearchScope.allScope(project)))
-                }
-            }
-            return result
+    private fun resolveToPsiElements(context: BindingContext, targetDescriptors: Collection<DeclarationDescriptor>): Collection<PsiElement> {
+        if (targetDescriptors.isNotEmpty()) {
+            return targetDescriptors flatMap { target -> resolveToPsiElements(context, target) }
         }
 
         val labelTargets = getLabelTargets(context)
@@ -112,19 +103,59 @@ abstract class AbstractJetReference<T : JetReferenceExpression>(val expression: 
         return Collections.emptySet()
     }
 
-    protected open fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor>? {
+    private fun resolveToPsiElements(context: BindingContext, targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
+        val result = HashSet<PsiElement>()
+        val project = expression.getProject()
+        result.addAll(BindingContextUtils.descriptorToDeclarations(context, targetDescriptor))
+        result.addAll(DescriptorToDeclarationUtil.findDeclarationsForDescriptorWithoutTrace(project, targetDescriptor))
+
+        if (targetDescriptor is PackageViewDescriptor) {
+            val psiFacade = JavaPsiFacade.getInstance(project)
+            val fqName = (targetDescriptor as PackageViewDescriptor).getFqName().asString()
+            ContainerUtil.addIfNotNull(result, psiFacade.findPackage(fqName))
+            ContainerUtil.addIfNotNull(result, psiFacade.findClass(fqName, GlobalSearchScope.allScope(project)))
+        }
+        return result
+    }
+
+    protected abstract fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor>
+
+    private fun getLabelTargets(context: BindingContext): Collection<PsiElement>? {
+        val reference = expression
+        if (reference !is JetReferenceExpression) {
+            return null
+        }
+        val labelTarget = context.get(BindingContext.LABEL_TARGET, reference)
+        if (labelTarget != null) {
+            return listOf(labelTarget)
+        }
+        return context.get(BindingContext.AMBIGUOUS_LABEL_TARGET, reference)
+    }
+}
+
+public abstract class JetSimpleReference<T : JetReferenceExpression>(expression: T) : AbstractJetReference<T>(expression) {
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val targetDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression)
         if (targetDescriptor != null) {
             return listOf(targetDescriptor)
         }
-        return context.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression)
+        return context.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression).orEmpty()
     }
 
-    private fun getLabelTargets(context: BindingContext): Collection<PsiElement>? {
-        val labelTarget = context.get(BindingContext.LABEL_TARGET, expression)
-        if (labelTarget != null) {
-            return listOf(labelTarget)
+    override fun isReferenceTo(element: PsiElement?): Boolean {
+        val resolvedElement = resolve()
+        if (resolvedElement == null || element == null) {
+            return false
         }
-        return context.get(BindingContext.AMBIGUOUS_LABEL_TARGET, expression)
+        return areElementsEquivalent(element, resolvedElement)
+    }
+}
+
+public abstract class JetMultiReference<T : JetElement>(expression: T) : AbstractJetReference<T>(expression) {
+    override fun isReferenceTo(element: PsiElement?): Boolean {
+        if (element == null) {
+            return false
+        }
+        return multiResolve(false).map { it.getElement() }.filterNotNull().any { areElementsEquivalent(it, element) }
     }
 }
