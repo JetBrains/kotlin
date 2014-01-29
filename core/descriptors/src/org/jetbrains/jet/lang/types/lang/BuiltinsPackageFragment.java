@@ -39,7 +39,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
         // TODO: support annotations
-        members = new DeserializedPackageMemberScope(storageManager, this, AnnotationDeserializer.EMPTY,
+        members = new DeserializedPackageMemberScope(storageManager, this, AnnotationDeserializer.UNSUPPORTED,
                                                      new BuiltInsDescriptorFinder(storageManager), loadPackage(), nameResolver);
     }
 
@@ -134,7 +134,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
 
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
             // TODO: support annotations
-            super(storageManager, AnnotationDeserializer.EMPTY, packageFragmentProvider);
+            super(storageManager, AnnotationDeserializer.UNSUPPORTED, packageFragmentProvider);
 
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override

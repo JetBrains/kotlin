@@ -60,37 +60,6 @@ public interface AnnotationDeserializer {
         }
     };
 
-    AnnotationDeserializer EMPTY = new AnnotationDeserializer() {
-        @NotNull
-        @Override
-        public Annotations loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto) {
-            return Annotations.EMPTY;
-        }
-
-        @NotNull
-        @Override
-        public Annotations loadCallableAnnotations(
-                @NotNull ClassOrPackageFragmentDescriptor container,
-                @NotNull ProtoBuf.Callable proto,
-                @NotNull NameResolver nameResolver,
-                @NotNull AnnotatedCallableKind kind
-        ) {
-            return Annotations.EMPTY;
-        }
-
-        @NotNull
-        @Override
-        public Annotations loadValueParameterAnnotations(
-                @NotNull ClassOrPackageFragmentDescriptor container,
-                @NotNull ProtoBuf.Callable callable,
-                @NotNull NameResolver nameResolver,
-                @NotNull AnnotatedCallableKind kind,
-                @NotNull ProtoBuf.Callable.ValueParameter proto
-        ) {
-            return Annotations.EMPTY;
-        }
-    };
-
     enum AnnotatedCallableKind {
         FUNCTION,
         PROPERTY,
