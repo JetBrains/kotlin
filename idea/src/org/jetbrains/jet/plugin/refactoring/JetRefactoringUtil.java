@@ -350,6 +350,11 @@ public class JetRefactoringUtil {
         }
         if (expressions.size() == 0) throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
 
+        if (expressions.size() == 1) {
+            callback.run(expressions.get(0));
+            return;
+        }
+
         final DefaultListModel model = new DefaultListModel();
         for (JetExpression expression : expressions) {
             model.addElement(expression);
