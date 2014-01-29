@@ -81,7 +81,7 @@ public class LockBasedStorageManager implements StorageManager {
         this(getPointOfConstruction(), ExceptionHandlingStrategy.THROW, new ReentrantLock());
     }
 
-    private LockBasedStorageManager(@NotNull ExceptionHandlingStrategy exceptionHandlingStrategy) {
+    protected LockBasedStorageManager(@NotNull ExceptionHandlingStrategy exceptionHandlingStrategy) {
         this(getPointOfConstruction(), exceptionHandlingStrategy, new ReentrantLock());
     }
 
