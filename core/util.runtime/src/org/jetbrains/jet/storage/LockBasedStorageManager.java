@@ -42,6 +42,11 @@ public class LockBasedStorageManager implements StorageManager {
     protected final Lock lock;
     private final String debugText;
 
+    private LockBasedStorageManager(@NotNull String debugText, @NotNull Lock lock) {
+        this.lock = lock;
+        this.debugText = debugText;
+    }
+
     public LockBasedStorageManager() {
         this(getPointOfConstruction(), new ReentrantLock());
     }
@@ -51,11 +56,6 @@ public class LockBasedStorageManager implements StorageManager {
         // we need to skip frames for getStackTrace(), this method and the constructor that's calling it
         if (trace.length <= 3) return "<unknown creating class>";
         return trace[3].toString();
-    }
-
-    private LockBasedStorageManager(@NotNull String debugText, @NotNull Lock lock) {
-        this.lock = lock;
-        this.debugText = debugText;
     }
 
     @Override
