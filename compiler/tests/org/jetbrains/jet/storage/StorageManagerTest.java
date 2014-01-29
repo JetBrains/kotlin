@@ -4,6 +4,8 @@ import jet.Function0;
 import jet.Function1;
 import jet.Unit;
 import junit.framework.TestCase;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
 import java.util.ArrayList;
@@ -424,6 +426,60 @@ public class StorageManagerTest extends TestCase {
 
         assertEquals(2, new C().rec.invoke().intValue());
         assertEquals(2, c.getCount());
+    }
+
+    // ExceptionHandlingStrategy
+
+    public void testExceptionHandlingStrategyForLazyValues() throws Exception {
+        class RethrownException extends RuntimeException {}
+
+        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(new LockBasedStorageManager.ExceptionHandlingStrategy() {
+            @NotNull
+            @Override
+            public RuntimeException handleException(@NotNull Throwable throwable) {
+                throw new RethrownException();
+            }
+        });
+        try {
+            m.createLazyValue(
+                    new Function0<Object>() {
+                        @Nullable
+                        @Override
+                        public Object invoke() {
+                            throw new RuntimeException();
+                        }
+                    }
+            ).invoke();
+            fail("Exception should have occurred");
+        }
+        catch (RethrownException ignored) {
+        }
+    }
+
+    public void testExceptionHandlingStrategyForMemoizedFunctions() throws Exception {
+        class RethrownException extends RuntimeException {}
+
+        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(new LockBasedStorageManager.ExceptionHandlingStrategy() {
+            @NotNull
+            @Override
+            public RuntimeException handleException(@NotNull Throwable throwable) {
+                throw new RethrownException();
+            }
+        });
+        try {
+            m.createMemoizedFunction(
+                    new Function1<Object, Object>() {
+                        @Nullable
+                        @Override
+                        public Object invoke(@Nullable Object o) {
+                            throw new RuntimeException();
+                        }
+                    }
+            ).invoke("");
+            fail("Exception should have occurred");
+        }
+        catch (RethrownException ignored) {
+        }
     }
 
     // toString()
