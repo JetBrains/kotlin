@@ -903,6 +903,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/generic.kt");
         }
         
+        @TestMetadata("getGenericInterfaces.kt")
+        public void testGetGenericInterfaces() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/getGenericInterfaces.kt");
+        }
+        
         @TestMetadata("implicitlyCastToHashable.kt")
         public void testImplicitlyCastToHashable() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/implicitlyCastToHashable.kt");

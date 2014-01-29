@@ -350,6 +350,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         sw.writeSuperclassEnd();
 
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
+        sw.writeInterface();
+        sw.writeClassBegin(Type.getObjectType(JvmAbi.JET_OBJECT.getInternalName()));
+        sw.writeClassEnd();
+        sw.writeInterfaceEnd();
         superInterfaces.add(JvmAbi.JET_OBJECT.getInternalName());
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
