@@ -366,7 +366,7 @@ public abstract class StackValue {
     public static class Local extends StackValue {
         final int index;
 
-        public Local(int index, Type type) {
+        private Local(int index, Type type) {
             super(type);
             this.index = index;
 

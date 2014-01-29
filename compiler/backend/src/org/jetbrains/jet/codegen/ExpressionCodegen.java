@@ -2656,7 +2656,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return generateElvis(expression);
         }
         else if (opToken == JetTokens.IN_KEYWORD || opToken == JetTokens.NOT_IN) {
-            return generateIn(expression);
+            return generateIn(StackValue.expression(Type.INT_TYPE, expression.getLeft(), this), expression.getRight(), reference);
         }
         else {
             ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, reference);
@@ -2678,23 +2678,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private StackValue generateIn(JetBinaryExpression expression) {
-        boolean inverted = expression.getOperationReference().getReferencedNameElementType() == JetTokens.NOT_IN;
-        if (isIntRangeExpr(expression.getRight())) {
-            StackValue leftValue = StackValue.expression(Type.INT_TYPE, expression.getLeft(), this);
-            JetBinaryExpression rangeExpression = (JetBinaryExpression) expression.getRight();
-            getInIntRange(leftValue, rangeExpression, inverted);
+    private StackValue generateIn(StackValue leftValue, JetExpression rangeExpression, JetSimpleNameExpression operationReference) {
+        JetExpression deparenthesized = JetPsiUtil.deparenthesize(rangeExpression);
+        if (isIntRangeExpr(deparenthesized)) {
+            genInIntRange(leftValue, (JetBinaryExpression) deparenthesized);
         }
         else {
-            invokeFunctionByReference(expression.getOperationReference());
-            if (inverted) {
-                genInvertBoolean(v);
-            }
+            invokeFunctionByReference(operationReference);
+        }
+        if (operationReference.getReferencedNameElementType() == JetTokens.NOT_IN) {
+            genInvertBoolean(v);
         }
         return StackValue.onStack(Type.BOOLEAN_TYPE);
     }
 
-    private void getInIntRange(StackValue leftValue, JetBinaryExpression rangeExpression, boolean inverted) {
+    private void genInIntRange(StackValue leftValue, JetBinaryExpression rangeExpression) {
         v.iconst(1);
         // 1
         leftValue.put(Type.INT_TYPE, v);
@@ -2728,9 +2726,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         // c c
 
         v.and(Type.INT_TYPE);
-        if (inverted) {
-            genInvertBoolean(v);
-        }
     }
 
     private StackValue generateBooleanAnd(JetBinaryExpression expression) {
@@ -3746,27 +3741,9 @@ The "returned" value of try expression with no finally is either the last expres
     private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition) {
         if (condition instanceof JetWhenConditionInRange) {
             JetWhenConditionInRange conditionInRange = (JetWhenConditionInRange) condition;
-            JetExpression rangeExpression = conditionInRange.getRangeExpression();
-            while (rangeExpression instanceof JetParenthesizedExpression) {
-                rangeExpression = ((JetParenthesizedExpression) rangeExpression).getExpression();
-            }
-            JetSimpleNameExpression operationReference = conditionInRange.getOperationReference();
-            boolean inverted = operationReference.getReferencedNameElementType() == JetTokens.NOT_IN;
-            if (isIntRangeExpr(rangeExpression)) {
-                getInIntRange(new StackValue.Local(subjectLocal, subjectType), (JetBinaryExpression) rangeExpression, inverted);
-            }
-            else {
-                //FunctionDescriptor op =
-                //        (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, conditionInRange.getOperationReference());
-                //genToJVMStack(rangeExpression);
-                //new StackValue.Local(subjectLocal, subjectType).put(OBJECT_TYPE, v);
-                //invokeFunctionNoParams(op, Type.BOOLEAN_TYPE, v);
-                invokeFunctionByReference(operationReference);
-                if (inverted) {
-                    genInvertBoolean(v);
-                }
-            }
-            return StackValue.onStack(Type.BOOLEAN_TYPE);
+            return generateIn(StackValue.local(subjectLocal, subjectType),
+                              conditionInRange.getRangeExpression(),
+                              conditionInRange.getOperationReference());
         }
         StackValue.Local match = subjectLocal == -1 ? null : StackValue.local(subjectLocal, subjectType);
         if (condition instanceof JetWhenConditionIsPattern) {
