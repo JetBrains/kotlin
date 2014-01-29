@@ -24,6 +24,7 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.*;
+import org.jetbrains.jet.plugin.intentions.attributeCallReplacements.*;
 import org.jetbrains.jet.plugin.intentions.declarations.ConvertMemberToExtension;
 import org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention;
 
@@ -116,6 +117,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
 
     public void doTestReconstructType(@NotNull String path) throws Exception {
         doTestIntention(path, new ReconstructTypeInCastOrIsAction());
+    }
+
+    public void doTestReplaceGetIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new ReplaceGetIntention());
     }
 
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
