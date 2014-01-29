@@ -30,39 +30,40 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.k2js.translate.context.Namer
 import org.jetbrains.k2js.translate.utils.ErrorReportingUtils
+import org.jetbrains.k2js.translate.utils.AnnotationsUtils
 
 
 val functionCallCases: CallCaseDispatcher<FunctionCallCase, FunctionCallInfo> = createFunctionCases()
 val variableAccessCases: CallCaseDispatcher<VariableAccessCase, VariableAccessInfo> = createVariableAccessCases()
 
-fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver: JsExpression? = null): JsExpression {
-    return buildCall(resolvedCall, receiver, null)
+fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiverOrThisObject: JsExpression? = null): JsExpression {
+    return buildCall(resolvedCall, receiverOrThisObject, null)
 }
 
-fun TranslationContext.buildGet(resolvedCall: ResolvedCall<out VariableDescriptor>, receiver: JsExpression? = null): JsExpression {
-    val variableAccessInfo = VariableAccessInfo(getCallInfo(resolvedCall, receiver), null);
+fun TranslationContext.buildGet(resolvedCall: ResolvedCall<out VariableDescriptor>, receiverOrThisObject: JsExpression? = null): JsExpression {
+    val variableAccessInfo = VariableAccessInfo(getCallInfo(resolvedCall, receiverOrThisObject), null);
     return variableAccessCases.translate(variableAccessInfo)
 }
 
-fun TranslationContext.buildSet(resolvedCall: ResolvedCall<out VariableDescriptor>, setTo: JsExpression, receiver: JsExpression? = null): JsExpression {
-    val variableAccessInfo = VariableAccessInfo(getCallInfo(resolvedCall, receiver), setTo);
+fun TranslationContext.buildSet(resolvedCall: ResolvedCall<out VariableDescriptor>, value: JsExpression, receiverOrThisObject: JsExpression? = null): JsExpression {
+    val variableAccessInfo = VariableAccessInfo(getCallInfo(resolvedCall, receiverOrThisObject), value);
     return variableAccessCases.translate(variableAccessInfo)
 }
 
 fun TranslationContext.buildFakeCall(functionDescriptor: FunctionDescriptor, args: List<JsExpression>, thisObject: JsExpression?): JsExpression {
-    val fakeCallInfo = object: CallInfo {
-        override val context: TranslationContext = this@buildFakeCall
-        override val resolvedCall: ResolvedCall<out CallableDescriptor>
-            get() {
-                throw UnsupportedOperationException("Resolved call for direct call unsupported")
-            }
-        override val callableDescriptor: CallableDescriptor = functionDescriptor
-        override val thisObject: JsExpression? = thisObject
-        override val receiverObject: JsExpression? = null
-        override val nullableReceiverForSafeCall: JsExpression? = null
+    val argumentsInfo = CallArgumentTranslator.ArgumentsInfo(args, false, null);
+    val functionName = getNameForDescriptor(functionDescriptor)
+    val isNative = AnnotationsUtils.isNativeObject(functionDescriptor)
+    val hasSpreadOperator = false
+    if (thisObject != null) {
+        return DefaultCallCase.buildDefaultCallWithThisObject(argumentsInfo, thisObject, functionName, isNative, hasSpreadOperator)
+    } else {
+        return DefaultCallCase.buildDefaultCallWithoutReceiver(this, argumentsInfo, functionDescriptor, functionName, isNative, hasSpreadOperator)
     }
-    val fakeFunctionInfo = FunctionCallInfo(fakeCallInfo, CallArgumentTranslator.ArgumentsInfo(args, false, null));
-    return DefaultCallCase(fakeFunctionInfo).translate()
+}
+
+fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
+    return this.getExplicitReceiverKind() != NO_EXPLICIT_RECEIVER
 }
 
 private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): JsExpression {
@@ -151,7 +152,7 @@ open class VariableAccessCase(override val callInfo: VariableAccessInfo) : CallC
         if (isGetAccess()) {
             return ref
         } else {
-            return JsAstUtils.assignment(ref, getSetToExpression())
+            return JsAstUtils.assignment(ref, value!!)
         }
     }
 }

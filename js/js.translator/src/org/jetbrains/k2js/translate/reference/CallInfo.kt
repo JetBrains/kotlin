@@ -39,52 +39,53 @@ trait CallInfo {
     val thisObject: JsExpression?
     val receiverObject: JsExpression?
     val nullableReceiverForSafeCall: JsExpression?
-
-    val callableDescriptor: CallableDescriptor
-        get() {
-            return resolvedCall.getResultingDescriptor().getOriginal()
-        }
-
-    fun isExtension(): Boolean = receiverObject != null
-    fun isMemberCall(): Boolean = thisObject != null
-    fun isSafeCall(): Boolean = nullableReceiverForSafeCall != null
-    fun isNative(): Boolean = AnnotationsUtils.isNativeObject(callableDescriptor)
-
-    fun isSuperInvocation() : Boolean {
-        val thisObject = resolvedCall.getThisObject()
-        return thisObject is ExpressionReceiver && ((thisObject as ExpressionReceiver)).getExpression() is JetSuperExpression
-    }
-
-    // TODO: toString for debug
 }
 
-// if setTo == null, it is get access
-class VariableAccessInfo(callInfo: CallInfo, private val setTo: JsExpression? = null): CallInfo by callInfo {
-    val variableDescriptor = super.callableDescriptor as VariableDescriptor
-    val variableName : JsName
-        get() {
-            return context.getNameForDescriptor(variableDescriptor)
-        }
+// if value == null, it is get access
+class VariableAccessInfo(callInfo: CallInfo, val value: JsExpression? = null): CallInfo by callInfo
 
-    fun isGetAccess(): Boolean = setTo == null
+class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfo by callInfo
 
-    fun getSetToExpression(): JsExpression {
-        if (isGetAccess()) {
-            throw IllegalStateException("This is get, setTo is null. callInfo: $this")
-        }
-        return setTo!!
+
+val CallInfo.callableDescriptor: CallableDescriptor
+    get() {
+        return resolvedCall.getResultingDescriptor().getOriginal()
     }
+fun CallInfo.isExtension(): Boolean {
+    return receiverObject != null
+}
+fun CallInfo.isMemberCall(): Boolean {
+    return thisObject != null
+}
+fun CallInfo.isSafeCall(): Boolean {
+    return resolvedCall.isSafeCall()
+}
+fun CallInfo.isNative(): Boolean {
+    return AnnotationsUtils.isNativeObject(callableDescriptor)
+}
+fun CallInfo.isSuperInvocation() : Boolean {
+    val thisObject = resolvedCall.getThisObject()
+    return thisObject is ExpressionReceiver && ((thisObject as ExpressionReceiver)).getExpression() is JetSuperExpression
 }
 
-class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfo by callInfo {
-    val functionName : JsName
-        get() { // getter, because for several descriptors name is undefined. Example: {(a) -> a+1}(3)
-            return context.getNameForDescriptor(callableDescriptor)
-        }
-
-    fun hasSpreadOperator() : Boolean {
-        return argumentsInfo.isHasSpreadOperator()
+val VariableAccessInfo.variableDescriptor: VariableDescriptor
+    get() {
+        return callableDescriptor as VariableDescriptor
     }
+val VariableAccessInfo.variableName : JsName
+    get() {
+        return context.getNameForDescriptor(variableDescriptor)
+    }
+fun VariableAccessInfo.isGetAccess(): Boolean {
+    return value == null
+}
+
+val FunctionCallInfo.functionName : JsName
+    get() { // getter, because for several descriptors name is undefined. Example: {(a) -> a+1}(3)
+        return context.getNameForDescriptor(callableDescriptor)
+    }
+fun FunctionCallInfo.hasSpreadOperator() : Boolean {
+    return argumentsInfo.isHasSpreadOperator()
 }
 
 private fun TranslationContext.getThisObject(receiverValue: ReceiverValue): JsExpression {
@@ -92,7 +93,7 @@ private fun TranslationContext.getThisObject(receiverValue: ReceiverValue): JsEx
     return getThisObject(getDeclarationDescriptorForReceiver(receiverValue))
 }
 
-private fun TranslationContext.mainGetCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): CallInfo {
+private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): CallInfo {
     val receiverKind = resolvedCall.getExplicitReceiverKind()
     fun getNotNullReceiver1(): JsExpression {
         assert(receiver1 != null, "ResolvedCall say, that receiver(1) must be not null")
@@ -136,7 +137,7 @@ private fun TranslationContext.mainGetCallInfo(resolvedCall: ResolvedCall<out Ca
         }
     }
     return object : CallInfo {
-        override val context: TranslationContext = this@mainGetCallInfo
+        override val context: TranslationContext = this@createCallInfo
         override val resolvedCall: ResolvedCall<out CallableDescriptor> = resolvedCall
         override val thisObject: JsExpression? = getThisObject()
         override val receiverObject: JsExpression? = getReceiverObject()
@@ -144,12 +145,8 @@ private fun TranslationContext.mainGetCallInfo(resolvedCall: ResolvedCall<out Ca
     };
 }
 
-fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
-    return this.getExplicitReceiverKind() != NO_EXPLICIT_RECEIVER
-}
-
 fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiver: JsExpression?): CallInfo {
-    return mainGetCallInfo(resolvedCall, receiver, null)
+    return createCallInfo(resolvedCall, receiver, null)
 }
 
 fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver: JsExpression?): FunctionCallInfo {
@@ -158,7 +155,7 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
 
 // two receiver need only for FunctionCall in VariableAsFunctionResolvedCall
 fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): FunctionCallInfo {
-    val callInfo = mainGetCallInfo(resolvedCall, receiver1, receiver2)
+    val callInfo = createCallInfo(resolvedCall, receiver1, receiver2)
 
     val receiverForArgsTranslator = if (resolvedCall.getExplicitReceiverKind() == BOTH_RECEIVERS) // TODO: remove this hack
         receiver2
