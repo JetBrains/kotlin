@@ -38,14 +38,13 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.jet.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.storage.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -81,7 +80,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     public ResolveSession(
             @NotNull Project project,
-            @NotNull LazyResolveStorageManager storageManager,
+            @NotNull LockBasedStorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
@@ -92,7 +91,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     public ResolveSession(
             @NotNull Project project,
-            @NotNull LazyResolveStorageManager storageManager,
+            @NotNull LockBasedStorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull BindingTrace delegationTrace
@@ -109,17 +108,18 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     @Deprecated // Internal use only
     public ResolveSession(
             @NotNull Project project,
-            @NotNull LazyResolveStorageManager storageManager,
+            @NotNull LockBasedStorageManager storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull Function<FqName, Name> classifierAliases,
             @NotNull Predicate<FqNameUnsafe> specialClasses,
             @NotNull BindingTrace delegationTrace
     ) {
-        this.storageManager = storageManager;
+        LockBasedLazyResolveStorageManager lockBasedLazyResolveStorageManager = new LockBasedLazyResolveStorageManager(storageManager);
+        this.storageManager = lockBasedLazyResolveStorageManager;
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
-        this.trace = storageManager.createSafeTrace(delegationTrace);
+        this.trace = lockBasedLazyResolveStorageManager.createSafeTrace(delegationTrace);
         this.injector = new InjectorForLazyResolve(project, this, rootDescriptor);
         this.module = rootDescriptor;
 
