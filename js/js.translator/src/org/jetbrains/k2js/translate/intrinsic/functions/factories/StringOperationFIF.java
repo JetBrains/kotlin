@@ -27,11 +27,7 @@ public final class StringOperationFIF extends CompositeFIF {
 
     private StringOperationFIF() {
         add(pattern("jet", "String", "get"), new BuiltInFunctionIntrinsic("charAt"));
-
-        add(pattern("jet", "String", "<get-length>"), LENGTH_PROPERTY_INTRINSIC);
-        add(pattern("js", "<get-size>").receiverExists(), LENGTH_PROPERTY_INTRINSIC);
         add(pattern("js", "length").receiverExists(), LENGTH_PROPERTY_INTRINSIC);
-        add(pattern("jet", "CharSequence", "<get-length>"), LENGTH_PROPERTY_INTRINSIC);
         add(pattern("js", "isEmpty").receiverExists(), IS_EMPTY_INTRINSIC);
     }
 }

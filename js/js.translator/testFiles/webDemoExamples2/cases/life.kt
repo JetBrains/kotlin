@@ -123,9 +123,6 @@ fun printField(s : String, steps : Int) {
 
 fun <T> Array<T>.toList() : List<T> = this.to(ArrayList<T>())
 
-val String?.size : Int
-get() = if (this != null) this.length else 0;
-
 fun <T, C: MutableCollection<T>> Array<T>.to(result: C) : C {
     for (elem in this)
         result.add(elem)
