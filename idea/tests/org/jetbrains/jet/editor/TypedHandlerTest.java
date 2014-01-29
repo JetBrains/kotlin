@@ -18,7 +18,7 @@ package org.jetbrains.jet.editor;
 
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.IOException;
 
@@ -315,7 +315,7 @@ public class TypedHandlerTest extends LightCodeInsightTestCase {
             checkResultByText(afterText);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 

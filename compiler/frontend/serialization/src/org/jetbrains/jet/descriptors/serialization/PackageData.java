@@ -18,7 +18,7 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import com.google.protobuf.ExtensionRegistryLite;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,7 +34,7 @@ public final class PackageData {
             return new PackageData(nameResolver, packageProto);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 
@@ -66,7 +66,7 @@ public final class PackageData {
             return result.toByteArray();
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 }

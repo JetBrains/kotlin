@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jet.utils.KotlinVfsUtil;
 
 import java.io.File;
@@ -97,7 +97,7 @@ public class LightClassUtil {
                                    FileUtil.toSystemIndependentName(BUILT_INS_SRC_DIR.getAbsolutePath()));
                 }
                 catch (MalformedURLException e) {
-                    throw ExceptionUtils.rethrow(e);
+                    throw UtilsPackage.rethrow(e);
                 }
             }
 

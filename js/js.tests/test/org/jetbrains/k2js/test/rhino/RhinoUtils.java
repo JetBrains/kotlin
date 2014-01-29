@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.utils.ExceptionUtils.rethrow;
+import static org.jetbrains.jet.utils.UtilsPackage.rethrow;
 import static org.jetbrains.k2js.test.BasicTest.pathToTestFilesRoot;
 
 public final class RhinoUtils {

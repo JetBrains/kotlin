@@ -23,7 +23,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
                 }
             }
             catch (IOException e) {
-                throw ExceptionUtils.rethrow(e);
+                throw UtilsPackage.rethrow(e);
             }
         }
 

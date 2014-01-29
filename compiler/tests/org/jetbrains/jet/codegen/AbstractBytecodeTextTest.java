@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         }
         catch (Throwable e) {
             System.out.println(text);
-            ExceptionUtils.rethrow(e);
+            UtilsPackage.rethrow(e);
         }
     }
 

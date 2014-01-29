@@ -28,7 +28,7 @@ import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.test.Tmpdir;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
@@ -54,7 +54,7 @@ public class CliBaseTest {
             return Pair.create(bytes.toString("utf-8"), exitCode);
         }
         catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
         finally {
             System.setOut(origOut);

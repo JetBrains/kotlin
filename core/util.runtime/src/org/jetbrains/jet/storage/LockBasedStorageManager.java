@@ -21,7 +21,7 @@ import jet.Function1;
 import jet.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jet.utils.WrappedValues;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +36,7 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull
             @Override
             public RuntimeException handleException(@NotNull Throwable throwable) {
-                throw ExceptionUtils.rethrow(throwable);
+                throw UtilsPackage.rethrow(throwable);
             }
         };
 

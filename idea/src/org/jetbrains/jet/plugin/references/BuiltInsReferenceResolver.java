@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -128,7 +128,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 builtIns.addAll(getBuiltInSourceFiles(BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL()));
             }
             catch (MalformedURLException e) {
-                throw ExceptionUtils.rethrow(e);
+                throw UtilsPackage.rethrow(e);
             }
         }
 

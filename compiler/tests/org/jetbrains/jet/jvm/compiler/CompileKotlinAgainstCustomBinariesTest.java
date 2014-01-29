@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.DescriptorValidator;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -129,7 +129,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
             return outputFile;
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 

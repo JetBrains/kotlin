@@ -39,7 +39,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.junit.Assert;
 
 import java.io.File;
@@ -85,7 +85,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             JetTestUtils.mkdirs(javaFilesDir);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
         return javaFilesDir;
     }
@@ -97,7 +97,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             Files.write(content, javaFile, Charset.forName("utf-8"));
             return true;
         } catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 

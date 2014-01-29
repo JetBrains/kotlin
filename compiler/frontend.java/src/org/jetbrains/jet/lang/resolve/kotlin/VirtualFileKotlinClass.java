@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.NullableLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.IOException;
 
@@ -81,7 +81,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
             }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
         return classNameRef.get();
     }
@@ -113,7 +113,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
             }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 
@@ -197,7 +197,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
             }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 

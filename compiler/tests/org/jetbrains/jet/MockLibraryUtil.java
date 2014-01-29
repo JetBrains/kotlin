@@ -20,7 +20,7 @@ import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.*;
@@ -53,7 +53,7 @@ public class MockLibraryUtil {
             return jarFile;
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 
@@ -73,7 +73,7 @@ public class MockLibraryUtil {
             assertEquals(new String(outStream.toByteArray()), ExitCode.OK.name(), invocationResult.name());
         }
         catch (Throwable e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 

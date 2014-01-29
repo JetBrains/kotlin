@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 
@@ -61,7 +61,7 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
             PsiDocumentManager.getInstance(myProject).commitAllDocuments();
         }
         catch (Exception e) {
-            ExceptionUtils.rethrow(e);
+            UtilsPackage.rethrow(e);
         }
     }
 

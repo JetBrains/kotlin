@@ -42,7 +42,7 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -206,10 +206,10 @@ public class CompileEnvironmentUtil {
             throw new CompileEnvironmentException("Invalid jar path " + jarPath, e);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
         finally {
-            ExceptionUtils.closeQuietly(outputStream);
+            UtilsPackage.closeQuietly(outputStream);
         }
     }
 

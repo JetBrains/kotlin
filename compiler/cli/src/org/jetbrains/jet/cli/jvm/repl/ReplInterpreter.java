@@ -60,7 +60,7 @@ import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -119,7 +119,7 @@ public class ReplInterpreter {
                 classpath.add(file.toURI().toURL());
             }
             catch (MalformedURLException e) {
-                throw ExceptionUtils.rethrow(e);
+                throw UtilsPackage.rethrow(e);
             }
         }
 
@@ -281,7 +281,7 @@ public class ReplInterpreter {
             PrintWriter writer = new PrintWriter(System.err);
             classLoader.dumpClasses(writer);
             writer.flush();
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 
