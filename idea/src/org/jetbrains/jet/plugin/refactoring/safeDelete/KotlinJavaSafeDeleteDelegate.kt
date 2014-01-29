@@ -43,15 +43,6 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
 
         val element = reference.getElement() as JetElement
 
-        val originalDeclaration = method.unwrapped
-        if (originalDeclaration !is PsiMethod && originalDeclaration !is JetDeclaration) return
-
-        val originalParameter = parameter.unwrapped
-        if (originalParameter == null) return
-
-        val parameterIndex = originalParameter.parameterIndex()
-        if (parameterIndex < 0) return
-
         val callExpression = element.getParentByType(javaClass<JetCallExpression>())
         if (callExpression == null) return
 
@@ -63,17 +54,33 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
         val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, calleeExpression)
         if (descriptor == null) return
 
-        if (originalDeclaration == BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor)) {
-            val args = callExpression.getValueArguments()
-            val argCount = args.size()
-            if (parameterIndex < argCount) {
-                usages.add(SafeDeleteValueArgumentListUsageInfo((args.get(parameterIndex) as JetValueArgument), parameter))
-            } else {
-                val lambdaArgs = callExpression.getFunctionLiteralArguments()
-                val lambdaIndex = parameterIndex - argCount
-                if (lambdaIndex < lambdaArgs.size()) {
-                    usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(lambdaArgs.get(lambdaIndex), parameter, true))
-                }
+        val originalDeclaration = method.unwrapped
+        if (originalDeclaration !is PsiMethod && originalDeclaration !is JetDeclaration) return
+
+        if (originalDeclaration != BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor)) return
+
+        val args = callExpression.getValueArguments()
+
+        val namedArguments = args.filter { arg -> arg is JetValueArgument && arg.getArgumentName()?.getText() == parameter.getName() }
+        if (!namedArguments.empty) {
+            usages.add(SafeDeleteValueArgumentListUsageInfo(namedArguments.first as JetValueArgument, parameter))
+            return
+        }
+
+        val originalParameter = parameter.unwrapped
+        if (originalParameter == null) return
+
+        val parameterIndex = originalParameter.parameterIndex()
+        if (parameterIndex < 0) return
+
+        val argCount = args.size()
+        if (parameterIndex < argCount) {
+            usages.add(SafeDeleteValueArgumentListUsageInfo((args.get(parameterIndex) as JetValueArgument), parameter))
+        } else {
+            val lambdaArgs = callExpression.getFunctionLiteralArguments()
+            val lambdaIndex = parameterIndex - argCount
+            if (lambdaIndex < lambdaArgs.size()) {
+                usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(lambdaArgs.get(lambdaIndex), parameter, true))
             }
         }
     }

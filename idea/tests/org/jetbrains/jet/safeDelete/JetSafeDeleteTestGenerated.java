@@ -723,6 +723,26 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("defaultParam1.kt")
+        public void testDefaultParam1() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/defaultParam1.kt");
+        }
+        
+        @TestMetadata("defaultParam2.kt")
+        public void testDefaultParam2() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/defaultParam2.kt");
+        }
+        
+        @TestMetadata("extNamedParam1.kt")
+        public void testExtNamedParam1() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/extNamedParam1.kt");
+        }
+        
+        @TestMetadata("extNamedParam2.kt")
+        public void testExtNamedParam2() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/extNamedParam2.kt");
+        }
+        
         @TestMetadata("hierarchyWithSafeUsages1.kt")
         public void testHierarchyWithSafeUsages1() throws Exception {
             doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages1.kt");
@@ -806,6 +826,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
         @TestMetadata("lambdaArgExt.kt")
         public void testLambdaArgExt() throws Exception {
             doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/lambdaArgExt.kt");
+        }
+        
+        @TestMetadata("namedParam1.kt")
+        public void testNamedParam1() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/namedParam1.kt");
+        }
+        
+        @TestMetadata("namedParam2.kt")
+        public void testNamedParam2() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/namedParam2.kt");
         }
         
         @TestMetadata("propertyParam1.kt")
