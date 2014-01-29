@@ -195,7 +195,14 @@ public class PackageCodegen extends GenerationStateAware {
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
         FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, getPackageFragment(file));
-        MemberCodegen memberCodegen = new MemberCodegen(state, null, packageFacade, null);
+        //TODO: FIX: Default method generated at facade without delegation
+        MemberCodegen memberCodegen = new MemberCodegen(state, null, packageFacade, null) {
+            @NotNull
+            @Override
+            public ClassBuilder getBuilder() {
+                return v.getClassBuilder();
+            }
+        };
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
                 memberCodegen.genFunctionOrProperty(packageFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
