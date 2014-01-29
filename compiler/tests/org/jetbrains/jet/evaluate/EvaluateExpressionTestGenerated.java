@@ -136,11 +136,6 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/evaluate/isPure"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
-        @TestMetadata("enum.kt")
-        public void testEnum() throws Exception {
-            doIsPureTest("compiler/testData/evaluate/isPure/enum.kt");
-        }
-        
         @TestMetadata("innerToType.kt")
         public void testInnerToType() throws Exception {
             doIsPureTest("compiler/testData/evaluate/isPure/innerToType.kt");
@@ -149,11 +144,6 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
         @TestMetadata("namedConstants.kt")
         public void testNamedConstants() throws Exception {
             doIsPureTest("compiler/testData/evaluate/isPure/namedConstants.kt");
-        }
-        
-        @TestMetadata("strings.kt")
-        public void testStrings() throws Exception {
-            doIsPureTest("compiler/testData/evaluate/isPure/strings.kt");
         }
         
         @TestMetadata("toType.kt")

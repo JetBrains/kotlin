@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 
 import java.util.Collections;
 
-public class IntegerValueTypeConstant extends CompileTimeConstant<Number> {
+public class IntegerValueTypeConstant extends IntegerValueConstant<Number> {
 
     private final IntegerValueTypeConstructor typeConstructor;
 

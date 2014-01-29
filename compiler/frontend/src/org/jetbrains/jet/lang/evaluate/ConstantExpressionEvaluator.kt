@@ -214,7 +214,13 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 
     private fun canBeUsedInAnnotation(expression: JetExpression) = trace.get(BindingContext.COMPILE_TIME_VALUE, expression)?.canBeUsedInAnnotations() ?: false
-    private fun isPureConstant(expression: JetExpression) = trace.get(BindingContext.COMPILE_TIME_VALUE, expression)?.isPure() ?: false
+    private fun isPureConstant(expression: JetExpression): Boolean {
+        val compileTimeConstant = trace.get(BindingContext.COMPILE_TIME_VALUE, expression)
+        if (compileTimeConstant is IntegerValueConstant) {
+            return compileTimeConstant.isPure()
+        }
+        return false
+    }
 
     private fun evaluateUnaryAndCheck(receiver: OperationArgument, name: String, callExpression: JetExpression): Any? {
         val functions = unaryOperations[UnaryOperationKey(receiver.ctcType, name)]
@@ -439,7 +445,7 @@ public fun recordCompileTimeValueForInitializerIfNeeded(
 }
 
 public fun IntegerValueTypeConstant.createCompileTimeConstantWithType(expectedType: JetType): CompileTimeConstant<*>?
-        = createCompileTimeConstant(this.getValue(expectedType), EvaluatorContext(this.canBeUsedInAnnotations(), this.isPure()))
+        = createCompileTimeConstant(this.getValue(expectedType), EvaluatorContext(this.canBeUsedInAnnotations(), true))
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
 

@@ -33,8 +33,9 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.resolve.constants.StringValue
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant
 
-abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResolveTest() {
+abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorResolveTest() {
 
     // Test directives should look like [// val testedPropertyName: expectedValue]
     fun doConstantTest(path: String) {
@@ -43,8 +44,7 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
             val compileTimeConstant = context.get(BindingContext.COMPILE_TIME_VALUE, property.getInitializer())
             if (compileTimeConstant is StringValue) {
                 "\\\"${compileTimeConstant.getValue()}\\\""
-            }
-            else {
+            } else {
                 compileTimeConstant.toString()
             }
         }
@@ -55,7 +55,11 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
         doTest(path) {
             property, context ->
             val compileTimeConstant = context.get(BindingContext.COMPILE_TIME_VALUE, property.getInitializer())
-            compileTimeConstant?.isPure().toString()
+            if (compileTimeConstant is IntegerValueConstant) {
+                compileTimeConstant.isPure().toString()
+            } else {
+                "null"
+            }
         }
     }
 
@@ -74,7 +78,7 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
             assertNotNull(expected, "Failed to find expected directive: $expectedPropertyPrefix")
 
             val property = AbstractAnnotationDescriptorResolveTest.getPropertyDescriptor(packageView, propertyName, false)
-                                ?: AbstractAnnotationDescriptorResolveTest.getLocalVarDescriptor(context!!, propertyName)
+            ?: AbstractAnnotationDescriptorResolveTest.getLocalVarDescriptor(context!!, propertyName)
 
             val jetProperty = BindingContextUtils.descriptorToDeclaration(context!!, property) as JetProperty
 
@@ -96,8 +100,7 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
             val matcher = pattern.matcher(it)
             if (matcher.find()) {
                 matcher.group(0) ?: "Couldn't match tested object $it"
-            }
-            else "Couldn't match tested object $it"
+            } else "Couldn't match tested object $it"
         }
     }
 

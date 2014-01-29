@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.types.JetType;
 public class DoubleValue extends CompileTimeConstant<Double> {
 
     public DoubleValue(double value, boolean canBeUsedInAnnotations) {
-        super(value, canBeUsedInAnnotations, false);
+        super(value, canBeUsedInAnnotations);
     }
 
     @NotNull
