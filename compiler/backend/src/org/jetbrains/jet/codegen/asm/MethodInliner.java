@@ -371,10 +371,23 @@ public class MethodInliner {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) next;
                 if (methodInsnNode.name.equals("checkParameterIsNotNull") && methodInsnNode.owner.equals("jet/runtime/Intrinsics")) {
                     AbstractInsnNode prev = cur.getPrevious();
-                    assert prev.getType() == AbstractInsnNode.VAR_INSN && prev.getOpcode() == Opcodes.ALOAD;
-                    int varIndex = ((VarInsnNode) prev).var;
-                    LambdaInfo closure = getLambda(varIndex);
-                    if (closure != null) {
+                    boolean delete = false;
+                    if (prev.getOpcode() == Opcodes.INVOKESTATIC) {
+                        //parameter boxing
+                        AbstractInsnNode prePrevious = cur.getPrevious();
+                        if (prePrevious.getType() == AbstractInsnNode.VAR_INSN &&
+                            prePrevious.getOpcode() < Opcodes.ALOAD &&
+                            prePrevious.getOpcode() >= Opcodes.ILOAD) {
+                            delete = true;
+                            node.instructions.remove(prePrevious);
+                        }
+                    } else {
+                        assert prev.getType() == AbstractInsnNode.VAR_INSN && prev.getOpcode() == Opcodes.ALOAD;
+                        int varIndex = ((VarInsnNode) prev).var;
+                        LambdaInfo closure = getLambda(varIndex);
+                        delete = closure != null;
+                    }
+                    if (delete) {
                         node.instructions.remove(prev);
                         node.instructions.remove(cur);
                         cur = next.getNext();
