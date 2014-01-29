@@ -284,8 +284,7 @@ public class KotlinBuiltIns {
                 getBuiltInClassByName("ByteRange"),
                 getBuiltInClassByName("ShortRange"),
                 getBuiltInClassByName("CharRange"),
-                getBuiltInClassByName("IntRange"),
-                getBuiltInClassByName("LongRange")
+                getBuiltInClassByName("IntRange")
         );
     }
 
