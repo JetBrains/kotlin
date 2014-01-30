@@ -78,58 +78,6 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
     return FunctionCallInfo(callInfo, argumentsInfo)
 }
 
-val CallInfo.callableDescriptor: CallableDescriptor
-    get() = resolvedCall.getResultingDescriptor().getOriginal()
-
-fun CallInfo.isExtension(): Boolean = receiverObject != null
-
-fun CallInfo.isMemberCall(): Boolean = thisObject != null
-
-fun CallInfo.isNative(): Boolean = AnnotationsUtils.isNativeObject(callableDescriptor)
-
-fun CallInfo.isSuperInvocation(): Boolean {
-    val thisObject = resolvedCall.getThisObject()
-    return thisObject is ExpressionReceiver && ((thisObject as ExpressionReceiver)).getExpression() is JetSuperExpression
-}
-
-fun CallInfo.constructSafeCallIsNeeded(result: JsExpression): JsExpression {
-    if (!resolvedCall.isSafeCall())
-        return result
-
-    val nullableReceiverForSafeCall = when (resolvedCall.getExplicitReceiverKind()) {
-        BOTH_RECEIVERS, RECEIVER_ARGUMENT -> receiverObject
-        else -> thisObject
-    }
-    return CallType.SAFE.constructCall(nullableReceiverForSafeCall, object : CallType.CallConstructor {
-        override fun construct(receiver: JsExpression?): JsExpression {
-            return result
-        }
-    }, context)
-}
-
-val VariableAccessInfo.variableDescriptor: VariableDescriptor
-    get() = callableDescriptor as VariableDescriptor
-
-val VariableAccessInfo.variableName: JsName
-    get() = context.getNameForDescriptor(variableDescriptor)
-
-fun VariableAccessInfo.isGetAccess(): Boolean = value == null
-
-fun VariableAccessInfo.getAccessFunctionName(): String = Namer.getNameForAccessor(variableName.getIdent()!!, isGetAccess(), false)
-
-fun VariableAccessInfo.constructAccessExpression(ref: JsNameRef): JsExpression {
-    if (isGetAccess()) {
-        return ref
-    } else {
-        return JsAstUtils.assignment(ref, value!!)
-    }
-}
-
-val FunctionCallInfo.functionName: JsName
-    get() = context.getNameForDescriptor(callableDescriptor)
-
-fun FunctionCallInfo.hasSpreadOperator(): Boolean = argumentsInfo.isHasSpreadOperator()
-
 private fun TranslationContext.getThisObject(receiverValue: ReceiverValue): JsExpression {
     assert(receiverValue.exists(), "receiverValue must be exist here")
     return getThisObject(getDeclarationDescriptorForReceiver(receiverValue))
