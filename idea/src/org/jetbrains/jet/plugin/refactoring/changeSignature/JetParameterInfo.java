@@ -80,7 +80,8 @@ public class JetParameterInfo implements ParameterInfo {
         if (!(inheritedFunction instanceof JetFunction))
             return name;
 
-        List<JetParameter> inheritedParameters = ((JetFunction) inheritedFunction).getValueParameters();
+        JetFunction inheritedJetFunction = (JetFunction) inheritedFunction;
+        List<JetParameter> inheritedParameters = inheritedJetFunction.getValueParameters();
 
         if (!isInherited || oldIndex < 0 || oldIndex >= baseFunction.getParametersCount() || oldIndex >= inheritedParameters.size())
             return name;
@@ -90,8 +91,8 @@ public class JetParameterInfo implements ParameterInfo {
         String inheritedParamName = inheritedParam.getName();
 
         if (oldParam.getName().equals(inheritedParamName)) {
-            BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) inheritedFunction.getContainingFile()).getBindingContext();
-            JetScope parametersScope = JetChangeSignatureUsageProcessor.getFunctionBodyScope((JetFunction) inheritedFunction, bindingContext);
+            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(inheritedJetFunction);
+            JetScope parametersScope = JetChangeSignatureUsageProcessor.getFunctionBodyScope(inheritedJetFunction, bindingContext);
 
             if (parametersScope != null && parametersScope.getLocalVariable(Name.identifier(name)) == null)
                 return name;

@@ -71,8 +71,10 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
                                      ((JetDelegatorToSuperCall) call).getCalleeExpression().getConstructorReferenceExpression();
 
         if (receiverExpr instanceof JetSimpleNameExpression) {
-            BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+            JetElement jetElement = PsiTreeUtil.getParentOfType(element, JetElement.class);
+            if (jetElement == null) return null;
+
+            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(jetElement);
             DeclarationDescriptor descriptor =
                     bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) receiverExpr);
 
@@ -85,13 +87,12 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
     }
 
     public static void invokeChangeSignature(
-            @NotNull PsiElement element,
+            @NotNull JetElement element,
             @NotNull PsiElement context,
             @NotNull Project project,
             @Nullable Editor editor
     ) {
-        BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(element);
         FunctionDescriptor functionDescriptor = findDescriptor(element, project, editor, bindingContext);
         if (functionDescriptor == null) {
             return;
@@ -142,7 +143,9 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
 
         PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         if (element != null && elementAtCaret != null) {
-            invokeChangeSignature(element, elementAtCaret, project, editor);
+            assert element instanceof JetElement : "This handler must be invoked for elements of JetLanguage : " + element.getText();
+
+            invokeChangeSignature((JetElement) element, elementAtCaret, project, editor);
         }
     }
 
@@ -150,7 +153,11 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
     public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, @Nullable DataContext dataContext) {
         if (elements.length != 1) return;
         Editor editor = dataContext != null ? PlatformDataKeys.EDITOR.getData(dataContext) : null;
-        invokeChangeSignature(elements[0], elements[0], project, editor);
+
+        PsiElement element = elements[0];
+        assert element instanceof JetElement : "This handler must be invoked for elements of JetLanguage : " + element.getText();
+
+        invokeChangeSignature((JetElement) element, element, project, editor);
     }
 
     @Nullable

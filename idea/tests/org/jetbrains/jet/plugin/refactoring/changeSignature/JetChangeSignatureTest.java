@@ -28,7 +28,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -198,7 +198,7 @@ public class JetChangeSignatureTest extends CodeInsightTestCase {
     private void doTestUnmodifiableCheck() throws Exception {
         try {
             JetChangeInfo changeInfo = getChangeInfo();
-            PsiFile containingFile = changeInfo.getMethod().getContainingFile();
+            JetElement method = (JetElement) changeInfo.getMethod();
             JetChangeSignatureConfiguration empty = new JetChangeSignatureConfiguration() {
                 @Override
                 public void configure(
@@ -211,9 +211,10 @@ public class JetChangeSignatureTest extends CodeInsightTestCase {
                     return true;
                 }
             };
-            BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) containingFile).getBindingContext();
+            BindingContext context = AnalyzerFacadeWithCache.getContextForElement(method);
+
             ChangeSignaturePackage
-                    .runChangeSignature(getProject(), changeInfo.getOldDescriptor(), empty, context, changeInfo.getMethod(), "test");
+                    .runChangeSignature(getProject(), changeInfo.getOldDescriptor(), empty, context, method, "test");
         }
         catch (RuntimeException e) {
             assertTrue(e.getMessage().startsWith("Refactoring cannot be"));
@@ -260,11 +261,11 @@ public class JetChangeSignatureTest extends CodeInsightTestCase {
         configureByFile(getTestName(false) + "Before.kt");
         Editor editor = getEditor();
         PsiFile file = getFile();
-        PsiElement element = new JetChangeSignatureHandler().findTargetMember(file, editor);
+        JetElement element = (JetElement) new JetChangeSignatureHandler().findTargetMember(file, editor);
         assertNotNull("Target element is null", element);
         Project project = getProject();
         BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+                AnalyzerFacadeWithCache.getContextForElement(element);
         PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
         assertNotNull(context);
         FunctionDescriptor functionDescriptor = JetChangeSignatureHandler.findDescriptor(element, project, editor, bindingContext);
