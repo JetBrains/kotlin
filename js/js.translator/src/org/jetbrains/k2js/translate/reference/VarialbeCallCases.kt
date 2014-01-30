@@ -75,7 +75,10 @@ class DefaultVariableAccessCase(callInfo: VariableAccessInfo) : VariableAccessCa
 
 class DelegatePropertyAccessIntrinsic(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo), DelegateIntrinsic<VariableAccessInfo> {
     override fun VariableAccessInfo.canBeApply(): Boolean {
-        return variableDescriptor is PropertyDescriptor
+        if(variableDescriptor is PropertyDescriptor) {
+            return isGetAccess() || (variableDescriptor as PropertyDescriptor).isVar()
+        }
+        return false
     }
 
     override fun VariableAccessInfo.getArgs(): List<JsExpression> {
@@ -88,22 +91,9 @@ class DelegatePropertyAccessIntrinsic(callInfo: VariableAccessInfo) : VariableAc
     override fun VariableAccessInfo.getDescriptor(): CallableDescriptor {
         val propertyDescriptor = variableDescriptor as PropertyDescriptor
         return if (isGetAccess()) {
-            var getter = propertyDescriptor.getGetter()
-            if (getter == null) {
-                val getterImpl = DescriptorFactory.createDefaultGetter(propertyDescriptor)
-                getterImpl.initialize(propertyDescriptor.getType())
-                ((propertyDescriptor as PropertyDescriptorImpl)).initialize(getterImpl, propertyDescriptor.getSetter())
-                getter = getterImpl
-            }
-            getter!!
+            propertyDescriptor.getGetter()!!
         } else {
-            var setter = propertyDescriptor.getSetter()
-            if (setter == null) {
-                val setterImpl = DescriptorFactory.createDefaultSetter(propertyDescriptor)
-                ((propertyDescriptor as PropertyDescriptorImpl)).initialize(propertyDescriptor.getGetter(), setterImpl)
-                setter = setterImpl
-            }
-            setter!!
+            propertyDescriptor.getSetter()!!
         }
     }
 }
