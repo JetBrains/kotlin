@@ -63,8 +63,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.storage.LockBasedStorageManagerWithExceptionTracking;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -215,7 +214,7 @@ public class JetSourceNavigationHelper {
         }
 
         Project project = decompiledDeclaration.getProject();
-        LockBasedStorageManager storageManager = new LockBasedStorageManager();
+        LockBasedStorageManagerWithExceptionTracking storageManager = LockBasedStorageManagerWithExceptionTracking.create();
         FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(storageManager, getContainingFiles(candidates),
                 new Predicate<FqName>() {
                     @Override

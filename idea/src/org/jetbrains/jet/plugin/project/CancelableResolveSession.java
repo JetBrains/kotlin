@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.ModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -32,13 +30,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 public class CancelableResolveSession implements KotlinCodeAnalyzer, ModificationTracker {
     private final Object createdForObject;
     private final ResolveSession resolveSession;
     private final ResolveElementCache resolveElementCache;
-    private final AtomicLong canceledTracker = new AtomicLong();
 
     public CancelableResolveSession(@NotNull JetFile file, @NotNull ResolveSession resolveSession) {
         this(file, file.getProject(), resolveSession);
@@ -55,82 +50,41 @@ public class CancelableResolveSession implements KotlinCodeAnalyzer, Modificatio
     }
 
     @NotNull
-    public BindingContext resolveToElement(final JetElement element) {
-        return computableWithProcessingCancel(new Computable<BindingContext>() {
-            @Override
-            public BindingContext compute() {
-                return resolveElementCache.resolveToElement(element);
-            }
-        });
+    public BindingContext resolveToElement(JetElement element) {
+        return resolveElementCache.resolveToElement(element);
     }
 
     @Override
     public ModuleDescriptor getModuleDescriptor() {
-        return computableWithProcessingCancel(new Computable<ModuleDescriptor>() {
-            @Override
-            public ModuleDescriptor compute() {
-                return resolveSession.getModuleDescriptor();
-            }
-        });
+        return resolveSession.getModuleDescriptor();
     }
 
     @NotNull
     @Override
-    public ClassDescriptor getClassDescriptor(@NotNull final JetClassOrObject classOrObject) {
-        return computableWithProcessingCancel(new Computable<ClassDescriptor>() {
-            @Override
-            public ClassDescriptor compute() {
-                return resolveSession.getClassDescriptor(classOrObject);
-            }
-        });
+    public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject) {
+        return resolveSession.getClassDescriptor(classOrObject);
     }
 
     @NotNull
     @Override
     public BindingContext getBindingContext() {
-        return computableWithProcessingCancel(new Computable<BindingContext>() {
-            @Override
-            public BindingContext compute() {
-                return resolveSession.getBindingContext();
-            }
-        });
+        return resolveSession.getBindingContext();
     }
 
     @NotNull
     @Override
-    public DeclarationDescriptor resolveToDescriptor(final JetDeclaration declaration) {
-        return computableWithProcessingCancel(new Computable<DeclarationDescriptor>() {
-            @Override
-            public DeclarationDescriptor compute() {
-                return resolveSession.resolveToDescriptor(declaration);
-            }
-        });
+    public DeclarationDescriptor resolveToDescriptor(JetDeclaration declaration) {
+        return resolveSession.resolveToDescriptor(declaration);
     }
 
     @Override
     public void forceResolveAll() {
-        computableWithProcessingCancel(new Computable<Integer>() {
-            @Override
-            public Integer compute() {
-                resolveSession.forceResolveAll();
-                return 0;
-            }
-        });
-    }
-
-    private <T> T computableWithProcessingCancel(Computable<T> computable) {
-        try {
-            return computable.compute();
-        }
-        catch (ProcessCanceledException canceledException) {
-            canceledTracker.getAndIncrement();
-            throw canceledException;
-        }
+        resolveSession.forceResolveAll();
     }
 
     @Override
     public long getModificationCount() {
-        return canceledTracker.get();
+        return resolveSession.getExceptionTracker().getModificationCount();
     }
 
     @Override

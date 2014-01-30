@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyI
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.LockBasedStorageManagerWithExceptionTracking;
 import org.jetbrains.jet.storage.StorageManager;
 
 import java.io.IOException;
@@ -152,7 +153,7 @@ public class GenerateInjectors {
         generator.addParameter(BindingTrace.class);
 
         // Fields
-        generator.addPublicField(LockBasedStorageManager.class);
+        generator.addField(true, LockBasedStorageManagerWithExceptionTracking.class, "storageManager", null);
         generator.addPublicField(JavaClassFinderImpl.class);
         generator.addField(TraceBasedExternalSignatureResolver.class);
         generator.addField(TraceBasedJavaResolverCache.class);

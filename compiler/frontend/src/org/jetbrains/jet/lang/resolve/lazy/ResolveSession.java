@@ -62,6 +62,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     };
 
     private final LazyResolveStorageManager storageManager;
+    private final ExceptionTracker exceptionTracker;
 
     private final ModuleDescriptor module;
 
@@ -80,24 +81,30 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     public ResolveSession(
             @NotNull Project project,
-            @NotNull LockBasedStorageManager storageManager,
+            @NotNull LockBasedStorageManagerWithExceptionTracking storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
-        this(project, storageManager, rootDescriptor, declarationProviderFactory, NO_ALIASES,
+        this(project,
+             storageManager,
+             storageManager.getTracker(),
+             rootDescriptor,
+             declarationProviderFactory,
+             NO_ALIASES,
              Predicates.<FqNameUnsafe>alwaysFalse(),
              new BindingTraceContext());
     }
 
     public ResolveSession(
             @NotNull Project project,
-            @NotNull LockBasedStorageManager storageManager,
+            @NotNull LockBasedStorageManagerWithExceptionTracking storageManager,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull BindingTrace delegationTrace
     ) {
         this(project,
              storageManager,
+             storageManager.getTracker(),
              rootDescriptor,
              declarationProviderFactory,
              NO_ALIASES,
@@ -109,6 +116,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     public ResolveSession(
             @NotNull Project project,
             @NotNull LockBasedStorageManager storageManager,
+            @NotNull ExceptionTracker exceptionTracker,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull Function<FqName, Name> classifierAliases,
@@ -117,6 +125,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     ) {
         LockBasedLazyResolveStorageManager lockBasedLazyResolveStorageManager = new LockBasedLazyResolveStorageManager(storageManager);
         this.storageManager = lockBasedLazyResolveStorageManager;
+        this.exceptionTracker = exceptionTracker;
         this.classifierAliases = classifierAliases;
         this.specialClasses = specialClasses;
         this.trace = lockBasedLazyResolveStorageManager.createSafeTrace(delegationTrace);
@@ -192,6 +201,11 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     @NotNull
     public LazyResolveStorageManager getStorageManager() {
         return storageManager;
+    }
+
+    @NotNull
+    public ExceptionTracker getExceptionTracker() {
+        return exceptionTracker;
     }
 
     @Override

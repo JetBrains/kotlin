@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.LockBasedStorageManagerWithExceptionTracking;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -100,7 +101,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         final JavaClassFinderImpl classFinder = injector.getJavaClassFinder();
 
         // TODO: Replace with stub declaration provider
-        LockBasedStorageManager storageManager = injector.getLockBasedStorageManager();
+        LockBasedStorageManagerWithExceptionTracking storageManager = injector.getStorageManager();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(storageManager, files, new Predicate<FqName>() {
             @Override
             public boolean apply(FqName fqName) {
