@@ -31,6 +31,8 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.k2js.translate.callTranslator.CallInfo;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslatorPackage;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -116,7 +118,7 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     private TranslationContext createContextWithAliasForThisExpression(@NotNull TranslationContext contextForInlining) {
         TranslationContext contextWithAliasForThisExpression = contextForInlining;
         SimpleFunctionDescriptor functionDescriptor = getFunctionDescriptor();
-        CallInfo callInfo = ReferencePackage.getCallInfo(contextForInlining, resolvedCall, receiver);
+        CallInfo callInfo = CallTranslatorPackage.getCallInfo(contextForInlining, resolvedCall, receiver);
         JsExpression receiver = callInfo.getReceiverObject();
         if (receiver != null) {
             contextWithAliasForThisExpression =

@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
@@ -43,6 +44,6 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
 
     @NotNull
     private JsExpression translate() {
-        return ReferencePackage.buildCall(context(), resolvedCall, receiver);
+        return CallTranslator.instance$.translate(context(), resolvedCall, receiver);
     }
 }

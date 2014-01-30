@@ -32,8 +32,10 @@ public enum CallType {
     SAFE {
         @NotNull
         @Override
-        JsExpression constructCall(@Nullable JsExpression receiver, @NotNull CallConstructor constructor,
-                                   @NotNull TranslationContext context) {
+        public JsExpression constructCall(
+                @Nullable JsExpression receiver, @NotNull CallConstructor constructor,
+                @NotNull TranslationContext context
+        ) {
             assert receiver != null;
             JsConditional expression = notNullConditional(receiver, JsLiteral.NULL, context);
             expression.setThenExpression(constructor.construct(expression.getThenExpression()));
@@ -45,14 +47,16 @@ public enum CallType {
     NORMAL {
         @NotNull
         @Override
-        JsExpression constructCall(@Nullable JsExpression receiver, @NotNull CallConstructor constructor,
-                                   @NotNull TranslationContext context) {
+        public JsExpression constructCall(
+                @Nullable JsExpression receiver, @NotNull CallConstructor constructor,
+                @NotNull TranslationContext context
+        ) {
             return constructor.construct(receiver);
         }
     };
 
     @NotNull
-    abstract JsExpression constructCall(@Nullable JsExpression receiver, @NotNull CallConstructor constructor,
+    public abstract JsExpression constructCall(@Nullable JsExpression receiver, @NotNull CallConstructor constructor,
                                         @NotNull TranslationContext context);
 
     @NotNull

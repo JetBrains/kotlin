@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.k2js.translate.reference
+package org.jetbrains.k2js.translate.callTranslator
 
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils
@@ -26,6 +26,7 @@ import org.jetbrains.k2js.translate.context.Namer
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.k2js.translate.reference.CallType
 
 
 val CallInfo.callableDescriptor: CallableDescriptor

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.reference
+package org.jetbrains.k2js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsNameRef
@@ -35,6 +35,7 @@ import org.jetbrains.k2js.translate.utils.PsiUtils
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.k2js.translate.context.TranslationContext
+import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>) : List<JsExpression> {
     if (arguments.isEmpty())

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.reference
+package org.jetbrains.k2js.translate.callTranslator
 
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
@@ -32,31 +32,47 @@ import org.jetbrains.k2js.translate.context.Namer
 import org.jetbrains.k2js.translate.utils.ErrorReportingUtils
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
 
+object CallTranslator {
+    fun translate(context: TranslationContext,
+                  resolvedCall: ResolvedCall<out FunctionDescriptor>,
+                  receiverOrThisObject: JsExpression? = null
+    ): JsExpression {
+        return translateCall(context, resolvedCall, ExplicitReceivers(receiverOrThisObject))
+    }
 
-fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiverOrThisObject: JsExpression? = null): JsExpression {
-    return buildCall(resolvedCall, ExplicitReceivers(receiverOrThisObject))
-}
+    fun translateGet(context: TranslationContext,
+                     resolvedCall: ResolvedCall<out VariableDescriptor>,
+                     receiverOrThisObject: JsExpression? = null
+    ): JsExpression {
+        val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, receiverOrThisObject), null);
+        return variableAccessInfo.translateVariableAccess()
+    }
 
-fun TranslationContext.buildGet(resolvedCall: ResolvedCall<out VariableDescriptor>, receiverOrThisObject: JsExpression? = null): JsExpression {
-    val variableAccessInfo = VariableAccessInfo(getCallInfo(resolvedCall, receiverOrThisObject), null);
-    return variableAccessInfo.translateVariableAccess()
-}
+    fun translateSet(context: TranslationContext,
+                     resolvedCall: ResolvedCall<out VariableDescriptor>,
+                     value: JsExpression,
+                     receiverOrThisObject: JsExpression? = null
+    ): JsExpression {
+        val variableAccessInfo = VariableAccessInfo(context.getCallInfo(resolvedCall, receiverOrThisObject), value);
+        return variableAccessInfo.translateVariableAccess()
+    }
 
-fun TranslationContext.buildSet(resolvedCall: ResolvedCall<out VariableDescriptor>, value: JsExpression, receiverOrThisObject: JsExpression? = null): JsExpression {
-    val variableAccessInfo = VariableAccessInfo(getCallInfo(resolvedCall, receiverOrThisObject), value);
-    return variableAccessInfo.translateVariableAccess()
-}
-
-fun TranslationContext.buildFakeCall(functionDescriptor: FunctionDescriptor, args: List<JsExpression>, thisObject: JsExpression?): JsExpression {
-    val argumentsInfo = CallArgumentTranslator.ArgumentsInfo(args, false, null);
-    val functionName = getNameForDescriptor(functionDescriptor)
-    val isNative = AnnotationsUtils.isNativeObject(functionDescriptor)
-    val hasSpreadOperator = false
-    if (thisObject != null) {
-        return DefaultFunctionCallCase.buildDefaultCallWithThisObject(argumentsInfo, thisObject, functionName, isNative, hasSpreadOperator)
-    } else {
-        return DefaultFunctionCallCase.buildDefaultCallWithoutReceiver(this, argumentsInfo, functionDescriptor, functionName, isNative, hasSpreadOperator)
+    fun buildCall(context: TranslationContext,
+                  functionDescriptor: FunctionDescriptor,
+                  args: List<JsExpression>,
+                  thisObject: JsExpression?
+    ): JsExpression {
+        val argumentsInfo = CallArgumentTranslator.ArgumentsInfo(args, false, null);
+        val functionName = context.getNameForDescriptor(functionDescriptor)
+        val isNative = AnnotationsUtils.isNativeObject(functionDescriptor)
+        val hasSpreadOperator = false
+        if (thisObject != null) {
+            return DefaultFunctionCallCase.buildDefaultCallWithThisObject(argumentsInfo, thisObject, functionName, isNative, hasSpreadOperator)
+        } else {
+            return DefaultFunctionCallCase.buildDefaultCallWithoutReceiver(context, argumentsInfo, functionDescriptor, functionName, isNative, hasSpreadOperator)
+        }
     }
 }
 
@@ -64,23 +80,26 @@ private fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
     return this.getExplicitReceiverKind() != NO_EXPLICIT_RECEIVER
 }
 
-private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, explicitReceivers: ExplicitReceivers): JsExpression {
+private fun translateCall(context: TranslationContext,
+                          resolvedCall: ResolvedCall<out FunctionDescriptor>,
+                          explicitReceivers: ExplicitReceivers
+): JsExpression {
     if (resolvedCall is VariableAsFunctionResolvedCall) {
         assert(explicitReceivers.receiverObject == null, "VariableAsFunctionResolvedCall must have one receiver")
         val variableCall = resolvedCall.getVariableCall()
         if (variableCall.expectedReceivers()) {
-            val newReceiver = buildGet(variableCall, explicitReceivers.receiverOrThisObject)
-            return buildCall(resolvedCall.getFunctionCall(), ExplicitReceivers(newReceiver))
+            val newReceiver = CallTranslator.translateGet(context, variableCall, explicitReceivers.receiverOrThisObject)
+            return translateCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(newReceiver))
         } else {
-            val thisObject = buildGet(variableCall, null)
+            val thisObject = CallTranslator.translateGet(context, variableCall, null)
             if (explicitReceivers.receiverOrThisObject == null)
-                return buildCall(resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject))
+                return translateCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject))
             else
-                return buildCall(resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject, explicitReceivers.receiverOrThisObject))
+                return translateCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject, explicitReceivers.receiverOrThisObject))
         }
     }
 
-    val functionCallInfo = getCallInfo(resolvedCall, explicitReceivers)
+    val functionCallInfo = context.getCallInfo(resolvedCall, explicitReceivers)
     return functionCallInfo.translateFunctionCall()
 }
 

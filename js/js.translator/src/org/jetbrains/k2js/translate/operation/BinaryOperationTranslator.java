@@ -27,10 +27,10 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.operation.BinaryOperationIntrinsic;
-import org.jetbrains.k2js.translate.reference.ReferencePackage;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.operation.AssignmentTranslator.isAssignmentOperator;
@@ -128,7 +128,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateAsOverloadedBinaryOperation() {
         ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCall(bindingContext(), expression.getOperationReference());
-        JsExpression result = ReferencePackage.buildCall(context(), resolvedCall, getReceiver());
+        JsExpression result = CallTranslator.instance$.translate(context(), resolvedCall, getReceiver());
         return mayBeWrapWithNegation(result);
     }
 

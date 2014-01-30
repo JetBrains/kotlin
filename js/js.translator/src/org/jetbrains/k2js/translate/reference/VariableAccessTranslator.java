@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -58,13 +59,13 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
     @NotNull
     @Override
     public JsExpression translateAsGet() {
-        return ReferencePackage.buildGet(context(), resolvedCall, receiver);
+        return CallTranslator.instance$.translateGet(context(), resolvedCall, receiver);
     }
 
     @NotNull
     @Override
     public JsExpression translateAsSet(@NotNull JsExpression setTo) {
-        return ReferencePackage.buildSet(context(), resolvedCall, setTo, receiver);
+        return CallTranslator.instance$.translateSet(context(), resolvedCall, setTo, receiver);
     }
 
     @NotNull

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.reference
+package org.jetbrains.k2js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.k2js.translate.context.Namer
+import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
 
 
 trait CallInfo {

@@ -25,11 +25,11 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.reference.ReferencePackage;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -141,7 +141,7 @@ public final class PropertyTranslator extends AbstractTranslator {
         JsExpression value;
         ResolvedCall<FunctionDescriptor> delegatedCall = bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor);
         if (delegatedCall != null) {
-            value = ReferencePackage.buildCall(context(), delegatedCall, getDelegateNameRef(getPropertyName()));
+            value = CallTranslator.instance$.translate(context(), delegatedCall, getDelegateNameRef(getPropertyName()));
         } else {
             value = backingFieldReference(context(), this.descriptor);
         }
@@ -171,7 +171,7 @@ public final class PropertyTranslator extends AbstractTranslator {
         ResolvedCall<FunctionDescriptor> delegatedCall = bindingContext().get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL,
                                                                               setterDescriptor);
         if (delegatedCall != null) {
-            setExpression = ReferencePackage.buildCall(contextWithAliased, delegatedCall, getDelegateNameRef(getPropertyName()));
+            setExpression = CallTranslator.instance$.translate(contextWithAliased, delegatedCall, getDelegateNameRef(getPropertyName()));
         } else {
             setExpression = assignmentToBackingField(contextWithAliased, descriptor, defaultParameterRef);
         }

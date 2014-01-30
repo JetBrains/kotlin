@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -81,7 +82,7 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
         if (!isGetter) {
             context = contextWithValueParameterAliasInArrayGetAccess(toSetTo);
         }
-        return ReferencePackage.buildCall(context, resolvedCall, arrayExpression);
+        return CallTranslator.instance$.translate(context, resolvedCall, arrayExpression);
     }
 
     @NotNull

@@ -23,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.JetTestFunctionDetector;
-import org.jetbrains.k2js.translate.reference.ReferencePackage;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
@@ -60,7 +60,8 @@ public final class JSTestGenerator {
             @NotNull ClassDescriptor classDescriptor, @NotNull JSTester tester) {
         JsExpression expression = ReferenceTranslator.translateAsFQReference(classDescriptor, context);
         JsNew testClass = new JsNew(expression);
-        JsExpression functionToTestCall = ReferencePackage.buildFakeCall(context, functionDescriptor, Collections.<JsExpression>emptyList(), testClass);
+        JsExpression functionToTestCall = CallTranslator.instance$.buildCall(context, functionDescriptor,
+                                                                             Collections.<JsExpression>emptyList(), testClass);
         JsStringLiteral testName = context.program().getStringLiteral(classDescriptor.getName() + "." + functionDescriptor.getName());
         tester.constructTestMethodInvocation(functionToTestCall, testName);
     }

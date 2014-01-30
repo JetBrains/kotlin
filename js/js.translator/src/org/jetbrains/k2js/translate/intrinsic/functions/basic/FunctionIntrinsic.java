@@ -19,8 +19,8 @@ package org.jetbrains.k2js.translate.intrinsic.functions.basic;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.translate.callTranslator.CallInfo;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.reference.CallInfo;
 
 import java.util.List;
 
