@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsName
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 
 
 trait CallInfo {
@@ -38,6 +39,12 @@ trait CallInfo {
 
     val thisObject: JsExpression?
     val receiverObject: JsExpression?
+
+    fun toString(): String {
+        val location = DiagnosticUtils.atLocation(context.bindingContext(), callableDescriptor)
+        val name = callableDescriptor.getName().asString()
+        return "callableDescriptor: $name at $location; thisObject: $thisObject; receiverObject: $receiverObject"
+    }
 }
 
 // if value == null, it is get access

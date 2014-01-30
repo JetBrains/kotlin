@@ -31,6 +31,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.k2js.translate.context.Namer
 import org.jetbrains.k2js.translate.utils.ErrorReportingUtils
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 
 
 val functionCallCases: CallCaseDispatcher<FunctionCallCase, FunctionCallInfo> = createFunctionCases()
@@ -68,7 +69,7 @@ fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
 
 private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, explicitReceivers: ExplicitReceivers): JsExpression {
     if (resolvedCall is VariableAsFunctionResolvedCall) {
-        assert(explicitReceivers.receiverObject == null, "VariableAsFunctionResolvedCall must have one receiver") // TODO: add debug info
+        assert(explicitReceivers.receiverObject == null, "VariableAsFunctionResolvedCall must have one receiver")
         val variableCall = resolvedCall.getVariableCall()
         if (variableCall.expectedReceivers()) {
             val newReceiver = buildGet(variableCall, explicitReceivers.receiverOrThisObject)
@@ -90,27 +91,24 @@ private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out Function
 trait CallCase<I : CallInfo> {
     val callInfo: I
 
-    protected fun unsupported(message: String = "") : Exception {
-        val stackTrace = Thread.currentThread().getStackTrace()
-        val methodName = stackTrace.get(stackTrace.lastIndex - 1).getMethodName()
-        val caseName = javaClass.getName()
-        return UnsupportedOperationException("this case unsopported: $message [$methodName; $caseName; $callInfo]")
+    protected fun unsupported(message: String = "") : Nothing {
+        throw UnsupportedOperationException("this case unsopported. $callInfo")
     }
 
     protected fun I.noReceivers(): JsExpression {
-        throw unsupported()
+        unsupported()
     }
 
     protected fun I.thisObject(): JsExpression {
-        throw unsupported()
+        unsupported()
     }
 
     protected fun I.receiverArgument(): JsExpression {
-        throw unsupported()
+        unsupported()
     }
 
     protected fun I.bothReceivers(): JsExpression {
-        throw unsupported()
+        unsupported()
     }
 
     final fun translate(): JsExpression {
