@@ -29,8 +29,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 
 
-class NativeVariableAccessCase(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo) {
-
+object NativeVariableAccessCase : VariableAccessCase {
     override fun VariableAccessInfo.receiverArgument(): JsExpression {
         return constructAccessExpression(JsNameRef(variableName, receiverObject!!))
     }
@@ -44,8 +43,7 @@ class NativeVariableAccessCase(callInfo: VariableAccessInfo) : VariableAccessCas
     }
 }
 
-class DefaultVariableAccessCase(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo) {
-
+object DefaultVariableAccessCase : VariableAccessCase {
     override fun VariableAccessInfo.noReceivers(): JsExpression {
         return constructAccessExpression(context.getQualifiedReference(variableDescriptor))
     }
@@ -73,7 +71,7 @@ class DefaultVariableAccessCase(callInfo: VariableAccessInfo) : VariableAccessCa
     }
 }
 
-class DelegatePropertyAccessIntrinsic(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo), DelegateIntrinsic<VariableAccessInfo> {
+object DelegatePropertyAccessIntrinsic : DelegateIntrinsic<VariableAccessInfo> {
     override fun VariableAccessInfo.canBeApply(): Boolean {
         if(variableDescriptor is PropertyDescriptor) {
             return isGetAccess() || (variableDescriptor as PropertyDescriptor).isVar()
@@ -98,7 +96,7 @@ class DelegatePropertyAccessIntrinsic(callInfo: VariableAccessInfo) : VariableAc
     }
 }
 
-class SuperPropertyAccessCase(callInfo: VariableAccessInfo) : VariableAccessCase(callInfo) {
+object SuperPropertyAccessCase : VariableAccessCase {
     override fun VariableAccessInfo.thisObject(): JsExpression {
         val variableName = context.program().getStringLiteral(this.variableName.getIdent())
         return if (isGetAccess())
@@ -108,12 +106,17 @@ class SuperPropertyAccessCase(callInfo: VariableAccessInfo) : VariableAccessCase
     }
 }
 
-fun createVariableAccessCases(): CallCaseDispatcher<VariableAccessCase, VariableAccessInfo> {
-    val caseDispatcher = CallCaseDispatcher<VariableAccessCase, VariableAccessInfo>()
+fun VariableAccessInfo.translateVariableAccess(): JsExpression {
+    val intrinsic = DelegatePropertyAccessIntrinsic.intrinsic(this)
 
-    caseDispatcher.addCase { DelegatePropertyAccessIntrinsic(it).intrinsic() }
-    caseDispatcher.addCase(::SuperPropertyAccessCase) { it.isSuperInvocation() }
-    caseDispatcher.addCase(::NativeVariableAccessCase) { it.isNative() }
-    caseDispatcher.addCase(::DefaultVariableAccessCase) { true } // TODO: fix this
-    return caseDispatcher
+    return when {
+        intrinsic != null ->
+            intrinsic
+        isSuperInvocation() ->
+            SuperPropertyAccessCase.translate(this)
+        isNative() ->
+            NativeVariableAccessCase.translate(this)
+        else ->
+            DefaultVariableAccessCase.translate(this)
+    }
 }

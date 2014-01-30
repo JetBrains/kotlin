@@ -31,6 +31,9 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import com.google.dart.compiler.backend.js.ast.JsNameRef
+import org.jetbrains.k2js.translate.utils.JsAstUtils
+import org.jetbrains.k2js.translate.context.Namer
 
 
 trait CallInfo {
@@ -48,7 +51,7 @@ trait CallInfo {
 }
 
 // if value == null, it is get access
-class VariableAccessInfo(callInfo: CallInfo, val value: JsExpression? = null): CallInfo by callInfo
+class VariableAccessInfo(callInfo: CallInfo, val value: JsExpression? = null) : CallInfo by callInfo
 
 class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTranslator.ArgumentsInfo) : CallInfo by callInfo
 
@@ -60,12 +63,12 @@ class FunctionCallInfo(callInfo: CallInfo, val argumentsInfo: CallArgumentTransl
  */
 class ExplicitReceivers(val receiverOrThisObject: JsExpression?, val receiverObject: JsExpression? = null)
 
-fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiver: JsExpression?): CallInfo {
-    return createCallInfo(resolvedCall, ExplicitReceivers(receiver))
+fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, receiverOrThisObject: JsExpression?): CallInfo {
+    return createCallInfo(resolvedCall, ExplicitReceivers(receiverOrThisObject))
 }
 
-fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver: JsExpression?): FunctionCallInfo {
-    return getCallInfo(resolvedCall, ExplicitReceivers(receiver));
+fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiverOrThisObject: JsExpression?): FunctionCallInfo {
+    return getCallInfo(resolvedCall, ExplicitReceivers(receiverOrThisObject));
 }
 
 // two receiver need only for FunctionCall in VariableAsFunctionResolvedCall
@@ -75,24 +78,20 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
     return FunctionCallInfo(callInfo, argumentsInfo)
 }
 
-
 val CallInfo.callableDescriptor: CallableDescriptor
-    get() {
-        return resolvedCall.getResultingDescriptor().getOriginal()
-    }
-fun CallInfo.isExtension(): Boolean {
-    return receiverObject != null
-}
-fun CallInfo.isMemberCall(): Boolean {
-    return thisObject != null
-}
-fun CallInfo.isNative(): Boolean {
-    return AnnotationsUtils.isNativeObject(callableDescriptor)
-}
-fun CallInfo.isSuperInvocation() : Boolean {
+    get() = resolvedCall.getResultingDescriptor().getOriginal()
+
+fun CallInfo.isExtension(): Boolean = receiverObject != null
+
+fun CallInfo.isMemberCall(): Boolean = thisObject != null
+
+fun CallInfo.isNative(): Boolean = AnnotationsUtils.isNativeObject(callableDescriptor)
+
+fun CallInfo.isSuperInvocation(): Boolean {
     val thisObject = resolvedCall.getThisObject()
     return thisObject is ExpressionReceiver && ((thisObject as ExpressionReceiver)).getExpression() is JetSuperExpression
 }
+
 fun CallInfo.constructSafeCallIsNeeded(result: JsExpression): JsExpression {
     if (!resolvedCall.isSafeCall())
         return result
@@ -109,25 +108,27 @@ fun CallInfo.constructSafeCallIsNeeded(result: JsExpression): JsExpression {
 }
 
 val VariableAccessInfo.variableDescriptor: VariableDescriptor
-    get() {
-        return callableDescriptor as VariableDescriptor
+    get() = callableDescriptor as VariableDescriptor
+
+val VariableAccessInfo.variableName: JsName
+    get() = context.getNameForDescriptor(variableDescriptor)
+
+fun VariableAccessInfo.isGetAccess(): Boolean = value == null
+
+fun VariableAccessInfo.getAccessFunctionName(): String = Namer.getNameForAccessor(variableName.getIdent()!!, isGetAccess(), false)
+
+fun VariableAccessInfo.constructAccessExpression(ref: JsNameRef): JsExpression {
+    if (isGetAccess()) {
+        return ref
+    } else {
+        return JsAstUtils.assignment(ref, value!!)
     }
-val VariableAccessInfo.variableName : JsName
-    get() {
-        return context.getNameForDescriptor(variableDescriptor)
-    }
-fun VariableAccessInfo.isGetAccess(): Boolean {
-    return value == null
 }
 
-val FunctionCallInfo.functionName : JsName
-    get() {
-        return context.getNameForDescriptor(callableDescriptor)
-    }
-fun FunctionCallInfo.hasSpreadOperator() : Boolean {
-    return argumentsInfo.isHasSpreadOperator()
-}
+val FunctionCallInfo.functionName: JsName
+    get() = context.getNameForDescriptor(callableDescriptor)
 
+fun FunctionCallInfo.hasSpreadOperator(): Boolean = argumentsInfo.isHasSpreadOperator()
 
 private fun TranslationContext.getThisObject(receiverValue: ReceiverValue): JsExpression {
     assert(receiverValue.exists(), "receiverValue must be exist here")
@@ -160,15 +161,6 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
         }
     }
 
-    fun getNullableReceiverForSafeCall(): JsExpression? {
-        if (!resolvedCall.isSafeCall()) {
-            return null
-        }
-        return when (receiverKind) {
-            BOTH_RECEIVERS -> explicitReceivers.receiverObject
-            else -> explicitReceivers.receiverOrThisObject
-        }
-    }
     return object : CallInfo {
         override val context: TranslationContext = this@createCallInfo
         override val resolvedCall: ResolvedCall<out CallableDescriptor> = resolvedCall

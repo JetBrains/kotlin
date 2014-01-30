@@ -34,21 +34,18 @@ import org.jetbrains.k2js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 
 
-val functionCallCases: CallCaseDispatcher<FunctionCallCase, FunctionCallInfo> = createFunctionCases()
-val variableAccessCases: CallCaseDispatcher<VariableAccessCase, VariableAccessInfo> = createVariableAccessCases()
-
 fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiverOrThisObject: JsExpression? = null): JsExpression {
     return buildCall(resolvedCall, ExplicitReceivers(receiverOrThisObject))
 }
 
 fun TranslationContext.buildGet(resolvedCall: ResolvedCall<out VariableDescriptor>, receiverOrThisObject: JsExpression? = null): JsExpression {
     val variableAccessInfo = VariableAccessInfo(getCallInfo(resolvedCall, receiverOrThisObject), null);
-    return variableAccessCases.translate(variableAccessInfo)
+    return variableAccessInfo.translateVariableAccess()
 }
 
 fun TranslationContext.buildSet(resolvedCall: ResolvedCall<out VariableDescriptor>, value: JsExpression, receiverOrThisObject: JsExpression? = null): JsExpression {
     val variableAccessInfo = VariableAccessInfo(getCallInfo(resolvedCall, receiverOrThisObject), value);
-    return variableAccessCases.translate(variableAccessInfo)
+    return variableAccessInfo.translateVariableAccess()
 }
 
 fun TranslationContext.buildFakeCall(functionDescriptor: FunctionDescriptor, args: List<JsExpression>, thisObject: JsExpression?): JsExpression {
@@ -57,13 +54,13 @@ fun TranslationContext.buildFakeCall(functionDescriptor: FunctionDescriptor, arg
     val isNative = AnnotationsUtils.isNativeObject(functionDescriptor)
     val hasSpreadOperator = false
     if (thisObject != null) {
-        return DefaultCallCase.buildDefaultCallWithThisObject(argumentsInfo, thisObject, functionName, isNative, hasSpreadOperator)
+        return DefaultFunctionCallCase.buildDefaultCallWithThisObject(argumentsInfo, thisObject, functionName, isNative, hasSpreadOperator)
     } else {
-        return DefaultCallCase.buildDefaultCallWithoutReceiver(this, argumentsInfo, functionDescriptor, functionName, isNative, hasSpreadOperator)
+        return DefaultFunctionCallCase.buildDefaultCallWithoutReceiver(this, argumentsInfo, functionDescriptor, functionName, isNative, hasSpreadOperator)
     }
 }
 
-fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
+private fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
     return this.getExplicitReceiverKind() != NO_EXPLICIT_RECEIVER
 }
 
@@ -84,34 +81,23 @@ private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out Function
     }
 
     val functionCallInfo = getCallInfo(resolvedCall, explicitReceivers)
-    return functionCallCases.translate(functionCallInfo)
+    return functionCallInfo.translateFunctionCall()
 }
 
 
 trait CallCase<I : CallInfo> {
-    val callInfo: I
 
-    protected fun unsupported(message: String = "") : Nothing {
-        throw UnsupportedOperationException("this case unsopported. $callInfo")
-    }
+    protected fun I.unsupported(message: String = "") : Nothing = throw UnsupportedOperationException("this case unsopported. $this")
 
-    protected fun I.noReceivers(): JsExpression {
-        unsupported()
-    }
+    protected fun I.noReceivers(): JsExpression = unsupported()
 
-    protected fun I.thisObject(): JsExpression {
-        unsupported()
-    }
+    protected fun I.thisObject(): JsExpression = unsupported()
 
-    protected fun I.receiverArgument(): JsExpression {
-        unsupported()
-    }
+    protected fun I.receiverArgument(): JsExpression = unsupported()
 
-    protected fun I.bothReceivers(): JsExpression {
-        unsupported()
-    }
+    protected fun I.bothReceivers(): JsExpression = unsupported()
 
-    final fun translate(): JsExpression {
+    final fun translate(callInfo: I): JsExpression {
         val result = if (callInfo.thisObject == null) {
             if (callInfo.receiverObject == null)
                 callInfo.noReceivers()
@@ -128,62 +114,23 @@ trait CallCase<I : CallInfo> {
     }
 }
 
-open class FunctionCallCase(override val callInfo: FunctionCallInfo) : CallCase<FunctionCallInfo>
+trait FunctionCallCase : CallCase<FunctionCallInfo>
 
-open class VariableAccessCase(override val callInfo: VariableAccessInfo) : CallCase<VariableAccessInfo> {
-    protected fun VariableAccessInfo.getAccessFunctionName(): String {
-        return Namer.getNameForAccessor(variableName.getIdent()!!, isGetAccess(), false)
-    }
+trait VariableAccessCase : CallCase<VariableAccessInfo>
 
-    protected fun VariableAccessInfo.constructAccessExpression(ref: JsNameRef): JsExpression {
-        if (isGetAccess()) {
-            return ref
-        } else {
-            return JsAstUtils.assignment(ref, value!!)
-        }
-    }
-}
-
-class CallCaseDispatcher<C : CallCase<I>, I : CallInfo> {
-    private val cases: MutableList<(I) -> JsExpression?> = ArrayList()
-
-    fun addCase(canBeApplyCase: (I) -> JsExpression?) {
-        cases.add(canBeApplyCase)
-    }
-
-    fun addCase(caseConstructor: (I) -> C, canApply: (I) -> Boolean) {
-        cases.add({
-            if (canApply(it))
-                caseConstructor(it).translate()
-            else
-                null
-        })
-    }
-
-    fun translate(callInfo: I): JsExpression {
-        for (case in cases) {
-            val result = case(callInfo)
-            if (result != null)
-                return result
-        }
-        throw UnsupportedOperationException("This case of call unsopported. CallInfo: $callInfo")
-    }
-}
-
-trait DelegateIntrinsic<I : CallInfo> : CallCase<I> {
+trait DelegateIntrinsic<I : CallInfo> {
     fun I.canBeApply(): Boolean = true
-    fun I.getReceiver(): JsExpression? {
-        return when (resolvedCall.getExplicitReceiverKind()) {
-            THIS_OBJECT -> thisObject
-            RECEIVER_ARGUMENT, BOTH_RECEIVERS -> receiverObject
-            else -> null
-        }
-    }
-
     fun I.getDescriptor(): CallableDescriptor
     fun I.getArgs(): List<JsExpression>
 
-    fun I.intrinsic(): JsExpression? {
+    fun intrinsic(callInfo: I): JsExpression? {
+        return if (callInfo.canBeApply())
+            callInfo.getIntrinsic()
+        else
+            null
+    }
+
+    private fun I.getIntrinsic(): JsExpression? {
         val descriptor = getDescriptor();
 
         // Now intrinsic support only FunctionDescriptor. See DelegatePropertyAccessIntrinsic.getDescriptor()
@@ -194,12 +141,5 @@ trait DelegateIntrinsic<I : CallInfo> : CallCase<I> {
             }
         }
         return null
-    }
-
-    fun intrinsic(): JsExpression? {
-        return if (callInfo.canBeApply())
-            callInfo.intrinsic()
-        else
-            null
     }
 }
