@@ -173,11 +173,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
         val reference = simpleName.getParentByType(javaClass<JetSimpleNameExpression>())
         if (reference == null) return null
 
-        val file = simpleName.getContainingFile()
-        if (file == null) return null
-
-        val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file as JetFile).getBindingContext()
-        val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, reference)
+        val descriptor = AnalyzerFacadeWithCache.getContextForElement(reference)[BindingContext.REFERENCE_TARGET, reference]
 
         return when (descriptor) {
             is ClassifierDescriptor -> if (DescriptorUtils.isSingleton(descriptor)) {
