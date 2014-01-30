@@ -81,7 +81,6 @@ public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionActi
     }
 
     private static JetType getReconstructedType(JetTypeReference typeRef) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) typeRef.getContainingFile()).getBindingContext();
-        return bindingContext.get(BindingContext.TYPE, typeRef);
+        return AnalyzerFacadeWithCache.getContextForElement(typeRef).get(BindingContext.TYPE, typeRef);
     }
 }

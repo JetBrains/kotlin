@@ -29,9 +29,6 @@ public class SplitPropertyDeclarationIntention : JetSelfTargetingIntention<JetPr
     override fun isApplicableTo(element: JetProperty): Boolean = DeclarationUtils.checkSplitProperty(element)
 
     override fun applyTo(element: JetProperty, editor: Editor) {
-        val file = element.getContainingFile()
-        if (file is JetFile) {
-            DeclarationUtils.splitPropertyDeclaration(element, file)
-        }
+        DeclarationUtils.splitPropertyDeclaration(element)
     }
 }

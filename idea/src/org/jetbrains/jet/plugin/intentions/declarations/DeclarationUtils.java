@@ -33,8 +33,6 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.JetPsiMatcher;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.Collections;
-
 public class DeclarationUtils {
     private DeclarationUtils() {
     }
@@ -84,20 +82,18 @@ public class DeclarationUtils {
     }
 
     @Nullable
-    private static JetType getPropertyTypeIfNeeded(@NotNull JetProperty property, @NotNull JetFile file) {
+    private static JetType getPropertyTypeIfNeeded(@NotNull JetProperty property) {
         if (property.getTypeRef() != null) return null;
 
-        JetType type = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext().get(
-                BindingContext.EXPRESSION_TYPE,
-                property.getInitializer()
+        JetType type = AnalyzerFacadeWithCache.getContextForElement(property).get(
+                BindingContext.EXPRESSION_TYPE, property.getInitializer()
         );
-
         return type == null || type.isError() ? null : type;
     }
 
     // returns assignment which replaces initializer
     @NotNull
-    public static JetBinaryExpression splitPropertyDeclaration(@NotNull JetProperty property, @NotNull JetFile file) {
+    public static JetBinaryExpression splitPropertyDeclaration(@NotNull JetProperty property) {
         Project project = property.getProject();
 
         PsiElement parent = property.getParent();
@@ -116,7 +112,7 @@ public class DeclarationUtils {
         parent.addAfter(JetPsiFactory.createNewLine(project), property);
 
         //noinspection ConstantConditions
-        JetType inferredType = getPropertyTypeIfNeeded(property, file);
+        JetType inferredType = getPropertyTypeIfNeeded(property);
 
         String typeStr = inferredType != null
                          ? DescriptorRenderer.TEXT.renderType(inferredType)
