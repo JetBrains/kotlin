@@ -48,7 +48,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.*;
 
 import java.util.*;
@@ -181,7 +181,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<ClassDescriptor> getTopLevelObjectsByName(
             @NotNull String name,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
         BindingContext context = resolveSession.resolveToElement(expression);
@@ -216,7 +216,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<FunctionDescriptor> getTopLevelFunctionDescriptorsByName(
             @NotNull String name,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
         // name parameter can differ from expression.getReferenceName() when expression contains completion suffix
@@ -288,7 +288,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<DeclarationDescriptor> getJetCallableExtensions(
             @NotNull final Condition<String> acceptedNameCondition,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull GlobalSearchScope searchScope
     ) {
         BindingContext context = resolveSession.resolveToElement(expression);

@@ -7,7 +7,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -76,7 +76,7 @@ public object ShortenReferences {
     }
 
     private class ShortenTypesVisitor(val file: JetFile, val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetVisitorVoid() {
-        private val resolveSession : CancelableResolveSession
+        private val resolveSession : ResolveSessionForBodies
             get() = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
 
         private val typesToShorten = ArrayList<JetUserType>()
@@ -142,7 +142,7 @@ public object ShortenReferences {
     }
 
     private class ShortenQualifiedExpressionsVisitor(val file: JetFile, val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetVisitorVoid() {
-        private val resolveSession : CancelableResolveSession
+        private val resolveSession : ResolveSessionForBodies
             get() = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
 
         private fun bindingContext(expression: JetReferenceExpression): BindingContext

@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetValueArgumentList;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
 public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCase {
     public void testInheritedFunctions() {
@@ -120,7 +120,7 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
 
         for (Object item : mockCreateParameterInfoContext.getItemsToShow()) {
             //noinspection unchecked
-            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, CancelableResolveSession>)item, parameterInfoUIContext);
+            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, ResolveSessionForBodies>)item, parameterInfoUIContext);
         }
         assertEquals(expectedResultText, parameterInfoUIContext.getResultText());
     }

@@ -61,10 +61,9 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -259,12 +258,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
         List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
-        CancelableResolveSession cancelableResolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
+        ResolveSessionForBodies resolveSessionForBodies = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
             assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
 
-            if (needToAddParameterTypes(functionLiteralExpression, cancelableResolveSession)) {
+            if (needToAddParameterTypes(functionLiteralExpression, resolveSessionForBodies)) {
                 functionsToAddParameters.add(functionLiteralExpression);
             }
         }
@@ -298,10 +297,10 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     private static boolean needToAddParameterTypes(
             @NotNull JetFunctionLiteralExpression functionLiteralExpression,
-            @NotNull CancelableResolveSession cancelableResolveSession
+            @NotNull ResolveSessionForBodies resolveSessionForBodies
     ) {
         JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
-        BindingContext context = cancelableResolveSession.resolveToElement(functionLiteralExpression);
+        BindingContext context = resolveSessionForBodies.resolveToElement(functionLiteralExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             DiagnosticFactory factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
@@ -319,12 +318,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
         List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
 
-        CancelableResolveSession cancelableResolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
+        ResolveSessionForBodies resolveSessionForBodies = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetCallExpression callExpression = getCallExpression(inlinedExpression);
             assert callExpression != null : "can't find call expression for " + inlinedExpression.getText();
 
-            if (hasIncompleteTypeInferenceDiagnostic(callExpression, cancelableResolveSession) && callExpression.getTypeArgumentList() == null) {
+            if (hasIncompleteTypeInferenceDiagnostic(callExpression, resolveSessionForBodies) && callExpression.getTypeArgumentList() == null) {
                 callsToAddArguments.add(callExpression);
             }
         }
@@ -366,10 +365,10 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     private static boolean hasIncompleteTypeInferenceDiagnostic(
             @NotNull JetCallExpression callExpression,
-            @NotNull CancelableResolveSession cancelableResolveSession
+            @NotNull ResolveSessionForBodies resolveSessionForBodies
     ) {
         JetExpression callee = callExpression.getCalleeExpression();
-        BindingContext context = cancelableResolveSession.resolveToElement(callExpression);
+        BindingContext context = resolveSessionForBodies.resolveToElement(callExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             if (diagnostic.getFactory() == Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER && diagnostic.getPsiElement() == callee) {
                 return true;

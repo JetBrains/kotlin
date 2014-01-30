@@ -81,18 +81,18 @@ public final class AnalyzerFacadeWithCache {
 
     @NotNull
     public static BindingContext getContextForElement(@NotNull JetElement jetElement) {
-        CancelableResolveSession cancelableResolveSession = getLazyResolveSessionForFile((JetFile) jetElement.getContainingFile());
-        return cancelableResolveSession.resolveToElement(jetElement);
+        ResolveSessionForBodies resolveSessionForBodies = getLazyResolveSessionForFile((JetFile) jetElement.getContainingFile());
+        return resolveSessionForBodies.resolveToElement(jetElement);
     }
 
     @NotNull
-    public static CancelableResolveSession getLazyResolveSessionForFile(@NotNull JetFile file) {
+    public static ResolveSessionForBodies getLazyResolveSessionForFile(@NotNull JetFile file) {
         Project project = file.getProject();
         DeclarationsCacheProvider provider = KotlinCacheManager.getInstance(project).getRegisteredProvider(TargetPlatformDetector.getPlatform(file));
 
         if (!provider.areDeclarationsAvailable(file)) {
             // There can be request for temp files (in completion) or non-source (in library) files. Create temp sessions for them.
-            CachedValue<CancelableResolveSession> cachedValue;
+            CachedValue<ResolveSessionForBodies> cachedValue;
 
             synchronized (PER_FILE_SESSION_CACHE) {
                 cachedValue = PER_FILE_SESSION_CACHE.get(file);
@@ -111,17 +111,17 @@ public final class AnalyzerFacadeWithCache {
         return AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
     }
 
-    private static final SLRUCache<JetFile, CachedValue<CancelableResolveSession>> PER_FILE_SESSION_CACHE = new SLRUCache<JetFile, CachedValue<CancelableResolveSession>>(2, 3) {
+    private static final SLRUCache<JetFile, CachedValue<ResolveSessionForBodies>> PER_FILE_SESSION_CACHE = new SLRUCache<JetFile, CachedValue<ResolveSessionForBodies>>(2, 3) {
         @NotNull
         @Override
-        public CachedValue<CancelableResolveSession> createValue(final JetFile file) {
+        public CachedValue<ResolveSessionForBodies> createValue(final JetFile file) {
             final Project fileProject = file.getProject();
             return CachedValuesManager.getManager(fileProject).createCachedValue(
                     // Each value monitors OUT_OF_CODE_BLOCK_MODIFICATION_COUNT and modification tracker of the stored value
-                    new CachedValueProvider<CancelableResolveSession>() {
+                    new CachedValueProvider<ResolveSessionForBodies>() {
                         @Nullable
                         @Override
-                        public Result<CancelableResolveSession> compute() {
+                        public Result<ResolveSessionForBodies> compute() {
                             Project project = file.getProject();
 
 
@@ -138,7 +138,7 @@ public final class AnalyzerFacadeWithCache {
                             }
 
                             ResolveSession resolveSession = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).getLazyResolveSession(fileProject, files);
-                            return Result.create(new CancelableResolveSession(file, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+                            return Result.create(new ResolveSessionForBodies(file, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
                         }
                     },
                     true);

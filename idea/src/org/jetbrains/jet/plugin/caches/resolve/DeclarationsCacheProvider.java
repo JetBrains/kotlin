@@ -28,13 +28,13 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.util.Collection;
 
 public abstract class DeclarationsCacheProvider {
-    private final CachedValue<CancelableResolveSession> lazyResolveCache;
+    private final CachedValue<ResolveSessionForBodies> lazyResolveCache;
 
     protected final TargetPlatform platform;
     protected final Project project;
@@ -50,7 +50,7 @@ public abstract class DeclarationsCacheProvider {
     public abstract KotlinDeclarationsCache getDeclarations(boolean allowIncomplete);
 
     @NotNull
-    public CancelableResolveSession getLazyResolveSession() {
+    public ResolveSessionForBodies getLazyResolveSession() {
         return lazyResolveCache.getValue();
     }
 
@@ -58,7 +58,7 @@ public abstract class DeclarationsCacheProvider {
         return JetFilesProvider.getInstance(project).isFileInScope(jetFile, GlobalSearchScope.allScope(project));
     }
 
-    private static class CancelableResolveSessionValueProvider implements CachedValueProvider<CancelableResolveSession> {
+    private static class CancelableResolveSessionValueProvider implements CachedValueProvider<ResolveSessionForBodies> {
         private final Project project;
         private final TargetPlatform platform;
 
@@ -69,10 +69,10 @@ public abstract class DeclarationsCacheProvider {
 
         @Nullable
         @Override
-        public synchronized Result<CancelableResolveSession> compute() {
+        public synchronized Result<ResolveSessionForBodies> compute() {
             Collection<JetFile> files = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
             ResolveSession resolveSession = AnalyzerFacadeProvider.getAnalyzerFacade(platform).getLazyResolveSession(project, files);
-            return Result.create(new CancelableResolveSession(project, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+            return Result.create(new ResolveSessionForBodies(project, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
         }
     }
 }

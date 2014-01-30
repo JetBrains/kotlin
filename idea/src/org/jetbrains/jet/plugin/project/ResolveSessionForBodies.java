@@ -30,20 +30,20 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
-public class CancelableResolveSession implements KotlinCodeAnalyzer, ModificationTracker {
+public class ResolveSessionForBodies implements KotlinCodeAnalyzer, ModificationTracker {
     private final Object createdForObject;
     private final ResolveSession resolveSession;
     private final ResolveElementCache resolveElementCache;
 
-    public CancelableResolveSession(@NotNull JetFile file, @NotNull ResolveSession resolveSession) {
+    public ResolveSessionForBodies(@NotNull JetFile file, @NotNull ResolveSession resolveSession) {
         this(file, file.getProject(), resolveSession);
     }
 
-    public CancelableResolveSession(@NotNull Project project, @NotNull ResolveSession resolveSession) {
+    public ResolveSessionForBodies(@NotNull Project project, @NotNull ResolveSession resolveSession) {
         this(project, project, resolveSession);
     }
 
-    private CancelableResolveSession(Object createdForObject, Project project, ResolveSession resolveSession) {
+    private ResolveSessionForBodies(Object createdForObject, Project project, ResolveSession resolveSession) {
         this.createdForObject = createdForObject;
         this.resolveSession = resolveSession;
         this.resolveElementCache = new ResolveElementCache(resolveSession, project);
@@ -89,6 +89,6 @@ public class CancelableResolveSession implements KotlinCodeAnalyzer, Modificatio
 
     @Override
     public String toString() {
-        return "CancelableResolveSession: " + getModificationCount() + " " + createdForObject + " " + createdForObject.hashCode();
+        return "ResolveSessionForBodies: " + getModificationCount() + " " + createdForObject + " " + createdForObject.hashCode();
     }
 }

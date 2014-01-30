@@ -40,7 +40,7 @@ import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.completion.weigher.WeigherPackage;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
@@ -61,7 +61,7 @@ class CompletionSession {
         this.parameters = parameters;
         this.jetReference = jetReference;
 
-        CancelableResolveSession resolveSession =
+        ResolveSessionForBodies resolveSession =
                 AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
         BindingContext expressionBindingContext = resolveSession.resolveToElement(jetReference.getExpression());
         JetScope scope = expressionBindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.getExpression());
@@ -274,7 +274,7 @@ class CompletionSession {
         return jetResult.getBindingContext();
     }
 
-    private CancelableResolveSession getResolveSession() {
+    private ResolveSessionForBodies getResolveSession() {
         return jetResult.getResolveSession();
     }
 

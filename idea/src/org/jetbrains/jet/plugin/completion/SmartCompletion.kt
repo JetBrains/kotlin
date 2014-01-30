@@ -4,7 +4,7 @@ import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.plugin.project.CancelableResolveSession
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import com.intellij.codeInsight.lookup.*
@@ -38,7 +38,7 @@ trait SmartCompletionData{
     val additionalElements: Iterable<LookupElement>
 }
 
-fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession: CancelableResolveSession): SmartCompletionData? {
+fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession: ResolveSessionForBodies): SmartCompletionData? {
     val parent = expression.getParent()
     val expressionWithType: JetExpression;
     val receiver: JetExpression?
@@ -102,7 +102,7 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
     }
 }
 
-private fun calcItemsToSkip(expression: JetExpression, resolveSession: CancelableResolveSession): Collection<DeclarationDescriptor> {
+private fun calcItemsToSkip(expression: JetExpression, resolveSession: ResolveSessionForBodies): Collection<DeclarationDescriptor> {
     val parent = expression.getParent()
     when(parent) {
         is JetProperty -> {
@@ -124,7 +124,7 @@ private fun calcItemsToSkip(expression: JetExpression, resolveSession: Cancelabl
     return listOf()
 }
 
-private fun typeInstantiationItems(expectedType: JetType, resolveSession: CancelableResolveSession, bindingContext: BindingContext): Iterable<LookupElement> {
+private fun typeInstantiationItems(expectedType: JetType, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): Iterable<LookupElement> {
     val typeConstructor: TypeConstructor = expectedType.getConstructor()
     val classifier: ClassifierDescriptor? = typeConstructor.getDeclarationDescriptor()
     if (!(classifier is ClassDescriptor)) return listOf()
@@ -299,7 +299,7 @@ private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpres
 }
 
 // adds java static members, enum members and members from class object
-private fun staticMembers(context: JetExpression, expectedType: JetType, resolveSession: CancelableResolveSession, bindingContext: BindingContext): Iterable<LookupElement> {
+private fun staticMembers(context: JetExpression, expectedType: JetType, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): Iterable<LookupElement> {
     val classDescriptor = TypeUtils.getClassDescriptor(expectedType)
     if (classDescriptor == null) return listOf()
     if (classDescriptor.getName().isSpecial()) return listOf()

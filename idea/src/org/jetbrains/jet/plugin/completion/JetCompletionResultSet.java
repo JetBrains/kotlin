@@ -23,10 +23,10 @@ import com.intellij.openapi.util.Conditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
 public class JetCompletionResultSet {
-    private final CancelableResolveSession resolveSession;
+    private final ResolveSessionForBodies resolveSession;
     private final BindingContext bindingContext;
     private final Condition<DeclarationDescriptor> descriptorFilter;
     private final CompletionResultSet result;
@@ -34,14 +34,14 @@ public class JetCompletionResultSet {
 
     public JetCompletionResultSet(
             @NotNull CompletionResultSet result,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull BindingContext bindingContext) {
         this(result, resolveSession, bindingContext, Conditions.<DeclarationDescriptor>alwaysTrue());
     }
 
     public JetCompletionResultSet(
             @NotNull CompletionResultSet result,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull BindingContext bindingContext,
             @NotNull Condition<DeclarationDescriptor> descriptorFilter) {
         this.result = result;
@@ -50,7 +50,7 @@ public class JetCompletionResultSet {
         this.descriptorFilter = descriptorFilter;
     }
 
-    public CancelableResolveSession getResolveSession() {
+    public ResolveSessionForBodies getResolveSession() {
         return resolveSession;
     }
 
