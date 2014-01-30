@@ -61,7 +61,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                                             JetObjectDeclaration.class);
         if (declaration == null) return;
 
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
+        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
 
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
