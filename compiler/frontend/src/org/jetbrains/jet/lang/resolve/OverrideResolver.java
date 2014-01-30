@@ -21,10 +21,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -265,9 +267,22 @@ public class OverrideResolver {
         }
     }
 
-    public static void collectMissingImplementations(MutableClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
+    public static void collectMissingImplementations(
+            MutableClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl
+    ) {
         for (CallableMemberDescriptor descriptor : classDescriptor.getAllCallableMembers()) {
             collectMissingImplementations(descriptor, abstractNoImpl, manyImpl);
+        }
+    }
+
+    public static void collectMissingImplementations(
+            ClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl
+    ) {
+        Iterator<CallableMemberDescriptor> callableMembers = KotlinPackage.filterIsInstance(
+                classDescriptor.getDefaultType().getMemberScope().getAllDescriptors().iterator(), CallableMemberDescriptor.class
+        );
+        while (callableMembers.hasNext()) {
+            collectMissingImplementations(callableMembers.next(), abstractNoImpl, manyImpl);
         }
     }
 
@@ -408,9 +423,9 @@ public class OverrideResolver {
         return overriddenDeclarationsByDirectParent;
     }
 
-    public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(MutableClassDescriptor classDescriptor) {
+    public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(ClassDescriptor classDescriptor) {
         Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
-        for (JetType supertype : classDescriptor.getSupertypes()) {
+        for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
             for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
                 if (descriptor instanceof CallableMemberDescriptor) {
                     CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;

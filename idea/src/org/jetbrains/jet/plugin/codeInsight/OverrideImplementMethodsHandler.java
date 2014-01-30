@@ -206,13 +206,13 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     @NotNull
     public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject, BindingContext bindingContext) {
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
-        if (descriptor instanceof MutableClassDescriptor) {
-            return collectMethodsToGenerate((MutableClassDescriptor) descriptor);
+        if (descriptor instanceof ClassDescriptor) {
+            return collectMethodsToGenerate((ClassDescriptor) descriptor);
         }
         return Collections.emptySet();
     }
 
-    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor);
+    protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(ClassDescriptor descriptor);
 
     private MemberChooser<DescriptorClassMember> showOverrideImplementChooser(
             Project project,
@@ -245,9 +245,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         assert classOrObject != null : "ClassObject should be checked in isValidFor method";
 
-        BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) classOrObject.getContainingFile())
-                        .getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
 
         Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject, bindingContext);
         if (missingImplementations.isEmpty() && !implementAll) {
