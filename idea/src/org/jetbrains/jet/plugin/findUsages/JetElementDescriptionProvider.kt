@@ -40,6 +40,7 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
             is JetNamedFunction -> "function"
             is JetProperty -> "property"
             is JetTypeParameter -> "type parameter"
+            is JetParameter -> "parameter"
             else -> null
         }
 
@@ -55,7 +56,7 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
                 if (kind != null) {
                     val descriptor = (targetElement as JetDeclaration).descriptor
                     if (descriptor != null) {
-                        val desc = if (location.includeParent() && targetElement !is JetTypeParameter) {
+                        val desc = if (location.includeParent() && targetElement !is JetTypeParameter && targetElement !is JetParameter) {
                             DescriptorUtils.getFqName(descriptor).asString()
                         }
                         else descriptor.getName().asString()
