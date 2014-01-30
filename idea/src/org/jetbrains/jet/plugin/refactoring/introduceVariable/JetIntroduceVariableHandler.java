@@ -33,7 +33,6 @@ import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -51,6 +50,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.refactoring.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -112,8 +112,9 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 return;
             }
         }
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) expression.getContainingFile());
-        BindingContext bindingContext = analyzeExhaust.getBindingContext();
+        ResolveSessionForBodies resolveSession =
+                AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) expression.getContainingFile());
+        BindingContext bindingContext = resolveSession.resolveToElement(expression);
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope != null) {
@@ -123,7 +124,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             }
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
-            InjectorForMacros injector = new InjectorForMacros(project, analyzeExhaust.getModuleDescriptor());
+            InjectorForMacros injector = new InjectorForMacros(project, resolveSession.getModuleDescriptor());
             JetType typeNoExpectedType = injector.getExpressionTypingServices().getType(scope, expression,
                                                                                 TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                                                 bindingTrace);
@@ -429,7 +430,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
 
         final ArrayList<JetExpression> result = new ArrayList<JetExpression>();
 
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) expression.getContainingFile()).getBindingContext();
+        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(expression);
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override
