@@ -65,6 +65,11 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
             return jetIndex < paramList.size() ? paramList.get(jetIndex) : null;
         }
 
+        if (declaration instanceof JetClass) {
+            List<JetParameter> paramList = ((JetClass) declaration).getPrimaryConstructorParameters();
+            return jetIndex < paramList.size() ? paramList.get(jetIndex) : null;
+        }
+
         if (jetIndex != 0) return null;
 
         JetPropertyAccessor setter = null;
