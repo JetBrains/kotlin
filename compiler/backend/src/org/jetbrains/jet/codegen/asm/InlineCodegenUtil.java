@@ -139,24 +139,24 @@ public class InlineCodegenUtil {
         if (currentDescriptor instanceof PackageFragmentDescriptor) {
             file = getContainingFile(codegenContext, typeMapper);
 
-            Type packageFragmentType = null;
+            Type packagePartType;
             if (file == null) {
                 //in case package fragment clinit
-                if (codegenContext.getParentContext() instanceof PackageContext) {
-                    packageFragmentType = ((PackageContext) codegenContext.getParentContext()).getPackagePartType();
-                }
+                assert codegenContext instanceof PackageContext : "Expected package context but " + codegenContext;
+                packagePartType = ((PackageContext) codegenContext).getPackagePartType();
             } else {
-                packageFragmentType =
+                packagePartType =
                         PackageCodegen.getPackagePartType(PackageClassUtils.getPackageClassFqName(getFqName(currentDescriptor).toSafe()),
                                                           file.getVirtualFile());
             }
 
-            if (packageFragmentType == null) {
+            if (packagePartType == null) {
                 DeclarationDescriptor contextDescriptor = codegenContext.getContextDescriptor();
+                //noinspection ConstantConditions
                 throw new RuntimeException("Couldn't find declaration for " + contextDescriptor.getContainingDeclaration().getName() + "." + contextDescriptor.getName() );
             }
 
-            return packageFragmentType.getInternalName().replace('.', '/');
+            return packagePartType.getInternalName().replace('.', '/');
         }
         else if (currentDescriptor instanceof ClassifierDescriptor) {
             Type type = typeMapper.mapType((ClassifierDescriptor) currentDescriptor);
@@ -170,10 +170,9 @@ public class InlineCodegenUtil {
             }
         }
 
-        assert currentDescriptor != null : "Wrong descriptor hierarchy " + currentDescriptor;
-
         String suffix = currentDescriptor.getName().isSpecial() ? "" : currentDescriptor.getName().asString();
 
+        //noinspection ConstantConditions
         return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper) + "$" + suffix;
     }
 

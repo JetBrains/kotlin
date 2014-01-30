@@ -16,11 +16,16 @@
 
 package org.jetbrains.jet.codegen.asm;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class NameGenerator {
 
     private final String ownerMethod;
 
     private int nextIndex = 1;
+
+    private final Map<String, NameGenerator> subGenerators = new HashMap<String, NameGenerator>();
 
     public NameGenerator(String onwerMethod) {
         this.ownerMethod = onwerMethod;
@@ -31,6 +36,11 @@ public class NameGenerator {
     }
 
     public NameGenerator subGenerator(String inliningMethod) {
-        return new NameGenerator(ownerMethod+ "$" + inliningMethod + nextIndex++);
+        NameGenerator generator = subGenerators.get(inliningMethod);
+        if (generator == null) {
+            generator = new NameGenerator(ownerMethod+ "$" + inliningMethod);
+            subGenerators.put(inliningMethod, generator);
+        }
+        return generator;
     }
 }

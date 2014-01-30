@@ -19,19 +19,17 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.asm.InlineCodegenUtil;
+import org.jetbrains.jet.codegen.asm.NameGenerator;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class MemberCodegen extends ParentCodegenAwareImpl {
@@ -40,14 +38,13 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
 
     private final ClassBuilder builder;
 
-    @NotNull
-    private Map<FunctionDescriptor, ClosureCodegen> inlinedClosures = new HashMap<FunctionDescriptor, ClosureCodegen>();
+    private NameGenerator inlineNameGenerator;
 
     public MemberCodegen(
             @NotNull GenerationState state,
             @Nullable MemberCodegen parentCodegen,
-            FieldOwnerContext context,
-            ClassBuilder builder
+            @NotNull FieldOwnerContext context,
+            @Nullable ClassBuilder builder
     ) {
         super(state, parentCodegen);
         this.context = context;
@@ -137,5 +134,14 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
     @NotNull
     public ClassBuilder getBuilder() {
         return builder;
+    }
+
+    public NameGenerator getInlineNameGenerator() {
+        if (inlineNameGenerator == null) {
+            String prefix = InlineCodegenUtil.getInlineName(context, typeMapper);
+
+            inlineNameGenerator = new NameGenerator(prefix);
+        }
+        return inlineNameGenerator;
     }
 }

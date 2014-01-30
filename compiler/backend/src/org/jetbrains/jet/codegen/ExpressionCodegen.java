@@ -103,8 +103,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Nullable
     private final MemberCodegen parentCodegen;
 
-    private NameGenerator inlineNameGenerator;
-
     /*
      * When we create a temporary variable to hold some value not to compute it many times
      * we put it into this map to emit access to that variable instead of evaluating the whole expression
@@ -3930,12 +3928,8 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     public NameGenerator getInlineNameGenerator() {
-        if (inlineNameGenerator == null) {
-            CodegenContext context = getContext();
-            String prefix = InlineCodegenUtil.getInlineName(context, typeMapper);
-
-            inlineNameGenerator = new NameGenerator(prefix + "$$inline");
-        }
-        return inlineNameGenerator;
+        NameGenerator nameGenerator = getParentCodegen().getInlineNameGenerator();
+        Name name = context.getContextDescriptor().getName();
+        return nameGenerator.subGenerator((name.isSpecial() ? "$special" : name.asString()) + "$$inlined" );
     }
 }
