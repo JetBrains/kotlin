@@ -39,8 +39,7 @@ fun JetImportDirective.isSafeToDelete(declaration: JetDeclaration): Boolean {
     }
 
     if (importReference != null) {
-        val bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache(declaration.getContainingFile() as JetFile).getBindingContext()
+        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(importReference)
         val referenceDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, importReference)
         val declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
         return referenceDescriptor == declarationDescriptor

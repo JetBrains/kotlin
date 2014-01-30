@@ -270,12 +270,12 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static String formatJavaOrLightMethod(@NotNull PsiMethod method) {
-        if (method instanceof KotlinLightMethod) {
-            JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-            BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
-            DeclarationDescriptor descriptor =
-                    bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+        PsiElement originalDeclaration = AsJavaPackage.getUnwrapped(method);
+        if (originalDeclaration instanceof JetDeclaration) {
+            JetDeclaration jetDeclaration = (JetDeclaration) originalDeclaration;
+            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(jetDeclaration);
+            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetDeclaration);
+
             if (descriptor != null) return formatFunctionDescriptor(descriptor);
         }
         return formatPsiMethod(method, false, false);
@@ -283,10 +283,8 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static String formatClass(@NotNull JetClassOrObject classOrObject) {
-        BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) classOrObject.getContainingFile()).getBindingContext();
-        DeclarationDescriptor descriptor =
-                bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (descriptor instanceof ClassDescriptor) return formatClassDescriptor(descriptor);
         return "class " + classOrObject.getName();
@@ -418,7 +416,7 @@ public class JetRefactoringUtil {
                 }
                 if (addExpression) {
                     JetExpression expression = (JetExpression)element;
-                    BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) expression.getContainingFile()).getBindingContext();
+                    BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(expression);
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     if (expressionType == null || !(expressionType instanceof PackageType) &&
                                                   !JetTypeChecker.INSTANCE.equalTypes(KotlinBuiltIns.
