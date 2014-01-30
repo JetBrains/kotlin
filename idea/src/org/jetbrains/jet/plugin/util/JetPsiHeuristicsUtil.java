@@ -40,7 +40,7 @@ public class JetPsiHeuristicsUtil {
             KotlinLightClassForExplicitDeclaration lightClass = (KotlinLightClassForExplicitDeclaration) member;
 
             // It is a Kotlin class already, we need to properly check visibility?
-            JetClassOrObject classOrObject = lightClass.getJetClassOrObject();
+            JetClassOrObject classOrObject = lightClass.getOrigin();
 
             if (isTopLevelDeclaration(classOrObject) && classOrObject.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 // The class is declared private in the targetPackage

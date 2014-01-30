@@ -713,7 +713,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         JetType expressionType = value.getType(KotlinBuiltIns.getInstance());
         if (value instanceof IntegerValueTypeConstant && context.contextDependency == INDEPENDENT) {
-            expressionType = getPrimitiveNumberType(((IntegerValueTypeConstant) value).getValue(), context.expectedType);
+            expressionType = ((IntegerValueTypeConstant) value).getType(context.expectedType);
             ArgumentTypeResolver.updateNumberType(expressionType, expression, context.trace);
         }
 

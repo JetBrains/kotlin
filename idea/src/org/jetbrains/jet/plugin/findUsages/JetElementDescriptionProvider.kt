@@ -23,27 +23,49 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import com.intellij.usageView.UsageViewLongNameLocation
 import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
+import org.jetbrains.jet.asJava.KotlinLightClass
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.asJava.unwrapped
+import org.jetbrains.jet.plugin.search.usagesSearch.descriptor
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public class JetElementDescriptionProvider : ElementDescriptionProvider {
     public override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
-        fun elementKind() = when (element) {
-            is JetClass -> if (element.isTrait()) "Trait" else "Class"
-            is JetObjectDeclaration -> "Object"
-            is JetNamedFunction -> "Function"
-            is JetProperty -> "Property"
-            is JetTypeParameter -> "Type parameter"
+        val targetElement = element.unwrapped
+
+        fun elementKind() = when (targetElement) {
+            is JetClass -> if (targetElement.isTrait()) "trait" else "class"
+            is JetObjectDeclaration -> "object"
+            is JetNamedFunction -> "function"
+            is JetProperty -> "property"
+            is JetTypeParameter -> "type parameter"
             else -> null
         }
 
-        if (element !is PsiNamedElement || element !is JetElement) return null
+        if (targetElement !is PsiNamedElement || targetElement !is JetElement) return null
 
-        val name = (element as PsiNamedElement).getName()
+        val name = (targetElement as PsiNamedElement).getName()
 
         return when(location) {
             is UsageViewLongNameLocation ->
                 name
-            is RefactoringDescriptionLocation ->
-                elementKind()?.let { kind -> "$kind $name" }
+            is RefactoringDescriptionLocation -> {
+                val kind = elementKind()
+                if (kind != null) {
+                    val descriptor = (targetElement as JetDeclaration).descriptor
+                    if (descriptor != null) {
+                        val desc = if (location.includeParent() && targetElement !is JetTypeParameter) {
+                            DescriptorUtils.getFqName(descriptor).asString()
+                        }
+                        else descriptor.getName().asString()
+
+                        "$kind $desc"
+                    }
+                    else null
+                }
+                else null
+            }
             else -> null
         }
     }

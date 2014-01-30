@@ -94,7 +94,7 @@ class LazyJavaAnnotationDescriptor(
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): CompileTimeConstant<*>? {
         return when (argument) {
-            is JavaLiteralAnnotationArgument -> JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(argument.getValue(), null)
+            is JavaLiteralAnnotationArgument -> JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(argument.getValue(), true, null)
             is JavaReferenceAnnotationArgument -> resolveFromReference(argument.resolve())
             is JavaArrayAnnotationArgument -> resolveFromArray(argument.getName() ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
             is JavaAnnotationAsAnnotationArgument -> resolveFromAnnotation(argument.getAnnotation())
@@ -123,7 +123,7 @@ class LazyJavaAnnotationDescriptor(
         val values = elements.map {
             argument -> resolveAnnotationArgument(argument) ?: NullValue.NULL
         }
-        return ArrayValue(values, valueParameter.getType())
+        return ArrayValue(values, valueParameter.getType(), true)
     }
 
     private fun resolveFromReference(element: JavaElement?): CompileTimeConstant<*>? {

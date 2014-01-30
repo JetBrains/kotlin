@@ -185,7 +185,8 @@
         </unzip>
 
         <!-- Bootstrap compiler -->
-        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
+        <!-- For idea 12 we take compiler from idea12 branch -->
+        <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/111032:id/kotlin-plugin-{build.number}.zip"
              dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
         <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
         <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>

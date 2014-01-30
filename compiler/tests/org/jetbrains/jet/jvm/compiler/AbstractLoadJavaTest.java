@@ -35,6 +35,7 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClass
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
@@ -141,7 +142,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                 environment.getProject(),
                 new TopDownAnalysisParameters(
-                        Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
+                        new LockBasedStorageManager(), Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
                 trace,
                 module);
 

@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.base.Predicates;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +25,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -101,9 +101,9 @@ public class CodegenTestUtil {
     @NotNull
     public static File compileJava(@NotNull String filename) {
         try {
-            File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
-            JetTestUtils.mkdirs(javaClassesTempDirectory);
-            String classPath = "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath();
+            File javaClassesTempDirectory = JetTestUtils.tmpDir("java-classes");
+            String classPath = ForTestCompileRuntime.runtimeJarForTests() + File.pathSeparator +
+                               JetTestUtils.getAnnotationsJar().getPath();
             List<String> options = Arrays.asList(
                     "-classpath", classPath,
                     "-d", javaClassesTempDirectory.getPath()

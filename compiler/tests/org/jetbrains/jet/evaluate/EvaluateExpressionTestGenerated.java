@@ -38,6 +38,11 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/evaluate/constant"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("classObjectProperty.kt")
+        public void testClassObjectProperty() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/classObjectProperty.kt");
+        }
+        
         @TestMetadata("compareTo.kt")
         public void testCompareTo() throws Exception {
             doConstantTest("compiler/testData/evaluate/constant/compareTo.kt");
@@ -51,6 +56,16 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
         @TestMetadata("equals.kt")
         public void testEquals() throws Exception {
             doConstantTest("compiler/testData/evaluate/constant/equals.kt");
+        }
+        
+        @TestMetadata("exceptionWhenEvaluate.kt")
+        public void testExceptionWhenEvaluate() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/exceptionWhenEvaluate.kt");
+        }
+        
+        @TestMetadata("finalProperty.kt")
+        public void testFinalProperty() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/finalProperty.kt");
         }
         
         @TestMetadata("float.kt")
@@ -73,9 +88,34 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
             doConstantTest("compiler/testData/evaluate/constant/integers.kt");
         }
         
+        @TestMetadata("localVal.kt")
+        public void testLocalVal() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/localVal.kt");
+        }
+        
+        @TestMetadata("localVar.kt")
+        public void testLocalVar() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/localVar.kt");
+        }
+        
+        @TestMetadata("nonFinalProperty.kt")
+        public void testNonFinalProperty() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/nonFinalProperty.kt");
+        }
+        
         @TestMetadata("strings.kt")
         public void testStrings() throws Exception {
             doConstantTest("compiler/testData/evaluate/constant/strings.kt");
+        }
+        
+        @TestMetadata("topLevelVal.kt")
+        public void testTopLevelVal() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/topLevelVal.kt");
+        }
+        
+        @TestMetadata("topLevelVar.kt")
+        public void testTopLevelVar() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/topLevelVar.kt");
         }
         
         @TestMetadata("unaryMinusIndepWoExpType.kt")

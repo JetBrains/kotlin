@@ -1,4 +1,5 @@
-// "Rename parameter to match overridden method" "false"
+// "class org.jetbrains.jet.plugin.quickfix.RenameParameterToMatchOverriddenMethodFix" "false"
+
 abstract class A {
     abstract fun foo(arg : Int) : Int;
 }

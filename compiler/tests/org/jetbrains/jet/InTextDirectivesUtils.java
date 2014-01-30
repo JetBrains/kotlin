@@ -160,6 +160,7 @@ public final class InTextDirectivesUtils {
                 String line;
 
                 while ((line = reader.readLine()) != null) {
+                    line = line.trim();
                     if (line.startsWith("//")) {
                         String uncommentedLine = line.substring(2).trim();
                         if (!uncommentedLine.isEmpty()) {

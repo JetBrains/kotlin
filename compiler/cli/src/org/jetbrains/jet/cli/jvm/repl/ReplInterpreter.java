@@ -43,7 +43,6 @@ import org.jetbrains.jet.codegen.KotlinCodegenFacade;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
-import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilderDummy;
@@ -60,6 +59,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.utils.ExceptionUtils;
 
 import java.io.File;
@@ -102,6 +102,7 @@ public class ReplInterpreter {
         trace = new BindingTraceContext();
         module = AnalyzerFacadeForJVM.createJavaModule("<repl>");
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                new LockBasedStorageManager(),
                 Predicates.<PsiFile>alwaysTrue(),
                 false,
                 true,

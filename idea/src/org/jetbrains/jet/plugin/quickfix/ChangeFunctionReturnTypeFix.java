@@ -124,8 +124,8 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             // if a function doesn't have a value parameter list, a syntax error is raised, and it should follow the function name
             elementToPrecedeType = elementToPrecedeType.getNextSibling();
         }
-        Pair<PsiElement, PsiElement> typeWhiteSpaceAndColon = JetPsiFactory.createTypeWhiteSpaceAndColon(project, typeText);
-        function.addRangeAfter(typeWhiteSpaceAndColon.first, typeWhiteSpaceAndColon.second, elementToPrecedeType);
+        function.addAfter(JetPsiFactory.createType(project, typeText), elementToPrecedeType);
+        function.addAfter(JetPsiFactory.createColon(project), elementToPrecedeType);
     }
 
     @NotNull

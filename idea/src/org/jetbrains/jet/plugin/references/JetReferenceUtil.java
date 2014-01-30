@@ -23,12 +23,10 @@ import com.intellij.psi.ResolveResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.plugin.libraries.DecompiledNavigationUtils;
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 
-import java.util.Collection;
 import java.util.List;
 
 public class JetReferenceUtil {
@@ -44,22 +42,12 @@ public class JetReferenceUtil {
 
         DeclarationDescriptor original = resultingDescriptor.getOriginal();
 
-        List<PsiElement> declarations = BindingContextUtils.descriptorToDeclarations(context, original);
-        for (PsiElement declaration : declarations) {
-            results.add(new PsiElementResolveResult(declaration, true));
+        for (PsiElement declaration : BindingContextUtils.descriptorToDeclarations(context, original)) {
+            results.add(new PsiElementResolveResult(declaration));
         }
 
-        JetDeclaration declarationInDecompiledFile =
-                DecompiledNavigationUtils.findDeclarationForReference(project, original);
-        if (declarationInDecompiledFile != null) {
-            results.add(new PsiElementResolveResult(declarationInDecompiledFile));
-        }
-
-        Collection<PsiElement> builtInSymbols =
-                project.getComponent(BuiltInsReferenceResolver.class).resolveBuiltInSymbol(original);
-
-        for (PsiElement symbol : builtInSymbols) {
-            results.add(new PsiElementResolveResult(symbol));
+        for (PsiElement declaration : DescriptorToDeclarationUtil.findDeclarationsForDescriptorWithoutTrace(project, original)) {
+            results.add(new PsiElementResolveResult(declaration));
         }
     }
 }

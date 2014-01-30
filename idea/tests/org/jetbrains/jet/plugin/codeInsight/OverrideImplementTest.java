@@ -95,6 +95,10 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doOverrideFileTest();
     }
 
+    public void testOverridePrimitiveProperty() {
+        doMultiImplementFileTest();
+    }
+
     public void testOverrideGenericFunction() {
         doOverrideFileTest();
     }

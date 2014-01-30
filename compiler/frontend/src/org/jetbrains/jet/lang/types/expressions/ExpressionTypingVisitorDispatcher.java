@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
@@ -34,32 +35,36 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
 
     @NotNull
-    public static ExpressionTypingFacade create(@NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-        return new ExpressionTypingVisitorDispatcher(platformToKotlinClassMap, null);
+    public static ExpressionTypingFacade create(@NotNull StorageManager storageManager, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
+        return new ExpressionTypingVisitorDispatcher(storageManager, platformToKotlinClassMap, null);
     }
 
     @NotNull
     public static ExpressionTypingInternals createForBlock(
+            @NotNull StorageManager storageManager,
             @NotNull PlatformToKotlinClassMap platformToKotlinClassMap,
             @NotNull WritableScope writableScope
     ) {
-        return new ExpressionTypingVisitorDispatcher(platformToKotlinClassMap, writableScope);
+        return new ExpressionTypingVisitorDispatcher(storageManager, platformToKotlinClassMap, writableScope);
     }
 
+    private final StorageManager storageManager;
     private final BasicExpressionTypingVisitor basic;
     private final ExpressionTypingVisitorForStatements statements;
-    private final ClosureExpressionsTypingVisitor closures = new ClosureExpressionsTypingVisitor(this);
+    private final ClosureExpressionsTypingVisitor closures;
     private final ControlStructureTypingVisitor controlStructures = new ControlStructureTypingVisitor(this);
     private final PatternMatchingTypingVisitor patterns = new PatternMatchingTypingVisitor(this);
 
-    private ExpressionTypingVisitorDispatcher(PlatformToKotlinClassMap platformToKotlinClassMap, WritableScope writableScope) {
+    private ExpressionTypingVisitorDispatcher(StorageManager storageManager, PlatformToKotlinClassMap platformToKotlinClassMap, WritableScope writableScope) {
+        this.storageManager = storageManager;
         this.basic = new BasicExpressionTypingVisitor(this, platformToKotlinClassMap);
         if (writableScope != null) {
-            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns);
+            this.statements = new ExpressionTypingVisitorForStatements(storageManager, this, writableScope, basic, controlStructures, patterns);
         }
         else {
             this.statements = null;
         }
+        this.closures = new ClosureExpressionsTypingVisitor(this, storageManager);
     }
 
     @NotNull
@@ -95,7 +100,9 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
     
     private ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
-        return new ExpressionTypingVisitorForStatements(this, ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"), basic, controlStructures, patterns);
+        return new ExpressionTypingVisitorForStatements(storageManager, this,
+                                                        ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"),
+                                                        basic, controlStructures, patterns);
     }
 
     @Override

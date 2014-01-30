@@ -17,11 +17,6 @@
 package org.jetbrains.jet.utils.builtinsSerializer
 
 import java.io.File
-import java.util.ArrayList
-
-// To regenerate built-ins in Kotlin project, launch main() with these arguments:
-public val BUILT_INS_DEST_DIR: String = "compiler/frontend/builtins"
-public val BUILT_INS_SRC_DIR: String = "idea/builtinsSrc"
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")

@@ -23,16 +23,8 @@ import org.jetbrains.jet.lang.types.JetType;
 
 public class BooleanValue extends CompileTimeConstant<Boolean> {
 
-    public static final BooleanValue FALSE = new BooleanValue(false);
-    public static final BooleanValue TRUE = new BooleanValue(true);
-
-    private BooleanValue(boolean value) {
-        super(value);
-    }
-
-    @NotNull
-    public static BooleanValue valueOf(boolean value) {
-        return value ? TRUE : FALSE;
+    public BooleanValue(boolean value, boolean canBeUseInAnnotation) {
+        super(value, canBeUseInAnnotation, false);
     }
 
     @NotNull

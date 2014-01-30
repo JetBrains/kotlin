@@ -53,6 +53,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/classInString.kt");
         }
         
+        @TestMetadata("localClass1.kt")
+        public void testLocalClass1() throws Exception {
+            doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/localClass1.kt");
+        }
+        
+        @TestMetadata("localClass2.kt")
+        public void testLocalClass2() throws Exception {
+            doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/localClass2.kt");
+        }
+        
         @TestMetadata("nestedClass1.kt")
         public void testNestedClass1() throws Exception {
             doClassTest("idea/testData/safeDelete/deleteClass/kotlinClass/nestedClass1.kt");
@@ -89,6 +99,21 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
     public static class KotlinObject extends AbstractJetSafeDeleteTest {
         public void testAllFilesPresentInKotlinObject() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/safeDelete/deleteObject/kotlinObject"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("anonymousObject.kt")
+        public void testAnonymousObject() throws Exception {
+            doObjectTest("idea/testData/safeDelete/deleteObject/kotlinObject/anonymousObject.kt");
+        }
+        
+        @TestMetadata("localObject1.kt")
+        public void testLocalObject1() throws Exception {
+            doObjectTest("idea/testData/safeDelete/deleteObject/kotlinObject/localObject1.kt");
+        }
+        
+        @TestMetadata("localObject2.kt")
+        public void testLocalObject2() throws Exception {
+            doObjectTest("idea/testData/safeDelete/deleteObject/kotlinObject/localObject2.kt");
         }
         
         @TestMetadata("nestedObject1.kt")
@@ -139,6 +164,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/fun2.kt");
         }
         
+        @TestMetadata("funExt1.kt")
+        public void testFunExt1() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/funExt1.kt");
+        }
+        
+        @TestMetadata("funExt2.kt")
+        public void testFunExt2() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/funExt2.kt");
+        }
+        
         @TestMetadata("implement1.kt")
         public void testImplement1() throws Exception {
             doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/implement1.kt");
@@ -147,6 +182,26 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
         @TestMetadata("implement2.kt")
         public void testImplement2() throws Exception {
             doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/implement2.kt");
+        }
+        
+        @TestMetadata("localFun1.kt")
+        public void testLocalFun1() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/localFun1.kt");
+        }
+        
+        @TestMetadata("localFun2.kt")
+        public void testLocalFun2() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/localFun2.kt");
+        }
+        
+        @TestMetadata("localFunExt1.kt")
+        public void testLocalFunExt1() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/localFunExt1.kt");
+        }
+        
+        @TestMetadata("localFunExt2.kt")
+        public void testLocalFunExt2() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/localFunExt2.kt");
         }
         
         @TestMetadata("noUsages.kt")
@@ -174,6 +229,11 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement2.kt");
         }
         
+        @TestMetadata("overrideAndImplement3.kt")
+        public void testOverrideAndImplement3() throws Exception {
+            doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement3.kt");
+        }
+        
         @TestMetadata("overrideWithUsages.kt")
         public void testOverrideWithUsages() throws Exception {
             doFunctionTest("idea/testData/safeDelete/deleteFunction/kotlinFunction/overrideWithUsages.kt");
@@ -185,6 +245,11 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
     public static class KotlinFunctionWithJava extends AbstractJetSafeDeleteTest {
         public void testAllFilesPresentInKotlinFunctionWithJava() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/safeDelete/deleteFunction/kotlinFunctionWithJava"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("funExt.kt")
+        public void testFunExt() throws Exception {
+            doFunctionTestWithJava("idea/testData/safeDelete/deleteFunction/kotlinFunctionWithJava/funExt.kt");
         }
         
         @TestMetadata("implement1.kt")
@@ -358,6 +423,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doPropertyTest("idea/testData/safeDelete/deleteProperty/kotlinProperty/property2.kt");
         }
         
+        @TestMetadata("propertyExt1.kt")
+        public void testPropertyExt1() throws Exception {
+            doPropertyTest("idea/testData/safeDelete/deleteProperty/kotlinProperty/propertyExt1.kt");
+        }
+        
+        @TestMetadata("propertyExt2.kt")
+        public void testPropertyExt2() throws Exception {
+            doPropertyTest("idea/testData/safeDelete/deleteProperty/kotlinProperty/propertyExt2.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/safeDelete/deleteProperty/kotlinPropertyWithJava")
@@ -414,6 +489,11 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
         @TestMetadata("overrideAndImplement2.kt")
         public void testOverrideAndImplement2() throws Exception {
             doPropertyTestWithJava("idea/testData/safeDelete/deleteProperty/kotlinPropertyWithJava/overrideAndImplement2.kt");
+        }
+        
+        @TestMetadata("propertyExt.kt")
+        public void testPropertyExt() throws Exception {
+            doPropertyTestWithJava("idea/testData/safeDelete/deleteProperty/kotlinPropertyWithJava/propertyExt.kt");
         }
         
     }
@@ -718,6 +798,26 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/internalUsage2.kt");
         }
         
+        @TestMetadata("lambdaArg.kt")
+        public void testLambdaArg() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/lambdaArg.kt");
+        }
+        
+        @TestMetadata("lambdaArgExt.kt")
+        public void testLambdaArgExt() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/lambdaArgExt.kt");
+        }
+        
+        @TestMetadata("propertyParam1.kt")
+        public void testPropertyParam1() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/propertyParam1.kt");
+        }
+        
+        @TestMetadata("propertyParam2.kt")
+        public void testPropertyParam2() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/propertyParam2.kt");
+        }
+        
         @TestMetadata("safeUsages1.kt")
         public void testSafeUsages1() throws Exception {
             doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsages1.kt");
@@ -731,6 +831,21 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
         @TestMetadata("safeUsages3.kt")
         public void testSafeUsages3() throws Exception {
             doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsages3.kt");
+        }
+        
+        @TestMetadata("safeUsagesExt1.kt")
+        public void testSafeUsagesExt1() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsagesExt1.kt");
+        }
+        
+        @TestMetadata("safeUsagesExt2.kt")
+        public void testSafeUsagesExt2() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsagesExt2.kt");
+        }
+        
+        @TestMetadata("setter.kt")
+        public void testSetter() throws Exception {
+            doValueParameterTest("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameter/setter.kt");
         }
         
     }
@@ -801,6 +916,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/internalUsage2.kt");
         }
         
+        @TestMetadata("lambdaArg.kt")
+        public void testLambdaArg() throws Exception {
+            doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/lambdaArg.kt");
+        }
+        
+        @TestMetadata("lambdaArgExt.kt")
+        public void testLambdaArgExt() throws Exception {
+            doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/lambdaArgExt.kt");
+        }
+        
         @TestMetadata("mixedHierarchy1.kt")
         public void testMixedHierarchy1() throws Exception {
             doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchy1.kt");
@@ -831,6 +956,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchyWithUnsafeUsages3.kt");
         }
         
+        @TestMetadata("propertyParam1.kt")
+        public void testPropertyParam1() throws Exception {
+            doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/propertyParam1.kt");
+        }
+        
+        @TestMetadata("propertyParam2.kt")
+        public void testPropertyParam2() throws Exception {
+            doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/propertyParam2.kt");
+        }
+        
         @TestMetadata("safeUsages1.kt")
         public void testSafeUsages1() throws Exception {
             doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsages1.kt");
@@ -844,6 +979,16 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
         @TestMetadata("safeUsages3.kt")
         public void testSafeUsages3() throws Exception {
             doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsages3.kt");
+        }
+        
+        @TestMetadata("safeUsagesExt1.kt")
+        public void testSafeUsagesExt1() throws Exception {
+            doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsagesExt1.kt");
+        }
+        
+        @TestMetadata("safeUsagesExt2.kt")
+        public void testSafeUsagesExt2() throws Exception {
+            doValueParameterTestWithJava("idea/testData/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsagesExt2.kt");
         }
         
     }

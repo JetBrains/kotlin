@@ -28,6 +28,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import junit.framework.Assert;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -53,7 +54,7 @@ public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
             }
 
             doSingleTest(getTestName(false) + ".kt");
-            checkAvailableActionsAreExpected();
+            checkForUnexpectedActions();
             checkForUnexpectedErrors();
         }
         finally {
@@ -63,12 +64,26 @@ public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
         }
     }
 
-    public void checkAvailableActionsAreExpected() {
-        List<IntentionAction> actions = getAvailableActions();
+    private void checkForUnexpectedActions() throws ClassNotFoundException {
         Pair<String, Boolean> pair = parseActionHintImpl(getFile(), getEditor().getDocument().getText());
-        if (!pair.getSecond()) {
-            // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
-            QuickFixActionsUtils.checkAvailableActionsAreExpected((JetFile) getFile(), actions);
+        if (!pair.second) {
+            List<IntentionAction> actions = getAvailableActions();
+
+            String prefix = "class ";
+            if (pair.first.startsWith(prefix)) {
+                String className = pair.first.substring(prefix.length());
+                Class<?> aClass = Class.forName(className);
+                assert IntentionAction.class.isAssignableFrom(aClass) : className + " should be inheritor of IntentionAction";
+                for (IntentionAction action : actions) {
+                    if (aClass.isAssignableFrom(action.getClass())) {
+                        Assert.fail("Unexpected intention action " + action.getClass() + " found");
+                    }
+                }
+            }
+            else {
+                // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
+                QuickFixActionsUtils.checkAvailableActionsAreExpected((JetFile) getFile(), actions);
+            }
         }
     }
 

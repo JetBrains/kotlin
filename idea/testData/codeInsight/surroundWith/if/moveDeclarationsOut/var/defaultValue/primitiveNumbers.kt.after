@@ -1,12 +1,12 @@
 fun foo() {
     var a: Int = 0
-    var b: Char = 0
+    var b: Char = '\u0000'
     var c: Byte = 0
     var d: Long = 0
     var e: Short = 0
-    var f: Double = 0
-    var g: Float = 0
-    if (<caret>) {
+    var f: Double = 0.0
+    var g: Float = 0.0f
+    if () {
         a = 1
         b = 1
         c = 1

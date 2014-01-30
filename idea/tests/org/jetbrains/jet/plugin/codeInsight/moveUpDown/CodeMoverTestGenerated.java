@@ -777,6 +777,16 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/codeInsight/moveUpDown/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("binaryExpr1.kt")
+        public void testBinaryExpr1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/binaryExpr1.kt");
+        }
+        
+        @TestMetadata("binaryExpr2.kt")
+        public void testBinaryExpr2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/binaryExpr2.kt");
+        }
+        
         @TestMetadata("closureBlockBoundary1.kt")
         public void testClosureBlockBoundary1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/closureBlockBoundary1.kt");
@@ -867,6 +877,26 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/if4.kt");
         }
         
+        @TestMetadata("ifExprToBlock1.kt")
+        public void testIfExprToBlock1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/ifExprToBlock1.kt");
+        }
+        
+        @TestMetadata("ifExprToBlock2.kt")
+        public void testIfExprToBlock2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/ifExprToBlock2.kt");
+        }
+        
+        @TestMetadata("ifToBlock1.kt")
+        public void testIfToBlock1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/ifToBlock1.kt");
+        }
+        
+        @TestMetadata("ifToBlock2.kt")
+        public void testIfToBlock2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/ifToBlock2.kt");
+        }
+        
         @TestMetadata("insideExpression1.kt")
         public void testInsideExpression1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/insideExpression1.kt");
@@ -900,6 +930,16 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
         @TestMetadata("intoClosureWithParams1.kt")
         public void testIntoClosureWithParams1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoClosureWithParams1.kt");
+        }
+        
+        @TestMetadata("intoElse1.kt")
+        public void testIntoElse1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoElse1.kt");
+        }
+        
+        @TestMetadata("intoElse2.kt")
+        public void testIntoElse2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/intoElse2.kt");
         }
         
         @TestMetadata("intoNestedClosure1.kt")
@@ -977,6 +1017,16 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfClosureWithParams1.kt");
         }
         
+        @TestMetadata("outOfElse1.kt")
+        public void testOutOfElse1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfElse1.kt");
+        }
+        
+        @TestMetadata("outOfElse2.kt")
+        public void testOutOfElse2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfElse2.kt");
+        }
+        
         @TestMetadata("outOfNestedClosure1.kt")
         public void testOutOfNestedClosure1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosure1.kt");
@@ -990,6 +1040,16 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
         @TestMetadata("outOfNestedClosureWithParams1.kt")
         public void testOutOfNestedClosureWithParams1() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/outOfNestedClosureWithParams1.kt");
+        }
+        
+        @TestMetadata("qualifiedCall1.kt")
+        public void testQualifiedCall1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/qualifiedCall1.kt");
+        }
+        
+        @TestMetadata("qualifiedCall2.kt")
+        public void testQualifiedCall2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/qualifiedCall2.kt");
         }
         
         @TestMetadata("when1.kt")
@@ -1040,6 +1100,16 @@ public class CodeMoverTestGenerated extends AbstractCodeMoverTest {
         @TestMetadata("while2.kt")
         public void testWhile2() throws Exception {
             doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/while2.kt");
+        }
+        
+        @TestMetadata("whileToBlock1.kt")
+        public void testWhileToBlock1() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whileToBlock1.kt");
+        }
+        
+        @TestMetadata("whileToBlock2.kt")
+        public void testWhileToBlock2() throws Exception {
+            doTestExpression("idea/testData/codeInsight/moveUpDown/expressions/whileToBlock2.kt");
         }
         
     }

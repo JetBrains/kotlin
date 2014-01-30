@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.RangeCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.AnnotationUtils;
+import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -227,7 +227,7 @@ public class IntrinsicMethods {
             }
         }
 
-        String value = AnnotationUtils.getIntrinsicAnnotationArgument(descriptor);
+        String value = CompileTimeConstantUtils.getIntrinsicAnnotationArgument(descriptor);
         if (value == null) return null;
 
         return namedMethods.get(value);

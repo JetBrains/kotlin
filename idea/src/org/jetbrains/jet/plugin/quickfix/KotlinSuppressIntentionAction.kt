@@ -37,9 +37,9 @@ public class KotlinSuppressIntentionAction(
     override fun getFamilyName() = JetBundle.message("suppress.warnings.family")
     override fun getText() = JetBundle.message("suppress.warning.for", diagnosticFactory.getName(), kind.kind, kind.name)
 
-    override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid()
+    override fun isAvailable(project: Project, editor: Editor, element: PsiElement) = element.isValid()
 
-    override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
+    override fun invoke(project: Project, editor: Editor, element: PsiElement) {
         val id = "\"${diagnosticFactory.getName()}\""
         if (suppressAt is JetModifierListOwner) {
             suppressAtModifierListOwner(suppressAt, id)

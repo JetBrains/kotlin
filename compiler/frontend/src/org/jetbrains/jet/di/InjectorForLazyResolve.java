@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -51,6 +52,7 @@ public class InjectorForLazyResolve {
     private final JetImportsFactory jetImportsFactory;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final StorageManager storageManager;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final CallExpressionResolver callExpressionResolver;
     private final CallResolver callResolver;
@@ -66,14 +68,15 @@ public class InjectorForLazyResolve {
         this.resolveSession = resolveSession;
         this.moduleDescriptor = moduleDescriptor;
         this.descriptorResolver = new DescriptorResolver();
-        this.expressionTypingServices = new ExpressionTypingServices();
+        this.storageManager = resolveSession.getStorageManager();
+        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.expressionTypingServices = new ExpressionTypingServices(storageManager, platformToKotlinClassMap);
         this.typeResolver = new TypeResolver();
         this.scopeProvider = new ScopeProvider(resolveSession);
         this.annotationResolver = new AnnotationResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.jetImportsFactory = new JetImportsFactory();
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
-        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.callExpressionResolver = new CallExpressionResolver();
         this.callResolver = new CallResolver();
@@ -83,6 +86,7 @@ public class InjectorForLazyResolve {
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
         this.descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
+        this.descriptorResolver.setStorageManager(storageManager);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
         this.expressionTypingServices.setAnnotationResolver(annotationResolver);
@@ -90,7 +94,6 @@ public class InjectorForLazyResolve {
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
         this.expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
-        this.expressionTypingServices.setPlatformToKotlinClassMap(platformToKotlinClassMap);
         this.expressionTypingServices.setProject(project);
         this.expressionTypingServices.setTypeResolver(typeResolver);
 

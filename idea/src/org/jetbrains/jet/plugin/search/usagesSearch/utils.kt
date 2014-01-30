@@ -44,12 +44,13 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.codegen.PropertyCodegen
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
+import org.jetbrains.jet.asJava.unwrapped
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
-val PsiReference.navigationTarget: PsiElement?
+val PsiReference.unwrappedTarget: PsiElement?
     get() {
-        val target = resolve()?.getNavigationElement()
+        val target = resolve()?.unwrapped
         return if (target is JetPropertyAccessor) target.getParentByType(javaClass<JetProperty>()) else target
     }
 
@@ -60,7 +61,7 @@ val JetParameter.propertyDescriptor: PropertyDescriptor?
     get() = AnalyzerFacadeWithCache.getContextForElement(this).get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
 
 fun PsiReference.isTargetUsage(target: PsiElement): Boolean {
-    return target.getNavigationElement() == navigationTarget
+    return target.unwrapped == unwrappedTarget
 }
 
 fun PsiReference.checkUsageVsOriginalDescriptor(
@@ -68,7 +69,7 @@ fun PsiReference.checkUsageVsOriginalDescriptor(
         declarationToDescriptor: (JetDeclaration) -> DeclarationDescriptor? = {it.descriptor},
         checker: (usageDescriptor: DeclarationDescriptor, targetDescriptor: DeclarationDescriptor) -> Boolean
 ): Boolean {
-    val refTarget = navigationTarget
+    val refTarget = unwrappedTarget
     if (refTarget !is JetDeclaration) return false
 
     val usageDescriptor = declarationToDescriptor(refTarget)
@@ -163,7 +164,7 @@ fun PsiReference.isPropertyReadOnlyUsage(): Boolean {
 
     val refTarget = resolve()
     if (refTarget is KotlinLightMethod) {
-        val origin = refTarget.getOrigin()
+        val origin = refTarget.origin
         val declaration: JetNamedDeclaration? = when (origin) {
             is JetPropertyAccessor -> origin.getParentByType(javaClass<JetProperty>())
             is JetProperty, is JetParameter -> origin as JetNamedDeclaration

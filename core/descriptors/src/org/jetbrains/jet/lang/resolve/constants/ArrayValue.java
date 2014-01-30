@@ -27,8 +27,8 @@ public class ArrayValue extends CompileTimeConstant<List<CompileTimeConstant<?>>
 
     private final JetType type;
 
-    public ArrayValue(@NotNull List<CompileTimeConstant<?>> value, @NotNull JetType type) {
-        super(value);
+    public ArrayValue(@NotNull List<CompileTimeConstant<?>> value, @NotNull JetType type, boolean canBeUsedInAnnotations) {
+        super(value, canBeUsedInAnnotations, false);
         this.type = type;
     }
 

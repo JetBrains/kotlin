@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.run;
 
+import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configurations.*;
@@ -26,7 +27,10 @@ import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.options.SettingsEditorGroup;
+import com.intellij.openapi.util.DefaultJDOMExternalizer;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,9 +67,14 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         return new JetRunConfiguration(getName(), getConfigurationModule(), getFactory());
     }
 
+    @NotNull
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-        return new JetRunConfigurationEditor(getProject());
+        SettingsEditorGroup<JetRunConfiguration> group = new SettingsEditorGroup<JetRunConfiguration>();
+        group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new JetRunConfigurationEditor(getProject()));
+        JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
+        group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<JetRunConfiguration>());
+        return group;
     }
 
     @Override

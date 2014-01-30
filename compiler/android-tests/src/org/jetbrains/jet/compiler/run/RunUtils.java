@@ -160,7 +160,20 @@ public class RunUtils {
         handler.startNotify();
 
         if (settings.waitForEnd) {
-            handler.waitFor(1200000);
+            String timeoutAsString = System.getenv("kotlin.tests.android.timeout");
+            if (timeoutAsString == null) {
+                timeoutAsString = "30";
+                System.err.println("Default value for timeout used: timeout = 30 min. You can change it using 'kotlin.tests.android.timeout' environment variable");
+            }
+            int timeout;
+            try {
+                timeout = Integer.parseInt(timeoutAsString);
+            }
+            catch (NumberFormatException e) {
+                timeout = 30;
+                System.err.println("Timeout system property should be a number");
+            }
+            handler.waitFor(timeout * 60 * 1000);
 
             if (!handler.isProcessTerminated()) {
                 System.out.println("Output before handler.isProcessTerminated() " + settings.commandLine);

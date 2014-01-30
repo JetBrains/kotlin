@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
 import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
@@ -82,7 +82,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final ControlFlowAnalyzer controlFlowAnalyzer;
     private final DeclarationsChecker declarationsChecker;
     private final DescriptorResolver descriptorResolver;
-    private final LockBasedStorageManager storageManager;
+    private final StorageManager storageManager;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
@@ -143,7 +143,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
         this.descriptorResolver = new DescriptorResolver();
-        this.storageManager = new LockBasedStorageManager();
+        this.storageManager = topDownAnalysisParameters.getStorageManager();
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
@@ -164,7 +164,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices();
+        this.expressionTypingServices = new ExpressionTypingServices(storageManager, javaToKotlinClassMap);
         this.callExpressionResolver = new CallExpressionResolver();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
@@ -225,6 +225,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
         this.descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
+        this.descriptorResolver.setStorageManager(storageManager);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
@@ -283,7 +284,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         expressionTypingServices.setCallResolver(callResolver);
         expressionTypingServices.setDescriptorResolver(descriptorResolver);
         expressionTypingServices.setExtensionProvider(callResolverExtensionProvider);
-        expressionTypingServices.setPlatformToKotlinClassMap(javaToKotlinClassMap);
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 

@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -60,6 +61,11 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
         outerDataFlowInfo = context.getOuterDataFlowInfo();
 
         topDownAnalysisParameters = context.getTopDownAnalysisParameters();
+    }
+
+    @Override
+    public StorageManager getStorageManager() {
+        return topDownAnalysisParameters.getStorageManager();
     }
 
     @Override

@@ -171,7 +171,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             @Override
             public void visit(@Nullable Name name, @Nullable Object value) {
                 if (name != null) {
-                    CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value, null);
+                    CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value, true, null);
                     setArgumentValueByName(name, argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name));
                 }
             }
@@ -249,8 +249,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             return Annotations.EMPTY;
         }
 
-        Annotations annotations = new AnnotationsImpl(memberAnnotations.invoke(kotlinClass).get(signature));
-        return annotations == null ? Annotations.EMPTY : annotations;
+        List<AnnotationDescriptor> annotations = memberAnnotations.invoke(kotlinClass).get(signature);
+        return annotations == null ? Annotations.EMPTY : new AnnotationsImpl(annotations);
     }
 
     @Nullable

@@ -378,14 +378,14 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
-        descriptor.setReturnType(DeferredType.create(resolveSession.getTrace(), resolveSession.getStorageManager().createLazyValue(
+        descriptor.setReturnType(DeferredType.create(resolveSession.getStorageManager(), resolveSession.getTrace(),
                 new Function0<JetType>() {
                     @Override
                     public JetType invoke() {
                         return thisDescriptor.getDefaultType();
                     }
                 })
-        ));
+        );
     }
 
     @Override

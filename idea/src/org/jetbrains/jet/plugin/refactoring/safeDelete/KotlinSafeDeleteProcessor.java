@@ -22,10 +22,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.psi.*;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.MethodSignatureUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor;
 import com.intellij.refactoring.safeDelete.NonCodeUsageSearchInfo;
@@ -33,35 +33,40 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverridingMethodU
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceJavaDeleteUsageInfo;
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo;
 import com.intellij.usageView.UsageInfo;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+import org.jetbrains.jet.plugin.references.JetPsiReference;
 
 import java.util.*;
 
 public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
     public static boolean canDeleteElement(@NotNull PsiElement element) {
+        if (PsiUtilPackage.isObjectLiteral(element)) return false;
+        if (element instanceof JetParameter) {
+            JetDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetDeclaration.class);
+            return declaration != null && !(declaration instanceof JetPropertyAccessor && ((JetPropertyAccessor) declaration).isSetter());
+        }
         return element instanceof JetClassOrObject
                || element instanceof JetNamedFunction
                || element instanceof PsiMethod
                || element instanceof JetProperty
-               || element instanceof JetTypeParameter
-               || element instanceof JetParameter;
+               || element instanceof JetTypeParameter;
     }
 
     @Override
@@ -71,19 +76,20 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
 
     @NotNull
     protected static NonCodeUsageSearchInfo getSearchInfo(
-            @NotNull PsiElement element, @NotNull final Collection<? extends PsiElement> ignoredElements
+            @NotNull PsiElement element, @NotNull Collection<? extends PsiElement> ignoredElements
     ) {
 
-        return new NonCodeUsageSearchInfo(
-                new Condition<PsiElement>() {
-                    @Override
-                    public boolean value(PsiElement usage) {
-                        if (usage instanceof JetFile) return false;
-                        return isInside(usage, ignoredElements);
-                    }
-                },
-                element
-        );
+        return new NonCodeUsageSearchInfo(getCondition(ignoredElements), element);
+    }
+
+    private static Condition<PsiElement> getCondition(final Collection<? extends PsiElement> ignoredElements) {
+        return new Condition<PsiElement>() {
+            @Override
+            public boolean value(PsiElement usage) {
+                if (usage instanceof JetFile) return false;
+                return isInside(usage, ignoredElements);
+            }
+        };
     }
 
     @NotNull
@@ -97,37 +103,69 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
             @NotNull PsiElement element, @NotNull PsiElement[] allElementsToDelete, @NotNull List<UsageInfo> result
     ) {
         if (element instanceof JetClassOrObject) {
-            return findClassOrObjectUsages(element, (JetClassOrObject) element, allElementsToDelete, result);
+            return delegateToJavaProcessor(LightClassUtil.getPsiClass((JetClassOrObject) element), allElementsToDelete, result);
         }
         if (element instanceof JetNamedFunction) {
-            return findFunctionUsages((JetNamedFunction) element, allElementsToDelete, result);
+            JetNamedFunction function = (JetNamedFunction) element;
+            if (function.isLocal()) {
+                return findKotlinDeclarationUsages(function, allElementsToDelete, result);
+            }
+            PsiMethod method = LightClassUtil.getLightClassMethod((JetNamedFunction) element);
+            if (method != null) return delegateToJavaProcessor(method, allElementsToDelete, result);
+
+            return getSearchInfo(element, allElementsToDelete);
         }
         if (element instanceof PsiMethod) {
-            return findPsiMethodUsages((PsiMethod) element, allElementsToDelete, result);
+            return delegateToJavaProcessor(element, allElementsToDelete, result);
         }
         if (element instanceof JetProperty) {
             JetProperty property = (JetProperty) element;
 
-            if (property.isLocal()) {
-                return findLocalVariableUsages(property, allElementsToDelete, result);
-            }
-            return findPropertyUsages(property, allElementsToDelete, result);
+            if (property.isLocal()) return findKotlinDeclarationUsages(property, allElementsToDelete, result);
+            return delegateToJavaProcessor(property, allElementsToDelete, result);
         }
         if (element instanceof JetTypeParameter) {
-            return findTypeParameterUsages((JetTypeParameter) element, allElementsToDelete, result);
+            JetTypeParameter typeParameter = (JetTypeParameter) element;
+
+            findTypeParameterUsages(typeParameter, result);
+            return delegateToJavaProcessor(typeParameter, allElementsToDelete, result);
         }
         if (element instanceof JetParameter) {
-            JetParameter jetParameter = (JetParameter) element;
-
-            PsiParameter psiParameter = getPsiParameter(jetParameter);
-            if (psiParameter != null) {
-                super.findUsages(psiParameter, allElementsToDelete, result);
-            }
-
-            return findParameterUsages(jetParameter, allElementsToDelete, result);
+            return delegateToJavaProcessor((JetParameter) element, allElementsToDelete, result);
         }
 
         return getSearchInfo(element, allElementsToDelete);
+    }
+
+    private NonCodeUsageSearchInfo delegateToJavaProcessor(
+            JetDeclaration jetDeclaration,
+            PsiElement[] allElementsToDelete,
+            List<UsageInfo> result
+    ) {
+        return new NonCodeUsageSearchInfo(
+                delegateToJavaProcessorAndCombineConditions(
+                        AsJavaPackage.toLightElements(jetDeclaration),
+                        getCondition(Arrays.asList(allElementsToDelete)),
+                        allElementsToDelete,
+                        result
+                ),
+                jetDeclaration
+        );
+    }
+
+    private Condition<PsiElement> delegateToJavaProcessorAndCombineConditions(
+            Iterable<? extends PsiElement> elements,
+            Condition<PsiElement> insideDeleted,
+            PsiElement[] allElementsToDelete,
+            List<UsageInfo> result
+    ) {
+        for (PsiElement element: elements) {
+            NonCodeUsageSearchInfo accessorSearchInfo = delegateToJavaProcessor(element, allElementsToDelete, result);
+            if (accessorSearchInfo == null) continue;
+
+            insideDeleted = Conditions.or(insideDeleted, accessorSearchInfo.getInsideDeletedCondition());
+        }
+        return insideDeleted;
     }
 
     @SuppressWarnings("MethodOverridesPrivateMethodOfSuperclass")
@@ -151,327 +189,91 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         return JavaSafeDeleteProcessor.isInside(place, ancestor);
     }
 
-    @NotNull
-    protected static NonCodeUsageSearchInfo findClassOrObjectUsages(
-            @NotNull PsiElement referencedElement,
-            @NotNull final JetClassOrObject classOrObject,
-            @NotNull final PsiElement[] allElementsToDelete,
-            @NotNull final List<UsageInfo> result
-    ) {
-        ReferencesSearch.search(referencedElement).forEach(new Processor<PsiReference>() {
-            @Override
-            public boolean process(PsiReference reference) {
-                PsiElement element = reference.getElement();
-
-                if (!isInside(element, allElementsToDelete)) {
-                    JetImportDirective importDirective = PsiTreeUtil.getParentOfType(element, JetImportDirective.class, false);
-                    if (importDirective != null) {
-                        result.add(new SafeDeleteImportDirectiveUsageInfo(importDirective, classOrObject));
-                        return true;
-                    }
-
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, classOrObject, false));
-                }
-                return true;
-            }
-        });
-
-        return getSearchInfo(referencedElement, allElementsToDelete);
-    }
-
     @Nullable
-    protected NonCodeUsageSearchInfo findPsiMethodUsages(
-            @NotNull PsiMethod method,
+    protected NonCodeUsageSearchInfo delegateToJavaProcessor(
+            @Nullable PsiElement element,
             @NotNull PsiElement[] allElementsToDelete,
             @NotNull List<UsageInfo> result
     ) {
+        if (element == null) return null;
+
         List<UsageInfo> javaUsages = new ArrayList<UsageInfo>();
-        NonCodeUsageSearchInfo searchInfo = super.findUsages(method, allElementsToDelete, javaUsages);
+        NonCodeUsageSearchInfo searchInfo = super.findUsages(element, allElementsToDelete, javaUsages);
 
         for (UsageInfo usageInfo : javaUsages) {
             if (usageInfo instanceof SafeDeleteOverridingMethodUsageInfo) {
                 SafeDeleteOverridingMethodUsageInfo overrideUsageInfo = (SafeDeleteOverridingMethodUsageInfo) usageInfo;
-                usageInfo = new KotlinSafeDeleteOverridingUsageInfo(
-                        overrideUsageInfo.getSmartPointer().getElement(), overrideUsageInfo.getReferencedElement()
-                );
+
+                PsiElement usageElement = overrideUsageInfo.getSmartPointer().getElement();
+                usageInfo = (usageElement != null)
+                            ? new KotlinSafeDeleteOverridingUsageInfo(usageElement, overrideUsageInfo.getReferencedElement())
+                            : null;
             }
-            result.add(usageInfo);
+            else if (usageInfo instanceof SafeDeleteReferenceJavaDeleteUsageInfo) {
+                SafeDeleteReferenceJavaDeleteUsageInfo javaDeleteUsageInfo = (SafeDeleteReferenceJavaDeleteUsageInfo) usageInfo;
+                PsiElement usageElement = javaDeleteUsageInfo.getElement();
+                JetImportDirective importDirective = PsiTreeUtil.getParentOfType(usageElement, JetImportDirective.class, false);
+                if (importDirective != null) {
+                    usageInfo = new SafeDeleteImportDirectiveUsageInfo(
+                            importDirective, (JetDeclaration) AsJavaPackage.getUnwrapped(element)
+                    );
+                }
+            }
+            if (usageInfo != null) {
+                result.add(usageInfo);
+            }
         }
 
         return searchInfo;
     }
 
     @NotNull
-    private static <T, C extends T> List<C> difference(@NotNull Collection<C> from, @NotNull T[] a) {
-        List<C> list = new ArrayList<C>(from);
-        list.removeAll(Arrays.asList(a));
-        return list;
-    }
-
-    private static void processDeclarationUsages(
-            @NotNull JetDeclaration declaration,
-            @NotNull PsiElement[] allElementsToDelete,
-            @NotNull List<UsageInfo> result,
-            @NotNull Collection<PsiReference> references,
-            @NotNull List<? extends PsiElement> overridingDeclarations
-    ) {
-        for (PsiReference reference : references) {
-            PsiElement element = reference.getElement();
-            if (!isInside(element, allElementsToDelete) && !isInside(element, overridingDeclarations)) {
-                JetImportDirective importDirective = PsiTreeUtil.getParentOfType(element, JetImportDirective.class, false);
-                if (importDirective != null) {
-                    result.add(new SafeDeleteImportDirectiveUsageInfo(importDirective, declaration));
-                }
-                else {
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, declaration, false));
-                }
-            }
-        }
-    }
-
-    @NotNull
-    protected static NonCodeUsageSearchInfo findFunctionUsages(
-            @NotNull JetNamedFunction function,
-            @NotNull PsiElement[] allElementsToDelete,
-            @NotNull List<UsageInfo> result
-    ) {
-        PsiMethod lightMethod = LightClassUtil.getLightClassMethod(function);
-        if (lightMethod == null) {
-            return getSearchInfo(function, allElementsToDelete);
-        }
-
-        Collection<PsiReference> references = ReferencesSearch.search(function).findAll();
-        List<PsiMethod> overridingMethods = difference(OverridingMethodsSearch.search(lightMethod, true).findAll(), allElementsToDelete);
-
-        processDeclarationUsages(function, allElementsToDelete, result, references, overridingMethods);
-
-        Map<PsiMethod, Collection<PsiReference>> methodToReferences = getOverridingUsagesMap(overridingMethods);
-        Set<PsiMethod> safeOverriding =
-                filterSafeOverridingMethods(lightMethod, references, overridingMethods, methodToReferences, result, allElementsToDelete);
-
-        List<PsiElement> ignoredElements = new ArrayList<PsiElement>(safeOverriding);
-        ContainerUtil.addAll(ignoredElements, allElementsToDelete);
-        return getSearchInfo(function, ignoredElements);
-    }
-
-    @NotNull
-    protected static NonCodeUsageSearchInfo findPropertyUsages(
-            @NotNull JetProperty property,
-            @NotNull PsiElement[] allElementsToDelete,
-            @NotNull List<UsageInfo> result
-    ) {
-        LightClassUtil.PropertyAccessorsPsiMethods propertyMethods = LightClassUtil.getLightClassPropertyMethods(property);
-        PsiMethod getter = propertyMethods.getGetter();
-        PsiMethod setter = propertyMethods.getSetter();
-
-        Collection<PsiReference> references = ReferencesSearch.search(property).findAll();
-
-        Collection<PsiMethod> getterOverriding =
-                (getter != null) ? OverridingMethodsSearch.search(getter, true).findAll() : Collections.<PsiMethod>emptyList();
-        Collection<PsiMethod> setterOverriding =
-                (setter != null) ? OverridingMethodsSearch.search(setter, true).findAll() : Collections.<PsiMethod>emptyList();
-
-        List<PsiMethod> overridingMethods = new ArrayList<PsiMethod>();
-        overridingMethods.addAll(getterOverriding);
-        overridingMethods.addAll(setterOverriding);
-        overridingMethods = difference(overridingMethods, allElementsToDelete);
-
-        processDeclarationUsages(property, allElementsToDelete, result, references, overridingMethods);
-
-        Map<PsiMethod, Collection<PsiReference>> methodToReferences = getOverridingUsagesMap(overridingMethods);
-        Set<PsiMethod> safeGetterOverriding =
-                getter != null
-                ? filterSafeOverridingMethods(getter, references, getterOverriding, methodToReferences, result, allElementsToDelete)
-                : Collections.<PsiMethod>emptySet();
-        Set<PsiMethod> safeSetterOverriding =
-                setter != null
-                ? filterSafeOverridingMethods(setter, references, setterOverriding, methodToReferences, result, allElementsToDelete)
-                : Collections.<PsiMethod>emptySet();
-
-        List<PsiElement> ignoredElements = new ArrayList<PsiElement>(safeGetterOverriding);
-        ignoredElements.addAll(safeSetterOverriding);
-        ContainerUtil.addAll(ignoredElements, allElementsToDelete);
-        return getSearchInfo(property, ignoredElements);
-    }
-
-    @NotNull
-    private static Map<PsiMethod, Collection<PsiReference>> getOverridingUsagesMap(@NotNull List<PsiMethod> overridingMethods) {
-        Map<PsiMethod, Collection<PsiReference>> methodToReferences = new HashMap<PsiMethod, Collection<PsiReference>>();
-        for (PsiMethod overridingMethod : overridingMethods) {
-            Collection<PsiReference> overridingReferences =
-                    ReferencesSearch.search(
-                            overridingMethod instanceof KotlinLightMethod
-                            ? ((KotlinLightMethod) overridingMethod).getOrigin() : overridingMethod
-                    ).findAll();
-            methodToReferences.put(overridingMethod, overridingReferences);
-        }
-        return methodToReferences;
-    }
-
-    @NotNull
-    protected static NonCodeUsageSearchInfo findLocalVariableUsages(
-            @NotNull final JetProperty property,
+    protected static NonCodeUsageSearchInfo findKotlinDeclarationUsages(
+            @NotNull final JetDeclaration declaration,
             @NotNull final PsiElement[] allElementsToDelete,
             @NotNull final List<UsageInfo> result
     ) {
-        ReferencesSearch.search(property, property.getUseScope()).forEach(new Processor<PsiReference>() {
+        ReferencesSearch.search(declaration, declaration.getUseScope()).forEach(new Processor<PsiReference>() {
             @Override
             public boolean process(PsiReference reference) {
                 PsiElement element = reference.getElement();
                 if (!isInside(element, allElementsToDelete)) {
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, property, false));
-                }
-                return true;
-            }
-        });
-
-        return getSearchInfo(property, allElementsToDelete);
-    }
-
-    @NotNull
-    protected static NonCodeUsageSearchInfo findParameterUsages(
-            @NotNull final JetParameter parameter,
-            @NotNull final PsiElement[] allElementsToDelete,
-            @NotNull final List<UsageInfo> result
-    ) {
-        NonCodeUsageSearchInfo searchInfo = getSearchInfo(parameter, allElementsToDelete);
-
-        final JetNamedFunction function = PsiTreeUtil.getParentOfType(parameter, JetNamedFunction.class);
-        if (function == null || parameter.getParent() != function.getValueParameterList()) return searchInfo;
-
-        final int parameterIndex = function.getValueParameters().indexOf(parameter);
-
-        ReferencesSearch.search(parameter, parameter.getUseScope()).forEach(new Processor<PsiReference>() {
-            @Override
-            public boolean process(PsiReference reference) {
-                PsiElement element = reference.getElement();
-                if (!isInside(element, allElementsToDelete)) {
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, parameter, false));
-                }
-                return true;
-            }
-        });
-
-        ReferencesSearch.search(function).forEach(
-                new Processor<PsiReference>() {
-                    @Override
-                    public boolean process(PsiReference reference) {
-                        processParameterUsageInCall(reference, function, parameterIndex, result, parameter);
-                        return true;
+                    JetImportDirective importDirective = PsiTreeUtil.getParentOfType(element, JetImportDirective.class, false);
+                    if (importDirective != null) {
+                        result.add(new SafeDeleteImportDirectiveUsageInfo(importDirective, declaration));
+                    }
+                    else {
+                        result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, declaration, false));
                     }
                 }
-        );
-
-        return searchInfo;
-    }
-
-    static void processParameterUsageInCall(
-            @NotNull PsiReference reference,
-            @NotNull PsiElement originalDeclaration,
-            int parameterIndex,
-            @NotNull List<UsageInfo> result,
-            @NotNull PsiElement parameter
-    ) {
-        PsiElement element = reference.getElement();
-
-        JetCallExpression callExpression =
-                PsiTreeUtil.getParentOfType(reference.getElement(), JetCallExpression.class, false);
-        if (callExpression == null) return;
-
-        JetExpression calleeExpression = callExpression.getCalleeExpression();
-        if (!(calleeExpression instanceof JetReferenceExpression
-              && PsiTreeUtil.isAncestor(calleeExpression, element, false))) return;
-
-        BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
-        DeclarationDescriptor descriptor =
-                bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpression);
-        if (descriptor == null) return;
-
-        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-        if (originalDeclaration.equals(declaration)) {
-            List<? extends ValueArgument> args = callExpression.getValueArguments();
-            int argCount = args.size();
-            if (parameterIndex < argCount) {
-                result.add(
-                        new SafeDeleteValueArgumentListUsageInfo((JetValueArgument) args.get(parameterIndex), parameter)
-                );
-            }
-            else {
-                List<JetExpression> lambdaArgs = callExpression.getFunctionLiteralArguments();
-                int lambdaIndex = parameterIndex - argCount;
-                if (lambdaIndex < lambdaArgs.size()) {
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(lambdaArgs.get(lambdaIndex), parameter, true));
-                }
-            }
-        }
-    }
-
-    @NotNull
-    protected static NonCodeUsageSearchInfo findTypeParameterUsages(
-            @NotNull final JetTypeParameter parameter,
-            @NotNull final PsiElement[] allElementsToDelete,
-            @NotNull final List<UsageInfo> result
-    ) {
-        NonCodeUsageSearchInfo searchInfo = getSearchInfo(parameter, allElementsToDelete);
-
-        ReferencesSearch.search(parameter).forEach(new Processor<PsiReference>() {
-            @Override
-            public boolean process(PsiReference reference) {
-                PsiElement element = reference.getElement();
-
-                if (!isInside(element, allElementsToDelete)) {
-                    result.add(new SafeDeleteReferenceSimpleDeleteUsageInfo(element, parameter, false));
-                }
                 return true;
             }
         });
 
+        return getSearchInfo(declaration, allElementsToDelete);
+    }
+
+    protected static void findTypeParameterUsages(
+            @NotNull final JetTypeParameter parameter,
+            @NotNull final List<UsageInfo> result
+    ) {
         JetTypeParameterListOwner owner = PsiTreeUtil.getParentOfType(parameter, JetTypeParameterListOwner.class);
-        if (owner == null) return searchInfo;
+        if (owner == null) return;
 
         List<JetTypeParameter> parameterList = owner.getTypeParameters();
-        final int parameterCount = parameterList.size();
         final int parameterIndex = parameterList.indexOf(parameter);
 
         ReferencesSearch.search(owner).forEach(
                 new Processor<PsiReference>() {
                     @Override
                     public boolean process(PsiReference reference) {
-                        if (reference instanceof PsiJavaCodeReferenceElement) {
-                            processJavaTypeArgumentListCandidate(
-                                    (PsiJavaCodeReferenceElement) reference, parameterIndex, parameterCount, result, parameter
-                            );
-                        }
-                        else {
+                        if (reference instanceof JetPsiReference) {
                             processKotlinTypeArgumentListCandidate(reference, parameterIndex, result, parameter);
                         }
                         return true;
                     }
                 }
         );
-
-        return searchInfo;
-    }
-
-    private static void processJavaTypeArgumentListCandidate(
-            @NotNull PsiJavaCodeReferenceElement reference,
-            int parameterIndex,
-            int parameterCount,
-            @NotNull List<UsageInfo> result,
-            @NotNull PsiElement parameter
-    ) {
-        PsiReferenceParameterList parameterList = reference.getParameterList();
-        if (parameterList != null) {
-            PsiTypeElement[] typeArgs = parameterList.getTypeParameterElements();
-            if (typeArgs.length > parameterIndex) {
-                if (typeArgs.length == 1 && parameterCount > 1
-                    && typeArgs[0].getType() instanceof PsiDiamondType) {
-                    return;
-                }
-                result.add(new SafeDeleteReferenceJavaDeleteUsageInfo(typeArgs[parameterIndex], parameter, true));
-            }
-        }
     }
 
     private static void processKotlinTypeArgumentListCandidate(
@@ -501,80 +303,6 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
                 result.add(new SafeDeleteTypeArgumentListUsageInfo(projections.get(parameterIndex), parameter));
             }
         }
-    }
-
-    /*
-     * Mostly copied from JavaSafeDeleteProcessor.validateOverridingMethods
-     * Revision: d4fc033
-     * (simplified and implemented proper treatment of light methods)
-     */
-    private static Set<PsiMethod> filterSafeOverridingMethods(
-            @NotNull PsiMethod originalMethod,
-            @NotNull Collection<PsiReference> originalReferences,
-            @NotNull Collection<PsiMethod> overridingMethods,
-            @NotNull Map<PsiMethod, Collection<PsiReference>> methodToReferences,
-            @NotNull List<UsageInfo> usages,
-            @NotNull PsiElement[] allElementsToDelete
-    ) {
-        Set<PsiMethod> validOverriding = new LinkedHashSet<PsiMethod>(overridingMethods);
-        boolean anyNewBadRefs;
-        do {
-            anyNewBadRefs = false;
-            for (PsiMethod overridingMethod : overridingMethods) {
-                if (validOverriding.contains(overridingMethod)) {
-                    Collection<PsiReference> overridingReferences = methodToReferences.get(overridingMethod);
-                    boolean anyOverridingRefs = false;
-                    for (PsiReference overridingReference : overridingReferences) {
-                        PsiElement element = overridingReference.getElement();
-                        if (!isInside(element, allElementsToDelete) && !isInside(element, validOverriding)) {
-                            anyOverridingRefs = true;
-                            break;
-                        }
-                    }
-
-                    if (!anyOverridingRefs && isMultipleInterfacesImplementation(overridingMethod, originalMethod, allElementsToDelete)) {
-                        anyOverridingRefs = true;
-                    }
-
-                    if (anyOverridingRefs) {
-                        validOverriding.remove(overridingMethod);
-                        anyNewBadRefs = true;
-
-                        for (PsiReference reference : originalReferences) {
-                            PsiElement element = reference.getElement();
-                            if (!isInside(element, allElementsToDelete) && !isInside(element, overridingMethods)) {
-                                validOverriding.clear();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        while (anyNewBadRefs && !validOverriding.isEmpty());
-
-        for (PsiMethod method : validOverriding) {
-            if (method != originalMethod) {
-                usages.add(new KotlinSafeDeleteOverridingUsageInfo(method, originalMethod));
-            }
-        }
-
-        return validOverriding;
-    }
-
-    @SuppressWarnings("MethodOverridesPrivateMethodOfSuperclass")
-    private static boolean isMultipleInterfacesImplementation(
-            @NotNull PsiMethod method, @NotNull PsiMethod originalMethod, @NotNull PsiElement[] ignore
-    ) {
-        PsiMethod[] methods = method.findSuperMethods();
-        for (PsiMethod superMethod : methods) {
-            PsiElement relevantElement = superMethod instanceof KotlinLightMethod
-                                         ? ((KotlinLightMethod) superMethod).getOrigin() : superMethod;
-            relevantElement = JetPsiUtil.ascendIfPropertyAccessor(relevantElement);
-            if (ArrayUtilRt.find(ignore, relevantElement) < 0 && !MethodSignatureUtil.isSuperMethod(originalMethod, superMethod)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -648,7 +376,7 @@ public class KotlinSafeDeleteProcessor extends JavaSafeDeleteProcessor {
         return result.toArray(new UsageInfo[result.size()]);
     }
 
-    static void removeOverrideModifier(@NotNull PsiElement element) {
+    public static void removeOverrideModifier(@NotNull PsiElement element) {
         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
             JetModifierList modifierList = ((JetModifierListOwner) element).getModifierList();
             if (modifierList == null) return;

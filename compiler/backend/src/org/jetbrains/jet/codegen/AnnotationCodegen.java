@@ -257,11 +257,8 @@ public abstract class AnnotationCodegen {
 
             @Override
             public Void visitNumberTypeValue(IntegerValueTypeConstant value, Void data) {
-                IntegerValueTypeConstructor typeConstructor = value.getValue();
-                Object numberType = EvaluatePackage.getValueForNumberType(typeConstructor, expectedType);
-                if (numberType != null) {
-                    annotationVisitor.visit(name, numberType);
-                }
+                Object numberType = value.getValue(expectedType);
+                annotationVisitor.visit(name, numberType);
                 return null;
             }
 

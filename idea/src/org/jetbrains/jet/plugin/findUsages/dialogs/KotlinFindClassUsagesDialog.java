@@ -84,7 +84,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
     public void configureLabelComponent(@NotNull SimpleColoredComponent coloredComponent) {
         PsiClass klass = (PsiClass) getPsiElement();
         if (klass instanceof KotlinLightClassForExplicitDeclaration) {
-            coloredComponent.append(JetRefactoringUtil.formatClass(((KotlinLightClassForExplicitDeclaration) klass).getJetClassOrObject()));
+            coloredComponent.append(JetRefactoringUtil.formatClass(((KotlinLightClassForExplicitDeclaration) klass).getOrigin()));
         }
     }
 

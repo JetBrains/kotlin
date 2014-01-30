@@ -35,6 +35,7 @@ import com.intellij.ide.hierarchy.method.MethodHierarchyBrowser
 import com.intellij.ide.hierarchy.method.getComparatorByExtension
 import com.intellij.ide.hierarchy.method.createTreesByExtension
 import com.intellij.ide.hierarchy.method.getElementFromDescriptorByExtension
+import org.jetbrains.jet.asJava.unwrapped
 
 class KotlinOverrideHierarchyBrowser(
         project: Project, baseElement: PsiElement
@@ -64,7 +65,7 @@ class KotlinOverrideHierarchyBrowser(
             if (typeName == MethodHierarchyBrowserBase.METHOD_TYPE) KotlinOverrideTreeStructure(myProject, psiElement) else null
 
     override fun getContentDisplayName(typeName: String, element: PsiElement): String? {
-        val targetElement = element.getNavigationElement()
+        val targetElement = element.unwrapped
         if (targetElement is JetDeclaration) {
             return ElementDescriptionUtil.getElementDescription(targetElement, RefactoringDescriptionLocation.WITHOUT_PARENT)
         }

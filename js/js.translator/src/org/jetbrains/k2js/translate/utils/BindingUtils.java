@@ -27,7 +27,9 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.List;
 
@@ -187,7 +189,19 @@ public final class BindingUtils {
     public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull JetExpression expression) {
         CompileTimeConstant<?> compileTimeValue = context.get(BindingContext.COMPILE_TIME_VALUE, expression);
         if (compileTimeValue != null) {
-            return compileTimeValue.getValue();
+            return getCompileTimeValue(context, expression, compileTimeValue);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull JetExpression expression, @NotNull CompileTimeConstant<?> constant) {
+        if (constant != null) {
+            if (constant instanceof IntegerValueTypeConstant) {
+                JetType expectedType = context.get(BindingContext.EXPRESSION_TYPE, expression);
+                return ((IntegerValueTypeConstant) constant).getValue(expectedType == null ? TypeUtils.NO_EXPECTED_TYPE : expectedType);
+            }
+            return constant.getValue();
         }
         return null;
     }

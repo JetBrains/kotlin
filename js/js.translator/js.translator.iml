@@ -8,10 +8,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="frontend" />
-    <orderEntry type="library" name="js-libs" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend-common" />
+    <orderEntry type="module" module-name="js.dart-ast" exported="" />
   </component>
 </module>
 

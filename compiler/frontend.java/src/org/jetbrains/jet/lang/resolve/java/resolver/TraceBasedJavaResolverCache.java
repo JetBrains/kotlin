@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.impl.JavaConstantExpressionEvaluator;
@@ -27,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.AnnotationUtils;
+import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -40,18 +38,12 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
 import javax.inject.Inject;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
 public class TraceBasedJavaResolverCache implements JavaResolverCache {
-    private static final Logger LOG = Logger.getInstance(TraceBasedJavaResolverCache.class);
-    private static final FqName ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION = fqNameByClass(AssertInvisibleInResolver.class);
-
     private BindingTrace trace;
 
     @Inject
@@ -80,17 +72,6 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     @Nullable
     @Override
     public ClassDescriptor getClass(@NotNull JavaClass javaClass) {
-        FqName fqName = javaClass.getFqName();
-        if (fqName != null && KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName.parent())) {
-            if (javaClass.findAnnotation(ASSERT_INVISIBLE_IN_RESOLVER_ANNOTATION) != null) {
-                if (ApplicationManager.getApplication().isInternal()) {
-                    LOG.error("Classpath is configured incorrectly:" +
-                              " class " + fqName + " from runtime must not be loaded by compiler");
-                }
-                return null;
-            }
-        }
-
         return trace.get(CLASS, ((JavaClassImpl) javaClass).getPsi());
     }
 
@@ -109,11 +90,13 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
         PsiField psiField = ((JavaFieldImpl) field).getPsi();
         trace.record(VARIABLE, psiField, descriptor);
 
-        if (AnnotationUtils.isPropertyCompileTimeConstant(descriptor)) {
+        if (!descriptor.isVar()) {
             PsiExpression initializer = psiField.getInitializer();
             Object evaluatedExpression = JavaConstantExpressionEvaluator.computeConstantExpression(initializer, false);
             if (evaluatedExpression != null) {
-                CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(evaluatedExpression, descriptor.getType());
+                CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver.
+                        resolveCompileTimeConstantValue(evaluatedExpression, CompileTimeConstantUtils
+                                .isPropertyCompileTimeConstant(descriptor), descriptor.getType());
                 if (constant != null) {
                     trace.record(COMPILE_TIME_INITIALIZER, descriptor, constant);
                 }

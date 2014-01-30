@@ -70,7 +70,7 @@ public final class JavaAnnotationArgumentResolver {
             @NotNull PostponedTasks postponedTasks
     ) {
         if (argument instanceof JavaLiteralAnnotationArgument) {
-            return resolveCompileTimeConstantValue(((JavaLiteralAnnotationArgument) argument).getValue(), null);
+            return resolveCompileTimeConstantValue(((JavaLiteralAnnotationArgument) argument).getValue(), true, null);
         }
         // Enum
         else if (argument instanceof JavaReferenceAnnotationArgument) {
@@ -124,7 +124,7 @@ public final class JavaAnnotationArgumentResolver {
             values.add(value == null ? NullValue.NULL : value);
         }
 
-        return new ArrayValue(values, valueParameter.getType());
+        return new ArrayValue(values, valueParameter.getType(), true);
     }
 
     @Nullable
@@ -167,44 +167,44 @@ public final class JavaAnnotationArgumentResolver {
     }
 
     @Nullable
-    public static CompileTimeConstant<?> resolveCompileTimeConstantValue(@Nullable Object value, @Nullable JetType expectedType) {
+    public static CompileTimeConstant<?> resolveCompileTimeConstantValue(@Nullable Object value, boolean canBeUseInAnnotation, @Nullable JetType expectedType) {
         if (value instanceof String) {
-            return new StringValue((String) value);
+            return new StringValue((String) value, canBeUseInAnnotation);
         }
         else if (value instanceof Byte) {
-            return new ByteValue((Byte) value);
+            return new ByteValue((Byte) value, canBeUseInAnnotation, false);
         }
         else if (value instanceof Short) {
-            return new ShortValue((Short) value);
+            return new ShortValue((Short) value, canBeUseInAnnotation, false);
         }
         else if (value instanceof Character) {
-            return new CharValue((Character) value);
+            return new CharValue((Character) value, canBeUseInAnnotation, false);
         }
         else if (value instanceof Integer) {
             KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
             Integer integer = (Integer) value;
             if (builtIns.getShortType().equals(expectedType)) {
-                return new ShortValue(integer.shortValue());
+                return new ShortValue(integer.shortValue(), canBeUseInAnnotation, false);
             }
             else if (builtIns.getByteType().equals(expectedType)) {
-                return new ByteValue(integer.byteValue());
+                return new ByteValue(integer.byteValue(), canBeUseInAnnotation, false);
             }
             else if (builtIns.getCharType().equals(expectedType)) {
-                return new CharValue((char) integer.intValue());
+                return new CharValue((char) integer.intValue(), canBeUseInAnnotation, false);
             }
-            return new IntValue(integer);
+            return new IntValue(integer, canBeUseInAnnotation, false);
         }
         else if (value instanceof Long) {
-            return new LongValue((Long) value);
+            return new LongValue((Long) value, canBeUseInAnnotation, false);
         }
         else if (value instanceof Float) {
-            return new FloatValue((Float) value);
+            return new FloatValue((Float) value, canBeUseInAnnotation);
         }
         else if (value instanceof Double) {
-            return new DoubleValue((Double) value);
+            return new DoubleValue((Double) value, canBeUseInAnnotation);
         }
         else if (value instanceof Boolean) {
-            return BooleanValue.valueOf((Boolean) value);
+            return new BooleanValue((Boolean) value, canBeUseInAnnotation);
         }
         else if (value == null) {
             return NullValue.NULL;

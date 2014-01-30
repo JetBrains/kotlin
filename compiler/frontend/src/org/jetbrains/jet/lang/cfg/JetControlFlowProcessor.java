@@ -555,8 +555,12 @@ public class JetControlFlowProcessor {
             }
             boolean conditionIsTrueConstant = false;
             if (condition instanceof JetConstantExpression && condition.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT) {
-                if (BooleanValue.TRUE == ConstantExpressionEvaluator.object$.evaluate(condition, trace, KotlinBuiltIns.getInstance().getBooleanType())) {
-                    conditionIsTrueConstant = true;
+                CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.object$.evaluate(condition, trace, KotlinBuiltIns.getInstance().getBooleanType());
+                if (compileTimeConstant instanceof BooleanValue) {
+                    Boolean value = ((BooleanValue) compileTimeConstant).getValue();
+                    if (Boolean.TRUE.equals(value)) {
+                        conditionIsTrueConstant = true;
+                    }
                 }
             }
             if (!conditionIsTrueConstant) {

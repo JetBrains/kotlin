@@ -510,6 +510,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/annotations")
+        @InnerTestClasses({Annotations.AnnotationParameterMustBeConstant.class})
         public static class Annotations extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInAnnotations() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -548,21 +549,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("annotationModifier.kt")
             public void testAnnotationModifier() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/annotationModifier.kt");
-            }
-            
-            @TestMetadata("annotationParameterMustBeClassLiteral.kt")
-            public void testAnnotationParameterMustBeClassLiteral() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeClassLiteral.kt");
-            }
-            
-            @TestMetadata("annotationParameterMustBeConstant.kt")
-            public void testAnnotationParameterMustBeConstant() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant.kt");
-            }
-            
-            @TestMetadata("annotationParameterMustBeEnumConst.kt")
-            public void testAnnotationParameterMustBeEnumConst() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeEnumConst.kt");
             }
             
             @TestMetadata("AnnotationsForClasses.kt")
@@ -645,6 +631,50 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/annotations/onMultiDeclaration.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant")
+            public static class AnnotationParameterMustBeConstant extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInAnnotationParameterMustBeConstant() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("booleanLocalVal.kt")
+                public void testBooleanLocalVal() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/booleanLocalVal.kt");
+                }
+                
+                @TestMetadata("compareAndEquals.kt")
+                public void testCompareAndEquals() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/compareAndEquals.kt");
+                }
+                
+                @TestMetadata("enumConst.kt")
+                public void testEnumConst() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/enumConst.kt");
+                }
+                
+                @TestMetadata("javaProperties.kt")
+                public void testJavaProperties() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/javaProperties.kt");
+                }
+                
+                @TestMetadata("kotlinProperties.kt")
+                public void testKotlinProperties() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/kotlinProperties.kt");
+                }
+                
+                @TestMetadata("strings.kt")
+                public void testStrings() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/strings.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Annotations");
+                suite.addTestSuite(Annotations.class);
+                suite.addTestSuite(AnnotationParameterMustBeConstant.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/backingField")
@@ -2854,6 +2884,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/evaluate/intOverflow.kt");
             }
             
+            @TestMetadata("intOverflowWithJavaProperties.kt")
+            public void testIntOverflowWithJavaProperties() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/intOverflowWithJavaProperties.kt");
+            }
+            
             @TestMetadata("integer.kt")
             public void testInteger() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/evaluate/integer.kt");
@@ -2887,6 +2922,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("parentesized.kt")
             public void testParentesized() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/evaluate/parentesized.kt");
+            }
+            
+            @TestMetadata("qualifiedExpressions.kt")
+            public void testQualifiedExpressions() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/evaluate/qualifiedExpressions.kt");
             }
             
             @TestMetadata("unaryMinusDepOnExpType.kt")
@@ -6791,7 +6831,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Tests");
             suite.addTestSuite(Tests.class);
-            suite.addTestSuite(Annotations.class);
+            suite.addTest(Annotations.innerSuite());
             suite.addTestSuite(BackingField.class);
             suite.addTestSuite(CallableReference.class);
             suite.addTest(Cast.innerSuite());

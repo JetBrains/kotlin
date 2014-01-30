@@ -25,6 +25,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.repl.ReplInterpreter;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.junit.After;
 import org.junit.Assert;
@@ -46,9 +47,8 @@ public class ReplInterpreterTest {
     }
 
     private void testFile(@NotNull String relativePath) {
-        CompilerConfiguration configuration =
-                JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File("out/production/runtime"));
+        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
         ReplInterpreter repl = new ReplInterpreter(disposable, configuration);
 
         ReplSessionTestFile file = ReplSessionTestFile.load(new File("compiler/testData/repl/" + relativePath));

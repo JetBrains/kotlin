@@ -32,7 +32,6 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.LightClass;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.light.LightModifierList;
-import com.intellij.psi.impl.light.LightTypeParameterListBuilder;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
@@ -185,18 +184,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         @Nullable
         @Override
         protected PsiTypeParameterList compute() {
-            LightTypeParameterListBuilder builder = new LightTypeParameterListBuilder(getManager(), getLanguage());
-            if (classOrObject instanceof JetTypeParameterListOwner) {
-                JetTypeParameterListOwner typeParameterListOwner = (JetTypeParameterListOwner) classOrObject;
-                List<JetTypeParameter> parameters = typeParameterListOwner.getTypeParameters();
-                for (int i = 0; i < parameters.size(); i++) {
-                    JetTypeParameter jetTypeParameter = parameters.get(i);
-                    String name = jetTypeParameter.getName();
-                    String safeName = name == null ? "__no_name__" : name;
-                    builder.addParameter(new KotlinLightTypeParameter(KotlinLightClassForExplicitDeclaration.this, i, safeName));
-                }
-            }
-            return builder;
+            return LightClassUtil.buildLightTypeParameterList(KotlinLightClassForExplicitDeclaration.this, classOrObject);
         }
     };
 
@@ -210,8 +198,9 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         this.classOrObject = classOrObject;
     }
 
+    @Override
     @NotNull
-    public JetClassOrObject getJetClassOrObject() {
+    public JetClassOrObject getOrigin() {
         return classOrObject;
     }
 

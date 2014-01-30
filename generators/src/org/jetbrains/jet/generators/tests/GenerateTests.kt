@@ -88,6 +88,8 @@ import org.jetbrains.jet.resolve.AbstractAdditionalLazyResolveDescriptorRenderer
 import org.jetbrains.jet.resolve.AbstractReferenceResolveInLibrarySourcesTest
 import org.jetbrains.jet.completion.AbstractCompiledKotlinInJavaCompletionTest
 import org.jetbrains.jet.completion.AbstractKotlinSourceInJavaCompletionTest
+import org.jetbrains.jet.plugin.intentions.AbstractIntentionTest
+import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithStdLib
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -98,6 +100,10 @@ fun main(args: Array<String>) {
             model("diagnostics/tests")
             model("diagnostics/tests/script", extension = "ktscript")
             model("codegen/box/functions/tailRecursion")
+        }
+
+        testClass(javaClass<AbstractJetDiagnosticsTestWithStdLib>()) {
+            model("diagnostics/testsWithStdLib")
         }
 
         testClass(javaClass<AbstractResolveTest>()) {
@@ -149,7 +155,6 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractDefaultArgumentsReflectionTest>()) {
             model("codegen/defaultArguments/reflection")
         }
-
 
         testClass(javaClass<AbstractLoadJavaTest>()) {
             model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
@@ -219,17 +224,7 @@ fun main(args: Array<String>) {
             model("evaluate/constant", testMethod = "doConstantTest")
             model("evaluate/isPure", testMethod = "doIsPureTest")
         }
-
-        testClass(javaClass<AbstractAnnotationParameterTest>()) {
-            model("resolveAnnotations/parameters")
-        }
-
-        testClass(javaClass<AbstractEvaluateExpressionTest>()) {
-            model("evaluate/constant", testMethod = "doConstantTest")
-            model("evaluate/isPure", testMethod = "doIsPureTest")
-        }
     }
-
 
     testGroup("idea/tests", "idea/testData") {
         testClass(javaClass<AbstractAdditionalLazyResolveDescriptorRendererTest>()) {
@@ -254,6 +249,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractQuickFixTest>()) {
             model("quickfix", pattern = "^before(\\w+)\\.kt$")
+        }
+
+        testClass(javaClass<AbstractIntentionTest>(), "ConvertToExpressionBodyTestGenerated") {
+            model("intentions/convertToExpressionBody", pattern = "^before(\\w+)\\.kt$")
         }
 
         testClass(javaClass<AbstractJSBasicCompletionTest>()) {

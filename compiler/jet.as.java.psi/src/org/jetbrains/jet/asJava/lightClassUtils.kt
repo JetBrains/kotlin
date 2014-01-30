@@ -23,6 +23,38 @@ import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.lang.psi.JetParameter
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
+import com.intellij.psi.PsiParameter
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.JetParameterList
+import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.jet.lang.psi.JetTypeParameter
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import com.intellij.psi.PsiTypeParameter
+import java.util.ArrayList
+import org.jetbrains.jet.lang.psi.JetTypeParameterList
+import com.intellij.psi.PsiTypeParameterListOwner
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiNamedElement
+import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
+
+fun JetDeclaration.toLightElements(): List<PsiElement> =
+        when (this) {
+            is JetClassOrObject -> Collections.singletonList(LightClassUtil.getPsiClass(this))
+            is JetNamedFunction -> Collections.singletonList(LightClassUtil.getLightClassMethod(this))
+            is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
+            is JetPropertyAccessor -> Collections.singletonList(LightClassUtil.getLightClassAccessorMethod(this))
+            is JetParameter -> ArrayList<PsiElement>().let { elements ->
+                toPsiParameter()?.let { psiParameter -> elements.add(psiParameter) }
+                LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
+
+                elements
+            }
+            is JetTypeParameter -> toPsiTypeParameters()
+            else -> Collections.emptyList()
+        }
 
 fun PsiElement.toLightMethods(): List<PsiMethod> =
         when (this) {
@@ -43,3 +75,42 @@ fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
             is PsiMethod -> this
             else -> null
         }
+
+fun JetParameter.toPsiParameter(): PsiParameter? {
+    val paramList = getParentByType(javaClass<JetParameterList>())
+    if (paramList == null) return null
+
+    val paramIndex = paramList.getParameters().indexOf(this)
+    val owner = paramList.getParent()
+    val lightParamIndex = if (owner != null && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
+
+    val method: PsiMethod? = when (owner) {
+        is JetNamedFunction -> LightClassUtil.getLightClassMethod(owner)
+        is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(owner)
+        is JetClass -> LightClassUtil.getPsiClass(owner)?.getConstructors()?.let { constructors ->
+            if (constructors.isNotEmpty()) constructors[0] else null
+        }
+        else -> null
+    }
+    if (method == null) return null
+
+    return method.getParameterList().getParameters()[lightParamIndex]
+}
+
+fun JetTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
+    val paramList = getParentByType(javaClass<JetTypeParameterList>())
+    if (paramList == null) return Collections.emptyList()
+
+    val paramIndex = paramList.getParameters().indexOf(this)
+    val lightOwners = paramList.getParentByType(javaClass<JetDeclaration>())?.toLightElements()
+
+    return lightOwners?.map { lightOwner -> (lightOwner as PsiTypeParameterListOwner).getTypeParameters()[paramIndex] }
+        ?: Collections.emptyList()
+}
+
+// Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
+val PsiElement.unwrapped: PsiElement?
+    get() = if (this is KotlinLightElement<*, *>) origin else this
+
+val PsiElement.namedUnwrappedElement: PsiNamedElement?
+    get() = unwrapped?.getParentByType(javaClass<PsiNamedElement>())

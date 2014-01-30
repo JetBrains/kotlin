@@ -19,13 +19,14 @@ package org.jetbrains.jet.plugin.refactoring;
 import com.intellij.codeInsight.unwrap.ScopeHighlighter;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.search.searches.DeepestSuperMethodsSearch;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.ui.components.JBList;
@@ -33,12 +34,12 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.PackageType;
@@ -48,6 +49,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -111,89 +113,48 @@ public class JetRefactoringUtil {
         return markAsJava ? "[Java] " + description : description;
     }
 
-    private static PsiElement toJetDeclarationOrMethod(PsiMethod method) {
-        return (method instanceof KotlinLightMethod) ? ((KotlinLightMethod) method).getOrigin() : method;
-    }
-
-    @NotNull
-    private static List<? extends PsiElement> getFunctionSuperDeclarations(@NotNull JetNamedFunction function) {
-        PsiMethod lightMethod = LightClassUtil.getLightClassMethod(function);
-        if (lightMethod == null) return Collections.emptyList();
-
-        return ContainerUtil.map(
-                DeepestSuperMethodsSearch.search(lightMethod).findAll(),
-                new Function<PsiMethod, PsiElement>() {
-                    @Override
-                    public PsiElement fun(PsiMethod method) {
-                        return toJetDeclarationOrMethod(method);
-                    }
-                }
-        );
-    }
-
-    @NotNull
-    private static List<? extends PsiElement> getPropertySuperDeclarations(@NotNull JetDeclaration declaration) {
-        LightClassUtil.PropertyAccessorsPsiMethods lightMethods;
-        if (declaration instanceof JetProperty) {
-            lightMethods = LightClassUtil.getLightClassPropertyMethods((JetProperty) declaration);
-        }
-        else if (declaration instanceof JetParameter) {
-            lightMethods = LightClassUtil.getLightClassPropertyMethods((JetParameter) declaration);
-        }
-        else return Collections.emptyList();
-
-        Collection<PsiMethod> foundMethods = new HashSet<PsiMethod>();
-        if (lightMethods.getGetter() != null) {
-            foundMethods.addAll(DeepestSuperMethodsSearch.search(lightMethods.getGetter()).findAll());
-        }
-        if (lightMethods.getSetter() != null) {
-            foundMethods.addAll(DeepestSuperMethodsSearch.search(lightMethods.getSetter()).findAll());
-        }
-
-        Set<PsiElement> declarations = new HashSet<PsiElement>();
-        for (PsiMethod method : foundMethods) {
-            declarations.add(toJetDeclarationOrMethod(method));
-        }
-
-        return new ArrayList<PsiElement>(declarations);
-    }
-
-    @NotNull
-    private static List<? extends PsiElement> getSuperDeclarations(@NotNull JetDeclaration declaration) {
-        if (declaration instanceof JetNamedFunction) return getFunctionSuperDeclarations((JetNamedFunction) declaration);
-        if (declaration instanceof JetProperty || declaration instanceof JetParameter) return getPropertySuperDeclarations(declaration);
-        return Collections.emptyList();
-    }
-
     @Nullable
     public static List<? extends PsiElement> checkSuperMethods(
             @NotNull JetDeclaration declaration, @Nullable Collection<PsiElement> ignore, @NotNull String actionStringKey
     ) {
-        BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
+        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(declaration);
 
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+        CallableDescriptor declarationDescriptor =
+                (CallableDescriptor)bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
-        if (declarationDescriptor instanceof LocalVariableDescriptor) {
+        if (declarationDescriptor == null || declarationDescriptor instanceof LocalVariableDescriptor) {
             return Collections.singletonList(declaration);
         }
 
-        List<? extends PsiElement> superDeclarations = getSuperDeclarations(declaration);
+        final Project project = declaration.getProject();
+        Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = ContainerUtil.map2Map(
+                OverridingUtil.getAllOverriddenDescriptors(declarationDescriptor),
+                new Function<CallableDescriptor, Pair<PsiElement, CallableDescriptor>>() {
+                    @Override
+                    public Pair<PsiElement, CallableDescriptor> fun(CallableDescriptor descriptor) {
+                        return new Pair<PsiElement, CallableDescriptor>(
+                                DescriptorToDeclarationUtil.getDeclaration(project, descriptor, bindingContext),
+                                descriptor
+                        );
+                    }
+                }
+        );
+        overriddenElementsToDescriptor.remove(null);
         if (ignore != null) {
-            superDeclarations.removeAll(ignore);
+            overriddenElementsToDescriptor.keySet().removeAll(ignore);
         }
 
-        if (superDeclarations.isEmpty()) return Collections.singletonList(declaration);
+        if (overriddenElementsToDescriptor.isEmpty()) return Collections.singletonList(declaration);
 
-        java.util.List<String> superClasses = getClassDescriptions(bindingContext, superDeclarations);
-        return askUserForMethodsToSearch(declaration, declarationDescriptor, superDeclarations, superClasses, actionStringKey);
+        List<String> superClasses = getClassDescriptions(overriddenElementsToDescriptor);
+        return askUserForMethodsToSearch(declaration, declarationDescriptor, overriddenElementsToDescriptor, superClasses, actionStringKey);
     }
 
     @NotNull
     private static List<? extends PsiElement> askUserForMethodsToSearch(
             @NotNull JetDeclaration declaration,
-            @NotNull DeclarationDescriptor declarationDescriptor,
-            @NotNull List<? extends PsiElement> superMethods,
+            @NotNull CallableDescriptor declarationDescriptor,
+            @NotNull Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor,
             @NotNull List<String> superClasses,
             @NotNull String actionStringKey
     ) {
@@ -211,7 +172,7 @@ public class JetRefactoringUtil {
         );
         switch (exitCode) {
             case Messages.YES:
-                return superMethods;
+                return ContainerUtil.newArrayList(overriddenElementsToDescriptor.keySet());
             case Messages.NO:
                 return Collections.singletonList(declaration);
             default:
@@ -220,31 +181,24 @@ public class JetRefactoringUtil {
     }
 
     @NotNull
-    private static List<String> getClassDescriptions(
-            @NotNull final BindingContext bindingContext, @NotNull Collection<? extends PsiElement> superMethods
-    ) {
+    private static List<String> getClassDescriptions(@NotNull Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor) {
         return ContainerUtil.map(
-                superMethods,
-                new Function<PsiElement, String>() {
+                overriddenElementsToDescriptor.entrySet(),
+                new Function<Map.Entry<PsiElement, CallableDescriptor>, String>() {
                     @Override
-                    public String fun(PsiElement element) {
+                    public String fun(Map.Entry<PsiElement, CallableDescriptor> entry) {
                         String description;
 
+                        PsiElement element = entry.getKey();
+                        CallableDescriptor descriptor = entry.getValue();
                         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
-                            DeclarationDescriptor descriptor =
-                                    bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
-                            assert descriptor != null;
-
-                            DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
-                            assert containingDescriptor != null;
-
-                            description = formatClassDescriptor(containingDescriptor);
+                            description = formatClassDescriptor(descriptor.getContainingDeclaration());
                         }
                         else {
-                            assert element instanceof PsiMethod;
+                            assert element instanceof PsiMethod : "Invalid element: " + element.getText();
 
                             PsiClass psiClass = ((PsiMethod) element).getContainingClass();
-                            assert psiClass != null;
+                            assert psiClass != null : "Invalid element: " + element.getText();
 
                             description = formatPsiClass(psiClass, true, false);
                         }

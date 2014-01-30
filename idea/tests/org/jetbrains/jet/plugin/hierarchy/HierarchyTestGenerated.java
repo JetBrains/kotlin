@@ -128,6 +128,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlin");
         }
         
+        @TestMetadata("JavaFromKotlinByRef")
+        public void testJavaFromKotlinByRef() throws Exception {
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlinByRef");
+        }
+        
         @TestMetadata("JavaFromKotlinForKotlinClass")
         public void testJavaFromKotlinForKotlinClass() throws Exception {
             doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlinForKotlinClass");
@@ -146,6 +151,16 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         @TestMetadata("KotlinFromJava")
         public void testKotlinFromJava() throws Exception {
             doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromJava");
+        }
+        
+        @TestMetadata("KotlinFromJavaByRef")
+        public void testKotlinFromJavaByRef() throws Exception {
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromJavaByRef");
+        }
+        
+        @TestMetadata("KotlinFromKotlinByRef")
+        public void testKotlinFromKotlinByRef() throws Exception {
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromKotlinByRef");
         }
         
         @TestMetadata("Object")

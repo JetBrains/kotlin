@@ -39,6 +39,13 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetParameterList
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import com.intellij.psi.PsiNamedElement
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration
+import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 
 fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
@@ -171,3 +178,15 @@ fun JetDeclaration.isOverridable(): Boolean {
     return klass.isTrait() ||
         hasModifier(JetTokens.ABSTRACT_KEYWORD) || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.OVERRIDE_KEYWORD)
 }
+
+fun PsiElement.isExtensionDeclaration(): Boolean {
+    val callable: JetCallableDeclaration? = when (this) {
+        is JetNamedFunction, is JetProperty -> this as JetCallableDeclaration
+        is JetPropertyAccessor -> getParentByType(javaClass<JetProperty>())
+        else -> null
+    }
+
+    return callable?.getReceiverTypeRef() != null
+}
+
+fun PsiElement.isObjectLiteral(): Boolean = this is JetObjectDeclaration && isObjectLiteral()

@@ -1114,7 +1114,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         assert constructorDescriptor != null;
         final JvmMethodSignature constructorSignature = typeMapper.mapSignature(constructorDescriptor);
 
-        functionCodegen.generateMethod(null, constructorSignature, constructorDescriptor, constructorContext,
+        functionCodegen.generateMethod(myClass, constructorSignature, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
                        @NotNull
                        @Override
@@ -1425,7 +1425,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Method methodInTrait = typeMapper.mapSignature(fun.getOriginal()).getAsmMethod();
 
         PsiElement origin = descriptorToDeclaration(bindingContext, fun);
-        MethodVisitor mv = v.newMethod(origin, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(origin, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null,
+                                       CodegenUtil.getExceptions(fun, typeMapper));
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(fun);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {

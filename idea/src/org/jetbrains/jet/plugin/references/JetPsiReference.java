@@ -25,12 +25,12 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.Collection;
@@ -90,9 +90,13 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     @Override
     public boolean isReferenceTo(PsiElement element) {
-        PsiElement target = resolve();
-        PsiElement mirrorElement = element instanceof KotlinLightMethod ? ((KotlinLightMethod) element).getOrigin() : null;
-        return target == element || (mirrorElement != null && target == mirrorElement) || (target != null && target.getNavigationElement() == element);
+        PsiElement resolvedElement = resolve();
+        if (resolvedElement == null) return false;
+
+        PsiNamedElement namedDeclaration = AsJavaPackage.getNamedUnwrappedElement(element);
+        PsiNamedElement namedResolvedDeclaration = AsJavaPackage.getNamedUnwrappedElement(resolvedElement);
+
+        return namedDeclaration != null && namedDeclaration.equals(namedResolvedDeclaration);
     }
 
     @NotNull

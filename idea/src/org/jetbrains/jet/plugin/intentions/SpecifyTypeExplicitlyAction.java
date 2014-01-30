@@ -263,10 +263,8 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     private static void addTypeAnnotationSilently(Project project, JetNamedDeclaration namedDeclaration, PsiElement anchor) {
-        JetTypeReference typeReference = JetPsiFactory.createType(project, "Any");
-        namedDeclaration.addAfter(typeReference, anchor);
-        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColonAndWhiteSpaces(project);
-        namedDeclaration.addRangeAfter(colon.getFirst(), colon.getSecond(), anchor);
+        namedDeclaration.addAfter(JetPsiFactory.createType(project, "Any"), anchor);
+        namedDeclaration.addAfter(JetPsiFactory.createColon(project), anchor);
     }
 
     @Nullable

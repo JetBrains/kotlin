@@ -7,7 +7,9 @@
       <maximumHeapSize value="512" />
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/update_dependencies.xml" />
-    <buildFile url="file://$PROJECT_DIR$/TeamCityBuild.xml" />
+    <buildFile url="file://$PROJECT_DIR$/TeamCityBuild.xml">
+      <maximumHeapSize value="512" />
+    </buildFile>
     <buildFile url="file://$PROJECT_DIR$/pluginPublisher/TeamCityPluginPublisher.xml" />
   </component>
 </project>

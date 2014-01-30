@@ -31,9 +31,13 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.CommonSupertypes;
+import org.jetbrains.jet.lang.types.DeferredType;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
@@ -45,11 +49,13 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
-import static org.jetbrains.jet.util.StorageUtil.createRecursionIntolerantLazyValueWithDefault;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
-    protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
+    private final StorageManager storageManager;
+
+    protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade, @NotNull StorageManager storageManager) {
         super(facade);
+        this.storageManager = storageManager;
     }
 
     @Override
@@ -67,14 +73,13 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @Override
             public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
                 if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
-                    JetType defaultType = DeferredType.create(context.trace, createRecursionIntolerantLazyValueWithDefault(
-                            ErrorUtils.createErrorType("Recursive dependency"),
-                            new Function0<JetType>() {
-                                @Override
-                                public JetType invoke() {
-                                    return descriptor.getDefaultType();
-                                }
-                            }));
+                    JetType defaultType = DeferredType.createRecursionIntolerant(storageManager, context.trace,
+                                                                                 new Function0<JetType>() {
+                                                                                     @Override
+                                                                                     public JetType invoke() {
+                                                                                         return descriptor.getDefaultType();
+                                                                                     }
+                                                                                 });
                     result[0] = defaultType;
                     if (!context.trace.get(PROCESSED, expression)) {
                         temporaryTrace.record(EXPRESSION_TYPE, expression, defaultType);
@@ -85,7 +90,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        TopDownAnalyzer.processClassOrObject(null, // don't need to add classifier of object literal to any scope
+        TopDownAnalyzer.processClassOrObject(storageManager,
+                                             null, // don't need to add classifier of object literal to any scope
                                              context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                              context.scope.getContainingDeclaration(),
                                              expression.getObjectDeclaration());
