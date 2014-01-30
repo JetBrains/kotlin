@@ -98,14 +98,6 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         return StringUtil.convertLineSeparators(result.toString())
     }
 
-    private val TextRange.start: Int
-        get() = getStartOffset()
-    private val TextRange.end: Int
-        get() = getEndOffset()
-    //TODO: not private due to KT-4340
-    val PsiElement.range: TextRange
-        get() = getTextRange()!!
-
     private fun convertRangeToKotlin(file: PsiJavaFile,
                                      range: TextRange,
                                      converter: Converter): String {
