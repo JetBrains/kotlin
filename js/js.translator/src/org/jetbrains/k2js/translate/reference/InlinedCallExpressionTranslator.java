@@ -62,16 +62,19 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     }
 
     @NotNull
-    public static JsExpression translate(@NotNull JetCallExpression expression,
-                                         @Nullable JsExpression receiver,
-                                         @NotNull CallType callType,
-                                         @NotNull TranslationContext context) {
-        return (new InlinedCallExpressionTranslator(expression, receiver, callType, context)).translate();
+    public static JsExpression translate(
+            @NotNull JetCallExpression expression,
+            @Nullable JsExpression receiver,
+            @NotNull TranslationContext context
+    ) {
+        return (new InlinedCallExpressionTranslator(expression, receiver, context)).translate();
     }
 
-    private InlinedCallExpressionTranslator(@NotNull JetCallExpression expression, @Nullable JsExpression receiver,
-                                            @NotNull CallType callType, @NotNull TranslationContext context) {
-        super(expression, receiver, callType, context);
+    private InlinedCallExpressionTranslator(
+            @NotNull JetCallExpression expression, @Nullable JsExpression receiver,
+            @NotNull TranslationContext context
+    ) {
+        super(expression, receiver, context);
     }
 
     @NotNull

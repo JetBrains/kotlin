@@ -26,7 +26,8 @@ import org.jetbrains.k2js.translate.context.Namer
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.k2js.translate.reference.CallType
+import com.google.dart.compiler.backend.js.ast.JsLiteral
+import org.jetbrains.k2js.translate.utils.TranslationUtils
 
 
 val CallInfo.callableDescriptor: CallableDescriptor
@@ -51,11 +52,9 @@ fun CallInfo.constructSafeCallIsNeeded(result: JsExpression): JsExpression {
         BOTH_RECEIVERS, RECEIVER_ARGUMENT -> receiverObject
         else -> thisObject
     }
-    return CallType.SAFE.constructCall(nullableReceiverForSafeCall, object : CallType.CallConstructor {
-        override fun construct(receiver: JsExpression?): JsExpression {
-            return result
-        }
-    }, context)
+    val expression = TranslationUtils.notNullConditional(nullableReceiverForSafeCall!!, JsLiteral.NULL, context)
+    expression.setThenExpression(result)
+    return expression
 }
 
 val VariableAccessInfo.variableDescriptor: VariableDescriptor

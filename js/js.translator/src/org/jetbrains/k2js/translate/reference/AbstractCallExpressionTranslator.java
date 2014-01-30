@@ -35,17 +35,16 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
     protected final ResolvedCall<? extends FunctionDescriptor> resolvedCall;
     @Nullable
     protected final JsExpression receiver;
-    @NotNull
-    protected final CallType callType;
 
-    protected AbstractCallExpressionTranslator(@NotNull JetCallExpression expression,
+    protected AbstractCallExpressionTranslator(
+            @NotNull JetCallExpression expression,
             @Nullable JsExpression receiver,
-            @NotNull CallType type, @NotNull TranslationContext context) {
+            @NotNull TranslationContext context
+    ) {
         super(context);
         this.expression = expression;
         this.resolvedCall = getResolvedCallForCallExpression(bindingContext(), expression);
         this.receiver = receiver;
-        this.callType = type;
     }
 
 }

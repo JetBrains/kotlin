@@ -26,20 +26,23 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
 
     @NotNull
-    public static JsExpression translate(@NotNull JetCallExpression expression,
+    public static JsExpression translate(
+            @NotNull JetCallExpression expression,
             @Nullable JsExpression receiver,
-            @NotNull CallType callType,
-            @NotNull TranslationContext context) {
+            @NotNull TranslationContext context
+    ) {
         if (InlinedCallExpressionTranslator.shouldBeInlined(expression, context)) {
-            return InlinedCallExpressionTranslator.translate(expression, receiver, callType, context);
+            return InlinedCallExpressionTranslator.translate(expression, receiver, context);
         }
-        return (new CallExpressionTranslator(expression, receiver, callType, context)).translate();
+        return (new CallExpressionTranslator(expression, receiver, context)).translate();
     }
 
-    private CallExpressionTranslator(@NotNull JetCallExpression expression,
+    private CallExpressionTranslator(
+            @NotNull JetCallExpression expression,
             @Nullable JsExpression receiver,
-            @NotNull CallType callType, @NotNull TranslationContext context) {
-        super(expression, receiver, callType, context);
+            @NotNull TranslationContext context
+    ) {
+        super(expression, receiver, context);
     }
 
     @NotNull
