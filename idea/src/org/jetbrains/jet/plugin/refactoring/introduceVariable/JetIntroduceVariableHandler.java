@@ -253,7 +253,6 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                     variableText += expression.getText();
                 }
                 JetProperty property = JetPsiFactory.createProperty(project, variableText);
-                if (property == null) return;
                 PsiElement anchor = calculateAnchor(commonParent, commonContainer, allReplaces);
                 if (anchor == null) return;
                 boolean needBraces = !(commonContainer instanceof JetBlockExpression ||
@@ -347,7 +346,10 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                         if (!function.hasDeclaredReturnType()) {
                             //todo: add return type
                         }
-                        function.getEqualsToken().delete();
+
+                        PsiElement equalsToken = function.getEqualsToken();
+                        assert equalsToken != null : "Function without block body was expected: " + function.getText();
+                        equalsToken.delete();
                     }
                     else if (commonContainer instanceof JetContainerNode) {
                         JetContainerNode node = (JetContainerNode)commonContainer;
@@ -443,7 +445,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             public void visitExpression(@NotNull JetExpression expression) {
                 if (PsiEquivalenceUtil.areElementsEquivalent(expression, actualExpression, null, new Comparator<PsiElement>() {
                     @Override
-                    public int compare(PsiElement element1, PsiElement element2) {
+                    public int compare(@NotNull PsiElement element1, @NotNull PsiElement element2) {
                         if (element1.getNode().getElementType() == JetTokens.IDENTIFIER &&
                             element2.getNode().getElementType() == JetTokens.IDENTIFIER) {
                             if (element1.getParent() instanceof JetSimpleNameExpression &&
