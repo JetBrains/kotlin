@@ -37,7 +37,7 @@ val functionCallCases: CallCaseDispatcher<FunctionCallCase, FunctionCallInfo> = 
 val variableAccessCases: CallCaseDispatcher<VariableAccessCase, VariableAccessInfo> = createVariableAccessCases()
 
 fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiverOrThisObject: JsExpression? = null): JsExpression {
-    return buildCall(resolvedCall, receiverOrThisObject, null)
+    return buildCall(resolvedCall, ExplicitReceivers(receiverOrThisObject))
 }
 
 fun TranslationContext.buildGet(resolvedCall: ResolvedCall<out VariableDescriptor>, receiverOrThisObject: JsExpression? = null): JsExpression {
@@ -66,23 +66,23 @@ fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
     return this.getExplicitReceiverKind() != NO_EXPLICIT_RECEIVER
 }
 
-private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, receiver1: JsExpression?, receiver2: JsExpression?): JsExpression {
+private fun TranslationContext.buildCall(resolvedCall: ResolvedCall<out FunctionDescriptor>, explicitReceivers: ExplicitReceivers): JsExpression {
     if (resolvedCall is VariableAsFunctionResolvedCall) {
-        assert(receiver2 == null, "receiver2 for VariableAsFunctionResolvedCall must be null") // TODO: add debug info
+        assert(explicitReceivers.receiverObject == null, "VariableAsFunctionResolvedCall must have one receiver") // TODO: add debug info
         val variableCall = resolvedCall.getVariableCall()
         if (variableCall.expectedReceivers()) {
-            val newReceiver = buildGet(variableCall, receiver1)
-            return buildCall(resolvedCall.getFunctionCall(), newReceiver, null)
+            val newReceiver = buildGet(variableCall, explicitReceivers.receiverOrThisObject)
+            return buildCall(resolvedCall.getFunctionCall(), ExplicitReceivers(newReceiver))
         } else {
-            val newReceiver2 = buildGet(variableCall, null)
-            if (receiver1 == null)
-                return buildCall(resolvedCall.getFunctionCall(), newReceiver2)
+            val thisObject = buildGet(variableCall, null)
+            if (explicitReceivers.receiverOrThisObject == null)
+                return buildCall(resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject))
             else
-                return buildCall(resolvedCall.getFunctionCall(), receiver1, newReceiver2)
+                return buildCall(resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject, explicitReceivers.receiverOrThisObject))
         }
     }
 
-    val functionCallInfo = getCallInfo(resolvedCall, receiver1, receiver2)
+    val functionCallInfo = getCallInfo(resolvedCall, explicitReceivers)
     return functionCallCases.translate(functionCallInfo)
 }
 
@@ -113,14 +113,6 @@ trait CallCase<I : CallInfo> {
         throw unsupported()
     }
 
-    fun constructSafeCall(result: JsExpression): JsExpression {
-        return CallType.SAFE.constructCall(callInfo.nullableReceiverForSafeCall, object : CallType.CallConstructor {
-            override fun construct(receiver: JsExpression?): JsExpression {
-                return result
-            }
-        }, callInfo.context)
-    }
-
     final fun translate(): JsExpression {
         val result = if (callInfo.thisObject == null) {
             if (callInfo.receiverObject == null)
@@ -134,10 +126,7 @@ trait CallCase<I : CallInfo> {
                 callInfo.bothReceivers()
         }
 
-        return if (callInfo.isSafeCall())
-            constructSafeCall(result)
-        else
-            return result
+        return callInfo.constructSafeCallIsNeeded(result)
     }
 }
 
