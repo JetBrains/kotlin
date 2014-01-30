@@ -67,7 +67,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             return NonCodeUsageSearchInfo(getIgnoranceCondition(), element)
         }
 
-        fun findUsagesByJavaProcessor(element: PsiElement): NonCodeUsageSearchInfo? {
+        fun findUsagesByJavaProcessor(element: PsiElement, forceReferencedElementUnwrapping: Boolean): NonCodeUsageSearchInfo? {
             val javaUsages = ArrayList<UsageInfo>()
             val searchInfo = super.findUsages(element, allElementsToDelete, javaUsages)
 
@@ -92,7 +92,9 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                             else {
                                 usageElement.getParentByType(javaClass<JetImportDirective>())?.let { importDirective ->
                                     SafeDeleteImportDirectiveUsageInfo(importDirective, element.unwrapped as JetDeclaration)
-                                } ?: usageInfo
+                                } ?: if (forceReferencedElementUnwrapping) {
+                                    SafeDeleteReferenceJavaDeleteUsageInfo(usageElement, element.unwrapped, usageInfo.isSafeDelete())
+                                } else usageInfo
                             }
                         }
 
@@ -105,7 +107,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         fun findUsagesByJavaProcessor(elements: Iterator<PsiElement>, insideDeleted: Condition<PsiElement>): Condition<PsiElement> =
                 elements
-                        .map { element -> findUsagesByJavaProcessor(element)?.getInsideDeletedCondition() }
+                        .map { element -> findUsagesByJavaProcessor(element, true)?.getInsideDeletedCondition() }
                         .filterNotNull()
                         .fold(insideDeleted) {(condition1, condition2) -> Conditions.or(condition1, condition2) }
 
@@ -161,19 +163,19 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         val searchInfo = when (element) {
             is JetClassOrObject ->
-                element.toLightClass()?.let { klass -> findUsagesByJavaProcessor(klass) }
+                element.toLightClass()?.let { klass -> findUsagesByJavaProcessor(klass, false) }
 
             is JetNamedFunction -> {
                 if (element.isLocal()) {
                     findKotlinDeclarationUsages(element)
                 }
                 else {
-                    element.getRepresentativeLightMethod()?.let { method -> findUsagesByJavaProcessor(method) }
+                    element.getRepresentativeLightMethod()?.let { method -> findUsagesByJavaProcessor(method, false) }
                 }
             }
 
             is PsiMethod ->
-                findUsagesByJavaProcessor(element)
+                findUsagesByJavaProcessor(element, false)
 
             is JetProperty -> {
                 if (element.isLocal()) {
