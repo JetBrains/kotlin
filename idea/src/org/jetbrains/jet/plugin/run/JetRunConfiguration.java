@@ -26,18 +26,25 @@ import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiClass;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
     implements CommonJavaRunConfigurationParameters {
@@ -197,8 +204,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
         private final JetRunConfiguration myConfiguration;
 
-        public MyJavaCommandLineState(@NotNull JetRunConfiguration configuration,
-                                      ExecutionEnvironment environment) {
+        public MyJavaCommandLineState(@NotNull JetRunConfiguration configuration, ExecutionEnvironment environment) {
             super(environment);
             myConfiguration = configuration;
         }
@@ -208,19 +214,66 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             JavaParameters params = new JavaParameters();
             RunConfigurationModule module = myConfiguration.getConfigurationModule();
 
-            int classPathType = JavaParametersUtil.getClasspathType(
-                    module,
-                    myConfiguration.getRunClass(),
-                    false);
+            int classPathType = getClasspathType(module);
 
-            String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH
-                                                                                : null;
+            String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH : null;
             JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
             JavaParametersUtil.configureConfiguration(params, myConfiguration);
 
             params.setMainClass(myConfiguration.getRunClass());
 
             return params;
+        }
+
+        private int getClasspathType(RunConfigurationModule configurationModule) throws CantRunException {
+            Module module = configurationModule.getModule();
+            if (module == null) throw CantRunException.noModuleConfigured(configurationModule.getModuleName());
+
+            String runClass = myConfiguration.getRunClass();
+            if (runClass == null) throw new CantRunException(String.format("Run class should be defined for configuration '%s'", myConfiguration.getName()));
+
+            PsiClass psiClass = JavaExecutionUtil.findMainClass(module, runClass);
+            if (psiClass == null) throw CantRunException.classNotFound(runClass, module);
+
+            FqName packageFqName = new FqName(runClass).parent();
+            JetNamedFunction mainFun = findMainFun(module, packageFqName);
+            if (mainFun == null) throw new CantRunException(String.format("Top-level function 'main' not found in package '%s'", packageFqName));
+
+            Module classModule = ModuleUtilCore.findModuleForPsiElement(mainFun);
+            if (classModule == null) classModule = module;
+            ModuleFileIndex fileIndex = ModuleRootManager.getInstance(classModule).getFileIndex();
+
+            VirtualFile virtualFileForMainFun = mainFun.getContainingFile().getVirtualFile();
+            if (virtualFileForMainFun == null) throw new CantRunException(String.format("Top-level function 'main' not found in package '%s'", packageFqName));
+
+            if (fileIndex.isInSourceContent(virtualFileForMainFun)) {
+                if (fileIndex.isInTestSourceContent(virtualFileForMainFun)) {
+                    return JavaParameters.JDK_AND_CLASSES_AND_TESTS;
+                }
+                else {
+                    return JavaParameters.JDK_AND_CLASSES;
+                }
+            }
+            List<OrderEntry> entriesForFile = fileIndex.getOrderEntriesForFile(virtualFileForMainFun);
+            for (OrderEntry entry : entriesForFile) {
+                if (entry instanceof ExportableOrderEntry && ((ExportableOrderEntry)entry).getScope() == DependencyScope.TEST) {
+                    return JavaParameters.JDK_AND_CLASSES_AND_TESTS;
+                }
+            }
+            return JavaParameters.JDK_AND_CLASSES;
+        }
+
+        @Nullable
+        private JetNamedFunction findMainFun(@NotNull Module module, @NotNull FqName packageFqName) throws CantRunException {
+            String mainFunFqName = packageFqName.child(Name.identifier("main")).asString();
+            Collection<JetNamedFunction> mainFunctions =
+                    JetTopLevelFunctionsFqnNameIndex.getInstance().get(mainFunFqName, module.getProject(), module.getModuleScope(true));
+            for (JetNamedFunction function : mainFunctions) {
+                if (JetMainDetector.isMain(function)) {
+                    return function;
+                }
+            }
+            return null;
         }
     }
 }
