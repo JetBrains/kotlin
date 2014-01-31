@@ -864,7 +864,7 @@ public class CandidateResolver {
 
         JetType erasedReceiverType = CallResolverUtil.getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor);
 
-        boolean isSubtypeByAutoCast = AutoCastUtils.isSubTypeByAutoCast(receiverArgument, erasedReceiverType, context);
+        boolean isSubtypeByAutoCast = AutoCastUtils.isSubTypeByAutoCastIgnoringNullability(receiverArgument, erasedReceiverType, context);
         if (!isSubtypeByAutoCast) {
             return RECEIVER_TYPE_ERROR;
         }
@@ -883,29 +883,25 @@ public class CandidateResolver {
     ) {
         if (receiverParameter == null || !receiverArgument.exists()) return SUCCESS;
         D candidateDescriptor = candidateCall.getCandidateDescriptor();
+        if (TypeUtils.dependsOnTypeParameters(receiverParameter.getType(), candidateDescriptor.getTypeParameters())) return SUCCESS;
 
-        boolean smartCastRecorded = false;
-        if (!TypeUtils.dependsOnTypeParameters(receiverParameter.getType(), candidateDescriptor.getTypeParameters())) {
-            boolean isSubtypeByAutoCast = AutoCastUtils.isSubTypeByAutoCast(receiverArgument, receiverParameter.getType(), context);
-            if (!isSubtypeByAutoCast) {
-                context.tracing.wrongReceiverType(trace, receiverParameter, receiverArgument);
-                return OTHER_ERROR;
-            }
-            smartCastRecorded = AutoCastUtils.recordAutoCastIfNecessary(receiverArgument, receiverParameter.getType(), context);
+        boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
+        boolean isSubtypeByAutoCast = AutoCastUtils.isSubTypeByAutoCastIgnoringNullability(
+                receiverArgument, receiverParameter.getType(), context);
+        if (!isSubtypeByAutoCast) {
+            context.tracing.wrongReceiverType(trace, receiverParameter, receiverArgument);
+            return OTHER_ERROR;
         }
+        AutoCastUtils.recordAutoCastIfNecessary(receiverArgument, receiverParameter.getType(), context, safeAccess);
 
         JetType receiverArgumentType = receiverArgument.getType();
 
         BindingContext bindingContext = trace.getBindingContext();
-        boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
-        if (!safeAccess && !receiverParameter.getType().isNullable() && receiverArgument.getType().isNullable()) {
+        if (!safeAccess && !receiverParameter.getType().isNullable() && receiverArgumentType.isNullable()) {
             if (!AutoCastUtils.isNotNull(receiverArgument, bindingContext, context.dataFlowInfo)) {
 
                 context.tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck);
                 return UNSAFE_CALL_ERROR;
-            }
-            if (!smartCastRecorded && isExplicitReceiver) {
-                AutoCastUtils.recordAutoCastToNotNullableType(receiverArgument, context.trace);
             }
         }
         DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext);

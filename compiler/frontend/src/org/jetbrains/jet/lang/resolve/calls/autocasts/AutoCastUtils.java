@@ -94,13 +94,13 @@ public class AutoCastUtils {
         return Lists.newArrayList(dataFlowInfo.getPossibleTypes(dataFlowValue));
     }
 
-    public static boolean isSubTypeByAutoCast(
+    public static boolean isSubTypeByAutoCastIgnoringNullability(
             @NotNull ReceiverValue receiverArgument,
             @NotNull JetType receiverParameterType,
             @NotNull ResolutionContext context
     ) {
         List<JetType> autoCastTypes = getAutoCastVariants(receiverArgument, context);
-        return getAutoCastSubType(receiverParameterType, autoCastTypes) != null;
+        return getAutoCastSubType(TypeUtils.makeNullable(receiverParameterType), autoCastTypes) != null;
     }
 
     @Nullable
@@ -110,8 +110,7 @@ public class AutoCastUtils {
     ) {
         Set<JetType> subTypes = Sets.newHashSet();
         for (JetType autoCastType : autoCastTypes) {
-            JetType effectiveAutoCastType = TypeUtils.makeNotNullable(autoCastType);
-            if (ArgumentTypeResolver.isSubtypeOfForArgumentType(effectiveAutoCastType, receiverParameterType)) {
+            if (ArgumentTypeResolver.isSubtypeOfForArgumentType(autoCastType, receiverParameterType)) {
                 subTypes.add(autoCastType);
             }
         }
@@ -125,19 +124,21 @@ public class AutoCastUtils {
     }
 
     public static boolean recordAutoCastIfNecessary(
-            ReceiverValue receiver,
-            @NotNull JetType receiverType,
-            @NotNull ResolutionContext context
+            @NotNull ReceiverValue receiver,
+            @NotNull JetType receiverParameterType,
+            @NotNull ResolutionContext context,
+            boolean safeAccess
     ) {
         if (!(receiver instanceof ExpressionReceiver)) return false;
 
-        if (ArgumentTypeResolver.isSubtypeOfForArgumentType(receiver.getType(), receiverType)) {
+        receiverParameterType = safeAccess ? TypeUtils.makeNullable(receiverParameterType) : receiverParameterType;
+        if (ArgumentTypeResolver.isSubtypeOfForArgumentType(receiver.getType(), receiverParameterType)) {
             return false;
         }
 
         List<JetType> autoCastTypesExcludingReceiver = getAutoCastVariantsExcludingReceiver(
                 context.trace.getBindingContext(), context.dataFlowInfo, receiver);
-        JetType autoCastSubType = getAutoCastSubType(receiverType, autoCastTypesExcludingReceiver);
+        JetType autoCastSubType = getAutoCastSubType(receiverParameterType, autoCastTypesExcludingReceiver);
         if (autoCastSubType == null) return false;
 
         JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
@@ -145,18 +146,6 @@ public class AutoCastUtils {
 
         recordCastOrError(expression, autoCastSubType, context.trace, dataFlowValue.isStableIdentifier(), true);
         return true;
-    }
-
-    public static void recordAutoCastToNotNullableType(@NotNull ReceiverValue receiver, @NotNull BindingTrace trace) {
-        if (!(receiver instanceof ExpressionReceiver)) return;
-
-        JetType receiverType = receiver.getType();
-        if (!receiverType.isNullable()) return;
-        JetType notNullableType = TypeUtils.makeNotNullable(receiverType);
-
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, trace.getBindingContext());
-        JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
-        recordCastOrError(expression, notNullableType, trace, dataFlowValue.isStableIdentifier(), true);
     }
 
     public static void recordCastOrError(

@@ -442,6 +442,11 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTestWithInfos("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
         }
         
+        @TestMetadata("SmartCastsWithSafeAccess.kt")
+        public void testSmartCastsWithSafeAccess() throws Exception {
+            doTestWithInfos("idea/testData/checker/infos/SmartCastsWithSafeAccess.kt");
+        }
+        
         @TestMetadata("Typos.kt")
         public void testTypos() throws Exception {
             doTestWithInfos("idea/testData/checker/infos/Typos.kt");
