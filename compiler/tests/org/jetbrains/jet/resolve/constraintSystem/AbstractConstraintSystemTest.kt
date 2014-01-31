@@ -52,17 +52,15 @@ import java.util.ArrayList
 import kotlin.test.assertEquals
 import org.junit.Assert
 import java.util.LinkedHashMap
+import kotlin.properties.Delegates
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val typePattern = """([\w|<|>|\(|\)]+)"""
-    val constraintPattern = Pattern.compile("""(SUBTYPE|SUPERTYPE|EQUALITY)\s+${typePattern}\s+${typePattern}\s+(!)?""", Pattern.MULTILINE)
+    val constraintPattern = Pattern.compile("""(SUBTYPE|SUPERTYPE)\s+${typePattern}\s+${typePattern}\s+(weak)?""", Pattern.MULTILINE)
     val variablesPattern = Pattern.compile("VARIABLES\\s+(.*)")
 
-    private var builtIns: KotlinBuiltIns? = null
-    private var typeResolver: TypeResolver? = null
-    private var expressionTypingServices: ExpressionTypingServices? = null
-    private var functionDescriptor: FunctionDescriptor? = null
-    private var scopeToResolveTypeParameters: JetScope? = null
+    private var typeResolver: TypeResolver by Delegates.notNull()
+    private var myDeclarations: MyDeclarations by Delegates.notNull()
 
     override fun createEnvironment(): JetCoreEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL)
@@ -71,13 +69,9 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     override fun setUp() {
         super.setUp()
 
-        builtIns = KotlinBuiltIns.getInstance()
-
         val injector = InjectorForTests(getProject(), JetTestUtils.createEmptyModule()!!)
-        typeResolver = injector.getTypeResolver()
-        expressionTypingServices = injector.getExpressionTypingServices()
-
-        analyzeDeclarations()
+        typeResolver = injector.getTypeResolver()!!
+        myDeclarations = analyzeDeclarations()
     }
 
     override fun getTestDataPath(): String {
@@ -90,7 +84,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         val psiFile = createPsiFile(null, fileName, loadFile(fileName))
         val analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.emptyList<AnalyzerScriptParameter>())!!
         val bindingContext = analyzeExhaust.getBindingContext()
-        return MyDeclarations(bindingContext, getProject(), typeResolver!!)
+        return MyDeclarations(bindingContext, getProject(), typeResolver)
     }
 
     public fun doTest(filePath: String) {
@@ -98,7 +92,6 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         val fileText = JetTestUtils.doLoadFile(file)!!
 
         val constraintSystem = ConstraintSystemImpl()
-        val myDeclarations = analyzeDeclarations()
 
         val typeParameterDescriptors = LinkedHashMap<TypeParameterDescriptor, Variance>()
         val variables = parseVariables(fileText)
@@ -124,8 +117,9 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         val resultingSubstitutor = constraintSystem.getResultingSubstitutor()
         val result = StringBuilder() append "result:\n"
         for ((typeParameter, variance) in typeParameterDescriptors) {
-            val resultForTypeParameter = resultingSubstitutor.substitute(myDeclarations.getType(typeParameter.getName().asString()), variance)
-            result append "${typeParameter.getName()}=${resultForTypeParameter?.let{ Renderers.RENDER_TYPE.render(it) }}\n"
+            val parameterType = myDeclarations.getType(typeParameter.getName().asString())
+            val resultType = resultingSubstitutor.substitute(parameterType, variance)
+            result append "${typeParameter.getName()}=${resultType?.let{ Renderers.RENDER_TYPE.render(it) }}\n"
         }
 
         JetTestUtils.assertEqualsToFile(file, "${getConstraintsText(fileText)}${resultingStatus}\n\n${result}\n")
@@ -153,7 +147,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
             val kind = MyConstraintKind.valueOf(matcher.group(1)!!)
             val firstType = matcher.group(2)!!
             val secondType = matcher.group(3)!!
-            val isWeak = matcher.groupCount() == 4 && matcher.group(4) == "!"
+            val isWeak = matcher.groupCount() == 4 && matcher.group(4) == "weak"
             constraints.add(MyConstraint(kind, firstType, secondType, isWeak))
         }
         return constraints

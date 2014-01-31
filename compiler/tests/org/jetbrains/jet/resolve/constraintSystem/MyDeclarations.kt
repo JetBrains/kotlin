@@ -47,6 +47,7 @@ import com.intellij.openapi.project.Project
 import java.util.regex.Pattern
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.jet.lang.types.JetTypeImpl
+import kotlin.test.assertNotNull
 
 public class MyDeclarations(
         private val context: BindingContext,
@@ -58,10 +59,19 @@ public class MyDeclarations(
 
     {
         val functions = context.getSliceContents(BindingContext.FUNCTION)
-        functionFoo = functions.values().iterator().next()
+        functionFoo = findFunctionByName(functions.values(), "foo")
         val function = (BindingContextUtils.descriptorToDeclaration(context, functionFoo) as JetFunction)
         val fooBody = function.getBodyExpression()
         scopeToResolveTypeParameters = context.get(BindingContext.RESOLUTION_SCOPE, fooBody)!!
+    }
+
+    private fun findFunctionByName(functions: Collection<FunctionDescriptor>, name: String): FunctionDescriptor {
+        for (function in functions) {
+            if (function.getName().asString() == name) {
+                return function
+            }
+        }
+        throw AssertionError("Function ${name} is not declared")
     }
 
     fun getParameterDescriptor(name: String): TypeParameterDescriptor {
