@@ -8,6 +8,10 @@ class ClassWithGenericSuperInterface: java.util.Comparator<String> {
     override fun compare(a: String, b: String): Int = 0
 }
 
+class ExplicitJetObject: java.util.Comparator<String>, JetObject {
+    override fun compare(a: String, b: String): Int = 0
+}
+
 fun check(klass: Class<*>) {
     val interfaces = klass.getInterfaces().toList()
     val genericInterfaces = klass.getGenericInterfaces().toList()
@@ -20,5 +24,6 @@ fun box(): String {
     check(javaClass<SimpleClass>())
     check(javaClass<ClassWithNonGenericSuperInterface>())
     check(javaClass<ClassWithGenericSuperInterface>())
+    check(javaClass<ExplicitJetObject>())
     return "OK"
 }

@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.protobuf.ExtensionRegistry;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -42,6 +43,7 @@ import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -53,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -349,23 +352,38 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         sw.writeSuperclassEnd();
 
-        LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
-        sw.writeInterface();
-        sw.writeClassBegin(Type.getObjectType(JvmAbi.JET_OBJECT.getInternalName()));
-        sw.writeClassEnd();
-        sw.writeInterfaceEnd();
-        superInterfaces.add(JvmAbi.JET_OBJECT.getInternalName());
+        List<JetType> interfaceSupertypes = Lists.newArrayList();
+        FqNameUnsafe jetObjectFqName = JvmAbi.JET_OBJECT.getFqNameForClassNameWithoutDollars().toUnsafe();
+        boolean explicitJetObject = false;
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
             JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
             assert superType != null : "No supertype for class: " + myClass.getText();
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
             if (isInterface(superClassDescriptor)) {
-                sw.writeInterface();
-                Type jvmName = typeMapper.mapSupertype(superType, sw);
-                sw.writeInterfaceEnd();
-                superInterfaces.add(jvmName.getInternalName());
+                interfaceSupertypes.add(superType);
+
+                assert superClassDescriptor != null : "should be already checked by isInterface()";
+                if (jetObjectFqName.equals(DescriptorUtils.getFqName(superClassDescriptor))) {
+                    explicitJetObject = true;
+                }
             }
+        }
+
+        LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
+        if (!explicitJetObject) {
+            sw.writeInterface();
+            sw.writeClassBegin(Type.getObjectType(JvmAbi.JET_OBJECT.getInternalName()));
+            sw.writeClassEnd();
+            sw.writeInterfaceEnd();
+            superInterfaces.add(JvmAbi.JET_OBJECT.getInternalName());
+        }
+
+        for (JetType supertype : interfaceSupertypes) {
+            sw.writeInterface();
+            Type jvmName = typeMapper.mapSupertype(supertype, sw);
+            sw.writeInterfaceEnd();
+            superInterfaces.add(jvmName.getInternalName());
         }
 
         return new JvmClassSignature(classAsmType.getInternalName(), superClassAsmType.getInternalName(),
