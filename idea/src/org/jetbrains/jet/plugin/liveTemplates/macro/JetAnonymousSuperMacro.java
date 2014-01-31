@@ -87,13 +87,12 @@ public class JetAnonymousSuperMacro extends Macro {
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.getEditor().getDocument());
         if (!(psiFile instanceof JetFile)) return null;
 
-        BindingContext bc = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) psiFile)
-                .getBindingContext();
         JetExpression expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.getStartOffset()), JetExpression.class);
+        if (expression == null) return null;
+
+        BindingContext bc = AnalyzerFacadeWithCache.getContextForElement(expression);
         JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, expression);
-        if (scope == null) {
-            return null;
-        }
+        if (scope == null) return null;
 
         List<PsiNamedElement> result = new ArrayList<PsiNamedElement>();
 
