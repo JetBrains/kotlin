@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -165,6 +165,10 @@ public class JetRefactoringUtil {
             @NotNull List<String> superClasses,
             @NotNull String actionStringKey
     ) {
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            return ContainerUtil.newArrayList(overriddenElementsToDescriptor.keySet());
+        }
+
         String superClassesStr = "\n" + StringUtil.join(superClasses, "");
         String message = JetBundle.message(
                 "x.overrides.y.in.class.list",
@@ -174,9 +178,7 @@ public class JetRefactoringUtil {
                 JetBundle.message(actionStringKey)
         );
 
-        int exitCode = Messages.showYesNoCancelDialog(
-                declaration.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
-        );
+        int exitCode = Messages.showYesNoCancelDialog(declaration.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon());
         switch (exitCode) {
             case Messages.YES:
                 return ContainerUtil.newArrayList(overriddenElementsToDescriptor.keySet());

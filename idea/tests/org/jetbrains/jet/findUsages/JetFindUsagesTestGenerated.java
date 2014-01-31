@@ -343,6 +343,11 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinTopLevelMethodUsagesNoImport.0.kt");
             }
             
+            @TestMetadata("usagesOfBaseForFunction.0.kt")
+            public void testUsagesOfBaseForFunction() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findFunctionUsages/usagesOfBaseForFunction.0.kt");
+            }
+            
         }
         
         @TestMetadata("idea/testData/findUsages/kotlin/findObjectUsages")
