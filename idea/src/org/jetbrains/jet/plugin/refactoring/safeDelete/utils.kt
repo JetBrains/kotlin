@@ -49,18 +49,16 @@ public fun PsiElement.canDeleteElement(): Boolean {
 }
 
 fun PsiElement.removeOverrideModifier() {
-    val modifier = when (this) {
+    when (this) {
         is JetNamedFunction, is JetProperty -> {
-            (this as JetModifierListOwner).getModifierList()?.getModifier(JetTokens.OVERRIDE_KEYWORD)
+            (this as JetModifierListOwner).getModifierList()?.getModifier(JetTokens.OVERRIDE_KEYWORD)?.delete()
         }
         is PsiMethod -> {
             getModifierList().getAnnotations().find {
                 annotation -> annotation.getQualifiedName() == "java.lang.Override"
-            }
+            }?.delete()
         }
-        else -> null
     }
-    modifier?.let { modifier -> modifier.delete() }
 }
 
 fun PsiMethod.cleanUpOverrides() {
