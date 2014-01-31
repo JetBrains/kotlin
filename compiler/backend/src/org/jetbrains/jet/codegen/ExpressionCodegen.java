@@ -1368,10 +1368,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 ClassDescriptor captureThis = closure.getCaptureThis();
                 if (captureThis != null) {
                     StackValue thisOrOuter = generateThisOrOuter(captureThis, false);
-                    if (inliner.shouldPutValue(OBJECT_TYPE, thisOrOuter, context, null)) {
-                        thisOrOuter.put(OBJECT_TYPE, v);
+
+                    assert !isPrimitive(thisOrOuter.type) : "This or outer should be non primitive: " + thisOrOuter.type;
+                    if (inliner.shouldPutValue(thisOrOuter.type, thisOrOuter, context, null)) {
+                        thisOrOuter.put(thisOrOuter.type, v);
                     }
-                    inliner.putCapturedInLocal(OBJECT_TYPE, thisOrOuter, null, paramIndex++);
+                    inliner.putCapturedInLocal(thisOrOuter.type, thisOrOuter, null, paramIndex++);
                 }
 
                 JetType captureReceiver = closure.getCaptureReceiverType();

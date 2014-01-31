@@ -52,6 +52,7 @@ import java.io.StringWriter;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 
 public class InlineCodegen implements ParentCodegenAware, Inliner {
@@ -236,13 +237,13 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
 
     @Override
-    public void putInLocal(Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor) {
+    public void putInLocal(@NotNull Type type, @Nullable StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor) {
         putCapturedInLocal(type, stackValue, valueParameterDescriptor, -1);
     }
 
     @Override
     public void putCapturedInLocal(
-            Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor, int index
+            @NotNull Type type, @Nullable StackValue stackValue, @Nullable ValueParameterDescriptor valueParameterDescriptor, int index
     ) {
         if (!disabled && notSeparateInline && Type.VOID_TYPE != type) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
@@ -261,7 +262,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
     }
 
     @Override
-    public boolean shouldPutValue(Type type, StackValue stackValue, MethodContext context, ValueParameterDescriptor descriptor) {
+    public boolean shouldPutValue(@NotNull Type type, @Nullable StackValue stackValue, MethodContext context, ValueParameterDescriptor descriptor) {
         //boolean isInline = true/*context.isInlineFunction() || context.getParentContext() instanceof ClosureContext*/;
         //if (stackValue != null && isInline && stackValue instanceof StackValue.Local) {
         //    if (isInvokeOnInlinable(type.getClassName(), "invoke") && (descriptor == null || !InlineUtil.hasNoinlineAnnotation(descriptor))) {
@@ -269,7 +270,15 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         //        return false;
         //    }
         //}
-        boolean shouldPut = false == (stackValue != null && stackValue instanceof StackValue.Local);
+
+        //remap only inline functions (and maybe non primitives)
+        //TODO - clean asserion and remapping logic
+        if (stackValue == null || isPrimitive(type) ^ isPrimitive(stackValue.type)) {
+            //don't remap boxing/unboxing primitives - lost identity and perfomance
+            return true;
+        }
+
+        boolean shouldPut = !(stackValue != null && stackValue instanceof StackValue.Local);
         if (shouldPut) {
             //we could recapture field of anonymous objects cause they couldn't change
             boolean isInlineClosure = codegen.getContext().isInlineClosure();
