@@ -37,7 +37,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.Map;
 
-import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject;
+import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.getNameForAnnotatedObjectWithOverrides;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMangledName;
@@ -263,7 +263,7 @@ public final class StaticContext {
                         return null;
                     }
 
-                    String nameFromAnnotation = getNameForAnnotatedObject(propertyDescriptor);
+                    String nameFromAnnotation = getNameForAnnotatedObjectWithOverrides(propertyDescriptor);
                     if (nameFromAnnotation != null) {
                         return declarePropertyOrPropertyAccessorName(descriptor, nameFromAnnotation, false);
                     }
@@ -297,7 +297,7 @@ public final class StaticContext {
                         return null;
                     }
 
-                    String name = getNameForAnnotatedObject(descriptor);
+                    String name = getNameForAnnotatedObjectWithOverrides(descriptor);
                     if (name != null) return getEnclosingScope(descriptor).declareName(name);
                     return null;
                 }

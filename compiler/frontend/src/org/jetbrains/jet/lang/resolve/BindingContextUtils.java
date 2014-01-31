@@ -339,12 +339,13 @@ public class BindingContextUtils {
     }
 
     @NotNull
-    public static Set<FunctionDescriptor> getAllOverriddenDeclarations(@NotNull FunctionDescriptor functionDescriptor) {
-        Set<FunctionDescriptor> result = Sets.newHashSet();
-        for (FunctionDescriptor overriddenDeclaration : functionDescriptor.getOverriddenDescriptors()) {
+    public static <T extends CallableMemberDescriptor> Set<T> getAllOverriddenDeclarations(@NotNull T memberDescriptor) {
+        Set<T> result = Sets.newHashSet();
+        for (CallableMemberDescriptor overriddenDeclaration : memberDescriptor.getOverriddenDescriptors()) {
             CallableMemberDescriptor.Kind kind = overriddenDeclaration.getKind();
             if (kind == DECLARATION) {
-                result.add(overriddenDeclaration);
+                //noinspection unchecked
+                result.add((T) overriddenDeclaration);
             }
             else if (kind == DELEGATION || kind == FAKE_OVERRIDE || kind == SYNTHESIZED) {
                 //do nothing
@@ -352,7 +353,8 @@ public class BindingContextUtils {
             else {
                 throw new AssertionError("Unexpected callable kind " + kind);
             }
-            result.addAll(getAllOverriddenDeclarations(overriddenDeclaration));
+            //noinspection unchecked
+            result.addAll(getAllOverriddenDeclarations((T) overriddenDeclaration));
         }
         return result;
     }

@@ -7,6 +7,7 @@ fun internal_foo(i: Int): Int = 2
 fun internal_boo(i: Int): Int = 2
 fun internal_boo(s: String): Int = 3
 fun internal_boo(): Int = 1
+native fun internal_boo(a: Array<Int>) = "should be ingnored"
 
 val internal_f = { internal_foo() + internal_foo(1) }
 val internal_b = { internal_boo() + internal_boo(1) }
@@ -19,6 +20,7 @@ public fun public_foo(i: Int): Int = 2
 public fun public_boo(i: Int): Int = 2
 public fun public_boo(s: String): Int = 3
 public fun public_boo(): Int = 1
+native public fun public_boo(a: Array<Int>): String = "should be ingnored"
 
 val public_f = { public_foo() + public_foo(1) }
 val public_b = { public_boo() + public_boo(1) }
@@ -28,6 +30,7 @@ native private fun private_foo(a: Array<Int>): String = "should be ingnored"
 private fun private_foo(): Int = 1
 private fun private_foo(i: Int): Int = 2
 
+native private fun private_boo(a: Array<Int>): String = "should be ingnored"
 private fun private_boo(i: Int): Int = 2
 private fun private_boo(s: String): Int = 3
 private fun private_boo(): Int = 1
@@ -44,6 +47,7 @@ fun mixed_foo(i: Int): Int = 2
 
 fun mixed_boo(i: Int): Int = 2
 private fun mixed_boo(s: String, i: Int): Int = 4
+native fun mixed_boo(a: Array<Int>) = "should be ingnored"
 public fun mixed_boo(s: String): Int = 3
 fun mixed_boo(): Int = 1
 

@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.utils;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
@@ -179,7 +179,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    private static String getSimpleMangledName(@NotNull FunctionDescriptor descriptor) {
+    private static String getSimpleMangledName(@NotNull final FunctionDescriptor descriptor) {
         DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
 
         JetScope jetScope = null;
@@ -193,11 +193,24 @@ public final class TranslationUtils {
         int counter = 0;
 
         if (jetScope != null) {
-            Collection<FunctionDescriptor> functions = jetScope.getFunctions(descriptor.getName());
-            List<FunctionDescriptor> overloadedFunctions = ContainerUtil.filter(functions, new Condition<FunctionDescriptor>() {
+            Collection<DeclarationDescriptor> declarations = jetScope.getAllDescriptors();
+            List<FunctionDescriptor> overloadedFunctions = ContainerUtil.mapNotNull(declarations, new Function<DeclarationDescriptor, FunctionDescriptor>() {
                 @Override
-                public boolean value(FunctionDescriptor descriptor) {
-                    return !needsStableMangling(descriptor) && !AnnotationsUtils.isNativeObject(descriptor);
+                public FunctionDescriptor fun(DeclarationDescriptor declarationDescriptor) {
+                    if (!(declarationDescriptor instanceof FunctionDescriptor)) return null;
+
+                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) declarationDescriptor;
+
+                    String name = AnnotationsUtils.getNameForAnnotatedObjectWithOverrides(functionDescriptor);
+
+                    if (name == null) {
+                        // when name == null it's mean that it's not native
+                        if (needsStableMangling(functionDescriptor)) return null;
+
+                        name = declarationDescriptor.getName().asString();
+                    }
+
+                    return descriptor.getName().asString().equals(name) ? functionDescriptor : null;
                 }
             });
 
@@ -369,6 +382,14 @@ public final class TranslationUtils {
     private static class OverloadedFunctionComparator implements Comparator<FunctionDescriptor> {
         @Override
         public int compare(@NotNull FunctionDescriptor a, @NotNull FunctionDescriptor b) {
+            // native functions first
+            if (isNativeOrOverrideNative(a)) {
+                if (!isNativeOrOverrideNative(b)) return -1;
+            }
+            else if (isNativeOrOverrideNative(b)) {
+                return 1;
+            }
+
             // be visibility
             // Actually "internal" > "private", but we want to have less number for "internal", so compare b with a instead of a with b.
             Integer result = Visibilities.compare(b.getVisibility(), a.getVisibility());
@@ -389,6 +410,14 @@ public final class TranslationUtils {
 
         private static int arity(FunctionDescriptor descriptor) {
             return descriptor.getValueParameters().size() + (descriptor.getReceiverParameter() == null ? 0 : 1);
+        }
+
+        private static boolean isNativeOrOverrideNative(FunctionDescriptor descriptor) {
+            Set<FunctionDescriptor> declarations = BindingContextUtils.getAllOverriddenDeclarations(descriptor);
+            for (FunctionDescriptor memberDescriptor : declarations) {
+                if (AnnotationsUtils.isNativeObject(memberDescriptor)) return true;
+            }
+            return false;
         }
     }
 }
