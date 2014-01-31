@@ -35,6 +35,9 @@ import com.google.dart.compiler.backend.js.ast.JsNameRef
 import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.k2js.translate.context.Namer
 import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
+import org.jetbrains.k2js.translate.utils.TranslationUtils
+import com.google.dart.compiler.backend.js.ast.JsLiteral
+import com.google.dart.compiler.backend.js.ast.JsConditional
 
 
 trait CallInfo {
@@ -43,6 +46,8 @@ trait CallInfo {
 
     val thisObject: JsExpression?
     val receiverObject: JsExpression?
+
+    fun constructSafeCallIsNeeded(result: JsExpression): JsExpression
 
     fun toString(): String {
         val location = DiagnosticUtils.atLocation(context.bindingContext(), callableDescriptor)
@@ -110,10 +115,37 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
         }
     }
 
+    var thisObject = getThisObject()
+    var receiverObject = getReceiverObject()
+    var notNullConditional: JsConditional? = null
+
+    if (resolvedCall.isSafeCall()) {
+        when (resolvedCall.getExplicitReceiverKind()) {
+            BOTH_RECEIVERS, RECEIVER_ARGUMENT -> {
+                notNullConditional = TranslationUtils.notNullConditional(receiverObject!!, JsLiteral.NULL, this)
+                receiverObject = notNullConditional!!.getThenExpression()
+            }
+            else -> {
+                notNullConditional = TranslationUtils.notNullConditional(thisObject!!, JsLiteral.NULL, this)
+                thisObject = notNullConditional!!.getThenExpression()
+            }
+        }
+    }
     return object : CallInfo {
         override val context: TranslationContext = this@createCallInfo
         override val resolvedCall: ResolvedCall<out CallableDescriptor> = resolvedCall
-        override val thisObject: JsExpression? = getThisObject()
-        override val receiverObject: JsExpression? = getReceiverObject()
+        override val thisObject: JsExpression? = thisObject
+        override val receiverObject: JsExpression? = receiverObject
+
+        val notNullConditionalForSafeCall: JsConditional? = notNullConditional
+
+        override fun constructSafeCallIsNeeded(result: JsExpression): JsExpression {
+            if (notNullConditionalForSafeCall == null) {
+                return result
+            } else {
+                notNullConditionalForSafeCall.setThenExpression(result)
+                return notNullConditionalForSafeCall
+            }
+        }
     };
 }

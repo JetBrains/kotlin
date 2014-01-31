@@ -44,19 +44,6 @@ fun CallInfo.isSuperInvocation(): Boolean {
     return thisObject is ExpressionReceiver && ((thisObject as ExpressionReceiver)).getExpression() is JetSuperExpression
 }
 
-fun CallInfo.constructSafeCallIsNeeded(result: JsExpression): JsExpression {
-    if (!resolvedCall.isSafeCall())
-        return result
-
-    val nullableReceiverForSafeCall = when (resolvedCall.getExplicitReceiverKind()) {
-        BOTH_RECEIVERS, RECEIVER_ARGUMENT -> receiverObject
-        else -> thisObject
-    }
-    val expression = TranslationUtils.notNullConditional(nullableReceiverForSafeCall!!, JsLiteral.NULL, context)
-    expression.setThenExpression(result)
-    return expression
-}
-
 val VariableAccessInfo.variableDescriptor: VariableDescriptor
     get() = callableDescriptor as VariableDescriptor
 

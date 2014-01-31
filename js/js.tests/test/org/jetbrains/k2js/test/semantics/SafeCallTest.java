@@ -39,4 +39,12 @@ public final class SafeCallTest extends SingleFileTranslationTest {
     public void testSafeCallReturnsNullIfFails() throws Exception {
         fooBoxTest();
     }
+
+    public void testSafeCallAndSideEffect() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testSafeCallAndIntrinsic() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

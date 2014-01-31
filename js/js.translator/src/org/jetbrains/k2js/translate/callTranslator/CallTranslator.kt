@@ -143,10 +143,18 @@ trait DelegateIntrinsic<I : CallInfo> {
     fun I.getArgs(): List<JsExpression>
 
     fun intrinsic(callInfo: I): JsExpression? {
-        return if (callInfo.canBeApply())
-            callInfo.getIntrinsic()
-        else
-            null
+        val result =
+                if (callInfo.canBeApply()) {
+                    callInfo.getIntrinsic()
+                } else {
+                    null
+                }
+
+        if (result != null) {
+            return callInfo.constructSafeCallIsNeeded(result)
+        } else {
+            return null
+        }
     }
 
     private fun I.getIntrinsic(): JsExpression? {
