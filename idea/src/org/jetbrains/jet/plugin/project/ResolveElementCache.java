@@ -62,7 +62,8 @@ public class ResolveElementCache {
                             @Nullable
                             @Override
                             public Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> compute() {
-                                LazyResolveStorageManager manager = ResolveElementCache.this.resolveSession.getStorageManager();
+                                ResolveSession resolveSession = ResolveElementCache.this.resolveSession;
+                                LazyResolveStorageManager manager = resolveSession.getStorageManager();
                                 MemoizedFunctionToNotNull<JetElement, BindingContext> elementsCacheFunction =
                                         manager.createWeaklyRetainedMemoizedFunction(new Function1<JetElement, BindingContext>() {
                                             @Override
@@ -71,7 +72,9 @@ public class ResolveElementCache {
                                             }
                                         });
 
-                                return Result.create(elementsCacheFunction, PsiModificationTracker.MODIFICATION_COUNT);
+                                return Result.create(elementsCacheFunction,
+                                                     PsiModificationTracker.MODIFICATION_COUNT,
+                                                     resolveSession.getExceptionTracker());
                             }
                         },
                         false);
