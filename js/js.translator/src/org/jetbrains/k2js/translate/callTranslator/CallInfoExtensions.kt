@@ -28,6 +28,7 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import org.jetbrains.k2js.translate.utils.TranslationUtils
+import org.jetbrains.k2js.translate.context.TranslationContext
 
 
 val CallInfo.callableDescriptor: CallableDescriptor
@@ -54,7 +55,7 @@ fun VariableAccessInfo.isGetAccess(): Boolean = value == null
 
 fun VariableAccessInfo.getAccessFunctionName(): String = Namer.getNameForAccessor(variableName.getIdent()!!, isGetAccess(), false)
 
-fun VariableAccessInfo.constructAccessExpression(ref: JsNameRef): JsExpression {
+fun VariableAccessInfo.constructAccessExpression(ref: JsExpression): JsExpression {
     if (isGetAccess()) {
         return ref
     } else {
@@ -66,3 +67,12 @@ val FunctionCallInfo.functionName: JsName
     get() = context.getNameForDescriptor(callableDescriptor)
 
 fun FunctionCallInfo.hasSpreadOperator(): Boolean = argumentsInfo.isHasSpreadOperator()
+
+fun TranslationContext.aliasOrValue(callableDescriptor: CallableDescriptor, value: (CallableDescriptor) -> JsExpression): JsExpression {
+    val alias = getAliasForDescriptor(callableDescriptor)
+    if (alias != null) {
+        return alias
+    } else {
+        return value(callableDescriptor)
+    }
+}

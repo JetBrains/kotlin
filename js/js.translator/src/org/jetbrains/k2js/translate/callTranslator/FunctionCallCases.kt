@@ -82,9 +82,12 @@ object DefaultFunctionCallCase : FunctionCallCase {
         if (isNative) {
             return JsInvocation(JsNameRef(functionName), argumentsInfo.getTranslateArguments())
         }
-        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
-        val functionCall = JsNameRef(functionName, qualifierForFunction)
-        return JsInvocation(functionCall, argumentsInfo.getTranslateArguments())
+
+        val functionRef = context.aliasOrValue(callableDescriptor) {
+            val qualifierForFunction = context.getQualifierForDescriptor(it)
+            JsNameRef(functionName, qualifierForFunction)
+        }
+        return JsInvocation(functionRef, argumentsInfo.getTranslateArguments())
     }
 
     override fun FunctionCallInfo.noReceivers(): JsExpression {
@@ -102,9 +105,12 @@ object DefaultFunctionCallCase : FunctionCallCase {
         if (isNative()) {
             return JsInvocation(JsNameRef(functionName, receiverObject), argumentsInfo.getTranslateArguments())
         }
-        val qualifierForFunction = context.getQualifierForDescriptor(callableDescriptor)
-        val functionCall = JsNameRef(functionName, qualifierForFunction) // TODO: remake to call
-        return JsInvocation(functionCall, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
+
+        val functionRef = context.aliasOrValue(callableDescriptor) {
+            val qualifierForFunction = context.getQualifierForDescriptor(it)
+            JsNameRef(functionName, qualifierForFunction) // TODO: remake to call
+        }
+        return JsInvocation(functionRef, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }
 
     override fun FunctionCallInfo.bothReceivers(): JsExpression { // TODO: think about crazy case: spreadOperator + native
@@ -152,7 +158,11 @@ object ConstructorCallCase : FunctionCallCase {
         if (isNative()) {
             return JsNew(JsNameRef(functionName), argumentsInfo.getTranslateArguments())
         }
-        return JsNew(context.getQualifiedReference(callableDescriptor), argumentsInfo.getTranslateArguments())
+
+        val functionRef = context.aliasOrValue(callableDescriptor) {
+            context.getQualifiedReference(it)
+        }
+        return JsNew(functionRef, argumentsInfo.getTranslateArguments())
     }
 }
 
@@ -167,7 +177,6 @@ object ExpressionAsFunctionDescriptorIntrinsic : FunctionCallCase {
         }
         val funRef = Translation.translateAsExpression((callableDescriptor as ExpressionAsFunctionDescriptor).getExpression()!!, context)
         return JsInvocation(funRef, argumentsInfo.getTranslateArguments())
-
     }
 }
 

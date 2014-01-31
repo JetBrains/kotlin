@@ -45,7 +45,10 @@ object NativeVariableAccessCase : VariableAccessCase {
 
 object DefaultVariableAccessCase : VariableAccessCase {
     override fun VariableAccessInfo.noReceivers(): JsExpression {
-        return constructAccessExpression(context.getQualifiedReference(variableDescriptor))
+        val functionRef = context.aliasOrValue(callableDescriptor) {
+            context.getQualifiedReference(variableDescriptor)
+        }
+        return constructAccessExpression(functionRef)
     }
 
     override fun VariableAccessInfo.thisObject(): JsExpression {
@@ -53,11 +56,13 @@ object DefaultVariableAccessCase : VariableAccessCase {
     }
 
     override fun VariableAccessInfo.receiverArgument(): JsExpression {
-        val funRef = JsNameRef(getAccessFunctionName(), context.getQualifierForDescriptor(variableDescriptor))
+        val functionRef = context.aliasOrValue(callableDescriptor) {
+            JsNameRef(getAccessFunctionName(), context.getQualifierForDescriptor(variableDescriptor))
+        }
         return if (isGetAccess()) {
-            JsInvocation(funRef, receiverObject!!)
+            JsInvocation(functionRef, receiverObject!!)
         } else {
-            JsInvocation(funRef, receiverObject!!, value!!)
+            JsInvocation(functionRef, receiverObject!!, value!!)
         }
     }
 
