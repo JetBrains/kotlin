@@ -17,7 +17,9 @@
 package org.jetbrains.jet.lang.resolve.calls.autocasts;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -28,9 +30,11 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.AUTOCAST_IMPOSSIBLE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
@@ -96,20 +100,28 @@ public class AutoCastUtils {
             @NotNull ResolutionContext context
     ) {
         List<JetType> autoCastTypes = getAutoCastVariants(receiverArgument, context);
-        return isSubTypeByAutoCast(receiverParameterType, autoCastTypes);
+        return getAutoCastSubType(receiverParameterType, autoCastTypes) != null;
     }
 
-    private static boolean isSubTypeByAutoCast(
+    @Nullable
+    private static JetType getAutoCastSubType(
             @NotNull JetType receiverParameterType,
             @NotNull List<JetType> autoCastTypes
     ) {
+        Set<JetType> subTypes = Sets.newHashSet();
         for (JetType autoCastType : autoCastTypes) {
             JetType effectiveAutoCastType = TypeUtils.makeNotNullable(autoCastType);
             if (ArgumentTypeResolver.isSubtypeOfForArgumentType(effectiveAutoCastType, receiverParameterType)) {
-                return true;
+                subTypes.add(autoCastType);
             }
         }
-        return false;
+        if (subTypes.isEmpty()) return null;
+
+        JetType intersection = TypeUtils.intersect(JetTypeChecker.INSTANCE, subTypes);
+        if (intersection == null || !intersection.getConstructor().isDenotable()) {
+            return receiverParameterType;
+        }
+        return intersection;
     }
 
     public static boolean recordAutoCastIfNecessary(
@@ -125,14 +137,14 @@ public class AutoCastUtils {
 
         List<JetType> autoCastTypesExcludingReceiver = getAutoCastVariantsExcludingReceiver(
                 context.trace.getBindingContext(), context.dataFlowInfo, receiver);
-        boolean autoCast = isSubTypeByAutoCast(receiverType, autoCastTypesExcludingReceiver);
-        if (autoCast) {
-            JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
-            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context.trace.getBindingContext());
+        JetType autoCastSubType = getAutoCastSubType(receiverType, autoCastTypesExcludingReceiver);
+        if (autoCastSubType == null) return false;
 
-            recordCastOrError(expression, receiverType, context.trace, dataFlowValue.isStableIdentifier(), true);
-        }
-        return autoCast;
+        JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
+        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context.trace.getBindingContext());
+
+        recordCastOrError(expression, autoCastSubType, context.trace, dataFlowValue.isStableIdentifier(), true);
+        return true;
     }
 
     public static void recordAutoCastToNotNullableType(@NotNull ReceiverValue receiver, @NotNull BindingTrace trace) {
