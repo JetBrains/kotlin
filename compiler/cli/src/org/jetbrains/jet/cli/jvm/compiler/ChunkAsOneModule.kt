@@ -1,6 +1,6 @@
 package org.jetbrains.jet.cli.jvm.compiler
 
-import jet.modules.Module
+import kotlin.modules.Module
 
 class ChunkAsOneModule(private val chunk: ModuleChunk) : Module {
     override fun getModuleName(): String = "chunk" + chunk.getModules().map { it.getModuleName() }.toString()

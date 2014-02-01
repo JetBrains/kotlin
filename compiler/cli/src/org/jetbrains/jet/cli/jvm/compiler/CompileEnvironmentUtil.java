@@ -22,8 +22,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import jet.modules.AllModules;
-import jet.modules.Module;
+import kotlin.modules.AllModules;
+import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFile;
@@ -42,9 +42,9 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -117,7 +117,7 @@ public class CompileEnvironmentUtil {
                                                       loadModuleScriptText(moduleScriptFile));
             }
 
-            modules = runDefineModules(paths, moduleScriptFile, generationState.getFactory());
+            modules = runDefineModules(paths, generationState.getFactory());
         }
         finally {
             Disposer.dispose(disposable);
@@ -133,7 +133,7 @@ public class CompileEnvironmentUtil {
         return modules;
     }
 
-    private static List<Module> runDefineModules(KotlinPaths paths, String moduleFile, ClassFileFactory factory) {
+    private static List<Module> runDefineModules(KotlinPaths paths, ClassFileFactory factory) {
         File stdlibJar = paths.getRuntimePath();
         GeneratedClassLoader loader;
         if (stdlibJar.exists()) {
@@ -149,17 +149,14 @@ public class CompileEnvironmentUtil {
             loader = new GeneratedClassLoader(factory, KotlinToJVMBytecodeCompiler.class.getClassLoader());
         }
         try {
-            Class packageClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
+            Class<?> packageClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
             Method method = packageClass.getDeclaredMethod("project");
-            if (method == null) {
-                throw new CompileEnvironmentException("Module script " + moduleFile + " must define project() function");
-            }
 
             method.setAccessible(true);
             method.invoke(null);
 
-            ArrayList<Module> answer = new ArrayList<Module>(AllModules.modules.get());
-            AllModules.modules.get().clear();
+            ArrayList<Module> answer = new ArrayList<Module>(AllModules.instance$.get());
+            AllModules.instance$.get().clear();
             return answer;
         }
         catch (Exception e) {
@@ -276,26 +273,31 @@ public class CompileEnvironmentUtil {
             this.description = description;
         }
 
+        @NotNull
         @Override
         public String getModuleName() {
             return description.getModuleName();
         }
 
+        @NotNull
         @Override
         public String getOutputDirectory() {
             return description.getOutputDir();
         }
 
+        @NotNull
         @Override
         public List<String> getSourceFiles() {
             return description.getSourceFiles();
         }
 
+        @NotNull
         @Override
         public List<String> getClasspathRoots() {
             return description.getClasspathRoots();
         }
 
+        @NotNull
         @Override
         public List<String> getAnnotationsRoots() {
             return description.getAnnotationsRoots();
