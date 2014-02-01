@@ -1,12 +1,12 @@
 package kotlin.modules
 
-import java.util.*
-import jet.modules.*
+import java.util.ArrayList
 
-public fun module(name: String, outputDir: String, callback:  ModuleBuilder.() -> Unit) {
+public fun module(name: String, outputDir: String, callback: ModuleBuilder.() -> Unit) {
     val builder = ModuleBuilder(name, outputDir)
     builder.callback()
-    AllModules.modules.get()?.add(builder)
+    jet.modules.AllModules.modules.get()?.add(builder)
+    kotlin.modules.AllModules.get()?.add(builder)
 }
 
 class SourcesBuilder(val parent: ModuleBuilder) {
@@ -27,7 +27,7 @@ class AnnotationsPathBuilder(val parent: ModuleBuilder) {
     }
 }
 
-open class ModuleBuilder(val name: String, val outputDir: String): Module {
+open class ModuleBuilder(val name: String, val outputDir: String): jet.modules.Module, kotlin.modules.Module {
     // http://youtrack.jetbrains.net/issue/KT-904
     private val sourceFiles0 = ArrayList<String>()
     private val classpathRoots0 = ArrayList<String>()
