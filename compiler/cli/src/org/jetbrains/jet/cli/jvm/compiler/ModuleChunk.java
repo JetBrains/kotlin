@@ -17,7 +17,7 @@
 package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.google.common.collect.Maps;
-import jet.modules.Module;
+import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

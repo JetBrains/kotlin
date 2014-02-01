@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * This interface duplicates {@link jet.modules.Module}, because cli-common should not depend on kotlin-runtime.jar
+ * This interface duplicates {@link kotlin.modules.Module}, because cli-common should not depend on kotlin-runtime.jar
  */
 public interface ModuleDescription {
 
