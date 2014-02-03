@@ -1,9 +1,11 @@
-fun main(args : Array<String>) {
+package foo
+
+fun box(): String {
   val a = 10
   val b = 3
   when {
-    a > b -> println("a")
-    b > a  -> println("b")
-    else -> println("Unknown")
+    a > b -> return "OK"
+    b > a  -> return "b"
+    else -> return "else"
   }
 }

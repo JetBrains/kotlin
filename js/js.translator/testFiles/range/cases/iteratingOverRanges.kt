@@ -35,7 +35,3 @@ fun box() : Boolean {
     return true
 
 }
-
-fun main() {
-    box()
-}

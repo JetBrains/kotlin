@@ -74,8 +74,8 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
         }
     }
 
-    public void testKT1665() throws Exception {
-        checkOutput("kt1665.kt", "a", "");
+    public void testKt1665() throws Exception {
+        checkFooBoxIsOk();
     }
 
     public void testWhenWithoutExpression() throws Exception {
