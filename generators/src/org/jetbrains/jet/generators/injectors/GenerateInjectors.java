@@ -183,7 +183,7 @@ public class GenerateInjectors {
 
         // Parameters
         generator.addPublicParameter(Project.class);
-        generator.addPublicParameter(TopDownAnalysisParameters.class);
+        generator.addParameter(TopDownAnalysisParameters.class);
         generator.addPublicParameter(BindingTrace.class);
         generator.addPublicParameter(ModuleDescriptorImpl.class);
         return generator;
@@ -261,7 +261,7 @@ public class GenerateInjectors {
 
         // Parameters
         generator.addPublicParameter(Project.class);
-        generator.addPublicParameter(TopDownAnalysisParameters.class);
+        generator.addParameter(TopDownAnalysisParameters.class);
         generator.addPublicParameter(BindingTrace.class);
         generator.addPublicParameter(BodiesResolveContext.class);
         generator.addParameter(ModuleDescriptor.class);

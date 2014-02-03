@@ -270,10 +270,6 @@ public class InjectorForTopDownAnalyzerForJs {
         return this.project;
     }
     
-    public TopDownAnalysisParameters getTopDownAnalysisParameters() {
-        return this.topDownAnalysisParameters;
-    }
-    
     public BindingTrace getBindingTrace() {
         return this.bindingTrace;
     }
