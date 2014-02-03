@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
@@ -176,9 +175,11 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         @NotNull
         @Override
-        public Collection<ResolvedCallWithTrace<FunctionDescriptor>> transformCall(@NotNull CallCandidateResolutionContext<CallableDescriptor> context,
-                @NotNull CallResolver callResolver, @NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
-
+        public Collection<ResolvedCallWithTrace<FunctionDescriptor>> transformCall(
+                @NotNull CallCandidateResolutionContext<CallableDescriptor> context,
+                @NotNull CallResolver callResolver,
+                @NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task
+        ) {
             CallableDescriptor descriptor = context.candidateCall.getCandidateDescriptor();
             if (descriptor instanceof FunctionDescriptor) {
                 return super.transformCall(context, callResolver, task);
@@ -192,7 +193,11 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
             final ResolvedCallWithTrace<VariableDescriptor> variableResolvedCall = (ResolvedCallWithTrace)context.candidateCall;
 
-            Call functionCall = new CallForImplicitInvoke(context.explicitExtensionReceiverForInvoke, task, returnType);
+            JetExpression calleeExpression = task.call.getCalleeExpression();
+            if (calleeExpression == null) return Collections.emptyList();
+
+            ExpressionReceiver variableReceiver = new ExpressionReceiver(calleeExpression, variableResolvedCall.getResultingDescriptor().getType());
+            Call functionCall = new CallForImplicitInvoke(context.explicitExtensionReceiverForInvoke, variableReceiver, task.call);
 
             DelegatingBindingTrace variableCallTrace = context.candidateCall.getTrace();
             BasicCallResolutionContext basicCallResolutionContext = BasicCallResolutionContext.create(
@@ -200,8 +205,8 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                     functionCall, context.checkArguments, context.dataFlowInfoForArguments);
 
             // 'invoke' call resolve
-            OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenName(
-                    basicCallResolutionContext, task.reference, Name.identifier("invoke"), false);
+            OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallForInvoke(
+                    basicCallResolutionContext, context.tracing); //todo context.tracing is incorrect
             Collection<ResolvedCallWithTrace<FunctionDescriptor>> calls = ((OverloadResolutionResultsImpl<FunctionDescriptor>)results).getResultingCalls();
 
             return Collections2.transform(calls, new Function<ResolvedCallWithTrace<FunctionDescriptor>, ResolvedCallWithTrace<FunctionDescriptor>>() {
@@ -219,14 +224,18 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
         final ExpressionReceiver calleeExpressionAsThisObject;
         final JetSimpleNameExpression fakeInvokeExpression;
 
-        private CallForImplicitInvoke(ReceiverValue explicitExtensionReceiver,
-                        ResolutionTask<CallableDescriptor, FunctionDescriptor> task, JetType returnType) {
-            super(task.call);
-            this.outerCall = task.call;
+        private CallForImplicitInvoke(
+                @NotNull ReceiverValue explicitExtensionReceiver,
+                @NotNull ExpressionReceiver calleeExpressionAsThisObject,
+                @NotNull Call call
+        ) {
+            super(call);
+            this.outerCall = call;
             this.explicitExtensionReceiver = explicitExtensionReceiver;
-            this.calleeExpressionAsThisObject = new ExpressionReceiver(task.reference, returnType);
-            this.fakeInvokeExpression = (JetSimpleNameExpression) JetPsiFactory.createExpression(task.call.getCallElement().getProject(), "invoke");
+            this.calleeExpressionAsThisObject = calleeExpressionAsThisObject;
+            this.fakeInvokeExpression = (JetSimpleNameExpression) JetPsiFactory.createExpression(call.getCallElement().getProject(), "invoke");
         }
+
         @NotNull
         @Override
         public ReceiverValue getExplicitReceiver() {

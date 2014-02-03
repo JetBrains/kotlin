@@ -72,13 +72,11 @@ public class ControlStructureTypingUtils {
     ) {
         SimpleFunctionDescriptorImpl function = createFunctionDescriptorForSpecialConstruction(
                 constructionName.toUpperCase(), argumentNames, isArgumentNullable);
-        JetReferenceExpression reference = JetPsiFactory.createSimpleName(
-                expressionTypingServices.getProject(), "fake" + constructionName + "Call");
         TracingStrategy tracing = createTracingForSpecialConstruction(call, constructionName);
         ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(function, null);
         CallResolver callResolver = expressionTypingServices.getCallResolver();
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
-                call, tracing, reference, context, resolutionCandidate, dataFlowInfoForArguments);
+                call, tracing, context, resolutionCandidate, dataFlowInfoForArguments);
         assert results.isSingleResult() : "Not single result after resolving one known candidate";
         return results.getResultingCall();
     }
@@ -242,6 +240,7 @@ public class ControlStructureTypingUtils {
         };
     }
 
+    @NotNull
     /*package*/ static TracingStrategy createTracingForSpecialConstruction(
             final @NotNull Call call,
             final @NotNull String constructionName

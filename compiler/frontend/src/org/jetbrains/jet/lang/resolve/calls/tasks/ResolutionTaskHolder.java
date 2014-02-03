@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls.tasks;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -31,7 +30,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
-    private final JetReferenceExpression reference;
     private final BasicCallResolutionContext basicCallResolutionContext;
     private final PriorityProvider<ResolutionCandidate<D>> priorityProvider;
     private final TracingStrategy tracing;
@@ -41,12 +39,11 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
 
     private List<ResolutionTask<D, F>> tasks = null;
 
-    public ResolutionTaskHolder(@NotNull JetReferenceExpression reference,
+    public ResolutionTaskHolder(
             @NotNull BasicCallResolutionContext basicCallResolutionContext,
             @NotNull PriorityProvider<ResolutionCandidate<D>> priorityProvider,
-            @Nullable TracingStrategy tracing
+            @NotNull TracingStrategy tracing
     ) {
-        this.reference = reference;
         this.basicCallResolutionContext = basicCallResolutionContext;
         this.priorityProvider = priorityProvider;
         this.tracing = tracing;
@@ -86,7 +83,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
                         }
                     });
                     if (!filteredCandidates.isEmpty()) {
-                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, reference, basicCallResolutionContext, tracing));
+                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, basicCallResolutionContext, tracing));
                     }
                 }
             }
