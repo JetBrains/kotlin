@@ -94,7 +94,7 @@ public class LockBasedStorageManager implements StorageManager {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " (" + debugText + ')';
+        return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " (" + debugText + ")";
     }
 
     @NotNull
@@ -213,7 +213,7 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     protected <T> RecursionDetectedResult<T> recursionDetectedDefault() {
-        throw new IllegalStateException("Recursive call in a lazy value");
+        throw new IllegalStateException("Recursive call in a lazy value under " + this);
     }
 
     private static class RecursionDetectedResult<T> {
@@ -237,7 +237,7 @@ public class LockBasedStorageManager implements StorageManager {
         }
 
         public T getValue() {
-            assert !fallThrough : "A value requested from FALL_THROUGH ";
+            assert !fallThrough : "A value requested from FALL_THROUGH in " + this;
             return value;
         }
 
@@ -365,7 +365,7 @@ public class LockBasedStorageManager implements StorageManager {
             lock.lock();
             try {
                 value = cache.get(input);
-                assert value != NotValue.COMPUTING : "Recursion detected on input: " + input;
+                assert value != NotValue.COMPUTING : "Recursion detected on input: " + input + " under " + LockBasedStorageManager.this;
                 if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
                 AssertionError error = null;
@@ -379,7 +379,8 @@ public class LockBasedStorageManager implements StorageManager {
                     // A seemingly obvious way to come about this case would be to declare a special exception class, but the problem is that
                     // one memoized function is likely to (indirectly) call another, and if this second one throws this exception, we are screwed
                     if (oldValue != NotValue.COMPUTING) {
-                        error = new AssertionError("Race condition detected on input " + input + ". Old value is " + oldValue);
+                        error = new AssertionError("Race condition detected on input " + input + ". Old value is " + oldValue +
+                                                   " under " + LockBasedStorageManager.this);
                         throw error;
                     }
 
@@ -389,7 +390,8 @@ public class LockBasedStorageManager implements StorageManager {
                     if (throwable == error) throw exceptionHandlingStrategy.handleException(throwable);
 
                     Object oldValue = cache.put(input, WrappedValues.escapeThrowable(throwable));
-                    assert oldValue == NotValue.COMPUTING : "Race condition detected on input " + input + ". Old value is " + oldValue;
+                    assert oldValue == NotValue.COMPUTING : "Race condition detected on input " + input + ". Old value is " + oldValue +
+                                                            " under " + LockBasedStorageManager.this;
 
                     throw exceptionHandlingStrategy.handleException(throwable);
                 }
@@ -413,7 +415,7 @@ public class LockBasedStorageManager implements StorageManager {
         @Override
         public V invoke(K input) {
             V result = super.invoke(input);
-            assert result != null : "compute() returned null";
+            assert result != null : "compute() returned null under " + LockBasedStorageManager.this;
             return result;
         }
     }
