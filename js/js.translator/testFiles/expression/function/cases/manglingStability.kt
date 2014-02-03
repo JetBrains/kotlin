@@ -115,14 +115,7 @@ class TestMixed {
 val mixed_in_class_f = TestMixed().f
 val mixed_in_class_b = TestMixed().b
 
-
-native
-fun eval(expr: String): Any? = noImpl
-
-val PACKAGE = "Kotlin.modules.JS_TESTS.foo"
-
-fun funToString(name: String) = eval("$PACKAGE.$name.toString()") as String
-
+// Helpers
 native
 fun String.replace(regexp: RegExp, replacement: String): String = noImpl
 
@@ -131,23 +124,25 @@ fun String.replaceAll(regexp: String, replacement: String): String = replace(Reg
 native
 class RegExp(regexp: String, flags: String)
 
-fun test(prefix: String) {
-    val fs = funToString("${prefix}_f")
-    val bs = funToString("${prefix}_b").replaceAll("boo", "foo")
+//Testing
 
-    if (fs != bs) throw Exception("FAILED on ${prefix}:\n fs = \"$fs\"\n bs = \"$bs\"")
+fun test(testName: String, ff: Any, fb: Any){
+    val f = ff.toString()
+    val b = fb.toString().replaceAll("boo", "foo")
+
+    if (f != b) throw Exception("FAILED on ${testName}:\n f = \"$f\"\n b = \"$b\"")
 }
 
 fun box(): String {
-    test("internal")
-    test("public")
-    test("private")
-    test("mixed")
+    test("internal", internal_f, internal_b)
+    test("public", public_f,public_b )
+    test("private", private_f, private_b)
+    test("mixed", mixed_f, mixed_b)
 
-    test("internal_in_class")
-    test("public_in_class")
-    test("private_in_class")
-    test("mixed_in_class")
+    test("internal_in_class", internal_in_class_f, internal_in_class_b)
+    test("public_in_class", public_in_class_f, public_in_class_b)
+    test("private_in_class", private_in_class_f, private_in_class_b)
+    test("mixed_in_class", mixed_in_class_f, mixed_in_class_b)
 
     return "OK"
 }

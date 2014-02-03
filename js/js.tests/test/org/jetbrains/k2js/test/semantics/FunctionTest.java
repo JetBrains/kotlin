@@ -113,7 +113,7 @@ public class FunctionTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
-    public void testMangling() throws Exception {
+    public void testManglingStability() throws Exception {
         checkFooBoxIsOk();
     }
 
