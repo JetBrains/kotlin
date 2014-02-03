@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
@@ -96,6 +95,10 @@ public final class JsDescriptorUtils {
 
     public static boolean isExtension(@NotNull CallableDescriptor functionDescriptor) {
         return (functionDescriptor.getReceiverParameter() != null);
+    }
+
+    public static boolean isOverride(@NotNull CallableMemberDescriptor descriptor) {
+        return !descriptor.getOverriddenDescriptors().isEmpty();
     }
 
     //TODO: why callable descriptor

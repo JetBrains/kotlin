@@ -148,22 +148,44 @@ public final class TranslationUtils {
         return getSimpleMangledName(descriptor);
     }
 
+    //TODO extend logic for nested/inner declarations
     private static boolean needsStableMangling(FunctionDescriptor descriptor) {
-        if (descriptor.getVisibility() == Visibilities.PUBLIC || !descriptor.getOverriddenDescriptors().isEmpty()) {
+        // Use stable mangling for overrides because we use stable mangling a overridable declaration.
+        if (JsDescriptorUtils.isOverride(descriptor)) {
             return true;
         }
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            return descriptor.getVisibility().isPublicAPI();
+        }
+        else if (containingDeclaration instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+            // Use stable mangling when it inside a overridable declaration for avoid clashing names when inheritance.
+            if (classDescriptor.getModality().isOverridable()) {
+                return true;
+            }
+
+            // Don't use stable mangling when it inside a non-public API declaration.
+            if (!classDescriptor.getVisibility().isPublicAPI()) {
+                return false;
+            }
+
+            // Ignore the `protected` visibility because it can be use outside a containing declaration
+            // only when the containing declaration is overridable.
+            if (descriptor.getVisibility() == Visibilities.PUBLIC) {
+                return true;
+            }
+
             return false;
         }
 
-        if (containingDeclaration instanceof MemberDescriptor) {
-            return ((MemberDescriptor) containingDeclaration).getModality().isOverridable();
-        }
+        assert containingDeclaration instanceof CallableMemberDescriptor :
+                "containingDeclaration for descriptor have unsupported type for mangling, " +
+                "descriptor: " + descriptor + ", containingDeclaration: " + containingDeclaration;
 
-        return true;
+        return false;
     }
 
     @NotNull
@@ -413,6 +435,8 @@ public final class TranslationUtils {
         }
 
         private static boolean isNativeOrOverrideNative(FunctionDescriptor descriptor) {
+            if (AnnotationsUtils.isNativeObject(descriptor)) return true;
+
             Set<FunctionDescriptor> declarations = BindingContextUtils.getAllOverriddenDeclarations(descriptor);
             for (FunctionDescriptor memberDescriptor : declarations) {
                 if (AnnotationsUtils.isNativeObject(memberDescriptor)) return true;
