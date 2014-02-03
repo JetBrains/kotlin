@@ -272,11 +272,14 @@
 
     <target name="builtins">
       <cleandir dir="${output}/builtins"/>
-      <java classname="org.jetbrains.jet.utils.builtinsSerializer.BuiltinsSerializerPackage">
+      <java classname="org.jetbrains.jet.utils.builtinsSerializer.BuiltinsSerializerPackage" failonerror="true" fork="true">
         <classpath>
           <path refid="classpath"/>
           <pathelement location="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"/>
         </classpath>
+        <assertions>
+          <enable/>
+        </assertions>
         <arg value="${output}/builtins"/>
         <arg value="core/builtins/native"/>
         <arg value="core/builtins/src"/>
@@ -539,6 +542,9 @@
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
               </classpath>
+              <assertions>
+                <enable/>
+              </assertions>
               <arg value="-src"/>
               <arg value="@{src}"/>
               <arg value="-output"/>
