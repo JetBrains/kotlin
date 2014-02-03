@@ -39,7 +39,7 @@ public class BranchedUnfoldingUtils {
         if (JetPsiUtil.isAssignment(root)) {
             JetBinaryExpression assignment = (JetBinaryExpression) root;
 
-            assertNotNull(assignment.getLeft());
+            if (assignment.getLeft() == null) return null;
 
             JetExpression rhs = assignment.getRight();
             if (rhs instanceof JetIfExpression) return UnfoldableKind.ASSIGNMENT_TO_IF;
