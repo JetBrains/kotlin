@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -34,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -159,7 +159,7 @@ public class TopDownAnalyzer {
     }
 
     public static void processClassOrObject(
-            @NotNull StorageManager storageManager,
+            @NotNull GlobalContext globalContext,
             @Nullable final WritableScope scope,
             @NotNull ExpressionTypingContext context,
             @NotNull final DeclarationDescriptor containingDeclaration,
@@ -170,8 +170,14 @@ public class TopDownAnalyzer {
                                                                          PlatformToKotlinClassMap.EMPTY);
 
         TopDownAnalysisParameters topDownAnalysisParameters =
-                new TopDownAnalysisParameters(storageManager, Predicates.equalTo(object.getContainingFile()),
-                false, true, Collections.<AnalyzerScriptParameter>emptyList());
+                new TopDownAnalysisParameters(
+                        globalContext.getStorageManager(),
+                        globalContext.getExceptionTracker(),
+                        Predicates.equalTo(object.getContainingFile()),
+                        false,
+                        true,
+                        Collections.<AnalyzerScriptParameter>emptyList()
+                );
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 object.getProject(), topDownAnalysisParameters, new ObservableBindingTrace(context.trace),

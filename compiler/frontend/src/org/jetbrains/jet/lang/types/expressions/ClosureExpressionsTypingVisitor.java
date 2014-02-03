@@ -23,6 +23,7 @@ import com.intellij.util.containers.ContainerUtil;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
@@ -37,7 +38,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.Collection;
@@ -51,11 +51,14 @@ import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
-    private final StorageManager storageManager;
+    private final GlobalContext globalContext;
 
-    protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade, @NotNull StorageManager storageManager) {
+    protected ClosureExpressionsTypingVisitor(
+            @NotNull GlobalContext globalContext,
+            @NotNull ExpressionTypingInternals facade
+    ) {
         super(facade);
-        this.storageManager = storageManager;
+        this.globalContext = globalContext;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @Override
             public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
                 if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
-                    JetType defaultType = DeferredType.createRecursionIntolerant(storageManager, context.trace,
+                    JetType defaultType = DeferredType.createRecursionIntolerant(globalContext.getStorageManager(), context.trace,
                                                                                  new Function0<JetType>() {
                                                                                      @Override
                                                                                      public JetType invoke() {
@@ -90,7 +93,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        TopDownAnalyzer.processClassOrObject(storageManager,
+        TopDownAnalyzer.processClassOrObject(globalContext,
                                              null, // don't need to add classifier of object literal to any scope
                                              context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                              context.scope.getContainingDeclaration(),

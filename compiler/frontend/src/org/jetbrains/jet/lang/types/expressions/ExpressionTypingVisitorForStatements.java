@@ -20,7 +20,11 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
@@ -39,7 +43,6 @@ import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 
@@ -52,21 +55,21 @@ import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisitor {
-    private final StorageManager storageManager;
+    private final GlobalContext globalContext;
     private final WritableScope scope;
     private final BasicExpressionTypingVisitor basic;
     private final ControlStructureTypingVisitor controlStructures;
     private final PatternMatchingTypingVisitor patterns;
 
     public ExpressionTypingVisitorForStatements(
-            @NotNull StorageManager storageManager,
+            @NotNull GlobalContext globalContext,
             @NotNull ExpressionTypingInternals facade,
             @NotNull WritableScope scope,
             BasicExpressionTypingVisitor basic,
             @NotNull ControlStructureTypingVisitor controlStructures,
             @NotNull PatternMatchingTypingVisitor patterns) {
         super(facade);
-        this.storageManager = storageManager;
+        this.globalContext = globalContext;
         this.scope = scope;
         this.basic = basic;
         this.controlStructures = controlStructures;
@@ -90,7 +93,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
-                storageManager,
+                globalContext,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration);
         return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);
     }
@@ -185,7 +188,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitClass(@NotNull JetClass klass, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
-                storageManager,
+                globalContext,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass);
         return DataFlowUtils.checkStatementType(klass, context, context.dataFlowInfo);
     }

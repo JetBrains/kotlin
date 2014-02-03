@@ -27,6 +27,7 @@ import com.intellij.util.containers.ContainerUtil;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
@@ -41,7 +42,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.storage.*;
+import org.jetbrains.jet.storage.ExceptionTracker;
+import org.jetbrains.jet.storage.LazyResolveStorageManager;
+import org.jetbrains.jet.storage.LockBasedLazyResolveStorageManager;
+import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -115,14 +119,14 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     @Deprecated
     public ResolveSession(
             @NotNull Project project,
-            @NotNull LockBasedStorageManagerWithExceptionTracking storageManager,
+            @NotNull GlobalContextImpl globalContext,
             @NotNull ModuleDescriptorImpl rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull BindingTrace delegationTrace
     ) {
-        LockBasedLazyResolveStorageManager lockBasedLazyResolveStorageManager = new LockBasedLazyResolveStorageManager(storageManager);
+        LockBasedLazyResolveStorageManager lockBasedLazyResolveStorageManager = new LockBasedLazyResolveStorageManager(globalContext.getStorageManager());
         this.storageManager = lockBasedLazyResolveStorageManager;
-        this.exceptionTracker = storageManager.getTracker();
+        this.exceptionTracker = globalContext.getExceptionTracker();
         this.trace = lockBasedLazyResolveStorageManager.createSafeTrace(delegationTrace);
         this.module = rootDescriptor;
 
@@ -193,11 +197,13 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     }
 
     @NotNull
+    //@Override
     public LazyResolveStorageManager getStorageManager() {
         return storageManager;
     }
 
     @NotNull
+    //@Override
     public ExceptionTracker getExceptionTracker() {
         return exceptionTracker;
     }

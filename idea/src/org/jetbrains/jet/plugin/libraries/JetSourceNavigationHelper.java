@@ -43,6 +43,8 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
+import org.jetbrains.jet.context.ContextPackage;
+import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -64,7 +66,6 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
-import org.jetbrains.jet.storage.LockBasedStorageManagerWithExceptionTracking;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -215,8 +216,8 @@ public class JetSourceNavigationHelper {
         }
 
         Project project = decompiledDeclaration.getProject();
-        LockBasedStorageManagerWithExceptionTracking storageManager = LockBasedStorageManagerWithExceptionTracking.create();
-        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(storageManager, getContainingFiles(candidates),
+        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
+        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(globalContext.getStorageManager(), getContainingFiles(candidates),
                 new Predicate<FqName>() {
                     @Override
                     public boolean apply(@Nullable FqName fqName) {
@@ -231,7 +232,7 @@ public class JetSourceNavigationHelper {
 
         KotlinCodeAnalyzer analyzer = new InjectorForLazyResolve(
                 project,
-                storageManager,
+                globalContext,
                 moduleDescriptor,
                 providerFactory,
                 new BindingTraceContext()).getResolveSession();

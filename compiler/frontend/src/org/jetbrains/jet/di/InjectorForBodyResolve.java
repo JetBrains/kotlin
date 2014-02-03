@@ -92,7 +92,7 @@ public class InjectorForBodyResolve {
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices(storageManager, platformToKotlinClassMap);
+        this.expressionTypingServices = new ExpressionTypingServices(getBodiesResolveContext(), platformToKotlinClassMap);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();

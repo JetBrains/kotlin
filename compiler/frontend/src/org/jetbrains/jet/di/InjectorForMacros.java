@@ -18,7 +18,8 @@ package org.jetbrains.jet.di;
 
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -40,7 +41,8 @@ public class InjectorForMacros {
     
     private final ExpressionTypingServices expressionTypingServices;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
-    private final LockBasedStorageManager lockBasedStorageManager;
+    private final GlobalContext globalContext;
+    private final StorageManager storageManager;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
@@ -58,10 +60,11 @@ public class InjectorForMacros {
         @NotNull Project project,
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
-        this.lockBasedStorageManager = new LockBasedStorageManager();
+        this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
-        this.expressionTypingServices = new ExpressionTypingServices(lockBasedStorageManager, platformToKotlinClassMap);
+        this.expressionTypingServices = new ExpressionTypingServices(globalContext, platformToKotlinClassMap);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
+        this.storageManager = globalContext.getStorageManager();
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
         this.annotationResolver = new AnnotationResolver();
@@ -104,7 +107,7 @@ public class InjectorForMacros {
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
-        descriptorResolver.setStorageManager(lockBasedStorageManager);
+        descriptorResolver.setStorageManager(storageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);

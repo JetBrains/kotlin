@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
@@ -122,6 +123,11 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     @Override
     public StorageManager getStorageManager() {
         return topDownAnalysisParameters.getStorageManager();
+    }
+
+    @Override
+    public ExceptionTracker getExceptionTracker() {
+        return topDownAnalysisParameters.getExceptionTracker();
     }
 
     @Override

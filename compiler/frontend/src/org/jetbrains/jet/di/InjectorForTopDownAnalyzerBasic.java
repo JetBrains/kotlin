@@ -116,7 +116,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices(storageManager, platformToKotlinClassMap);
+        this.expressionTypingServices = new ExpressionTypingServices(getTopDownAnalysisContext(), platformToKotlinClassMap);
         this.callExpressionResolver = new CallExpressionResolver();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();

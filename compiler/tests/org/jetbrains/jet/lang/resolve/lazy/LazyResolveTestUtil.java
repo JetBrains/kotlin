@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.context.ContextPackage;
+import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
@@ -40,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,8 +54,9 @@ public class LazyResolveTestUtil {
     public static InjectorForTopDownAnalyzer createInjectorForTDA(JetCoreEnvironment environment) {
         JetTestUtils.newTrace(environment);
 
+        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters params = new TopDownAnalysisParameters(
-                new LockBasedStorageManager(), Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
+                globalContext.getStorageManager(), globalContext.getExceptionTracker(), Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
         BindingTrace sharedTrace = support.getTrace();
         ModuleDescriptorImpl sharedModule = support.getModule();

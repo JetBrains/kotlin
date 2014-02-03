@@ -59,6 +59,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -103,6 +104,7 @@ public class ReplInterpreter {
         module = AnalyzerFacadeForJVM.createJavaModule("<repl>");
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 new LockBasedStorageManager(),
+                new ExceptionTracker(), // dummy
                 Predicates.<PsiFile>alwaysTrue(),
                 false,
                 true,

@@ -20,6 +20,7 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
@@ -36,6 +37,7 @@ public class InjectorForJvmCodegen {
     private final GenerationState generationState;
     private final ClassBuilderFactory classBuilderFactory;
     private final Project project;
+    private final GlobalContext globalContext;
     private final BindingTrace bindingTrace;
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
@@ -52,6 +54,7 @@ public class InjectorForJvmCodegen {
         this.generationState = generationState;
         this.classBuilderFactory = classBuilderFactory;
         this.project = project;
+        this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.bindingTrace = jetTypeMapper.getBindingTrace();
         this.bindingContext = bindingTrace.getBindingContext();
         this.classBuilderMode = classBuilderFactory.getClassBuilderMode();

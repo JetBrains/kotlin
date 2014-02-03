@@ -165,7 +165,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices(storageManager, javaToKotlinClassMap);
+        this.expressionTypingServices = new ExpressionTypingServices(getTopDownAnalysisContext(), javaToKotlinClassMap);
         this.callExpressionResolver = new CallExpressionResolver();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();

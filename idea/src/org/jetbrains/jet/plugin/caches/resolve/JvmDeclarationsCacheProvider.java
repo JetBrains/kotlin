@@ -105,7 +105,7 @@ class JvmDeclarationsCacheProvider extends DeclarationsCacheProvider {
                     project,
                     cachedKey,
                     declarationsProvider,
-                    false
+                    true
             );
         }
     }

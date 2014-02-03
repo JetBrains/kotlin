@@ -17,12 +17,13 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.storage.LockBasedStorageManagerWithExceptionTracking;
+import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -44,12 +45,13 @@ import javax.annotation.PreDestroy;
 public class InjectorForLazyResolve {
     
     private final Project project;
-    private final LockBasedStorageManagerWithExceptionTracking lockBasedStorageManagerWithExceptionTracking;
+    private final GlobalContextImpl globalContext;
     private final ModuleDescriptorImpl moduleDescriptor;
     private final DeclarationProviderFactory declarationProviderFactory;
     private final BindingTrace bindingTrace;
     private final ResolveSession resolveSession;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
+    private final StorageManager storageManager;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -66,23 +68,24 @@ public class InjectorForLazyResolve {
     
     public InjectorForLazyResolve(
         @NotNull Project project,
-        @NotNull LockBasedStorageManagerWithExceptionTracking lockBasedStorageManagerWithExceptionTracking,
+        @NotNull GlobalContextImpl globalContext,
         @NotNull ModuleDescriptorImpl moduleDescriptor,
         @NotNull DeclarationProviderFactory declarationProviderFactory,
         @NotNull BindingTrace bindingTrace
     ) {
         this.project = project;
-        this.lockBasedStorageManagerWithExceptionTracking = lockBasedStorageManagerWithExceptionTracking;
+        this.globalContext = globalContext;
         this.moduleDescriptor = moduleDescriptor;
         this.declarationProviderFactory = declarationProviderFactory;
         this.bindingTrace = bindingTrace;
-        this.resolveSession = new ResolveSession(project, lockBasedStorageManagerWithExceptionTracking, moduleDescriptor, declarationProviderFactory, bindingTrace);
+        this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
+        this.storageManager = resolveSession.getStorageManager();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices(lockBasedStorageManagerWithExceptionTracking, platformToKotlinClassMap);
+        this.expressionTypingServices = new ExpressionTypingServices(globalContext, platformToKotlinClassMap);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
@@ -123,7 +126,7 @@ public class InjectorForLazyResolve {
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
-        descriptorResolver.setStorageManager(lockBasedStorageManagerWithExceptionTracking);
+        descriptorResolver.setStorageManager(storageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);

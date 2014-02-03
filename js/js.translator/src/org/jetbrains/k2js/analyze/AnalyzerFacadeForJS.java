@@ -26,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
+import org.jetbrains.jet.context.ContextPackage;
+import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
@@ -38,8 +40,6 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProv
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
-import org.jetbrains.jet.storage.LockBasedStorageManagerWithExceptionTracking;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
@@ -91,8 +91,9 @@ public final class AnalyzerFacadeForJS {
 
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
+        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                new LockBasedStorageManager(), completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
+                globalContext.getStorageManager(), globalContext.getExceptionTracker(), completely, false, false, Collections.<AnalyzerScriptParameter>emptyList());
 
         ModuleDescriptor libraryModule = config.getLibraryModule();
         if (libraryModule != null) {
@@ -154,15 +155,15 @@ public final class AnalyzerFacadeForJS {
 
     @NotNull
     public static ResolveSession getLazyResolveSession(Collection<JetFile> files, Config config) {
-        LockBasedStorageManagerWithExceptionTracking storageManager = LockBasedStorageManagerWithExceptionTracking.create();
+        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
-                storageManager, Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
+                globalContext.getStorageManager(), Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
         ModuleDescriptorImpl module = createJsModule("<lazy module>");
         module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
         return new InjectorForLazyResolve(
                 config.getProject(),
-                storageManager,
+                globalContext,
                 module,
                 declarationProviderFactory,
                 new BindingTraceContext()).getResolveSession();

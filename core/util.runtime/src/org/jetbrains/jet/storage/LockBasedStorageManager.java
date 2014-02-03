@@ -59,6 +59,7 @@ public class LockBasedStorageManager implements StorageManager {
         }
     };
 
+    @NotNull
     public static LockBasedStorageManager createWithExceptionHandling(@NotNull ExceptionHandlingStrategy exceptionHandlingStrategy) {
         return new LockBasedStorageManager(exceptionHandlingStrategy);
     }
