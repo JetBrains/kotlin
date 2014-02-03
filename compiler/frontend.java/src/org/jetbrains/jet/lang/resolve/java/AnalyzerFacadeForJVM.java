@@ -26,6 +26,7 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.context.ContextPackage;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
@@ -204,7 +205,22 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             boolean storeContextForBodiesResolve,
             ModuleDescriptorImpl module
     ) {
-        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
+        GlobalContext globalContext = ContextPackage.GlobalContext();
+        return analyzeFilesWithJavaIntegrationInGlobalContext(project, files, trace, scriptParameters, filesToAnalyzeCompletely,
+                                                              storeContextForBodiesResolve, module, globalContext);
+    }
+
+    @NotNull
+    public static AnalyzeExhaust analyzeFilesWithJavaIntegrationInGlobalContext(
+            Project project,
+            Collection<JetFile> files,
+            BindingTrace trace,
+            List<AnalyzerScriptParameter> scriptParameters,
+            Predicate<PsiFile> filesToAnalyzeCompletely,
+            boolean storeContextForBodiesResolve,
+            ModuleDescriptorImpl module,
+            GlobalContext globalContext
+    ) {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 globalContext.getStorageManager(),
                 globalContext.getExceptionTracker(),
