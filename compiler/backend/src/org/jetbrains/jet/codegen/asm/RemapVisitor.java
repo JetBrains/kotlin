@@ -16,28 +16,30 @@
 
 package org.jetbrains.jet.codegen.asm;
 
-import org.jetbrains.asm4.*;
+import org.jetbrains.asm4.AnnotationVisitor;
+import org.jetbrains.asm4.Label;
+import org.jetbrains.asm4.MethodVisitor;
+import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-//http://asm.ow2.org/current/asm-transformations.pdf
-public class InliningAdapter extends InstructionAdapter {
+public class RemapVisitor extends InstructionAdapter {
 
     private final Label end;
-    protected final VarRemapper remapper;
-    private int nextLocalIndex = 0;
 
-    public InliningAdapter(MethodVisitor mv, int api, String desc, Label end, int localsStart, VarRemapper remapper) {
-        super(api, mv);
+    private final VarRemapper remapper;
+
+    private final boolean remapReturn;
+
+    protected RemapVisitor(MethodVisitor mv, Label end, VarRemapper remapper, boolean remapReturn) {
+        super(InlineCodegenUtil.API, mv);
         this.end = end;
         this.remapper = remapper;
-        nextLocalIndex = localsStart;
+        this.remapReturn = remapReturn;
     }
 
+    @Override
     public void visitInsn(int opcode) {
-        if (opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
+        if (remapReturn && opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN) {
             super.visitJumpInsn(Opcodes.GOTO, end);
         }
         else {
@@ -54,21 +56,13 @@ public class InliningAdapter extends InstructionAdapter {
     public void visitVarInsn(int opcode, int var) {
         int newVar = remapper.remap(var);
         super.visitVarInsn(opcode, newVar);
-        int size = newVar + (opcode == Opcodes.DSTORE || opcode == Opcodes.LSTORE ? 2 : 1);
-        if (size > nextLocalIndex) {
-            nextLocalIndex = size;
-        }
-    }
-
-    public int getNextLocalIndex() {
-        return nextLocalIndex;
     }
 
     @Override
     public void visitLocalVariable(
             String name, String desc, String signature, Label start, Label end, int index
     ) {
-        //super.visitLocalVariable(name, desc, signature, start, end, index);
+
     }
 
     @Override
@@ -90,5 +84,4 @@ public class InliningAdapter extends InstructionAdapter {
     public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
         return null;
     }
-
 }

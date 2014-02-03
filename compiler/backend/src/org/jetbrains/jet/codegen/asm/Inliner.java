@@ -21,6 +21,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.CallableMethod;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.context.MethodContext;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 
@@ -35,7 +36,14 @@ public interface Inliner {
         }
 
         @Override
-        public void putInLocal(Type type, StackValue stackValue) {
+        public void putInLocal(Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor) {
+
+        }
+
+        @Override
+        public void putCapturedInLocal(
+                Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor, int index
+        ) {
 
         }
 
@@ -45,7 +53,7 @@ public interface Inliner {
         }
 
         @Override
-        public boolean isInliningClosure(JetExpression expression) {
+        public boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptora) {
             return false;
         }
 
@@ -61,7 +69,8 @@ public interface Inliner {
 
         @Override
         public boolean shouldPutValue(
-                Type type, StackValue stackValue, MethodContext context
+                Type type, StackValue stackValue, MethodContext context,
+                ValueParameterDescriptor descriptor
         ) {
             return true;
         }
@@ -69,15 +78,17 @@ public interface Inliner {
 
     void inlineCall(CallableMethod callableMethod, ClassVisitor visitor);
 
-    void putInLocal(Type type, StackValue stackValue);
+    void putInLocal(Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor);
 
-    boolean shouldPutValue(Type type, StackValue stackValue, MethodContext context);
+    void putCapturedInLocal(Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor, int index);
+
+    boolean shouldPutValue(Type type, StackValue stackValue, MethodContext context, ValueParameterDescriptor descriptor);
 
     void putHiddenParams();
 
     void leaveTemps();
 
-    boolean isInliningClosure(JetExpression expression);
+    boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptora);
 
     void rememberClosure(JetFunctionLiteralExpression expression, Type type);
 }

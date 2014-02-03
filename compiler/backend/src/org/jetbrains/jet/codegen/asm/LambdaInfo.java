@@ -37,7 +37,7 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.anonymousClassForFunction;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 
-public class ClosureInfo {
+public class LambdaInfo {
 
     public final JetFunctionLiteralExpression expression;
 
@@ -47,7 +47,7 @@ public class ClosureInfo {
 
     private MethodNode node;
 
-    private Collection<EnclosedValueDescriptor> capturedVars;
+    private List<CapturedParamInfo> capturedVars;
 
     private final FunctionDescriptor functionDescriptor;
 
@@ -57,7 +57,7 @@ public class ClosureInfo {
 
     private int paramOffset;
 
-    ClosureInfo(@NotNull JetFunctionLiteralExpression expression, @NotNull JetTypeMapper typeMapper) {
+    LambdaInfo(@NotNull JetFunctionLiteralExpression expression, @NotNull JetTypeMapper typeMapper) {
         this.expression = expression;
         this.typeMapper = typeMapper;
         BindingContext bindingContext = typeMapper.getBindingContext();
@@ -91,30 +91,47 @@ public class ClosureInfo {
         return classDescriptor;
     }
 
-    public Type getClosureClassType() {
+    public Type getLambdaClassType() {
         return closureClassType;
     }
 
-    public Collection<EnclosedValueDescriptor> getCapturedVars() {
+    public List<CapturedParamInfo> getCapturedVars() {
         //lazy initialization cause it would be calculated after object creation
+        int index = 0;
         if (capturedVars == null) {
-            capturedVars = new ArrayList<EnclosedValueDescriptor>();
+            capturedVars = new ArrayList<CapturedParamInfo>();
 
             if (closure.getCaptureThis() != null) {
                 EnclosedValueDescriptor descriptor = new EnclosedValueDescriptor(AsmUtil.CAPTURED_THIS_FIELD, null, null, typeMapper.mapType(closure.getCaptureThis()));
-                capturedVars.add(descriptor);
+                capturedVars.add(getCapturedParamInfo(descriptor, index));
+                index += descriptor.getType().getSize();
             }
 
             if (closure.getCaptureReceiverType() != null) {
                 EnclosedValueDescriptor descriptor = new EnclosedValueDescriptor(AsmUtil.CAPTURED_RECEIVER_FIELD, null, null, typeMapper.mapType(closure.getCaptureReceiverType()));
-                capturedVars.add(descriptor);
+                capturedVars.add(getCapturedParamInfo(descriptor, index));
+                index += descriptor.getType().getSize();
             }
 
             if (closure != null) {
-                capturedVars.addAll(closure.getCaptureVariables().values());
+                for (EnclosedValueDescriptor descriptor : closure.getCaptureVariables().values()) {
+                    capturedVars.add(getCapturedParamInfo(descriptor, index));
+                    index += descriptor.getType().getSize();
+                }
             }
         }
         return capturedVars;
+    }
+
+    @NotNull
+    public static CapturedParamInfo getCapturedParamInfo(@NotNull EnclosedValueDescriptor descriptor, int index) {
+        return new CapturedParamInfo(descriptor.getFieldName(), descriptor.getType(), false, -1, index);
+    }
+
+    private void shiftParams(int shift) {
+        for (CapturedParamInfo var : getCapturedVars()) {
+            var.setShift(shift);
+        }
     }
 
     public int getParamOffset() {
@@ -123,6 +140,7 @@ public class ClosureInfo {
 
     public void setParamOffset(int paramOffset) {
         this.paramOffset = paramOffset;
+        shiftParams(paramOffset);
     }
 
     public List<Type> getParamsWithoutCapturedValOrVar() {
@@ -132,8 +150,7 @@ public class ClosureInfo {
 
     public int getCapturedVarsSize() {
         int size = 0;
-        for (Iterator<EnclosedValueDescriptor> iterator = getCapturedVars().iterator(); iterator.hasNext(); ) {
-            EnclosedValueDescriptor next = iterator.next();
+        for (CapturedParamInfo next : getCapturedVars()) {
             size += next.getType().getSize();
         }
         return size;

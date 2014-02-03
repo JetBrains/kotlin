@@ -16,18 +16,32 @@
 
 package org.jetbrains.jet.codegen.asm;
 
-class ClosureUsage {
+public class FieldAccess {
 
-    public final int index;
+    private final String name;
 
-    public final boolean inlinable;
+    private final String type;
 
-    ClosureUsage(int index, boolean isInlinable) {
-        this.index = index;
-        inlinable = isInlinable;
+    private final FieldAccess owner;
+
+    private final boolean isThisAccess;
+
+    public FieldAccess(String name, String type, FieldAccess owner) {
+        this.name = name;
+        this.type = type;
+        this.owner = owner;
+        isThisAccess = false;
     }
 
-    public boolean isInlinable() {
-        return inlinable;
+    public FieldAccess(String name, String type) {
+        this.name = "!this!" + name;
+        this.type = type;
+        isThisAccess = true;
+        owner = null;
+    }
+
+
+    public boolean isThisAccess() {
+        return isThisAccess;
     }
 }

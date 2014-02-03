@@ -136,6 +136,13 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
         return newVisitor(type, sourceFile);
     }
 
+    public ClassBuilder forLambdaInlining(Type lambaType, PsiFile sourceFile) {
+        if (isPrimitive(lambaType)) {
+            throw new IllegalStateException("Codegen for primitive type is not possible: " + lambaType);
+        }
+        return newVisitor(lambaType, sourceFile);
+    }
+
     @NotNull
     public ClassBuilder forPackagePart(@NotNull Type asmType, @NotNull PsiFile sourceFile) {
         return newVisitor(asmType, sourceFile);

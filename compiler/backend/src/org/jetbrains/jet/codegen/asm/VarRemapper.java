@@ -20,11 +20,14 @@ import java.util.List;
 
 public abstract class VarRemapper {
 
+
+
     public static class ShiftRemapper extends VarRemapper {
 
         private final int shift;
 
-        public ShiftRemapper(int shift) {
+        public ShiftRemapper(int shift, VarRemapper remapper) {
+            super(remapper);
             this.shift = shift;
         }
 
@@ -36,12 +39,12 @@ public abstract class VarRemapper {
 
     public static class ClosureRemapper extends ShiftRemapper {
 
-        private final ClosureInfo info;
+        private final LambdaInfo info;
         private final List<ParameterInfo> originalParams;
         private final int capturedSize;
 
-        public ClosureRemapper(ClosureInfo info, int valueParametersShift, List<ParameterInfo> originalParams) {
-            super(valueParametersShift);
+        public ClosureRemapper(LambdaInfo info, int valueParametersShift, List<ParameterInfo> originalParams) {
+            super(valueParametersShift, null);
             this.info = info;
             this.originalParams = originalParams;
             capturedSize = info.getCapturedVarsSize();
@@ -58,45 +61,66 @@ public abstract class VarRemapper {
 
     public static class ParamRemapper extends VarRemapper {
 
-        private final int paramShift;
-        private final int paramSize;
-        private final int additionalParamsSize;
-        private final List<ParameterInfo> params;
-        private final int actualParams;
+        private final int allParamsSize;
+        private final Parameters params;
+        private final int actualParamsSize;
 
-        public ParamRemapper(int paramShift, int paramSize, int additionalParamsSize, List<ParameterInfo> params) {
-            this.paramShift = paramShift;
-            this.paramSize = paramSize;
-            this.additionalParamsSize = additionalParamsSize;
+        private final int [] remapIndex;
+
+        public ParamRemapper(Parameters params, VarRemapper parent) {
+            super(parent);
+            this.allParamsSize = params.totalSize();
             this.params = params;
 
-            int paramCount = 0;
-            for (int i = 0; i < params.size(); i++) {
-                ParameterInfo info = params.get(i);
+            int realSize = 0;
+            remapIndex = new int [params.totalSize()];
+
+            int index = 0;
+            for (ParameterInfo info : params) {
                 if (!info.isSkippedOrRemapped()) {
-                    paramCount += info.getType().getSize();
+                    remapIndex[index] = realSize;
+                    realSize += info.getType().getSize();
+                } else {
+                    remapIndex[index] = info.isRemapped() ? info.getRemapIndex() : -1;
                 }
+                index++;
             }
-            actualParams = paramCount;
+
+            actualParamsSize = realSize;
         }
 
         @Override
         public int doRemap(int index) {
-            if (index < paramSize) {
+            int remappedIndex;
+
+            if (index < allParamsSize) {
                 ParameterInfo info = params.get(index);
-                if (info.isSkipped) {
+                remappedIndex = remapIndex[index];
+                if (info.isSkipped || remappedIndex == -1) {
                     throw new RuntimeException("Trying to access skipped parameter: " + info.type + " at " +index);
                 }
-                return info.getInlinedIndex();
+                if (info.isRemapped()) {
+                    return remappedIndex;
+                }
             } else {
-                return paramShift + actualParams + index; //captured params not used directly in this inlined method, they used in closure
+                remappedIndex = actualParamsSize - params.totalSize() + index; //captured params not used directly in this inlined method, they used in closure
             }
+
+            if (parent == null) {
+                return remappedIndex;
+            }
+
+            return parent.doRemap(remappedIndex);
         }
     }
 
-
-
     protected boolean nestedRemmapper;
+
+    protected VarRemapper parent;
+
+    public VarRemapper(VarRemapper parent) {
+        this.parent = parent;
+    }
 
     public int remap(int index) {
         if (nestedRemmapper) {
@@ -111,4 +135,14 @@ public abstract class VarRemapper {
         nestedRemmapper = nestedRemap;
     }
 
+
+    public static int getActualSize(List<ParameterInfo> params) {
+        int size = 0;
+        for (ParameterInfo paramInfo : params) {
+            if (!paramInfo.isSkippedOrRemapped()) {
+                size += paramInfo.getType().getSize();
+            }
+        }
+        return size;
+    }
 }

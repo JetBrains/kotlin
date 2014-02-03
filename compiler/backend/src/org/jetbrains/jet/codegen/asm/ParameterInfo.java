@@ -23,13 +23,15 @@ class ParameterInfo {
 
     public static final ParameterInfo STUB = new ParameterInfo(AsmTypeConstants.OBJECT_TYPE, true, -1, -1);
 
-    public final int index;
+    private int index;
 
     public final Type type;
 
     public final boolean isSkipped;
 
-    public final int remapIndex;
+    private int remapIndex;
+
+    public LambdaInfo lambda;
 
     ParameterInfo(Type type, boolean skipped, int remapIndex, int index) {
         this.type = type;
@@ -42,8 +44,20 @@ class ParameterInfo {
         return isSkipped || remapIndex != -1;
     }
 
+    public boolean isRemapped() {
+        return remapIndex != -1;
+    }
+
+    public int getRemapIndex() {
+        return remapIndex;
+    }
+
     public int getInlinedIndex() {
-        return remapIndex != -1 ? remapIndex : index;
+        return remapIndex != -1 ? getRemapIndex() : getIndex();
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public boolean isSkipped() {
@@ -52,5 +66,22 @@ class ParameterInfo {
 
     public Type getType() {
         return type;
+    }
+
+
+    public LambdaInfo getLambda() {
+        return lambda;
+    }
+
+    public void setLambda(LambdaInfo lambda) {
+        this.lambda = lambda;
+    }
+
+    public void setRemapIndex(int remapIndex) {
+        this.remapIndex = remapIndex;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

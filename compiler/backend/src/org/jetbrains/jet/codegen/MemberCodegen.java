@@ -130,6 +130,10 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
         }
     }
 
+    public void genClassOrObject(CodegenContext parentContext, JetClassOrObject aClass) {
+        genClassOrObject(parentContext, aClass, state, this);
+    }
+
     @NotNull
     public ClassBuilder getBuilder() {
         return builder;

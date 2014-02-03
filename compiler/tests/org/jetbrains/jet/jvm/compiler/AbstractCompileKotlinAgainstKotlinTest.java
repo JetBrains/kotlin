@@ -121,13 +121,13 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
 
     private OutputFileCollection compileA(@NotNull File ktAFile) throws IOException {
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
-                                                                                                            ConfigurationKind.JDK_ONLY);
+                                                                                                            ConfigurationKind.ALL);
         return compileKotlin(ktAFile, aDir, jetCoreEnvironment, getTestRootDisposable());
     }
 
     private OutputFileCollection compileB(@NotNull File ktBFile) throws IOException {
         CompilerConfiguration configurationWithADirInClasspath = JetTestUtils
-                .compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir);
+                .compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir);
 
         return compileKotlin(ktBFile, bDir, JetCoreEnvironment.createForTests(getTestRootDisposable(), configurationWithADirInClasspath),
                       getTestRootDisposable());
