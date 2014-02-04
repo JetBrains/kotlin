@@ -181,7 +181,7 @@ public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
     }
 }
 
-public final class Char : jet.Hashable, jet.Comparable<jet.Char> {
+public final class Char : jet.Comparable<jet.Char> {
     /*primary*/ private constructor Char()
     public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
     public open override /*1*/ fun compareTo(/*0*/ other: jet.Char): jet.Int
@@ -305,7 +305,7 @@ public trait CharSequence {
     public abstract fun get(/*0*/ index: jet.Int): jet.Char
 }
 
-public trait Collection</*0*/ out E> : jet.Iterable<E>, jet.Hashable {
+public trait Collection</*0*/ out E> : jet.Iterable<E> {
     public abstract fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
     public abstract fun isEmpty(): jet.Boolean
@@ -754,9 +754,6 @@ public trait Function8</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/
 
 public trait Function9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ out R> {
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
-}
-
-public trait Hashable {
 }
 
 public final enum class InlineStrategy : jet.Enum<jet.InlineStrategy> {
@@ -1383,7 +1380,7 @@ public trait Map</*0*/ K, /*1*/ out V> {
     public abstract fun size(): jet.Int
     public abstract fun values(): jet.Collection<V>
     
-    public trait Entry</*0*/ out K, /*1*/ out V> : jet.Hashable {
+    public trait Entry</*0*/ out K, /*1*/ out V> {
         public abstract fun getKey(): K
         public abstract fun getValue(): V
     }
@@ -1463,7 +1460,7 @@ public trait MutableMap</*0*/ K, /*1*/ V> : jet.Map<K, V> {
     public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
     public abstract override /*1*/ fun values(): jet.MutableCollection<V>
     
-    public trait MutableEntry</*0*/ K, /*1*/ V> : jet.Map.Entry<K, V>, jet.Hashable {
+    public trait MutableEntry</*0*/ K, /*1*/ V> : jet.Map.Entry<K, V> {
         public abstract override /*1*/ /*fake_override*/ fun getKey(): K
         public abstract override /*1*/ /*fake_override*/ fun getValue(): V
         public abstract fun setValue(/*0*/ value: V): V
@@ -1488,7 +1485,7 @@ public final class Nothing {
     /*primary*/ private constructor Nothing()
 }
 
-public abstract class Number : jet.Hashable {
+public abstract class Number {
     /*primary*/ public constructor Number()
     public abstract fun toByte(): jet.Byte
     public abstract fun toChar(): jet.Char

@@ -1,6 +1,6 @@
 package jet
 
-public class Char private () : Hashable, Comparable<Char> {
+public class Char private () : Comparable<Char> {
     public fun compareTo(other : Double) : Int
     public fun compareTo(other : Float)  : Int
     public fun compareTo(other : Long)    : Int
@@ -63,7 +63,4 @@ public class Char private () : Hashable, Comparable<Char> {
     public fun toChar() : Char
     public fun toShort() : Short
     public fun toByte() : Byte
-
-    public override fun hashCode() : Int
-    public override fun equals(other : Any?) : Boolean
 }

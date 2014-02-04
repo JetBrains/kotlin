@@ -1,13 +1,5 @@
 class A() {
-  fun equals(<warning>a</warning> : Any?) : Boolean = false
-}
-
-class B() {
-  fun equals(<warning>a</warning> : Any?) : Boolean? = false
-}
-
-class C() {
-  fun equals(<warning>a</warning> : Any?) : Int = 0
+  override fun equals(<warning>a</warning> : Any?) : Boolean = false
 }
 
 fun f(): Unit {
@@ -22,8 +14,6 @@ fun f(): Unit {
   x != 1
 
   <error>A() == 1</error>
-  B() <error>==</error> 1
-  C() <error>==</error> 1
 
   <error>x === "1"</error>
   <error>x !== "1"</error>

@@ -26,10 +26,10 @@ public class ByteRange(public override val start: Byte, public override val end:
 
     override fun iterator(): ByteIterator = ByteProgressionIterator(start, end, 1)
 
-    fun equals(other: Any?): Boolean =
+    override fun equals(other: Any?): Boolean =
         other is ByteRange && start == other.start && end == other.end
 
-    fun hashCode(): Int = 31 * start.toInt() + end
+    override fun hashCode(): Int = 31 * start.toInt() + end
 
     class object {
         public val EMPTY: ByteRange = ByteRange(1, 0)
@@ -44,10 +44,10 @@ public class CharRange(public override val start: Char, public override val end:
 
     override fun iterator(): CharIterator = CharProgressionIterator(start, end, 1)
 
-    fun equals(other: Any?): Boolean =
+    override fun equals(other: Any?): Boolean =
         other is CharRange && start == other.start && end == other.end
 
-    fun hashCode(): Int = 31 * start.toInt() + end
+    override fun hashCode(): Int = 31 * start.toInt() + end
 
     class object {
         public val EMPTY: CharRange = CharRange(1.toChar(), 0.toChar())
@@ -62,10 +62,10 @@ public class ShortRange(public override val start: Short, public override val en
 
     override fun iterator(): ShortIterator = ShortProgressionIterator(start, end, 1)
 
-    fun equals(other: Any?): Boolean =
+    override fun equals(other: Any?): Boolean =
         other is ShortRange && start == other.start && end == other.end
 
-    fun hashCode(): Int = 31 * start.toInt() + end
+    override fun hashCode(): Int = 31 * start.toInt() + end
 
     class object {
         public val EMPTY: ShortRange = ShortRange(1, 0)
@@ -80,10 +80,10 @@ public class IntRange(public override val start: Int, public override val end: I
 
     override fun iterator(): IntIterator = IntProgressionIterator(start, end, 1)
 
-    fun equals(other: Any?): Boolean =
+    override fun equals(other: Any?): Boolean =
         other is IntRange && start == other.start && end == other.end
 
-    fun hashCode(): Int = 31 * start + end
+    override fun hashCode(): Int = 31 * start + end
 
     class object {
         public val EMPTY: IntRange = IntRange(1, 0)
@@ -98,10 +98,10 @@ public class LongRange(public override val start: Long, public override val end:
 
     override fun iterator(): LongIterator = LongProgressionIterator(start, end, 1)
 
-    fun equals(other: Any?): Boolean =
+    override fun equals(other: Any?): Boolean =
         other is LongRange && start == other.start && end == other.end
 
-    fun hashCode(): Int = (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))).toInt()
+    override fun hashCode(): Int = (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))).toInt()
 
     class object {
         public val EMPTY: LongRange = LongRange(1, 0)
@@ -116,10 +116,10 @@ public class FloatRange(public override val start: Float, public override val en
 
     override fun iterator(): FloatIterator = FloatProgressionIterator(start, end, 1.0f)
 
-    fun equals(other: Any?): Boolean =
+    override fun equals(other: Any?): Boolean =
         other is FloatRange && java.lang.Float.compare(start, other.start) == 0 && java.lang.Float.compare(end, other.end) == 0
 
-    fun hashCode(): Int = 31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end)
+    override fun hashCode(): Int = 31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end)
 
     class object {
         public val EMPTY: FloatRange = FloatRange(1.0f, 0.0f)
@@ -134,10 +134,10 @@ public class DoubleRange(public override val start: Double, public override val 
 
     override fun iterator(): DoubleIterator = DoubleProgressionIterator(start, end, 1.0)
 
-    fun equals(other: Any?): Boolean =
+    override fun equals(other: Any?): Boolean =
         other is DoubleRange && java.lang.Double.compare(start, other.start) == 0 && java.lang.Double.compare(end, other.end) == 0
 
-    fun hashCode(): Int {
+    override fun hashCode(): Int {
         var temp = java.lang.Double.doubleToLongBits(start)
         val result = (temp xor (temp ushr 32))
         temp = java.lang.Double.doubleToLongBits(end)
