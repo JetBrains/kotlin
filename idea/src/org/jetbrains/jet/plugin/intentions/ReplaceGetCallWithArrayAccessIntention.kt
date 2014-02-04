@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetValueArgumentList
 import org.jetbrains.jet.lang.psi.JetNamedArgumentImpl
 import org.jetbrains.jet.lang.psi.JetValueArgumentName
 
-public class GetCallReplacementIntention: JetSelfTargetingIntention<JetDotQualifiedExpression>("get.call.replacement", javaClass()) {
+public class ReplaceGetCallWithArrayAccessIntention : JetSelfTargetingIntention<JetDotQualifiedExpression>("replace.get.call.with.array.access", javaClass()) {
     override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
         val selector = element.getSelectorExpression()
 
@@ -35,14 +35,14 @@ public class GetCallReplacementIntention: JetSelfTargetingIntention<JetDotQualif
                 val callee: JetExpression? = selector.getCalleeExpression()
                 val arguments: JetValueArgumentList? = selector.getValueArgumentList()
 
-                when (arguments) {
-                    null -> return false
-                    else ->
-                        for (arg: JetValueArgument in arguments.getArguments()) {
-                            if (arg.getArgumentName() != null) {
-                                return false
-                            }
+                if (arguments == null) {
+                    return false
+                } else {
+                    for (arg: JetValueArgument in arguments.getArguments()) {
+                        if (arg.getArgumentName() != null) {
+                            return false
                         }
+                    }
                 }
 
                 return callee!!.textMatches("get")

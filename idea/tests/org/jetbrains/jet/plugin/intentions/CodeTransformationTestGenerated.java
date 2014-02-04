@@ -1184,6 +1184,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/getCallReplacement"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("functionLiteral.kt")
+        public void testFunctionLiteral() throws Exception {
+            doTestGetCallReplacement("idea/testData/intentions/getCallReplacement/functionLiteral.kt");
+        }
+        
         @TestMetadata("getCall1.kt")
         public void testGetCall1() throws Exception {
             doTestGetCallReplacement("idea/testData/intentions/getCallReplacement/getCall1.kt");
