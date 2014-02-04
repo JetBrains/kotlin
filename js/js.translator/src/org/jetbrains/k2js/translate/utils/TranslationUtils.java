@@ -43,6 +43,8 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.createDataDescriptor
 
 public final class TranslationUtils {
     public static final Comparator<FunctionDescriptor> OVERLOADED_FUNCTION_COMPARATOR = new OverloadedFunctionComparator();
+    // TODO drop after KT-4517 will be fixed.
+    public static final Set<String> ANY_METHODS = ContainerUtil.set("equals", "hashCode", "toString");
 
     private TranslationUtils() {
     }
@@ -150,7 +152,8 @@ public final class TranslationUtils {
 
     //TODO extend logic for nested/inner declarations
     private static boolean needsStableMangling(FunctionDescriptor descriptor) {
-        // Use stable mangling for overrides because we use stable mangling a overridable declaration.
+        // Use stable mangling for overrides because we use stable mangling when any function inside a overridable declaration
+        // for avoid clashing names when inheritance.
         if (JsDescriptorUtils.isOverride(descriptor)) {
             return true;
         }
@@ -162,6 +165,12 @@ public final class TranslationUtils {
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+
+            // TODO drop this temporary workaround and uncomment test cases in manglingAnyMethods.kt after KT-4517 will be fixed.
+            if (ANY_METHODS.contains(descriptor.getName().asString())) {
+                return true;
+            }
+
             // Use stable mangling when it inside a overridable declaration for avoid clashing names when inheritance.
             if (classDescriptor.getModality().isOverridable()) {
                 return true;

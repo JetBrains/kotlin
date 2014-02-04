@@ -125,4 +125,7 @@ public class FunctionTest extends AbstractExpressionTest {
         checkFooBoxIsOk();
     }
 
+    public void testManglingAnyMethods() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
