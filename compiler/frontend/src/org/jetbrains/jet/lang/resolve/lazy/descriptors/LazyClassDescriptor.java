@@ -364,7 +364,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
                 new Function0<Collection<JetType>>() {
                     @Override
                     public Collection<JetType> invoke() {
-                        if (resolveSession.isClassSpecial(DescriptorUtils.getFqName(LazyClassDescriptor.this))) {
+                        if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(LazyClassDescriptor.this)) {
                             return Collections.emptyList();
                         }
 

@@ -43,6 +43,7 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 
 public class BuiltInsSerializer(val out: PrintStream?) {
     private var totalSize = 0
@@ -96,11 +97,8 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         // DescriptorValidator.validate(packageView)
 
         val serializer = DescriptorSerializer(object : SerializerExtension() {
-            private val set = setOf("Any", "Nothing")
-
-            override fun hasSupertypes(descriptor: ClassDescriptor): Boolean {
-                return descriptor.getName().asString() !in set
-            }
+            override fun hasSupertypes(descriptor: ClassDescriptor): Boolean =
+                    !KotlinBuiltIns.isSpecialClassWithNoSupertypes(descriptor)
         })
 
         val classNames = ArrayList<Name>()

@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -37,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclaration
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -69,8 +66,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     private final BindingTrace trace;
     private final DeclarationProviderFactory declarationProviderFactory;
-
-    private final Predicate<FqNameUnsafe> specialClasses;
 
     private final Function<FqName, Name> classifierAliases;
 
@@ -131,7 +126,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         this.module = rootDescriptor;
 
         this.classifierAliases = NO_ALIASES;
-        this.specialClasses = Predicates.alwaysFalse();
 
         this.packages = storageManager.createMemoizedFunctionWithNullableValues(new MemoizedFunctionToNullable<FqName, LazyPackageDescriptor>() {
             @Nullable
@@ -185,10 +179,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             return null;
         }
         return new LazyPackageDescriptor(module, fqName, this, provider);
-    }
-
-    public boolean isClassSpecial(@NotNull FqNameUnsafe fqName) {
-        return specialClasses.apply(fqName);
     }
 
     @Override

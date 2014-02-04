@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -892,6 +893,12 @@ public class KotlinBuiltIns {
     }
 
     // Recognized & special
+
+    public static boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
+        FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
+        return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("Any")).toUnsafe().equals(fqName) ||
+               BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("Nothing")).toUnsafe().equals(fqName);
+    }
 
     public boolean isNothing(@NotNull JetType type) {
         return isNothingOrNullableNothing(type)
