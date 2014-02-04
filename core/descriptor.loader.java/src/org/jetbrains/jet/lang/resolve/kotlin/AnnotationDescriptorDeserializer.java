@@ -51,7 +51,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
 
@@ -215,8 +214,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     @NotNull
     private ClassDescriptor resolveClass(@NotNull JvmClassName className) {
-        ClassDescriptor annotationClass = javaDescriptorResolver.resolveClass(className.getFqNameForClassNameWithoutDollars(),
-                                                                         IGNORE_KOTLIN_SOURCES);
+        ClassDescriptor annotationClass = javaDescriptorResolver.resolveClass(className.getFqNameForClassNameWithoutDollars()
+        );
         return annotationClass != null ? annotationClass : ErrorUtils.getErrorClass();
     }
 

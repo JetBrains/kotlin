@@ -39,7 +39,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.plugin.libraries.JetDecompiledData.descriptorToKey;
 
 public final class DecompiledDataFactory {
@@ -96,7 +95,7 @@ public final class DecompiledDataFactory {
             }
         }
         else if (kind == KotlinClassHeader.Kind.CLASS) {
-            ClassDescriptor cd = javaDescriptorResolver.resolveClass(classFqName, INCLUDE_KOTLIN_SOURCES);
+            ClassDescriptor cd = javaDescriptorResolver.resolveClass(classFqName);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }
