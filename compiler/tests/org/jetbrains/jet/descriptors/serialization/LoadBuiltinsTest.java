@@ -44,14 +44,15 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     }
 
     public void testBuiltIns() throws Exception {
-        RecursiveDescriptorComparator.Configuration configuration = RecursiveDescriptorComparator.RECURSIVE_ALL.withRenderer(
-                new DescriptorRendererBuilder()
-                        .setWithDefinedIn(false)
-                        .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
-                        .setVerbose(true)
-                        .setPrettyFunctionTypes(false)
-                        .build()
-        );
+        RecursiveDescriptorComparator.Configuration configuration =
+                RecursiveDescriptorComparator.RECURSIVE_ALL.includeMethodsOfObject(false).withRenderer(
+                        new DescriptorRendererBuilder()
+                                .setWithDefinedIn(false)
+                                .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
+                                .setVerbose(true)
+                                .setPrettyFunctionTypes(false)
+                                .build()
+                );
 
         List<JetFile> files = JetTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
                 allFilesUnder("core/builtins/native"),

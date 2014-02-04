@@ -268,13 +268,18 @@ public class RecursiveDescriptorComparator {
                                      validationStrategy, renderer);
         }
 
+        public Configuration includeMethodsOfObject(boolean includeMethodsOfJavaObject) {
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
+                                     validationStrategy, renderer);
+        }
+
         public Configuration withValidationStrategy(@NotNull DescriptorValidator.ValidationVisitor validationStrategy) {
             return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
                                      validationStrategy, renderer);
         }
 
         public Configuration withRenderer(@NotNull DescriptorRenderer renderer) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage, 
+            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfJavaObject, recurseIntoPackage,
                                      validationStrategy, renderer);
         }
     }

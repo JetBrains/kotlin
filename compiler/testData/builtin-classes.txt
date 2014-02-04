@@ -30,7 +30,6 @@ public final class Boolean : jet.Comparable<jet.Boolean> {
     /*primary*/ private constructor Boolean()
     public final fun and(/*0*/ other: jet.Boolean): jet.Boolean
     public open override /*1*/ fun compareTo(/*0*/ other: jet.Boolean): jet.Int
-    public final fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public final fun not(): jet.Boolean
     public final fun or(/*0*/ other: jet.Boolean): jet.Boolean
     public final fun xor(/*0*/ other: jet.Boolean): jet.Boolean
@@ -71,8 +70,6 @@ public final class Byte : jet.Number, jet.Comparable<jet.Byte> {
     public final fun div(/*0*/ other: jet.Int): jet.Int
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Int
-    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Byte
     public final fun minus(): jet.Int
     public final fun minus(/*0*/ other: jet.Byte): jet.Int
@@ -146,10 +143,7 @@ public final class ByteProgression : jet.Progression<jet.Byte> {
         public open override /*1*/ fun <get-increment>(): jet.Int
     public open override /*1*/ val start: jet.Byte
         public open override /*1*/ fun <get-start>(): jet.Byte
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.ByteIterator
-    internal final fun toString(): jet.String
 }
 
 internal final class ByteProgressionIterator : jet.ByteIterator {
@@ -178,10 +172,7 @@ public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
     public open override /*2*/ val start: jet.Byte
         public open override /*2*/ fun <get-start>(): jet.Byte
     public open override /*1*/ fun contains(/*0*/ item: jet.Byte): jet.Boolean
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.ByteIterator
-    public open override /*1*/ /*fake_override*/ fun toString(): jet.String
     
     public class object <class-object-for-ByteRange> {
         /*primary*/ private constructor <class-object-for-ByteRange>()
@@ -206,8 +197,6 @@ public final class Char : jet.Hashable, jet.Comparable<jet.Char> {
     public final fun div(/*0*/ other: jet.Int): jet.Int
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Int
-    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Char
     public final fun minus(): jet.Int
     public final fun minus(/*0*/ other: jet.Byte): jet.Int
@@ -272,10 +261,7 @@ public final class CharProgression : jet.Progression<jet.Char> {
         public open override /*1*/ fun <get-increment>(): jet.Int
     public open override /*1*/ val start: jet.Char
         public open override /*1*/ fun <get-start>(): jet.Char
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.CharIterator
-    internal final fun toString(): jet.String
 }
 
 internal final class CharProgressionIterator : jet.CharIterator {
@@ -304,10 +290,7 @@ public final class CharRange : jet.Range<jet.Char>, jet.Progression<jet.Char> {
     public open override /*2*/ val start: jet.Char
         public open override /*2*/ fun <get-start>(): jet.Char
     public open override /*1*/ fun contains(/*0*/ item: jet.Char): jet.Boolean
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.CharIterator
-    public open override /*1*/ /*fake_override*/ fun toString(): jet.String
     
     public class object <class-object-for-CharRange> {
         /*primary*/ private constructor <class-object-for-CharRange>()
@@ -320,14 +303,11 @@ public trait CharSequence {
     public abstract val length: jet.Int
         public abstract fun <get-length>(): jet.Int
     public abstract fun get(/*0*/ index: jet.Int): jet.Char
-    public abstract fun toString(): jet.String
 }
 
 public trait Collection</*0*/ out E> : jet.Iterable<E>, jet.Hashable {
     public abstract fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract fun isEmpty(): jet.Boolean
     public abstract override /*1*/ fun iterator(): jet.Iterator<E>
     public abstract fun size(): jet.Int
@@ -354,8 +334,6 @@ public final class Double : jet.Number, jet.Comparable<jet.Double> {
     public final fun div(/*0*/ other: jet.Int): jet.Double
     public final fun div(/*0*/ other: jet.Long): jet.Double
     public final fun div(/*0*/ other: jet.Short): jet.Double
-    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Double
     public final fun minus(): jet.Double
     public final fun minus(/*0*/ other: jet.Byte): jet.Double
@@ -428,10 +406,7 @@ public final class DoubleProgression : jet.Progression<jet.Double> {
         public open override /*1*/ fun <get-increment>(): jet.Double
     public open override /*1*/ val start: jet.Double
         public open override /*1*/ fun <get-start>(): jet.Double
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.DoubleIterator
-    internal final fun toString(): jet.String
 }
 
 internal final class DoubleProgressionIterator : jet.DoubleIterator {
@@ -457,10 +432,7 @@ public final class DoubleRange : jet.Range<jet.Double>, jet.Progression<jet.Doub
     public open override /*2*/ val start: jet.Double
         public open override /*2*/ fun <get-start>(): jet.Double
     public open override /*1*/ fun contains(/*0*/ item: jet.Double): jet.Boolean
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.DoubleIterator
-    public open override /*1*/ /*fake_override*/ fun toString(): jet.String
     
     public class object <class-object-for-DoubleRange> {
         /*primary*/ private constructor <class-object-for-DoubleRange>()
@@ -584,8 +556,6 @@ public final class Float : jet.Number, jet.Comparable<jet.Float> {
     public final fun div(/*0*/ other: jet.Int): jet.Float
     public final fun div(/*0*/ other: jet.Long): jet.Float
     public final fun div(/*0*/ other: jet.Short): jet.Float
-    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Float
     public final fun minus(): jet.Float
     public final fun minus(/*0*/ other: jet.Byte): jet.Float
@@ -659,10 +629,7 @@ public final class FloatProgression : jet.Progression<jet.Float> {
         public open override /*1*/ fun <get-increment>(): jet.Float
     public open override /*1*/ val start: jet.Float
         public open override /*1*/ fun <get-start>(): jet.Float
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.FloatIterator
-    internal final fun toString(): jet.String
 }
 
 internal final class FloatProgressionIterator : jet.FloatIterator {
@@ -688,10 +655,7 @@ public final class FloatRange : jet.Range<jet.Float>, jet.Progression<jet.Float>
     public open override /*2*/ val start: jet.Float
         public open override /*2*/ fun <get-start>(): jet.Float
     public open override /*1*/ fun contains(/*0*/ item: jet.Float): jet.Boolean
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.FloatIterator
-    public open override /*1*/ /*fake_override*/ fun toString(): jet.String
     
     public class object <class-object-for-FloatRange> {
         /*primary*/ private constructor <class-object-for-FloatRange>()
@@ -793,8 +757,6 @@ public trait Function9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/
 }
 
 public trait Hashable {
-    public abstract fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract fun hashCode(): jet.Int
 }
 
 public final enum class InlineStrategy : jet.Enum<jet.InlineStrategy> {
@@ -851,8 +813,6 @@ public final class Int : jet.Number, jet.Comparable<jet.Int> {
     public final fun div(/*0*/ other: jet.Int): jet.Int
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Int
-    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Int
     public final fun inv(): jet.Int
     public final fun minus(): jet.Int
@@ -932,10 +892,7 @@ public final class IntProgression : jet.Progression<jet.Int> {
         public open override /*1*/ fun <get-increment>(): jet.Int
     public open override /*1*/ val start: jet.Int
         public open override /*1*/ fun <get-start>(): jet.Int
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.IntIterator
-    internal final fun toString(): jet.String
 }
 
 internal final class IntProgressionIterator : jet.IntIterator {
@@ -964,10 +921,7 @@ public final class IntRange : jet.Range<jet.Int>, jet.Progression<jet.Int> {
     public open override /*2*/ val start: jet.Int
         public open override /*2*/ fun <get-start>(): jet.Int
     public open override /*1*/ fun contains(/*0*/ item: jet.Int): jet.Boolean
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.IntIterator
-    public open override /*1*/ /*fake_override*/ fun toString(): jet.String
     
     public class object <class-object-for-IntRange> {
         /*primary*/ private constructor <class-object-for-IntRange>()
@@ -1264,9 +1218,7 @@ public trait KMemberFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3,
 public trait List</*0*/ out E> : jet.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public abstract fun get(/*0*/ index: jet.Int): E
-    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract fun indexOf(/*0*/ o: jet.Any?): jet.Int
     public abstract override /*1*/ fun isEmpty(): jet.Boolean
     public abstract override /*1*/ fun iterator(): jet.Iterator<E>
@@ -1304,8 +1256,6 @@ public final class Long : jet.Number, jet.Comparable<jet.Long> {
     public final fun div(/*0*/ other: jet.Int): jet.Long
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Long
-    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Long
     public final fun inv(): jet.Long
     public final fun minus(): jet.Long
@@ -1385,10 +1335,7 @@ public final class LongProgression : jet.Progression<jet.Long> {
         public open override /*1*/ fun <get-increment>(): jet.Long
     public open override /*1*/ val start: jet.Long
         public open override /*1*/ fun <get-start>(): jet.Long
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.LongIterator
-    internal final fun toString(): jet.String
 }
 
 internal final class LongProgressionIterator : jet.LongIterator {
@@ -1417,10 +1364,7 @@ public final class LongRange : jet.Range<jet.Long>, jet.Progression<jet.Long> {
     public open override /*2*/ val start: jet.Long
         public open override /*2*/ fun <get-start>(): jet.Long
     public open override /*1*/ fun contains(/*0*/ item: jet.Long): jet.Boolean
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.LongIterator
-    public open override /*1*/ /*fake_override*/ fun toString(): jet.String
     
     public class object <class-object-for-LongRange> {
         /*primary*/ private constructor <class-object-for-LongRange>()
@@ -1440,10 +1384,8 @@ public trait Map</*0*/ K, /*1*/ out V> {
     public abstract fun values(): jet.Collection<V>
     
     public trait Entry</*0*/ out K, /*1*/ out V> : jet.Hashable {
-        public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
         public abstract fun getKey(): K
         public abstract fun getValue(): V
-        public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     }
 }
 
@@ -1453,8 +1395,6 @@ public trait MutableCollection</*0*/ E> : jet.Collection<E>, jet.MutableIterable
     public abstract fun clear(): jet.Unit
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): jet.Boolean
     public abstract override /*2*/ fun iterator(): jet.MutableIterator<E>
     public abstract fun remove(/*0*/ o: jet.Any?): jet.Boolean
@@ -1481,9 +1421,7 @@ public trait MutableList</*0*/ E> : jet.List<E>, jet.MutableCollection<E> {
     public abstract override /*1*/ fun clear(): jet.Unit
     public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: jet.Int): E
-    public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: jet.Any?): jet.Int
     public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
     public abstract override /*2*/ /*fake_override*/ fun iterator(): jet.MutableIterator<E>
@@ -1526,10 +1464,8 @@ public trait MutableMap</*0*/ K, /*1*/ V> : jet.Map<K, V> {
     public abstract override /*1*/ fun values(): jet.MutableCollection<V>
     
     public trait MutableEntry</*0*/ K, /*1*/ V> : jet.Map.Entry<K, V>, jet.Hashable {
-        public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
         public abstract override /*1*/ /*fake_override*/ fun getKey(): K
         public abstract override /*1*/ /*fake_override*/ fun getValue(): V
-        public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
         public abstract fun setValue(/*0*/ value: V): V
     }
 }
@@ -1540,8 +1476,6 @@ public trait MutableSet</*0*/ E> : jet.Set<E>, jet.MutableCollection<E> {
     public abstract override /*1*/ fun clear(): jet.Unit
     public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
     public abstract override /*2*/ fun iterator(): jet.MutableIterator<E>
     public abstract override /*1*/ fun remove(/*0*/ o: jet.Any?): jet.Boolean
@@ -1556,8 +1490,6 @@ public final class Nothing {
 
 public abstract class Number : jet.Hashable {
     /*primary*/ public constructor Number()
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract fun toByte(): jet.Byte
     public abstract fun toChar(): jet.Char
     public abstract fun toDouble(): jet.Double
@@ -1594,14 +1526,11 @@ public trait Range</*0*/ T : jet.Comparable<T>> {
     public abstract val start: T
         public abstract fun <get-start>(): T
     public abstract fun contains(/*0*/ item: T): jet.Boolean
-    public open fun toString(): jet.String
 }
 
 public trait Set</*0*/ out E> : jet.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
     public abstract override /*1*/ fun isEmpty(): jet.Boolean
     public abstract override /*1*/ fun iterator(): jet.Iterator<E>
     public abstract override /*1*/ fun size(): jet.Int
@@ -1624,8 +1553,6 @@ public final class Short : jet.Number, jet.Comparable<jet.Short> {
     public final fun div(/*0*/ other: jet.Int): jet.Int
     public final fun div(/*0*/ other: jet.Long): jet.Long
     public final fun div(/*0*/ other: jet.Short): jet.Int
-    public open override /*1*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    public open override /*1*/ fun hashCode(): jet.Int
     public final fun inc(): jet.Short
     public final fun minus(): jet.Int
     public final fun minus(/*0*/ other: jet.Byte): jet.Int
@@ -1699,10 +1626,7 @@ public final class ShortProgression : jet.Progression<jet.Short> {
         public open override /*1*/ fun <get-increment>(): jet.Int
     public open override /*1*/ val start: jet.Short
         public open override /*1*/ fun <get-start>(): jet.Short
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.ShortIterator
-    internal final fun toString(): jet.String
 }
 
 internal final class ShortProgressionIterator : jet.ShortIterator {
@@ -1731,10 +1655,7 @@ public final class ShortRange : jet.Range<jet.Short>, jet.Progression<jet.Short>
     public open override /*2*/ val start: jet.Short
         public open override /*2*/ fun <get-start>(): jet.Short
     public open override /*1*/ fun contains(/*0*/ item: jet.Short): jet.Boolean
-    internal final fun equals(/*0*/ other: jet.Any?): jet.Boolean
-    internal final fun hashCode(): jet.Int
     public open override /*1*/ fun iterator(): jet.ShortIterator
-    public open override /*1*/ /*fake_override*/ fun toString(): jet.String
     
     public class object <class-object-for-ShortRange> {
         /*primary*/ private constructor <class-object-for-ShortRange>()
@@ -1748,10 +1669,8 @@ public final class String : jet.Comparable<jet.String>, jet.CharSequence {
     public open override /*1*/ val length: jet.Int
         public open override /*1*/ fun <get-length>(): jet.Int
     public open override /*1*/ fun compareTo(/*0*/ that: jet.String): jet.Int
-    public final fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public open override /*1*/ fun get(/*0*/ index: jet.Int): jet.Char
     public final fun plus(/*0*/ other: jet.Any?): jet.String
-    public open override /*1*/ fun toString(): jet.String
 }
 
 public open class Throwable {
@@ -1763,7 +1682,6 @@ public open class Throwable {
 
 public final class Unit {
     /*primary*/ private constructor Unit()
-    internal final fun toString(): jet.String
     
     public class object <class-object-for-Unit> {
         /*primary*/ private constructor <class-object-for-Unit>()
