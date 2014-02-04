@@ -2878,9 +2878,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/functions/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("extensionInvokeOnExpr.kt")
+            public void testExtensionInvokeOnExpr() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/extensionInvokeOnExpr.kt");
+            }
+            
             @TestMetadata("invoke.kt")
             public void testInvoke() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/invoke/invoke.kt");
+            }
+            
+            @TestMetadata("invokeOnExprByConvention.kt")
+            public void testInvokeOnExprByConvention() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/invokeOnExprByConvention.kt");
             }
             
             @TestMetadata("kt3189.kt")
@@ -2896,6 +2906,31 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("kt3297.kt")
             public void testKt3297() throws Exception {
                 doTest("compiler/testData/codegen/box/functions/invoke/kt3297.kt");
+            }
+            
+            @TestMetadata("kt3450getAndInvoke.kt")
+            public void testKt3450getAndInvoke() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/kt3450getAndInvoke.kt");
+            }
+            
+            @TestMetadata("kt3631invokeOnString.kt")
+            public void testKt3631invokeOnString() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/kt3631invokeOnString.kt");
+            }
+            
+            @TestMetadata("kt3772.kt")
+            public void testKt3772() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/kt3772.kt");
+            }
+            
+            @TestMetadata("kt3821invokeOnThis.kt")
+            public void testKt3821invokeOnThis() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/kt3821invokeOnThis.kt");
+            }
+            
+            @TestMetadata("kt3822invokeOnThis.kt")
+            public void testKt3822invokeOnThis() throws Exception {
+                doTest("compiler/testData/codegen/box/functions/invoke/kt3822invokeOnThis.kt");
             }
             
         }

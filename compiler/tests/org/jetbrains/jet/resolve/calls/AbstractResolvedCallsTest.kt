@@ -34,6 +34,7 @@ import java.io.File
 import java.util.Collections
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
@@ -72,12 +73,22 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
 
         var callFound = false
         for ((element, resolvedCall) in analyzeFileAndGetResolvedCallEntries()) {
-            if (callName.equals(element.getText())) {
+
+            fun tryCall(resolvedCall: ResolvedCall<*>, actualName: String? = element.getText()) {
+                if (callName == null || callName != actualName) return
                 callFound = true
                 checkResolvedCall(resolvedCall, element)
             }
+
+            if (resolvedCall is VariableAsFunctionResolvedCall) {
+                tryCall(resolvedCall.getFunctionCall(), "invoke")
+                tryCall(resolvedCall.getVariableCall())
+            }
+            else {
+                tryCall(resolvedCall)
+            }
         }
-        assertTrue(callFound, "Resolved call for $callName was not found.")
+        assertTrue(callFound, "Resolved call for $callName was not found")
     }
 }
 

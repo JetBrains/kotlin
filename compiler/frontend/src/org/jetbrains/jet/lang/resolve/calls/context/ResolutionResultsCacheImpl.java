@@ -100,7 +100,7 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
             @NotNull WritableSlice<CallKey, T> slice
     ) {
         if (expression == null) return null;
-        for (CallType callType : Lists.newArrayList(DEFAULT, ARRAY_GET_METHOD, ARRAY_SET_METHOD)) {
+        for (CallType callType : Lists.newArrayList(DEFAULT, ARRAY_GET_METHOD, ARRAY_SET_METHOD, INVOKE)) {
             CallKey callKey = CallKey.create(callType, expression);
             T context = trace.get(slice, callKey);
             if (context != null) {

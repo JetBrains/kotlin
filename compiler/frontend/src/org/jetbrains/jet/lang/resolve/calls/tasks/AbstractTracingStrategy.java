@@ -46,7 +46,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 public abstract class AbstractTracingStrategy implements TracingStrategy {
-    private final JetExpression reference;
+    protected final JetExpression reference;
     protected final Call call;
 
     protected AbstractTracingStrategy(@NotNull JetExpression reference, @NotNull Call call) {
@@ -61,11 +61,6 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             descriptors.add(candidate.getCandidateDescriptor());
         }
         trace.record(AMBIGUOUS_REFERENCE_TARGET, reference, descriptors);
-    }
-
-    @Override
-    public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> candidates) {
-        trace.report(UNRESOLVED_REFERENCE_WRONG_RECEIVER.on(reference, candidates));
     }
 
     @Override

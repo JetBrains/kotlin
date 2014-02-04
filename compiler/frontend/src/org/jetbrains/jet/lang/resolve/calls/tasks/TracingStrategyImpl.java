@@ -26,7 +26,10 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
+import java.util.Collection;
+
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 public class TracingStrategyImpl extends AbstractTracingStrategy {
@@ -63,5 +66,10 @@ public class TracingStrategyImpl extends AbstractTracingStrategy {
     @Override
     public void unresolvedReference(@NotNull BindingTrace trace) {
         trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+    }
+
+    @Override
+    public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> candidates) {
+        trace.report(UNRESOLVED_REFERENCE_WRONG_RECEIVER.on(reference, candidates));
     }
 }

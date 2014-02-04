@@ -5081,6 +5081,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/operatorsOverloading/kt1028.kt");
             }
             
+            @TestMetadata("kt3450.kt")
+            public void testKt3450() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/operatorsOverloading/kt3450.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/overload")
@@ -6041,6 +6046,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/invoke")
+            @InnerTestClasses({Invoke.Errors.class})
             public static class Invoke extends AbstractJetDiagnosticsTest {
                 public void testAllFilesPresentInInvoke() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/resolve/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -6091,6 +6097,50 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/resolve/invoke/valNamedInvoke.kt");
                 }
                 
+                @TestMetadata("compiler/testData/diagnostics/tests/resolve/invoke/errors")
+                public static class Errors extends AbstractJetDiagnosticsTest {
+                    public void testAllFilesPresentInErrors() throws Exception {
+                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/resolve/invoke/errors"), Pattern.compile("^(.+)\\.kt$"), true);
+                    }
+                    
+                    @TestMetadata("ambiguityForInvoke.kt")
+                    public void testAmbiguityForInvoke() throws Exception {
+                        doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/ambiguityForInvoke.kt");
+                    }
+                    
+                    @TestMetadata("invisibleInvoke.kt")
+                    public void testInvisibleInvoke() throws Exception {
+                        doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/invisibleInvoke.kt");
+                    }
+                    
+                    @TestMetadata("typeInferenceErrorForInvoke.kt")
+                    public void testTypeInferenceErrorForInvoke() throws Exception {
+                        doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/typeInferenceErrorForInvoke.kt");
+                    }
+                    
+                    @TestMetadata("unresolvedInvoke.kt")
+                    public void testUnresolvedInvoke() throws Exception {
+                        doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/unresolvedInvoke.kt");
+                    }
+                    
+                    @TestMetadata("unsafeCallWithInvoke.kt")
+                    public void testUnsafeCallWithInvoke() throws Exception {
+                        doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/unsafeCallWithInvoke.kt");
+                    }
+                    
+                    @TestMetadata("wrongReceiverTypeForInvoke.kt")
+                    public void testWrongReceiverTypeForInvoke() throws Exception {
+                        doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/wrongReceiverTypeForInvoke.kt");
+                    }
+                    
+                }
+                
+                public static Test innerSuite() {
+                    TestSuite suite = new TestSuite("Invoke");
+                    suite.addTestSuite(Invoke.class);
+                    suite.addTestSuite(Errors.class);
+                    return suite;
+                }
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls")
@@ -6142,7 +6192,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Resolve");
                 suite.addTestSuite(Resolve.class);
-                suite.addTestSuite(Invoke.class);
+                suite.addTest(Invoke.innerSuite());
                 suite.addTestSuite(NestedCalls.class);
                 suite.addTestSuite(SpecialConstructions.class);
                 return suite;

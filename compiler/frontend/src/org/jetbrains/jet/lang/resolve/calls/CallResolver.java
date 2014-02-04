@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -38,8 +37,6 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.tasks.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
-import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.util.JetFakeReference;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -48,7 +45,6 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.LabelResolver;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
@@ -57,7 +53,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
@@ -285,31 +280,20 @@ public class CallResolver {
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<CallableDescriptor, FunctionDescriptor>(candidates, functionReference, context)); // !! DataFlowInfo.EMPTY
             }
             else if (calleeExpression != null) {
+
                 // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
                 JetType calleeType = expressionTypingServices.safeGetType(context.scope, calleeExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace); // We are actually expecting a function, but there seems to be no easy way of expressing this
+                ExpressionReceiver expressionReceiver = new ExpressionReceiver(calleeExpression, calleeType);
 
-                if (!KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(calleeType)) {
-//                    checkTypesWithNoCallee(trace, scope, call);
-                    if (!calleeType.isError()) {
-                        context.trace.report(CALLEE_NOT_A_FUNCTION.on(calleeExpression, calleeType));
-                    }
-                    return checkArgumentTypesAndFail(context);
+                Call call = new CallTransformer.CallForImplicitInvoke(
+                        context.call.getExplicitReceiver(), expressionReceiver, context.call);
+                TracingStrategyForInvoke tracingForInvoke = new TracingStrategyForInvoke(calleeExpression, call);
+                OverloadResolutionResults<FunctionDescriptor> invokeResults =
+                        resolveCallForInvoke(context.replaceCall(call), tracingForInvoke);
+                if (invokeResults.isNothing() || invokeResults.getResultCode() == CANDIDATES_WITH_WRONG_RECEIVER) {
+                    context.trace.report(CALLEE_NOT_A_FUNCTION.on(calleeExpression, calleeType));
                 }
-
-                FunctionDescriptorImpl functionDescriptor = new ExpressionAsFunctionDescriptor(context.scope.getContainingDeclaration(), Name.special("<for expression " + calleeExpression.getText() + ">"), calleeExpression);
-                FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER_PARAMETER, Modality.FINAL,
-                                                                  Visibilities.LOCAL);
-                ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(functionDescriptor, JetPsiUtil.isSafeCall(context.call));
-                resolutionCandidate.setReceiverArgument(context.call.getExplicitReceiver());
-                resolutionCandidate.setExplicitReceiverKind(ExplicitReceiverKind.RECEIVER_ARGUMENT);
-
-                // strictly speaking, this is a hack:
-                // we need to pass a reference, but there's no reference in the PSI,
-                // so we wrap what we have into a fake reference and pass it on (unwrap on the other end)
-                functionReference = new JetFakeReference(calleeExpression);
-
-                prioritizedTasks = Collections.singletonList(new ResolutionTask<CallableDescriptor, FunctionDescriptor>(
-                        Collections.singleton(resolutionCandidate), functionReference, context));
+                return (OverloadResolutionResultsImpl<FunctionDescriptor>) invokeResults; //todo
             }
             else {
 //                checkTypesWithNoCallee(trace, scope, call);
@@ -486,7 +470,9 @@ public class CallResolver {
             @NotNull TracingStrategy tracing
     ) {
         ResolutionDebugInfo.Data debugInfo = ResolutionDebugInfo.create();
-        context.trace.record(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, context.call.getCallElement(), debugInfo);
+        if (context.call.getCallType() != Call.CallType.INVOKE) {
+            context.trace.record(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, context.call.getCallElement(), debugInfo);
+        }
         context.trace.record(RESOLUTION_SCOPE, context.call.getCalleeExpression(), context.scope);
 
         if (context.dataFlowInfo.hasTypeInfoConstraints()) {

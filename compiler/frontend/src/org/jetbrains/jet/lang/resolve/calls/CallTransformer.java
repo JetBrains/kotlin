@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImp
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategyForInvoke;
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -205,8 +206,9 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                     functionCall, context.checkArguments, context.dataFlowInfoForArguments);
 
             // 'invoke' call resolve
+            TracingStrategyForInvoke tracingForInvoke = new TracingStrategyForInvoke(calleeExpression, functionCall);
             OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallForInvoke(
-                    basicCallResolutionContext, context.tracing); //todo context.tracing is incorrect
+                    basicCallResolutionContext, tracingForInvoke);
             Collection<ResolvedCallWithTrace<FunctionDescriptor>> calls = ((OverloadResolutionResultsImpl<FunctionDescriptor>)results).getResultingCalls();
 
             return Collections2.transform(calls, new Function<ResolvedCallWithTrace<FunctionDescriptor>, ResolvedCallWithTrace<FunctionDescriptor>>() {
@@ -224,7 +226,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
         final ExpressionReceiver calleeExpressionAsThisObject;
         final JetSimpleNameExpression fakeInvokeExpression;
 
-        private CallForImplicitInvoke(
+        public CallForImplicitInvoke(
                 @NotNull ReceiverValue explicitExtensionReceiver,
                 @NotNull ExpressionReceiver calleeExpressionAsThisObject,
                 @NotNull Call call
@@ -256,14 +258,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
         @NotNull
         @Override
         public PsiElement getCallElement() {
-            if (outerCall.getCallElement() instanceof JetCallElement) {
-                //to report errors properly
-                JetValueArgumentList list = ((JetCallElement)outerCall.getCallElement()).getValueArgumentList();
-                if (list != null) {
-                    return list;
-                }
-            }
-            return fakeInvokeExpression;
+            return outerCall.getCallElement();
         }
 
         @NotNull
