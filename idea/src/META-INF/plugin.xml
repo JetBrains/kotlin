@@ -487,11 +487,7 @@
     </intentionAction>
 
     <intentionAction>
-<<<<<<< HEAD
       <className>org.jetbrains.jet.plugin.intentions.ReplaceGetCallWithArrayAccessIntention</className>
-=======
-      <className>org.jetbrains.jet.plugin.intentions.GetCallReplacementIntention</className>
->>>>>>> d6b25612c15a4991a2f8af974ec05a9112d4763b
       <category>Kotlin</category>
     </intentionAction>
 
