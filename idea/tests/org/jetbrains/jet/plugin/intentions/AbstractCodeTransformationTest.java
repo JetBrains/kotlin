@@ -30,6 +30,10 @@ import org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclaration
 import java.io.File;
 
 public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
+    public void doTestConvertGetToBrackets(@NotNull String path) throws Exception {
+       doTestIntention(path, new QualifiedGetToBracketsIntention());
+    }
+
     public void doTestFoldIfToAssignment(@NotNull String path) throws Exception {
         doTestIntention(path, new FoldIfToAssignmentIntention());
     }
