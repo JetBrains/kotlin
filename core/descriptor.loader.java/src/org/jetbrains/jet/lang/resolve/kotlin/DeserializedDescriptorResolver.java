@@ -38,7 +38,6 @@ import org.jetbrains.jet.storage.StorageManager;
 import javax.inject.Inject;
 import java.util.Collection;
 
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.CLASS;
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.PACKAGE_FACADE;
@@ -59,7 +58,7 @@ public final class DeserializedDescriptorResolver {
         @Nullable
         @Override
         public ClassDescriptor findClass(@NotNull ClassId classId) {
-            return javaDescriptorResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()), INCLUDE_KOTLIN_SOURCES);
+            return javaDescriptorResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()));
         }
 
         @NotNull

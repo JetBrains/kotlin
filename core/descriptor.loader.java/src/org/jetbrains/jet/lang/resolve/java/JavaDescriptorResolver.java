@@ -33,10 +33,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.storage.StorageManager;
 
-import javax.inject.Inject;
-
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
@@ -100,13 +96,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     }
 
     @Nullable
-    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        return getPackageFragmentProvider().getClass(qualifiedName);
-    }
-
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
-        return resolveClass(qualifiedName, IGNORE_KOTLIN_SOURCES);
+        return getPackageFragmentProvider().getClass(qualifiedName);
     }
 
     @Nullable
