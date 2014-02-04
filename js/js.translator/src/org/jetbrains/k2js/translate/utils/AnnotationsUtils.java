@@ -28,9 +28,11 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isOverride;
 
 public final class AnnotationsUtils {
 
@@ -72,18 +74,23 @@ public final class AnnotationsUtils {
 
     @Nullable
     public static String getNameForAnnotatedObjectWithOverrides(@NotNull DeclarationDescriptor declarationDescriptor) {
-        Set<DeclarationDescriptor> descriptors;
+        List<DeclarationDescriptor> descriptors;
 
         if (declarationDescriptor instanceof CallableMemberDescriptor &&
-            ((CallableMemberDescriptor) declarationDescriptor).getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+            isOverride((CallableMemberDescriptor) declarationDescriptor)) {
 
             Set<CallableMemberDescriptor> overriddenDeclarations =
                     BindingContextUtils.getAllOverriddenDeclarations((CallableMemberDescriptor) declarationDescriptor);
-            //noinspection unchecked
-            descriptors = ContainerUtil.<CallableMemberDescriptor, DeclarationDescriptor>map2Set(overriddenDeclarations, Function.ID);
+
+            descriptors = ContainerUtil.mapNotNull(overriddenDeclarations, new Function<CallableMemberDescriptor, DeclarationDescriptor>() {
+                @Override
+                public DeclarationDescriptor fun(CallableMemberDescriptor descriptor) {
+                    return isOverride(descriptor) ? null : descriptor;
+                }
+            });
         }
         else {
-            descriptors = ContainerUtil.newHashSet(declarationDescriptor);
+            descriptors = ContainerUtil.newArrayList(declarationDescriptor);
         }
 
         for (DeclarationDescriptor descriptor : descriptors) {

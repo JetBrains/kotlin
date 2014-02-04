@@ -18,8 +18,9 @@ class B(val b: Int) : A(b / 2) {
     fun boo(i: String): String = "B.boo($i: String)"
 
     fun bar(i: String): String = "B.bar($i: String)"
-    override fun baz(i: Int): String = "B.baz($i: Int)"
     fun bar(): String = "B.bar()"
+    override fun baz(i: Int): String = "B.baz($i: Int)"
+    fun bar(d: Double): String = "B.bar($d: Double)"
 }
 
 fun box(): String {
@@ -38,6 +39,7 @@ fun box(): String {
     if (b.bar("apl") != "B.bar(apl: String)") return "b.bar(\"apl\") != \"B.bar(apl: String)\", it: ${b.bar("apl")}"
     if (b.baz(34) != "B.baz(34: Int)") return "b.baz(34) != \"B.baz(34: Int)\", it: ${b.baz(34)}"
     if (b.bar() != "B.bar()") return "b.bar() != \"B.bar()\", it: ${b.bar()}"
+    if (b.bar(2.213) != "B.bar(2.213: Double)") return "b.bar(2.213) != \"B.bar(2.213: Double)\", it: ${b.bar(2.213)}"
 
     val a: A = b
 
