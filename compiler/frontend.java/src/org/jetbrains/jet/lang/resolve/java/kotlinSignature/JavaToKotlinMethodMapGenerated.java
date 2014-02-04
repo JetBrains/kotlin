@@ -28,9 +28,15 @@ class JavaToKotlinMethodMapGenerated {
     JavaToKotlinMethodMapGenerated() {
         ImmutableMultimap.Builder<String, JavaToKotlinMethodMap.ClassData> b = ImmutableMultimap.builder();
         
+        put(b, "java.lang.Object", "Any",
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("hashCode()", "fun hashCode(): jet.Int")            
+        );
+        
         put(b, "java.lang.String", "String",
             pair("compareTo(java.lang.String)", "fun compareTo(that: jet.String): jet.Int"),            
             pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
             pair("toString()", "fun toString(): jet.String")            
         );
         
@@ -49,11 +55,13 @@ class JavaToKotlinMethodMapGenerated {
         );
         
         put(b, "java.lang.Enum", "Enum",
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
             pair("name()", "fun name(): jet.String"),            
             pair("ordinal()", "fun ordinal(): jet.Int")            
         );
         
-        put(b, "java.lang.Object", "Hashable",
+        put(b, "java.lang.annotation.Annotation", "Annotation",
             pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
             pair("hashCode()", "fun hashCode(): jet.Int")            
         );
@@ -175,7 +183,9 @@ class JavaToKotlinMethodMapGenerated {
             pair("containsKey(java.lang.Object)", "fun containsKey(key: jet.Any?): jet.Boolean"),            
             pair("containsValue(java.lang.Object)", "fun containsValue(value: jet.Any?): jet.Boolean"),            
             pair("entrySet()", "fun entrySet(): jet.Set<jet.Map.Entry<K, V>>"),            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
             pair("get(java.lang.Object)", "fun get(key: jet.Any?): V?"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
             pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
             pair("keySet()", "fun keySet(): jet.Set<K>"),            
             pair("size()", "fun size(): jet.Int"),            
@@ -187,7 +197,9 @@ class JavaToKotlinMethodMapGenerated {
             pair("containsKey(java.lang.Object)", "fun containsKey(key: jet.Any?): jet.Boolean"),            
             pair("containsValue(java.lang.Object)", "fun containsValue(value: jet.Any?): jet.Boolean"),            
             pair("entrySet()", "fun entrySet(): jet.MutableSet<jet.MutableMap.MutableEntry<K, V>>"),            
+            pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
             pair("get(java.lang.Object)", "fun get(key: jet.Any?): V?"),            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
             pair("isEmpty()", "fun isEmpty(): jet.Boolean"),            
             pair("keySet()", "fun keySet(): jet.MutableSet<K>"),            
             pair("put(K, V)", "fun put(key: K, value: V): V?"),            

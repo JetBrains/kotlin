@@ -4,6 +4,5 @@ class Test {
     }
 }
 
-// EXIST: Any, Nothing, Unit, Int, Number
-// EXIST: Array, Hashable
+// EXIST: Any, Nothing, Unit, Int, Number, Array
 // EXIST_JAVA_ONLY: Math, Thread

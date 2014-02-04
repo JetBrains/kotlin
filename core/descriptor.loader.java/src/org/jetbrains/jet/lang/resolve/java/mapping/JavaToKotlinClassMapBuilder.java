@@ -43,7 +43,6 @@ public abstract class JavaToKotlinClassMapBuilder {
         register(Enum.class, kotlinBuiltIns.getEnum());
         register(Annotation.class, kotlinBuiltIns.getAnnotation());
         register(Deprecated.class, kotlinBuiltIns.getDeprecatedAnnotation(), Direction.JAVA_TO_KOTLIN);
-        register(Object.class, kotlinBuiltIns.getHashable(), Direction.KOTLIN_TO_JAVA);
         register(Void.class, kotlinBuiltIns.getNothing(), Direction.KOTLIN_TO_JAVA);
 
         register(Iterable.class, kotlinBuiltIns.getIterable(), kotlinBuiltIns.getMutableIterable());

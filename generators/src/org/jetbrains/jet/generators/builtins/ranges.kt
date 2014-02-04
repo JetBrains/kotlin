@@ -66,10 +66,10 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, end, $increment)
 
-    fun equals(other: Any?): Boolean =
+    override fun equals(other: Any?): Boolean =
         other is $range && ${compare("start")} && ${compare("end")}
 
-    fun hashCode(): Int $hashCode
+    override fun hashCode(): Int $hashCode
 
     class object {
         public val EMPTY: $range = $range($emptyBounds)

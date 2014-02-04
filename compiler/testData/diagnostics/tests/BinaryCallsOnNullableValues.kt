@@ -1,13 +1,5 @@
 class A() {
-  fun equals(<!UNUSED_PARAMETER!>a<!> : Any?) : Boolean = false
-}
-
-class B() {
-  fun equals(<!UNUSED_PARAMETER!>a<!> : Any?) : Boolean? = false
-}
-
-class C() {
-  fun equals(<!UNUSED_PARAMETER!>a<!> : Any?) : Int = 0
+  override fun equals(other : Any?) : Boolean = false
 }
 
 fun f(): Unit {
@@ -22,8 +14,6 @@ fun f(): Unit {
   x != 1
 
   <!EQUALITY_NOT_APPLICABLE!>A() == 1<!>
-  B() <!RESULT_TYPE_MISMATCH!>==<!> 1
-  C() <!RESULT_TYPE_MISMATCH!>==<!> 1
 
   <!EQUALITY_NOT_APPLICABLE!>x === "1"<!>
   <!EQUALITY_NOT_APPLICABLE!>x !== "1"<!>

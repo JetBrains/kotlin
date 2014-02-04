@@ -16,7 +16,7 @@ data class D(val x: Int) {
 
 data class E(val x: Int) {
   fun equals(x: E): Boolean = false
-  fun equals(x: Any?): Boolean = false
+  override fun equals(x: Any?): Boolean = false
 }
 
 fun box(): String {

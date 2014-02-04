@@ -1,6 +1,6 @@
 package jet
 
-public abstract class Number : Hashable {
+public abstract class Number {
   public abstract fun toDouble() : Double
   public abstract fun toFloat() : Float
   public abstract fun toLong() : Long
@@ -8,13 +8,6 @@ public abstract class Number : Hashable {
   public abstract fun toChar() : Char
   public abstract fun toShort() : Short
   public abstract fun toByte() : Byte
-//  fun equals(other : Double) : Boolean
-//  fun equals(other : Float) : Boolean
-//  fun equals(other : Long) : Boolean
-//  fun equals(other : Byte) : Boolean
-//  fun equals(other : Int) : Boolean
-//  fun equals(other : Short) : Boolean
-//  fun equals(other : Char) : Boolean
 }
 
 public class Double private () : Number, Comparable<Double>  {
@@ -85,9 +78,6 @@ public class Double private () : Number, Comparable<Double>  {
   public override fun toChar() : Char
   public override fun toShort() : Short
   public override fun toByte() : Byte
-
-  public override fun hashCode() : Int
-  public override fun equals(other : Any?) : Boolean
 }
 
 public class Float private () : Number, Comparable<Float>  {
@@ -159,9 +149,6 @@ public class Float private () : Number, Comparable<Float>  {
   public override fun toChar() : Char
   public override fun toShort() : Short
   public override fun toByte() : Byte
-
-  public override fun hashCode() : Int
-  public override fun equals(other : Any?) : Boolean
 }
 
 public class Long private () : Number, Comparable<Long> {
@@ -241,9 +228,6 @@ public class Long private () : Number, Comparable<Long> {
   public override fun toChar() : Char
   public override fun toShort() : Short
   public override fun toByte() : Byte
-
-  public override fun hashCode() : Int
-  public override fun equals(other : Any?) : Boolean
 }
 
 public class Int private () : Number, Comparable<Int> {
@@ -323,9 +307,6 @@ public class Int private () : Number, Comparable<Int> {
   public override fun toChar() : Char
   public override fun toShort() : Short
   public override fun toByte() : Byte
-
-  public override fun hashCode() : Int
-  public override fun equals(other : Any?) : Boolean
 }
 
 public class Short private () : Number, Comparable<Short> {
@@ -397,9 +378,6 @@ public class Short private () : Number, Comparable<Short> {
   public override fun toChar() : Char
   public override fun toShort() : Short
   public override fun toByte() : Byte
-
-  public override fun hashCode() : Int
-  public override fun equals(other : Any?) : Boolean
 }
 
 public class Byte private () : Number, Comparable<Byte> {
@@ -471,7 +449,4 @@ public class Byte private () : Number, Comparable<Byte> {
   public override fun toChar() : Char
   public override fun toShort() : Short
   public override fun toByte() : Byte
-
-  public override fun hashCode() : Int
-  public override fun equals(other : Any?) : Boolean
 }

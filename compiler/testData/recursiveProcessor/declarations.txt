@@ -50,13 +50,35 @@ Trait.traitFunc:SimpleFunctionDescriptor
 Trait.traitProp:PropertyDescriptor
 Trait:ClassDescriptorWithResolutionScopes
 a:ValueParameterDescriptor
+fake <class-object-for-Class>.equals:SimpleFunctionDescriptor
+fake <class-object-for-Class>.hashCode:SimpleFunctionDescriptor
+fake <class-object-for-NestedClass>.equals:SimpleFunctionDescriptor
+fake <class-object-for-NestedClass>.hashCode:SimpleFunctionDescriptor
+fake <class-object-for-NestedObject>.equals:SimpleFunctionDescriptor
+fake <class-object-for-NestedObject>.hashCode:SimpleFunctionDescriptor
 fake <class-object-for-NestedObject>.nestedFunc:SimpleFunctionDescriptor
 fake <class-object-for-Object>.<get-objProp>:PropertyGetterDescriptor
+fake <class-object-for-Object>.equals:SimpleFunctionDescriptor
+fake <class-object-for-Object>.hashCode:SimpleFunctionDescriptor
 fake <class-object-for-Object>.objFunc:SimpleFunctionDescriptor
 fake <class-object-for-Object>.objProp:PropertyDescriptor
 fake Class.<get-traitProp>:PropertyGetterDescriptor
+fake Class.equals:SimpleFunctionDescriptor
+fake Class.hashCode:SimpleFunctionDescriptor
 fake Class.traitFunc:SimpleFunctionDescriptor
 fake Class.traitProp:PropertyDescriptor
+fake NestedClass.equals:SimpleFunctionDescriptor
+fake NestedClass.hashCode:SimpleFunctionDescriptor
+fake NestedObject.equals:SimpleFunctionDescriptor
+fake NestedObject.hashCode:SimpleFunctionDescriptor
+fake NestedTrait.equals:SimpleFunctionDescriptor
+fake NestedTrait.hashCode:SimpleFunctionDescriptor
+fake Object.equals:SimpleFunctionDescriptor
+fake Object.hashCode:SimpleFunctionDescriptor
+fake Outer.equals:SimpleFunctionDescriptor
+fake Outer.hashCode:SimpleFunctionDescriptor
+fake Trait.equals:SimpleFunctionDescriptor
+fake Trait.hashCode:SimpleFunctionDescriptor
 func.this:ReceiverParameterDescriptor
 innerTest.<get-prop>:PropertyGetterDescriptor
 innerTest.<get-propVar>:PropertyGetterDescriptor
@@ -65,6 +87,17 @@ innerTest.func:SimpleFunctionDescriptor
 innerTest.prop:PropertyDescriptor
 innerTest.propVar:PropertyDescriptor
 innerTest:PackageViewDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
+other:ValueParameterDescriptor
 prop.this:ReceiverParameterDescriptor
 prop.this:ReceiverParameterDescriptor
 test:PackageViewDescriptor

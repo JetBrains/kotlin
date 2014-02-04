@@ -1,11 +1,11 @@
 package foo
 
 class Foo(val name: String) {
-    public fun equals(that: Any?): Boolean {
-        if (that !is Foo) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is Foo) {
             return false
         }
-        return this.name == that.name
+        return this.name == other.name
     }
 }
 

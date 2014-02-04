@@ -8,7 +8,7 @@ public trait MutableIterable<out T> : Iterable<T> {
     override fun iterator() : MutableIterator<T>
 }
 
-public trait Collection<out E> : Iterable<E>, Hashable {
+public trait Collection<out E> : Iterable<E> {
     // Query Operations
     public fun size() : Int
     public fun isEmpty() : Boolean
@@ -123,7 +123,7 @@ public trait Map<K, out V> {
     public fun values() : Collection<V>
     public fun entrySet() : Set<Map.Entry<K, V>>
 
-    public trait Entry<out K, out V> : Hashable {
+    public trait Entry<out K, out V> {
         public fun getKey() : K
         public fun getValue() : V
     }
@@ -143,7 +143,7 @@ public trait MutableMap<K, V> : Map<K, V> {
     override fun values() : MutableCollection<V>
     override fun entrySet() : MutableSet<MutableMap.MutableEntry<K, V>>
 
-    public trait MutableEntry<K,V> : Map.Entry<K, V>, Hashable {
+    public trait MutableEntry<K,V> : Map.Entry<K, V> {
     	public fun setValue(value : V) : V
     }
 }
