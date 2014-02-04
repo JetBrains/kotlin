@@ -23,13 +23,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
     private final CalleeMethodsTreeStructure javaTreeStructure;
@@ -45,7 +48,7 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         this.javaTreeStructure = new CalleeMethodsTreeStructure(project, representativePsiMethod, scopeType);
     }
 
-    private static List<? extends PsiElement> getCalleeElements(@NotNull JetElement rootElement) {
+    private static Map<PsiReference, PsiElement> getReferencesToCalleeElements(@NotNull JetElement rootElement) {
         List<JetElement> elementsToAnalyze = new ArrayList<JetElement>();
         if (rootElement instanceof JetNamedFunction) {
             elementsToAnalyze.add(((JetNamedFunction) rootElement).getBodyExpression());
@@ -78,19 +81,19 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
             }
         }
 
-        final ArrayList<PsiElement> result = new ArrayList<PsiElement>();
+        final Map<PsiReference, PsiElement> referencesToCalleeElements = new HashMap<PsiReference, PsiElement>();
         for (JetElement element : elementsToAnalyze) {
             element.accept(
                     new CalleeReferenceVisitorBase(AnalyzerFacadeWithCache.getContextForElement(element), false) {
                         @Override
                         protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
-                            result.add(declaration);
+                            referencesToCalleeElements.put(reference.getReference(), declaration);
                         }
                     }
             );
         }
 
-        return result;
+        return referencesToCalleeElements;
     }
 
     @NotNull
@@ -126,7 +129,7 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
     }
 
     private Object[] buildChildrenByKotlinTarget(HierarchyNodeDescriptor descriptor, JetElement targetElement) {
-        List<? extends PsiElement> calleeDescriptors = getCalleeElements(targetElement);
-        return collectNodeDescriptors(descriptor, calleeDescriptors, representativePsiClass);
+        Map<PsiReference, PsiElement> referencesToCalleeElements = getReferencesToCalleeElements(targetElement);
+        return collectNodeDescriptors(descriptor, referencesToCalleeElements, representativePsiClass);
     }
 }

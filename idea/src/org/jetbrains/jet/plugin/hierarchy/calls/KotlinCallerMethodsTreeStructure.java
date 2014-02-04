@@ -66,7 +66,7 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
 
             BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
 
-            final ArrayList<PsiElement> result = new ArrayList<PsiElement>();
+            final Map<PsiReference, PsiElement> referencesToElements = new HashMap<PsiReference, PsiElement>();
             codeBlockForLocalDeclaration.accept(new CalleeReferenceVisitorBase(bindingContext, true) {
                 @Override
                 protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
@@ -80,11 +80,11 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
                     }
 
                     if (container != null) {
-                        result.add(container);
+                        referencesToElements.put(reference.getReference(), container);
                     }
                 }
             });
-            return collectNodeDescriptors(descriptor, result, null);
+            return collectNodeDescriptors(descriptor, referencesToElements, null);
         }
     }
 
@@ -230,7 +230,7 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
                     }
 
                     if (element != null) {
-                        addNodeDescriptorForElement(element, methodToDescriptorMap, descriptor);
+                        addNodeDescriptorForElement(ref, element, methodToDescriptorMap, descriptor);
                     }
 
                     return true;
