@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -40,7 +39,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.utils.CommonSuppliers;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -224,7 +222,7 @@ public class OverrideResolver {
         }
     }
 
-    protected void checkOverridesInAClass(@NotNull MutableClassDescriptor classDescriptor, @NotNull JetClassOrObject klass) {
+    private void checkOverridesInAClass(@NotNull MutableClassDescriptor classDescriptor, @NotNull JetClassOrObject klass) {
         if (topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) return;
 
         // Check overrides for internal consistency
@@ -420,36 +418,6 @@ public class OverrideResolver {
             overriddenDeclarationsByDirectParent.put(descriptor, overridden);
         }
         return overriddenDeclarationsByDirectParent;
-    }
-
-    public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(ClassDescriptor classDescriptor) {
-        Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
-        for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
-                if (descriptor instanceof CallableMemberDescriptor) {
-                    CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
-                    inheritedFunctions.add(memberDescriptor);
-                }
-            }
-        }
-
-        // Only those actually inherited
-        Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOutOverridden(inheritedFunctions);
-
-        // Group members with "the same" signature
-        Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = CommonSuppliers.newLinkedHashSetHashSetMultimap();
-        for (CallableMemberDescriptor one : filteredMembers) {
-            if (factoredMembers.values().contains(one)) continue;
-            for (CallableMemberDescriptor another : filteredMembers) {
-//                if (one == another) continue;
-                factoredMembers.put(one, one);
-                if (OverridingUtil.isOverridableBy(one, another).getResult() == OVERRIDABLE
-                        || OverridingUtil.isOverridableBy(another, one).getResult() == OVERRIDABLE) {
-                    factoredMembers.put(one, another);
-                }
-            }
-        }
-        return factoredMembers;
     }
 
     private interface CheckOverrideReportStrategy {

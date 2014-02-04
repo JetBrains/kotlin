@@ -16,19 +16,26 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
 public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
     @Override
     protected Set<CallableMemberDescriptor> collectMethodsToGenerate(ClassDescriptor descriptor) {
-        Set<CallableMemberDescriptor> superMethods = OverrideResolver.collectSuperMethods(descriptor).keySet();
+        Set<CallableMemberDescriptor> superMethods = collectSuperMethods(descriptor);
         for (DeclarationDescriptor member : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (member instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callable = (CallableMemberDescriptor) member;
@@ -46,6 +53,37 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
             }
         }
         return result;
+    }
+
+    @NotNull
+    private static Set<CallableMemberDescriptor> collectSuperMethods(@NotNull ClassDescriptor classDescriptor) {
+        Set<CallableMemberDescriptor> inheritedFunctions = new LinkedHashSet<CallableMemberDescriptor>();
+        for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
+                if (descriptor instanceof CallableMemberDescriptor) {
+                    inheritedFunctions.add((CallableMemberDescriptor) descriptor);
+                }
+            }
+        }
+
+        // Only those actually inherited
+        Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOutOverridden(inheritedFunctions);
+
+        // Group members with "the same" signature
+        Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = LinkedHashMultimap.create();
+        for (CallableMemberDescriptor one : filteredMembers) {
+            if (factoredMembers.values().contains(one)) continue;
+            for (CallableMemberDescriptor another : filteredMembers) {
+//                if (one == another) continue;
+                factoredMembers.put(one, one);
+                if (OverridingUtil.isOverridableBy(one, another).getResult() == OVERRIDABLE
+                    || OverridingUtil.isOverridableBy(another, one).getResult() == OVERRIDABLE) {
+                    factoredMembers.put(one, another);
+                }
+            }
+        }
+
+        return factoredMembers.keySet();
     }
 
     @Override
