@@ -52,5 +52,19 @@ public class QualifiedGetToBracketsIntention : JetSelfTargetingIntention<JetDotQ
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+
+        val receiver = element.getReceiverExpression()
+        val selector = element.getSelectorExpression()
+        val params = selector?.getLastChild()
+        when (params){
+            is JetValueArgumentList -> {
+                val lParens = params.getFirstChild()
+                val rParens = params.getLastChild()
+                lParens?.delete()
+                rParens?.delete()
+                val bracketAccessor = JetPsiFactory.createExpression(params.getProject(), receiver.getText() + "[" + params.getText() + "]")
+                element.replace(bracketAccessor)
+            }
+        }
     }
 }
