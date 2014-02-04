@@ -5,4 +5,8 @@
   <item name='com.google.common.collect.SetMultimap java.util.Map&lt;K,java.util.Collection&lt;V&gt;&gt; asMap()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item
+      name='com.google.common.collect.Sets com.google.common.collect.Sets.SetView&lt;E&gt; intersection(java.util.Set&lt;E&gt;, java.util.Set&lt;?&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>

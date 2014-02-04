@@ -1,5 +1,14 @@
 <root>
+  <item name='org.jetbrains.jps.builders.CompileScopeTestBuilder org.jetbrains.jps.builders.CompileScopeTestBuilder all()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='org.jetbrains.jps.builders.CompileScopeTestBuilder org.jetbrains.jps.builders.CompileScopeTestBuilder allModules()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='org.jetbrains.jps.builders.CompileScopeTestBuilder org.jetbrains.jps.builders.CompileScopeTestBuilder make()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='org.jetbrains.jps.builders.CompileScopeTestBuilder org.jetbrains.jps.builders.CompileScopeTestBuilder rebuild()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='org.jetbrains.jps.builders.JpsBuildTestCase java.lang.String createFile(java.lang.String, java.lang.String)'>

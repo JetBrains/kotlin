@@ -52,8 +52,7 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
         super.tearDown()
     }
 
-    fun makeAllGetLog(): String {
-        val scope = CompileScopeTestBuilder.make().all()
+    fun buildGetLog(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): String {
         val logger = MyLogger(FileUtil.toSystemIndependentName(workDir.getAbsolutePath()))
         val descriptor = createProjectDescriptor(BuildLoggingManager(logger))
         try {
@@ -67,7 +66,7 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
     private fun doTest() {
         addModule("module", array<String>(getAbsolutePath("src")), null, null, addJdk("my jdk"))
 
-        makeAllGetLog()
+        buildGetLog()
 
         FileUtil.processFilesRecursively(testDataDir, {
             if (it!!.getName().endsWith(".new")) {
@@ -77,8 +76,16 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
             true
         })
 
-        val log = makeAllGetLog()
+        val log = buildGetLog()
         UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), log)
+
+        val outDir = File(getAbsolutePath("out"))
+        val outAfterMake = File(getAbsolutePath("out-after-make"))
+        FileUtil.copyDir(outDir, outAfterMake)
+
+        buildGetLog(CompileScopeTestBuilder.rebuild().allModules())
+
+        assertEqualDirectories(outDir, outAfterMake, { it.name == "script.xml" })
     }
 
     override fun doGetProjectDir(): File? = workDir
