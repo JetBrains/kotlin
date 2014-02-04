@@ -20,9 +20,7 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.asm.InlineCodegenUtil.isLambdaClass;
-import static org.jetbrains.jet.codegen.asm.InlineCodegenUtil.isLambdaConstructorCall;
-import static org.jetbrains.jet.codegen.asm.InlineCodegenUtil.isInvokeOnInlinable;
+import static org.jetbrains.jet.codegen.asm.InlineCodegenUtil.*;
 
 public class MethodInliner {
 
@@ -213,6 +211,7 @@ public class MethodInliner {
         ArrayList<Type> capturedTypes = parameters.getCapturedTypes();
         Type[] allTypes = ArrayUtil.mergeArrays(types, capturedTypes.toArray(new Type[capturedTypes.size()]));
 
+        node.instructions.resetLabels();
         MethodNode transformedNode = new MethodNode(node.access, node.name, Type.getMethodDescriptor(returnType, allTypes), node.signature, null) {
 
             @Override
@@ -236,9 +235,14 @@ public class MethodInliner {
                 }
                 super.visitIincInsn(newIndex, increment);
             }
+
+            @Override
+            public void visitMaxs(int maxStack, int maxLocals) {
+                super.visitMaxs(maxStack, maxLocals + capturedParamsSize);
+            }
         };
+
         node.accept(transformedNode);
-        transformedNode.visitMaxs(30, 30);
 
         if (lambdaInfo != null) {
             transformCaptured(transformedNode, parameters, lambdaInfo, lambdaFieldRemapper);

@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.ClassVisitor;
+import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
@@ -163,15 +164,16 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
                                            jvmSignature.getGenericsSignature(),
                                            null);
 
-            FunctionCodegen.generateMethodBody(node, functionDescriptor, context.getParentContext().intoFunction(functionDescriptor),
+            //for maxLocals calculation
+            MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(node);
+            FunctionCodegen.generateMethodBody(adapter, functionDescriptor, context.getParentContext().intoFunction(functionDescriptor),
                                                jvmSignature,
                                                new FunctionGenerationStrategy.FunctionDefault(state,
                                                                                               functionDescriptor,
                                                                                               (JetDeclarationWithBody) element),
                                                getParentCodegen());
-            //TODO
-            node.visitMaxs(30, 30);
-            node.visitEnd();
+            adapter.visitMaxs(-1, -1);
+            adapter.visitEnd();
         }
         return node;
     }
@@ -196,7 +198,6 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
 
         inliner.doTransformAndMerge(codegen.getInstructionAdapter(), remapper);
-        generateClosuresBodies();
     }
 
 
@@ -219,9 +220,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         Method asmMethod = jvmMethodSignature.getAsmMethod();
         MethodNode methodNode = new MethodNode(Opcodes.ASM4, getMethodAsmFlags(descriptor, context.getContextKind()), asmMethod.getName(), asmMethod.getDescriptor(), jvmMethodSignature.getGenericsSignature(), null);
 
-
-        //AnalyzerAdapter adapter = new AnalyzerAdapter("fake", methodNode.access, methodNode.name, methodNode.desc, methodNode);
-        MethodNode adapter = methodNode;
+        MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
 
         FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration) {
             @Override
@@ -229,7 +228,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
                 return false;
             }
         }, codegen.getParentCodegen());
-        adapter.visitMaxs(30, 30);
+        adapter.visitMaxs(-1, -1);
 
         return methodNode;
     }
