@@ -56,6 +56,11 @@ public class ReferenceResolveWithLibTestGenerated extends AbstractReferenceResol
         doTest("idea/testData/resolve/referenceWithLib/iteratorWithTypeParameter.kt");
     }
     
+    @TestMetadata("packageOfLibDeclaration.kt")
+    public void testPackageOfLibDeclaration() throws Exception {
+        doTest("idea/testData/resolve/referenceWithLib/packageOfLibDeclaration.kt");
+    }
+    
     @TestMetadata("sameNameInLib.kt")
     public void testSameNameInLib() throws Exception {
         doTest("idea/testData/resolve/referenceWithLib/sameNameInLib.kt");
