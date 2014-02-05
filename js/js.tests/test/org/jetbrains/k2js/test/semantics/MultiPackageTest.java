@@ -39,23 +39,23 @@ public class MultiPackageTest extends MultipleFilesTranslationTest {
     }
 
     public void testNestedPackageFunctionCalledFromOtherPackage() throws Exception {
-        runMultiFileTest("nestedPackageFunctionCalledFromOtherPackage", "a.foo", "box", true);
+        runMultiFileTest("nestedPackageFunctionCalledFromOtherPackage", "a.foo", TEST_FUNCTION, true);
     }
 
     public void testSubpackagesWithClashingNames() throws Exception {
-        runMultiFileTest("subpackagesWithClashingNames", "a.foo", "box", true);
+        runMultiFileTest("subpackagesWithClashingNames", "a.foo", TEST_FUNCTION, true);
     }
 
     public void testSubpackagesWithClashingNamesUsingImport() throws Exception {
-        runMultiFileTest("subpackagesWithClashingNamesUsingImport", "a.foo", "box", true);
+        runMultiFileTest("subpackagesWithClashingNamesUsingImport", "a.foo", TEST_FUNCTION, true);
     }
 
     public void testCreateClassFromOtherPackage() throws Exception {
-        runMultiFileTest("createClassFromOtherPackage", "a.foo", "box", true);
+        runMultiFileTest("createClassFromOtherPackage", "a.foo", TEST_FUNCTION, true);
     }
 
     public void testCreateClassFromOtherPackageUsingImport() throws Exception {
-        runMultiFileTest("createClassFromOtherPackageUsingImport", "a.foo", "box", true);
+        runMultiFileTest("createClassFromOtherPackageUsingImport", "a.foo", TEST_FUNCTION, true);
     }
 }
 

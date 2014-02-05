@@ -28,8 +28,8 @@ public final class MiscTest extends AbstractExpressionTest {
         super("misc/");
     }
 
-    public void testLocalPropertys() throws Exception {
-        runFunctionOutputTest("localProperty.kt", "foo", "box", 50);
+    public void testLocalProperty() throws Exception {
+        fooBoxIsValue(50);
     }
 
     public void testIntRange() throws Exception {
@@ -42,7 +42,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testClassWithoutPackage() throws Exception {
-        runFunctionOutputTest("classWithoutPackage.kt", Namer.getRootPackageName(), "box", true);
+        runFunctionOutputTest("classWithoutPackage.kt", Namer.getRootPackageName(), TEST_FUNCTION, true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
