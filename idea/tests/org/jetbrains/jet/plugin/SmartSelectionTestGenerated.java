@@ -36,6 +36,11 @@ public class SmartSelectionTestGenerated extends AbstractSmartSelectionTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/smartSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
+    @TestMetadata("labelledThis.kt")
+    public void testLabelledThis() throws Exception {
+        doTestSmartSelection("idea/testData/smartSelection/labelledThis.kt");
+    }
+    
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         doTestSmartSelection("idea/testData/smartSelection/simple.kt");
