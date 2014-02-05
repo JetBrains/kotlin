@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -31,7 +30,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.TypeProjectionImpl;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -70,7 +68,7 @@ public final class JavaAnnotationArgumentResolver {
             @NotNull PostponedTasks postponedTasks
     ) {
         if (argument instanceof JavaLiteralAnnotationArgument) {
-            return resolveCompileTimeConstantValue(((JavaLiteralAnnotationArgument) argument).getValue(), true, null);
+            return ResolverPackage.resolveCompileTimeConstantValue(((JavaLiteralAnnotationArgument) argument).getValue(), true, null);
         }
         // Enum
         else if (argument instanceof JavaReferenceAnnotationArgument) {
@@ -164,51 +162,5 @@ public final class JavaAnnotationArgumentResolver {
         );
 
         return new JavaClassValue(javaClassType);
-    }
-
-    @Nullable
-    public static CompileTimeConstant<?> resolveCompileTimeConstantValue(@Nullable Object value, boolean canBeUseInAnnotation, @Nullable JetType expectedType) {
-        if (value instanceof String) {
-            return new StringValue((String) value, canBeUseInAnnotation);
-        }
-        else if (value instanceof Byte) {
-            return new ByteValue((Byte) value, canBeUseInAnnotation, false);
-        }
-        else if (value instanceof Short) {
-            return new ShortValue((Short) value, canBeUseInAnnotation, false);
-        }
-        else if (value instanceof Character) {
-            return new CharValue((Character) value, canBeUseInAnnotation, false);
-        }
-        else if (value instanceof Integer) {
-            KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-            Integer integer = (Integer) value;
-            if (builtIns.getShortType().equals(expectedType)) {
-                return new ShortValue(integer.shortValue(), canBeUseInAnnotation, false);
-            }
-            else if (builtIns.getByteType().equals(expectedType)) {
-                return new ByteValue(integer.byteValue(), canBeUseInAnnotation, false);
-            }
-            else if (builtIns.getCharType().equals(expectedType)) {
-                return new CharValue((char) integer.intValue(), canBeUseInAnnotation, false);
-            }
-            return new IntValue(integer, canBeUseInAnnotation, false);
-        }
-        else if (value instanceof Long) {
-            return new LongValue((Long) value, canBeUseInAnnotation, false);
-        }
-        else if (value instanceof Float) {
-            return new FloatValue((Float) value, canBeUseInAnnotation);
-        }
-        else if (value instanceof Double) {
-            return new DoubleValue((Double) value, canBeUseInAnnotation);
-        }
-        else if (value instanceof Boolean) {
-            return new BooleanValue((Boolean) value, canBeUseInAnnotation);
-        }
-        else if (value == null) {
-            return NullValue.NULL;
-        }
-        return null;
     }
 }
