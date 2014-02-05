@@ -153,15 +153,16 @@ public class MethodInliner {
 
                     Parameters params = new Parameters(lambdaParameters, Parameters.transformList(capturedRemapper.markRecaptured(info.getCapturedVars(), info), lambdaParameters.size()));
 
+                    this.setInlining(true);
                     MethodInliner inliner = new MethodInliner(info.getNode(), params, parent.subInline(parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
                                                               capturedRemapper);
 
                     VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(params, valueParamShift);
                     inliner.doTransformAndMerge(this.mv, remapper); //TODO add skipped this and receiver
-
                     Method bridge = typeMapper.mapSignature(ClosureCodegen.getInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();
                     Method delegate = typeMapper.mapSignature(info.getFunctionDescriptor()).getAsmMethod();
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
+                    this.setInlining(true);
                 }
                 else if (isLambdaConstructorCall(owner, name)) { //TODO add method
                     assert invocation != null : "<init> call not corresponds to new call" + owner + " " + name;
@@ -258,71 +259,96 @@ public class MethodInliner {
 
         AbstractInsnNode cur = node.instructions.getFirst();
         int index = 0;
+        Set<LabelNode> deadLabels = new HashSet<LabelNode>();
+
         while (cur != null) {
-            if (cur.getType() == AbstractInsnNode.METHOD_INSN) {
-                MethodInsnNode methodInsnNode = (MethodInsnNode) cur;
-                String owner = methodInsnNode.owner;
-                String desc = methodInsnNode.desc;
-                String name = methodInsnNode.name;
-                //TODO check closure
-                int paramLength = Type.getArgumentTypes(desc).length + 1;//non static
-                if (isInvokeOnInlinable(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
-                    Frame<SourceValue> frame = sources[index];
-                    SourceValue sourceValue = frame.getStack(frame.getStackSize() - paramLength);
+            Frame<SourceValue> frame = sources[index];
 
-                    boolean isInlinable = false;
-                    LambdaInfo lambdaInfo = null;
-                    int varIndex = -1;
+            if (frame != null) {
+                if (cur.getType() == AbstractInsnNode.METHOD_INSN) {
+                    MethodInsnNode methodInsnNode = (MethodInsnNode) cur;
+                    String owner = methodInsnNode.owner;
+                    String desc = methodInsnNode.desc;
+                    String name = methodInsnNode.name;
+                    //TODO check closure
+                    int paramLength = Type.getArgumentTypes(desc).length + 1;//non static
+                    if (isInvokeOnInlinable(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
+                        SourceValue sourceValue = frame.getStack(frame.getStackSize() - paramLength);
 
-                    if (sourceValue.insns.size() == 1) {
-                        AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
-                        if (insnNode.getType() == AbstractInsnNode.VAR_INSN) {
-                            assert insnNode.getOpcode() == Opcodes.ALOAD : insnNode.toString();
+                        boolean isInlinable = false;
+                        LambdaInfo lambdaInfo = null;
+                        int varIndex = -1;
 
-                            varIndex = ((VarInsnNode) insnNode).var;
-                            lambdaInfo = getLambda(varIndex);
-                            isInlinable = lambdaInfo != null;
-
-                            if (isInlinable) {
-                                //remove inlinable access
-                                node.instructions.remove(insnNode);
-                            }
-                        }
-                    }
-
-                    inlinableInvocation.add(new InlinableAccess(varIndex, isInlinable, getParametersInfo(lambdaInfo, desc)));
-                }
-                else if (isLambdaConstructorCall(owner, name)) {
-                    Frame<SourceValue> frame = sources[index];
-                    Map<Integer, InlinableAccess> infos = new HashMap<Integer, InlinableAccess>();
-                    int paramStart = frame.getStackSize() - paramLength;
-
-                    for (int i = 0; i < paramLength; i++) {
-                        SourceValue sourceValue = frame.getStack(paramStart + i);
                         if (sourceValue.insns.size() == 1) {
                             AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
-                            if (insnNode.getType() == AbstractInsnNode.VAR_INSN && insnNode.getOpcode() == Opcodes.ALOAD) {
-                                int varIndex = ((VarInsnNode) insnNode).var;
-                                LambdaInfo lambdaInfo = getLambda(varIndex);
-                                if (lambdaInfo != null) {
-                                    InlinableAccess inlinableAccess = new InlinableAccess(varIndex, true, null);
-                                    inlinableAccess.setInfo(lambdaInfo);
-                                    infos.put(i, inlinableAccess);
+                            if (insnNode.getType() == AbstractInsnNode.VAR_INSN) {
+                                assert insnNode.getOpcode() == Opcodes.ALOAD : insnNode.toString();
+                                varIndex = ((VarInsnNode) insnNode).var;
+                                lambdaInfo = getLambda(varIndex);
+                                isInlinable = lambdaInfo != null;
 
+                                if (isInlinable) {
                                     //remove inlinable access
                                     node.instructions.remove(insnNode);
                                 }
                             }
                         }
-                    }
 
-                    ConstructorInvocation invocation = new ConstructorInvocation(owner, infos);
-                    constructorInvocationList.add(invocation);
+                        inlinableInvocation.add(new InlinableAccess(varIndex, isInlinable, getParametersInfo(lambdaInfo, desc)));
+                    }
+                    else if (isLambdaConstructorCall(owner, name)) {
+                        Map<Integer, InlinableAccess> infos = new HashMap<Integer, InlinableAccess>();
+                        int paramStart = frame.getStackSize() - paramLength;
+
+                        for (int i = 0; i < paramLength; i++) {
+                            SourceValue sourceValue = frame.getStack(paramStart + i);
+                            if (sourceValue.insns.size() == 1) {
+                                AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
+                                if (insnNode.getType() == AbstractInsnNode.VAR_INSN && insnNode.getOpcode() == Opcodes.ALOAD) {
+                                    int varIndex = ((VarInsnNode) insnNode).var;
+                                    LambdaInfo lambdaInfo = getLambda(varIndex);
+                                    if (lambdaInfo != null) {
+                                        InlinableAccess inlinableAccess = new InlinableAccess(varIndex, true, null);
+                                        inlinableAccess.setInfo(lambdaInfo);
+                                        infos.put(i, inlinableAccess);
+
+                                        //remove inlinable access
+                                        node.instructions.remove(insnNode);
+                                    }
+                                }
+                            }
+                        }
+
+                        ConstructorInvocation invocation = new ConstructorInvocation(owner, infos);
+                        constructorInvocationList.add(invocation);
+                    }
                 }
             }
+
+            AbstractInsnNode prevNode = cur;
             cur = cur.getNext();
             index++;
+
+            //given frame is <tt>null</tt> if and only if the corresponding instruction cannot be reached (dead code).
+            if (frame == null) {
+                //clean dead code otherwise there is problems in unreachable finally block, don't touch label it cause try/catch/finally problems
+                if (prevNode.getType() == AbstractInsnNode.LABEL) {
+                    deadLabels.add((LabelNode) prevNode);
+                } else {
+                    node.instructions.remove(prevNode);
+                }
+            }
         }
+
+        //clean dead try catch blocks
+        List<TryCatchBlockNode> blocks = node.tryCatchBlocks;
+        for (Iterator<TryCatchBlockNode> iterator = blocks.iterator(); iterator.hasNext(); ) {
+            TryCatchBlockNode block = iterator.next();
+            if (deadLabels.contains(block.start) && deadLabels.contains(block.end)) {
+                iterator.remove();
+            }
+        }
+
         return node;
     }
 

@@ -16,13 +16,21 @@
 
 package org.jetbrains.jet.codegen.asm;
 
+import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class InlineAdapter extends InstructionAdapter {
 
     private int nextLocalIndex = 0;
+
+    private boolean isInlining = false;
+
+    private final List<CatchBlock> blocks = new ArrayList<CatchBlock>();
 
     public InlineAdapter(MethodVisitor mv, int localsSize) {
         super(mv);
@@ -50,5 +58,44 @@ public class InlineAdapter extends InstructionAdapter {
 
     public int getNextLocalIndex() {
         return nextLocalIndex;
+    }
+
+    public void setInlining(boolean isInlining) {
+        this.isInlining = isInlining;
+    }
+
+    @Override
+    public void visitTryCatchBlock(Label start,
+            Label end, Label handler, String type) {
+        if(!isInlining) {
+            blocks.add(new CatchBlock(start, end,
+                                      handler, type));
+        } else {
+            super.visitTryCatchBlock(start, end,
+                                     handler, type);
+        }
+    }
+
+    @Override
+    public void visitMaxs(int stack, int locals) {
+        for (CatchBlock b : blocks) {
+            super.visitTryCatchBlock(b.start, b.end,
+                                     b.handler, b.type);
+        }
+        super.visitMaxs(stack, locals);
+    }
+
+    private static class CatchBlock {
+        private final Label start;
+        private final Label end;
+        private final Label handler;
+        private final String type;
+
+        public CatchBlock(Label start, Label end, Label handler, String type) {
+            this.start = start;
+            this.end = end;
+            this.handler = handler;
+            this.type = type;
+        }
     }
 }
