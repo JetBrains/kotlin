@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
 import org.jetbrains.jet.di.*
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -53,6 +54,7 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
                 generatorForTopDownAnalyzerBasic(),
                 generatorForTopDownAnalyzerForJvm(),
                 generatorForJavaDescriptorResolver(),
+                generatorForLazyResolveWithJava(),
                 generatorForTopDownAnalyzerForJs(),
                 generatorForMacro(),
                 generatorForTests(),
@@ -130,6 +132,34 @@ private fun generatorForJavaDescriptorResolver() =
             )
             field(javaClass<VirtualFileFinder>(),
                   init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
+        }
+
+private fun generatorForLazyResolveWithJava() =
+        generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForLazyResolveWithJava") {
+            parameter(javaClass<Project>())
+            parameter(javaClass<GlobalContextImpl>(), useAsContext = true)
+            parameters(
+                    javaClass<DeclarationProviderFactory>(),
+                    javaClass<BindingTrace>()
+            )
+
+            publicField(javaClass<ModuleDescriptorImpl>(), name = "module", useAsContext = true,
+                        init = GivenExpression("org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule(\"<fake-jdr-module>\")"))
+            publicFields(
+                    javaClass<ResolveSession>(),
+                    javaClass<JavaDescriptorResolver>()
+            )
+
+            field(javaClass<VirtualFileFinder>(),
+                  init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
+            fields(
+                    javaClass<JavaClassFinderImpl>(),
+                    javaClass<TraceBasedExternalSignatureResolver>(),
+                    javaClass<LazyResolveBasedCache>(),
+                    javaClass<TraceBasedErrorReporter>(),
+                    javaClass<PsiBasedMethodSignatureChecker>(),
+                    javaClass<PsiBasedExternalAnnotationResolver>()
+            )
         }
 
 private fun generatorForMacro() =

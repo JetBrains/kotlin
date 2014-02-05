@@ -28,9 +28,7 @@ import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
-import org.jetbrains.jet.di.InjectorForLazyResolve;
+import org.jetbrains.jet.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -86,9 +84,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     @NotNull
     @Override
     public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
-        BindingTraceContext javaResolverTrace = new BindingTraceContext();
-        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(fileProject, javaResolverTrace);
-        return createLazyResolveSession(fileProject, files, javaResolverTrace, injector, true);
+        return createLazyResolveSession(fileProject, files, new BindingTraceContext(), true);
     }
 
     @NotNull
@@ -96,23 +92,31 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull Project project,
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
-            @NotNull InjectorForJavaDescriptorResolver injector,
             boolean addBuiltIns
     ) {
+        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
+
         // TODO: Replace with stub declaration provider
-        GlobalContextImpl globalContext = injector.getGlobalContext();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 globalContext.getStorageManager(),
                 files);
 
-        ModuleDescriptorImpl module = injector.getModule();
+        InjectorForLazyResolveWithJava resolveWithJava = new InjectorForLazyResolveWithJava(
+                project,
+                globalContext,
+                declarationProviderFactory,
+                trace);
+
+        resolveWithJava.getModule().addFragmentProvider(
+                DependencyKind.BINARIES, resolveWithJava.getJavaDescriptorResolver().getPackageFragmentProvider());
 
         if (addBuiltIns) {
-            module.addFragmentProvider(DependencyKind.BUILT_INS,
-                                       KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+            resolveWithJava.getModule().addFragmentProvider(
+                    DependencyKind.BUILT_INS,
+                    KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         }
 
-        return new InjectorForLazyResolve(project, globalContext, module, declarationProviderFactory, trace).getResolveSession();
+        return resolveWithJava.getResolveSession();
     }
 
     @NotNull

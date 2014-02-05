@@ -72,10 +72,9 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         val files = environment.getSourceFiles() ?: error("No source files in $sourceRoots")
 
         val project = environment.getProject()
-        val trace = BindingTraceContext()
-        val session = AnalyzerFacadeForJVM.createLazyResolveSession(project, files, trace,
-                                                                    InjectorForJavaDescriptorResolverUtil.create(project, trace), false)
-        val module = session.getModuleDescriptor() ?: error("No module resolved for $sourceRoots")
+
+        val session = AnalyzerFacadeForJVM.createLazyResolveSession(project, files, BindingTraceContext(), false)
+        val module = session.getModuleDescriptor()
 
         if (!FileUtil.delete(destDir)) {
             System.err.println("Could not delete: " + destDir)
