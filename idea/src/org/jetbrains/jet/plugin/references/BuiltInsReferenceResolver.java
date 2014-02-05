@@ -176,6 +176,15 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     @Nullable
     private DeclarationDescriptor findCurrentDescriptorForMember(@NotNull MemberDescriptor originalDescriptor) {
+        if (originalDescriptor instanceof CallableMemberDescriptor &&
+            ((CallableMemberDescriptor) originalDescriptor).getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            CallableMemberDescriptor descriptor = (CallableMemberDescriptor) originalDescriptor;
+            while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                descriptor = descriptor.getOverriddenDescriptors().iterator().next();
+            }
+            return findCurrentDescriptorForMember(descriptor.getOriginal());
+        }
+
         DeclarationDescriptor containingDeclaration = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());
         JetScope memberScope = getMemberScope(containingDeclaration);
         if (memberScope == null) return null;
@@ -220,10 +229,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             return Collections.emptyList();
         }
 
-        DeclarationDescriptor descriptor = declarationDescriptor;
-
-        descriptor = descriptor.getOriginal();
-        descriptor = findCurrentDescriptor(descriptor);
+        DeclarationDescriptor descriptor = findCurrentDescriptor(declarationDescriptor.getOriginal());
         if (descriptor != null) {
             return BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
         }
