@@ -25,9 +25,10 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
+import org.jetbrains.jet.lang.resolve.ResolvePackage;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement;
@@ -94,7 +95,7 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
             PsiExpression initializer = psiField.getInitializer();
             Object evaluatedExpression = JavaConstantExpressionEvaluator.computeConstantExpression(initializer, false);
             if (evaluatedExpression != null) {
-                CompileTimeConstant<?> constant = JavaAnnotationArgumentResolver.
+                CompileTimeConstant<?> constant = ResolvePackage.
                         resolveCompileTimeConstantValue(evaluatedExpression, CompileTimeConstantUtils
                                 .isPropertyCompileTimeConstant(descriptor), descriptor.getType());
                 if (constant != null) {
