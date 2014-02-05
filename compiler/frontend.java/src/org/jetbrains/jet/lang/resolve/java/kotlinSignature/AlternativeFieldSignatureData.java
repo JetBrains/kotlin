@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -33,12 +33,12 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
     private JetType altReturnType;
 
     public AlternativeFieldSignatureData(
-            @NotNull JavaAnnotationResolver annotationResolver,
+            @NotNull ExternalAnnotationResolver externalAnnotationResolver,
             @NotNull JavaFieldImpl field,
             @NotNull JetType originalReturnType,
             boolean isVar
     ) {
-        String signature = SignaturesUtil.getKotlinSignature(annotationResolver, field);
+        String signature = SignaturesUtil.getKotlinSignature(externalAnnotationResolver, field);
 
         if (signature == null) {
             setAnnotated(false);

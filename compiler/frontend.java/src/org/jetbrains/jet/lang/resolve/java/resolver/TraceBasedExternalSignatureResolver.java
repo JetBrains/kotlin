@@ -39,7 +39,7 @@ import java.util.List;
 
 public class TraceBasedExternalSignatureResolver implements ExternalSignatureResolver {
     private BindingTrace trace;
-    private JavaAnnotationResolver annotationResolver;
+    private ExternalAnnotationResolver externalAnnotationResolver;
 
     @Inject
     public void setTrace(BindingTrace trace) {
@@ -47,8 +47,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
     }
 
     @Inject
-    public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {
-        this.annotationResolver = annotationResolver;
+    public void setExternalAnnotationResolver(ExternalAnnotationResolver externalAnnotationResolver) {
+        this.externalAnnotationResolver = externalAnnotationResolver;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
         AlternativeMethodSignatureData data =
-                new AlternativeMethodSignatureData(annotationResolver, (JavaMethodImpl) method, receiverType, valueParameters, returnType,
+                new AlternativeMethodSignatureData(externalAnnotationResolver, (JavaMethodImpl) method, receiverType, valueParameters, returnType,
                                                    typeParameters, hasSuperMethods);
 
         if (data.isAnnotated() && !data.hasErrors()) {
@@ -100,7 +100,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             boolean isVar
     ) {
         AlternativeFieldSignatureData data =
-                new AlternativeFieldSignatureData(annotationResolver, (JavaFieldImpl) field, returnType, isVar);
+                new AlternativeFieldSignatureData(externalAnnotationResolver, (JavaFieldImpl) field, returnType, isVar);
 
         if (data.isAnnotated() && !data.hasErrors()) {
             return new AlternativeFieldSignature(data.getReturnType(), null);
