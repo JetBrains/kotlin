@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.CommonBundle;
 import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.ide.util.FQNameCellRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.VerticalFlowLayout;
@@ -35,7 +34,7 @@ import static com.intellij.util.ui.UIUtil.ComponentStyle.SMALL;
 import static com.intellij.util.ui.UIUtil.FontColor.BRIGHTER;
 
 //TODO: this is a copy of com.intellij.codeInsight.editorActions.RestoreReferencesDialog
-//consider improving rendering of list cells if you decide to submit pull request to idea (or improve this version)
+// Cell renderer was replaced by custom implementation
 public class RestoreReferencesDialog extends DialogWrapper {
   private final Object[] myNamedElements;
   private JList myList;
@@ -74,7 +73,7 @@ public class RestoreReferencesDialog extends DialogWrapper {
   protected JComponent createCenterPanel() {
     final JPanel panel = new JPanel(new BorderLayout(UIUtil.DEFAULT_HGAP, UIUtil.DEFAULT_VGAP));
     myList = new JBList(myNamedElements);
-    myList.setCellRenderer(new FQNameCellRenderer());
+    myList.setCellRenderer(new KotlinImportListRenderer());
     panel.add(ScrollPaneFactory.createScrollPane(myList), BorderLayout.CENTER);
 
     panel.add(new JBLabel(myContainsClassesOnly ?
