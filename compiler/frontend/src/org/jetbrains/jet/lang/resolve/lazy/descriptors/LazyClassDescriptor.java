@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptorWithResolutionScopes;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
@@ -56,7 +57,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObj
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
-public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEntity, ClassDescriptor {
+public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEntity, ClassDescriptorWithResolutionScopes {
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
         @Override
         public boolean apply(JetType type) {
@@ -157,6 +158,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
         return unsubstitutedMemberScope;
     }
 
+    @Override
     @NotNull
     public JetScope getScopeForClassHeaderResolution() {
         return scopeForClassHeaderResolution.invoke();
@@ -177,6 +179,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
                 getScopeProvider().getResolutionScopeForDeclaration(scopeAnchor));
     }
 
+    @Override
     @NotNull
     public JetScope getScopeForMemberDeclarationResolution() {
         return scopeForMemberDeclarationResolution.invoke();
@@ -200,8 +203,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
                 classObjectAdapterScope);
     }
 
+    @Override
     @NotNull
-    public JetScope getScopeForPropertyInitializerResolution() {
+    public JetScope getScopeForInitializerResolution() {
         return scopeForPropertyInitializerResolution.invoke();
     }
 
@@ -332,7 +336,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
         getScopeForClassHeaderResolution();
         getScopeForMemberDeclarationResolution();
         ForceResolveUtil.forceResolveAllContents(getScopeForMemberLookup());
-        getScopeForPropertyInitializerResolution();
+        getScopeForInitializerResolution();
         getUnsubstitutedInnerClassesScope();
         ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
         getUnsubstitutedPrimaryConstructor();

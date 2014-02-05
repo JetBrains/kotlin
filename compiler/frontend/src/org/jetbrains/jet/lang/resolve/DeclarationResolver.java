@@ -155,7 +155,7 @@ public class DeclarationResolver {
             if (modifierList != null) {
                 MutableClassDescriptor descriptor = entry.getValue();
                 descriptor.addAnnotations(annotationResolver.resolveAnnotationsWithoutArguments(
-                        descriptor.getScopeForSupertypeResolution(), modifierList, trace));
+                        descriptor.getScopeForClassHeaderResolution(), modifierList, trace));
             }
         }
     }
@@ -178,8 +178,8 @@ public class DeclarationResolver {
             }
 
             resolveFunctionAndPropertyHeaders(
-                    classOrObject.getDeclarations(), classDescriptor.getScopeForMemberResolution(),
-                    classDescriptor.getScopeForInitializers(), classDescriptor.getScopeForMemberResolution(),
+                    classOrObject.getDeclarations(), classDescriptor.getScopeForMemberDeclarationResolution(),
+                    classDescriptor.getScopeForInitializerResolution(), classDescriptor.getScopeForMemberDeclarationResolution(),
                     classDescriptor.getBuilder());
         }
 
@@ -283,7 +283,7 @@ public class DeclarationResolver {
         boolean isAnnotationClass = DescriptorUtils.isAnnotationClass(classDescriptor);
 
         // TODO : not all the parameters are real properties
-        JetScope memberScope = classDescriptor.getScopeForSupertypeResolution();
+        JetScope memberScope = classDescriptor.getScopeForClassHeaderResolution();
         ConstructorDescriptor constructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass, trace);
         if (constructorDescriptor != null) {
             List<ValueParameterDescriptor> valueParameterDescriptors = constructorDescriptor.getValueParameters();

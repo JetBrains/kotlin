@@ -166,8 +166,8 @@ public class BodyResolver {
             MutableClassDescriptor descriptor = entry.getValue();
             resolveDelegationSpecifierList(classOrObject, descriptor,
                                            descriptor.getUnsubstitutedPrimaryConstructor(),
-                                           descriptor.getScopeForSupertypeResolution(),
-                                           descriptor.getScopeForMemberResolution());
+                                           descriptor.getScopeForClassHeaderResolution(),
+                                           descriptor.getScopeForMemberDeclarationResolution());
         }
     }
 
@@ -342,7 +342,7 @@ public class BodyResolver {
 
     private void resolveClassAnnotations() {
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            resolveAnnotationArguments(entry.getValue().getScopeForSupertypeResolution(), entry.getKey());
+            resolveAnnotationArguments(entry.getValue().getScopeForClassHeaderResolution(), entry.getKey());
         }
     }
 
@@ -351,7 +351,7 @@ public class BodyResolver {
             JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
             resolveAnonymousInitializers(classOrObject, descriptor.getUnsubstitutedPrimaryConstructor(),
-                                         descriptor.getScopeForInitializers());
+                                         descriptor.getScopeForInitializerResolution());
         }
     }
 
@@ -394,10 +394,10 @@ public class BodyResolver {
             MutableClassDescriptor classDescriptor = entry.getValue();
             ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
 
-            annotationResolver.resolveAnnotationsArguments(classDescriptor.getScopeForSupertypeResolution(), klass.getPrimaryConstructorModifierList(), trace);
+            annotationResolver.resolveAnnotationsArguments(classDescriptor.getScopeForClassHeaderResolution(), klass.getPrimaryConstructorModifierList(), trace);
 
             if (unsubstitutedPrimaryConstructor != null) {
-                WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForSupertypeResolution(), unsubstitutedPrimaryConstructor);
+                WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(), unsubstitutedPrimaryConstructor);
                 expressionTypingServices.resolveValueParameters(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
                                        parameterScope, context.getOuterDataFlowInfo(), trace, context.completeAnalysisNeeded(klass));
             }
@@ -447,7 +447,7 @@ public class BodyResolver {
                 JetExpression delegateExpression = property.getDelegateExpression();
                 if (delegateExpression != null) {
                     assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
-                    resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberResolution(), propertyScope);
+                    resolvePropertyDelegate(property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberDeclarationResolution(), propertyScope);
                 }
 
                 resolveAnnotationArguments(propertyScope, property);

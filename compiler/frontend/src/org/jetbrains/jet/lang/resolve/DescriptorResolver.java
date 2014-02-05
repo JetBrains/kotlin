@@ -133,7 +133,7 @@ public class DescriptorResolver {
             @NotNull MutableClassDescriptor descriptor,
             BindingTrace trace
     ) {
-        for (JetType supertype : resolveSupertypes(descriptor.getScopeForSupertypeResolution(), descriptor, jetClass, trace)) {
+        for (JetType supertype : resolveSupertypes(descriptor.getScopeForClassHeaderResolution(), descriptor, jetClass, trace)) {
             descriptor.addSupertype(supertype);
         }
     }

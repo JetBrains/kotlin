@@ -670,7 +670,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             scope = currentFileModule.getPackage(JetPsiUtil.getFQName(currentFile)).getMemberScope();
         } else {
             assert ownerClassDescriptor instanceof MutableClassDescriptor;
-            scope = ((MutableClassDescriptor) ownerClassDescriptor).getScopeForMemberResolution();
+            scope = ((MutableClassDescriptor) ownerClassDescriptor).getScopeForMemberDeclarationResolution();
         }
 
         // figure out type substitutions for type parameters

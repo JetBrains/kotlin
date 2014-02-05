@@ -215,7 +215,7 @@ public class TypeHierarchyResolver {
             if (classOrObject instanceof JetClass) {
                 MutableClassDescriptor descriptor = entry.getValue();
                 //noinspection unchecked
-                descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor.getScopeForSupertypeResolution(),
+                descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor.getScopeForClassHeaderResolution(),
                                                         (List) descriptor.getTypeConstructor().getParameters(), trace);
             }
         }
@@ -610,7 +610,7 @@ public class TypeHierarchyResolver {
 
             createClassObjectForEnumClass(mutableClassDescriptor);
 
-            JetScope classScope = mutableClassDescriptor.getScopeForMemberResolution();
+            JetScope classScope = mutableClassDescriptor.getScopeForMemberDeclarationResolution();
 
             prepareForDeferredCall(classScope, mutableClassDescriptor, klass);
 
@@ -625,7 +625,7 @@ public class TypeHierarchyResolver {
         ) {
             MutableClassDescriptor descriptor = new MutableClassDescriptor(owner.getOwnerForChildren(), outerScope, kind, false, name);
 
-            prepareForDeferredCall(descriptor.getScopeForMemberResolution(), descriptor, declaration);
+            prepareForDeferredCall(descriptor.getScopeForMemberDeclarationResolution(), descriptor, declaration);
 
             createPrimaryConstructorForObject(declaration, descriptor);
             trace.record(BindingContext.CLASS, declaration, descriptor);

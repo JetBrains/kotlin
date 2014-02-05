@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-public class MutableClassDescriptor extends MutableClassDescriptorLite {
+public class MutableClassDescriptor extends MutableClassDescriptorLite implements ClassDescriptorWithResolutionScopes {
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
     private ConstructorDescriptor primaryConstructor;
 
@@ -137,13 +137,15 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
         scopeForMemberResolution.setImplicitReceiver(getThisAsReceiverParameter());
     }
 
+    @Override
     @NotNull
-    public JetScope getScopeForSupertypeResolution() {
+    public JetScope getScopeForClassHeaderResolution() {
         return scopeForSupertypeResolution;
     }
 
+    @Override
     @NotNull
-    public JetScope getScopeForMemberResolution() {
+    public JetScope getScopeForMemberDeclarationResolution() {
         return scopeForMemberResolution;
     }
 
@@ -154,8 +156,9 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
         return scopeForInitializers;
     }
 
+    @Override
     @NotNull
-    public JetScope getScopeForInitializers() {
+    public JetScope getScopeForInitializerResolution() {
         return getWritableScopeForInitializers();
     }
 

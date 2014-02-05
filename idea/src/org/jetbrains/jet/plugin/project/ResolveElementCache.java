@@ -312,7 +312,7 @@ public class ResolveElementCache {
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(classInitializer, JetClassOrObject.class);
         LazyClassDescriptor classOrObjectDescriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor(classOrObject);
         bodyResolver.resolveAnonymousInitializers(classOrObject, classOrObjectDescriptor.getUnsubstitutedPrimaryConstructor(),
-                classOrObjectDescriptor.getScopeForPropertyInitializerResolution());
+                classOrObjectDescriptor.getScopeForInitializerResolution());
 
         return true;
     }
