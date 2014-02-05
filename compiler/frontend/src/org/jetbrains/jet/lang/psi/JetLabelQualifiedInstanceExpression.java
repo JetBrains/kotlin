@@ -20,8 +20,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 
-public abstract class JetLabelQualifiedInstanceExpression extends JetLabelQualifiedExpression
-        implements JetStatementExpression {
+public abstract class JetLabelQualifiedInstanceExpression extends JetLabelQualifiedExpression {
 
     public JetLabelQualifiedInstanceExpression(@NotNull ASTNode node) {
         super(node);
