@@ -20,11 +20,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaLiteralAnnotationArgument;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
+import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -38,8 +35,8 @@ public class SignaturesUtil {
     }
 
     @Nullable
-    public static String getKotlinSignature(@NotNull JavaAnnotationResolver annotationResolver, @NotNull JavaMember member) {
-        JavaAnnotation annotation = annotationResolver.findAnnotationWithExternal(member, KOTLIN_SIGNATURE);
+    public static String getKotlinSignature(@NotNull ExternalAnnotationResolver externalAnnotationResolver, @NotNull JavaMember member) {
+        JavaAnnotation annotation = findAnnotationWithExternal(externalAnnotationResolver, member, KOTLIN_SIGNATURE);
 
         if (annotation != null) {
             JavaAnnotationArgument argument = annotation.findArgument(KOTLIN_SIGNATURE_VALUE_FIELD_NAME);
@@ -53,4 +50,15 @@ public class SignaturesUtil {
 
         return null;
     }
+
+    @Nullable
+    public static JavaAnnotation findAnnotationWithExternal(@NotNull ExternalAnnotationResolver externalAnnotationResolver, @NotNull JavaAnnotationOwner owner, @NotNull FqName name) {
+        JavaAnnotation annotation = owner.findAnnotation(name);
+        if (annotation != null) {
+            return annotation;
+        }
+
+        return externalAnnotationResolver.findExternalAnnotation(owner, name);
+    }
+
 }

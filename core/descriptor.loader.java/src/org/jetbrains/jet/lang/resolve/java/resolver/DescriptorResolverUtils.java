@@ -29,17 +29,20 @@ import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.TypeProjectionImpl;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameSafe;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
+    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
+
     private DescriptorResolverUtils() {
     }
 
@@ -127,10 +130,6 @@ public final class DescriptorResolverUtils {
 
         return "values()".equals(signature) ||
                "valueOf(java.lang.String)".equals(signature);
-    }
-
-    public static boolean isCorrectOwnerForEnumMethod(@NotNull ClassOrPackageFragmentDescriptor ownerDescriptor, @NotNull JavaMethod method) {
-        return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(method);
     }
 
     public static boolean isObjectMethodInInterface(@NotNull JavaMember member) {
@@ -305,5 +304,23 @@ public final class DescriptorResolverUtils {
         }
 
         return false;
+    }
+
+    @Nullable
+    public static ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
+        if (!qualifiedName.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null;
+
+        List<Name> segments = qualifiedName.pathSegments();
+        if (segments.size() < 2) return null;
+
+        JetScope scope = KotlinBuiltIns.getInstance().getBuiltInsPackageScope();
+        for (int i = 1, size = segments.size(); i < size; i++) {
+            ClassifierDescriptor classifier = scope.getClassifier(segments.get(i));
+            if (classifier == null) return null;
+            assert classifier instanceof ClassDescriptor : "Unexpected classifier in built-ins: " + classifier;
+            scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
+        }
+
+        return (ClassDescriptor) scope.getContainingDeclaration();
     }
 }

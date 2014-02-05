@@ -13,8 +13,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver.*
+import org.jetbrains.jet.lang.resolve.AnnotationLoadingUtil.*
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
@@ -30,10 +29,11 @@ import org.jetbrains.jet.utils.valuesToMap
 import org.jetbrains.jet.utils.keysToMap
 import org.jetbrains.jet.utils.keysToMapExceptNulls
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.resolve.AnnotationLoadingUtil
+import org.jetbrains.jet.lang.resolve.resolveCompileTimeConstantValue
 
 private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
     override fun getName(): Name? = null
@@ -69,7 +69,7 @@ class LazyJavaAnnotationDescriptor(
         val nameToArg = _nameToArgument()
 
         var javaAnnotationArgument = nameToArg[valueParameter.getName()]
-        if (javaAnnotationArgument == null && valueParameter.getName() == JavaAnnotationResolver.DEFAULT_ANNOTATION_MEMBER_NAME) {
+        if (javaAnnotationArgument == null && valueParameter.getName() == AnnotationLoadingUtil.DEFAULT_ANNOTATION_MEMBER_NAME) {
             javaAnnotationArgument = nameToArg[null]
         }
 
@@ -94,7 +94,7 @@ class LazyJavaAnnotationDescriptor(
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): CompileTimeConstant<*>? {
         return when (argument) {
-            is JavaLiteralAnnotationArgument -> JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(argument.getValue(), true, null)
+            is JavaLiteralAnnotationArgument -> resolveCompileTimeConstantValue(argument.getValue(), true, null)
             is JavaReferenceAnnotationArgument -> resolveFromReference(argument.resolve())
             is JavaArrayAnnotationArgument -> resolveFromArray(argument.getName() ?: DEFAULT_ANNOTATION_MEMBER_NAME, argument.getElements())
             is JavaAnnotationAsAnnotationArgument -> resolveFromAnnotation(argument.getAnnotation())
@@ -107,7 +107,7 @@ class LazyJavaAnnotationDescriptor(
         val fqName = javaAnnotation.getFqName()
         if (fqName == null) return null
 
-        if (JavaAnnotationResolver.isSpecialAnnotation(fqName)) {
+        if (AnnotationLoadingUtil.isSpecialAnnotation(fqName)) {
             return null
         }
 
@@ -146,7 +146,7 @@ class LazyJavaAnnotationDescriptor(
     private fun resolveFromJavaClassObjectType(javaType: JavaType): CompileTimeConstant<*>? {
         // Class type is never nullable in 'Foo.class' in Java
         val `type` = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()))
-        val jlClass = c.javaClassResolver.resolveClassByFqName(JavaAnnotationArgumentResolver.JL_CLASS_FQ_NAME)
+        val jlClass = c.javaClassResolver.resolveClassByFqName(AnnotationLoadingUtil.JL_CLASS_FQ_NAME)
         if (jlClass == null) return null
 
         val arguments = listOf(TypeProjectionImpl(`type`))

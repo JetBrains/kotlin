@@ -59,8 +59,6 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-
 public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     private static final String SHOW_MARKERS_PROPERTY = "kotlin.signature.markers.enabled";
 
@@ -175,7 +173,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return packageFragment.getMemberScope();
         }
         else {
-            ClassDescriptor klass = javaDescriptorResolver.resolveClass(classFqName, IGNORE_KOTLIN_SOURCES);
+            ClassDescriptor klass = javaDescriptorResolver.resolveClass(classFqName);
             if (klass == null) {
                 return null;
             }

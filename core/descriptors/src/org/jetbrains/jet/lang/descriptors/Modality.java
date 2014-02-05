@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum Modality {
     // THE ORDER OF ENTRIES MATTERS HERE
     FINAL(false),
@@ -32,6 +34,7 @@ public enum Modality {
         return overridable;
     }
 
+    @NotNull
     public static Modality convertFromFlags(boolean _abstract, boolean open) {
         if (_abstract) return ABSTRACT;
         if (open) return OPEN;

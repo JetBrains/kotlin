@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 
 open class GlobalJavaResolverContext(

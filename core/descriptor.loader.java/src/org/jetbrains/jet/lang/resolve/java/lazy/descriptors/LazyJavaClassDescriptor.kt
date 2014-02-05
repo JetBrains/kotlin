@@ -9,7 +9,6 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.types.TypeConstructor
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
@@ -18,7 +17,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.resolve.java.lazy.resolveAnnotations
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
@@ -32,6 +30,11 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.jet.lang.descriptors.ClassKind
+import org.jetbrains.jet.lang.resolve.DescriptorFactory
+import java.util.ArrayList
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -46,10 +49,19 @@ class LazyJavaClassDescriptor(
         c.javaResolverCache.recordClass(jClass, this)
     }
 
-    private val _kind = JavaClassResolver.determineClassKind(jClass)
-    private val _modality = JavaClassResolver.determineClassModality(jClass)
+    private val _kind = when {
+        jClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
+        jClass.isInterface() -> ClassKind.TRAIT
+        jClass.isEnum() -> ClassKind.ENUM_CLASS
+        else -> ClassKind.CLASS
+    }
+
+    private val _modality = if (jClass.isAnnotationType())
+                                Modality.FINAL
+                            else Modality.convertFromFlags(jClass.isAbstract() || jClass.isInterface(), !jClass.isFinal())
+
     private val _visibility = jClass.getVisibility()
-    private val _isInner = JavaClassResolver.isInnerClass(jClass)
+    private val _isInner = jClass.getOuterClass() != null && !jClass.isStatic()
 
     override fun getKind() = _kind
     override fun getModality() = _modality
@@ -82,12 +94,22 @@ class LazyJavaClassDescriptor(
 
             classObject.setScopeForMemberLookup(writableScope)
 
-            JavaClassResolver.createEnumSyntheticMethods(classObject, this.getDefaultType())
+            createEnumSyntheticMethods(classObject, this.getDefaultType())
 
             classObject
         }
         else null
     }
+
+    private fun createEnumSyntheticMethods(classObject: JavaEnumClassObjectDescriptor, enumType: JetType) {
+        val valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(enumType)
+        val valuesMethod = DescriptorFactory.createEnumClassObjectValuesMethod(classObject, valuesReturnType)
+        classObject.getBuilder().addFunctionDescriptor(valuesMethod)
+
+        val valueOfMethod = DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, enumType)
+        classObject.getBuilder().addFunctionDescriptor(valueOfMethod)
+    }
+
     override fun getClassObjectDescriptor(): ClassDescriptor? = _classObjectDescriptor()
     override fun getClassObjectType(): JetType? = getClassObjectDescriptor()?.let { d -> d.getDefaultType() }
 
@@ -115,8 +137,31 @@ class LazyJavaClassDescriptor(
             return _scopeForMemberLookup.resolveMethodToFunctionDescriptor(samInterfaceMethod, false)
         }
         else {
-            return JavaClassResolver.findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(getDefaultType()))
+            return findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(getDefaultType()))
         }
+    }
+
+    private fun findFunctionWithMostSpecificReturnType(supertypes: Set<JetType>): SimpleFunctionDescriptor {
+        val candidates = ArrayList<SimpleFunctionDescriptor>(supertypes.size())
+        for (supertype in supertypes) {
+            val abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype)
+            if (!abstractMembers.isEmpty()) {
+                candidates.add((abstractMembers[0] as SimpleFunctionDescriptor))
+            }
+        }
+        if (candidates.isEmpty()) {
+            throw IllegalStateException("Couldn't find abstract method in supertypes " + supertypes)
+        }
+        var currentMostSpecificType = candidates[0]
+        for (candidate in candidates) {
+            val candidateReturnType = candidate.getReturnType()
+            val currentMostSpecificReturnType = currentMostSpecificType.getReturnType()
+            assert(candidateReturnType != null && currentMostSpecificReturnType != null, "$candidate, $currentMostSpecificReturnType")
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(candidateReturnType!!, currentMostSpecificReturnType!!)) {
+                currentMostSpecificType = candidate
+            }
+        }
+        return currentMostSpecificType
     }
 
     override fun toString() = "lazy java class $fqName"
@@ -136,11 +181,11 @@ class LazyJavaClassDescriptor(
         private val _supertypes = c.storageManager.createLazyValue<Collection<JetType>> {
             val supertypes = jClass.getSupertypes()
             if (supertypes.isEmpty())
-                if (jClass.getFqName() == JavaSupertypeResolver.OBJECT_FQ_NAME) {
+                if (jClass.getFqName() == DescriptorResolverUtils.OBJECT_FQ_NAME) {
                     listOf(KotlinBuiltIns.getInstance().getAnyType())
                 }
                 else {
-                    val jlObject = c.javaClassResolver.resolveClassByFqName(JavaSupertypeResolver.OBJECT_FQ_NAME)?.getDefaultType()
+                    val jlObject = c.javaClassResolver.resolveClassByFqName(DescriptorResolverUtils.OBJECT_FQ_NAME)?.getDefaultType()
                     // If java.lang.Object is not found, we simply use Any to recover
                     listOf(jlObject ?: KotlinBuiltIns.getInstance().getAnyType())
                 }

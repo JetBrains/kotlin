@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -353,7 +352,7 @@ public class SingleAbstractMethodUtils {
             }
             assert classifier instanceof JavaClass : "Classifier should be a class here: " + classifier;
             JavaClass javaClass = (JavaClass) classifier;
-            if (JavaSupertypeResolver.OBJECT_FQ_NAME.equals(javaClass.getFqName())) {
+            if (DescriptorResolverUtils.OBJECT_FQ_NAME.equals(javaClass.getFqName())) {
                 return true;
             }
             for (JavaMethod method : javaClass.getMethods()) {

@@ -46,8 +46,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-
 public class ResolveDescriptorsFromExternalLibraries {
 
 
@@ -203,7 +201,7 @@ public class ResolveDescriptorsFromExternalLibraries {
                 String className = entryName.substring(0, entryName.length() - ".class".length()).replace("/", ".");
 
                 try {
-                    ClassDescriptor clazz = javaDescriptorResolver.resolveClass(new FqName(className), IGNORE_KOTLIN_SOURCES);
+                    ClassDescriptor clazz = javaDescriptorResolver.resolveClass(new FqName(className));
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                     }

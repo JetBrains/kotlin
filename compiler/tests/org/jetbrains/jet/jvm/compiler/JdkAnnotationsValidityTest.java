@@ -57,8 +57,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-
 public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
     private static final int CLASSES_IN_CHUNK = 500;
@@ -124,7 +122,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass, IGNORE_KOTLIN_SOURCES);
+                    ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass);
                     PackageViewDescriptor topLevelPackage = injector.getModule().getPackage(javaClass);
                     if (topLevelClass == null) {
                         continue;

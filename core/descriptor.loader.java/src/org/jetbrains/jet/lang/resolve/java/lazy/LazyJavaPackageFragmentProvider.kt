@@ -7,7 +7,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaPackage
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaClass
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
@@ -73,7 +72,7 @@ public open class LazyJavaPackageFragmentProvider(
             val fqName = javaClass.getFqName()
             if (fqName != null) {
                 // TODO: this should be handled by module separation logic
-                val builtinClass = JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName)
+                val builtinClass = DescriptorResolverUtils.getKotlinBuiltinClassDescriptor(fqName)
                 if (builtinClass != null) return builtinClass
 
                 if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
@@ -97,7 +96,7 @@ public open class LazyJavaPackageFragmentProvider(
         }
 
         override fun resolveClassByFqName(fqName: FqName): ClassDescriptor? {
-            val builtinClass = JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName)
+            val builtinClass = DescriptorResolverUtils.getKotlinBuiltinClassDescriptor(fqName)
             if (builtinClass != null) return builtinClass
 
             // TODO Here we prefer sources (something outside JDR subsystem) to binaries, which should actually be driven by module dependencies separation
