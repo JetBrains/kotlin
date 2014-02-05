@@ -29,21 +29,23 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.SmartList;
+import jet.Function1;
 import junit.framework.Assert;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixtureTestCase {
     @NotNull
@@ -128,8 +130,21 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
 
         final CallableMemberDescriptor singleToOverride;
         if (memberToOverride == null) {
-            assertEquals("Invalid number of available descriptors for override", 1, descriptors.size());
-            singleToOverride = descriptors.iterator().next();
+            // Filter out fake overrides of members of Any (equals, hashCode, toString)
+            List<CallableMemberDescriptor> filtered = KotlinPackage.filter(descriptors, new Function1<CallableMemberDescriptor, Boolean>() {
+                @Override
+                public Boolean invoke(CallableMemberDescriptor descriptor) {
+                    ClassDescriptor any = KotlinBuiltIns.getInstance().getAny();
+                    for (CallableMemberDescriptor overridden : OverridingUtil.getOverriddenDeclarations(descriptor)) {
+                        if (overridden.getContainingDeclaration().equals(any)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            });
+            assertEquals("Invalid number of available descriptors for override", 1, filtered.size());
+            singleToOverride = filtered.iterator().next();
         }
         else {
             CallableMemberDescriptor candidateToOverride = null;
