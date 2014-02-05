@@ -224,22 +224,6 @@ public final class JavaFunctionResolver {
         return functions;
     }
 
-    @Nullable
-    public static SamConstructorDescriptor resolveSamConstructor(@NotNull JavaPackageFragmentDescriptor owner, @NotNull NamedMembers namedMembers) {
-        if (namedMembers.getSamInterface() != null) {
-            ClassDescriptor klass = owner.getJavaDescriptorResolver().resolveClass(owner.getFqName().child(namedMembers.getName()));
-            if (klass instanceof JavaClassDescriptor) {
-                return createSamConstructorFunction(owner, (JavaClassDescriptor) klass);
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    public static SimpleFunctionDescriptor resolveSamAdapter(@NotNull SimpleFunctionDescriptor original) {
-        return isSamAdapterNecessary(original) ? (SimpleFunctionDescriptor) createSamAdapterFunction(original) : null;
-    }
-
     @NotNull
     private JetType makeReturnType(
             @NotNull JavaType returnType,
@@ -258,16 +242,5 @@ public final class JavaFunctionResolver {
         else {
             return transformedType;
         }
-    }
-
-    @NotNull
-    public static Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
-        Set<SimpleFunctionDescriptor> result = new LinkedHashSet<SimpleFunctionDescriptor>();
-        for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
-            for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(name)) {
-                result.add((SimpleFunctionDescriptor) function);
-            }
-        }
-        return result;
     }
 }

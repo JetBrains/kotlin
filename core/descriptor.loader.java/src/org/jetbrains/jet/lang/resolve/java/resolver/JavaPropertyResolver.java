@@ -143,20 +143,4 @@ public final class JavaPropertyResolver {
 
         return propertyType;
     }
-
-    @NotNull
-    public static Set<PropertyDescriptor> getPropertiesFromSupertypes(@NotNull Name name, @NotNull ClassDescriptor descriptor) {
-        Set<PropertyDescriptor> result = new HashSet<PropertyDescriptor>();
-        for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
-            for (VariableDescriptor property : supertype.getMemberScope().getProperties(name)) {
-                result.add((PropertyDescriptor) property);
-            }
-        }
-
-        return result;
-    }
-
-    public static boolean isStaticFinalField(@NotNull JavaField field) {
-        return field.isFinal() && field.isStatic();
-    }
 }
