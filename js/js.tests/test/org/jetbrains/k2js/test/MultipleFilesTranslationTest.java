@@ -53,7 +53,7 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
     }
 
     public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
-        runMultiFileTest(dirName, "foo", "box", true);
+        runMultiFileTest(dirName, TEST_PACKAGE, TEST_FUNCTION, true);
     }
 }
 
