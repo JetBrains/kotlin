@@ -80,19 +80,16 @@ fun generate(): String {
     val unaryOperationsMapIterator = unaryOperationsMap.iterator()
     while (unaryOperationsMapIterator.hasNext()) {
         val (funcName, parameters) = unaryOperationsMapIterator.next()
-        p.print(
+        p.println(
                 "unaryOperation(",
                 parameters.map { it.asSrting() }.makeString(", "),
                 ", ",
                 "\"$funcName\"",
                 ", { a -> a.${funcName}() }, ",
                 renderCheckUnaryOperation(funcName, parameters),
-                ")"
+                ")",
+                if (unaryOperationsMapIterator.hasNext()) "," else ""
         )
-        if (unaryOperationsMapIterator.hasNext()) {
-            p.printWithNoIndent(", ")
-        }
-        p.println()
     }
     p.popIndent()
     p.println(")")
@@ -106,19 +103,16 @@ fun generate(): String {
     val binaryOperationsMapIterator = binaryOperationsMap.iterator()
     while (binaryOperationsMapIterator.hasNext()) {
         val (funcName, parameters) = binaryOperationsMapIterator.next()
-        p.print(
+        p.println(
                 "binaryOperation(",
                 parameters.map { it.asSrting() }.makeString(", "),
                 ", ",
                 "\"$funcName\"",
                 ", { a, b -> a.${funcName}(b) }, ",
                 renderCheckBinaryOperation(funcName, parameters),
-                ")"
+                ")",
+                if (binaryOperationsMapIterator.hasNext()) "," else ""
         )
-        if (binaryOperationsMapIterator.hasNext()) {
-            p.printWithNoIndent(", ")
-        }
-        p.println()
     }
     p.popIndent()
     p.println(")")
