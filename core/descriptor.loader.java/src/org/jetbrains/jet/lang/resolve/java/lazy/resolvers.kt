@@ -23,9 +23,9 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 
 trait LazyJavaClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
@@ -71,7 +71,7 @@ data class JavaClassLookupResult(val jClass: JavaClass? = null, val kClass: Clas
 fun LazyJavaResolverContext.findClassInJava(fqName: FqName): JavaClassLookupResult {
     // TODO: this should be governed by module separation logic
     // Do not look for JavaClasses for Kotlin binaries & built-ins
-    if (JavaClassResolver.getKotlinBuiltinClassDescriptor(fqName) != null) {
+    if (DescriptorResolverUtils.getKotlinBuiltinClassDescriptor(fqName) != null) {
         return JavaClassLookupResult()
     }
 
