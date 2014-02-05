@@ -59,6 +59,26 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/PackageLocalVisibility.java");
         }
         
+        @TestMetadata("RawTypeWithUpperBound.java")
+        public void testRawTypeWithUpperBound() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/RawTypeWithUpperBound.java");
+        }
+        
+        @TestMetadata("RawUpperBound.java")
+        public void testRawUpperBound() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/RawUpperBound.java");
+        }
+        
+        @TestMetadata("RecursiveRawUpperBound.java")
+        public void testRecursiveRawUpperBound() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/RecursiveRawUpperBound.java");
+        }
+        
+        @TestMetadata("RecursiveWildcardUpperBound.java")
+        public void testRecursiveWildcardUpperBound() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/RecursiveWildcardUpperBound.java");
+        }
+        
         @TestMetadata("SubclassFromNested.java")
         public void testSubclassFromNested() throws Exception {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/SubclassFromNested.java");

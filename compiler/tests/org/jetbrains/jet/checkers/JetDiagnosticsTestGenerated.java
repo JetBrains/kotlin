@@ -4558,6 +4558,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/j+k/mutableIterator.kt");
             }
             
+            @TestMetadata("overrideRawType.kt")
+            public void testOverrideRawType() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/overrideRawType.kt");
+            }
+            
             @TestMetadata("OverrideVararg.kt")
             public void testOverrideVararg() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/OverrideVararg.kt");

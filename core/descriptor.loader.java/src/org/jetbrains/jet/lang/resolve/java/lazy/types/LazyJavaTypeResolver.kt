@@ -79,9 +79,12 @@ class LazyJavaTypeResolver(
 
     private class LazyStarProjection(
             c: LazyJavaResolverContext,
-            val typeParameter: TypeParameterDescriptor
+            val typeParameter: TypeParameterDescriptor,
+            val attr: JavaTypeAttributes
     ) : TypeProjectionBase() {
-        override fun getProjectionKind() = if (typeParameter.getVariance() == OUT_VARIANCE) INVARIANT else OUT_VARIANCE
+        override fun getProjectionKind() =
+                // projections are not allowed in immediate arguments of supertypes
+                if (typeParameter.getVariance() == OUT_VARIANCE || attr.howThisTypeIsUsed == SUPERTYPE) INVARIANT else OUT_VARIANCE
         override fun getType() = typeParameter.getUpperBoundsAsType()
     }
 
@@ -167,18 +170,19 @@ class LazyJavaTypeResolver(
             if (isRaw()) {
                 return typeParameters.map {
                     parameter ->
-                    // not making a star projection because of this case:
-                    // Java:
-                    // class C<T extends C> {}
-                    // The upper bound is raw here, and we can't compute the projection: it would be infinite:
-                    // C<*> = C<out C<out C<...>>>
-                    // this way we loose some type information, even when the case is not so bad, but it doesn't seem to matter
 
-                    // projections are not allowed in immediate arguments of supertypes
-                    val projectionKind = if (parameter.getVariance() == OUT_VARIANCE || attr.howThisTypeIsUsed == SUPERTYPE)
-                                              INVARIANT
-                                         else OUT_VARIANCE
-                    TypeProjectionImpl(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType())
+                    if (attr.howThisTypeIsUsed == UPPER_BOUND) {
+                        // not making a star projection because of this case:
+                        // Java:
+                        // class C<T extends C> {}
+                        // The upper bound is raw here, and we can't compute the projection: it would be infinite:
+                        // C<*> = C<out C<out C<...>>>
+                        // this way we lose some type information, even when the case is not so bad, but it doesn't seem to matter
+                        val projectionKind = if (parameter.getVariance() == OUT_VARIANCE) INVARIANT else OUT_VARIANCE
+                        TypeProjectionImpl(projectionKind, KotlinBuiltIns.getInstance().getNullableAnyType())
+                    }
+                    else
+                        LazyStarProjection(c, parameter, attr)
                 }
             }
             if (isConstructorTypeParameter()) {
@@ -209,7 +213,7 @@ class LazyJavaTypeResolver(
                 is JavaWildcardType -> {
                     val bound = javaType.getBound()
                     if (bound == null)
-                        LazyStarProjection(c, typeParameter)
+                        LazyStarProjection(c, typeParameter, attr)
                     else {
                         var projectionKind = if (javaType.isExtends()) OUT_VARIANCE else IN_VARIANCE
                         if (projectionKind == typeParameter.getVariance()) {
@@ -263,11 +267,11 @@ class LazyJavaTypeAttributes(
         c: LazyJavaResolverContext,
         val annotationOwner: JavaAnnotationOwner,
         override val howThisTypeIsUsed: TypeUsage,
-        computeHowThisTypeIsUsedAccrodingToAnnotations: () -> TypeUsage = {howThisTypeIsUsed}
+        computeHowThisTypeIsUsedAccordingToAnnotations: () -> TypeUsage = {howThisTypeIsUsed}
 ): JavaTypeAttributes {
 
     override val howThisTypeIsUsedAccordingToAnnotations: TypeUsage by c.storageManager.createLazyValue(
-        computeHowThisTypeIsUsedAccrodingToAnnotations
+        computeHowThisTypeIsUsedAccordingToAnnotations
     )
 
     override val isMarkedNotNull: Boolean by c.storageManager.createLazyValue { c.hasNotNullAnnotation(annotationOwner) }
