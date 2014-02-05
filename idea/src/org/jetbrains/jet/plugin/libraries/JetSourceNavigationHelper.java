@@ -32,7 +32,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopes;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -42,9 +42,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
-import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
+import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -118,7 +118,7 @@ public class JetSourceNavigationHelper {
         GlobalSearchScope resultScope = GlobalSearchScope.EMPTY_SCOPE;
         for (OrderEntry orderEntry : projectFileIndex.getOrderEntriesForFile(libraryFile)) {
             for (VirtualFile sourceDir : orderEntry.getFiles(OrderRootType.SOURCES)) {
-                resultScope = resultScope.uniteWith(GlobalSearchScopes.directoryScope(project, sourceDir, true));
+                resultScope = resultScope.uniteWith(GlobalSearchScopesCore.directoryScope(project, sourceDir, true));
             }
         }
         return resultScope;
@@ -217,13 +217,16 @@ public class JetSourceNavigationHelper {
 
         Project project = decompiledDeclaration.getProject();
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(globalContext.getStorageManager(), getContainingFiles(candidates),
+        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
+                globalContext.getStorageManager(),
+                getContainingFiles(candidates),
                 new Predicate<FqName>() {
                     @Override
                     public boolean apply(@Nullable FqName fqName) {
                         return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
                     }
                 });
+
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
                                                                          AnalyzerFacadeForJVM.DEFAULT_IMPORTS,
                                                                          PlatformToKotlinClassMap.EMPTY);
@@ -390,12 +393,12 @@ public class JetSourceNavigationHelper {
 
         return JavaPsiFacade.getInstance(project).findClass(fqName, new GlobalSearchScope(project) {
             @Override
-            public int compare(VirtualFile file1, VirtualFile file2) {
+            public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
                 return 0;
             }
 
             @Override
-            public boolean contains(VirtualFile file) {
+            public boolean contains(@NotNull VirtualFile file) {
                 List<OrderEntry> entries = idx.getOrderEntriesForFile(file);
                 for (OrderEntry entry : entries) {
                     if (orderEntries.contains(entry)) return true;
