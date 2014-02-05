@@ -24,6 +24,7 @@ import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class SeleniumTest {
     protected static WebDriver driver = createDriver();
 
     public static WebDriver createDriver() {
-        HtmlUnitDriver answer = new HtmlUnitDriver(true);
+        HtmlUnitDriver answer = new HtmlUnitDriver(BrowserVersion.FIREFOX_17);
         answer.setJavascriptEnabled(true);
         return answer;
     }

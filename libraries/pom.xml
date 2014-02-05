@@ -54,9 +54,9 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <pegdown.version>1.1.0</pegdown.version>
-        <surefire-version>2.5</surefire-version>
+        <surefire-version>2.16</surefire-version>
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
-        <selenium.version>2.25.0</selenium.version>
+        <selenium.version>2.37.1</selenium.version>
     </properties>
 
     <prerequisites>
