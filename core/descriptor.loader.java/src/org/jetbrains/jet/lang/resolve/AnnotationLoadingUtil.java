@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
-public class AnnotationLoadingUtil {
+public final class AnnotationLoadingUtil {
     public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
     public static final FqName JETBRAINS_NOT_NULL_ANNOTATION = fqNameByClass(NotNull.class);
     public static final FqName JETBRAINS_NULLABLE_ANNOTATION = fqNameByClass(Nullable.class);
@@ -38,4 +38,6 @@ public class AnnotationLoadingUtil {
             || fqName.equals(JvmAnnotationNames.KOTLIN_CLASS)
             || fqName.equals(JvmAnnotationNames.KOTLIN_PACKAGE);
     }
+
+    private AnnotationLoadingUtil() {}
 }
