@@ -167,7 +167,7 @@ private fun JetType.isIntegerType(): Boolean {
 
 
 private fun FunctionDescriptor.getParametersTypes(): List<JetType> {
-    val list = arrayListOf(getExpectedThisObject()!!.getType())
+    val list = arrayListOf((getContainingDeclaration() as ClassDescriptor).getDefaultType())
     getValueParameters().map { it.getType() }.forEach {
         list.add(TypeUtils.makeNotNullable(it))
     }
