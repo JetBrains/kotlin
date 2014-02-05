@@ -4,6 +4,7 @@
       <w>accessors</w>
       <w>goto</w>
       <w>kdoc</w>
+      <w>memoized</w>
       <w>redeclarations</w>
       <w>subclassed</w>
       <w>subgraph</w>
