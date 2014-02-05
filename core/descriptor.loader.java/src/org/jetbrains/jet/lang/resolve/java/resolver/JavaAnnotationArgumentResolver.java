@@ -40,7 +40,6 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KO
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.INCLUDE_KOTLIN_SOURCES;
 
 public final class JavaAnnotationArgumentResolver {
-    public static final FqName JL_CLASS_FQ_NAME = new FqName("java.lang.Class");
 
     private JavaAnnotationResolver annotationResolver;
     private JavaClassResolver classResolver;
