@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameSafe;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
     public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
@@ -131,10 +130,6 @@ public final class DescriptorResolverUtils {
 
         return "values()".equals(signature) ||
                "valueOf(java.lang.String)".equals(signature);
-    }
-
-    public static boolean isCorrectOwnerForEnumMethod(@NotNull ClassOrPackageFragmentDescriptor ownerDescriptor, @NotNull JavaMethod method) {
-        return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(method);
     }
 
     public static boolean isObjectMethodInInterface(@NotNull JavaMember member) {
