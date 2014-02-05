@@ -136,11 +136,11 @@ class LazyJavaClassDescriptor(
         private val _supertypes = c.storageManager.createLazyValue<Collection<JetType>> {
             val supertypes = jClass.getSupertypes()
             if (supertypes.isEmpty())
-                if (jClass.getFqName() == JavaSupertypeResolver.OBJECT_FQ_NAME) {
+                if (jClass.getFqName() == DescriptorResolverUtils.OBJECT_FQ_NAME) {
                     listOf(KotlinBuiltIns.getInstance().getAnyType())
                 }
                 else {
-                    val jlObject = c.javaClassResolver.resolveClassByFqName(JavaSupertypeResolver.OBJECT_FQ_NAME)?.getDefaultType()
+                    val jlObject = c.javaClassResolver.resolveClassByFqName(DescriptorResolverUtils.OBJECT_FQ_NAME)?.getDefaultType()
                     // If java.lang.Object is not found, we simply use Any to recover
                     listOf(jlObject ?: KotlinBuiltIns.getInstance().getAnyType())
                 }

@@ -40,6 +40,8 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameSafe;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClassObject;
 
 public final class DescriptorResolverUtils {
+    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
+
     private DescriptorResolverUtils() {
     }
 
