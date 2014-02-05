@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetModifierList;
@@ -36,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.lang.annotation.Retention;
@@ -123,6 +123,14 @@ public abstract class AnnotationCodegen {
     private void generateNullabilityAnnotation(@Nullable JetType type, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
         if (type == null) return;
 
+        if (isBareTypeParameterWithNullableUpperBound(type)) {
+            // This is to account for the case of, say
+            //   class Function<R> { fun invoke(): R }
+            // it would be a shame to put @Nullable on the return type of the function, and force all callers to check for null,
+            // so we put no annotations
+            return;
+        }
+
         boolean isNullableType = CodegenUtil.isNullableType(type);
         if (!isNullableType && KotlinBuiltIns.getInstance().isPrimitiveType(type)) return;
 
@@ -132,6 +140,11 @@ public abstract class AnnotationCodegen {
         if (!annotationDescriptorsAlreadyPresent.contains(descriptor)) {
             visitAnnotation(descriptor, false).visitEnd();
         }
+    }
+
+    private static boolean isBareTypeParameterWithNullableUpperBound(@NotNull JetType type) {
+        ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
+        return !type.isNullable() && classifier instanceof TypeParameterDescriptor && TypeUtils.hasNullableSuperType(type);
     }
 
     private static boolean isVolatile(@NotNull AnnotationDescriptor annotationDescriptor) {
