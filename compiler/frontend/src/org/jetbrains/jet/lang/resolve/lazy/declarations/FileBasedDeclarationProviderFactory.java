@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,10 +104,6 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     /*package*/ boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
         return index.invoke().declaredPackages.contains(packageFqName);
-    }
-
-    /*package*/ boolean isPackageDeclared(@NotNull FqName packageFqName) {
-        return isPackageDeclaredExplicitly(packageFqName) || isPackageDeclaredExternally.apply(packageFqName);
     }
 
     /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull final FqName parent) {
