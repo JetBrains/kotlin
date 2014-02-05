@@ -22,16 +22,13 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.LazyJavaTypeAttributes
 import org.jetbrains.jet.lang.resolve.java.lazy.hasMutableAnnotation
 import org.jetbrains.jet.lang.resolve.java.lazy.hasReadOnlyAnnotation
 import org.jetbrains.jet.lang.resolve.java.structure.JavaValueParameter
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import java.util.LinkedHashSet
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
 import java.util.Collections
-import org.jetbrains.jet.utils.emptyOrSingletonList
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
@@ -70,7 +67,7 @@ public abstract class LazyJavaMemberScope(
                       .flatMap {
                               m ->
                               val function = resolveMethodToFunctionDescriptor(m, true)
-                              val samAdapter = JavaFunctionResolver.resolveSamAdapter(function)
+                              val samAdapter = resolveSamAdapter(function)
                               if (samAdapter != null)
                                   listOf(function, samAdapter).iterator()
                               else
@@ -85,7 +82,7 @@ public abstract class LazyJavaMemberScope(
         }
 
         if (_containingDeclaration is ClassDescriptor) {
-            val functionsFromSupertypes = JavaFunctionResolver.getFunctionsFromSupertypes(name, _containingDeclaration);
+            val functionsFromSupertypes = getFunctionsFromSupertypes(name, _containingDeclaration);
 
             functions.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, functions, _containingDeclaration, c.errorReporter));
         }
@@ -204,6 +201,18 @@ public abstract class LazyJavaMemberScope(
         }.toList()
     }
 
+    private fun resolveSamAdapter(original: SimpleFunctionDescriptor): SimpleFunctionDescriptor? {
+        return if (SingleAbstractMethodUtils.isSamAdapterNecessary(original))
+                    SingleAbstractMethodUtils.createSamAdapterFunction(original) as SimpleFunctionDescriptor
+               else null
+    }
+
+    private fun getFunctionsFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
+        return descriptor.getTypeConstructor().getSupertypes().flatMap {
+            it.getMemberScope().getFunctions(name).map { f -> f as SimpleFunctionDescriptor }
+        }.toSet()
+    }
+
     override fun getFunctions(name: Name) = _functions(name)
     protected open fun getAllFunctionNames(): Collection<Name> = memberIndex().getAllMethodNames()
 
@@ -219,7 +228,7 @@ public abstract class LazyJavaMemberScope(
         }
 
         if (_containingDeclaration is ClassDescriptor) {
-            val propertiesFromSupertypes = JavaPropertyResolver.getPropertiesFromSupertypes(name, _containingDeclaration);
+            val propertiesFromSupertypes = getPropertiesFromSupertypes(name, _containingDeclaration);
 
             properties.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, properties, _containingDeclaration,
                                                c.errorReporter));
@@ -260,10 +269,16 @@ public abstract class LazyJavaMemberScope(
     private fun getPropertyType(field: JavaField): JetType {
         // Fields do not have their own generic parameters
         val propertyType = c.typeResolver.transformJavaType(field.getType(), LazyJavaTypeAttributes(c, field, TypeUsage.MEMBER_SIGNATURE_INVARIANT))
-        if (JavaPropertyResolver.isStaticFinalField(field)) {
+        if (field.isFinal() && field.isStatic()) {
             return TypeUtils.makeNotNullable(propertyType)
         }
         return propertyType
+    }
+
+    private fun getPropertiesFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
+        return descriptor.getTypeConstructor().getSupertypes().flatMap {
+            it.getMemberScope().getProperties(name).map { p -> p as PropertyDescriptor }
+        }.toSet()
     }
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> = _properties(name)

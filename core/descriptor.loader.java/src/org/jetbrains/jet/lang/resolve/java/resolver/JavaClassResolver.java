@@ -272,21 +272,6 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    public static ClassKind determineClassKind(@NotNull JavaClass klass) {
-        if (klass.isInterface()) {
-            return klass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT;
-        }
-        return klass.isEnum() ? ClassKind.ENUM_CLASS : ClassKind.CLASS;
-    }
-
-    @NotNull
-    public static Modality determineClassModality(@NotNull JavaClass klass) {
-        return klass.isAnnotationType()
-               ? Modality.FINAL
-               : Modality.convertFromFlags(klass.isAbstract() || klass.isInterface(), !klass.isFinal());
-    }
-
-    @NotNull
     public static FqNameUnsafe getFqNameForClassObject(@NotNull JavaClass javaClass) {
         FqName fqName = javaClass.getFqName();
         assert fqName != null : "Reading java class with no qualified name";
@@ -310,30 +295,6 @@ public final class JavaClassResolver {
         else {
             return findFunctionWithMostSpecificReturnType(TypeUtils.getAllSupertypes(samInterface.getDefaultType()));
         }
-    }
-
-    @NotNull
-    public static SimpleFunctionDescriptor findFunctionWithMostSpecificReturnType(@NotNull Set<JetType> supertypes) {
-        List<SimpleFunctionDescriptor> candidates = new ArrayList<SimpleFunctionDescriptor>(supertypes.size());
-        for (JetType supertype : supertypes) {
-            List<CallableMemberDescriptor> abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype);
-            if (!abstractMembers.isEmpty()) {
-                candidates.add((SimpleFunctionDescriptor) abstractMembers.get(0));
-            }
-        }
-        if (candidates.isEmpty()) {
-            throw new IllegalStateException("Couldn't find abstract method in supertypes " + supertypes);
-        }
-        SimpleFunctionDescriptor currentMostSpecificType = candidates.get(0);
-        for (SimpleFunctionDescriptor candidate : candidates) {
-            JetType candidateReturnType = candidate.getReturnType();
-            JetType currentMostSpecificReturnType = currentMostSpecificType.getReturnType();
-            assert candidateReturnType != null && currentMostSpecificReturnType != null : candidate + ", " + currentMostSpecificReturnType;
-            if (JetTypeChecker.INSTANCE.isSubtypeOf(candidateReturnType, currentMostSpecificReturnType)) {
-                currentMostSpecificType = candidate;
-            }
-        }
-        return currentMostSpecificType;
     }
 
     private void cache(@NotNull FqNameUnsafe fqName, @Nullable ClassDescriptor classDescriptor) {
@@ -390,19 +351,6 @@ public final class JavaClassResolver {
             }
         }
         return FqNameUnsafe.fromSegments(correctedSegments);
-    }
-
-    public static boolean isInnerClass(@NotNull JavaClass javaClass) {
-        return javaClass.getOuterClass() != null && !javaClass.isStatic();
-    }
-
-    public static void createEnumSyntheticMethods(@NotNull JavaEnumClassObjectDescriptor classObject, @NotNull JetType enumType) {
-        JetType valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(enumType);
-        SimpleFunctionDescriptor valuesMethod = DescriptorFactory.createEnumClassObjectValuesMethod(classObject, valuesReturnType);
-        classObject.getBuilder().addFunctionDescriptor(valuesMethod);
-
-        SimpleFunctionDescriptor valueOfMethod = DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, enumType);
-        classObject.getBuilder().addFunctionDescriptor(valueOfMethod);
     }
 
     @NotNull

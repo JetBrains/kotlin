@@ -172,15 +172,6 @@ public final class JavaConstructorResolver {
     }
 
     @NotNull
-    public static Visibility getConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
-        Visibility visibility = classDescriptor.getVisibility();
-        if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
-            return JavaVisibilities.PROTECTED_AND_PACKAGE;
-        }
-        return visibility;
-    }
-
-    @NotNull
     private ConstructorDescriptor resolveConstructor(
             @NotNull JavaMethod constructor,
             @NotNull ClassDescriptor classDescriptor,
@@ -217,10 +208,5 @@ public final class JavaConstructorResolver {
 
         cache.recordConstructor(constructor, constructorDescriptor);
         return constructorDescriptor;
-    }
-
-    @Nullable
-    public static ConstructorDescriptor resolveSamAdapter(@NotNull ConstructorDescriptor original) {
-        return isSamAdapterNecessary(original) ? (ConstructorDescriptor) createSamAdapterConstructor(original) : null;
     }
 }

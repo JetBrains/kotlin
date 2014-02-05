@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl
 import java.util.Collections
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver
 import org.jetbrains.jet.utils.*
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
@@ -34,6 +33,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.jet.lang.resolve.java.JavaVisibilities
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -53,7 +54,7 @@ public class LazyJavaClassMemberScope(
         jClass.getConstructors().flatMap {
             jCtor ->
             val constructor = resolveConstructor(jCtor, getContainingDeclaration(), jClass.isStatic())
-            val samAdapter = JavaConstructorResolver.resolveSamAdapter(constructor)
+            val samAdapter = resolveSamAdapter(constructor)
             if (samAdapter != null) {
                 (samAdapter as ConstructorDescriptorImpl).setReturnType(containingDeclaration.getDefaultType())
                 listOf(constructor, samAdapter)
@@ -63,6 +64,12 @@ public class LazyJavaClassMemberScope(
         } ifEmpty {
             emptyOrSingletonList(createDefaultConstructor())
         }
+    }
+
+    private fun resolveSamAdapter(original: ConstructorDescriptor): ConstructorDescriptor? {
+        return if (SingleAbstractMethodUtils.isSamAdapterNecessary(original))
+                   SingleAbstractMethodUtils.createSamAdapterConstructor(original) as ConstructorDescriptor
+               else null
     }
 
     private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor, isStaticClass: Boolean): ConstructorDescriptor {
@@ -102,10 +109,18 @@ public class LazyJavaClassMemberScope(
         val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
                               else Collections.emptyList<ValueParameterDescriptor>()
 
-        constructorDescriptor.initialize(typeParameters, valueParameters, JavaConstructorResolver.getConstructorVisibility(classDescriptor), jClass.isStatic())
+        constructorDescriptor.initialize(typeParameters, valueParameters, getConstructorVisibility(classDescriptor), jClass.isStatic())
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
         c.javaResolverCache.recordConstructor(jClass, constructorDescriptor);
         return constructorDescriptor
+    }
+
+    private fun getConstructorVisibility(classDescriptor: ClassDescriptor): Visibility {
+        val visibility = classDescriptor.getVisibility()
+        if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
+            return JavaVisibilities.PROTECTED_AND_PACKAGE
+        }
+        return visibility
     }
 
     private fun createAnnotationConstructorParameters(constructor: ConstructorDescriptorImpl): List<ValueParameterDescriptor> {
