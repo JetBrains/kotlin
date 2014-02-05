@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.codeInsight
+package org.jetbrains.jet.plugin.codeInsight;
 
-import com.intellij.ide.util.FQNameCellRenderer
-import javax.swing.JList
-import java.awt.Component
+import com.intellij.ide.util.FQNameCellRenderer;
+import org.jetbrains.annotations.NotNull;
 
-class KotlinImportListRenderer: FQNameCellRenderer() {
-    override fun getListCellRendererComponent(list: JList?, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component? {
-        val component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus)
-        setIcon(null)
-        return component
+import javax.swing.*;
+import java.awt.*;
+
+/* package */ final class KotlinImportListRenderer extends FQNameCellRenderer {
+    @NotNull
+    @Override
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        setIcon(null);
+        return component;
     }
 }
