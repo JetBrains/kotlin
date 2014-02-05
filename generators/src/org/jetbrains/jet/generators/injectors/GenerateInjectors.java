@@ -135,7 +135,7 @@ public class GenerateInjectors {
         generator.addField(PsiBasedMethodSignatureChecker.class);
         generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addField(MutablePackageFragmentProvider.class);
-        generator.addField(JavaPackageFragmentProviderImpl.class);
+        generator.addField(false, JavaPackageFragmentProvider.class, null, new GivenExpression("javaDescriptorResolver.getPackageFragmentProvider()"));
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression(
                                    VirtualFileFinder.class.getName() + ".SERVICE.getInstance(project)"));
@@ -161,7 +161,7 @@ public class GenerateInjectors {
         generator.addField(PsiBasedMethodSignatureChecker.class);
         generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addPublicField(JavaDescriptorResolver.class);
-        generator.addField(JavaPackageFragmentProviderImpl.class);
+        generator.addField(false, JavaPackageFragmentProvider.class, null, new GivenExpression("javaDescriptorResolver.getPackageFragmentProvider()"));
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
                            new GivenExpression(VirtualFileFinder.class.getName() + ".SERVICE.getInstance(project)"));
         generator.addField(true, ModuleDescriptorImpl.class, "module",

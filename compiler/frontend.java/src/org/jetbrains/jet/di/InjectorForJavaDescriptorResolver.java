@@ -27,22 +27,11 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProviderImpl;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeParameterResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeTransformer;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaConstructorResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPropertyResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -61,22 +50,11 @@ public class InjectorForJavaDescriptorResolver {
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private final JavaDescriptorResolver javaDescriptorResolver;
-    private final JavaPackageFragmentProviderImpl javaPackageFragmentProvider;
+    private final JavaPackageFragmentProvider javaPackageFragmentProvider;
     private final VirtualFileFinder virtualFileFinder;
     private final ModuleDescriptorImpl module;
-    private final JavaAnnotationResolver javaAnnotationResolver;
-    private final JavaAnnotationArgumentResolver javaAnnotationArgumentResolver;
-    private final JavaClassResolver javaClassResolver;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
-    private final JavaFunctionResolver javaFunctionResolver;
-    private final JavaTypeParameterResolver javaTypeParameterResolver;
-    private final JavaTypeTransformer javaTypeTransformer;
-    private final JavaValueParameterResolver javaValueParameterResolver;
-    private final JavaMemberResolver javaMemberResolver;
-    private final JavaConstructorResolver javaConstructorResolver;
-    private final JavaPropertyResolver javaPropertyResolver;
-    private final JavaSupertypeResolver javaSupertypeResolver;
     
     public InjectorForJavaDescriptorResolver(
         @NotNull Project project,
@@ -92,75 +70,24 @@ public class InjectorForJavaDescriptorResolver {
         this.traceBasedErrorReporter = new TraceBasedErrorReporter();
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
-        this.javaDescriptorResolver = new JavaDescriptorResolver();
-        this.javaPackageFragmentProvider = new JavaPackageFragmentProviderImpl();
+        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
         this.module = org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule("<fake-jdr-module>");
-        this.javaAnnotationResolver = new JavaAnnotationResolver();
-        this.javaAnnotationArgumentResolver = new JavaAnnotationArgumentResolver();
-        this.javaClassResolver = new JavaClassResolver();
-        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
+        this.javaDescriptorResolver = new JavaDescriptorResolver(storageManager, getJavaClassFinder(), psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, traceBasedJavaResolverCache, deserializedDescriptorResolver, virtualFileFinder, getModule());
+        this.javaPackageFragmentProvider = javaDescriptorResolver.getPackageFragmentProvider();
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer(storageManager);
-        this.javaFunctionResolver = new JavaFunctionResolver();
-        this.javaTypeParameterResolver = new JavaTypeParameterResolver();
-        this.javaTypeTransformer = new JavaTypeTransformer();
-        this.javaValueParameterResolver = new JavaValueParameterResolver();
-        this.javaMemberResolver = new JavaMemberResolver();
-        this.javaConstructorResolver = new JavaConstructorResolver();
-        this.javaPropertyResolver = new JavaPropertyResolver();
-        this.javaSupertypeResolver = new JavaSupertypeResolver();
 
         this.javaClassFinder.setProject(project);
 
-        traceBasedExternalSignatureResolver.setAnnotationResolver(javaAnnotationResolver);
+        traceBasedExternalSignatureResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
 
         traceBasedJavaResolverCache.setTrace(bindingTrace);
 
         traceBasedErrorReporter.setTrace(bindingTrace);
 
-        psiBasedMethodSignatureChecker.setAnnotationResolver(javaAnnotationResolver);
+        psiBasedMethodSignatureChecker.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-
-        this.javaDescriptorResolver.setClassResolver(javaClassResolver);
-        this.javaDescriptorResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
-        this.javaDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
-        this.javaDescriptorResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
-        this.javaDescriptorResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        this.javaDescriptorResolver.setJavaClassFinder(javaClassFinder);
-        this.javaDescriptorResolver.setJavaResolverCache(traceBasedJavaResolverCache);
-        this.javaDescriptorResolver.setKotlinClassFinder(virtualFileFinder);
-        this.javaDescriptorResolver.setModule(module);
-        this.javaDescriptorResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
-        this.javaDescriptorResolver.setSignatureChecker(psiBasedMethodSignatureChecker);
-        this.javaDescriptorResolver.setStorageManager(storageManager);
-
-        javaPackageFragmentProvider.setCache(traceBasedJavaResolverCache);
-        javaPackageFragmentProvider.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
-        javaPackageFragmentProvider.setJavaClassFinder(javaClassFinder);
-        javaPackageFragmentProvider.setJavaDescriptorResolver(javaDescriptorResolver);
-        javaPackageFragmentProvider.setKotlinClassFinder(virtualFileFinder);
-        javaPackageFragmentProvider.setMemberResolver(javaMemberResolver);
-        javaPackageFragmentProvider.setModule(module);
-
-        javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
-        javaAnnotationResolver.setClassResolver(javaClassResolver);
-        javaAnnotationResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
-
-        javaAnnotationArgumentResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
-        javaAnnotationArgumentResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaClassResolver.setCache(traceBasedJavaResolverCache);
-        javaClassResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
-        javaClassResolver.setFunctionResolver(javaFunctionResolver);
-        javaClassResolver.setJavaClassFinder(javaClassFinder);
-        javaClassResolver.setKotlinClassFinder(virtualFileFinder);
-        javaClassResolver.setMemberResolver(javaMemberResolver);
-        javaClassResolver.setPackageFragmentProvider(javaPackageFragmentProvider);
-        javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
-        javaClassResolver.setTypeParameterResolver(javaTypeParameterResolver);
 
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
@@ -171,41 +98,6 @@ public class InjectorForJavaDescriptorResolver {
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorDeserializer.setJavaDescriptorResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
-
-        javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaFunctionResolver.setCache(traceBasedJavaResolverCache);
-        javaFunctionResolver.setErrorReporter(traceBasedErrorReporter);
-        javaFunctionResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaFunctionResolver.setSignatureChecker(psiBasedMethodSignatureChecker);
-        javaFunctionResolver.setTypeParameterResolver(javaTypeParameterResolver);
-        javaFunctionResolver.setTypeTransformer(javaTypeTransformer);
-        javaFunctionResolver.setValueParameterResolver(javaValueParameterResolver);
-
-        javaTypeParameterResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaTypeTransformer.setClassResolver(javaClassResolver);
-
-        javaValueParameterResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaMemberResolver.setClassResolver(javaClassResolver);
-        javaMemberResolver.setConstructorResolver(javaConstructorResolver);
-        javaMemberResolver.setFunctionResolver(javaFunctionResolver);
-        javaMemberResolver.setPropertyResolver(javaPropertyResolver);
-
-        javaConstructorResolver.setCache(traceBasedJavaResolverCache);
-        javaConstructorResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
-        javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
-
-        javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaPropertyResolver.setCache(traceBasedJavaResolverCache);
-        javaPropertyResolver.setErrorReporter(traceBasedErrorReporter);
-        javaPropertyResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
-
-        javaSupertypeResolver.setClassResolver(javaClassResolver);
-        javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
         javaClassFinder.initialize();
 
