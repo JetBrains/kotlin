@@ -25,25 +25,25 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 
-public fun resolveCompileTimeConstantValue(value: Any?, canBeUseInAnnotation: Boolean, expectedType: JetType?): CompileTimeConstant<*>? {
+public fun resolveCompileTimeConstantValue(value: Any?, canBeUsedInAnnotations: Boolean, expectedType: JetType?): CompileTimeConstant<*>? {
     return when (value) {
-        is String -> StringValue(value, canBeUseInAnnotation)
-        is Byte -> ByteValue(value, canBeUseInAnnotation, false)
-        is Short -> ShortValue(value, canBeUseInAnnotation, false)
-        is Char -> CharValue(value, canBeUseInAnnotation, false)
+        is String -> StringValue(value, canBeUsedInAnnotations)
+        is Byte -> ByteValue(value, canBeUsedInAnnotations, false)
+        is Short -> ShortValue(value, canBeUsedInAnnotations, false)
+        is Char -> CharValue(value, canBeUsedInAnnotations, false)
         is Int -> {
             val builtIns = KotlinBuiltIns.getInstance()
             when (expectedType) {
-                builtIns.getShortType() -> ShortValue(value.toShort(), canBeUseInAnnotation, false)
-                builtIns.getByteType() -> ByteValue(value.toByte(), canBeUseInAnnotation, false)
-                builtIns.getCharType() ->  CharValue(value.toChar(), canBeUseInAnnotation, false)
-                else -> IntValue(value, canBeUseInAnnotation, false)
+                builtIns.getShortType() -> ShortValue(value.toShort(), canBeUsedInAnnotations, false)
+                builtIns.getByteType() -> ByteValue(value.toByte(), canBeUsedInAnnotations, false)
+                builtIns.getCharType() ->  CharValue(value.toChar(), canBeUsedInAnnotations, false)
+                else -> IntValue(value, canBeUsedInAnnotations, false)
             }
         }
-        is Long -> LongValue(value, canBeUseInAnnotation, false)
-        is Float -> FloatValue(value, canBeUseInAnnotation)
-        is Double -> DoubleValue(value, canBeUseInAnnotation)
-        is Boolean -> BooleanValue(value, canBeUseInAnnotation)
+        is Long -> LongValue(value, canBeUsedInAnnotations, false)
+        is Float -> FloatValue(value, canBeUsedInAnnotations)
+        is Double -> DoubleValue(value, canBeUsedInAnnotations)
+        is Boolean -> BooleanValue(value, canBeUsedInAnnotations)
         null -> NullValue.NULL
         else -> null
     }
