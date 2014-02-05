@@ -39,7 +39,7 @@ import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.*;
 
-import static org.jetbrains.jet.plugin.quickfix.ImportInsertHelper.doNeedImport;
+import static org.jetbrains.jet.plugin.quickfix.ImportInsertHelper.needImport;
 
 public class JetImportOptimizer implements ImportOptimizer {
     @Override
@@ -75,8 +75,8 @@ public class JetImportOptimizer implements ImportOptimizer {
                             }
 
                             if (isUseful(importPath, usedQualifiedNames) &&
-                                    doNeedImport(importPath, jetFile, directivesBeforeCurrent) &&
-                                    doNeedImport(importPath, jetFile, directivesAfterCurrent)) {
+                                    needImport(importPath, jetFile, directivesBeforeCurrent) &&
+                                    needImport(importPath, jetFile, directivesAfterCurrent)) {
                                 directivesBeforeCurrent.add(anImport);
                             }
                             else {

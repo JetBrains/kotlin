@@ -88,7 +88,7 @@ public class ImportInsertHelper {
             new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
         }
 
-        if (!doNeedImport(importPath, file)) {
+        if (!needImport(importPath, file)) {
             return;
         }
 
@@ -142,11 +142,15 @@ public class ImportInsertHelper {
         return QualifiedNamesUtil.isImported(defaultImports, importPath);
     }
 
-    public static boolean doNeedImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
-        return doNeedImport(importPath, file, file.getImportDirectives());
+    public static boolean needImport(@NotNull FqName fqName, @NotNull JetFile file) {
+        return needImport(new ImportPath(fqName, false), file);
     }
 
-    public static boolean doNeedImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
+    public static boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        return needImport(importPath, file, file.getImportDirectives());
+    }
+
+    public static boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
         if (importPath.fqnPart().firstSegmentIs(JavaDescriptorResolver.JAVA_ROOT)) {
             FqName withoutJavaRoot = QualifiedNamesUtil.withoutFirstSegment(importPath.fqnPart());
             importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder(), importPath.getAlias());

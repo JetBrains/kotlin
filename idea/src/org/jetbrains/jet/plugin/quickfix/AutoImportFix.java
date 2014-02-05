@@ -107,7 +107,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
             @Override
             public boolean apply(@Nullable FqName fqName) {
                 assert fqName != null;
-                return ImportInsertHelper.doNeedImport(new ImportPath(fqName, false), (JetFile) file);
+                return ImportInsertHelper.needImport(new ImportPath(fqName, false), (JetFile) file);
             }
         });
     }

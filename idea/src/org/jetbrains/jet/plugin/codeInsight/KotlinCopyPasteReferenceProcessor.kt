@@ -225,8 +225,11 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             return Collections.emptyList()
         }
         return referenceData.map {
-            val referenceExpression = findReference(it, file, bounds)
-            if (referenceExpression != null) createReferenceToRestoreData(referenceExpression, it.fqName) else null
+            if (ImportInsertHelper.needImport(it.fqName, file)) {
+                val referenceExpression = findReference(it, file, bounds)
+                if (referenceExpression != null) createReferenceToRestoreData(referenceExpression, it.fqName) else null
+            }
+            else null
         }.filterNotNull()
     }
 
