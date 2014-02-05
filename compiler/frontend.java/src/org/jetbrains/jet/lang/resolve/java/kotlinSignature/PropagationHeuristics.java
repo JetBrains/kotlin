@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.Visibilities;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaTypeSubstitutorImpl;
@@ -234,7 +234,7 @@ class PropagationHeuristics {
             return !method.isConstructor() &&
                    !method.isStatic() &&
                    method.getVisibility() != Visibilities.PRIVATE &&
-                   !JavaSupertypeResolver.OBJECT_FQ_NAME.equals(method.getContainingClass().getFqName());
+                   !DescriptorResolverUtils.OBJECT_FQ_NAME.equals(method.getContainingClass().getFqName());
         }
     }
 }

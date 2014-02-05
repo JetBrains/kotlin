@@ -35,7 +35,6 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 
 public final class JavaSupertypeResolver {
-    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 
     private JavaTypeTransformer typeTransformer;
     private JavaClassResolver classResolver;
