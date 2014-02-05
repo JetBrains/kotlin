@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage
+import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorDeserializer
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
@@ -115,9 +116,21 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         annotationDeserializer.setStorage(deserializerStorage)
     }
 
+    private val constantDeserializer = ConstantDescriptorDeserializer();
+    {
+        constantDeserializer.setClassResolver {
+            fqName ->
+            classes(fqName.toClassId())
+        }
+        constantDeserializer.setKotlinClassFinder(localClassFinder)
+        constantDeserializer.setErrorReporter(LOGGING_REPORTER)
+        constantDeserializer.setStorage(deserializerStorage)
+    }
+
     private val deserializers = DescriptorDeserializers();
     {
         deserializers.setAnnotationDescriptorDeserializer(annotationDeserializer)
+        deserializers.setConstantDescriptorDeserializer(constantDeserializer)
     }
 
     private val descriptorFinder = object : DescriptorFinder {

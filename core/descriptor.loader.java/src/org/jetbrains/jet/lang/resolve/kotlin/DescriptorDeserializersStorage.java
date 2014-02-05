@@ -20,9 +20,11 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
+import org.jetbrains.jet.lang.resolve.java.resolver.ResolverPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
@@ -36,21 +38,21 @@ public class DescriptorDeserializersStorage {
     private DependencyClassByQualifiedNameResolver classResolver;
     private ErrorReporter errorReporter;
 
-    private final MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Map<MemberSignature, List<AnnotationDescriptor>>> memberAnnotations;
+    private final MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Storage> storage;
 
     public DescriptorDeserializersStorage(@NotNull StorageManager storageManager) {
-        this.memberAnnotations = storageManager.createMemoizedFunction(
-                new Function1<KotlinJvmBinaryClass, Map<MemberSignature, List<AnnotationDescriptor>>>() {
+        this.storage = storageManager.createMemoizedFunction(
+                new Function1<KotlinJvmBinaryClass, Storage>() {
                     @NotNull
                     @Override
-                    public Map<MemberSignature, List<AnnotationDescriptor>> invoke(@NotNull KotlinJvmBinaryClass kotlinClass) {
+                    public Storage invoke(@NotNull KotlinJvmBinaryClass kotlinClass) {
                         try {
                             return loadMemberAnnotationsFromClass(kotlinClass);
                         }
                         catch (IOException e) {
                             errorReporter.reportAnnotationLoadingError(
                                     "Error loading member annotations from Kotlin class: " + kotlinClass, e);
-                            return Collections.emptyMap();
+                            return Storage.EMPTY;
                         }
                     }
                 });
@@ -67,15 +69,14 @@ public class DescriptorDeserializersStorage {
     }
 
     @NotNull
-    public MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Map<MemberSignature, List<AnnotationDescriptor>>> getMemberAnnotations() {
-        return memberAnnotations;
+    protected MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Storage> getStorage() {
+        return storage;
     }
 
     @NotNull
-    protected Map<MemberSignature, List<AnnotationDescriptor>> loadMemberAnnotationsFromClass(@NotNull KotlinJvmBinaryClass kotlinClass)
-            throws IOException {
-        final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations =
-                new HashMap<MemberSignature, List<AnnotationDescriptor>>();
+    private Storage loadMemberAnnotationsFromClass(@NotNull KotlinJvmBinaryClass kotlinClass) throws IOException {
+        final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations = new HashMap<MemberSignature, List<AnnotationDescriptor>>();
+        final Map<MemberSignature, CompileTimeConstant<?>> propertyConstants = new HashMap<MemberSignature, CompileTimeConstant<?>>();
 
         kotlinClass.loadMemberAnnotations(new KotlinJvmBinaryClass.MemberVisitor() {
             @Nullable
@@ -131,7 +132,7 @@ public class DescriptorDeserializersStorage {
             }
         });
 
-        return memberAnnotations;
+        return new Storage(memberAnnotations, propertyConstants);
     }
 
     // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
@@ -171,6 +172,32 @@ public class DescriptorDeserializersStorage {
         @Override
         public String toString() {
             return signature;
+        }
+    }
+
+    protected static class Storage {
+        private final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations;
+        private final Map<MemberSignature, CompileTimeConstant<?>> propertyConstants;
+
+        public static final Storage EMPTY = new Storage(
+                Collections.<MemberSignature, List<AnnotationDescriptor>>emptyMap(),
+                Collections.<MemberSignature, CompileTimeConstant<?>>emptyMap()
+        );
+
+        public Storage(
+                @NotNull Map<MemberSignature, List<AnnotationDescriptor>> annotations,
+                @NotNull Map<MemberSignature, CompileTimeConstant<?>> constants
+        ) {
+            this.memberAnnotations = annotations;
+            this.propertyConstants = constants;
+        }
+
+        public Map<MemberSignature, List<AnnotationDescriptor>> getMemberAnnotations() {
+            return memberAnnotations;
+        }
+
+        public Map<MemberSignature, CompileTimeConstant<?>> getPropertyConstants() {
+            return propertyConstants;
         }
     }
 }

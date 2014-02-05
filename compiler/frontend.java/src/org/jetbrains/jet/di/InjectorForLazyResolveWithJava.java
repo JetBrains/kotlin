@@ -55,6 +55,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage;
+import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorDeserializer;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -101,6 +102,7 @@ public class InjectorForLazyResolveWithJava {
     private final DescriptorDeserializers descriptorDeserializers;
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
     private final DescriptorDeserializersStorage descriptorDeserializersStorage;
+    private final ConstantDescriptorDeserializer constantDescriptorDeserializer;
     
     public InjectorForLazyResolveWithJava(
         @NotNull Project project,
@@ -147,6 +149,7 @@ public class InjectorForLazyResolveWithJava {
         this.descriptorDeserializers = new DescriptorDeserializers();
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
         this.descriptorDeserializersStorage = new DescriptorDeserializersStorage(lockBasedStorageManager);
+        this.constantDescriptorDeserializer = new ConstantDescriptorDeserializer();
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
@@ -224,6 +227,7 @@ public class InjectorForLazyResolveWithJava {
         deserializedDescriptorResolver.setStorageManager(lockBasedStorageManager);
 
         descriptorDeserializers.setAnnotationDescriptorDeserializer(annotationDescriptorDeserializer);
+        descriptorDeserializers.setConstantDescriptorDeserializer(constantDescriptorDeserializer);
 
         annotationDescriptorDeserializer.setClassResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
@@ -232,6 +236,11 @@ public class InjectorForLazyResolveWithJava {
 
         descriptorDeserializersStorage.setClassResolver(javaDescriptorResolver);
         descriptorDeserializersStorage.setErrorReporter(traceBasedErrorReporter);
+
+        constantDescriptorDeserializer.setClassResolver(javaDescriptorResolver);
+        constantDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
+        constantDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
+        constantDescriptorDeserializer.setStorage(descriptorDeserializersStorage);
 
         javaClassFinder.initialize();
 

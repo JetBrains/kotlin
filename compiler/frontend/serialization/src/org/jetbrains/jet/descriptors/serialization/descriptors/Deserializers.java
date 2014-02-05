@@ -25,10 +25,19 @@ public interface Deserializers {
         public AnnotationDeserializer getAnnotationDeserializer() {
             return AnnotationDeserializer.UNSUPPORTED;
         }
+
+        @NotNull
+        @Override
+        public ConstantDeserializer getConstantDeserializer() {
+            return ConstantDeserializer.UNSUPPORTED;
+        }
     };
 
     @NotNull
     AnnotationDeserializer getAnnotationDeserializer();
+
+    @NotNull
+    ConstantDeserializer getConstantDeserializer();
 
     enum AnnotatedCallableKind {
         FUNCTION,

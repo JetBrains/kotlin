@@ -211,7 +211,7 @@ public class AnnotationDescriptorDeserializer extends BaseDescriptorDeserializer
             return Annotations.EMPTY;
         }
 
-        List<AnnotationDescriptor> annotations = storage.getMemberAnnotations().invoke(kotlinClass).get(signature);
+        List<AnnotationDescriptor> annotations = storage.getStorage().invoke(kotlinClass).getMemberAnnotations().get(signature);
         return annotations == null ? Annotations.EMPTY : new AnnotationsImpl(annotations);
     }
 

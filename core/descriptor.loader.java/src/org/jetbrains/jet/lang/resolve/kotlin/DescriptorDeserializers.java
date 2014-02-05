@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers;
 
 import javax.inject.Inject;
@@ -25,15 +26,27 @@ import javax.inject.Inject;
 public class DescriptorDeserializers implements Deserializers {
 
     private AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
+    private ConstantDescriptorDeserializer constantDescriptorDeserializer;
 
     @Inject
     public void setAnnotationDescriptorDeserializer(AnnotationDescriptorDeserializer annotationDescriptorDeserializer) {
         this.annotationDescriptorDeserializer = annotationDescriptorDeserializer;
     }
 
+    @Inject
+    public void setConstantDescriptorDeserializer(ConstantDescriptorDeserializer constantDescriptorDeserializer) {
+        this.constantDescriptorDeserializer = constantDescriptorDeserializer;
+    }
+
     @NotNull
     @Override
     public AnnotationDeserializer getAnnotationDeserializer() {
         return annotationDescriptorDeserializer;
+    }
+
+    @NotNull
+    @Override
+    public ConstantDeserializer getConstantDeserializer() {
+        return constantDescriptorDeserializer;
     }
 }
