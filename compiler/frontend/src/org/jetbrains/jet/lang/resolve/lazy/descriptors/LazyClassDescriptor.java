@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement;
 import jet.Function0;
 import jet.Function1;
 import jet.Unit;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -31,7 +32,6 @@ import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptorWithResolutionScopes;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
@@ -207,6 +207,22 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
     @NotNull
     public JetScope getScopeForInitializerResolution() {
         return scopeForPropertyInitializerResolution.invoke();
+    }
+
+    @NotNull
+    @Override
+    public Collection<CallableMemberDescriptor> getDeclaredCallableMembers() {
+        //noinspection unchecked
+        return (Collection) KotlinPackage.filter(
+                unsubstitutedMemberScope.getDescriptorsFromDeclaredElements(),
+                new Function1<DeclarationDescriptor, Boolean>() {
+                    @Override
+                    public Boolean invoke(DeclarationDescriptor descriptor) {
+                        return descriptor instanceof CallableMemberDescriptor
+                               && ((CallableMemberDescriptor) descriptor).getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+                    }
+                }
+        );
     }
 
     @NotNull

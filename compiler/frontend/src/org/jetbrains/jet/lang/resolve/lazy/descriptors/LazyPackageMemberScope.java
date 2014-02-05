@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragmentDescriptor, PackageMemberDeclarationProvider> {
@@ -72,8 +73,10 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragm
         // No extra properties
     }
 
+    @NotNull
     @Override
-    protected void addExtraDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
+    protected Collection<DeclarationDescriptor> computeExtraDescriptors() {
+        return Collections.emptyList();
     }
 
     @Override

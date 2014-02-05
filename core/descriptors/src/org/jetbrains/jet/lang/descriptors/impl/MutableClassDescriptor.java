@@ -107,6 +107,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
         return properties;
     }
 
+    @Override
     @NotNull
     public Set<CallableMemberDescriptor> getDeclaredCallableMembers() {
         return declaredCallableMembers;

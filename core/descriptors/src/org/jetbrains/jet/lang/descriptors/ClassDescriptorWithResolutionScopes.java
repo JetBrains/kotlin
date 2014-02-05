@@ -17,7 +17,10 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+
+import java.util.Collection;
 
 public interface ClassDescriptorWithResolutionScopes extends ClassDescriptor {
     @NotNull
@@ -28,4 +31,8 @@ public interface ClassDescriptorWithResolutionScopes extends ClassDescriptor {
 
     @NotNull
     JetScope getScopeForInitializerResolution();
+
+    @NotNull
+    @ReadOnly
+    Collection<CallableMemberDescriptor> getDeclaredCallableMembers();
 }
