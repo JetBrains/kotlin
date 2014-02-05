@@ -137,6 +137,11 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest("idea/testData/resolve/references/InSecondClassObject.kt");
     }
     
+    @TestMetadata("JavaReference.kt")
+    public void testJavaReference() throws Exception {
+        doTest("idea/testData/resolve/references/JavaReference.kt");
+    }
+    
     @TestMetadata("PackageReference.kt")
     public void testPackageReference() throws Exception {
         doTest("idea/testData/resolve/references/PackageReference.kt");
