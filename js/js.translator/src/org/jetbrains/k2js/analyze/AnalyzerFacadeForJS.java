@@ -157,7 +157,7 @@ public final class AnalyzerFacadeForJS {
     public static ResolveSession getLazyResolveSession(Collection<JetFile> files, Config config) {
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
-                globalContext.getStorageManager(), Config.withJsLibAdded(files, config), Predicates.<FqName>alwaysFalse());
+                globalContext.getStorageManager(), Config.withJsLibAdded(files, config));
         ModuleDescriptorImpl module = createJsModule("<lazy module>");
         module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
