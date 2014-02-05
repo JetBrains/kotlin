@@ -40,6 +40,8 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
+import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers
+import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
@@ -64,7 +66,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         val membersScope = DeserializedPackageMemberScope(
                 storageManager,
                 createDummyPackageFragment(packageFqName),
-                annotationDeserializer,
+                deserializers,
                 descriptorFinder,
                 JavaProtoBufUtil.readPackageDataFrom(annotationData)
         )
@@ -93,7 +95,16 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         resolveClassByClassId(classId)
     }
 
-    private val annotationDeserializer = AnnotationDescriptorDeserializer(storageManager);
+    private val deserializerStorage = DescriptorDeserializersStorage(storageManager);
+    {
+        deserializerStorage.setClassResolver {
+            fqName ->
+            classes(fqName.toClassId())
+        }
+        deserializerStorage.setErrorReporter(LOGGING_REPORTER)
+    }
+
+    private val annotationDeserializer = AnnotationDescriptorDeserializer();
     {
         annotationDeserializer.setClassResolver {
             fqName ->
@@ -101,6 +112,12 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         }
         annotationDeserializer.setKotlinClassFinder(localClassFinder)
         annotationDeserializer.setErrorReporter(LOGGING_REPORTER)
+        annotationDeserializer.setStorage(deserializerStorage)
+    }
+
+    private val deserializers = DescriptorDeserializers();
+    {
+        deserializers.setAnnotationDescriptorDeserializer(annotationDeserializer)
     }
 
     private val descriptorFinder = object : DescriptorFinder {
@@ -149,7 +166,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             LOG.error("Annotation data missing for ${kotlinClass.getClassName()}")
         }
         val classData = JavaProtoBufUtil.readClassDataFrom(data!!)
-        return DeserializedClassDescriptor(storageManager, annotationDeserializer, descriptorFinder, packageFragmentProvider,
+        return DeserializedClassDescriptor(storageManager, deserializers, descriptorFinder, packageFragmentProvider,
                                            classData.getNameResolver(), classData.getClassProto())
     }
 

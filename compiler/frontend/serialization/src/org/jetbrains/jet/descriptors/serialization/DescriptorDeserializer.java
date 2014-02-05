@@ -21,10 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -38,7 +37,7 @@ import java.util.List;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter;
 import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
-import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.AnnotatedCallableKind;
+import static org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers.AnnotatedCallableKind;
 
 public class DescriptorDeserializer {
 
@@ -48,7 +47,7 @@ public class DescriptorDeserializer {
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
             @NotNull DescriptorFinder descriptorFinder,
-            @NotNull AnnotationDeserializer annotationDeserializer
+            @NotNull Deserializers annotationDeserializer
     ) {
         return new DescriptorDeserializer(storageManager,
                 new TypeDeserializer(storageManager, null, nameResolver, descriptorFinder,
@@ -62,7 +61,7 @@ public class DescriptorDeserializer {
             @NotNull TypeDeserializer typeDeserializer,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
-            @NotNull AnnotationDeserializer annotationDeserializer
+            @NotNull Deserializers annotationDeserializer
     ) {
         return new DescriptorDeserializer(storageManager, typeDeserializer, containingDeclaration, nameResolver, annotationDeserializer);
     }
@@ -70,7 +69,7 @@ public class DescriptorDeserializer {
     private final DeclarationDescriptor containingDeclaration;
     private final NameResolver nameResolver;
     private final TypeDeserializer typeDeserializer;
-    private final AnnotationDeserializer annotationDeserializer;
+    private final Deserializers deserializers;
 
     private final StorageManager storageManager;
 
@@ -79,13 +78,13 @@ public class DescriptorDeserializer {
             @NotNull TypeDeserializer typeDeserializer,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
-            @NotNull AnnotationDeserializer annotationDeserializer
+            @NotNull Deserializers deserializers
     ) {
         this.storageManager = storageManager;
         this.typeDeserializer = typeDeserializer;
         this.containingDeclaration = containingDeclaration;
         this.nameResolver = nameResolver;
-        this.annotationDeserializer = annotationDeserializer;
+        this.deserializers = deserializers;
     }
 
     @NotNull
@@ -116,7 +115,7 @@ public class DescriptorDeserializer {
                         return descriptors;
                     }
                 });
-        return create(storageManager, childTypeDeserializer, descriptor, nameResolver, annotationDeserializer);
+        return create(storageManager, childTypeDeserializer, descriptor, nameResolver, deserializers);
     }
 
     @NotNull
@@ -206,7 +205,7 @@ public class DescriptorDeserializer {
         int flags = proto.getFlags();
         DeserializedSimpleFunctionDescriptor function = new DeserializedSimpleFunctionDescriptor(
                 containingDeclaration, proto,
-                annotationDeserializer,
+                deserializers,
                 nameResolver
         );
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
@@ -251,7 +250,7 @@ public class DescriptorDeserializer {
 
     @NotNull
     private Annotations getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
-        return getAnnotations(containingDeclaration, proto, flags, kind, annotationDeserializer, nameResolver);
+        return getAnnotations(containingDeclaration, proto, flags, kind, deserializers.getAnnotationDeserializer(), nameResolver);
     }
 
     public static Annotations getAnnotations(
@@ -402,7 +401,7 @@ public class DescriptorDeserializer {
             @NotNull Callable.ValueParameter valueParameter
     ) {
         return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())
-               ? annotationDeserializer.loadValueParameterAnnotations(classOrPackage, callable, nameResolver, kind, valueParameter)
+               ? deserializers.getAnnotationDeserializer().loadValueParameterAnnotations(classOrPackage, callable, nameResolver, kind, valueParameter)
                : Annotations.EMPTY;
     }
 }

@@ -43,7 +43,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kin
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.PACKAGE_FACADE;
 
 public final class DeserializedDescriptorResolver {
-    private AnnotationDescriptorDeserializer annotationDeserializer;
+    private DescriptorDeserializers annotationDeserializer;
 
     private StorageManager storageManager;
 
@@ -69,7 +69,7 @@ public final class DeserializedDescriptorResolver {
     };
 
     @Inject
-    public void setAnnotationDeserializer(AnnotationDescriptorDeserializer annotationDeserializer) {
+    public void setAnnotationDeserializer(DescriptorDeserializers annotationDeserializer) {
         this.annotationDeserializer = annotationDeserializer;
     }
 

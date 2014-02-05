@@ -19,7 +19,7 @@ package org.jetbrains.jet.descriptors.serialization;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
@@ -28,14 +28,14 @@ import org.jetbrains.jet.storage.StorageManager;
 
 public abstract class AbstractDescriptorFinder implements DescriptorFinder {
     private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> findClass;
-    private final AnnotationDeserializer annotationDeserializer;
+    private final Deserializers deserializers;
 
     public AbstractDescriptorFinder(
             @NotNull final StorageManager storageManager,
-            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull Deserializers deserializers,
             @NotNull final PackageFragmentProvider packageFragmentProvider
     ) {
-        this.annotationDeserializer = annotationDeserializer;
+        this.deserializers = deserializers;
 
         this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function1<ClassId, ClassDescriptor>() {
             @Override
@@ -46,7 +46,7 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
                 }
 
                 AbstractDescriptorFinder _this = AbstractDescriptorFinder.this;
-                return new DeserializedClassDescriptor(storageManager, _this.annotationDeserializer, _this, packageFragmentProvider,
+                return new DeserializedClassDescriptor(storageManager, _this.deserializers, _this, packageFragmentProvider,
                                                 classData.getNameResolver(), classData.getClassProto());
             }
         });
