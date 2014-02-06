@@ -2,12 +2,12 @@ package test
 
 internal final class ConstructorTypeParamClassObjectConflict</*0*/ test> {
     /*primary*/ public constructor ConstructorTypeParamClassObjectConflict</*0*/ test>()
-    internal final val some: kotlin.Int
+    internal final val some: kotlin.Int = 12.toInt()
         internal final fun <get-some>(): kotlin.Int
     
     internal class object <class-object-for-ConstructorTypeParamClassObjectConflict> {
         /*primary*/ private constructor <class-object-for-ConstructorTypeParamClassObjectConflict>()
-        internal final val test: kotlin.Int
+        internal final val test: kotlin.Int = 12.toInt()
             internal final fun <get-test>(): kotlin.Int
     }
 }
@@ -27,14 +27,14 @@ internal final class ConstructorTypeParamClassObjectTypeConflict</*0*/ test> {
 
 internal final class TestClassObjectAndClassConflict {
     /*primary*/ public constructor TestClassObjectAndClassConflict()
-    internal final val bla: kotlin.String
+    internal final val bla: kotlin.String = "More"
         internal final fun <get-bla>(): kotlin.String
-    internal final val some: kotlin.String
+    internal final val some: kotlin.String = "More"
         internal final fun <get-some>(): kotlin.String
     
     internal class object <class-object-for-TestClassObjectAndClassConflict> {
         /*primary*/ private constructor <class-object-for-TestClassObjectAndClassConflict>()
-        internal final val bla: kotlin.Int
+        internal final val bla: kotlin.Int = 12.toInt()
             internal final fun <get-bla>(): kotlin.Int
     }
 }
@@ -46,7 +46,7 @@ internal final class TestConstructorParamClassObjectConflict {
     
     internal class object <class-object-for-TestConstructorParamClassObjectConflict> {
         /*primary*/ private constructor <class-object-for-TestConstructorParamClassObjectConflict>()
-        internal final val test: kotlin.Int
+        internal final val test: kotlin.Int = 12.toInt()
             internal final fun <get-test>(): kotlin.Int
     }
 }
@@ -60,7 +60,7 @@ internal final class TestConstructorValClassObjectConflict {
     
     internal class object <class-object-for-TestConstructorValClassObjectConflict> {
         /*primary*/ private constructor <class-object-for-TestConstructorValClassObjectConflict>()
-        internal final val test: kotlin.Int
+        internal final val test: kotlin.Int = 12.toInt()
             internal final fun <get-test>(): kotlin.Int
     }
 }

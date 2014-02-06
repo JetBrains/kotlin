@@ -18,15 +18,13 @@ package org.jetbrains.jet.descriptors.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
-import org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers;
+import org.jetbrains.jet.descriptors.serialization.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.storage.StorageManager;
 
@@ -195,6 +193,11 @@ public class DescriptorDeserializer {
             }
         }
 
+        property.setCompileTimeInitializer(
+                getPropertyConstant(containingDeclaration, proto, flags, AnnotatedCallableKind.PROPERTY,
+                                                   deserializers.getConstantDeserializer(), nameResolver)
+        );
+
         property.initialize(getter, setter);
 
         return property;
@@ -267,6 +270,23 @@ public class DescriptorDeserializer {
                ? annotationDeserializer
                        .loadCallableAnnotations((ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind)
                : Annotations.EMPTY;
+    }
+
+    @Nullable
+    public static CompileTimeConstant<?> getPropertyConstant(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Callable proto,
+            int flags,
+            @NotNull AnnotatedCallableKind kind,
+            @NotNull ConstantDeserializer constantDeserializer,
+            @NotNull NameResolver nameResolver
+    ) {
+        assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
+                : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
+        return Flags.HAS_CONSTANT.get(flags)
+               ? constantDeserializer
+                       .loadPropertyConstant((ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind)
+               : null;
     }
 
     public static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {

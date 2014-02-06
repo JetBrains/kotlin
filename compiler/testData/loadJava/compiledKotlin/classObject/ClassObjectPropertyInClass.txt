@@ -2,12 +2,12 @@ package test
 
 internal final class A {
     /*primary*/ public constructor A()
-    internal final val other: kotlin.Int
+    internal final val other: kotlin.Int = 1.toInt()
         internal final fun <get-other>(): kotlin.Int
     
     internal class object <class-object-for-A> {
         /*primary*/ private constructor <class-object-for-A>()
-        internal final val some: kotlin.Int
+        internal final val some: kotlin.Int = 1.toInt()
             internal final fun <get-some>(): kotlin.Int
     }
 }

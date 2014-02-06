@@ -161,6 +161,7 @@ public class DescriptorSerializer {
 
         boolean hasGetter = false;
         boolean hasSetter = false;
+        boolean hasConstant = false;
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
@@ -194,6 +195,8 @@ public class DescriptorSerializer {
                     }
                 }
             }
+
+            hasConstant = propertyDescriptor.getCompileTimeInitializer() != null;
         }
 
         builder.setFlags(Flags.getCallableFlags(
@@ -203,7 +206,8 @@ public class DescriptorSerializer {
                 descriptor.getKind(),
                 callableKind(descriptor),
                 hasGetter,
-                hasSetter
+                hasSetter,
+                hasConstant
         ));
         //TODO builder.setExtraVisibility()
 

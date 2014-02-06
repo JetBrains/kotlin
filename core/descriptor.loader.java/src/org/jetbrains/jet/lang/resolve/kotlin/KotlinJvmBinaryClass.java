@@ -40,7 +40,7 @@ public interface KotlinJvmBinaryClass {
         MethodAnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc);
 
         @Nullable
-        AnnotationVisitor visitField(@NotNull Name name, @NotNull String desc);
+        AnnotationVisitor visitField(@NotNull Name name, @NotNull String desc, @Nullable Object initializer);
     }
 
     interface AnnotationVisitor {

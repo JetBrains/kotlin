@@ -1,6 +1,6 @@
 package test
 
-internal val x: kotlin.Int
+internal val x: kotlin.Int = 5.toInt()
     internal fun <get-x>(): kotlin.Int
 
 public object Obj {

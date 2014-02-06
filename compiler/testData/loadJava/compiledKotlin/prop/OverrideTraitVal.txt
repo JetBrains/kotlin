@@ -2,7 +2,7 @@ package test
 
 internal open class Subclass : test.Trait {
     /*primary*/ public constructor Subclass()
-    internal open override /*1*/ val shape: kotlin.String
+    internal open override /*1*/ val shape: kotlin.String = "circle"
         internal open override /*1*/ fun <get-shape>(): kotlin.String
 }
 

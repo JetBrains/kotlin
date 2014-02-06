@@ -158,7 +158,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
             new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(ASM4) {
                 @Override
                 public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
-                    final AnnotationVisitor v = memberVisitor.visitField(Name.guess(name), desc);
+                    final AnnotationVisitor v = memberVisitor.visitField(Name.guess(name), desc, value);
                     if (v == null) return null;
 
                     return new FieldVisitor(ASM4) {
