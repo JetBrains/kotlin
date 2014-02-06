@@ -48,7 +48,7 @@ public final class EqualsIntrinsic implements BinaryOperationIntrinsic {
         }
         FunctionDescriptor functionDescriptor = getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
         assert functionDescriptor != null;
-        return JsDescriptorUtils.isBuiltin(functionDescriptor);
+        return JsDescriptorUtils.isBuiltin(functionDescriptor) || TopLevelFIF.EQUALS_IN_ANY.apply(functionDescriptor);
     }
 
     @Override
@@ -65,7 +65,7 @@ public final class EqualsIntrinsic implements BinaryOperationIntrinsic {
             return new JsBinaryOperation(isNegated ? JsBinaryOperator.REF_NEQ : JsBinaryOperator.REF_EQ, left, right);
         }
 
-        JsExpression result = TopLevelFIF.EQUALS.apply(left, Arrays.asList(right), context);
+        JsExpression result = TopLevelFIF.KOTLIN_EQUALS.apply(left, Arrays.asList(right), context);
         return isNegated ? JsAstUtils.negated(result) : result;
     }
 
