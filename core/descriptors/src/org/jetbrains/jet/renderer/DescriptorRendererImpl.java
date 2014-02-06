@@ -62,6 +62,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final ValueParametersHandler handler;
     @NotNull
     private final TextFormat textFormat;
+    private final boolean includePropertyConstant;
     @NotNull
     private final Set<FqName> excludedAnnotationClasses;
 
@@ -80,7 +81,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             @NotNull OverrideRenderingPolicy overrideRenderingPolicy,
             @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat,
-            @NotNull Collection<FqName> excludedAnnotationClasses
+            @NotNull Collection<FqName> excludedAnnotationClasses,
+            boolean includePropertyConstant
     ) {
         this.shortNames = shortNames;
         this.withDefinedIn = withDefinedIn;
@@ -95,6 +97,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.overrideRenderingPolicy = overrideRenderingPolicy;
         this.debugMode = debugMode;
         this.textFormat = textFormat;
+        this.includePropertyConstant = includePropertyConstant;
         this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
         this.prettyFunctionTypes = prettyFunctionTypes;
     }
@@ -663,6 +666,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderName(variable, builder);
         builder.append(": ").append(escape(renderType(typeToRender)));
 
+        renderInitializer(variable, builder);
+
         if (verbose && varargElementType != null) {
             builder.append(" /*").append(escape(renderType(realType))).append("*/");
         }
@@ -688,9 +693,19 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         renderName(property, builder);
         builder.append(": ").append(escape(renderType(property.getType())));
 
+        renderInitializer(property, builder);
+
         renderWhereSuffix(property.getTypeParameters(), builder);
     }
 
+    private void renderInitializer(@NotNull VariableDescriptor variable, @NotNull StringBuilder builder) {
+        if (includePropertyConstant) {
+            CompileTimeConstant<?> initializer = variable.getCompileTimeInitializer();
+            if (initializer != null) {
+                builder.append(" = ").append(escape(renderConstant(initializer)));
+            }
+        }
+    }
 
     /* CLASSES */
     private void renderClass(@NotNull ClassDescriptor klass, @NotNull StringBuilder builder) {
