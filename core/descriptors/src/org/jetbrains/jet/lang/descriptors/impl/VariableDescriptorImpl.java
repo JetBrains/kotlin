@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -29,6 +30,7 @@ import java.util.Set;
 
 public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRootImpl implements VariableDescriptor {
     private JetType outType;
+    private CompileTimeConstant<?> compileTimeInitializer;
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -58,6 +60,18 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     public void setOutType(JetType outType) {
         assert this.outType == null;
         this.outType = outType;
+    }
+
+    @Nullable
+    @Override
+    public CompileTimeConstant<?> getCompileTimeInitializer() {
+        return compileTimeInitializer;
+    }
+
+    public void setCompileTimeInitializer(@Nullable CompileTimeConstant<?> compileTimeInitializer) {
+        if (!isVar()) {
+            this.compileTimeInitializer = compileTimeInitializer;
+        }
     }
 
     @Override

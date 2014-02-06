@@ -294,7 +294,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         if (resolvedCall != null) {
             val callableDescriptor = resolvedCall.getResultingDescriptor()
             if (callableDescriptor is VariableDescriptor) {
-                val compileTimeConstant = trace.getBindingContext().get(COMPILE_TIME_INITIALIZER, callableDescriptor)
+                val compileTimeConstant = callableDescriptor.getCompileTimeInitializer() ?: trace.getBindingContext().get(COMPILE_TIME_INITIALIZER, callableDescriptor)
                 if (compileTimeConstant == null) return null
 
                 val value: Any? =
@@ -435,10 +435,15 @@ public fun recordCompileTimeValueForInitializerIfNeeded(
         trace: BindingTrace
 ) {
     if (!variableDescriptor.isVar()) {
-        if (trace.get(BindingContext.COMPILE_TIME_INITIALIZER, variableDescriptor) == null) {
+        if (variableDescriptor.getCompileTimeInitializer() == null && trace.get(BindingContext.COMPILE_TIME_INITIALIZER, variableDescriptor) == null) {
             val constant = ConstantExpressionEvaluator.evaluate(initializer, trace, variableType)
             if (constant != null) {
-                trace.record(BindingContext.COMPILE_TIME_INITIALIZER, variableDescriptor, constant)
+                if (constant is IntegerValueTypeConstant) {
+                    trace.record(BindingContext.COMPILE_TIME_INITIALIZER, variableDescriptor, constant.createCompileTimeConstantWithType(variableType))
+                }
+                else {
+                    trace.record(BindingContext.COMPILE_TIME_INITIALIZER, variableDescriptor, constant)
+                }
             }
         }
     }
@@ -552,54 +557,10 @@ private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
 }
 
 private fun createCompileTimeConstant(value: Any?, c: EvaluatorContext, expectedType: JetType? = null): CompileTimeConstant<*>? {
-    if (expectedType == null) {
-        when(value) {
-            is Byte -> return ByteValue(value, c.canBeUsedInAnnotation, c.isPure)
-            is Short -> return ShortValue(value, c.canBeUsedInAnnotation, c.isPure)
-            is Int -> return IntValue(value, c.canBeUsedInAnnotation, c.isPure)
-            is Long -> return LongValue(value, c.canBeUsedInAnnotation, c.isPure)
-        }
-    }
-    return when(value) {
-        is Byte, is Short, is Int, is Long -> getIntegerValue((value as Number).toLong(), c, expectedType)
-        is Char -> CharValue(value, c.canBeUsedInAnnotation, c.isPure)
-        is Float -> FloatValue(value, c.canBeUsedInAnnotation)
-        is Double -> DoubleValue(value, c.canBeUsedInAnnotation)
-        is Boolean -> BooleanValue(value, c.canBeUsedInAnnotation)
-        is String -> StringValue(value, c.canBeUsedInAnnotation)
-        else -> null
-    }
+    return ConstantUtils.createCompileTimeConstant(value, c.canBeUsedInAnnotation, c.isPure, expectedType)
 }
-
 
 fun isIntegerType(value: Any?) = value is Byte || value is Short || value is Int || value is Long
-
-private fun getIntegerValue(value: Long, c: EvaluatorContext, expectedType: JetType): CompileTimeConstant<*>? {
-    fun defaultIntegerValue(value: Long) = when (value) {
-        value.toInt().toLong() -> IntValue(value.toInt(), c.canBeUsedInAnnotation, c.isPure)
-        else -> LongValue(value, c.canBeUsedInAnnotation, c.isPure)
-    }
-
-    if (CompileTimeConstantChecker.noExpectedTypeOrError(expectedType)) {
-        return IntegerValueTypeConstant(value, c.canBeUsedInAnnotation)
-    }
-
-    val builtIns = KotlinBuiltIns.getInstance()
-
-    return when (TypeUtils.makeNotNullable(expectedType)) {
-        builtIns.getLongType() -> LongValue(value, c.canBeUsedInAnnotation, c.isPure)
-        builtIns.getShortType() -> when (value) {
-            value.toShort().toLong() -> ShortValue(value.toShort(), c.canBeUsedInAnnotation, c.isPure)
-            else -> defaultIntegerValue(value)
-        }
-        builtIns.getByteType() -> when (value) {
-            value.toByte().toLong() -> ByteValue(value.toByte(), c.canBeUsedInAnnotation, c.isPure)
-            else -> defaultIntegerValue(value)
-        }
-        builtIns.getCharType() -> IntValue(value.toInt(), c.canBeUsedInAnnotation, c.isPure)
-        else -> defaultIntegerValue(value)
-    }
-}
 
 private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): JetType? {
     return when (resolvedCall.getExplicitReceiverKind()) {

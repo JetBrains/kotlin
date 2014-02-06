@@ -29,9 +29,12 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
@@ -913,7 +916,7 @@ public class DescriptorResolver {
 
     @NotNull
     private JetType getVariableType(
-            @NotNull final VariableDescriptor variableDescriptor,
+            @NotNull final VariableDescriptorImpl variableDescriptor,
             @NotNull final JetScope scope,
             @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
@@ -955,23 +958,36 @@ public class DescriptorResolver {
                             new Function0<JetType>() {
                                 @Override
                                 public JetType invoke() {
-                                    JetType type = resolveInitializerType(scope, initializer, dataFlowInfo, trace);
-
-                                    EvaluatePackage.recordCompileTimeValueForInitializerIfNeeded(
-                                            variableDescriptor, initializer, type, trace);
-                                    return transformAnonymousTypeIfNeeded(variableDescriptor, variable, type, trace);
+                                    JetType initializerType = resolveInitializerType(scope, initializer, dataFlowInfo, trace);
+                                    setConstantForVariable(variableDescriptor, initializer, initializerType, trace);
+                                    return transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace);
                                 }
                             }
                     );
                 }
                 else {
-                    return resolveInitializerType(scope, initializer, dataFlowInfo, trace);
+                    JetType initializerType = resolveInitializerType(scope, initializer, dataFlowInfo, trace);
+                    setConstantForVariable(variableDescriptor, initializer, initializerType, trace);
+                    return initializerType;
                 }
             }
         }
         else {
             return typeResolver.resolveType(scope, propertyTypeRef, trace, true);
         }
+    }
+
+    private static void setConstantForVariable(
+            @NotNull VariableDescriptorImpl variableDescriptor,
+            @NotNull JetExpression initializer,
+            @NotNull JetType initializerType,
+            @NotNull BindingTrace trace
+    ) {
+        CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(initializer, trace, initializerType);
+        if (constant instanceof IntegerValueTypeConstant){
+            constant = EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) constant, initializerType);
+        }
+        variableDescriptor.setCompileTimeInitializer(constant);
     }
 
     @NotNull
