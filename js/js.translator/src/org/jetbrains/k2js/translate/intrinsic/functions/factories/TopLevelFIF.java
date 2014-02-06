@@ -34,6 +34,7 @@ import org.jetbrains.k2js.translate.callTranslator.CallInfo;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
@@ -45,8 +46,9 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionInt
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
 public final class TopLevelFIF extends CompositeFIF {
+    public static final DescriptorPredicate EQUALS_IN_ANY = pattern("jet", "Any", "equals");
     @NotNull
-    public static final KotlinFunctionIntrinsic EQUALS = new KotlinFunctionIntrinsic("equals");
+    public static final KotlinFunctionIntrinsic KOTLIN_EQUALS = new KotlinFunctionIntrinsic("equals");
     @NotNull
     public static final FunctionIntrinsic IDENTITY_EQUALS = new FunctionIntrinsic() {
         @NotNull
@@ -138,11 +140,12 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
+        add(EQUALS_IN_ANY, KOTLIN_EQUALS);
         add(pattern("jet", "toString").receiverExists(), TO_STRING);
-        add(pattern("jet", "equals").receiverExists(), EQUALS);
+        add(pattern("jet", "equals").receiverExists(), KOTLIN_EQUALS);
         add(pattern("jet", "identityEquals").receiverExists(), IDENTITY_EQUALS);
-        add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
-        add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
+        add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
+        add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
         add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
         add(pattern("jet", "PropertyMetadataImpl", "<init>"), PROPERTY_METADATA_IMPL);
         add(pattern("jet", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
