@@ -41,6 +41,16 @@ public class ExpressionSelectionTestGenerated extends AbstractExpressionSelectio
         doTestExpressionSelection("idea/testData/expressionSelection/binaryExpr.kt");
     }
     
+    @TestMetadata("labelledStatement.kt")
+    public void testLabelledStatement() throws Exception {
+        doTestExpressionSelection("idea/testData/expressionSelection/labelledStatement.kt");
+    }
+    
+    @TestMetadata("labelledThis.kt")
+    public void testLabelledThis() throws Exception {
+        doTestExpressionSelection("idea/testData/expressionSelection/labelledThis.kt");
+    }
+    
     @TestMetadata("noExpression.kt")
     public void testNoExpression() throws Exception {
         doTestExpressionSelection("idea/testData/expressionSelection/noExpression.kt");

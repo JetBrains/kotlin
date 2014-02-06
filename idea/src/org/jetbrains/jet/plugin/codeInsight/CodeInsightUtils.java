@@ -13,10 +13,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetBlockExpression;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -35,7 +32,13 @@ public class CodeInsightUtils {
         else if (!(element instanceof JetExpression)) {
             return null;
         }
-        else if (element instanceof JetBlockExpression) {
+
+        // For cases like 'this@outerClass', don't return the label part
+        if (JetPsiUtil.isLabelIdentifierExpression(element)) {
+            element = PsiTreeUtil.getParentOfType(element, JetExpression.class);
+        }
+
+        if (element instanceof JetBlockExpression) {
             List<JetElement> statements = ((JetBlockExpression) element).getStatements();
             if (statements.size() == 1) {
                 JetElement elem = statements.get(0);
