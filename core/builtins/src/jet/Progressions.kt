@@ -34,7 +34,7 @@ public class ByteProgression(
 
     override fun hashCode(): Int = 31 * (31 * start.toInt() + end) + increment
 
-    fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
 public class CharProgression(
@@ -53,7 +53,7 @@ public class CharProgression(
 
     override fun hashCode(): Int = 31 * (31 * start.toInt() + end) + increment
 
-    fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
 public class ShortProgression(
@@ -72,7 +72,7 @@ public class ShortProgression(
 
     override fun hashCode(): Int = 31 * (31 * start.toInt() + end) + increment
 
-    fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
 public class IntProgression(
@@ -91,7 +91,7 @@ public class IntProgression(
 
     override fun hashCode(): Int = 31 * (31 * start + end) + increment
 
-    fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
 public class LongProgression(
@@ -110,7 +110,7 @@ public class LongProgression(
 
     override fun hashCode(): Int = (31 * (31 * (start xor (start ushr 32)) + (end xor (end ushr 32))) + (increment xor (increment ushr 32))).toInt()
 
-    fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
 public class FloatProgression(
@@ -130,7 +130,7 @@ public class FloatProgression(
 
     override fun hashCode(): Int = 31 * (31 * java.lang.Float.floatToIntBits(start) + java.lang.Float.floatToIntBits(end)) + java.lang.Float.floatToIntBits(increment)
 
-    fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 
 public class DoubleProgression(
@@ -157,6 +157,6 @@ public class DoubleProgression(
         return (31 * result + (temp xor (temp ushr 32))).toInt()
     }
 
-    fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$start..$end step $increment" else "$start downTo $end step ${-increment}"
 }
 

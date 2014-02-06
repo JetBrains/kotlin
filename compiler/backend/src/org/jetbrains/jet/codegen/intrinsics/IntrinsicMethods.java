@@ -100,6 +100,7 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeName, Name.identifier("dec"), 0, DEC);
             declareIntrinsicFunction(typeName, Name.identifier("hashCode"), 0, HASH_CODE);
             declareIntrinsicFunction(typeName, Name.identifier("equals"), 1, EQUALS);
+            declareIntrinsicFunction(typeName, Name.identifier("toString"), 0, TO_STRING);
         }
 
         declareBinaryOp(Name.identifier("plus"), IADD);
@@ -116,6 +117,7 @@ public class IntrinsicMethods {
 
         declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("not"), 0, new Not());
         declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("equals"), 1, EQUALS);
+        declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("toString"), 0, TO_STRING);
 
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("plus"), 1, new Concat());
         declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar());

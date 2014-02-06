@@ -19,4 +19,7 @@ class C : Base<String, C, Unit>() {
         return super<Base>.hashCode()
     }
     override val method: (String?) -> String = ?
+    override fun toString(): String {
+        return super<Base>.toString()
+    }
 }

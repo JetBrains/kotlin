@@ -48,7 +48,7 @@ fun main(args: Array<String>) {
 trait Element {
     fun render(builder: StringBuilder, indent: String)
 
-    fun toString(): String? {
+    override fun toString(): String {
         val builder = StringBuilder()
         render(builder, "")
         return builder.toString()

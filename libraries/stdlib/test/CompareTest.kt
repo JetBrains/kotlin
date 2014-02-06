@@ -5,7 +5,7 @@ import kotlin.test.*
 import org.junit.Test
 
 class Item(val name: String, val rating: Int): Comparable<Item> {
-    fun toString() = "Item($name, $rating)"
+    override fun toString() = "Item($name, $rating)"
 
     public override fun compareTo(other: Item): Int {
         return compareBy(this, other, { rating }, { name })

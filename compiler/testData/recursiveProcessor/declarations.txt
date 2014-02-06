@@ -52,33 +52,44 @@ Trait:ClassDescriptorWithResolutionScopes
 a:ValueParameterDescriptor
 fake <class-object-for-Class>.equals:SimpleFunctionDescriptor
 fake <class-object-for-Class>.hashCode:SimpleFunctionDescriptor
+fake <class-object-for-Class>.toString:SimpleFunctionDescriptor
 fake <class-object-for-NestedClass>.equals:SimpleFunctionDescriptor
 fake <class-object-for-NestedClass>.hashCode:SimpleFunctionDescriptor
+fake <class-object-for-NestedClass>.toString:SimpleFunctionDescriptor
 fake <class-object-for-NestedObject>.equals:SimpleFunctionDescriptor
 fake <class-object-for-NestedObject>.hashCode:SimpleFunctionDescriptor
 fake <class-object-for-NestedObject>.nestedFunc:SimpleFunctionDescriptor
+fake <class-object-for-NestedObject>.toString:SimpleFunctionDescriptor
 fake <class-object-for-Object>.<get-objProp>:PropertyGetterDescriptor
 fake <class-object-for-Object>.equals:SimpleFunctionDescriptor
 fake <class-object-for-Object>.hashCode:SimpleFunctionDescriptor
 fake <class-object-for-Object>.objFunc:SimpleFunctionDescriptor
 fake <class-object-for-Object>.objProp:PropertyDescriptor
+fake <class-object-for-Object>.toString:SimpleFunctionDescriptor
 fake Class.<get-traitProp>:PropertyGetterDescriptor
 fake Class.equals:SimpleFunctionDescriptor
 fake Class.hashCode:SimpleFunctionDescriptor
+fake Class.toString:SimpleFunctionDescriptor
 fake Class.traitFunc:SimpleFunctionDescriptor
 fake Class.traitProp:PropertyDescriptor
 fake NestedClass.equals:SimpleFunctionDescriptor
 fake NestedClass.hashCode:SimpleFunctionDescriptor
+fake NestedClass.toString:SimpleFunctionDescriptor
 fake NestedObject.equals:SimpleFunctionDescriptor
 fake NestedObject.hashCode:SimpleFunctionDescriptor
+fake NestedObject.toString:SimpleFunctionDescriptor
 fake NestedTrait.equals:SimpleFunctionDescriptor
 fake NestedTrait.hashCode:SimpleFunctionDescriptor
+fake NestedTrait.toString:SimpleFunctionDescriptor
 fake Object.equals:SimpleFunctionDescriptor
 fake Object.hashCode:SimpleFunctionDescriptor
+fake Object.toString:SimpleFunctionDescriptor
 fake Outer.equals:SimpleFunctionDescriptor
 fake Outer.hashCode:SimpleFunctionDescriptor
+fake Outer.toString:SimpleFunctionDescriptor
 fake Trait.equals:SimpleFunctionDescriptor
 fake Trait.hashCode:SimpleFunctionDescriptor
+fake Trait.toString:SimpleFunctionDescriptor
 func.this:ReceiverParameterDescriptor
 innerTest.<get-prop>:PropertyGetterDescriptor
 innerTest.<get-propVar>:PropertyGetterDescriptor

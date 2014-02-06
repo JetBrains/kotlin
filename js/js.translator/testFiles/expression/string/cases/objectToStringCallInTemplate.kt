@@ -1,7 +1,7 @@
 package foo
 
 class A(var i : Int) {
-    fun toString() = "a$i"
+    override fun toString() = "a$i"
 }
 
 fun box() : Boolean {

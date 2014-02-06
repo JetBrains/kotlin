@@ -3,7 +3,7 @@ package foo
 var i = 0
 
 class A() {
-  fun toString():  String {
+  override fun toString(): String {
       i++
       return "bar"
   }

@@ -7,13 +7,13 @@ public fun toString(): String = ""
 public class PublicClass {
     override fun equals(a: Any?): Boolean = this.identityEquals(a)
     override fun hashCode(): Int = 0
-    public fun toString(): String = "PublicClass"
+    override fun toString(): String = "PublicClass"
 }
 
 internal class InternalClass {
     override fun equals(a: Any?): Boolean = this.identityEquals(a)
     override fun hashCode(): Int = 1
-    public fun toString(): String = "InternalClass"
+    override fun toString(): String = "InternalClass"
 
     // overloads
     public fun equals(a: Any?, b: Any?): Boolean = a == b
@@ -24,7 +24,7 @@ internal class InternalClass {
 private class PrivateClass {
     override fun equals(a: Any?): Boolean = this.identityEquals(a)
     override fun hashCode(): Int = 2
-    public fun toString(): String = "InternalClass"
+    override fun toString(): String = "InternalClass"
 
     // overloads
     public fun equals(a: Any?, b: Any?): Boolean = a == b

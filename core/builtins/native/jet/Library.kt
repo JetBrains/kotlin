@@ -35,8 +35,6 @@ public trait CharSequence {
   public fun get(index : Int) : Char
 
   public val length : Int
-
-  public fun toString() : String
 }
 
 public class String() : Comparable<String>, CharSequence {
@@ -44,7 +42,6 @@ public class String() : Comparable<String>, CharSequence {
 
   public override fun compareTo(that : String) : Int
   public override fun get(index : Int) : Char
-  public override fun toString() : String
   public override val length: Int
 }
 

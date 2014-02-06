@@ -33,7 +33,7 @@ class Failure(val message : String) : ParseResult<Nothing> {
 }
 
 open class Token(val text : String) {
-    fun toString() = text
+    override fun toString() = text
 }
 object LPAR : Token("(")
 object RPAR : Token(")")

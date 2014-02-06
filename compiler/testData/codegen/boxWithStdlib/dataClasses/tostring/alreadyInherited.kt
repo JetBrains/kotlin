@@ -1,5 +1,5 @@
 trait SuperTrait {
-    public fun toString(): String = "!"
+  override fun toString(): String = "!"
 }
 
 data class A(val x: Int): SuperTrait {
