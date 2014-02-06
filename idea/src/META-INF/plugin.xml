@@ -490,6 +490,11 @@
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.ReplaceWithDotQualifiedMethodCallIntention</className>
+
+      <category>Kotlin</category>
+    </intentionAction>
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ReplaceGetWithBracketsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
