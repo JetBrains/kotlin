@@ -248,7 +248,7 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
         if (codeBlockForLocalDeclaration != null) return new WithLocalRoot(project, element, scopeType, codeBlockForLocalDeclaration);
 
         PsiMethod representativeMethod = getRepresentativePsiMethod(element);
-        assert representativeMethod != null;
+        assert representativeMethod != null : "Can't generate light method: " + element.getText();
         return new WithNonLocalRoot(project, element, scopeType, representativeMethod);
     }
 }
