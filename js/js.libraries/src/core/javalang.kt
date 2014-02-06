@@ -51,5 +51,5 @@ public class StringBuilder() : Appendable {
     //TODO
     //override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder = js.noImpl
     public fun append(obj: Any?): StringBuilder = js.noImpl
-    public fun toString(): String = js.noImpl
+    override fun toString(): String = js.noImpl
 }

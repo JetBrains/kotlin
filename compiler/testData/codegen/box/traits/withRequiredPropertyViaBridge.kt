@@ -4,7 +4,7 @@ trait Trait : Base {
     private val value : String
         get() = "OK"
         
-    fun toString() = object {
+    override fun toString() = object {
         fun foo() = value
     }.foo()
 }

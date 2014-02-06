@@ -49,7 +49,7 @@ public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E
 
     override fun equals(other: Any?): Boolean = js.noImpl
 
-    fun toString(): String = js.noImpl
+    override fun toString(): String = js.noImpl
 }
 
 library

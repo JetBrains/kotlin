@@ -23,5 +23,5 @@ public trait Range<T : Comparable<T>> {
 
     public fun contains(item: T): Boolean
 
-    public fun toString(): String = "$start..$end"
+    override fun toString(): String = "$start..$end"
 }

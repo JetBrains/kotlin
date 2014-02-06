@@ -16,6 +16,9 @@ class C : A() {
     override fun hashCode(): Int {
         return super<A>.hashCode()
     }
+    override fun toString(): String {
+        return super<A>.toString()
+    }
 
     /*
         Some another comment

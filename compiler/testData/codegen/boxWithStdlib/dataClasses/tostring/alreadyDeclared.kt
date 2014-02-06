@@ -1,5 +1,5 @@
 data class A(val x: Int) {
-  fun toString(): String = "!"
+  override fun toString(): String = "!"
 }
 
 fun box(): String {

@@ -1,7 +1,7 @@
 package foo
 
 class Foo(val name: String) {
-  public fun toString(): String {
+  override fun toString(): String {
     return name + "S"
   }
 }

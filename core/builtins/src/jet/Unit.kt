@@ -17,7 +17,7 @@
 package jet
 
 public class Unit private() {
-    fun toString() = "Unit.VALUE"
+    override fun toString() = "Unit.VALUE"
 
     class object {
         public val VALUE: Unit = Unit()

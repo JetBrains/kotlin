@@ -1,6 +1,6 @@
 class A(
         val a: String = object {
-            fun toString(): String = "OK"
+            override fun toString(): String = "OK"
         }.toString()
 )
 

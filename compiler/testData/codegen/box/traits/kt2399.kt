@@ -7,7 +7,7 @@ class JsonArray {
 }
 
 class ProjectInfo {
-    public fun toString(): String = "OK"
+    override fun toString(): String = "OK"
 }
 
 public trait Parser<in IN: Any, out OUT: Any> {

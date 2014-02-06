@@ -1,6 +1,6 @@
 trait Trait {
     fun foo() = "O"
-    fun toString() = "K"
+    override fun toString() = "K"
 }
 
 class SimpleClass : Trait

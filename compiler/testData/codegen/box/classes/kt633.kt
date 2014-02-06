@@ -1,5 +1,5 @@
 class mInt(val i : Int) {
-    fun toString() : String = "mint: $i"
+    override fun toString() : String = "mint: $i"
     fun plus(i : Int) = mInt(this.i + i)
     fun inc() = mInt(i + 1)
 }

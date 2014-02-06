@@ -6,7 +6,7 @@ import org.junit.Test as test
 
 class ListTest {
 
-    test fun toString() {
+    test fun _toString() {
         val data = arrayList("foo", "bar")
         assertEquals("[foo, bar]", data.toString())
     }

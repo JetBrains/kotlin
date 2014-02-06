@@ -179,7 +179,7 @@ fun returnFunctionLiteral(<info>a</info>: Any?): Function0<Int> =
 fun merge<TYPO descr="Typo: In word 'Autocasts'">Autocasts</TYPO>(a: Any?) {
   if (a is String || a is Int) {
     a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("")
-    a.toString()
+    <info descr="Automatically cast to jet.Any"><info>a</info></info>.toString()
   }
   if (a is Int || a is String) {
     a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: compareTo">compareTo</error>("")

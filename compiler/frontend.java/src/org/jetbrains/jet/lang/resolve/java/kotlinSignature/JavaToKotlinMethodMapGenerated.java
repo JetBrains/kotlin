@@ -30,7 +30,8 @@ class JavaToKotlinMethodMapGenerated {
         
         put(b, "java.lang.Object", "Any",
             pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
-            pair("hashCode()", "fun hashCode(): jet.Int")            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
+            pair("toString()", "fun toString(): jet.String")            
         );
         
         put(b, "java.lang.String", "String",
@@ -47,7 +48,8 @@ class JavaToKotlinMethodMapGenerated {
         put(b, "java.lang.Throwable", "Throwable",
             pair("getCause()", "fun getCause(): jet.Throwable?"),            
             pair("getMessage()", "fun getMessage(): jet.String?"),            
-            pair("printStackTrace()", "fun printStackTrace(): jet.Unit")            
+            pair("printStackTrace()", "fun printStackTrace(): jet.Unit"),            
+            pair("toString()", "fun toString(): jet.String")            
         );
         
         put(b, "java.lang.Comparable", "Comparable",
@@ -58,12 +60,14 @@ class JavaToKotlinMethodMapGenerated {
             pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
             pair("hashCode()", "fun hashCode(): jet.Int"),            
             pair("name()", "fun name(): jet.String"),            
-            pair("ordinal()", "fun ordinal(): jet.Int")            
+            pair("ordinal()", "fun ordinal(): jet.Int"),            
+            pair("toString()", "fun toString(): jet.String")            
         );
         
         put(b, "java.lang.annotation.Annotation", "Annotation",
             pair("equals(java.lang.Object)", "fun equals(other: jet.Any?): jet.Boolean"),            
-            pair("hashCode()", "fun hashCode(): jet.Int")            
+            pair("hashCode()", "fun hashCode(): jet.Int"),            
+            pair("toString()", "fun toString(): jet.String")            
         );
         
         put(b, "java.lang.Iterable", "Iterable",
