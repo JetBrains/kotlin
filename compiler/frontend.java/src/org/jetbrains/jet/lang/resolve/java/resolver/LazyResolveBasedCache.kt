@@ -32,14 +32,18 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl
+import com.google.common.base.Predicates
+import org.jetbrains.jet.lang.descriptors.impl.PackageViewDescriptorImpl
+import org.jetbrains.jet.lang.resolve.name.tail
+import org.jetbrains.jet.lang.resolve.name.each
 
 public class LazyResolveBasedCache() : JavaResolverCache {
-    private var resolveSession by Delegates.notNull<ResolveSession>()
-    private var traceBasedCache = TraceBasedJavaResolverCache()
-
     class object {
         private val LOG = Logger.getInstance(javaClass<TraceBasedJavaResolverCache>())
     }
+
+    private var resolveSession by Delegates.notNull<ResolveSession>()
+    private val traceBasedCache = TraceBasedJavaResolverCache()
 
     Inject
     public fun setSession(resolveSession: ResolveSession) {
@@ -51,8 +55,11 @@ public class LazyResolveBasedCache() : JavaResolverCache {
         val descriptor = traceBasedCache.getClassResolvedFromSource(fqName)
         if (descriptor != null) return descriptor
 
-        val classes = ResolveSessionUtils.getClassDescriptorsByFqName(resolveSession, fqName)
-        return if (classes.isNotEmpty()) classes.first() else null
+        return resolveSession.findInPackageFragments(fqName) { packageFragmentDescriptor ->
+            ResolveSessionUtils.findByQualifiedName(
+                    packageFragmentDescriptor.getMemberScope(),
+                    fqName.tail(packageFragmentDescriptor.getFqName()))
+        }
     }
 
     override fun getClass(javaClass: JavaClass): ClassDescriptor? {
@@ -72,5 +79,25 @@ public class LazyResolveBasedCache() : JavaResolverCache {
     }
     override fun recordClass(javaClass: JavaClass, descriptor: ClassDescriptor) {
         traceBasedCache.recordClass(javaClass, descriptor)
+    }
+
+    private fun <T: Any> ResolveSession.findInPackageFragments(fqName: FqName, find: (PackageFragmentDescriptor) -> T?): T? {
+        var result: T? = null
+        (if (fqName.isRoot()) fqName else fqName.parent()).each { (parentFqName: FqName) : Boolean ->
+            val packageDescriptor = resolveSession.getPackageFragment(parentFqName)
+            if (packageDescriptor == null) {
+                return@each false // Stop iteration
+            }
+
+            val findResult = find(packageDescriptor)
+            if (findResult != null) {
+                result = findResult
+                return@each false // Stop iteration
+            }
+
+            true // Continue search
+        }
+
+        return result
     }
 }
