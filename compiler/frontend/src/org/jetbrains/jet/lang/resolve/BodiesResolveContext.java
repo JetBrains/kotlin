@@ -18,7 +18,9 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Function;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -41,12 +43,20 @@ public interface BodiesResolveContext extends GlobalContext {
     @NotNull
     @Override
     ExceptionTracker getExceptionTracker();
+
+    @ReadOnly
     Collection<JetFile> getFiles();
+
+    @Mutable
     Map<JetClassOrObject, MutableClassDescriptor> getClasses();
+    @Mutable
     Map<JetProperty, PropertyDescriptor> getProperties();
+    @Mutable
     Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions();
     Function<JetDeclaration, JetScope> getDeclaringScopes();
+    @Mutable
     Map<JetScript, ScriptDescriptor> getScripts();
+    @Mutable
     Map<JetScript, WritableScope> getScriptScopes();
     DataFlowInfo getOuterDataFlowInfo();
 
