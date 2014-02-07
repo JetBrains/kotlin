@@ -40,16 +40,12 @@ public class QualifiedGetToBracketsIntention : JetSelfTargetingIntention<JetDotQ
 
         val receiver = element.getReceiverExpression()
         val selector = element.getSelectorExpression()
-        when (selector){
-            is JetCallExpression -> {
-                val params = selector.getValueArgumentList()
-                val lParens = params?.getFirstChild()
-                val rParens = params?.getLastChild()
-                lParens?.delete()
-                rParens?.delete()
-                val bracketAccessor = JetPsiFactory.createExpression(params?.getProject(), receiver.getText() + "[" + params?.getText() + "]")
-                element.replace(bracketAccessor)
-            }
+        if (selector is JetCallExpression) {
+            val params = selector.getValueArgumentList()
+            params?.getLeftParenthesis()?.delete()
+            params?.getRightParenthesis()?.delete()
+            val bracketAccessor = JetPsiFactory.createExpression(params?.getProject(), receiver.getText() + "[" + params?.getText() + "]")
+            element.replace(bracketAccessor)
         }
     }
 }
