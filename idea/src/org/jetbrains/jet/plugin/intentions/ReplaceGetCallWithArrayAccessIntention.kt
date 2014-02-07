@@ -34,16 +34,15 @@ public class ReplaceGetCallWithArrayAccessIntention : JetSelfTargetingIntention<
     override fun isApplicableTo(element: JetExpression): Boolean {
         fun methodCallCheck(expression: JetDotQualifiedExpression): Boolean {
             val selector = expression.getSelectorExpression()
-            val receiver = expression.getReceiverExpression()
 
-            if (selector is JetCallExpression && !(receiver is JetPostfixExpression)) {
+            if (selector is JetCallExpression) {
                 val callee = selector.getCalleeExpression()
                 val arguments = selector.getValueArgumentList()
                 val typeArguments = selector.getTypeArgumentList()
 
                 return arguments != null
                     && typeArguments == null
-                    && !arguments.getArguments().any { (arg): Boolean -> arg.getArgumentName() != null }
+                    && !arguments.getArguments().any { it.getArgumentName() != null }
                     && callee != null
                     && callee.textMatches("get")
             } else {
@@ -73,9 +72,14 @@ public class ReplaceGetCallWithArrayAccessIntention : JetSelfTargetingIntention<
             val receiver = expression.getReceiverExpression()
             val arrayArgumentsTextStringBuilder = StringBuilder("[${argumentsText!!.substring(1, argumentsText.length - 1)}")
 
-            for (functionLiteral in functionLiteralArguments) {
-                arrayArgumentsTextStringBuilder.append(", ${functionLiteral.getText()}")
+            for (index in functionLiteralArguments.indices) {
+                val functionLiteral = functionLiteralArguments.get(index)
+                if (index == 0 && arguments.getArguments().count() == 0)
+                    arrayArgumentsTextStringBuilder.append("${functionLiteral.getText()}")
+                else
+                    arrayArgumentsTextStringBuilder.append(", ${functionLiteral.getText()}")
             }
+
             arrayArgumentsTextStringBuilder.append("]")
 
             val replacement = JetPsiFactory.createExpression(project, receiver.getText() + arrayArgumentsTextStringBuilder.toString())

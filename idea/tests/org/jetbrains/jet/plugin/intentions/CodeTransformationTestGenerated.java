@@ -1184,6 +1184,16 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/replaceGetCallWithArrayAccess"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("emptyArgsSingleFunctionLiteral.kt")
+        public void testEmptyArgsSingleFunctionLiteral() throws Exception {
+            doTestReplaceGetCallWithArrayAccess("idea/testData/intentions/replaceGetCallWithArrayAccess/emptyArgsSingleFunctionLiteral.kt");
+        }
+        
+        @TestMetadata("functionCallAfterGet.kt")
+        public void testFunctionCallAfterGet() throws Exception {
+            doTestReplaceGetCallWithArrayAccess("idea/testData/intentions/replaceGetCallWithArrayAccess/functionCallAfterGet.kt");
+        }
+        
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
             doTestReplaceGetCallWithArrayAccess("idea/testData/intentions/replaceGetCallWithArrayAccess/functionLiteral.kt");
@@ -1217,6 +1227,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         @TestMetadata("infixFunctionCall.kt")
         public void testInfixFunctionCall() throws Exception {
             doTestReplaceGetCallWithArrayAccess("idea/testData/intentions/replaceGetCallWithArrayAccess/infixFunctionCall.kt");
+        }
+        
+        @TestMetadata("infixFunctionLiteralParameter.kt")
+        public void testInfixFunctionLiteralParameter() throws Exception {
+            doTestReplaceGetCallWithArrayAccess("idea/testData/intentions/replaceGetCallWithArrayAccess/infixFunctionLiteralParameter.kt");
         }
         
         @TestMetadata("namedParameterAssignment.kt")
