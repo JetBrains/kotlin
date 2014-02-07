@@ -35,8 +35,6 @@ public class LazyJavaPackageFragmentProvider(
 
     override fun getModule() = _module
 
-    override fun getJavaDescriptorResolver() = c.javaDescriptorResolver
-
     private val _packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> = c.storageManager.createMemoizedFunctionWithNullableValues {
         fqName ->
         val jPackage = c.finder.findPackage(fqName)

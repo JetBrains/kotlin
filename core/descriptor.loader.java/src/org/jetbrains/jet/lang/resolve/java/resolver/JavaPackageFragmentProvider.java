@@ -29,9 +29,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collection;
 
 public interface JavaPackageFragmentProvider extends PackageFragmentProvider {
-    @NotNull
-    JavaDescriptorResolver getJavaDescriptorResolver();
-
     @Nullable
     JavaPackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName);
 
