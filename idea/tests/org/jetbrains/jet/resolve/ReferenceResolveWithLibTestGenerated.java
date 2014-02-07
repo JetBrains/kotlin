@@ -66,6 +66,11 @@ public class ReferenceResolveWithLibTestGenerated extends AbstractReferenceResol
         doTest("idea/testData/resolve/referenceWithLib/packageOfLibDeclaration.kt");
     }
     
+    @TestMetadata("referenceToRootJavaClassFromLib.kt")
+    public void testReferenceToRootJavaClassFromLib() throws Exception {
+        doTest("idea/testData/resolve/referenceWithLib/referenceToRootJavaClassFromLib.kt");
+    }
+    
     @TestMetadata("sameNameInLib.kt")
     public void testSameNameInLib() throws Exception {
         doTest("idea/testData/resolve/referenceWithLib/sameNameInLib.kt");
