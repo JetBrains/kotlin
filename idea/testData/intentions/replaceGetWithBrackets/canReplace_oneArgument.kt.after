@@ -1,0 +1,4 @@
+import java.util.ArrayList
+
+val list: ArrayList<Int> = ArrayList<Int>()
+val x = list[1]<caret>
