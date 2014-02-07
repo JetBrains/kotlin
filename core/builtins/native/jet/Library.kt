@@ -2,10 +2,6 @@ package jet
 
 public trait Annotation
 
-public annotation class volatile
-
-public fun <R> synchronized(lock: Any, block: () -> R): R
-
 public fun Any?.identityEquals(other: Any?): Boolean // = this === other
 
 public fun Any?.equals(other: Any?): Boolean

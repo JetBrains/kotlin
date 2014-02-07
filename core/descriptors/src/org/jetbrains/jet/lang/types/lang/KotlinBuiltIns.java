@@ -362,11 +362,6 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getVolatileAnnotationClass() {
-        return getBuiltInClassByName("volatile");
-    }
-
-    @NotNull
     public ClassDescriptor getTailRecursiveAnnotationClass() {
         return getBuiltInClassByName("tailRecursive");
     }
@@ -528,7 +523,6 @@ public class KotlinBuiltIns {
                 getMutableMap(),
                 getMutableMapEntry(),
 
-                getVolatileAnnotationClass(),
                 getDataClassAnnotation(),
                 getAnnotation(),
                 getComparable(),
@@ -948,10 +942,6 @@ public class KotlinBuiltIns {
     static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
         FqName fqName = DescriptorUtils.getFqName(annotationClass).toSafe();
         return descriptor.getOriginal().getAnnotations().findAnnotation(fqName) != null;
-    }
-
-    public boolean isVolatile(@NotNull PropertyDescriptor descriptor) {
-        return containsAnnotation(descriptor, getVolatileAnnotationClass());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
