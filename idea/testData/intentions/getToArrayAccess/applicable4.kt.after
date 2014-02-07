@@ -1,0 +1,9 @@
+// IS_APPLICABLE: true
+fun foo() {
+	val x = X();
+    x["XyZ"]<caret>;
+}
+
+public class X() {
+    fun get(a: String) : String = a;
+}

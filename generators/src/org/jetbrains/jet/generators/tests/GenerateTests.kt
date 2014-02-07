@@ -313,7 +313,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractCodeTransformationTest>()) {
-            model("intentions/branched/folding/ifToAssignment", testMethod = "doTestFoldIfToAssignment")
+/*            model("intentions/branched/folding/ifToAssignment", testMethod = "doTestFoldIfToAssignment")
             model("intentions/branched/folding/ifToReturn", testMethod = "doTestFoldIfToReturn")
             model("intentions/branched/folding/ifToReturnAsymmetrically", testMethod = "doTestFoldIfToReturnAsymmetrically")
             model("intentions/branched/folding/whenToAssignment", testMethod = "doTestFoldWhenToAssignment")
@@ -334,7 +334,8 @@ fun main(args: Array<String>) {
             model("intentions/declarations/join", testMethod = "doTestJoinProperty")
             model("intentions/declarations/convertMemberToExtension", testMethod = "doTestConvertMemberToExtension")
             model("intentions/reconstructedType", testMethod = "doTestReconstructType")
-            model("intentions/removeUnnecessaryParentheses", testMethod = "doTestRemoveUnnecessaryParentheses")
+            model("intentions/removeUnnecessaryParentheses", testMethod = "doTestRemoveUnnecessaryParentheses")*/
+            model("intentions/getToArrayAccess", testMethod = "doTestGetToArrayAccess")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
