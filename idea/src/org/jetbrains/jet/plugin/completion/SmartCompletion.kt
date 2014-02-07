@@ -313,7 +313,7 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
     }
 
     if (classDescriptor is JavaClassDescriptor) {
-        val pseudoPackage = DescriptorResolverUtils.getPackageForCorrespondingJavaClass(classDescriptor)
+        val pseudoPackage = classDescriptor.getCorrespondingPackageFragment()
         if (pseudoPackage != null) {
             pseudoPackage.getMemberScope().getAllDescriptors().filterTo(descriptors, isSuitableCallable)
         }

@@ -27,14 +27,17 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 
-import javax.inject.Inject;
-
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
-    private ModuleDescriptor module;
+    private final ModuleDescriptor module;
 
-    private LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
+    private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
+
+    public JavaDescriptorResolver(@NotNull LazyJavaPackageFragmentProvider provider, @NotNull ModuleDescriptor module) {
+        lazyJavaPackageFragmentProvider = provider;
+        this.module = module;
+    }
 
     @NotNull
     public ModuleDescriptor getModule() {
@@ -55,15 +58,5 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Nullable
     public PackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName) {
         return lazyJavaPackageFragmentProvider.getPackageFragment(fqName);
-    }
-
-    @Inject
-    public void setModule(@NotNull ModuleDescriptor module) {
-        this.module = module;
-    }
-
-    @Inject
-    public void setLazyJavaPackageFragmentProvider(@NotNull LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider) {
-        this.lazyJavaPackageFragmentProvider = lazyJavaPackageFragmentProvider;
     }
 }

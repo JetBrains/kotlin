@@ -40,7 +40,8 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.*;
@@ -58,7 +59,6 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isAnnotationClass;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isAnonymousObject;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
-import static org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor.Kind.CLASS_STATICS;
 
 public class JetTypeMapper extends BindingTraceAware {
 
@@ -122,14 +122,9 @@ public class JetTypeMapper extends BindingTraceAware {
             @NotNull DeclarationDescriptor descriptor,
             boolean insideModule
     ) {
-        if (packageFragment instanceof JavaPackageFragmentDescriptor) {
-            JavaPackageFragmentDescriptor javaPackageFragment = (JavaPackageFragmentDescriptor) packageFragment;
-            if (javaPackageFragment.getKind() == CLASS_STATICS) {
-                ClassDescriptor classDescriptor =
-                        javaPackageFragment.getJavaDescriptorResolver().resolveClass(javaPackageFragment.getFqName());
-                assert classDescriptor != null : "Class not found while a package fragment exists: " + packageFragment;
-                return mapType(classDescriptor.getDefaultType()).getInternalName();
-            }
+        if (packageFragment instanceof JavaClassStaticsPackageFragmentDescriptor) {
+            JavaClassStaticsPackageFragmentDescriptor javaPackageFragment = (JavaClassStaticsPackageFragmentDescriptor) packageFragment;
+            return mapClass(javaPackageFragment.getCorrespondingClass()).getInternalName();
         }
 
         // It's not a package created for Java class statics

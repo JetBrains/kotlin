@@ -267,16 +267,6 @@ public final class DescriptorResolverUtils {
         return TypeSubstitutor.create(typeSubstitutionContext);
     }
 
-    @Nullable
-    public static JavaPackageFragmentDescriptor getPackageForCorrespondingJavaClass(@NotNull JavaClassDescriptor javaClass) {
-        PackageFragmentDescriptor packageFragment = DescriptorUtils.getParentOfType(javaClass, PackageFragmentDescriptor.class);
-        assert packageFragment instanceof JavaPackageFragmentDescriptor :
-                "java class " + javaClass + " is under non-java fragment: " + packageFragment;
-
-        JavaPackageFragmentProvider provider = ((JavaPackageFragmentDescriptor) packageFragment).getProvider();
-        return provider.getPackageFragment(getFqNameSafe(javaClass));
-    }
-
     public static boolean isJavaClassVisibleAsPackage(@NotNull JavaClass javaClass) {
         return !isCompiledKotlinClassOrPackageClass(javaClass) && hasStaticMembers(javaClass);
     }

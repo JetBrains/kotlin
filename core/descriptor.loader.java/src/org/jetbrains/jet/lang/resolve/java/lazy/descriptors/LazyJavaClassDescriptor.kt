@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import java.util.ArrayList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -109,6 +110,9 @@ class LazyJavaClassDescriptor(
         val valueOfMethod = DescriptorFactory.createEnumClassObjectValueOfMethod(classObject, enumType)
         classObject.getBuilder().addFunctionDescriptor(valueOfMethod)
     }
+
+    override fun getCorrespondingPackageFragment() =
+            c.packageFragmentProvider.getPackageFragment(fqName) as? JavaClassStaticsPackageFragmentDescriptor
 
     override fun getClassObjectDescriptor(): ClassDescriptor? = _classObjectDescriptor()
     override fun getClassObjectType(): JetType? = getClassObjectDescriptor()?.let { d -> d.getDefaultType() }
