@@ -57,6 +57,7 @@ import org.jetbrains.jet.plugin.highlighter.AbstractHighlightingTest
 import org.jetbrains.jet.plugin.folding.AbstractKotlinFoldingTest
 import org.jetbrains.jet.plugin.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.jet.plugin.intentions.AbstractCodeTransformationTest
+import org.jetbrains.jet.plugin.AbstractSmartSelectionTest
 import org.jetbrains.jet.plugin.hierarchy.AbstractHierarchyTest
 import org.jetbrains.jet.plugin.codeInsight.moveUpDown.AbstractCodeMoverTest
 import org.jetbrains.jet.plugin.refactoring.inline.AbstractInlineTest
@@ -457,6 +458,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractKotlinSourceInJavaCompletionTest>()) {
             model("completion/injava", extension = "java")
+        }
+
+        testClass(javaClass<AbstractSmartSelectionTest>()) {
+            model("smartSelection", testMethod = "doTestSmartSelection", pattern = """^([^\.]+)\.kt$""")
         }
     }
 
