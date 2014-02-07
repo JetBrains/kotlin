@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,14 @@
 
 package org.jetbrains.jet;
 
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -28,6 +32,10 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 import java.util.zip.ZipOutputStream;
 
 import static junit.framework.Assert.assertEquals;
@@ -42,6 +50,27 @@ public class MockLibraryUtil {
 
             File classesDir = new File(contentDir, "classes");
             compile(sourcesPath, classesDir);
+
+            List<File> javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), new File(sourcesPath));
+            if (!javaFiles.isEmpty()) {
+                List<String> classPath = ContainerUtil.list(ForTestCompileRuntime.runtimeJarForTests().getPath(),
+                                                            JetTestUtils.getAnnotationsJar().getPath());
+
+                // Probably no kotlin files were present, so dir might not have been created after kotlin compiler
+                if (classesDir.exists()) {
+                    classPath.add(classesDir.getPath());
+                }
+                else {
+                    FileUtil.createDirectory(classesDir);
+                }
+
+                List<String> options = Arrays.asList(
+                        "-classpath", StringUtil.join(classPath, File.pathSeparator),
+                        "-d", classesDir.getPath()
+                );
+
+                JetTestUtils.compileJavaFiles(javaFiles, options);
+            }
 
             File jarFile = new File(contentDir, "library.jar");
 
