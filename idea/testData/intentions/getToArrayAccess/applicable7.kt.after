@@ -1,0 +1,10 @@
+// IS_APPLICABLE: true
+fun foo() {
+	val y = 1;
+    val x = X();
+    x[y == 1]<caret>
+}
+
+public class X() {
+    fun get(a: Boolean) : Boolean = a;
+}
