@@ -119,6 +119,9 @@ public class ConstantUtils {
         else if (value instanceof String) {
             return new StringValue((String) value, canBeUsedInAnnotations);
         }
+        else if (value == null) {
+            return NullValue.NULL;
+        }
         return null;
     }
 

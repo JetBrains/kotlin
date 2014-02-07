@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
+import org.jetbrains.jet.lang.resolve.java.structure.JavaPropertyInitializerEvaluator
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -264,6 +265,10 @@ public abstract class LazyJavaMemberScope(
         }
 
         propertyDescriptor.setType(effectiveSignature.getReturnType(), Collections.emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(getContainingDeclaration()), null : JetType?)
+
+        if (!propertyDescriptor.isVar()) {
+            propertyDescriptor.setCompileTimeInitializer(JavaPropertyInitializerEvaluator.getInstance().getInitializerConstant(field, propertyDescriptor))
+        }
 
         c.javaResolverCache.recordField(field, propertyDescriptor);
 

@@ -484,4 +484,15 @@ public class DescriptorUtils {
         }
         return descriptor;
     }
+
+    public static boolean isPropertyCompileTimeConstant(@NotNull VariableDescriptor descriptor) {
+        if (descriptor.isVar()) {
+            return false;
+        }
+        if (isClassObject(descriptor.getContainingDeclaration()) || isTopLevelDeclaration(descriptor)) {
+            JetType type = descriptor.getType();
+            return KotlinBuiltIns.getInstance().isPrimitiveType(type) || KotlinBuiltIns.getInstance().getStringType().equals(type);
+        }
+        return false;
+    }
 }

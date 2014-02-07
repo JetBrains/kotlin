@@ -82,17 +82,20 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     override fun visitConstantExpression(expression: JetConstantExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val text = expression.getText()
         if (text == null) return null
-        val result: Any? = when (expression.getNode().getElementType()) {
+
+        val nodeElementType = expression.getNode().getElementType()
+        if (nodeElementType == JetNodeTypes.NULL) return NullValue.NULL
+
+        val result: Any? = when (nodeElementType) {
             JetNodeTypes.INTEGER_CONSTANT -> parseLong(text)
             JetNodeTypes.FLOAT_CONSTANT -> parseFloatingLiteral(text)
             JetNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
             JetNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantChecker.parseChar(expression)
-            JetNodeTypes.NULL -> null
             else -> throw IllegalArgumentException("Unsupported constant: " + expression)
         }
-        if (result == null && expression.getNode().getElementType() == JetNodeTypes.NULL) return NullValue.NULL
+        if (result == null) return null
 
-        fun isLongWithSuffix() = expression.getNode().getElementType() == JetNodeTypes.INTEGER_CONSTANT && hasLongSuffix(text)
+        fun isLongWithSuffix() = nodeElementType == JetNodeTypes.INTEGER_CONSTANT && hasLongSuffix(text)
 
         return createCompileTimeConstant(result, expectedType, !isLongWithSuffix())
     }
@@ -181,6 +184,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val argumentsEntrySet = resolvedCall.getValueArguments().entrySet()
         if (argumentsEntrySet.isEmpty()) {
             val result = evaluateUnaryAndCheck(argumentForReceiver, resultingDescriptorName.asString(), callExpression)
+            if (result == null) return null
             val isArgumentPure = isPureConstant(argumentForReceiver.expression)
             val canBeUsedInAnnotation = canBeUsedInAnnotation(argumentForReceiver.expression)
             val isNumberConversionMethod = resultingDescriptorName in OperatorConventions.NUMBER_CONVERSIONS
@@ -197,6 +201,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             }
 
             val result = evaluateBinaryAndCheck(argumentForReceiver, argumentForParameter, resultingDescriptorName.asString(), callExpression)
+            if (result == null) return null
 
             val areArgumentsPure = isPureConstant(argumentForReceiver.expression) && isPureConstant(argumentForParameter.expression)
             val canBeUsedInAnnotation = canBeUsedInAnnotation(argumentForReceiver.expression) && canBeUsedInAnnotation(argumentForParameter.expression)
@@ -303,7 +308,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
                         else
                             compileTimeConstant.getValue()
                 return createCompileTimeConstant(value, expectedType, isPure = false,
-                                                 canBeUsedInAnnotation = CompileTimeConstantUtils.isPropertyCompileTimeConstant(callableDescriptor))
+                                                 canBeUsedInAnnotation = DescriptorUtils.isPropertyCompileTimeConstant(callableDescriptor))
             }
         }
         return null

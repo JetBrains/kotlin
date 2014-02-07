@@ -5,5 +5,5 @@ public open class StaticFinal : java.lang.Object {
 }
 
 package test.StaticFinal {
-    public val foo: kotlin.String
+    public val foo: kotlin.String = "aaa"
 }

@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.ConstantUtils;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
@@ -38,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ResolverPackage;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -134,7 +136,7 @@ public class AnnotationDescriptorDeserializer extends BaseDescriptorDeserializer
             @Override
             public void visit(@Nullable Name name, @Nullable Object value) {
                 if (name != null) {
-                    CompileTimeConstant<?> argument = ResolverPackage.resolveCompileTimeConstantValue(value, true, null);
+                    CompileTimeConstant<?> argument = ConstantUtils.createCompileTimeConstant(value, true, false, null);
                     setArgumentValueByName(name, argument != null ? argument : ErrorValue.create("Unsupported annotation argument: " + name));
                 }
             }
