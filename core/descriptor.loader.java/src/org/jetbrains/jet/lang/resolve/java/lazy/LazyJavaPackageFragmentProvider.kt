@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
@@ -78,20 +79,18 @@ public class LazyJavaPackageFragmentProvider(
                     return c.javaResolverCache.getClassResolvedFromSource(fqName)
                 }
             }
+            val resolvedClassifier = getContainingScope(javaClass)?.getClassifier(javaClass.getName())
+            return resolvedClassifier as? ClassDescriptor ?: c.javaResolverCache.getClass(javaClass)
+        }
 
-            val outer = javaClass.getOuterClass()
-            val scope = if (outer != null) {
-                val outerClass = resolveClass(outer)
-                if (outerClass == null) return c.javaResolverCache.getClass(javaClass)
-                outerClass.getUnsubstitutedInnerClassesScope()
+        private fun getContainingScope(javaClass: JavaClass): JetScope? {
+            val outerClass = javaClass.getOuterClass()
+            if (outerClass != null) {
+                return resolveClass(outerClass)?.getUnsubstitutedInnerClassesScope()
             }
             else {
-                val outerPackage = getPackageFragment(fqName!!.parent())
-                if (outerPackage == null) return c.javaResolverCache.getClass(javaClass)
-                outerPackage.getMemberScope()
+                return getPackageFragment(javaClass.getFqName()!!.parent())?.getMemberScope()
             }
-            return scope.getClassifier(javaClass.getName()) as? ClassDescriptor
-                        ?: c.javaResolverCache.getClass(javaClass)
         }
 
         override fun resolveClassByFqName(fqName: FqName): ClassDescriptor? {
