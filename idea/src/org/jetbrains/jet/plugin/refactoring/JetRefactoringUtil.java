@@ -383,16 +383,22 @@ public class JetRefactoringUtil {
         }
     }
 
-    private static void smartSelectExpression(@NotNull Editor editor, @NotNull PsiFile file, int offset,
-                                             @NotNull final SelectExpressionCallback callback)
-            throws IntroduceRefactoringException {
-        if (offset < 0) throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
-        PsiElement element = file.findElementAt(offset);
-        if (element == null) throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
-        if (element instanceof PsiWhiteSpace) {
-            smartSelectExpression(editor, file, offset - 1, callback);
-            return;
+    public static List<JetExpression> getSmartSelectSuggestions(
+            @NotNull PsiFile file,
+            int offset
+    ) throws IntroduceRefactoringException {
+        if (offset < 0) {
+            return new ArrayList<JetExpression>();
         }
+
+        PsiElement element = file.findElementAt(offset);
+        if (element == null) {
+            return new ArrayList<JetExpression>();
+        }
+        if (element instanceof PsiWhiteSpace) {
+            return getSmartSelectSuggestions(file, offset - 1);
+        }
+
         ArrayList<JetExpression> expressions = new ArrayList<JetExpression>();
         while (element != null && !(element instanceof JetBlockExpression && !(element.getParent() instanceof JetFunctionLiteral)) &&
                !(element instanceof JetNamedFunction)
@@ -427,6 +433,13 @@ public class JetRefactoringUtil {
             }
             element = element.getParent();
         }
+        return expressions;
+    }
+
+    private static void smartSelectExpression(
+            @NotNull Editor editor, @NotNull PsiFile file, int offset,
+            @NotNull final SelectExpressionCallback callback) throws IntroduceRefactoringException {
+        List<JetExpression> expressions = getSmartSelectSuggestions(file, offset);
         if (expressions.size() == 0) throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
 
         if (expressions.size() == 1) {
