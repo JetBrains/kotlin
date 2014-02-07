@@ -531,6 +531,9 @@ public class JetTestUtils {
 
     public static String getLastCommentInFile(JetFile file) {
         PsiElement lastChild = file.getLastChild();
+        if (lastChild != null && lastChild.getNode().getElementType().equals(JetTokens.WHITE_SPACE)) {
+            lastChild = lastChild.getPrevSibling();
+        }
         assert lastChild != null;
 
         if (lastChild.getNode().getElementType().equals(JetTokens.BLOCK_COMMENT)) {
