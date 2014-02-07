@@ -34,10 +34,10 @@ import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolverWithCache;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -57,6 +57,8 @@ import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
+import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer;
 import org.jetbrains.annotations.NotNull;
@@ -84,10 +86,10 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private final TraceBasedJavaResolverCache traceBasedJavaResolverCache;
     private final TraceBasedErrorReporter traceBasedErrorReporter;
+    private final LazyJavaClassResolverWithCache lazyJavaClassResolverWithCache;
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
-    private final JavaPackageFragmentProvider javaPackageFragmentProvider;
     private final VirtualFileFinder virtualFileFinder;
     private final DeclarationResolver declarationResolver;
     private final AnnotationResolver annotationResolver;
@@ -107,6 +109,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final FunctionAnalyzerExtension functionAnalyzerExtension;
     private final ScriptBodyResolver scriptBodyResolver;
+    private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
+    private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
     
@@ -128,18 +132,17 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
-        this.javaClassFinder = new JavaClassFinderImpl();
-        this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
-        this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
-        this.traceBasedErrorReporter = new TraceBasedErrorReporter();
-        this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
-        this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
-        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
-        this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
-        this.javaDescriptorResolver = new JavaDescriptorResolver(storageManager, javaClassFinder, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, traceBasedJavaResolverCache, deserializedDescriptorResolver, virtualFileFinder, getModuleDescriptor());
+        this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.javaToKotlinClassMap = org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap.getInstance();
+        this.javaClassFinder = new JavaClassFinderImpl();
+        this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
+        this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
+        this.traceBasedErrorReporter = new TraceBasedErrorReporter();
+        this.lazyJavaClassResolverWithCache = new LazyJavaClassResolverWithCache(traceBasedJavaResolverCache);
+        this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
+        this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
-        this.javaPackageFragmentProvider = javaDescriptorResolver.getPackageFragmentProvider();
+        this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -158,6 +161,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.scriptBodyResolver = new ScriptBodyResolver();
+        this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
+        this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, javaClassFinder, virtualFileFinder, deserializedDescriptorResolver, lazyJavaClassResolverWithCache, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, traceBasedJavaResolverCache, getJavaDescriptorResolver());
+        this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModuleDescriptor());
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer(storageManager);
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
@@ -195,6 +201,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setStorageManager(storageManager);
         this.descriptorResolver.setTypeResolver(typeResolver);
+
+        this.javaDescriptorResolver.setLazyJavaPackageFragmentProvider(lazyJavaPackageFragmentProvider);
+        this.javaDescriptorResolver.setModule(moduleDescriptor);
 
         javaClassFinder.setProject(project);
 
@@ -281,7 +290,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
         deserializedDescriptorResolver.setJavaDescriptorResolver(javaDescriptorResolver);
-        deserializedDescriptorResolver.setJavaPackageFragmentProvider(javaPackageFragmentProvider);
+        deserializedDescriptorResolver.setJavaPackageFragmentProvider(lazyJavaPackageFragmentProvider);
         deserializedDescriptorResolver.setStorageManager(storageManager);
 
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
