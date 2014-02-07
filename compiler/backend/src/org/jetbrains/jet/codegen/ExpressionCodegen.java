@@ -1528,6 +1528,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
+    private boolean hasFinallyBLocks() {
+        for (BlockStackElement element : blockStackElements) {
+            if (element instanceof FinallyBlockStackElement) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void genFinallyBlockOrGoto(
             @Nullable FinallyBlockStackElement finallyBlockStackElement,
             @Nullable Label tryCatchBlockEnd
@@ -1566,7 +1575,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetExpression returnedExpression = expression.getReturnedExpression();
         if (returnedExpression != null) {
             gen(returnedExpression, returnType);
-            doFinallyOnReturn();
+            boolean hasFinallyBLocks = hasFinallyBLocks();
+            if (hasFinallyBLocks) {
+                int returnValIndex = myFrameMap.enterTemp(returnType);
+                StackValue.local(returnValIndex, returnType).store(returnType, v);
+                doFinallyOnReturn();
+                StackValue.local(returnValIndex, returnType).put(returnType, v);
+                myFrameMap.leaveTemp(returnType);
+            }
             v.areturn(returnType);
         }
         else {
