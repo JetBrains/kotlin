@@ -1,18 +1,18 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2010-2014 JetBrains s.r.o.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 package org.jetbrains.jet.plugin.references
 
@@ -38,6 +38,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.asJava.*
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.utils.keysToMap
+import com.intellij.psi.PsiMethod
 
 public trait JetReference : PsiPolyVariantReference {
     public fun resolveToDescriptors(): Collection<DeclarationDescriptor>
@@ -68,7 +69,13 @@ abstract class AbstractJetReference<T : JetElement>(element: T)
 
     override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()
 
-    protected fun areElementsEquivalent(el1: PsiElement, el2: PsiElement): Boolean = el1.namedUnwrappedElement == el2.namedUnwrappedElement
+    protected fun checkElementMatch(referenceTarget: PsiElement, elementToMatch: PsiElement): Boolean {
+        val unwrappedTarget = referenceTarget.namedUnwrappedElement
+        val unwrappedElementToMatch = elementToMatch.namedUnwrappedElement
+
+        return (unwrappedTarget == unwrappedElementToMatch) ||
+        (referenceTarget is PsiMethod && referenceTarget.isConstructor() && referenceTarget.getContainingClass() == elementToMatch)
+    }
 
     [suppress("CAST_NEVER_SUCCEEDS")]
     override fun getVariants(): Array<Any> = PsiReference.EMPTY_ARRAY as Array<Any>
@@ -147,7 +154,7 @@ public abstract class JetSimpleReference<T : JetReferenceExpression>(expression:
         if (resolvedElement == null || element == null) {
             return false
         }
-        return areElementsEquivalent(element, resolvedElement)
+        return checkElementMatch(resolvedElement, element)
     }
 }
 
@@ -156,6 +163,6 @@ public abstract class JetMultiReference<T : JetElement>(expression: T) : Abstrac
         if (element == null) {
             return false
         }
-        return multiResolve(false).map { it.getElement() }.filterNotNull().any { areElementsEquivalent(it, element) }
+        return multiResolve(false).map { it.getElement() }.filterNotNull().any { checkElementMatch(it, element) }
     }
 }

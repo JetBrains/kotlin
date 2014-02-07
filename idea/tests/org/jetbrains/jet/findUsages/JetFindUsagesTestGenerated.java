@@ -631,6 +631,11 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/java/findJavaClassUsages/JKClassMethodsUsages.0.java");
             }
             
+            @TestMetadata("JKClassWithImplicitConstructorAllUsages.0.java")
+            public void testJKClassWithImplicitConstructorAllUsages() throws Exception {
+                doTest("idea/testData/findUsages/java/findJavaClassUsages/JKClassWithImplicitConstructorAllUsages.0.java");
+            }
+            
             @TestMetadata("JKDerivedInterfaces.0.java")
             public void testJKDerivedInterfaces() throws Exception {
                 doTest("idea/testData/findUsages/java/findJavaClassUsages/JKDerivedInterfaces.0.java");
