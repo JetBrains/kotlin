@@ -22,10 +22,9 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolver;
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolverWithCache;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -46,7 +45,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
             ExternalSignatureResolver externalSignatureResolver,
             ErrorReporter errorReporter,
             MethodSignatureChecker signatureChecker,
-            final JavaResolverCache javaResolverCache,
+            JavaResolverCache javaResolverCache,
             DeserializedDescriptorResolver deserializedDescriptorResolver,
             KotlinClassFinder kotlinClassFinder,
             ModuleDescriptor module
@@ -58,22 +57,7 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
                         javaClassFinder,
                         kotlinClassFinder,
                         deserializedDescriptorResolver,
-                        new LazyJavaClassResolver() {
-                            @Override
-                            public ClassDescriptor resolveClass(JavaClass aClass) {
-                                FqName fqName = aClass.getFqName();
-                                if (fqName != null) {
-                                    return resolveClassByFqName(fqName);
-                                }
-
-                                return null;
-                            }
-
-                            @Override
-                            public ClassDescriptor resolveClassByFqName(FqName fqName) {
-                                return javaResolverCache.getClassResolvedFromSource(fqName);
-                            }
-                        },
+                        new LazyJavaClassResolverWithCache(javaResolverCache),
                         externalAnnotationResolver,
                         externalSignatureResolver,
                         errorReporter,
