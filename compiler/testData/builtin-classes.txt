@@ -1,7 +1,6 @@
 package-fragment jet
 
 public fun </*0*/ T> arrayOfNulls(/*0*/ size: jet.Int): jet.Array<T?>
-public fun </*0*/ R> synchronized(/*0*/ lock: jet.Any, /*1*/ block: jet.Function0<R>): R
 public fun jet.Any?.equals(/*0*/ other: jet.Any?): jet.Boolean
 public fun jet.Any?.identityEquals(/*0*/ other: jet.Any?): jet.Boolean
 public fun </*0*/ T> jet.Iterator<T>.iterator(): jet.Iterator<T>
@@ -1687,10 +1686,6 @@ public final class Unit {
     }
 }
 
-public final annotation class atomic : jet.Annotation {
-    /*primary*/ public constructor atomic()
-}
-
 public final annotation class data : jet.Annotation {
     /*primary*/ public constructor data()
 }
@@ -1719,8 +1714,4 @@ public final annotation class suppress : jet.Annotation {
 
 public final annotation class tailRecursive : jet.Annotation {
     /*primary*/ public constructor tailRecursive()
-}
-
-public final annotation class volatile : jet.Annotation {
-    /*primary*/ public constructor volatile()
 }

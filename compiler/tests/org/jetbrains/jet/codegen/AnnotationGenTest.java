@@ -24,9 +24,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 
 import java.lang.annotation.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 public class AnnotationGenTest extends CodegenTestCase {
 
@@ -47,6 +45,13 @@ public class AnnotationGenTest extends CodegenTestCase {
 
     private Class<?> getPackageSrcClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
         return loader.loadClass(PackageCodegen.getPackagePartInternalName(myFiles.getPsiFile()));
+    }
+
+    public void testVolatileProperty() throws Exception {
+        loadText("abstract class Foo { public volatile var x: String = \"\"; }");
+        Class<?> aClass = generateClass("Foo");
+        Field x = aClass.getDeclaredField("x");
+        assertTrue((x.getModifiers() & Modifier.VOLATILE) != 0);
     }
 
     public void testPropField() throws Exception {

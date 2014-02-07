@@ -58,10 +58,6 @@ public class IntrinsicMethods {
     private static final ArraySet ARRAY_SET = new ArraySet();
     private static final ArrayGet ARRAY_GET = new ArrayGet();
     private static final StringPlus STRING_PLUS = new StringPlus();
-    private static final String KOTLIN_JAVA_CLASS_FUNCTION = "kotlin.javaClass.function";
-    private static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
-    private static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
-    private static final String KOTLIN_COPY_TO_ARRAY = "kotlin.collections.copyToArray";
     private static final EnumValues ENUM_VALUES = new EnumValues();
     private static final EnumValueOf ENUM_VALUE_OF = new EnumValueOf();
     private static final ToString TO_STRING = new ToString();
@@ -70,13 +66,13 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
-
     @PostConstruct
     public void init() {
-        namedMethods.put(KOTLIN_JAVA_CLASS_FUNCTION, new JavaClassFunction());
-        namedMethods.put(KOTLIN_JAVA_CLASS_PROPERTY, new JavaClassProperty());
-        namedMethods.put(KOTLIN_ARRAYS_ARRAY, new JavaClassArray());
-        namedMethods.put(KOTLIN_COPY_TO_ARRAY, new CopyToArray());
+        namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
+        namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
+        namedMethods.put("kotlin.arrays.array", new JavaClassArray());
+        namedMethods.put("kotlin.collections.copyToArray", new CopyToArray());
+        namedMethods.put("kotlin.synchronized", new StupidSync());
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
@@ -126,7 +122,6 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("plus"), 1, STRING_PLUS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("arrayOfNulls"), 1, new NewArray());
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("synchronized"), 2, new StupidSync());
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("iterator"), 0, new IteratorIterator());
 
         for (PrimitiveType type : PrimitiveType.values()) {
