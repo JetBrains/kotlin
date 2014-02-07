@@ -53,12 +53,12 @@ public open class LazyJavaPackageFragmentProvider(
     }
 
     override fun getPackageFragment(fqName: FqName) = _packageFragments(fqName)
-    override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)} ?: listOf()
 
-    override fun getSubPackagesOf(fqName: FqName) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages()
-                                                                        ?: listOf<FqName>()
-    override fun getClassNamesInPackage(packageName: FqName) = getPackageFragment(packageName)?.getMemberScope()?.getAllClassNames()
-                                                                    ?: listOf<Name>()
+    override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)}.orEmpty()
+
+    override fun getSubPackagesOf(fqName: FqName) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
+
+    override fun getClassNamesInPackage(packageName: FqName) = getPackageFragment(packageName)?.getMemberScope()?.getAllClassNames().orEmpty()
 
     fun getClass(fqName: FqName): ClassDescriptor? = c.javaClassResolver.resolveClassByFqName(fqName)
 
