@@ -4256,6 +4256,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/primitiveTypes/ea35963.kt");
         }
         
+        @TestMetadata("equalsHashCodeToString.kt")
+        public void testEqualsHashCodeToString() throws Exception {
+            doTest("compiler/testData/codegen/box/primitiveTypes/equalsHashCodeToString.kt");
+        }
+        
         @TestMetadata("incrementByteCharShort.kt")
         public void testIncrementByteCharShort() throws Exception {
             doTest("compiler/testData/codegen/box/primitiveTypes/incrementByteCharShort.kt");

@@ -58,12 +58,10 @@ public class IntrinsicMethods {
     private static final ArraySet ARRAY_SET = new ArraySet();
     private static final ArrayGet ARRAY_GET = new ArrayGet();
     private static final StringPlus STRING_PLUS = new StringPlus();
-    public static final String KOTLIN_JAVA_CLASS_FUNCTION = "kotlin.javaClass.function";
+    private static final String KOTLIN_JAVA_CLASS_FUNCTION = "kotlin.javaClass.function";
     private static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
-    public static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
-    public static final String KOTLIN_COPY_TO_ARRAY = "kotlin.collections.copyToArray";
-    private static final String KOTLIN_TO_STRING = "kotlin.toString";
-    private static final String KOTLIN_HASH_CODE = "kotlin.hashCode";
+    private static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
+    private static final String KOTLIN_COPY_TO_ARRAY = "kotlin.collections.copyToArray";
     private static final EnumValues ENUM_VALUES = new EnumValues();
     private static final EnumValueOf ENUM_VALUE_OF = new EnumValueOf();
     private static final ToString TO_STRING = new ToString();
@@ -79,8 +77,6 @@ public class IntrinsicMethods {
         namedMethods.put(KOTLIN_JAVA_CLASS_PROPERTY, new JavaClassProperty());
         namedMethods.put(KOTLIN_ARRAYS_ARRAY, new JavaClassArray());
         namedMethods.put(KOTLIN_COPY_TO_ARRAY, new CopyToArray());
-        namedMethods.put(KOTLIN_HASH_CODE, HASH_CODE);
-        namedMethods.put(KOTLIN_TO_STRING, TO_STRING);
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
@@ -98,8 +94,12 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeName, Name.identifier("rangeTo"), 1, RANGE_TO);
             declareIntrinsicFunction(typeName, Name.identifier("inc"), 0, INC);
             declareIntrinsicFunction(typeName, Name.identifier("dec"), 0, DEC);
-            declareIntrinsicFunction(typeName, Name.identifier("hashCode"), 0, HASH_CODE);
+        }
+
+        for (PrimitiveType type : PrimitiveType.values()) {
+            Name typeName = type.getTypeName();
             declareIntrinsicFunction(typeName, Name.identifier("equals"), 1, EQUALS);
+            declareIntrinsicFunction(typeName, Name.identifier("hashCode"), 0, HASH_CODE);
             declareIntrinsicFunction(typeName, Name.identifier("toString"), 0, TO_STRING);
         }
 
@@ -116,8 +116,6 @@ public class IntrinsicMethods {
         declareBinaryOp(Name.identifier("xor"), IXOR);
 
         declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("not"), 0, new Not());
-        declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("equals"), 1, EQUALS);
-        declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("toString"), 0, TO_STRING);
 
         declareIntrinsicFunction(Name.identifier("String"), Name.identifier("plus"), 1, new Concat());
         declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar());
