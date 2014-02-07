@@ -767,6 +767,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     
     @TestMetadata("idea/testData/quickfix/migration")
     public static class Migration extends AbstractQuickFixTest {
+        @TestMetadata("beforeAddOverrideToEqualsHashCodeToString.kt")
+        public void testAddOverrideToEqualsHashCodeToString() throws Exception {
+            doTest("idea/testData/quickfix/migration/beforeAddOverrideToEqualsHashCodeToString.kt");
+        }
+        
         public void testAllFilesPresentInMigration() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/quickfix/migration"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
