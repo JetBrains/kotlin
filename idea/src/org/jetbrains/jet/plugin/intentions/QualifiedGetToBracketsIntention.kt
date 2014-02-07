@@ -22,47 +22,32 @@ import org.jetbrains.jet.lang.psi.JetValueArgumentList
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lexer.JetTokens
-import java.util.regex.Pattern
+import org.jetbrains.jet.lang.psi.JetCallExpression
 
 public class QualifiedGetToBracketsIntention : JetSelfTargetingIntention<JetDotQualifiedExpression>("qualified.get.to.brackets", javaClass()) {
-    val assignPattern = Pattern.compile("[^=]=[^=]")
 
     override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
-        val selector = element.getSelectorExpression();
-        if (selector?.getFirstChild()?.getText() != "get") return false
-        val params = selector?.getLastChild()
+        val selector = element.getSelectorExpression()
 
-        return when (params) {
-            is JetValueArgumentList -> {
-                if (!params.getArguments().isEmpty() && params.getRightParenthesis() != null) {
-                    val paramsCharSeq = params.getText()?.get(0,params.getTextLength())
-                    when (paramsCharSeq) {
-                        is CharSequence -> {
-                            val containsAssignment = assignPattern?.matcher(paramsCharSeq).find()
-                            !containsAssignment
-                        }
-                        else -> { false }
-                    }
-                } else {
-                    false
-                }
-            }
-            else -> { false }
-        }
+        return selector is JetCallExpression &&
+               selector.getCalleeExpression()?.getText() == "get" &&
+               selector.getValueArguments().isNotEmpty() &&
+               selector.getValueArguments().all({arg -> arg?.isNamed() == false})
+
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
 
         val receiver = element.getReceiverExpression()
         val selector = element.getSelectorExpression()
-        val params = selector?.getLastChild()
-        when (params){
-            is JetValueArgumentList -> {
-                val lParens = params.getFirstChild()
-                val rParens = params.getLastChild()
+        when (selector){
+            is JetCallExpression -> {
+                val params = selector.getValueArgumentList()
+                val lParens = params?.getFirstChild()
+                val rParens = params?.getLastChild()
                 lParens?.delete()
                 rParens?.delete()
-                val bracketAccessor = JetPsiFactory.createExpression(params.getProject(), receiver.getText() + "[" + params.getText() + "]")
+                val bracketAccessor = JetPsiFactory.createExpression(params?.getProject(), receiver.getText() + "[" + params?.getText() + "]")
                 element.replace(bracketAccessor)
             }
         }
