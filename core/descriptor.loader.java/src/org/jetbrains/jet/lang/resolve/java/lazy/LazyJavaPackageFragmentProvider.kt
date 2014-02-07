@@ -17,15 +17,13 @@ public class LazyJavaPackageFragmentProvider(
         private val _module: ModuleDescriptor
 ) : JavaPackageFragmentProvider {
 
-    private val outerClassResolver = outerContext.javaClassResolver
-
     private val c = LazyJavaResolverContext(
             this,
+            FragmentClassResolver(),
             outerContext.storageManager,
             outerContext.finder,
             outerContext.kotlinClassFinder,
             outerContext.deserializedDescriptorResolver,
-            FragmentClassResolver(),
             outerContext.externalAnnotationResolver,
             outerContext.externalSignatureResolver,
             outerContext.errorReporter,
@@ -84,16 +82,16 @@ public class LazyJavaPackageFragmentProvider(
             val outer = javaClass.getOuterClass()
             val scope = if (outer != null) {
                 val outerClass = resolveClass(outer)
-                if (outerClass == null) return outerClassResolver.resolveClass(javaClass)
+                if (outerClass == null) return c.javaResolverCache.getClass(javaClass)
                 outerClass.getUnsubstitutedInnerClassesScope()
             }
             else {
                 val outerPackage = getPackageFragment(fqName!!.parent())
-                if (outerPackage == null) return outerClassResolver.resolveClass(javaClass)
+                if (outerPackage == null) return c.javaResolverCache.getClass(javaClass)
                 outerPackage.getMemberScope()
             }
             return scope.getClassifier(javaClass.getName()) as? ClassDescriptor
-                        ?: outerClassResolver.resolveClass(javaClass)
+                        ?: c.javaResolverCache.getClass(javaClass)
         }
 
         override fun resolveClassByFqName(fqName: FqName): ClassDescriptor? {
@@ -102,7 +100,7 @@ public class LazyJavaPackageFragmentProvider(
 
             // TODO Here we prefer sources (something outside JDR subsystem) to binaries, which should actually be driven by module dependencies separation
             // See DeserializedDescriptorResolver.javaDescriptorFinder
-            val classFromSources = outerClassResolver.resolveClassByFqName(fqName)
+            val classFromSources = c.javaResolverCache.getClassResolvedFromSource(fqName)
             if (classFromSources != null) return classFromSources
 
             val (jClass, kClass) = c.findClassInJava(fqName)

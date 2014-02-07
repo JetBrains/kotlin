@@ -26,25 +26,10 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaResolverCache
 
 trait LazyJavaClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
     fun resolveClassByFqName(fqName: FqName): ClassDescriptor?
-}
-
-class LazyJavaClassResolverWithCache(val javaResolverCache: JavaResolverCache) : LazyJavaClassResolver {
-    override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
-        val fqName = javaClass.getFqName()
-        if (fqName != null) {
-            return resolveClassByFqName(fqName)
-        }
-        return null
-    }
-
-    override fun resolveClassByFqName(fqName: FqName): ClassDescriptor? {
-        return javaResolverCache.getClassResolvedFromSource(fqName)
-    }
 }
 
 trait TypeParameterResolver {

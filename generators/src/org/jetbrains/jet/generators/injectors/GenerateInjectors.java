@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaClassResolverWithCache;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
@@ -134,7 +133,6 @@ public class GenerateInjectors {
         generator.addField(TraceBasedExternalSignatureResolver.class);
         generator.addField(TraceBasedJavaResolverCache.class);
         generator.addField(TraceBasedErrorReporter.class);
-        generator.addField(LazyJavaClassResolverWithCache.class);
         generator.addField(PsiBasedMethodSignatureChecker.class);
         generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addField(MutablePackageFragmentProvider.class);
@@ -161,7 +159,6 @@ public class GenerateInjectors {
         generator.addField(TraceBasedJavaResolverCache.class);
         generator.addField(TraceBasedErrorReporter.class);
         generator.addField(PsiBasedMethodSignatureChecker.class);
-        generator.addField(LazyJavaClassResolverWithCache.class);
         generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addField(false, VirtualFileFinder.class, "virtualFileFinder",
