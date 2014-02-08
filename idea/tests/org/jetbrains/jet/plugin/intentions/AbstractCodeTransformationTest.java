@@ -118,6 +118,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new InsertCurlyBracesToTemplateIntention());
     }
 
+    public void doTestSwapBinaryExpression(@NotNull String path) throws Exception {
+        doTestIntention(path, new SwapBinaryExpression());
+    }
+
     public void doTestConvertMemberToExtension(@NotNull String path) throws Exception {
         doTestIntention(path, new ConvertMemberToExtension());
     }

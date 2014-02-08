@@ -1,0 +1,5 @@
+fun main() {
+    for (i in 10..1) {
+        println("Hello World")
+    }
+}
