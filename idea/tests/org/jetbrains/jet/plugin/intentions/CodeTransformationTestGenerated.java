@@ -1177,6 +1177,23 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         }
         
     }
+
+    @TestMetadata("idea/testData/intentions/bracketToGet")
+    public static class BracketToGet extends AbstractCodeTransformationTest {
+        public void testAllFilesPresentInBracketToGet() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/bracketToGet"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("getPossible1.kt")
+        public void testGetPossible1() throws Exception {
+            doTestBracketToGet("idea/testData/intentions/bracketToGet/getPossible1.kt");
+        }
+
+        @TestMetadata("getPossible2.kt")
+        public void testGetPossible2() throws Exception {
+            doTestBracketToGet("idea/testData/intentions/bracketToGet/getPossible2.kt");
+        }
+    }
     
     public static Test suite() {
         TestSuite suite = new TestSuite("CodeTransformationTestGenerated");
@@ -1202,6 +1219,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         suite.addTestSuite(ConvertMemberToExtension.class);
         suite.addTestSuite(ReconstructedType.class);
         suite.addTestSuite(RemoveUnnecessaryParentheses.class);
+        suite.addTestSuite(BracketToGet.class);
         return suite;
     }
 }

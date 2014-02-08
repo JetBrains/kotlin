@@ -118,6 +118,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ReconstructTypeInCastOrIsAction());
     }
 
+    public void doTestBracketToGet(@NotNull String path) throws Exception {
+        doTestIntention(path, new BracketToGetIntention());
+    }
+
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
