@@ -1204,6 +1204,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestRemoveUnnecessaryBraces("idea/testData/intentions/removeUnnecessaryBraces/removeUnnecessaryBracesForIf.kt");
         }
         
+        @TestMetadata("removeUnnecessaryBracesForIfWithNoStatement.kt")
+        public void testRemoveUnnecessaryBracesForIfWithNoStatement() throws Exception {
+            doTestRemoveUnnecessaryBraces("idea/testData/intentions/removeUnnecessaryBraces/removeUnnecessaryBracesForIfWithNoStatement.kt");
+        }
+        
         @TestMetadata("removeUnnecessaryBracesForIfWthTwoStatements.kt")
         public void testRemoveUnnecessaryBracesForIfWthTwoStatements() throws Exception {
             doTestRemoveUnnecessaryBraces("idea/testData/intentions/removeUnnecessaryBraces/removeUnnecessaryBracesForIfWthTwoStatements.kt");
