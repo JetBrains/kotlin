@@ -60,14 +60,14 @@ public class ReplaceGetWithSquareBracketsIntention : JetSelfTargetingIntention<J
         return true
     }
 
-    fun parseArgumentString (argList: JetValueArgumentList?): String {
+    fun parseArgumentString(argList: JetValueArgumentList?): String {
         if (argList == null) return ""
         val argListText = argList.getText()
         if (argList.getArguments().isNotEmpty()) {
-            assert (argListText != null, "get function call parameters cannot be converted to text.")
+            assert (argListText != null, "getText fuction call on JetValueArgumentList returned null")
             assert (argListText!!.length() >= 2 &&
                     argListText[0] == '(' &&
-                    argListText[argListText.length() - 1] == ')', "Parameters passed to get function call are not syntactically correct.")
+                    argListText[argListText.length() - 1] == ')', "Parameters passed to get function call in user code are not syntactically correct.")
             return argListText.substring(1, argListText.length() - 1)
         } else {
             return ""
@@ -86,7 +86,7 @@ public class ReplaceGetWithSquareBracketsIntention : JetSelfTargetingIntention<J
             argListText.isNotEmpty() && !funcLiteralArg.isNotEmpty() -> argListText
             else -> ""
         }
-        assert(arrayAccessExpText.isNotEmpty(), "No valid parameters to get function call found")
+        assert(arrayAccessExpText.isNotEmpty(), "No valid parameters to get function call in used code found")
 
         val modifiedExpr = JetPsiFactory.createExpression(element.getProject(), "$receiverText[$arrayAccessExpText]")
         parent.replace(modifiedExpr)
