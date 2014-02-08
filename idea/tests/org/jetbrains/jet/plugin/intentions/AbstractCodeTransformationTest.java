@@ -134,6 +134,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ReplaceWithInfixFunctionCallIntention());
     }
 
+    public void doTestReplaceExplicitFunctionLiteralParamWithIt(@NotNull String path) throws Exception {
+        doTestIntention(path, new ReplaceExplicitFunctionLiteralParamWithItIntention());
+    }
+
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
