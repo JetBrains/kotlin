@@ -1,0 +1,3 @@
+if (b) <spot>{
+  return 1
+}</spot>

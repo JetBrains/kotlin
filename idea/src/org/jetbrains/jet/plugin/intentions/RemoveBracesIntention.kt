@@ -16,33 +16,28 @@
 
 package org.jetbrains.jet.plugin.intentions
 
-import org.jetbrains.jet.lang.psi.JetCallExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.psiUtil.appendElement
-import org.jetbrains.jet.lang.psi.JetContainerNode
 import org.jetbrains.jet.lang.psi.JetWhileExpression
 import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.psi.JetDoWhileExpression
 import org.jetbrains.jet.lang.psi.JetForExpression
-import org.jetbrains.jet.plugin.JetBundle
 
-public class RemoveUnnecessaryBracesIntention : JetSelfTargetingIntention<JetBlockExpression>("remove.unnecessary.braces", javaClass()) {
+public class RemoveBracesIntention : JetSelfTargetingIntention<JetBlockExpression>("remove.braces", javaClass()) {
 
     override fun isApplicableTo(element: JetBlockExpression): Boolean {
-        if (element.getStatements().size() > 1)
+        if (element.getStatements().size() != 1 ) {
             return false
+        }
 
         val parentContext = element.getParent()?.getContext()
-        var conditionText: String
 
-        when (parentContext) {
-            is JetIfExpression -> conditionText = "if"
-            is JetWhileExpression -> conditionText = "while"
-            is JetDoWhileExpression -> conditionText = "do"
-            is JetForExpression -> conditionText = "for"
+        var conditionText = when (parentContext) {
+            is JetIfExpression -> "if"
+            is JetWhileExpression -> "while"
+            is JetDoWhileExpression -> "do...while"
+            is JetForExpression -> "for"
             else -> return false
         }
 

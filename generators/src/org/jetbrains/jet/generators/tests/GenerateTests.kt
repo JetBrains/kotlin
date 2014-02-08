@@ -335,7 +335,7 @@ fun main(args: Array<String>) {
             model("intentions/declarations/convertMemberToExtension", testMethod = "doTestConvertMemberToExtension")
             model("intentions/reconstructedType", testMethod = "doTestReconstructType")
             model("intentions/removeUnnecessaryParentheses", testMethod = "doTestRemoveUnnecessaryParentheses")
-            model("intentions/removeUnnecessaryBraces", testMethod = "doTestRemoveUnnecessaryBraces")
+            model("intentions/removeBraces", testMethod = "doTestRemoveBraces")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {

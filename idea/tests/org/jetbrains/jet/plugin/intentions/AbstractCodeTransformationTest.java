@@ -120,8 +120,8 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ReconstructTypeInCastOrIsAction());
     }
 
-    public void doTestRemoveUnnecessaryBraces(@NotNull String path) throws Exception {
-        doTestIntention(path, new RemoveUnnecessaryBracesIntention());
+    public void doTestRemoveBraces(@NotNull String path) throws Exception {
+        doTestIntention(path, new RemoveBracesIntention());
     }
 
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {

@@ -489,7 +489,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.RemoveUnnecessaryBracesIntention</className>
+      <className>org.jetbrains.jet.plugin.intentions.RemoveBracesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
