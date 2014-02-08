@@ -369,6 +369,7 @@ fun main(args: Array<String>) {
             model("intentions/insertCurlyBracestsToTemplate", testMethod = "doTestInsertCurlyToTemplate")
             model("intentions/moveLambdaInsideParentheses", testMethod = "doTestMoveLambdaInsideParentheses")
             model("intentions/moveLambdaOutsideParentheses", testMethod = "doTestMoveLambdaOutsideParentheses")
+            model("intentions/replaceExplicitFunctionLiteralParamWithIt", testMethod = "doTestReplaceExplicitFunctionLiteralParamWithIt")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {

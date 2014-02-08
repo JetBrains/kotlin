@@ -528,6 +528,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ReplaceExplicitFunctionLiteralParamWithItIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>
