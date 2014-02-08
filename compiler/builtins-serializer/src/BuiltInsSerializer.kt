@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer
 import org.jetbrains.jet.descriptors.serialization.SerializerExtension
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
@@ -41,6 +40,9 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.name.FqName
+import com.intellij.util.containers.ContainerUtil
 
 public class BuiltInsSerializer(val out: PrintStream?) {
     private var totalSize = 0
@@ -73,18 +75,25 @@ public class BuiltInsSerializer(val out: PrintStream?) {
                                                                     InjectorForJavaDescriptorResolverUtil.create(project, trace), false)
         val module = session.getModuleDescriptor() ?: error("No module resolved for $sourceRoots")
 
-        val fqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
-        val packageView = module.getPackage(fqName) ?: error("No package resolved in $module")
-
-        // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
-        // DescriptorValidator.validate(packageView)
-
         if (!FileUtil.delete(destDir)) {
             System.err.println("Could not delete: " + destDir)
         }
         if (!destDir.mkdirs()) {
             System.err.println("Could not make directories: " + destDir)
         }
+
+        for (fqName in ContainerUtil.mapNotNull(files) { it?.getPackageName() }.toSet()) {
+            serializePackage(module, FqName(fqName), destDir)
+        }
+
+        out?.println("Total bytes written: $totalSize to $totalFiles files")
+    }
+
+    fun serializePackage(module: ModuleDescriptor, fqName: FqName, destDir: File) {
+        val packageView = module.getPackage(fqName) ?: error("No package resolved in $module")
+
+        // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
+        // DescriptorValidator.validate(packageView)
 
         val serializer = DescriptorSerializer(object : SerializerExtension() {
             private val set = setOf("Any", "Nothing")
@@ -122,8 +131,6 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         val nameStream = ByteArrayOutputStream()
         NameSerializationUtil.serializeNameTable(nameStream, serializer.getNameTable())
         write(destDir, BuiltInsSerializationUtil.getNameTableFilePath(fqName), nameStream)
-
-        out?.println("Total bytes written: $totalSize to $totalFiles files")
     }
 
     fun writeClassNames(serializer: DescriptorSerializer, classNames: List<Name>, stream: ByteArrayOutputStream) {
