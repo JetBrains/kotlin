@@ -381,6 +381,7 @@ fun main(args: Array<String>) {
             model("intentions/simplifyNegatedBinaryExpressionIntention", testMethod = "doTestSimplifyNegatedBinaryExpressionIntention")
             model("intentions/convertNegatedBooleanSequence", testMethod="doTestConvertNegatedBooleanSequence")
             model("intentions/convertNegatedExpressionWithDemorgansLaw", testMethod = "doTestConvertNegatedExpressionWithDemorgansLaw")
+            model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
