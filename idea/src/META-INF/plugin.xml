@@ -489,7 +489,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.jet.plugin.intentions.ReplaceWithDotQualifiedMethodCallIntention</className>
+      <className>org.jetbrains.jet.plugin.intentions.ReplaceWithInfixFunctionCallIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
