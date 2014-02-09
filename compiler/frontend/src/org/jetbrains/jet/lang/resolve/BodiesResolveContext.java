@@ -22,10 +22,10 @@ import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptorWithResolutionScopes;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -48,7 +48,7 @@ public interface BodiesResolveContext extends GlobalContext {
     Collection<JetFile> getFiles();
 
     @Mutable
-    Map<JetClassOrObject, MutableClassDescriptor> getClasses();
+    Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getClasses();
     @Mutable
     Map<JetProperty, PropertyDescriptor> getProperties();
     @Mutable

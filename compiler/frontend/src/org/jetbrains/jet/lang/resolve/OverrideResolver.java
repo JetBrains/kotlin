@@ -21,7 +21,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.LinkedMultiMap;
@@ -86,7 +85,7 @@ public class OverrideResolver {
      * Generate fake overrides and add overridden descriptors to existing descriptors.
      */
     private void generateOverridesAndDelegation() {
-        Set<MutableClassDescriptor> ourClasses = new HashSet<MutableClassDescriptor>(context.getClasses().values());
+        Set<ClassDescriptorWithResolutionScopes> ourClasses = new HashSet<ClassDescriptorWithResolutionScopes>(context.getClasses().values());
         Set<ClassifierDescriptor> processed = new HashSet<ClassifierDescriptor>();
 
         for (MutableClassDescriptorLite klass : ContainerUtil.reverse(context.getClassesTopologicalOrder())) {
@@ -104,7 +103,7 @@ public class OverrideResolver {
     private void generateOverridesAndDelegationInAClass(
             @NotNull MutableClassDescriptor classDescriptor,
             @NotNull Set<ClassifierDescriptor> processed,
-            @NotNull Set<MutableClassDescriptor> classesBeingAnalyzed
+            @NotNull Set<ClassDescriptorWithResolutionScopes> classesBeingAnalyzed
             // to filter out classes such as stdlib and others that come from dependencies
     ) {
         if (!processed.add(classDescriptor)) {
@@ -220,8 +219,8 @@ public class OverrideResolver {
     }
 
     private void checkOverrides() {
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            checkOverridesInAClass(entry.getValue(), entry.getKey());
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
+            checkOverridesInAClass((MutableClassDescriptor) entry.getValue(), entry.getKey());
         }
     }
 
@@ -685,9 +684,11 @@ public class OverrideResolver {
     }
 
     private void checkParameterOverridesForAllClasses() {
-        for (MutableClassDescriptor classDescriptor : context.getClasses().values()) {
-            for (CallableMemberDescriptor member : classDescriptor.getAllCallableMembers()) {
-                checkOverridesForParameters(member);
+        for (ClassDescriptorWithResolutionScopes classDescriptor : context.getClasses().values()) {
+            for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+                if (member instanceof CallableMemberDescriptor) {
+                    checkOverridesForParameters((CallableMemberDescriptor) member);
+                }
             }
         }
     }

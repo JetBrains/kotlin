@@ -173,9 +173,9 @@ public class TypeHierarchyResolver {
     }
 
     private void createTypeConstructors() {
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
+            MutableClassDescriptor descriptor = (MutableClassDescriptor) entry.getValue();
             if (classOrObject instanceof JetClass) {
                 descriptorResolver.resolveMutableClassDescriptor((JetClass) classOrObject, descriptor, trace);
             }
@@ -210,18 +210,18 @@ public class TypeHierarchyResolver {
     }
 
     private void resolveTypesInClassHeaders() {
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             if (classOrObject instanceof JetClass) {
-                MutableClassDescriptor descriptor = entry.getValue();
+                ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
                 //noinspection unchecked
                 descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor.getScopeForClassHeaderResolution(),
                                                         (List) descriptor.getTypeConstructor().getParameters(), trace);
             }
         }
 
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
-            descriptorResolver.resolveSupertypesForMutableClassDescriptor(entry.getKey(), entry.getValue(), trace);
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
+            descriptorResolver.resolveSupertypesForMutableClassDescriptor(entry.getKey(), (MutableClassDescriptor) entry.getValue(), trace);
         }
     }
 

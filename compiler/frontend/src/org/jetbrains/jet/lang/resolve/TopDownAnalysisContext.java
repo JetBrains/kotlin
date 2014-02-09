@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -43,7 +42,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private DataFlowInfo outerDataFlowInfo = DataFlowInfo.EMPTY;
 
-    private final Map<JetClassOrObject, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
+    private final Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = Maps.newLinkedHashMap();
     protected final Map<JetFile, MutablePackageFragmentDescriptor> packageFragments = Maps.newHashMap();
     private List<MutableClassDescriptorLite> classesTopologicalOrder = null;
 
@@ -108,7 +107,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     }
 
     @Override
-    public Map<JetClassOrObject, MutableClassDescriptor> getClasses() {
+    public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getClasses() {
         return classes;
     }
 

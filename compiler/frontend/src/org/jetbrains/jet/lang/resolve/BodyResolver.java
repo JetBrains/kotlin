@@ -24,7 +24,6 @@ import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -161,9 +160,9 @@ public class BodyResolver {
 
     private void resolveDelegationSpecifierLists() {
         // TODO : Make sure the same thing is not initialized twice
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
+            ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
             resolveDelegationSpecifierList(classOrObject, descriptor,
                                            descriptor.getUnsubstitutedPrimaryConstructor(),
                                            descriptor.getScopeForClassHeaderResolution(),
@@ -341,15 +340,15 @@ public class BodyResolver {
     }
 
     private void resolveClassAnnotations() {
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
             resolveAnnotationArguments(entry.getValue().getScopeForClassHeaderResolution(), entry.getKey());
         }
     }
 
     private void resolveAnonymousInitializers() {
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
-            MutableClassDescriptor descriptor = entry.getValue();
+            ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
             resolveAnonymousInitializers(classOrObject, descriptor.getUnsubstitutedPrimaryConstructor(),
                                          descriptor.getScopeForInitializerResolution());
         }
@@ -388,10 +387,10 @@ public class BodyResolver {
     }
 
     private void resolvePrimaryConstructorParameters() {
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
             if (!(entry.getKey() instanceof JetClass)) continue;
             JetClass klass = (JetClass) entry.getKey();
-            MutableClassDescriptor classDescriptor = entry.getValue();
+            ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
             ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
 
             annotationResolver.resolveAnnotationsArguments(classDescriptor.getScopeForClassHeaderResolution(), klass.getPrimaryConstructorModifierList(), trace);
@@ -424,10 +423,10 @@ public class BodyResolver {
 
         // Member properties
         Set<JetProperty> processed = Sets.newHashSet();
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
             if (!(entry.getKey() instanceof JetClass)) continue;
             JetClass jetClass = (JetClass) entry.getKey();
-            MutableClassDescriptor classDescriptor = entry.getValue();
+            ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
 
             for (JetProperty property : jetClass.getProperties()) {
                 PropertyDescriptor propertyDescriptor = this.context.getProperties().get(property);

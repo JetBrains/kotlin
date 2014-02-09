@@ -21,7 +21,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -62,7 +61,7 @@ public class OverloadResolver {
         MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages = MultiMap.create();
         fillGroupedConstructors(inClasses, inPackages);
 
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
             checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
         }
         checkOverloadsInPackages(inPackages);
@@ -72,7 +71,7 @@ public class OverloadResolver {
             @NotNull MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses,
             @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
     ) {
-        for (MutableClassDescriptor klass : context.getClasses().values()) {
+        for (ClassDescriptorWithResolutionScopes klass : context.getClasses().values()) {
             if (klass.getKind().isSingleton()) {
                 // Constructors of singletons aren't callable from the code, so they shouldn't participate in overload name checking
                 continue;
@@ -131,13 +130,13 @@ public class OverloadResolver {
     }
 
     private void checkOverloadsInAClass(
-            MutableClassDescriptor classDescriptor, JetClassOrObject klass,
+            ClassDescriptorWithResolutionScopes classDescriptor, JetClassOrObject klass,
             Collection<ConstructorDescriptor> nestedClassConstructors
     ) {
         MultiMap<Name, CallableMemberDescriptor> functionsByName = MultiMap.create();
         
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-            MutableClassDescriptor classObjectDescriptor = (MutableClassDescriptor) classDescriptor.getClassObjectDescriptor();
+            ClassDescriptorWithResolutionScopes classObjectDescriptor = (ClassDescriptorWithResolutionScopes) classDescriptor.getClassObjectDescriptor();
             assert classObjectDescriptor != null;
             for (CallableMemberDescriptor memberDescriptor : classObjectDescriptor.getDeclaredCallableMembers()) {
                 functionsByName.putValue(memberDescriptor.getName(), memberDescriptor);

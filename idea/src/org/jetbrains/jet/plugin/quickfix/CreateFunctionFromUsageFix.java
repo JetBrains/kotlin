@@ -51,8 +51,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -669,8 +671,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         if (isExtension) {
             scope = currentFileModule.getPackage(JetPsiUtil.getFQName(currentFile)).getMemberScope();
         } else {
-            assert ownerClassDescriptor instanceof MutableClassDescriptor;
-            scope = ((MutableClassDescriptor) ownerClassDescriptor).getScopeForMemberDeclarationResolution();
+            scope = ((ClassDescriptorWithResolutionScopes) ownerClassDescriptor).getScopeForMemberDeclarationResolution();
         }
 
         // figure out type substitutions for type parameters

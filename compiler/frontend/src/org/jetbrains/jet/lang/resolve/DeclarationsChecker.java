@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.DeferredType;
@@ -48,10 +47,10 @@ public class DeclarationsChecker {
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
-        Map<JetClassOrObject, MutableClassDescriptor> classes = bodiesResolveContext.getClasses();
-        for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : classes.entrySet()) {
+        Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = bodiesResolveContext.getClasses();
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : classes.entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
-            MutableClassDescriptor classDescriptor = entry.getValue();
+            ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
             if (!bodiesResolveContext.completeAnalysisNeeded(classOrObject)) continue;
 
             if (classOrObject instanceof JetClass) {
@@ -99,7 +98,7 @@ public class DeclarationsChecker {
         reportErrorIfHasIllegalModifier(declaration);
     }
 
-    private void checkClass(JetClass aClass, MutableClassDescriptor classDescriptor) {
+    private void checkClass(JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
         if (aClass.isTrait()) {
             checkTraitModifiers(aClass);
@@ -128,7 +127,7 @@ public class DeclarationsChecker {
     }
 
 
-    private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
+    private void checkOpenMembers(ClassDescriptorWithResolutionScopes classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
             if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) continue;
             JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);

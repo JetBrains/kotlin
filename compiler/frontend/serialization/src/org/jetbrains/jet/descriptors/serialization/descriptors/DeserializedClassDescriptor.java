@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
@@ -262,7 +261,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
     }
 
     @NotNull
-    private MutableClassDescriptor createEnumClassObject() {
+    private ClassDescriptorWithResolutionScopes createEnumClassObject() {
         MutableClassDescriptor classObject = new MutableClassDescriptor(this, getScopeForMemberLookup(), ClassKind.CLASS_OBJECT,
                                                                         false, getClassObjectName(getName()));
         classObject.setSupertypes(Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));

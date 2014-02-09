@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -457,7 +456,7 @@ public class ResolveElementCache {
         }
 
         @Override
-        public Map<JetClassOrObject, MutableClassDescriptor> getClasses() {
+        public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getClasses() {
             return Collections.emptyMap();
         }
 
