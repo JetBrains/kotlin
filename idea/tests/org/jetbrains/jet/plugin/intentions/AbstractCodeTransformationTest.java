@@ -21,6 +21,8 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.siyeh.ipp.braces.*;
+import com.siyeh.ipp.braces.RemoveBracesIntention;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.*;
@@ -116,6 +118,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
 
     public void doTestReconstructType(@NotNull String path) throws Exception {
         doTestIntention(path, new ReconstructTypeInCastOrIsAction());
+    }
+
+    public void doTestRemoveUnnecessaryBraces(@NotNull String path) throws Exception {
+        doTestIntention(path, new RemoveUnnecessaryBracesIntention());
     }
 
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
