@@ -17,12 +17,11 @@
 package org.jetbrains.jet.plugin.refactoring.nameSuggester;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
@@ -76,18 +75,7 @@ public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
     private void doTest() {
         myFixture.configureByFile(getTestName(false) + ".kt");
         JetFile file = (JetFile) myFixture.getFile();
-        PsiElement lastChild = file.getLastChild();
-        assert lastChild != null;
-        String expectedResultText = null;
-        if (lastChild.getNode().getElementType().equals(JetTokens.BLOCK_COMMENT)) {
-            String lastChildText = lastChild.getText();
-            expectedResultText = lastChildText.substring(2, lastChildText.length() - 2).trim();
-        }
-        else if (lastChild.getNode().getElementType().equals(JetTokens.EOL_COMMENT)) {
-            expectedResultText = lastChild.getText().substring(2).trim();
-        }
-        assert expectedResultText != null;
-        final String finalExpectedResultText = expectedResultText;
+        final String expectedResultText = JetTestUtils.getLastCommentInFile(file);
         try {
             JetRefactoringUtil.selectExpression(myFixture.getEditor(), file, new JetRefactoringUtil.SelectExpressionCallback() {
                 @Override
@@ -95,7 +83,7 @@ public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
                     String[] names = JetNameSuggester.suggestNames(expression, JetNameValidator.getEmptyValidator(getProject()), "value");
                     Arrays.sort(names);
                     String result = StringUtil.join(names, "\n").trim();
-                    assertEquals(finalExpectedResultText, result);
+                    assertEquals(expectedResultText, result);
                 }
             });
         } catch (JetRefactoringUtil.IntroduceRefactoringException e) {

@@ -1176,6 +1176,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestRemoveUnnecessaryParentheses("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParentheses7.kt");
         }
         
+        @TestMetadata("unnecessaryParentheses8.kt")
+        public void testUnnecessaryParentheses8() throws Exception {
+            doTestRemoveUnnecessaryParentheses("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParentheses8.kt");
+        }
+        
     }
     
     public static Test suite() {

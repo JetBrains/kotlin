@@ -29,6 +29,7 @@ import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
@@ -64,6 +65,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -525,6 +527,24 @@ public class JetTestUtils {
         }
         result.delete(result.length() - 1, result.length());
         return result.toString();
+    }
+
+    public static String getLastCommentInFile(JetFile file) {
+        PsiElement lastChild = file.getLastChild();
+        if (lastChild != null && lastChild.getNode().getElementType().equals(JetTokens.WHITE_SPACE)) {
+            lastChild = lastChild.getPrevSibling();
+        }
+        assert lastChild != null;
+
+        if (lastChild.getNode().getElementType().equals(JetTokens.BLOCK_COMMENT)) {
+            String lastChildText = lastChild.getText();
+            return lastChildText.substring(2, lastChildText.length() - 2).trim();
+        }
+        else if (lastChild.getNode().getElementType().equals(JetTokens.EOL_COMMENT)) {
+            return lastChild.getText().substring(2).trim();
+        } else {
+            throw new AssertionError("Test file '" + file.getName() + "' should end in a comment; last node was: " + lastChild);
+        }
     }
 
     public static void compileJavaFiles(@NotNull Collection<File> files, List<String> options) throws IOException {
