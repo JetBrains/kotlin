@@ -110,6 +110,14 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new RemoveUnnecessaryParenthesesIntention());
     }
 
+    public void doTestMoveLambdaInsideParenthesis(@NotNull String path) throws Exception {
+        doTestIntention(path, new MoveLambdaInsideParenthesisIntention());
+    }
+
+    public void doTestMoveLambdaOutsideParenthesis(@NotNull String path) throws Exception {
+        doTestIntention(path, new MoveLambdaOutsideParenthesisIntention());
+    }
+
     public void doTestConvertMemberToExtension(@NotNull String path) throws Exception {
         doTestIntention(path, new ConvertMemberToExtension());
     }
