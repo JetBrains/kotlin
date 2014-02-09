@@ -1,3 +1,3 @@
 fun foo(x: Foo) {
-    x!! <caret>foo 1
+    <caret>x!! foo 1
 }

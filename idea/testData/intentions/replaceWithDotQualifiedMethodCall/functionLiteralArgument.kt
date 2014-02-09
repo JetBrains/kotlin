@@ -1,3 +1,3 @@
 fun foo(x: Foo) {
-    x <caret>foo { it * 2 }
+    <caret>x foo { it * 2 }
 }

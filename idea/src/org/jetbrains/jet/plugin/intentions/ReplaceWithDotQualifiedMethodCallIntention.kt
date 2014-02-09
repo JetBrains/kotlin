@@ -27,39 +27,26 @@ import com.google.common.collect.ImmutableSet
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lexer.JetToken
 
-public class ReplaceWithDotQualifiedMethodCallIntention : JetSelfTargetingIntention<JetSimpleNameExpression>("replace.with.dot.qualified.method.call.intention", javaClass()) {
-    private val NON_APPLICABLE_BINARY_OPERATIONS: ImmutableSet<JetToken>? = ImmutableSet.builder<JetToken>()
-            ?.addAll(OperatorConventions.BINARY_OPERATION_NAMES.keySet())
-            ?.addAll(OperatorConventions.COMPARISON_OPERATIONS)
-            ?.addAll(OperatorConventions.EQUALS_OPERATIONS)
-            ?.addAll(OperatorConventions.BOOLEAN_OPERATIONS.keySet())
-            ?.build()
-
-    override fun isApplicableTo(element: JetSimpleNameExpression): Boolean {
-        val parent = element.getParent()
-
-        return parent is JetBinaryExpression &&
-                parent.getLeft() != null &&
-                parent.getRight() != null &&
-                !(NON_APPLICABLE_BINARY_OPERATIONS?.contains(parent.getOperationToken()) ?: false)
+public class ReplaceWithDotQualifiedMethodCallIntention : JetSelfTargetingIntention<JetBinaryExpression>("replace.with.dot.qualified.method.call.intention", javaClass()) {
+    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
+        return element.getLeft() != null && element.getRight() != null && element.getOperationToken() == JetTokens.IDENTIFIER
     }
 
-    override fun applyTo(element: JetSimpleNameExpression, editor: Editor) {
-        val parent = element.getParent() as JetBinaryExpression
-        val receiverText = parent.getLeft()!!.getText()
-        val argumentText = parent.getRight()!!.getText()
-        val functionName = element.getText()
+    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+        val receiverText = element.getLeft()!!.getText()
+        val argumentText = element.getRight()!!.getText()
+        val functionName = element.getOperationReference().getText()
         val replacementExpressionStringBuilder = StringBuilder("$receiverText.$functionName")
 
         replacementExpressionStringBuilder.append(
-                when (parent.getRight()) {
+                when (element.getRight()) {
                     is JetFunctionLiteralExpression -> " $argumentText"
-                    is JetParenthesizedExpression -> "$argumentText"
+                    is JetParenthesizedExpression -> argumentText
                     else -> "($argumentText)"
                 }
         )
 
         val replacement = JetPsiFactory.createExpression(element.getProject(), replacementExpressionStringBuilder.toString())
-        parent.replace(replacement)
+        element.replace(replacement)
     }
 }

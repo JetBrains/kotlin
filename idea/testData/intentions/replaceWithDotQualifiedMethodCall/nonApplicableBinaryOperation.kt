@@ -1,4 +1,4 @@
 // IS_APPLICABLE: false
 fun foo(x: Foo) {
-    x <caret>== x
+    <caret>x == x
 }
