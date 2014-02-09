@@ -1221,6 +1221,44 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         
     }
     
+    @TestMetadata("idea/testData/intentions/replaceWithDotQualifiedMethodCall")
+    public static class ReplaceWithDotQualifiedMethodCall extends AbstractCodeTransformationTest {
+        public void testAllFilesPresentInReplaceWithDotQualifiedMethodCall() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/replaceWithDotQualifiedMethodCall"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("functionCallAfterInfixCall.kt")
+        public void testFunctionCallAfterInfixCall() throws Exception {
+            doTestReplaceWithDotQualifiedMethodCall("idea/testData/intentions/replaceWithDotQualifiedMethodCall/functionCallAfterInfixCall.kt");
+        }
+        
+        @TestMetadata("functionLiteralArgument.kt")
+        public void testFunctionLiteralArgument() throws Exception {
+            doTestReplaceWithDotQualifiedMethodCall("idea/testData/intentions/replaceWithDotQualifiedMethodCall/functionLiteralArgument.kt");
+        }
+        
+        @TestMetadata("nonApplicableBinaryOperation.kt")
+        public void testNonApplicableBinaryOperation() throws Exception {
+            doTestReplaceWithDotQualifiedMethodCall("idea/testData/intentions/replaceWithDotQualifiedMethodCall/nonApplicableBinaryOperation.kt");
+        }
+        
+        @TestMetadata("nullAssertedCall.kt")
+        public void testNullAssertedCall() throws Exception {
+            doTestReplaceWithDotQualifiedMethodCall("idea/testData/intentions/replaceWithDotQualifiedMethodCall/nullAssertedCall.kt");
+        }
+        
+        @TestMetadata("parenthesesAroundRightHandArgument.kt")
+        public void testParenthesesAroundRightHandArgument() throws Exception {
+            doTestReplaceWithDotQualifiedMethodCall("idea/testData/intentions/replaceWithDotQualifiedMethodCall/parenthesesAroundRightHandArgument.kt");
+        }
+        
+        @TestMetadata("simpleInfixFunctionCall.kt")
+        public void testSimpleInfixFunctionCall() throws Exception {
+            doTestReplaceWithDotQualifiedMethodCall("idea/testData/intentions/replaceWithDotQualifiedMethodCall/simpleInfixFunctionCall.kt");
+        }
+        
+    }
+    
     public static Test suite() {
         TestSuite suite = new TestSuite("CodeTransformationTestGenerated");
         suite.addTestSuite(IfToAssignment.class);
