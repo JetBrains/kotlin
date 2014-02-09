@@ -1,0 +1,9 @@
+class Foo {
+    fun foo(x: Int) {
+        println("lol")
+    }
+}
+
+fun bar(baz: Foo) {
+    baz foo 1
+}

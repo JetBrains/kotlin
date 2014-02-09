@@ -118,8 +118,8 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ReconstructTypeInCastOrIsAction());
     }
 
-    public void doTestReplaceWithDotQualifiedMethodCall(@NotNull String path) throws Exception {
-        doTestIntention(path, new ReplaceWithDotQualifiedMethodCallIntention());
+    public void doTestReplaceWithInfixFunctionCall(@NotNull String path) throws Exception {
+        doTestIntention(path, new ReplaceWithInfixFunctionCallIntention());
     }
 
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
