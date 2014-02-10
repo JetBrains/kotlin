@@ -38,23 +38,24 @@ public class RangeTo extends IntrinsicMethod {
             List<JetExpression> arguments,
             StackValue receiver
     ) {
+        Type leftType;
+        Type rightType;
         if (arguments.size() == 1) {
-            Type leftType = receiver.type;
-            Type rightType = codegen.expressionType(arguments.get(0));
+            leftType = receiver.type;
+            rightType = codegen.expressionType(arguments.get(0));
             receiver.put(leftType, v);
             codegen.gen(arguments.get(0), rightType);
-            v.invokestatic("jet/runtime/Ranges", "rangeTo",
-                           "(" + receiver.type.getDescriptor() + leftType.getDescriptor() + ")" + returnType.getDescriptor());
         }
         else {
             JetBinaryExpression expression = (JetBinaryExpression) element;
-            Type leftType = codegen.expressionType(expression.getLeft());
-            Type rightType = codegen.expressionType(expression.getRight());
+            leftType = codegen.expressionType(expression.getLeft());
+            rightType = codegen.expressionType(expression.getRight());
             codegen.gen(expression.getLeft(), leftType);
             codegen.gen(expression.getRight(), rightType);
-            v.invokestatic("jet/runtime/Ranges", "rangeTo",
-                           "(" + leftType.getDescriptor() + rightType.getDescriptor() + ")" + returnType.getDescriptor());
         }
+
+        v.invokestatic("jet/runtime/Ranges", "rangeTo", Type.getMethodDescriptor(returnType, leftType, rightType));
+
         return returnType;
     }
 }
