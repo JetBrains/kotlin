@@ -1,4 +1,4 @@
-package jet.runtime;
+package kotlin.internal;
 
 import java.util.Arrays;
 import java.util.Collection;
