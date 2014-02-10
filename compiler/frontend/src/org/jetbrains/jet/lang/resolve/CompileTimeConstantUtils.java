@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import jet.runtime.Intrinsic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -97,7 +96,8 @@ public class CompileTimeConstantUtils {
 
     @Nullable
     public static String getIntrinsicAnnotationArgument(@NotNull Annotated annotatedDescriptor) {
-        AnnotationDescriptor intrinsicAnnotation = annotatedDescriptor.getAnnotations().findAnnotation(new FqName(Intrinsic.class.getName()));
+        AnnotationDescriptor intrinsicAnnotation =
+                annotatedDescriptor.getAnnotations().findAnnotation(new FqName("kotlin.jvm.internal.Intrinsic"));
         if (intrinsicAnnotation == null) return null;
 
         Collection<CompileTimeConstant<?>> values = intrinsicAnnotation.getAllValueArguments().values();
