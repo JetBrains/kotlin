@@ -22,7 +22,7 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
 
     public MutablePackageFragmentProvider(@NotNull ModuleDescriptor module) {
         this.module = module;
-        fqNameToPackage.put(FqName.ROOT, new MutablePackageFragmentDescriptor(this, module, FqName.ROOT));
+        fqNameToPackage.put(FqName.ROOT, new MutablePackageFragmentDescriptor(module, FqName.ROOT));
     }
 
     @NotNull
@@ -43,7 +43,7 @@ public class MutablePackageFragmentProvider implements PackageFragmentProvider {
             FqName parent = fqName.parent();
             getOrCreateFragment(parent); // assure that parent exists
 
-            fqNameToPackage.put(fqName, new MutablePackageFragmentDescriptor(this, module, fqName));
+            fqNameToPackage.put(fqName, new MutablePackageFragmentDescriptor(module, fqName));
             subPackages.putValue(parent, fqName);
         }
 

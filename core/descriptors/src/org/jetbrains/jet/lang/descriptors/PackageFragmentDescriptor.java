@@ -21,8 +21,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 public interface PackageFragmentDescriptor extends ClassOrPackageFragmentDescriptor {
-    @NotNull
-    PackageFragmentProvider getProvider();
 
     @NotNull
     @Override

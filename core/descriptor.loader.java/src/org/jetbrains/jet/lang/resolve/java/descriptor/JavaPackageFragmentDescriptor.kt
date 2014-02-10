@@ -18,9 +18,7 @@ package org.jetbrains.jet.lang.resolve.java.descriptor
 
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 
-public trait JavaPackageFragmentDescriptor : PackageFragmentDescriptor {
-    override fun getProvider(): JavaPackageFragmentProvider
-}
+public trait JavaPackageFragmentDescriptor : PackageFragmentDescriptor
 
 public trait JavaClassStaticsPackageFragmentDescriptor : JavaPackageFragmentDescriptor {
     public fun getCorrespondingClass(): JavaClassDescriptor

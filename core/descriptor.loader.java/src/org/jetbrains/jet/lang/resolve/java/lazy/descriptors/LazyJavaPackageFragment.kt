@@ -54,7 +54,6 @@ abstract class LazyJavaPackageFragment(
     override fun getMemberScope(): LazyJavaPackageFragmentScope = _memberScope
 
     override fun getFqName() = _fqName
-    override fun getProvider() = c.packageFragmentProvider
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) = visitor.visitPackageFragmentDescriptor(this, data) as R
 

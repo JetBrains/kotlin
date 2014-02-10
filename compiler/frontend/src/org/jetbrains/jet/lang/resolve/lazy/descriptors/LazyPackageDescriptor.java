@@ -59,12 +59,6 @@ public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements 
 
     @NotNull
     @Override
-    public PackageFragmentProvider getProvider() {
-        return resolveSession.getPackageFragmentProvider();
-    }
-
-    @NotNull
-    @Override
     public ModuleDescriptor getContainingDeclaration() {
         return module;
     }

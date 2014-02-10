@@ -62,7 +62,6 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     }
 
     @NotNull
-    @Override
     public PackageFragmentProvider getProvider() {
         return packageFragmentProvider;
     }
@@ -105,7 +104,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     }
 
     private class BuiltinsPackageFragmentProvider implements PackageFragmentProvider {
-        private final PackageFragmentDescriptor rootPackage = new MutablePackageFragmentDescriptor(this, module, FqName.ROOT);
+        private final PackageFragmentDescriptor rootPackage = new MutablePackageFragmentDescriptor(module, FqName.ROOT);
 
         @NotNull
         @Override
