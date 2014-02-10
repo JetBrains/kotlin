@@ -28,10 +28,12 @@ fun assertExists(file: File): Unit =
         if (!file.exists()) error("Output dir does not exist: ${file.getAbsolutePath()}")
 
 val BUILT_INS_DIR = File("core/builtins/src/jet/")
-val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/jet/")
+val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/kotlin/")
 
 abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected abstract fun generateBody(): Unit
+
+    protected open fun getPackage(): String = "jet"
 
     final fun generate() {
         out.println(File("injector-generator/copyright.txt").readText())
@@ -39,7 +41,7 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
         // and we don't want to scare users with any internal information about our project
         out.println("// Auto-generated file. DO NOT EDIT!")
         out.println()
-        out.println("package jet")
+        out.println("package ${getPackage()}")
         out.println()
 
         generateBody()
@@ -64,6 +66,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
 fun main(args: Array<String>) {
     generateBuiltIns { file, generator ->
         println("generating $file")
+        file.getParentFile()?.mkdirs()
         PrintWriter(file) use {
             generator(it).generate()
         }

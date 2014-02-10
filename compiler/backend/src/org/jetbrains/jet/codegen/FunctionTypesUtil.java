@@ -22,6 +22,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
@@ -30,6 +34,7 @@ import org.jetbrains.jet.lang.types.TypeProjectionImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FunctionTypesUtil {
@@ -49,22 +54,18 @@ public class FunctionTypesUtil {
         K_MEMBER_FUNCTIONS = new ArrayList<ClassDescriptor>(n);
         K_EXTENSION_FUNCTIONS = new ArrayList<ClassDescriptor>(n);
 
+        ModuleDescriptor module = new ModuleDescriptorImpl(Name.special("<fake module for functions impl>"),
+                                                           Collections.<ImportPath>emptyList(), JavaToKotlinClassMap.getInstance());
+        MutablePackageFragmentDescriptor kotlin = new MutablePackageFragmentDescriptor(module, new FqName("kotlin"));
+        MutablePackageFragmentDescriptor reflect = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.reflect"));
+
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         for (int i = 0; i < n; i++) {
-            Name functionImpl = Name.identifier("FunctionImpl" + i);
-            FUNCTIONS.add(createFunctionImplDescriptor(functionImpl, builtIns.getFunction(i)));
-
-            Name extensionFunctionImpl = Name.identifier("ExtensionFunctionImpl" + i);
-            EXTENSION_FUNCTIONS.add(createFunctionImplDescriptor(extensionFunctionImpl, builtIns.getExtensionFunction(i)));
-
-            Name kFunctionImpl = Name.identifier("KFunctionImpl" + i);
-            K_FUNCTIONS.add(createFunctionImplDescriptor(kFunctionImpl, builtIns.getKFunction(i)));
-
-            Name kMemberFunctionImpl = Name.identifier("KMemberFunctionImpl" + i);
-            K_MEMBER_FUNCTIONS.add(createFunctionImplDescriptor(kMemberFunctionImpl, builtIns.getKMemberFunction(i)));
-
-            Name kExtensionFunctionImpl = Name.identifier("KExtensionFunctionImpl" + i);
-            K_EXTENSION_FUNCTIONS.add(createFunctionImplDescriptor(kExtensionFunctionImpl, builtIns.getKExtensionFunction(i)));
+            createFunctionImpl(FUNCTIONS, kotlin, "FunctionImpl" + i, builtIns.getFunction(i));
+            createFunctionImpl(EXTENSION_FUNCTIONS, kotlin, "ExtensionFunctionImpl" + i, builtIns.getExtensionFunction(i));
+            createFunctionImpl(K_FUNCTIONS, reflect, "KFunctionImpl" + i, builtIns.getKFunction(i));
+            createFunctionImpl(K_MEMBER_FUNCTIONS, reflect, "KMemberFunctionImpl" + i, builtIns.getKMemberFunction(i));
+            createFunctionImpl(K_EXTENSION_FUNCTIONS, reflect, "KExtensionFunctionImpl" + i, builtIns.getKExtensionFunction(i));
         }
 
         ImmutableMap.Builder<ClassDescriptor, ClassDescriptor> builder = ImmutableMap.builder();
@@ -137,22 +138,25 @@ public class FunctionTypesUtil {
         );
     }
 
-    @NotNull
-    private static ClassDescriptor createFunctionImplDescriptor(@NotNull Name name, @NotNull ClassDescriptor functionInterface) {
-        PackageFragmentDescriptor builtinsFragment = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
+    private static void createFunctionImpl(
+            @NotNull List<ClassDescriptor> result,
+            @NotNull PackageFragmentDescriptor containingDeclaration,
+            @NotNull String name,
+            @NotNull ClassDescriptor functionInterface
+    ) {
         MutableClassDescriptor functionImpl = new MutableClassDescriptor(
-                builtinsFragment,
-                builtinsFragment.getMemberScope(),
+                containingDeclaration,
+                containingDeclaration.getMemberScope(),
                 ClassKind.CLASS,
                 false,
-                name
+                Name.identifier(name)
         );
         functionImpl.setModality(Modality.FINAL);
         functionImpl.setVisibility(Visibilities.PUBLIC);
         functionImpl.setTypeParameterDescriptors(functionInterface.getDefaultType().getConstructor().getParameters());
         functionImpl.createTypeConstructor();
 
-        return functionImpl;
+        result.add(functionImpl);
     }
 
     @NotNull
@@ -170,10 +174,10 @@ public class FunctionTypesUtil {
     public static Type getFunctionImplType(@NotNull FunctionDescriptor descriptor) {
         int paramCount = descriptor.getValueParameters().size();
         if (descriptor.getReceiverParameter() != null) {
-            return Type.getObjectType("jet/ExtensionFunctionImpl" + paramCount);
+            return Type.getObjectType("kotlin/ExtensionFunctionImpl" + paramCount);
         }
         else {
-            return Type.getObjectType("jet/FunctionImpl" + paramCount);
+            return Type.getObjectType("kotlin/FunctionImpl" + paramCount);
         }
     }
 }
