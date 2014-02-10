@@ -17,6 +17,7 @@
     <property name="output" value="${basedir}/${output.relative}"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
+    <property name="bootstrap.build.no.tests" value="false"/>
     <property name="output.name" value="kotlin-compiler-${build.number}"/>
     <property name="idea.sdk" value="${basedir}/ideaSDK"/>
 
@@ -291,7 +292,30 @@
         <attribute name="compress" default="true"/>
 
         <sequential>
-          <jar jarfile="@{jarfile}" compress="@{compress}">
+          <!--
+          For "Compiler and Plugin - Bootstrap - No Tests" configuration the compiler will contain the runtime it was built against, and
+          will NOT contain the new runtime in its "Class-Path" attribute. This is done because the new compiler is guaranteed to work
+          against the OLD runtime (because the new compiler is just a Kotlin application, compiled by the old compiler with the old
+          runtime), but _will not necessarily_ work against the new one.
+          However we don't do this on the second run of our distribution, i.e. we do not include the new runtime in the NEWEST compiler.
+          This is because there are little to no differences between the new and the newest runtime, and so we assume that our newest
+          compiler will work with any of them. Also distributing two runtimes (inside the compiler and a separate one) could cause all
+          kinds of problems and confusion for users who include both our compiler and runtime in their classpath
+          -->
+          <if>
+            <istrue value="${bootstrap.build.no.tests}"/>
+            <then>
+              <property name="compiler.manifest.class.path" value="."/>
+            </then>
+            <else>
+              <property name="compiler.manifest.class.path" value="kotlin-runtime.jar"/>
+            </else>
+          </if>
+
+          <jar jarfile="@{jarfile}" compress="@{compress}" duplicate="preserve">
+              <zipfileset src="${bootstrap.runtime}">
+                <include name="**/*.class" if="${bootstrap.build.no.tests}"/>
+              </zipfileset>
               <fileset dir="${output}/classes/compiler"/>
               <fileset dir="${output}/builtins" includes="jet/**"/>
               <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
@@ -312,7 +336,7 @@
                   <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler}"/>
                   <attribute name="Implementation-Version" value="${build.number}"/>
 
-                  <attribute name="Class-Path" value="kotlin-runtime.jar"/>
+                  <attribute name="Class-Path" value="${compiler.manifest.class.path}"/>
                   <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
               </manifest>
           </jar>
@@ -422,6 +446,10 @@
                     }
 
                     -keep class jet.** {
+                        public protected *;
+                    }
+
+                    -keep class kotlin.** {
                         public protected *;
                     }
 
