@@ -141,7 +141,7 @@ public class Float private () : Number, Comparable<Float>  {
 
   public fun rangeTo(other : Double) : DoubleRange
   public fun rangeTo(other : Float)  : FloatRange
-  public fun rangeTo(other : Long)   : DoubleRange
+  public fun rangeTo(other : Long)   : FloatRange
   public fun rangeTo(other : Int)    : FloatRange
   public fun rangeTo(other : Short)  : FloatRange
   public fun rangeTo(other : Byte)   : FloatRange

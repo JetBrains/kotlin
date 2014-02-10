@@ -585,7 +585,7 @@ public final class Float : jet.Number, jet.Comparable<jet.Float> {
     public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
     public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
     public final fun rangeTo(/*0*/ other: jet.Int): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Long): jet.DoubleRange
+    public final fun rangeTo(/*0*/ other: jet.Long): jet.FloatRange
     public final fun rangeTo(/*0*/ other: jet.Short): jet.FloatRange
     public final fun times(/*0*/ other: jet.Byte): jet.Float
     public final fun times(/*0*/ other: jet.Char): jet.Float
