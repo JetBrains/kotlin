@@ -1,6 +1,6 @@
 // IS_APPLICABLE: false
 fun foo() {
-    val x = X()
+	val x = X()
 	val y = "$<caret>{x.bar()}"
 }
 
