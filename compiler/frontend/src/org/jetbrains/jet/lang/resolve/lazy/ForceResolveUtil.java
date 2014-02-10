@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.lazy;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -69,6 +70,10 @@ public class ForceResolveUtil {
         if (object instanceof LazyEntity) {
             LazyEntity lazyEntity = (LazyEntity) object;
             lazyEntity.forceResolveAllContents();
+        }
+        else if (object instanceof CallableDescriptor) {
+            CallableDescriptor callableDescriptor = (CallableDescriptor) object;
+            forceResolveAllContents(callableDescriptor.getReturnType());
         }
     }
 
