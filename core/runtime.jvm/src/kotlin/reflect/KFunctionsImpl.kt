@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package jet
+package kotlin.reflect
 
 public abstract class KFunctionImpl0<out R> : KFunction0<R>, DefaultJetObject() {
     override fun toString() = "${getClass().getGenericSuperclass()}"

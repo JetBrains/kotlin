@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package jet
+package kotlin.reflect
 
 public abstract class KExtensionFunctionImpl0<in T, out R> : KExtensionFunction0<T, R>, DefaultJetObject() {
     override fun toString() = "${getClass().getGenericSuperclass()}"

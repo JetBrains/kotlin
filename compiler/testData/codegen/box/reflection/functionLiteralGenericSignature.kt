@@ -19,15 +19,15 @@ val extensionFun = { Any.() : Unit -> }
 val extensionWithArgFun = { Long.(x: Any) : Date -> Date() }
 
 fun box(): String {
-    assertGenericSuper("jet.FunctionImpl0<jet.Unit>", unitFun)
-    assertGenericSuper("jet.FunctionImpl0<java.lang.Integer>", intFun)
-    assertGenericSuper("jet.FunctionImpl1<java.lang.String, jet.Unit>", stringParamFun)
-    assertGenericSuper("jet.FunctionImpl1<java.util.List<? extends java.lang.String>, java.util.List<? extends java.lang.String>>", listFun)
-    assertGenericSuper("jet.FunctionImpl1<java.util.List<java.lang.Double>, java.util.List<java.lang.Integer>>", mutableListFun)
-    assertGenericSuper("jet.FunctionImpl1<java.lang.Comparable<? super java.lang.String>, jet.Unit>", funWithIn)
+    assertGenericSuper("kotlin.FunctionImpl0<jet.Unit>", unitFun)
+    assertGenericSuper("kotlin.FunctionImpl0<java.lang.Integer>", intFun)
+    assertGenericSuper("kotlin.FunctionImpl1<java.lang.String, jet.Unit>", stringParamFun)
+    assertGenericSuper("kotlin.FunctionImpl1<java.util.List<? extends java.lang.String>, java.util.List<? extends java.lang.String>>", listFun)
+    assertGenericSuper("kotlin.FunctionImpl1<java.util.List<java.lang.Double>, java.util.List<java.lang.Integer>>", mutableListFun)
+    assertGenericSuper("kotlin.FunctionImpl1<java.lang.Comparable<? super java.lang.String>, jet.Unit>", funWithIn)
 
-    assertGenericSuper("jet.ExtensionFunctionImpl0<java.lang.Object, jet.Unit>", extensionFun)
-    assertGenericSuper("jet.ExtensionFunctionImpl1<java.lang.Long, java.lang.Object, java.util.Date>", extensionWithArgFun)
+    assertGenericSuper("kotlin.ExtensionFunctionImpl0<java.lang.Object, jet.Unit>", extensionFun)
+    assertGenericSuper("kotlin.ExtensionFunctionImpl1<java.lang.Long, java.lang.Object, java.util.Date>", extensionWithArgFun)
 
     return "OK"
 }

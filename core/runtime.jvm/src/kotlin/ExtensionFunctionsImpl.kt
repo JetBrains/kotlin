@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package jet
+package kotlin
 
 public abstract class ExtensionFunctionImpl0<in T, out R> : ExtensionFunction0<T, R>, DefaultJetObject() {
     override fun toString() = "${getClass().getGenericSuperclass()}"
