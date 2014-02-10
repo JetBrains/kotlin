@@ -1,10 +1,7 @@
 package kotlin
 
-import java.lang.Class
-import java.lang.Object
 import java.lang.annotation.*
-
-import jet.runtime.Intrinsic
+import kotlin.internal.Intrinsic
 
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method
