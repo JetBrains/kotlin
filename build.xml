@@ -562,6 +562,26 @@
           </sequential>
         </macrodef>
 
+        <macrodef name="pack_runtime">
+          <attribute name="jar"/>
+          <element name="classpath"/>
+
+          <sequential>
+            <jar destfile="@{jar}">
+              <classpath/>
+              <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+
+              <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.and.stdlib}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+              </manifest>
+            </jar>
+          </sequential>
+        </macrodef>
+
         <new_kotlinc src="${basedir}/core/builtins/src${path.separator}${basedir}/core/runtime.jvm/src"
                      output="${output}/classes/runtime"
                      classpath="${basedir}/core/builtins/src${path.separator}${basedir}/core/runtime.jvm/src"/>
@@ -572,23 +592,27 @@
             <classpath location="${output}/classes/runtime"/>
         </javac2>
 
+        <!-- TODO: these source paths should be defined once somewhere (see ForTestCompileRuntime) -->
+        <new_kotlinc src="${basedir}/libraries/stdlib/src/kotlin/Core.kt"
+                     output="${output}/classes/runtime-minimal"
+                     classpath="${output}/classes/runtime"/>
+
+        <pack_runtime jar="${output}/kotlin-runtime-minimal.jar">
+          <classpath>
+            <fileset dir="${output}/classes/runtime-minimal"/>
+          </classpath>
+        </pack_runtime>
+
         <new_kotlinc src="${basedir}/libraries/stdlib/src"
                      output="${output}/classes/stdlib"
                      classpath="${output}/classes/runtime"/>
 
-        <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
+        <pack_runtime jar="${kotlin-home}/lib/kotlin-runtime.jar">
+          <classpath>
             <fileset dir="${output}/classes/runtime"/>
             <fileset dir="${output}/classes/stdlib"/>
-            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-            <manifest>
-                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.and.stdlib}"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
+          </classpath>
+        </pack_runtime>
     </target>
 
     <target name="runtime_sources">

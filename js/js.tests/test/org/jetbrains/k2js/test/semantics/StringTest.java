@@ -77,7 +77,10 @@ public final class StringTest extends AbstractExpressionTest {
             String filePath = getOutputFilePath(getTestName(true) + ".kt", ecmaVersion);
             //noinspection IOResourceOpenedButNotSafelyClosed
             String text = loadTextAndClose(new FileInputStream(filePath));
-            assertFalse(filePath + " should not contain toString calls", text.contains("toString"));
+            // We strip out minimal runtime, because it has equals and toString in its text
+            int minimalRuntimeBegin = text.indexOf("kotlin: Kotlin.definePackage(");
+            assertTrue("Minimal runtime not found in translated file: " + filePath, minimalRuntimeBegin != -1);
+            assertFalse(filePath + " should not contain toString calls", text.substring(0, minimalRuntimeBegin).contains("toString"));
         }
     }
 

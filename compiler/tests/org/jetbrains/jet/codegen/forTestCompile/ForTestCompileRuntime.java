@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.forTestCompile;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
@@ -38,6 +39,12 @@ import java.util.regex.Pattern;
 public class ForTestCompileRuntime {
     private static final String BUILT_INS_SRC_PATH = "core/builtins/src";
     private static final String RUNTIME_JVM_SRC_PATH = "core/runtime.jvm/src";
+    private static final String STDLIB_HOME_SRC_PATH = "libraries/stdlib/src";
+
+    // TODO: these source paths should be defined once somewhere (see build.xml)
+    public static final List<String> MINIMAL_RUNTIME_SOURCES = Arrays.asList(
+            STDLIB_HOME_SRC_PATH + "/kotlin/Core.kt"
+    );
 
     private ForTestCompileRuntime() {
     }
@@ -53,6 +60,20 @@ public class ForTestCompileRuntime {
         protected void doCompile(@NotNull File classesDir) throws Exception {
             compileBuiltIns(classesDir);
             compileStdlib(classesDir);
+        }
+    }
+
+    private static class MinimalRuntime extends ForTestCompileSomething {
+        private MinimalRuntime() {
+            super("runtime-minimal");
+        }
+
+        private static final MinimalRuntime runtime = new MinimalRuntime();
+
+        @Override
+        protected void doCompile(@NotNull File classesDir) throws Exception {
+            String src = StringUtil.join(MINIMAL_RUNTIME_SOURCES, File.pathSeparator);
+            compileKotlinToJvm("stdlib-minimal", classesDir, src, classesDir.getPath());
         }
     }
 
@@ -75,7 +96,7 @@ public class ForTestCompileRuntime {
     }
 
     private static void compileStdlib(@NotNull File destDir) throws IOException {
-        compileKotlinToJvm("stdlib", destDir, "libraries/stdlib/src", destDir.getPath());
+        compileKotlinToJvm("stdlib", destDir, STDLIB_HOME_SRC_PATH, destDir.getPath());
     }
 
     private static void compileKotlinToJvm(
@@ -102,6 +123,11 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File runtimeJarForTests() {
         return ForTestCompileSomething.ACTUALLY_COMPILE ? Runtime.runtime.getJarFile() : new File("dist/kotlinc/lib/kotlin-runtime.jar");
+    }
+
+    @NotNull
+    public static File minimalRuntimeForTests() {
+        return ForTestCompileSomething.ACTUALLY_COMPILE ? MinimalRuntime.runtime.getJarFile() : new File("dist/kotlin-runtime-minimal.jar");
     }
 
     // This method is very convenient when you have trouble compiling runtime in tests

@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.k2js.config.EcmaVersion;
@@ -169,7 +170,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
     @NotNull
     protected List<String> additionalKotlinFiles() {
-        return Lists.newArrayList();
+        // TODO: compile minimal runtime only once for all tests
+        return Lists.newArrayList(ForTestCompileRuntime.MINIMAL_RUNTIME_SOURCES);
     }
 
 

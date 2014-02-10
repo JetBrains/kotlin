@@ -141,8 +141,8 @@ public final class TopLevelFIF extends CompositeFIF {
 
     private TopLevelFIF() {
         add(EQUALS_IN_ANY, KOTLIN_EQUALS);
-        add(pattern("jet", "toString").receiverExists(), TO_STRING);
-        add(pattern("jet", "equals").receiverExists(), KOTLIN_EQUALS);
+        add(pattern("kotlin", "toString").receiverExists(), TO_STRING);
+        add(pattern("kotlin", "equals").receiverExists(), KOTLIN_EQUALS);
         add(pattern("jet", "identityEquals").receiverExists(), IDENTITY_EQUALS);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);

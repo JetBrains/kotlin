@@ -113,6 +113,7 @@ public abstract class Config {
      */
     @NotNull
     public static final List<String> STDLIB_FILE_NAMES = Arrays.asList(
+            "/kotlin/Core.kt",
             "/kotlin/Preconditions.kt",
             "/kotlin/Iterators.kt",
             "/kotlin/JUtil.kt",

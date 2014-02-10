@@ -27,7 +27,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
+import org.jetbrains.jet.plugin.JetWithJdkAndMinimalRuntimeLightProjectDescriptor;
 
 import java.io.File;
 import java.util.List;
@@ -36,7 +36,7 @@ public abstract class AbstractHighlightingTest extends LightCodeInsightFixtureTe
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
+        return JetWithJdkAndMinimalRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     protected void doTest(String filePath) throws Exception {
