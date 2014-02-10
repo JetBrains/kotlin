@@ -125,9 +125,16 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
         });
     }
 
-    private void configureByDependencyIfExists(@NotNull String dependencyFileName) {
-        if (new File(BASE_PATH + "/" + dependencyFileName).exists()) {
-            myFixture.configureByFile(dependencyFileName);
+    private void configureByDependencyIfExists(@NotNull String dependencyFileName) throws Exception {
+        File file = new File(BASE_PATH + "/" + dependencyFileName);
+        if (file.exists()) {
+            if (dependencyFileName.endsWith(".java")) {
+                //allow test framework to put it under right directory
+                myFixture.addClass(FileUtil.loadFile(file));
+            }
+            else {
+                myFixture.configureByFile(dependencyFileName);
+            }
         }
     }
 
