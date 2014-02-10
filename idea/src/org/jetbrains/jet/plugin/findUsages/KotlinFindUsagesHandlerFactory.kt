@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 import com.intellij.find.findUsages.FindUsagesManager
 import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
 import com.intellij.psi.PsiMethod
+import org.jetbrains.jet.plugin.findUsages.handlers.DelegatingFindMemberUsagesHandler
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
     val javaHandlerFactory = JavaFindUsagesHandlerFactory(project)
@@ -58,23 +59,9 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             is JetNamedFunction, is JetProperty, is JetParameter -> {
                 val declaration = element as JetNamedDeclaration
 
-                return if (forHighlightUsages) KotlinFindMemberUsagesHandler.getInstance(declaration, this)
-                else JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
-                    when (callables.size()) {
-                        0 -> FindUsagesHandler.NULL_HANDLER
-                        1 -> {
-                            val callable = callables.get(0)
-                            when (callable) {
-                                is JetNamedDeclaration ->
-                                    KotlinFindMemberUsagesHandler.getInstance(callable, this)
-                                is PsiMethod ->
-                                    javaHandlerFactory.createFindUsagesHandler(callable, forHighlightUsages)
-                                else -> null
-                            }
-                        }
-                        else ->
-                            KotlinFindMemberUsagesHandler.getInstance(declaration, callables, this)
-                    }
+                if (forHighlightUsages) return KotlinFindMemberUsagesHandler.getInstance(declaration, this)
+                return JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
+                    if (callables.empty) FindUsagesHandler.NULL_HANDLER else DelegatingFindMemberUsagesHandler(declaration, callables, this)
                 }
             }
 
