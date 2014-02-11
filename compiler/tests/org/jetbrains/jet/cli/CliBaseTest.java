@@ -45,12 +45,12 @@ public class CliBaseTest {
     public final TestName testName = new TestName();
 
     @NotNull
-    private static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull String[] args) {
+    private static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLICompiler<?> compiler, @NotNull List<String> args) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         PrintStream origOut = System.out;
         try {
             System.setOut(new PrintStream(bytes));
-            ExitCode exitCode = CLICompiler.doMainNoExit(compiler, args);
+            ExitCode exitCode = CLICompiler.doMainNoExit(compiler, ArrayUtil.toStringArray(args));
             return Pair.create(bytes.toString("utf-8"), exitCode);
         }
         catch (Exception e) {
@@ -79,14 +79,14 @@ public class CliBaseTest {
     }
 
     @NotNull
-    static String[] readArgs(
+    static List<String> readArgs(
             @NotNull String argsFilePath,
             @NotNull final String testDataDir,
             @NotNull final String tempDir
     ) throws IOException {
         List<String> lines = FileUtil.loadLines(new FileInputStream(argsFilePath));
 
-        return ArrayUtil.toStringArray(ContainerUtil.mapNotNull(lines, new Function<String, String>() {
+        return ContainerUtil.mapNotNull(lines, new Function<String, String>() {
             @Override
             public String fun(String arg) {
                 if (arg.isEmpty()) {
@@ -97,7 +97,7 @@ public class CliBaseTest {
                         .replace("$TEMP_DIR$", tempDir)
                         .replace("$TESTDATA_DIR$", testDataDir);
             }
-        }));
+        });
     }
 
     protected void executeCompilerCompareOutputJVM() throws Exception {
