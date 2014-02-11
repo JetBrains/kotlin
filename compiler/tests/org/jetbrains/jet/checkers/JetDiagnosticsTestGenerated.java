@@ -4498,6 +4498,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/j+k/innerNestedClassFromJava.kt");
             }
             
+            @TestMetadata("invisiblePackagePrivateInheritedMember.kt")
+            public void testInvisiblePackagePrivateInheritedMember() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/j+k/invisiblePackagePrivateInheritedMember.kt");
+            }
+            
             @TestMetadata("KJKInheritance.kt")
             public void testKJKInheritance() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/j+k/KJKInheritance.kt");
