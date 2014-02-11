@@ -102,12 +102,12 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
         if (JetPsiUtil.isLocal(classOrObject)) {
             BindingContext bindingContext = session.resolveToElement(classOrObject);
-            forceResolveAllContents(bindingContext.get(BindingContext.CLASS, classOrObject));
+            ForceResolveUtil.forceResolveAllContents(bindingContext.get(BindingContext.CLASS, classOrObject));
 
             return new LightClassConstructionContext(bindingContext, null);
         }
 
-        forceResolveAllContents(session.getClassDescriptor(classOrObject));
+        ForceResolveUtil.forceResolveAllContents(session.getClassDescriptor(classOrObject));
         return new LightClassConstructionContext(session.getBindingContext(), null);
     }
 
@@ -132,7 +132,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                     Name name = jetFunction.getNameAsSafeName();
                     Collection<FunctionDescriptor> functions = packageDescriptor.getMemberScope().getFunctions(name);
                     for (FunctionDescriptor descriptor : functions) {
-                        forceResolveAllContents(descriptor);
+                        ForceResolveUtil.forceResolveAllContents(descriptor);
                     }
                 }
                 else if (declaration instanceof JetProperty) {
@@ -140,7 +140,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                     Name name = jetProperty.getNameAsSafeName();
                     Collection<VariableDescriptor> properties = packageDescriptor.getMemberScope().getProperties(name);
                     for (VariableDescriptor descriptor : properties) {
-                        forceResolveAllContents(descriptor);
+                        ForceResolveUtil.forceResolveAllContents(descriptor);
                     }
                 }
                 else if (declaration instanceof JetClassOrObject) {
@@ -150,13 +150,6 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                     LOG.error("Unsupported declaration kind: " + declaration + " in file " + file.getName() + "\n" + file.getText());
                 }
             }
-        }
-    }
-
-    private static void forceResolveAllContents(DeclarationDescriptor descriptor) {
-        ForceResolveUtil.forceResolveAllContents(descriptor);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("done: " + descriptor);
         }
     }
 
@@ -187,9 +180,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     }
 
     @Override
-    public boolean packageExists(
-            @NotNull FqName fqName, @NotNull GlobalSearchScope scope
-    ) {
+    public boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope) {
         return !JetAllPackagesIndex.getInstance().get(fqName.asString(), project, kotlinSources(scope)).isEmpty();
     }
 
