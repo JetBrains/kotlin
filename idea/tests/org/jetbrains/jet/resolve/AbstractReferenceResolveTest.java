@@ -73,6 +73,10 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
             myFixture.configureByFile(path);
         }
 
+        performChecks();
+    }
+
+    protected void performChecks() {
         if (InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), MULTIRESOLVE)) {
             doMultiResolveTest();
         }
