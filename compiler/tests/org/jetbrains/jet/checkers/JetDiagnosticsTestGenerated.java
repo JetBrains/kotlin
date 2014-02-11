@@ -3086,6 +3086,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/kt2906.kt");
             }
             
+            @TestMetadata("kt4529.kt")
+            public void testKt4529() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/functionLiterals/kt4529.kt");
+            }
+            
             @TestMetadata("LabeledFunctionLiterals.kt")
             public void testLabeledFunctionLiterals() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/functionLiterals/LabeledFunctionLiterals.kt");
@@ -6358,6 +6363,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("compiler/testData/diagnostics/tests/smartCasts")
         @InnerTestClasses({SmartCasts.Inference.class})
         public static class SmartCasts extends AbstractJetDiagnosticsTest {
+            @TestMetadata("afterBinaryExpr.kt")
+            public void testAfterBinaryExpr() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/smartCasts/afterBinaryExpr.kt");
+            }
+            
             public void testAllFilesPresentInSmartCasts() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/smartCasts"), Pattern.compile("^(.+)\\.kt$"), true);
             }

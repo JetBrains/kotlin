@@ -1141,9 +1141,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             resolutionResults = OverloadResolutionResultsImpl.nameNotFound();
         }
 
-        JetExpression right = binaryExpression.getRight();
-        if (right != null) {
-            dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
+        if (resolutionResults.isSingleResult()) {
+            dataFlowInfo = resolutionResults.getResultingCall().getDataFlowInfoForArguments().getResultInfo();
         }
 
         return JetTypeInfo.create(OverloadResolutionResultsUtil.getResultingType(resolutionResults, context.contextDependency), dataFlowInfo);
