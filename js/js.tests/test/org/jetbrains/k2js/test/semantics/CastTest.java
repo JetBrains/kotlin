@@ -31,4 +31,12 @@ public final class CastTest extends AbstractExpressionTest {
     public void testCastToNotNullType() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testSmartCastInExtensionFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testSmartCastInFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

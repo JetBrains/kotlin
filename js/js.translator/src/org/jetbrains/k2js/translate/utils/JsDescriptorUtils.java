@@ -24,8 +24,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastReceiver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -112,12 +114,20 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static DeclarationDescriptor getDeclarationDescriptorForReceiver
-            (@NotNull ReceiverValue receiverParameter) {
-        DeclarationDescriptor declarationDescriptor =
-                receiverParameter.getType().getConstructor().getDeclarationDescriptor();
-        //TODO: WHY assert?
-        assert declarationDescriptor != null;
+    public static DeclarationDescriptor getDeclarationDescriptorForReceiver(@NotNull ReceiverValue receiverParameter) {
+        DeclarationDescriptor declarationDescriptor;
+
+        if (receiverParameter instanceof ThisReceiver) {
+            declarationDescriptor = ((ThisReceiver) receiverParameter).getDeclarationDescriptor();
+        }
+        else if (receiverParameter instanceof AutoCastReceiver) {
+            AutoCastReceiver autoCastReceiver = ((AutoCastReceiver) receiverParameter);
+            declarationDescriptor = getDeclarationDescriptorForReceiver(autoCastReceiver.getOriginal());
+        }
+        else {
+            throw new UnsupportedOperationException("Unsupported receiver type: " + receiverParameter);
+        }
+
         return declarationDescriptor.getOriginal();
     }
 
