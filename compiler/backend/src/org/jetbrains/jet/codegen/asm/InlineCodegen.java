@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -62,11 +63,9 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     private final ExpressionCodegen codegen;
 
-    private final boolean notSeparateInline;
+    private final boolean asFunctionInline;
 
     private final GenerationState state;
-
-    private final boolean disabled;
 
     private final Call call;
 
@@ -90,18 +89,15 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     public InlineCodegen(
             @NotNull ExpressionCodegen codegen,
-            boolean notSeparateInline,
             @NotNull GenerationState state,
-            boolean disabled,
             @NotNull SimpleFunctionDescriptor functionDescriptor,
             @NotNull Call call
     ) {
+        assert functionDescriptor.getInlineStrategy().isInline() : "InlineCodegen could inline only inline function but " + functionDescriptor;
+
         this.state = state;
         this.typeMapper = state.getTypeMapper();
-
         this.codegen = codegen;
-        this.notSeparateInline = notSeparateInline;
-        this.disabled = disabled;
         this.call = call;
         this.functionDescriptor = functionDescriptor.getOriginal();
         bindingContext = codegen.getBindingContext();
@@ -110,6 +106,10 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         context = (MethodContext) getContext(functionDescriptor, state);
         originalFunctionFrame = context.prepareFrame(typeMapper);
         jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
+
+        InlineStrategy inlineStrategy =
+                codegen.getContext().isInlineFunction() ? InlineStrategy.IN_PLACE : functionDescriptor.getInlineStrategy();
+        this.asFunctionInline = false;
     }
 
 
@@ -244,7 +244,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
     public void putCapturedInLocal(
             @NotNull Type type, @Nullable StackValue stackValue, @Nullable ValueParameterDescriptor valueParameterDescriptor, int index
     ) {
-        if (!disabled && notSeparateInline && Type.VOID_TYPE != type) {
+        if (!asFunctionInline && Type.VOID_TYPE != type) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
             boolean couldBeRemapped = !shouldPutValue(type, stackValue, codegen.getContext(), valueParameterDescriptor);
             StackValue remappedIndex = couldBeRemapped ? stackValue : null;
@@ -364,14 +364,9 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         }
     }
 
-    public boolean isDisabled() {
-        return disabled;
-    }
-
     @Override
     public boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptora) {
-        return !disabled &&
-               expression instanceof JetFunctionLiteralExpression &&
+        return expression instanceof JetFunctionLiteralExpression &&
                !InlineUtil.hasNoinlineAnnotation(valueParameterDescriptora);
     }
 
