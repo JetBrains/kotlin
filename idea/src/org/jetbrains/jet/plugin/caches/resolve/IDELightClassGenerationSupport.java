@@ -134,8 +134,16 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
                 return new LightClassConstructionContext(session.getBindingContext(), null);
             }
             else {
-                KotlinCacheManager cacheManager = KotlinCacheManager.getInstance(project);
-                return new LightClassConstructionContext(cacheManager.getLightClassContextCache().getLightClassBindingContext(classOrObject), null);
+                BindingContext bindingContext;
+                if (JetPsiUtil.isLocal(classOrObject)) {
+                    bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
+                }
+                else {
+                    bindingContext = KotlinCacheManager.getInstance(project)
+                            .getPossiblyIncompleteDeclarationsForLightClassGeneration().getBindingContext();
+                }
+
+                return new LightClassConstructionContext(bindingContext, null);
             }
         }
         finally {
