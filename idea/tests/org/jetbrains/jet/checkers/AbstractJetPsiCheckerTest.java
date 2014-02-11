@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,28 @@
 
 package org.jetbrains.jet.checkers;
 
-import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
 
-public abstract class AbstractJetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
+public abstract class AbstractJetPsiCheckerTest extends JetLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String filePath) throws Exception {
-        doTest(filePath, true, false);
+        myFixture.configureByFile(filePath);
+        myFixture.checkHighlighting(true, false, false);
     }
 
     public void doTestWithInfos(@NotNull String filePath) throws Exception {
         try {
-            enableInspectionTool(new SpellCheckingInspection());
+            myFixture.configureByFile(filePath);
+
+            //noinspection unchecked
+            myFixture.enableInspections(SpellCheckingInspection.class);
+
             JetPsiChecker.setNamesHighlightingEnabled(false);
-            doTest(filePath, true, true);
+            myFixture.checkHighlighting(true, true, false);
         }
         finally {
             JetPsiChecker.setNamesHighlightingEnabled(true);
@@ -41,12 +46,7 @@ public abstract class AbstractJetPsiCheckerTest extends LightDaemonAnalyzerTestC
 
     @NotNull
     @Override
-    protected String getTestDataPath() {
-        return "";
-    }
-
-    @Override
-    protected Sdk getProjectJDK() {
-        return PluginTestCaseBase.jdkFromIdeaHome();
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetLightProjectDescriptor.INSTANCE;
     }
 }
