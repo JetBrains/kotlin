@@ -32,10 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -50,7 +47,6 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
-import org.jetbrains.jet.utils.Profiler;
 
 import java.util.*;
 
@@ -59,8 +55,6 @@ import static org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope.kotlinSour
 public class IDELightClassGenerationSupport extends LightClassGenerationSupport {
 
     private static final Logger LOG = Logger.getInstance(IDELightClassGenerationSupport.class);
-
-    private static boolean USE_LAZY = true;
 
     public static IDELightClassGenerationSupport getInstanceForIDE(@NotNull Project project) {
         return (IDELightClassGenerationSupport) ServiceManager.getService(project, LightClassGenerationSupport.class);
@@ -96,59 +90,25 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         List<JetFile> sortedFiles = new ArrayList<JetFile>(files);
         Collections.sort(sortedFiles, jetFileComparator);
 
-        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + " analyze", LOG).start();
-        try {
-            if (USE_LAZY) {
-                ResolveSessionForBodies session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(sortedFiles.get(0));
-                forceResolvePackageDeclarations(files, session);
-                return new LightClassConstructionContext(session.getBindingContext(), null);
-            }
-            else {
-                KotlinCacheManager cacheManager = KotlinCacheManager.getInstance(project);
-                KotlinDeclarationsCache declarationsCache = cacheManager.getPossiblyIncompleteDeclarationsForLightClassGeneration();
-                return new LightClassConstructionContext(declarationsCache.getBindingContext(), null);
-            }
-        }
-        finally {
-            p.end();
-        }
+        ResolveSessionForBodies session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(sortedFiles.get(0));
+        forceResolvePackageDeclarations(files, session);
+        return new LightClassConstructionContext(session.getBindingContext(), null);
     }
 
     @NotNull
     @Override
     public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        Profiler p = Profiler.create((USE_LAZY ? "lazy" : "eager") + " analyze", LOG).start();
+        ResolveSessionForBodies session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) classOrObject.getContainingFile());
 
-        try {
-            if (USE_LAZY) {
-                ResolveSessionForBodies session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) classOrObject.getContainingFile());
+        if (JetPsiUtil.isLocal(classOrObject)) {
+            BindingContext bindingContext = session.resolveToElement(classOrObject);
+            forceResolveAllContents(bindingContext.get(BindingContext.CLASS, classOrObject));
 
-                if (JetPsiUtil.isLocal(classOrObject)) {
-                    BindingContext bindingContext = session.resolveToElement(classOrObject);
-                    forceResolveAllContents(bindingContext.get(BindingContext.CLASS, classOrObject));
-
-                    return new LightClassConstructionContext(bindingContext, null);
-                }
-
-                forceResolveAllContents(session.getClassDescriptor(classOrObject));
-                return new LightClassConstructionContext(session.getBindingContext(), null);
-            }
-            else {
-                BindingContext bindingContext;
-                if (JetPsiUtil.isLocal(classOrObject)) {
-                    bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
-                }
-                else {
-                    bindingContext = KotlinCacheManager.getInstance(project)
-                            .getPossiblyIncompleteDeclarationsForLightClassGeneration().getBindingContext();
-                }
-
-                return new LightClassConstructionContext(bindingContext, null);
-            }
+            return new LightClassConstructionContext(bindingContext, null);
         }
-        finally {
-            p.end();
-        }
+
+        forceResolveAllContents(session.getClassDescriptor(classOrObject));
+        return new LightClassConstructionContext(session.getBindingContext(), null);
     }
 
     private static void forceResolvePackageDeclarations(@NotNull Collection<JetFile> files, @NotNull KotlinCodeAnalyzer session) {
