@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public class FunctionAnalyzerExtension {
     private static List<AnalyzerExtension> getExtensions(@NotNull FunctionDescriptor functionDescriptor) {
         List<AnalyzerExtension> list = new ArrayList<AnalyzerExtension>();
         if (functionDescriptor instanceof SimpleFunctionDescriptor &&
-                ((SimpleFunctionDescriptor) functionDescriptor).isInline()) {
+                ((SimpleFunctionDescriptor) functionDescriptor).getInlineStrategy().isInline()) {
             list.add(InlineAnalyzerExtension.INSTANCE);
         }
         return list;

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 
 /**
  * Simple functions are the ones with 'fun' keyword and function literals
@@ -31,5 +32,6 @@ public interface SimpleFunctionDescriptor extends FunctionDescriptor {
     @Override
     SimpleFunctionDescriptor getOriginal();
 
-    boolean isInline();
+    @NotNull
+    InlineStrategy getInlineStrategy();
 }

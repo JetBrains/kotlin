@@ -50,7 +50,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
     private final boolean isEffectivelyPublicApiFunction;
 
     public InlineCallResolverExtension(@NotNull SimpleFunctionDescriptor descriptor) {
-        assert descriptor.isInline() : "This extension should be created only for inline functions but not " + descriptor;
+        assert descriptor.getInlineStrategy().isInline() : "This extension should be created only for inline functions but not " + descriptor;
         this.descriptor = descriptor;
         this.isEffectivelyPublicApiFunction = isEffectivelyPublicApi(descriptor);
 
@@ -232,7 +232,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
 
         return isInvoke ||
                //or inline extension
-               ((SimpleFunctionDescriptor) descriptor).isInline();
+               ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
     }
 
     private void checkVisibility(@NotNull CallableDescriptor declarationDescriptor, @NotNull JetElement expression, @NotNull BasicCallResolutionContext context){

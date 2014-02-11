@@ -91,7 +91,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     public boolean isInlineFunction() {
         DeclarationDescriptor descriptor = getContextDescriptor();
         if (descriptor instanceof SimpleFunctionDescriptor) {
-            return ((SimpleFunctionDescriptor) descriptor).isInline();
+            return ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
         }
         return false;
     }
