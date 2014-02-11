@@ -45,7 +45,7 @@
               <element id="module-output" name="util.runtime" />
             </element>
           </element>
-          <element id="library" level="project" name="kotlin-runtime" />
+          <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-runtime.jar" />
         </element>
         <element id="directory" name="kotlinc">
           <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />
