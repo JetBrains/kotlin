@@ -36,6 +36,10 @@ abstract class AbstractShortenRefsTest : LightCodeInsightFixtureTestCase() {
         if (File(dependencyPath).exists()) {
             fixture.configureByFile(dependencyPath)
         }
+        val javaDependencyPath = testPath.replace(".kt", ".dependency.java")
+        if (File(javaDependencyPath).exists()) {
+            fixture.configureByFile(javaDependencyPath)
+        }
 
         fixture.configureByFile(testPath)
 
