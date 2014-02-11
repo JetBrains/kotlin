@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -100,24 +99,17 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull InjectorForJavaDescriptorResolver injector,
             boolean addBuiltIns
     ) {
-        final JavaClassFinderImpl classFinder = injector.getJavaClassFinder();
-
         // TODO: Replace with stub declaration provider
         GlobalContextImpl globalContext = injector.getGlobalContext();
         FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
                 globalContext.getStorageManager(),
-                files,
-                new Predicate<FqName>() {
-                    @Override
-                    public boolean apply(FqName fqName) {
-                        return classFinder.findPackage(fqName) != null || KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
-                    }
-                });
+                files);
 
         ModuleDescriptorImpl module = injector.getModule();
 
         if (addBuiltIns) {
-            module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+            module.addFragmentProvider(DependencyKind.BUILT_INS,
+                                       KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         }
 
         return new InjectorForLazyResolve(project, globalContext, module, declarationProviderFactory, trace).getResolveSession();

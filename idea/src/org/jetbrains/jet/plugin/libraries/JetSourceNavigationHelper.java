@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
@@ -219,13 +218,7 @@ public class JetSourceNavigationHelper {
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
                 globalContext.getStorageManager(),
-                getContainingFiles(candidates),
-                new Predicate<FqName>() {
-                    @Override
-                    public boolean apply(@Nullable FqName fqName) {
-                        return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
-                    }
-                });
+                getContainingFiles(candidates));
 
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
                                                                          AnalyzerFacadeForJVM.DEFAULT_IMPORTS,
