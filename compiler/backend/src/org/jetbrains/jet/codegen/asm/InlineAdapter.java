@@ -32,6 +32,8 @@ public class InlineAdapter extends InstructionAdapter {
 
     private final List<CatchBlock> blocks = new ArrayList<CatchBlock>();
 
+    private int nextLocalIndexBeforeInline = -1;
+
     public InlineAdapter(MethodVisitor mv, int localsSize) {
         super(mv);
         nextLocalIndex = localsSize;
@@ -62,6 +64,11 @@ public class InlineAdapter extends InstructionAdapter {
 
     public void setInlining(boolean isInlining) {
         this.isInlining = isInlining;
+        if (isInlining) {
+            nextLocalIndexBeforeInline = nextLocalIndex;
+        } else {
+            nextLocalIndex = nextLocalIndexBeforeInline;
+        }
     }
 
     @Override

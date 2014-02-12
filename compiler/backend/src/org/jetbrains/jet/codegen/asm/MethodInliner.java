@@ -104,7 +104,6 @@ public class MethodInliner {
 
         final Iterator<ConstructorInvocation> iterator = constructorInvocationList.iterator();
 
-        //TODO add reset to counter
         InlineAdapter inliner = new InlineAdapter(resultNode, parameters.totalSize()) {
 
             private ConstructorInvocation invocation;
