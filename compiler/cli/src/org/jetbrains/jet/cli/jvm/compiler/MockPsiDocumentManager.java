@@ -67,6 +67,10 @@ public class MockPsiDocumentManager extends PsiDocumentManager {
     public void commitDocument(@NotNull Document document) {
     }
 
+    public CharSequence getLastCommittedText(@NotNull Document document) {
+        return document.getText();
+    }
+
     @Override
     @NotNull
     public Document[] getUncommittedDocuments() {
