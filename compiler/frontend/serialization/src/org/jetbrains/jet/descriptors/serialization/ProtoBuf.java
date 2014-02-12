@@ -7832,7 +7832,6 @@ public final class ProtoBuf {
      *has_annotations
      *CallableKind
      *MemberKind
-     *inline
      *hasGetter
      *hasSetter
      * </pre>
@@ -7848,7 +7847,6 @@ public final class ProtoBuf {
      *has_annotations
      *CallableKind
      *MemberKind
-     *inline
      *hasGetter
      *hasSetter
      * </pre>
@@ -9056,7 +9054,6 @@ public final class ProtoBuf {
      *has_annotations
      *CallableKind
      *MemberKind
-     *inline
      *hasGetter
      *hasSetter
      * </pre>
@@ -9074,7 +9071,6 @@ public final class ProtoBuf {
      *has_annotations
      *CallableKind
      *MemberKind
-     *inline
      *hasGetter
      *hasSetter
      * </pre>
@@ -9750,7 +9746,6 @@ public final class ProtoBuf {
        *has_annotations
        *CallableKind
        *MemberKind
-       *inline
        *hasGetter
        *hasSetter
        * </pre>
@@ -9768,7 +9763,6 @@ public final class ProtoBuf {
        *has_annotations
        *CallableKind
        *MemberKind
-       *inline
        *hasGetter
        *hasSetter
        * </pre>
@@ -9786,7 +9780,6 @@ public final class ProtoBuf {
        *has_annotations
        *CallableKind
        *MemberKind
-       *inline
        *hasGetter
        *hasSetter
        * </pre>
@@ -9807,7 +9800,6 @@ public final class ProtoBuf {
        *has_annotations
        *CallableKind
        *MemberKind
-       *inline
        *hasGetter
        *hasSetter
        * </pre>
