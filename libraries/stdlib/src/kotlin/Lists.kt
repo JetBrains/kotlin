@@ -80,3 +80,21 @@ public fun <T:Any> List<T?>.requireNoNulls() : List<T> {
     return this as List<T>
 }
 
+// "Iterable-getters"
+/**
+ * Returns a subList
+ */
+public fun <T> List<T>.get(indexes: IntRange): List<T>{
+    return subList(indexes.start, indexes.end)
+}
+/**
+ * Returns a new List of elements, indexes of which were iterated by the iterator
+ */
+public fun <T> List<T>.get(indexes: Iterable<Int>): List<T>{
+    val result = listBuilder<T>()
+    for(i in indexes){
+        result.add(get(i))
+    }
+    return result.build()
+}
+
