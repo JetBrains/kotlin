@@ -412,7 +412,7 @@ public class AsmUtil {
                 return StackValue.cmp(opToken, leftType);
             }
             else {
-                v.invokestatic("jet/runtime/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z");
+                v.invokestatic("kotlin/jvm/internal/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z");
 
                 if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
                     genInvertBoolean(v);
@@ -488,7 +488,7 @@ public class AsmUtil {
             if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
                 v.load(index, asmType);
                 v.visitLdcInsn(parameter.getName().asString());
-                v.invokestatic("jet/runtime/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
+                v.invokestatic("kotlin/jvm/internal/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
             }
         }
     }
@@ -530,7 +530,7 @@ public class AsmUtil {
             v.dup();
             v.visitLdcInsn(descriptor.getContainingDeclaration().getName().asString());
             v.visitLdcInsn(descriptor.getName().asString());
-            v.invokestatic("jet/runtime/Intrinsics", assertMethodToCall, "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
+            v.invokestatic("kotlin/jvm/internal/Intrinsics", assertMethodToCall, "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
         }
     }
 

@@ -41,7 +41,7 @@ public class ArrayIndices extends IntrinsicMethod {
     ) {
         receiver.put(receiver.type, v);
         v.arraylength();
-        v.invokestatic("jet/runtime/Ranges", "arrayIndices", "(I)Ljet/IntRange;");
+        v.invokestatic("kotlin/jvm/internal/Intrinsics", "arrayIndices", "(I)Ljet/IntRange;");
         return JET_INT_RANGE_TYPE;
     }
 }

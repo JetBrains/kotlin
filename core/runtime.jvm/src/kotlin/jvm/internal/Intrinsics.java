@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package jet.runtime;
+package kotlin.jvm.internal;
 
 import jet.Function0;
+import jet.IntRange;
+import kotlin.KotlinNullPointerException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @SuppressWarnings("unused")
 public class Intrinsics {
@@ -26,11 +31,11 @@ public class Intrinsics {
     }
 
     public static String stringPlus(String self, Object other) {
-        return ((self == null) ? "null" : self) + ((other == null) ? "null" : other.toString());
+        return String.valueOf(self) + String.valueOf(other);
     }
 
     public static void throwNpe() {
-        throw new JetNullPointerException();
+        throw new KotlinNullPointerException();
     }
 
     public static void checkReturnedValueIsNotNull(Object value, String className, String methodName) {
@@ -66,20 +71,20 @@ public class Intrinsics {
         }
     }
 
-    public static <T> Class<T> getJavaClass(T self) {
-        return (Class<T>) self.getClass();
-    }
-
     public static int compare(long thisVal, long anotherVal) {
-        return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+        return thisVal < anotherVal ? -1 : thisVal == anotherVal ? 0 : 1;
     }
 
     public static int compare(int thisVal, int anotherVal) {
-        return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+        return thisVal < anotherVal ? -1 : thisVal == anotherVal ? 0 : 1;
     }
 
     public static boolean areEqual(Object first, Object second) {
         return first == null ? second == null : first.equals(second);
+    }
+
+    public static IntRange arrayIndices(int length) {
+        return new IntRange(0, length - 1);
     }
 
     public static <R> R stupidSync(Object lock, Function0<R> block) {
@@ -92,63 +97,21 @@ public class Intrinsics {
             "throwNpe", "checkReturnedValueIsNotNull", "checkFieldIsNotNull", "checkParameterIsNotNull"
     ));
 
-    private static <T extends Throwable> T sanitizeStackTrace(T throwable) {
+    public static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         StackTraceElement[] stackTrace = throwable.getStackTrace();
-        ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>();
+        ArrayList<StackTraceElement> list = new ArrayList<StackTraceElement>(stackTrace.length);
         boolean skip = true;
-        for(StackTraceElement ste : stackTrace) {
+        for (StackTraceElement element : stackTrace) {
             if (!skip) {
-                list.add(ste);
+                list.add(element);
             }
-            else {
-                if ("jet.runtime.Intrinsics".equals(ste.getClassName())) {
-                    if (METHOD_NAMES_TO_SKIP.contains(ste.getMethodName())) {
-                        skip = false;
-                    }
+            else if ("kotlin.jvm.internal.Intrinsics".equals(element.getClassName())) {
+                if (METHOD_NAMES_TO_SKIP.contains(element.getMethodName())) {
+                    skip = false;
                 }
             }
         }
         throwable.setStackTrace(list.toArray(new StackTraceElement[list.size()]));
         return throwable;
-    }
-
-    private static class JetNullPointerException extends NullPointerException {
-        @Override
-        public synchronized Throwable fillInStackTrace() {
-            super.fillInStackTrace();
-            return sanitizeStackTrace(this);
-        }
-    }
-
-    public static class SpreadBuilder extends ArrayList {
-        public void addSpread(Object array) {
-            if (array != null) {
-                if (array instanceof Object[]) {
-                    Object[] arr = (Object[]) array;
-                    if (arr.length > 0) {
-                        ensureCapacity(size() + arr.length);
-                        for (int i = 0; i < arr.length; i++) {
-                            add(arr[i]);
-                        }
-                    }
-                }
-                else if (array instanceof Collection) {
-                    addAll((Collection) array);
-                }
-                else if (array instanceof Iterable) {
-                    for(Iterator iterator = ((Iterable) array).iterator(); iterator.hasNext(); ) {
-                        add(iterator.next());
-                    }
-                }
-                else if (array instanceof Iterator) {
-                    for(Iterator iterator = ((Iterator) array); iterator.hasNext(); ) {
-                        add(iterator.next());
-                    }
-                }
-                else {
-                    throw new UnsupportedOperationException("Don't know how to spread " + array.getClass());
-                }
-            }
-        }
     }
 }

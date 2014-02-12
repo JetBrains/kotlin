@@ -2355,7 +2355,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 gen(arguments.get(0).getArgumentExpression(), type);
             }
             else {
-                String owner = "jet/runtime/Intrinsics$SpreadBuilder";
+                String owner = "kotlin/jvm/internal/SpreadBuilder";
                 v.anew(Type.getObjectType(owner));
                 v.dup();
                 v.invokespecial(owner, "<init>", "()V");
@@ -3047,7 +3047,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.dup();
             Label ok = new Label();
             v.ifnonnull(ok);
-            v.invokestatic("jet/runtime/Intrinsics", "throwNpe", "()V");
+            v.invokestatic("kotlin/jvm/internal/Intrinsics", "throwNpe", "()V");
             v.mark(ok);
             return StackValue.onStack(base.type);
         }
