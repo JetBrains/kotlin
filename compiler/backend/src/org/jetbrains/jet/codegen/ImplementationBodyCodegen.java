@@ -1157,7 +1157,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v);
 
         if (isClassObject(descriptor)) {
-            context.recordSyntheticAccessorIfNeeded(constructorDescriptor, typeMapper);
+            context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);
         }
     }
 

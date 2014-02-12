@@ -48,7 +48,7 @@ public final class EnclosedValueDescriptor {
     public StackValue getOuterValue(ExpressionCodegen expressionCodegen) {
         GenerationState state = expressionCodegen.getState();
         for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
-            if (aCase.isCase(descriptor, state)) {
+            if (aCase.isCase(descriptor)) {
                 return aCase.outerValue(this, expressionCodegen);
             }
         }

@@ -101,7 +101,7 @@ public class PropertyCodegen extends GenerationStateAware {
         generateGetter(p, propertyDescriptor, p.getGetter());
         generateSetter(p, propertyDescriptor, p.getSetter());
 
-        context.recordSyntheticAccessorIfNeeded(propertyDescriptor, typeMapper);
+        context.recordSyntheticAccessorIfNeeded(propertyDescriptor, bindingContext);
     }
 
     public void generatePrimaryConstructorProperty(JetParameter p, PropertyDescriptor descriptor) {

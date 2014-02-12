@@ -145,7 +145,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         generateBridgeIfNeeded(owner, state, v, functionDescriptor);
 
-        methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, typeMapper);
+        methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
     }
 
     private void generateParameterAnnotations(

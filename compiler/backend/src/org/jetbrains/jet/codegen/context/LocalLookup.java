@@ -34,8 +34,8 @@ public interface LocalLookup {
     enum LocalLookupCase {
         VAR {
             @Override
-            public boolean isCase(DeclarationDescriptor d, GenerationState state) {
-                return (d instanceof VariableDescriptor) && !(d instanceof PropertyDescriptor);
+            public boolean isCase(DeclarationDescriptor d) {
+                return d instanceof VariableDescriptor && !(d instanceof PropertyDescriptor);
             }
 
             @Override
@@ -69,7 +69,7 @@ public interface LocalLookup {
 
         LOCAL_NAMED_FUNCTION {
             @Override
-            public boolean isCase(DeclarationDescriptor d, GenerationState state) {
+            public boolean isCase(DeclarationDescriptor d) {
                 return isLocalNamedFun(d);
             }
 
@@ -100,7 +100,7 @@ public interface LocalLookup {
 
         RECEIVER {
             @Override
-            public boolean isCase(DeclarationDescriptor d, GenerationState state) {
+            public boolean isCase(DeclarationDescriptor d) {
                 return d instanceof CallableDescriptor;
             }
 
@@ -129,7 +129,7 @@ public interface LocalLookup {
             }
         };
 
-        public abstract boolean isCase(DeclarationDescriptor d, GenerationState state);
+        public abstract boolean isCase(DeclarationDescriptor d);
 
         public abstract StackValue innerValue(
                 DeclarationDescriptor d,
