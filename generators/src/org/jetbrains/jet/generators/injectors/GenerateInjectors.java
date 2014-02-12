@@ -17,12 +17,6 @@
 package org.jetbrains.jet.generators.injectors;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.DependencyInjectorGenerator;
@@ -77,7 +71,6 @@ public class GenerateInjectors {
                 generateInjectorForTopDownAnalyzerForJs(),
                 generateMacroInjector(),
                 generateTestInjector(),
-                generateInjectorForJvmCodegen(),
                 generateInjectorForLazyResolve(),
                 generateInjectorForBodyResolve()
         );
@@ -227,31 +220,6 @@ public class GenerateInjectors {
         generator.addParameter(ModuleDescriptor.class);
 
         generator.configure("compiler/tests", "org.jetbrains.jet.di", "InjectorForTests", GenerateInjectors.class);
-        return generator;
-    }
-
-    private static DependencyInjectorGenerator generateInjectorForJvmCodegen() throws IOException {
-        DependencyInjectorGenerator generator = new DependencyInjectorGenerator();
-
-        // Parameters
-        generator.addPublicParameter(JetTypeMapper.class);
-        generator.addPublicParameter(GenerationState.class);
-        generator.addParameter(ClassBuilderFactory.class);
-        generator.addPublicParameter(Project.class);
-
-        // Fields
-        generator.addField(false, GlobalContext.class, null,
-                           new GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"));
-        generator.addField(false, BindingTrace.class, "bindingTrace",
-                           new GivenExpression("jetTypeMapper.getBindingTrace()"));
-        generator.addField(false, BindingContext.class, "bindingContext",
-                           new GivenExpression("bindingTrace.getBindingContext()"));
-        generator.addField(false, ClassBuilderMode.class, "classBuilderMode",
-                           new GivenExpression("classBuilderFactory.getClassBuilderMode()"));
-        generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
-        generator.addPublicField(ClassFileFactory.class);
-
-        generator.configure("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen", GenerateInjectors.class);
         return generator;
     }
 
