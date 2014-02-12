@@ -27,19 +27,17 @@ public object ShortenReferences {
     }
 
     public fun process(elements: Iterable<JetElement>) {
-        val first = elements.firstOrNull()
-        if (first == null) return
-        val file = first.getContainingFile() as JetFile
+        for ((file, fileElements) in elements.groupBy { element -> element.getContainingFile() as JetFile }) {
+            // first resolve all qualified references - optimization
+            val resolveAllVisitor = ResolveAllReferencesVisitor(file)
+            processElements(fileElements, resolveAllVisitor)
 
-        // first resolve all qualified references - optimization
-        val resolveAllVisitor = ResolveAllReferencesVisitor(file)
-        processElements(elements, resolveAllVisitor)
+            val shortenTypesVisitor = ShortenTypesVisitor(file, resolveAllVisitor.result)
+            processElements(fileElements, shortenTypesVisitor)
+            shortenTypesVisitor.finish()
 
-        val shortenTypesVisitor = ShortenTypesVisitor(file, resolveAllVisitor.result)
-        processElements(elements, shortenTypesVisitor)
-        shortenTypesVisitor.finish()
-
-        processElements(elements, ShortenQualifiedExpressionsVisitor(file, resolveAllVisitor.result))
+            processElements(fileElements, ShortenQualifiedExpressionsVisitor(file, resolveAllVisitor.result))
+        }
     }
 
     private fun processElements(elements: Iterable<JetElement>, visitor: JetVisitorVoid) {
