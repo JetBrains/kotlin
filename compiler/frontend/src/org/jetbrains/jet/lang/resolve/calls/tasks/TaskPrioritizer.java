@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.tasks;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -38,10 +39,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.PackageType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.isOrOverridesSynthesized;
 import static org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*;
@@ -119,7 +117,7 @@ public class TaskPrioritizer {
             addCandidatesForInvoke(receiver, c);
             return;
         }
-        List<ReceiverValue> implicitReceivers = JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope);
+        Collection<ReceiverValue> implicitReceivers = Sets.newLinkedHashSet(JetScopeUtils.getImplicitReceiversHierarchyValues(c.scope));
         if (receiver.exists()) {
             addCandidatesForExplicitReceiver(receiver, implicitReceivers, c, /*isExplicit=*/true);
             return;
@@ -129,7 +127,7 @@ public class TaskPrioritizer {
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesForExplicitReceiver(
             @NotNull ReceiverValue explicitReceiver,
-            @NotNull List<ReceiverValue> implicitReceivers,
+            @NotNull Collection<ReceiverValue> implicitReceivers,
             @NotNull TaskPrioritizerContext<D, F> c,
             boolean isExplicit
     ) {
@@ -180,7 +178,7 @@ public class TaskPrioritizer {
     }
 
     private static <D extends CallableDescriptor, F extends D> void addCandidatesForNoReceiver(
-            @NotNull List<ReceiverValue> implicitReceivers,
+            @NotNull Collection<ReceiverValue> implicitReceivers,
             @NotNull TaskPrioritizerContext<D, F> c
     ) {
         List<Collection<ResolutionCandidate<D>>> localsList = Lists.newArrayList();
