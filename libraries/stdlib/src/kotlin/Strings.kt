@@ -66,3 +66,29 @@ public inline fun String.count(predicate: (Char) -> Boolean): Int {
     }
     return answer
 }
+
+// "Iterable-getters"
+public fun CharSequence.get(indexes: IntRange): CharSequence{
+    return subSequence(indexes.start, indexes.end + 1)!! // inclusive
+}
+public fun CharSequence.get(indexes: Iterable<Int>): CharSequence{
+    val result = StringBuilder()
+    for(i in indexes){
+        result.append(get(i))
+    }
+    return result
+}
+
+/**
+ * Returns a substring
+ */
+public fun String.get(indexes: IntRange): String{
+    return substring(indexes.start, indexes.end + 1) // inclusive
+}
+public fun String.get(indexes: Iterable<Int>): String{
+    val result = StringBuilder()
+    for(i in indexes){
+        result.append(get(i))
+    }
+    return result.toString()
+}

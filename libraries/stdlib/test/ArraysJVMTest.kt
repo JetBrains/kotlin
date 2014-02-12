@@ -189,4 +189,26 @@ class ArraysJVMTest {
         expect(3000000000000) { longArray(1000000000000, 2000000000000).sum() }
         expect(3.0.toFloat()) { floatArray(1.0.toFloat(), 2.0.toFloat()).sum() }
     }
+    
+    test fun indexOf() {
+        expect(-1){ intArray().indexOf(45) }
+        expect(1) { intArray(2, 3, 9, 3, 6, 2, 3).indexOf(3) }
+        expect(1) { doubleArray(1.0, 2.0, 8.0).indexOf(2.0) }
+        expect(0) { byteArray(100, 100).indexOf(100) }
+        expect(-1){ shortArray(200, 500, 89).indexOf(18) }
+        expect(1) { longArray(1000000000000, 2000000000000).indexOf(2000000000000) }
+        expect(2) { floatArray(1.0.toFloat(), 2.0.toFloat(), 9.0.toFloat()).indexOf(9.0F) }
+        expect(7) { intArray<(20, { if(it < 10) it else 20 - it }).indexOf(7)}
+    }
+
+    test fun lastIndexOf() {
+        expect(-1){ intArray().lastIndexOf(45) }
+        expect(6) { intArray(2, 3, 9, 3, 6, 2, 3).lastIndexOf(3) }
+        expect(1) { doubleArray(1.0, 2.0, 8.0).lastIndexOf(2.0) }
+        expect(1) { byteArray(100, 100).lastIndexOf(100) }
+        expect(-1){ shortArray(200, 500, 89).lastIndexOf(18) }
+        expect(1) { longArray(1000000000000, 2000000000000).indexOf(2000000000000) }
+        expect(2) { floatArray(1.0F, 2.0F, 9.0F).lastIndexOf(9.0F) }
+        expect(13){ intArray(20, { if(it < 10) it else 20 - it }).lastIndexOf(7)}
+    }
 }
