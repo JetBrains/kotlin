@@ -20,12 +20,15 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.*;
 import org.jetbrains.asm4.tree.MethodNode;
 import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
+import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
@@ -127,23 +130,31 @@ public class InlineCodegenUtil {
         return null;
     }
 
-    public static String getInlineName(@NotNull DeclarationDescriptor referencedDescriptor, @NotNull JetTypeMapper typeMapper) {
-        return getInlineName(referencedDescriptor, referencedDescriptor, typeMapper);
+    public static String getInlineName(@NotNull CodegenContext codegenContext, @NotNull JetTypeMapper typeMapper) {
+        return getInlineName(codegenContext, codegenContext.getContextDescriptor(), typeMapper);
     }
 
-    private static String getInlineName(@NotNull DeclarationDescriptor referencedDescriptor, @NotNull DeclarationDescriptor currentDescriptor, @NotNull JetTypeMapper typeMapper) {
+    private static String getInlineName(@NotNull CodegenContext codegenContext, @NotNull DeclarationDescriptor currentDescriptor, @NotNull JetTypeMapper typeMapper) {
+        PsiFile file;
         if (currentDescriptor instanceof PackageFragmentDescriptor) {
-            PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(typeMapper.getBindingContext(), referencedDescriptor);
-            if (psiElement == null) {
-                psiElement = BindingContextUtils.descriptorToDeclaration(typeMapper.getBindingContext(), referencedDescriptor.getContainingDeclaration());
-                if (psiElement == null) {
-                    throw new RuntimeException("Couldn't find declaration for " + referencedDescriptor.getContainingDeclaration().getName() + "." + referencedDescriptor.getName() );
+            file = getContainingFile(codegenContext, typeMapper);
+
+            Type packageFragmentType = null;
+            if (file == null) {
+                //in case package fragment clinit
+                if (codegenContext.getParentContext() instanceof PackageContext) {
+                    packageFragmentType = ((PackageContext) codegenContext.getParentContext()).getPackagePartType();
                 }
+            } else {
+                packageFragmentType =
+                        PackageCodegen.getPackagePartType(PackageClassUtils.getPackageClassFqName(getFqName(currentDescriptor).toSafe()),
+                                                          file.getVirtualFile());
             }
 
-            Type packageFragmentType =
-                    PackageCodegen.getPackagePartType(PackageClassUtils.getPackageClassFqName(getFqName(currentDescriptor).toSafe()),
-                                         psiElement.getContainingFile().getVirtualFile());
+            if (packageFragmentType == null) {
+                DeclarationDescriptor contextDescriptor = codegenContext.getContextDescriptor();
+                throw new RuntimeException("Couldn't find declaration for " + contextDescriptor.getContainingDeclaration().getName() + "." + contextDescriptor.getName() );
+            }
 
             return packageFragmentType.getInternalName().replace('.', '/');
         }
@@ -163,7 +174,7 @@ public class InlineCodegenUtil {
 
         String suffix = currentDescriptor.getName().isSpecial() ? "" : currentDescriptor.getName().asString();
 
-        return getInlineName(referencedDescriptor, currentDescriptor.getContainingDeclaration(), typeMapper) + "$" + suffix;
+        return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper) + "$" + suffix;
     }
 
     @Nullable
@@ -214,5 +225,20 @@ public class InlineCodegenUtil {
 
     public static boolean isInitCallOfFunction(String owner, String name) {
         return "<init>".equals(name);
+    }
+
+    @Nullable
+    public static PsiFile getContainingFile(CodegenContext codegenContext, JetTypeMapper typeMapper) {
+        DeclarationDescriptor contextDescriptor = codegenContext.getContextDescriptor();
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(typeMapper.getBindingContext(), contextDescriptor);
+        if (psiElement == null) {
+            //in case of synthetic
+            psiElement = BindingContextUtils.descriptorToDeclaration(typeMapper.getBindingContext(), contextDescriptor);
+        }
+
+        if (psiElement != null) {
+            return psiElement.getContainingFile();
+        }
+        return null;
     }
 }

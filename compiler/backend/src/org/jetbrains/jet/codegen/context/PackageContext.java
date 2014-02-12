@@ -20,11 +20,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.asm4.Type;
 
 public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor> {
-    
-    public PackageContext(@NotNull PackageFragmentDescriptor contextDescriptor, @Nullable CodegenContext parent) {
+
+    private final Type packagePartType;
+
+    public PackageContext(@NotNull PackageFragmentDescriptor contextDescriptor, @Nullable CodegenContext parent, Type packagePartType) {
         super(contextDescriptor, OwnerKind.PACKAGE, parent, null, null, null);
+        this.packagePartType = packagePartType;
     }
 
     @Override
@@ -35,5 +39,9 @@ public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor>
     @Override
     public String toString() {
         return "Package: " + getContextDescriptor().getName();
+    }
+
+    public Type getPackagePartType() {
+        return packagePartType;
     }
 }

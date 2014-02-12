@@ -30,6 +30,7 @@ import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
+import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.descriptors.serialization.BitEncoding;
@@ -169,7 +170,8 @@ public class PackageCodegen extends GenerationStateAware {
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file) {
         boolean generateSrcClass = false;
-        FieldOwnerContext packagePartContext = CodegenContext.STATIC.intoPackagePart(getPackageFragment(file));
+        Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
+        PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(getPackageFragment(file), packagePartType);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
@@ -188,7 +190,6 @@ public class PackageCodegen extends GenerationStateAware {
 
         if (!generateSrcClass) return null;
 
-        Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
         ClassBuilder builder = state.getFactory().forPackagePart(packagePartType, file);
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
@@ -212,7 +213,9 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        CodegenContext context = CodegenContext.STATIC.intoPackagePart(getPackageFragment((JetFile) classOrObject.getContainingFile()));
+        JetFile file = (JetFile) classOrObject.getContainingFile();
+        Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
+        CodegenContext context = CodegenContext.STATIC.intoPackagePart(getPackageFragment(file), packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }
 

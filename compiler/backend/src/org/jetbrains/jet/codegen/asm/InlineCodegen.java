@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -140,7 +139,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
             VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable((DeserializedSimpleFunctionDescriptor) functionDescriptor, state);
             node = InlineCodegenUtil.getMethodNode(file.getInputStream(), functionDescriptor.getName().asString(),
-                                 callableMethod.getAsmMethod().getDescriptor());
+                                                   callableMethod.getAsmMethod().getDescriptor());
 
             if (node == null) {
                 throw new RuntimeException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
@@ -189,7 +188,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         InliningInfo info =
                 new InliningInfo(expressionMap, null, null, null, state,
                                  codegen.getInlineNameGenerator().subGenerator(functionDescriptor.getName().asString()),
-                                 codegen.getContext().getContextDescriptor());
+                                 codegen.getContext(), call);
         MethodInliner inliner = new MethodInliner(node, parameters, info, null, new LambdaFieldRemapper()); //with captured
 
         VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, new VarRemapper.ShiftRemapper(initialFrameSize, null));
@@ -387,7 +386,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     public static CodegenContext getContext(DeclarationDescriptor descriptor, GenerationState state) {
         if (descriptor instanceof PackageFragmentDescriptor) {
-            return new PackageContext((PackageFragmentDescriptor) descriptor, null);
+            return new PackageContext((PackageFragmentDescriptor) descriptor, null, null);
         }
 
         CodegenContext parent = getContext(descriptor.getContainingDeclaration(), state);

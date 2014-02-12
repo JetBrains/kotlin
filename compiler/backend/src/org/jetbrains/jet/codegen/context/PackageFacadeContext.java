@@ -23,19 +23,16 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 
 public class PackageFacadeContext extends PackageContext {
 
-    private final Type delegateTo;
-
     public PackageFacadeContext(
             @NotNull PackageFragmentDescriptor contextDescriptor,
             @Nullable CodegenContext parent,
             @NotNull Type delegateTo
     ) {
-        super(contextDescriptor, parent);
-        this.delegateTo = delegateTo;
+        super(contextDescriptor, parent, delegateTo);
     }
 
     @NotNull
     public Type getDelegateToClassType() {
-        return delegateTo;
+        return getPackagePartType();
     }
 }

@@ -3928,7 +3928,7 @@ The "returned" value of try expression with no finally is either the last expres
     public NameGenerator getInlineNameGenerator() {
         if (inlineNameGenerator == null) {
             CodegenContext context = getContext();
-            String prefix = InlineCodegenUtil.getInlineName(context.getContextDescriptor(), typeMapper);
+            String prefix = InlineCodegenUtil.getInlineName(context, typeMapper);
 
             inlineNameGenerator = new NameGenerator(prefix + "$$inline");
         }
