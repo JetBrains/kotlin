@@ -56,16 +56,6 @@ public class RecursiveDescriptorComparator {
     public static final Configuration RECURSIVE = new Configuration(false, false, true, 
                                                                     Predicates.<FqName>alwaysTrue(),
                                                                     FORBID_ERROR_TYPES, DEFAULT_RENDERER);
-    public static final Configuration WITHOUT_COMPILE_TIME_CONSTANTS = new Configuration(false, false, true,
-                                                                    Predicates.<FqName>alwaysTrue(),
-                                                                    FORBID_ERROR_TYPES,
-                                                                    new DescriptorRendererBuilder()
-                                                                            .setWithDefinedIn(false)
-                                                                            .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
-                                                                            .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
-                                                                            .setVerbose(true)
-                                                                            .setIncludePropertyConstant(false)
-                                                                            .build());
 
     public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, 
                                                                         Predicates.<FqName>alwaysTrue(),

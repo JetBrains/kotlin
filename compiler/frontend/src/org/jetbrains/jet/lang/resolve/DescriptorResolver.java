@@ -973,21 +973,32 @@ public class DescriptorResolver {
             }
         }
         else {
-            return typeResolver.resolveType(scope, propertyTypeRef, trace, true);
+            JetType type = typeResolver.resolveType(scope, propertyTypeRef, trace, true);
+            JetExpression initializer = variable.getInitializer();
+            if (initializer != null) {
+                setConstantForVariable(variableDescriptor, initializer, type, trace);
+            }
+            return type;
         }
     }
 
-    private static void setConstantForVariable(
+    private void setConstantForVariable(
             @NotNull VariableDescriptorImpl variableDescriptor,
-            @NotNull JetExpression initializer,
-            @NotNull JetType initializerType,
-            @NotNull BindingTrace trace
+            @NotNull final JetExpression initializer,
+            @NotNull final JetType initializerType,
+            @NotNull final BindingTrace trace
     ) {
-        CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(initializer, trace, initializerType);
-        if (constant instanceof IntegerValueTypeConstant){
-            constant = EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) constant, initializerType);
-        }
-        variableDescriptor.setCompileTimeInitializer(constant);
+        variableDescriptor.setCompileTimeInitializer(storageManager.createRecursionTolerantNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
+            @Nullable
+            @Override
+            public CompileTimeConstant<?> invoke() {
+                CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(initializer, trace, initializerType);
+                if ((constant instanceof IntegerValueTypeConstant)) {
+                    return EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) constant, initializerType);
+                }
+                return constant;
+            }
+        }, null));
     }
 
     @NotNull

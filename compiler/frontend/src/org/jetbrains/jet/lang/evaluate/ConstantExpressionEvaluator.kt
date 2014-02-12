@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.resolve.BindingContext.COMPILE_TIME_INITIALIZER
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
@@ -299,7 +298,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         if (resolvedCall != null) {
             val callableDescriptor = resolvedCall.getResultingDescriptor()
             if (callableDescriptor is VariableDescriptor) {
-                val compileTimeConstant = callableDescriptor.getCompileTimeInitializer() ?: trace.getBindingContext().get(COMPILE_TIME_INITIALIZER, callableDescriptor)
+                val compileTimeConstant = callableDescriptor.getCompileTimeInitializer()
                 if (compileTimeConstant == null) return null
 
                 val value: Any? =
@@ -430,27 +429,6 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     fun createCompileTimeConstant(value: Any?, expectedType: JetType?, isPure: Boolean = true, canBeUsedInAnnotation: Boolean = true): CompileTimeConstant<*>? {
         val c = EvaluatorContext(canBeUsedInAnnotation, isPure)
         return createCompileTimeConstant(value, c, if (isPure) expectedType ?: TypeUtils.NO_EXPECTED_TYPE else null)
-    }
-}
-
-public fun recordCompileTimeValueForInitializerIfNeeded(
-        variableDescriptor: VariableDescriptor,
-        initializer: JetExpression,
-        variableType: JetType,
-        trace: BindingTrace
-) {
-    if (!variableDescriptor.isVar()) {
-        if (variableDescriptor.getCompileTimeInitializer() == null && trace.get(BindingContext.COMPILE_TIME_INITIALIZER, variableDescriptor) == null) {
-            val constant = ConstantExpressionEvaluator.evaluate(initializer, trace, variableType)
-            if (constant != null) {
-                if (constant is IntegerValueTypeConstant) {
-                    trace.record(BindingContext.COMPILE_TIME_INITIALIZER, variableDescriptor, constant.createCompileTimeConstantWithType(variableType))
-                }
-                else {
-                    trace.record(BindingContext.COMPILE_TIME_INITIALIZER, variableDescriptor, constant)
-                }
-            }
-        }
     }
 }
 

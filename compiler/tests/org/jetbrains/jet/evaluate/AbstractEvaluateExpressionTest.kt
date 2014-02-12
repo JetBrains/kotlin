@@ -41,7 +41,7 @@ abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorReso
     fun doConstantTest(path: String) {
         doTest(path) {
             property, context ->
-            val compileTimeConstant = context.get(BindingContext.COMPILE_TIME_VALUE, property.getInitializer())
+            val compileTimeConstant = property.getCompileTimeInitializer()
             if (compileTimeConstant is StringValue) {
                 "\\\"${compileTimeConstant.getValue()}\\\""
             } else {
@@ -54,7 +54,7 @@ abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorReso
     fun doIsPureTest(path: String) {
         doTest(path) {
             property, context ->
-            val compileTimeConstant = context.get(BindingContext.COMPILE_TIME_VALUE, property.getInitializer())
+            val compileTimeConstant = property.getCompileTimeInitializer()
             if (compileTimeConstant is IntegerValueConstant) {
                 compileTimeConstant.isPure().toString()
             } else {
@@ -63,7 +63,7 @@ abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorReso
         }
     }
 
-    private fun doTest(path: String, getValueToTest: (JetProperty, BindingContext) -> String) {
+    private fun doTest(path: String, getValueToTest: (VariableDescriptor, BindingContext) -> String) {
         val myFile = File(path)
         val fileText = FileUtil.loadFile(myFile, true)
         val packageView = getPackage(fileText)
@@ -80,9 +80,7 @@ abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorReso
             val property = AbstractAnnotationDescriptorResolveTest.getPropertyDescriptor(packageView, propertyName, false)
             ?: AbstractAnnotationDescriptorResolveTest.getLocalVarDescriptor(context!!, propertyName)
 
-            val jetProperty = BindingContextUtils.descriptorToDeclaration(context!!, property) as JetProperty
-
-            val testedObject = getValueToTest(jetProperty, context!!)
+            val testedObject = getValueToTest(property, context!!)
             expectedActual.add(expectedPropertyPrefix + expected!! to expectedPropertyPrefix + testedObject)
         }
 

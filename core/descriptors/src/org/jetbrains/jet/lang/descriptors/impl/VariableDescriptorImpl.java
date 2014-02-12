@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.storage.NullableLazyValue;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.Set;
 
 public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRootImpl implements VariableDescriptor {
     private JetType outType;
-    private CompileTimeConstant<?> compileTimeInitializer;
+    private NullableLazyValue<CompileTimeConstant<?>> compileTimeInitializer;
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -65,10 +66,13 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     @Nullable
     @Override
     public CompileTimeConstant<?> getCompileTimeInitializer() {
-        return compileTimeInitializer;
+        if (compileTimeInitializer != null) {
+            return compileTimeInitializer.invoke();
+        }
+        return null;
     }
 
-    public void setCompileTimeInitializer(@Nullable CompileTimeConstant<?> compileTimeInitializer) {
+    public void setCompileTimeInitializer(@NotNull NullableLazyValue<CompileTimeConstant<?>> compileTimeInitializer) {
         if (!isVar()) {
             this.compileTimeInitializer = compileTimeInitializer;
         }

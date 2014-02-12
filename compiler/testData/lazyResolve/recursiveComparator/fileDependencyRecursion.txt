@@ -1,4 +1,4 @@
 package test
 
-internal val fromImported: kotlin.Int
-internal val normal: kotlin.Int
+internal val fromImported: kotlin.Int = 1
+internal val normal: kotlin.Int = 1

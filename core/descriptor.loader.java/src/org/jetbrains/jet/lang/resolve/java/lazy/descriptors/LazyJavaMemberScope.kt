@@ -267,7 +267,10 @@ public abstract class LazyJavaMemberScope(
         propertyDescriptor.setType(effectiveSignature.getReturnType(), Collections.emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(getContainingDeclaration()), null : JetType?)
 
         if (!propertyDescriptor.isVar()) {
-            propertyDescriptor.setCompileTimeInitializer(JavaPropertyInitializerEvaluator.getInstance().getInitializerConstant(field, propertyDescriptor))
+            propertyDescriptor.setCompileTimeInitializer(
+                    c.storageManager.createNullableLazyValue {
+                        JavaPropertyInitializerEvaluator.getInstance().getInitializerConstant(field, propertyDescriptor)
+                    })
         }
 
         c.javaResolverCache.recordField(field, propertyDescriptor);

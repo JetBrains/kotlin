@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.descriptors.*;
@@ -132,8 +133,8 @@ public class DescriptorDeserializer {
     }
 
     @NotNull
-    private PropertyDescriptor loadProperty(@NotNull Callable proto) {
-        int flags = proto.getFlags();
+    private PropertyDescriptor loadProperty(@NotNull final Callable proto) {
+        final int flags = proto.getFlags();
 
         PropertyDescriptorImpl property = new PropertyDescriptorImpl(
                 containingDeclaration,
@@ -194,8 +195,15 @@ public class DescriptorDeserializer {
         }
 
         property.setCompileTimeInitializer(
-                getPropertyConstant(containingDeclaration, proto, flags, AnnotatedCallableKind.PROPERTY,
-                                                   deserializers.getConstantDeserializer(), nameResolver)
+                storageManager.createNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
+                    @Nullable
+                    @Override
+                    public CompileTimeConstant<?> invoke() {
+                        return getPropertyConstant(
+                                containingDeclaration, proto, flags, AnnotatedCallableKind.PROPERTY,
+                                deserializers.getConstantDeserializer(), nameResolver);
+                    }
+                })
         );
 
         property.initialize(getter, setter);

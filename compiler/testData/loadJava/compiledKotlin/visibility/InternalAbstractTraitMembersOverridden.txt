@@ -14,7 +14,7 @@ internal final class B : test.A {
     public open override /*1*/ var p: kotlin.Int
         public open override /*1*/ fun <get-p>(): kotlin.Int
         public open override /*1*/ fun <set-p>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
-    internal open override /*1*/ val v: kotlin.Int
+    internal open override /*1*/ val v: kotlin.Int = 0.toInt()
         internal open override /*1*/ fun <get-v>(): kotlin.Int
     internal open override /*1*/ fun f(): kotlin.Int
 }

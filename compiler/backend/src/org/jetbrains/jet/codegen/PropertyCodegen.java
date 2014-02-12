@@ -235,10 +235,9 @@ public class PropertyCodegen extends GenerationStateAware {
         Object value = null;
 
         if (ImplementationBodyCodegen.shouldWriteFieldInitializer(propertyDescriptor, typeMapper)) {
-            JetExpression initializer = p instanceof JetProperty ? ((JetProperty) p).getInitializer() : null;
+            CompileTimeConstant<?> initializer = propertyDescriptor.getCompileTimeInitializer();
             if (initializer != null) {
-                CompileTimeConstant<?> compileTimeValue = ExpressionCodegen.getCompileTimeConstant(initializer, bindingContext);
-                value = compileTimeValue != null ? compileTimeValue.getValue() : null;
+                value = initializer.getValue();
             }
         }
 
