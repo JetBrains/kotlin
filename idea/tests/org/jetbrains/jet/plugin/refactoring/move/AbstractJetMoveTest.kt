@@ -37,6 +37,11 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.util.Computable
 import org.jetbrains.jet.JetTestUtils
+import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesProcessor
+import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
+import com.intellij.refactoring.PackageWrapper
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 
@@ -140,7 +145,40 @@ enum class MoveAction {
                 options.setMemberVisibility(visibility)
             }
 
-            MoveMembersProcessor(mainFile.getProject(), options).run()
+            MoveMembersProcessor(elementAtCaret.getProject(), options).run()
+        }
+    }
+
+    MOVE_TOP_LEVEL_CLASSES {
+        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val classToMove = elementAtCaret!!.getParentByType(javaClass<PsiClass>())!!
+            val targetPackage = config.getString("targetPackage")
+
+            MoveClassesOrPackagesProcessor(
+                    project = mainFile.getProject(),
+                    elements = array(classToMove),
+                    moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
+                    searchInComments = false,
+                    searchInNonJavaFiles = true,
+                    moveCallback = null
+            ).run()
+        }
+    }
+
+    MOVE_PACKAGES {
+        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val project = mainFile.getProject()
+            val sourcePackage = config.getString("sourcePackage")
+            val targetPackage = config.getString("targetPackage")
+
+            MoveClassesOrPackagesProcessor(
+                    project = project,
+                    elements = array(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
+                    moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
+                    searchInComments = false,
+                    searchInNonJavaFiles = true,
+                    moveCallback = null
+            ).run()
         }
     }
 
