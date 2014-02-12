@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,8 @@ public class BytecodeToolWindow extends JPanel implements Disposable {
                     return printStackTraceToString(exhaust.getError());
                 }
                 state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEXT, Progress.DEAF, exhaust.getBindingContext(),
-                                            Collections.singletonList(jetFile), true, true, true,
+                                            Collections.singletonList(jetFile), true, true,
+                                            GenerationState.GenerateClassFilter.GENERATE_ALL,
                                             InlineUtil.DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW /*TODO add checkbox or extract it from option*/);
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ClassFileViewProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
@@ -33,6 +35,7 @@ import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
@@ -67,7 +70,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
         return new KotlinJavaFileStubProvider<KotlinPackageLightClassData>(
                 project,
                 false,
-                new StubGenerationStrategy.NoDeclaredClasses<KotlinPackageLightClassData>() {
+                new StubGenerationStrategy<KotlinPackageLightClassData>() {
                     @NotNull
                     @Override
                     public LightClassConstructionContext getContext(@NotNull Collection<JetFile> files) {
@@ -95,10 +98,20 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                     }
 
                     @Override
+                    public GenerationState.GenerateClassFilter getGenerateClassFilter() {
+                        return GenerationState.GenerateClassFilter.ONLY_PACKAGE_CLASS;
+                    }
+
+                    @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
                         PackageCodegen codegen = state.getFactory().forPackage(packageFqName, files);
                         codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
                         state.getFactory().asList();
+                    }
+
+                    @Override
+                    public String toString() {
+                        return StubGenerationStrategy.class.getName() + " for package class";
                     }
                 }
         );
@@ -109,7 +122,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
         return new KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData>(
                 classOrObject.getProject(),
                 JetPsiUtil.isLocal(classOrObject),
-                new StubGenerationStrategy.WithDeclaredClasses<OutermostKotlinClassLightClassData>() {
+                new StubGenerationStrategy<OutermostKotlinClassLightClassData>() {
                     private JetFile getFile() {
                         return (JetFile) classOrObject.getContainingFile();
                     }
@@ -172,10 +185,53 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                     }
 
                     @Override
+                    public GenerationState.GenerateClassFilter getGenerateClassFilter() {
+                        return new GenerationState.GenerateClassFilter() {
+                            @Override
+                            public boolean shouldProcess(JetClassOrObject generatedClassOrObject) {
+                                // Trivial: generate and analyze class we are interested in.
+                                if (generatedClassOrObject == classOrObject) return true;
+
+                                // Process all parent classes as they are context for current class
+                                // Process child classes because they probably affect members (heuristic)
+                                if (PsiTreeUtil.isAncestor(generatedClassOrObject, classOrObject, true) ||
+                                    PsiTreeUtil.isAncestor(classOrObject, generatedClassOrObject, true)) {
+                                    return true;
+                                }
+
+                                if (JetPsiUtil.isLocal(generatedClassOrObject) && JetPsiUtil.isLocal(classOrObject)) {
+                                    // Local classes should be process by CodegenAnnotatingVisitor to
+                                    // decide what class they should be placed in.
+                                    //
+                                    // Example:
+                                    // class A
+                                    // fun foo() {
+                                    //     trait Z: A {}
+                                    //     fun bar() {
+                                    //         class <caret>O2: Z {}
+                                    //     }
+                                    // }
+
+                                    // TODO: current method will process local classes in irrelevant declarations, it should be fixed.
+                                    PsiElement commonParent = PsiTreeUtil.findCommonParent(generatedClassOrObject, classOrObject);
+                                    return commonParent != null && !(commonParent instanceof PsiFile);
+                                }
+
+                                return false;
+                            }
+                        };
+                    }
+
+                    @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
                         PackageCodegen packageCodegen = state.getFactory().forPackage(getPackageFqName(), files);
                         packageCodegen.generateClassOrObject(classOrObject);
                         state.getFactory().asList();
+                    }
+
+                    @Override
+                    public String toString() {
+                        return StubGenerationStrategy.class.getName() + " for explicit class " + classOrObject.getName();
                     }
                 }
         );
@@ -224,7 +280,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                     context.getBindingContext(),
                     Lists.newArrayList(files),
                     /*not-null assertions*/false, false,
-                    /*generateDeclaredClasses=*/stubGenerationStrategy.generateDeclaredClasses(),
+                    /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
                     InlineUtil.DEFAULT_INLINE_FLAG_FOR_STUB);
             state.beforeCompile();
 
@@ -309,36 +365,11 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
     private interface StubGenerationStrategy<T extends WithFileStub> {
         @NotNull Collection<JetFile> getFiles();
         @NotNull FqName getPackageFqName();
+
         @NotNull LightClassConstructionContext getContext(@NotNull Collection<JetFile> files);
         @NotNull T createLightClassData(PsiJavaFileStub javaFileStub, BindingContext bindingContext);
 
-        boolean generateDeclaredClasses();
+        GenerationState.GenerateClassFilter getGenerateClassFilter();
         void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files);
-
-        abstract class NoDeclaredClasses<U extends WithFileStub> implements StubGenerationStrategy<U> {
-            @Override
-            public boolean generateDeclaredClasses() {
-                return false;
-            }
-
-            @Override
-            public String toString() {
-                // For subclasses to be identifiable in the debugger
-                return NoDeclaredClasses.class.getSimpleName();
-            }
-        }
-
-        abstract class WithDeclaredClasses<U extends WithFileStub> implements StubGenerationStrategy<U> {
-            @Override
-            public boolean generateDeclaredClasses() {
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                // For subclasses to be identifiable in the debugger
-                return WithDeclaredClasses.class.getSimpleName();
-            }
-        }
     }
 }

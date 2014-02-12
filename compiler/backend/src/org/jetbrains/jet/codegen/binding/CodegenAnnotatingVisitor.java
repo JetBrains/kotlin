@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.SamCodegenUtil;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
@@ -53,7 +54,8 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
 class CodegenAnnotatingVisitor extends JetVisitorVoid {
     private static final TokenSet BINARY_OPERATIONS = TokenSet.orSet(
-            AUGMENTED_ASSIGNMENTS, TokenSet.create(PLUS, MINUS, MUL, DIV, PERC, RANGE, LT, GT, LTEQ, GTEQ, IDENTIFIER));
+            AUGMENTED_ASSIGNMENTS,
+            TokenSet.create(PLUS, MINUS, MUL, DIV, PERC, RANGE, LT, GT, LTEQ, GTEQ, IDENTIFIER));
 
     private static class ClassDescriptorWithState {
 
@@ -82,11 +84,15 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     private final Stack<ClassDescriptorWithState> classStack = new Stack<ClassDescriptorWithState>();
     private final Stack<String> nameStack = new Stack<String>();
+
     private final BindingTrace bindingTrace;
     private final BindingContext bindingContext;
 
-    public CodegenAnnotatingVisitor(BindingTrace bindingTrace) {
+    private final GenerationState.GenerateClassFilter filter;
+
+    public CodegenAnnotatingVisitor(BindingTrace bindingTrace, GenerationState.GenerateClassFilter filter) {
         this.bindingTrace = bindingTrace;
+        this.filter = filter;
         this.bindingContext = bindingTrace.getBindingContext();
     }
 
@@ -209,6 +215,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     @Override
     public void visitClass(@NotNull JetClass klass) {
+        if (!filter.shouldProcess(klass)) return;
+
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, klass);
         // working around a problem with shallow analysis
         if (classDescriptor == null) return;
