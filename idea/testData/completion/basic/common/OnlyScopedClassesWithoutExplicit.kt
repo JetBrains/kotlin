@@ -6,4 +6,4 @@ fun firstFun() {
 
 // INVOCATION_COUNT: 0
 // EXIST: { lookupString:"Int", tailText:" (jet)" }
-// ABSENT: { lookupString:"Int", tailText:" (jet.runtime.SharedVar)" }
+// ABSENT: { lookupString:"IntRef", tailText:" (kotlin.internal.Ref)" }

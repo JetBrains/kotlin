@@ -934,7 +934,7 @@ public abstract class StackValue {
             v.load(index, OBJECT_TYPE);
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
-            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "element", refType.getDescriptor());
             coerceFrom(refType, v);
             coerceTo(type, v);
             if (isReleaseOnPut) {
@@ -950,7 +950,7 @@ public abstract class StackValue {
             AsmUtil.swap(v, sharedTypeForType(this.type), topOfStackType);
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
-            v.visitFieldInsn(PUTFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            v.visitFieldInsn(PUTFIELD, sharedType.getInternalName(), "element", refType.getDescriptor());
         }
     }
 
@@ -958,32 +958,23 @@ public abstract class StackValue {
         switch (type.getSort()) {
             case Type.OBJECT:
             case Type.ARRAY:
-                return JET_SHARED_VAR_TYPE;
-
+                return OBJECT_REF_TYPE;
             case Type.BYTE:
-                return JET_SHARED_BYTE_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$ByteRef");
             case Type.SHORT:
-                return JET_SHARED_SHORT_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$ShortRef");
             case Type.CHAR:
-                return JET_SHARED_CHAR_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$CharRef");
             case Type.INT:
-                return JET_SHARED_INT_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$IntRef");
             case Type.LONG:
-                return JET_SHARED_LONG_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$LongRef");
             case Type.BOOLEAN:
-                return JET_SHARED_BOOLEAN_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$BooleanRef");
             case Type.FLOAT:
-                return JET_SHARED_FLOAT_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$FloatRef");
             case Type.DOUBLE:
-                return JET_SHARED_DOUBLE_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$DoubleRef");
             default:
                 throw new UnsupportedOperationException();
         }
@@ -1011,7 +1002,7 @@ public abstract class StackValue {
         public void put(Type type, InstructionAdapter v) {
             Type sharedType = sharedTypeForType(this.type);
             Type refType = refType(this.type);
-            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "element", refType.getDescriptor());
             coerceFrom(refType, v);
             coerceTo(type, v);
         }
@@ -1019,7 +1010,7 @@ public abstract class StackValue {
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
-            v.visitFieldInsn(PUTFIELD, sharedTypeForType(type).getInternalName(), "ref", refType(type).getDescriptor());
+            v.visitFieldInsn(PUTFIELD, sharedTypeForType(type).getInternalName(), "element", refType(type).getDescriptor());
         }
     }
 
