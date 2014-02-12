@@ -68,8 +68,12 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver
     );
-    
-    protected abstract Context self();
+
+    @NotNull
+    private Context self() {
+        //noinspection unchecked
+        return (Context) this;
+    }
 
     @NotNull
     public Context replaceBindingTrace(@NotNull BindingTrace trace) {

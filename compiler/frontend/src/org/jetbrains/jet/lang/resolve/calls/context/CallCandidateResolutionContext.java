@@ -98,9 +98,4 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext);
     }
-
-    @Override
-    protected CallCandidateResolutionContext<D> self() {
-        return this;
-    }
 }

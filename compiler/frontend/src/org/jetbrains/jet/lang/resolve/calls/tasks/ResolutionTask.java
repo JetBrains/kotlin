@@ -119,11 +119,6 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         return newTask;
     }
 
-    @Override
-    protected ResolutionTask<D, F> self() {
-        return this;
-    }
-
     public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
         return new ResolutionTask<D, F>(
                 candidates, reference, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
