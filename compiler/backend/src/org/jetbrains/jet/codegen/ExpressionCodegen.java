@@ -3230,8 +3230,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         else {
             v.load(index, OBJECT_TYPE);
             generateInitializer.fun(variableDescriptor);
-            v.putfield(sharedVarType.getInternalName(), "ref",
-                       sharedVarType == JET_SHARED_VAR_TYPE ? "Ljava/lang/Object;" : varType.getDescriptor());
+            v.putfield(sharedVarType.getInternalName(), "element",
+                       sharedVarType.equals(OBJECT_REF_TYPE) ? "Ljava/lang/Object;" : varType.getDescriptor());
         }
     }
 

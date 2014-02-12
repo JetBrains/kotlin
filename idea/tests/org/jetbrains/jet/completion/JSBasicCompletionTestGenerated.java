@@ -359,11 +359,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest("idea/testData/completion/basic/common/ObjectRedeclaration2.kt");
         }
         
-        @TestMetadata("OnlyScopedClassesWithoutExplicit.kt")
-        public void testOnlyScopedClassesWithoutExplicit() throws Exception {
-            doTest("idea/testData/completion/basic/common/OnlyScopedClassesWithoutExplicit.kt");
-        }
-        
         @TestMetadata("OverloadFunctions.kt")
         public void testOverloadFunctions() throws Exception {
             doTest("idea/testData/completion/basic/common/OverloadFunctions.kt");
