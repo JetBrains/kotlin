@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package jet.runtime;
+package kotlin;
 
-import jet.IntRange;
+import kotlin.internal.Intrinsics;
+import org.jetbrains.annotations.NotNull;
 
-public class Ranges {
-    public static IntRange arrayIndices(int length) {
-        return new IntRange(0, length - 1);
+public class KotlinNullPointerException extends NullPointerException {
+    @NotNull
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        super.fillInStackTrace();
+        return Intrinsics.sanitizeStackTrace(this);
     }
-
-    private Ranges() {}
 }

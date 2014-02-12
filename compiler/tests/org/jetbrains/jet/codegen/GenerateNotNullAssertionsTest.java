@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import jet.runtime.Intrinsics;
 import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.MethodVisitor;
@@ -28,7 +27,6 @@ import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -166,8 +164,6 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         assertNotNull(file);
         ClassReader reader = new ClassReader(file.asByteArray());
 
-        final String intrinsics = JvmClassName.byFqNameWithoutInnerClasses(Intrinsics.class.getName()).getInternalName();
-
         reader.accept(new ClassVisitor(Opcodes.ASM4) {
             @Override
             public MethodVisitor visitMethod(
@@ -178,7 +174,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
                     public void visitMethodInsn(int opcode, String owner, String name, String desc) {
                         assertFalse(
                                 "Intrinsics method is called: " + name + desc + "  Caller: " + callerName + callerDesc,
-                                intrinsics.equals(owner)
+                                "kotlin/internal/Intrinsics".equals(owner)
                         );
                     }
                 };

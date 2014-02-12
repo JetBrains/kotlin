@@ -44,7 +44,7 @@ public class StupidSync extends IntrinsicMethod {
             StackValue receiver
     ) {
         codegen.pushMethodArguments((JetCallExpression) element, Arrays.asList(OBJECT_TYPE, JET_FUNCTION0_TYPE));
-        v.invokestatic("jet/runtime/Intrinsics", "stupidSync", "(Ljava/lang/Object;Ljet/Function0;)Ljava/lang/Object;");
+        v.invokestatic("kotlin/internal/Intrinsics", "stupidSync", "(Ljava/lang/Object;Ljet/Function0;)Ljava/lang/Object;");
         return OBJECT_TYPE;
     }
 }

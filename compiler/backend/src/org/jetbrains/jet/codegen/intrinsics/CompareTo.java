@@ -58,10 +58,10 @@ public class CompareTo extends IntrinsicMethod {
         codegen.gen(argument, type);
 
         if (type == Type.INT_TYPE) {
-            v.invokestatic("jet/runtime/Intrinsics", "compare", "(II)I");
+            v.invokestatic("kotlin/internal/Intrinsics", "compare", "(II)I");
         }
         else if (type == Type.LONG_TYPE) {
-            v.invokestatic("jet/runtime/Intrinsics", "compare", "(JJ)I");
+            v.invokestatic("kotlin/internal/Intrinsics", "compare", "(JJ)I");
         }
         else if (type == Type.FLOAT_TYPE) {
             v.invokestatic("java/lang/Float", "compare", "(FF)I");
