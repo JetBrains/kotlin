@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.protobuf.ExtensionRegistry;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -42,8 +41,6 @@ import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -1328,27 +1325,24 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @Override
             public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expr) {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expr);
-                if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
+
+                DeclarationDescriptor toLookup;
+                if (isLocalNamedFun(descriptor)) {
+                    toLookup = descriptor;
+                }
+                else if (descriptor instanceof CallableMemberDescriptor) {
+                    toLookup = descriptor.getContainingDeclaration();
+                }
+                else if (descriptor instanceof VariableDescriptor) {
                     ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) constructorContext.getContextDescriptor();
                     for (ValueParameterDescriptor parameterDescriptor : constructorDescriptor.getValueParameters()) {
-                        //noinspection ConstantConditions
-                        if (descriptor.equals(parameterDescriptor)) {
-                            return;
-                        }
+                        if (descriptor.equals(parameterDescriptor)) return;
                     }
-                    constructorContext.lookupInContext(descriptor, null, state, true);
-                } else if (isLocalNamedFun(descriptor)) {
-                    assert descriptor != null;
-                    MutableClassDescriptor classDescriptor =
-                            (MutableClassDescriptor) constructorContext.getParentContext().getContextDescriptor();
-
-                    for (CallableMemberDescriptor memberDescriptor : classDescriptor.getAllCallableMembers()) {
-                        if (descriptor.equals(memberDescriptor)) {
-                            return;
-                        }
-                    }
-                    constructorContext.lookupInContext(descriptor, null, state, true);
+                    toLookup = descriptor;
                 }
+                else return;
+
+                constructorContext.lookupInContext(toLookup, null, state, true);
             }
 
             @Override

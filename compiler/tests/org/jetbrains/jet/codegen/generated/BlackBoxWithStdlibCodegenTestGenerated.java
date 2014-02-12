@@ -1018,6 +1018,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/kt864.kt");
         }
         
+        @TestMetadata("objectCaptureOuterConstructorProperty.kt")
+        public void testObjectCaptureOuterConstructorProperty() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/objectCaptureOuterConstructorProperty.kt");
+        }
+        
         @TestMetadata("referenceToSelfInLocal.kt")
         public void testReferenceToSelfInLocal() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/referenceToSelfInLocal.kt");

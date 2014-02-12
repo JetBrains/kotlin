@@ -1384,7 +1384,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
     
     @TestMetadata("compiler/testData/codegen/box/closures")
-    @InnerTestClasses({Closures.ClosureInsideClosure.class})
+    @InnerTestClasses({Closures.CaptureOuterProperty.class, Closures.ClosureInsideClosure.class})
     public static class Closures extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInClosures() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/closures"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1510,6 +1510,49 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/closures/simplestClosureAndBoxing.kt");
         }
         
+        @TestMetadata("compiler/testData/codegen/box/closures/captureOuterProperty")
+        public static class CaptureOuterProperty extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInCaptureOuterProperty() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/closures/captureOuterProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("captureFunctionInProperty.kt")
+            public void testCaptureFunctionInProperty() throws Exception {
+                doTest("compiler/testData/codegen/box/closures/captureOuterProperty/captureFunctionInProperty.kt");
+            }
+            
+            @TestMetadata("inFunction.kt")
+            public void testInFunction() throws Exception {
+                doTest("compiler/testData/codegen/box/closures/captureOuterProperty/inFunction.kt");
+            }
+            
+            @TestMetadata("inProperty.kt")
+            public void testInProperty() throws Exception {
+                doTest("compiler/testData/codegen/box/closures/captureOuterProperty/inProperty.kt");
+            }
+            
+            @TestMetadata("inPropertyDeepObjectChain.kt")
+            public void testInPropertyDeepObjectChain() throws Exception {
+                doTest("compiler/testData/codegen/box/closures/captureOuterProperty/inPropertyDeepObjectChain.kt");
+            }
+            
+            @TestMetadata("inPropertyFromSuperClass.kt")
+            public void testInPropertyFromSuperClass() throws Exception {
+                doTest("compiler/testData/codegen/box/closures/captureOuterProperty/inPropertyFromSuperClass.kt");
+            }
+            
+            @TestMetadata("inPropertyFromSuperSuperClass.kt")
+            public void testInPropertyFromSuperSuperClass() throws Exception {
+                doTest("compiler/testData/codegen/box/closures/captureOuterProperty/inPropertyFromSuperSuperClass.kt");
+            }
+            
+            @TestMetadata("kt4176.kt")
+            public void testKt4176() throws Exception {
+                doTest("compiler/testData/codegen/box/closures/captureOuterProperty/kt4176.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
         public static class ClosureInsideClosure extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInClosureInsideClosure() throws Exception {
@@ -1551,6 +1594,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Closures");
             suite.addTestSuite(Closures.class);
+            suite.addTestSuite(CaptureOuterProperty.class);
             suite.addTestSuite(ClosureInsideClosure.class);
             return suite;
         }
