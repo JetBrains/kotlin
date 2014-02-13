@@ -603,6 +603,12 @@
     <item name="java.io.PipedWriter void write(char[], int, int) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.io.PrintStream void print(char[]) 0">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.io.PrintStream void println(char[]) 0">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
     <item name="java.io.PrintStream PrintStream(java.io.File, java.lang.String) 1">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -640,6 +646,18 @@
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.io.PrintStream java.io.PrintStream printf(java.util.Locale, java.lang.String, java.lang.Object...)">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.io.PrintStream java.io.PrintStream printf(java.lang.String, java.lang.Object...) 0">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.io.PrintStream java.io.PrintStream printf(java.util.Locale, java.lang.String, java.lang.Object...) 1">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.io.PrintStream java.io.PrintStream format(java.lang.String, java.lang.Object...) 0">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.io.PrintStream java.io.PrintStream format(java.util.Locale, java.lang.String, java.lang.Object...) 1">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.io.PrintStream java.lang.Appendable append(char)">

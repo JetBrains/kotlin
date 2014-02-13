@@ -357,6 +357,7 @@
 
             <else>
                 <available property="rtjar" value="${java.home}/lib/rt.jar" file="${java.home}/lib/rt.jar"/>
+                <available property="jssejar" value="${java.home}/lib/jsse.jar" file="${java.home}/lib/jsse.jar"/>
                 <available property="rtjar" value="${java.home}/../Classes/classes.jar" file="${java.home}/../Classes/classes.jar"/>
 
                 <proguard><![CDATA[
@@ -396,6 +397,7 @@
                     -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 
                     -libraryjars '${rtjar}'
+                    -libraryjars '${jssejar}'
                     -libraryjars '${bootstrap.runtime}'
 
                     -target 1.6

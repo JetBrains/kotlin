@@ -34,6 +34,8 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.application.Result
 
 public abstract class AbstractJavaToKotlinConverterPluginTest() : AbstractJavaToKotlinConverterTest("ide.kt", PluginSettings)
 public abstract class AbstractJavaToKotlinConverterBasicTest() : AbstractJavaToKotlinConverterTest("kt", TestSettings)
@@ -72,7 +74,7 @@ abstract class AbstractJavaToKotlinConverterTest(
 
     private fun reformat(text: String, project: Project): String {
         val convertedFile = JetTestUtils.createFile("converted", text, project)
-        ApplicationManager.getApplication()!!.runWriteAction {
+        WriteCommandAction.runWriteCommandAction(project) {
             CodeStyleManager.getInstance(project)!!.reformat(convertedFile)
         }
         return convertedFile.getText()!!

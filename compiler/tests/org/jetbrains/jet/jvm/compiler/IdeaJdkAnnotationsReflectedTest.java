@@ -78,6 +78,9 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
         for (FqName classFqName : JdkAnnotationsValidityTest.getAffectedClasses("jar://ideaSDK/lib/jdkAnnotations.jar!/")) {
             if (new FqName("org.jdom").equals(classFqName.parent())) continue; // filter unrelated jdom annotations
             if (new FqName("java.util.concurrent.TransferQueue").equals(classFqName)) continue; // filter JDK7-specific class
+            if (new FqName("java.util.Objects").equals(classFqName)) continue; // filter JDK7-specific class
+            if (new FqName("java.nio.file.Files").equals(classFqName)) continue; // filter JDK7-specific class
+            if (new FqName("java.nio.file.Paths").equals(classFqName)) continue; // filter JDK7-specific class
             // the following idea annotation is incorrect
             // <item name="java.io.StringWriter void write(java.lang.String) 0">
             // <annotation name="org.jetbrains.annotations.NotNull" />

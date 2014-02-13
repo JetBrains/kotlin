@@ -141,5 +141,8 @@
     <item name="java.nio.charset.Charset java.nio.charset.Charset defaultCharset()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name='java.nio.charset.Charset java.util.SortedMap&lt;java.lang.String,java.nio.charset.Charset&gt; availableCharsets()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>
 

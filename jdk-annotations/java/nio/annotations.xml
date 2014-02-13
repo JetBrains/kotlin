@@ -24,6 +24,12 @@
     <item name="java.nio.ByteBuffer byte[] array()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.nio.Buffer java.lang.Object array()">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.nio.CharBuffer char[] array()">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
     <item name="java.nio.ByteBuffer int compareTo(java.lang.Object) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -264,6 +270,9 @@
     <item name="java.nio.CharBuffer java.nio.CharBuffer wrap(char[], int, int)">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.nio.CharBuffer java.nio.CharBuffer wrap(char[], int, int) 0">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
     <item name="java.nio.CharBuffer java.nio.CharBuffer wrap(java.lang.CharSequence)">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
@@ -271,6 +280,9 @@
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.nio.CharBuffer java.nio.CharBuffer wrap(java.lang.CharSequence, int, int)">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.nio.CharBuffer java.nio.CharBuffer wrap(java.lang.CharSequence, int, int) 0">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.nio.DoubleBuffer int compareTo(java.lang.Object) 0">
@@ -622,6 +634,9 @@
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
     <item name="java.nio.ShortBuffer java.nio.ShortBuffer wrap(short[], int, int)">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
+    <item name="java.nio.charset.Charset java.util.SortedMap&lt;java.lang.String,java.nio.charset.Charset&gt; availableCharsets()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
 </root>

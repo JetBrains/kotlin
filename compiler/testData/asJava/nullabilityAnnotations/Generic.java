@@ -1,4 +1,4 @@
-public interface Generic <N, NN>  extends jet.JetObject {
+public interface Generic <N, NN> extends jet.JetObject {
     N a(@jet.runtime.typeinfo.JetValueParameter(name = "n") N n);
 
     @org.jetbrains.annotations.NotNull
