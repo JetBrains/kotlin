@@ -49,7 +49,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @Nullable
-    /* package */ static Pair<JvmClassName, KotlinClassHeader> readClassNameAndHeader(@NotNull byte[] fileContents) {
+    private static Pair<JvmClassName, KotlinClassHeader> readClassNameAndHeader(@NotNull byte[] fileContents) {
         final ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
         final Ref<JvmClassName> classNameRef = Ref.create();
         new ClassReader(fileContents).accept(new ClassVisitor(ASM4) {
@@ -93,6 +93,12 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
             LOG.warn(renderFileReadingErrorMessage(file), e);
             return null;
         }
+    }
+
+    @Nullable
+    public static KotlinClassHeader readClassHeader(@NotNull byte[] fileContents) {
+        Pair<JvmClassName, KotlinClassHeader> pair = readClassNameAndHeader(fileContents);
+        return pair == null ? null : pair.second;
     }
 
     @NotNull
