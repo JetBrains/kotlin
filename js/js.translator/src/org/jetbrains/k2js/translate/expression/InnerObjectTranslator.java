@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-class InnerObjectTranslator extends InnerDeclarationTranslator {
+public class InnerObjectTranslator extends InnerDeclarationTranslator {
     public InnerObjectTranslator(
             @NotNull TranslationContext context,
             @NotNull JsFunction fun

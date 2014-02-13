@@ -24,6 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -408,6 +409,28 @@ public final class TranslationUtils {
         }
 
         return ensureNotNull;
+    }
+
+    public static String getSuggestedName(TranslationContext context, DeclarationDescriptor descriptor) {
+        String suggestedName = "";
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration != null &&
+            !(containingDeclaration instanceof ClassOrPackageFragmentDescriptor) &&
+            !(containingDeclaration instanceof AnonymousFunctionDescriptor)) {
+            suggestedName = context.getNameForDescriptor(containingDeclaration).getIdent();
+        }
+
+        if (!suggestedName.isEmpty() && !suggestedName.endsWith("$")) {
+            suggestedName += "$";
+        }
+
+        if (descriptor.getName().isSpecial()) {
+            suggestedName += "f";
+        }
+        else {
+            suggestedName += context.getNameForDescriptor(descriptor).getIdent();
+        }
+        return suggestedName;
     }
 
     private static class OverloadedFunctionComparator implements Comparator<FunctionDescriptor> {
