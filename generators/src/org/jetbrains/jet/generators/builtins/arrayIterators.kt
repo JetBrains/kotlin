@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators.builtins.iterators
+package org.jetbrains.jet.generators.builtins.arrayIterators
 
 import org.jetbrains.jet.generators.builtins.IteratorKind
 import org.jetbrains.jet.generators.builtins.generateBuiltIns.*
 import java.io.PrintWriter
 
-class GenerateIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+class GenerateArrayIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun getPackage() = "kotlin.jvm.internal"
+
     override fun generateBody() {
         for (kind in IteratorKind.values()) {
             val s = kind.capitalized
-            out.println("public abstract class ${s}Iterator : Iterator<$s> {")
-            out.println("    override final fun next() = next$s()")
-            out.println()
-            out.println("    public abstract fun next$s(): $s")
+            out.println("private class Array${s}Iterator(private val array: ${s}Array) : ${s}Iterator() {")
+            out.println("    private var index = 0")
+            out.println("    override fun hasNext() = index < array.size")
+            out.println("    override fun next$s() = array[index++]")
             out.println("}")
             out.println()
+        }
+        for (kind in IteratorKind.values()) {
+            val s = kind.capitalized
+            out.println("public fun iterator(array: ${s}Array): ${s}Iterator = Array${s}Iterator(array)")
         }
     }
 }

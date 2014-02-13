@@ -58,7 +58,7 @@ public class ArrayIterator extends IntrinsicMethod {
         assert funDescriptor != null;
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
         if (containingDeclaration.equals(KotlinBuiltIns.getInstance().getArray())) {
-            v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
+            v.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", "([Ljava/lang/Object;)Ljava/util/Iterator;");
             return getType(Iterator.class);
         }
 
@@ -68,7 +68,7 @@ public class ArrayIterator extends IntrinsicMethod {
             if (containingDeclaration.equals(arrayClass)) {
                 String iteratorDesc = asmDescByFqNameWithoutInnerClasses(new FqName("jet." + primitiveType.getTypeName() + "Iterator"));
                 String methodSignature = "([" + asmTypeForPrimitive(jvmPrimitiveType) + ")" + iteratorDesc;
-                v.invokestatic("jet/runtime/ArrayIterator", "iterator", methodSignature);
+                v.invokestatic("kotlin/jvm/internal/InternalPackage", "iterator", methodSignature);
                 return Type.getType(iteratorDesc);
             }
         }
