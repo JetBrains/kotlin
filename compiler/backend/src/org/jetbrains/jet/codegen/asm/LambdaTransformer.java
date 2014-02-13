@@ -65,8 +65,10 @@ public class LambdaTransformer {
     private String signature;
     private String superName;
     private String[] interfaces;
+    private boolean isSameModule;
 
-    public LambdaTransformer(String lambdaInternalName, InliningInfo info) {
+    public LambdaTransformer(String lambdaInternalName, InliningInfo info, boolean isSameModule) {
+        this.isSameModule = isSameModule;
         this.state = info.state;
         this.typeMapper = state.getTypeMapper();
         this.info = info;
@@ -122,7 +124,7 @@ public class LambdaTransformer {
         MethodVisitor invokeVisitor = newMethod(classBuilder, invoke);
         InlineFieldRemapper remapper = new InlineFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getRecapturedLambdas());
         MethodInliner inliner = new MethodInliner(invoke, parameters, info.subInline(info.nameGenerator.subGenerator("lambda")), oldLambdaType,
-                                                  remapper);
+                                                  remapper, isSameModule);
         inliner.doTransformAndMerge(invokeVisitor, new VarRemapper.ParamRemapper(parameters, 0), remapper, false);
         invokeVisitor.visitMaxs(-1, -1);
 

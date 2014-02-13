@@ -81,11 +81,14 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     private final JvmMethodSignature jvmSignature;
 
+    private final boolean isSameModule;
+
     private LambdaInfo activeLambda;
 
     protected final List<ParameterInfo> tempTypes = new ArrayList<ParameterInfo>();
 
     protected final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
+    private SimpleFunctionDescriptor inlineFunctionDescriptor;
 
     public InlineCodegen(
             @NotNull ExpressionCodegen codegen,
@@ -94,6 +97,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
             @NotNull Call call
     ) {
         assert functionDescriptor.getInlineStrategy().isInline() : "InlineCodegen could inline only inline function but " + functionDescriptor;
+        inlineFunctionDescriptor = functionDescriptor;
 
         this.state = state;
         this.typeMapper = state.getTypeMapper();
@@ -110,6 +114,9 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         InlineStrategy inlineStrategy =
                 codegen.getContext().isInlineFunction() ? InlineStrategy.IN_PLACE : functionDescriptor.getInlineStrategy();
         this.asFunctionInline = false;
+
+        isSameModule = !(functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) /*not compiled library*/ &&
+                       CodegenUtil.isCallInsideSameModuleAsDeclared(inlineFunctionDescriptor, codegen.getContext());
     }
 
 
@@ -193,7 +200,8 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
                 new InliningInfo(expressionMap, null, null, null, state,
                                  codegen.getInlineNameGenerator().subGenerator(functionDescriptor.getName().asString()),
                                  codegen.getContext(), call);
-        MethodInliner inliner = new MethodInliner(node, parameters, info, null, new LambdaFieldRemapper()); //with captured
+
+        MethodInliner inliner = new MethodInliner(node, parameters, info, null, new LambdaFieldRemapper(), isSameModule); //with captured
 
         VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
 

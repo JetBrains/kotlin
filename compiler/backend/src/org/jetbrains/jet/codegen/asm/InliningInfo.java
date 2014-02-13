@@ -38,6 +38,7 @@ public class InliningInfo {
     public final NameGenerator nameGenerator;
 
     public final CodegenContext startContext;
+
     public final Call call;
 
     public InliningInfo(

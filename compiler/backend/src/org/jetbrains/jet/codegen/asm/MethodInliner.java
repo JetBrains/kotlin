@@ -34,6 +34,7 @@ public class MethodInliner {
     private final Type lambdaInfo;
 
     private final LambdaFieldRemapper lambdaFieldRemapper;
+    private boolean isSameModule;
 
     private final JetTypeMapper typeMapper;
 
@@ -56,13 +57,15 @@ public class MethodInliner {
             Parameters parameters,
             @NotNull InliningInfo parent,
             @Nullable Type lambdaInfo,
-            LambdaFieldRemapper lambdaFieldRemapper
+            LambdaFieldRemapper lambdaFieldRemapper,
+            boolean isSameModule
     ) {
         this.node = node;
         this.parameters = parameters;
         this.parent = parent;
         this.lambdaInfo = lambdaInfo;
         this.lambdaFieldRemapper = lambdaFieldRemapper;
+        this.isSameModule = isSameModule;
         this.typeMapper = parent.state.getTypeMapper();
     }
 
@@ -113,7 +116,8 @@ public class MethodInliner {
                     invocation = iterator.next();
 
                     if (invocation.isInlinable()) {
-                        LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(), parent.subInline(parent.nameGenerator));
+                        LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(), parent.subInline(parent.nameGenerator),
+                                                                              isSameModule);
                         transformer.doTransform(invocation);
                         super.anew(transformer.getNewLambdaType());
                         constructorInvocation.put(invocation.getOwnerInternalName(), invocation);
@@ -154,7 +158,7 @@ public class MethodInliner {
 
                     this.setInlining(true);
                     MethodInliner inliner = new MethodInliner(info.getNode(), params, parent.subInline(parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
-                                                              capturedRemapper);
+                                                              capturedRemapper, isSameModule);
 
                     VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(params, valueParamShift);
                     inliner.doTransformAndMerge(this.mv, remapper); //TODO add skipped this and receiver
@@ -318,7 +322,7 @@ public class MethodInliner {
                             }
                         }
 
-                        ConstructorInvocation invocation = new ConstructorInvocation(owner, infos);
+                        ConstructorInvocation invocation = new ConstructorInvocation(owner, infos, isSameModule);
                         constructorInvocationList.add(invocation);
                     }
                 }
