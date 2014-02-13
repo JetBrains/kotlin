@@ -345,7 +345,7 @@ public class CallResolver {
         }
         if (results == null) {
             BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
-            results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
+            results = doResolveCallAndRecordDebugInfo(newContext, prioritizedTasks, callTransformer, tracing);
             DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
             if (deltasTraceForTypeInference != null) {
                 deltasTraceForTypeInference.addAllMyDataTo(traceToResolveCall);
@@ -459,7 +459,7 @@ public class CallResolver {
     }
 
     @NotNull
-    private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCall(
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallAndRecordDebugInfo(
             @NotNull BasicCallResolutionContext context,
             @NotNull List<ResolutionTask<D, F>> prioritizedTasks, // high to low priority
             @NotNull CallTransformer<D, F> callTransformer,
@@ -477,6 +477,20 @@ public class CallResolver {
 
         debugInfo.set(ResolutionDebugInfo.TASKS, prioritizedTasks);
 
+        OverloadResolutionResultsImpl<F> results = doResolveCall(context, prioritizedTasks, callTransformer, tracing);
+        if (results.isSingleResult()) {
+            debugInfo.set(ResolutionDebugInfo.RESULT, results.getResultingCall());
+        }
+        return results;
+    }
+
+    @NotNull
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCall(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull List<ResolutionTask<D, F>> prioritizedTasks, // high to low priority
+            @NotNull CallTransformer<D, F> callTransformer,
+            @NotNull TracingStrategy tracing
+    ) {
         if (context.checkArguments == CheckValueArgumentsMode.ENABLED) {
             argumentTypeResolver.analyzeArgumentsAndRecordTypes(context);
         }
@@ -484,15 +498,12 @@ public class CallResolver {
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
         OverloadResolutionResultsImpl<F> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D, F> task : prioritizedTasks) {
-            TemporaryBindingTrace taskTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve a task for", task.call.getCalleeExpression());
+            TemporaryBindingTrace taskTrace =
+                    TemporaryBindingTrace.create(context.trace, "trace to resolve a task for", task.call.getCalleeExpression());
             OverloadResolutionResultsImpl<F> results = performResolutionGuardedForExtraFunctionLiteralArguments(
                     task.replaceBindingTrace(taskTrace), callTransformer);
             if (results.isSuccess() || results.isAmbiguity()) {
                 taskTrace.commit();
-
-                if (results.isSuccess()) {
-                    debugInfo.set(ResolutionDebugInfo.RESULT, results.getResultingCall());
-                }
                 return results;
             }
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
@@ -500,25 +511,20 @@ public class CallResolver {
                 return results;
             }
             boolean updateResults = traceForFirstNonemptyCandidateSet == null
-                        || (resultsForFirstNonemptyCandidateSet.getResultCode() == CANDIDATES_WITH_WRONG_RECEIVER &&
-                            results.getResultCode() != CANDIDATES_WITH_WRONG_RECEIVER);
+                                    || (resultsForFirstNonemptyCandidateSet.getResultCode() == CANDIDATES_WITH_WRONG_RECEIVER
+                                        && results.getResultCode() != CANDIDATES_WITH_WRONG_RECEIVER);
             if (!task.getCandidates().isEmpty() && !results.isNothing() && updateResults) {
                 traceForFirstNonemptyCandidateSet = taskTrace;
                 resultsForFirstNonemptyCandidateSet = results;
             }
         }
-        if (traceForFirstNonemptyCandidateSet != null) {
-            traceForFirstNonemptyCandidateSet.commit();
-            if (resultsForFirstNonemptyCandidateSet.isSingleResult()) {
-
-                debugInfo.set(ResolutionDebugInfo.RESULT, resultsForFirstNonemptyCandidateSet.getResultingCall());
-            }
-        }
-        else {
+        if (traceForFirstNonemptyCandidateSet == null) {
             tracing.unresolvedReference(context.trace);
             argumentTypeResolver.checkTypesWithNoCallee(context, SHAPE_FUNCTION_ARGUMENTS);
+            return OverloadResolutionResultsImpl.<F>nameNotFound();
         }
-        return resultsForFirstNonemptyCandidateSet != null ? resultsForFirstNonemptyCandidateSet : OverloadResolutionResultsImpl.<F>nameNotFound();
+        traceForFirstNonemptyCandidateSet.commit();
+        return resultsForFirstNonemptyCandidateSet;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
