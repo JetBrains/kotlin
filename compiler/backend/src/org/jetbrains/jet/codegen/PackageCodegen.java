@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.io.FileUtil;
@@ -24,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
@@ -60,11 +60,8 @@ public class PackageCodegen extends GenerationStateAware {
     private final ClassBuilderOnDemand v;
 
     @NotNull
-    private final FqName name;
-
-    @NotNull
     private final Collection<JetFile> files;
-    private final Set<PackageFragmentDescriptor> packageFragments;
+    private final PackageFragmentDescriptor packageFragment;
 
     public PackageCodegen(
             @NotNull ClassBuilderOnDemand v,
@@ -73,16 +70,10 @@ public class PackageCodegen extends GenerationStateAware {
             @NotNull Collection<JetFile> packageFiles
     ) {
         super(state);
-        checkAllFilesHaveSamePackage(packageFiles);
 
         this.v = v;
-        name = fqName;
         this.files = packageFiles;
-
-        packageFragments = Sets.newHashSet();
-        for (JetFile file : packageFiles) {
-            packageFragments.add(getPackageFragment(file));
-        }
+        this.packageFragment = getOnlyPackageFragment();
 
         final PsiFile sourceFile = packageFiles.size() == 1 ? packageFiles.iterator().next().getContainingFile() : null;
 
@@ -137,7 +128,7 @@ public class PackageCodegen extends GenerationStateAware {
         }
 
         assert v.isActivated() == shouldGeneratePackageClass :
-                "Different algorithms for generating package class and for heuristics for: " + name.asString();
+                "Different algorithms for generating package class and for heuristics for: " + packageFragment;
     }
 
     private void writeKotlinPackageAnnotationIfNeeded(@NotNull JvmSerializationBindings bindings) {
@@ -151,7 +142,7 @@ public class PackageCodegen extends GenerationStateAware {
         }
 
         DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(bindings));
-        ProtoBuf.Package packageProto = serializer.packageProto(packageFragments).build();
+        ProtoBuf.Package packageProto = serializer.packageProto(Collections.singleton(packageFragment)).build();
 
         if (packageProto.getMemberCount() == 0) return;
 
@@ -171,8 +162,8 @@ public class PackageCodegen extends GenerationStateAware {
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file) {
         boolean generateSrcClass = false;
-        Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
-        PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(getPackageFragment(file), packagePartType);
+        Type packagePartType = getPackagePartType(getPackageClassFqName(packageFragment.getFqName()), file.getVirtualFile());
+        PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
@@ -196,7 +187,7 @@ public class PackageCodegen extends GenerationStateAware {
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
-        FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, getPackageFragment(file));
+        FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, packageFragment);
         //TODO: FIX: Default method generated at facade without delegation
         MemberCodegen memberCodegen = new MemberCodegen(state, null, packageFacade, null) {
             @NotNull
@@ -215,16 +206,26 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     @NotNull
-    private PackageFragmentDescriptor getPackageFragment(@NotNull JetFile file) {
-        PackageFragmentDescriptor packageFragment = bindingContext.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
-        assert packageFragment != null : "package fragment is null for " + file;
-        return packageFragment;
+    private PackageFragmentDescriptor getOnlyPackageFragment() {
+        SmartList<PackageFragmentDescriptor> fragments = new SmartList<PackageFragmentDescriptor>();
+        for (JetFile file : files) {
+            PackageFragmentDescriptor fragment = bindingContext.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
+            assert fragment != null : "package fragment is null for " + file;
+
+            if (!fragments.contains(fragment)) {
+                fragments.add(fragment);
+            }
+        }
+        if (fragments.size() != 1) {
+            throw new IllegalStateException("More than one package fragment, files: " + files + " | fragments: " + fragments);
+        }
+        return fragments.get(0);
     }
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
         JetFile file = (JetFile) classOrObject.getContainingFile();
-        Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
-        CodegenContext context = CodegenContext.STATIC.intoPackagePart(getPackageFragment(file), packagePartType);
+        Type packagePartType = getPackagePartType(getPackageClassFqName(packageFragment.getFqName()), file.getVirtualFile());
+        CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }
 
@@ -233,8 +234,6 @@ public class PackageCodegen extends GenerationStateAware {
      * @return
      */
     public static boolean shouldGeneratePackageClass(@NotNull Collection<JetFile> packageFiles) {
-        checkAllFilesHaveSamePackage(packageFiles);
-
         for (JetFile file : packageFiles) {
             for (JetDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
@@ -244,21 +243,6 @@ public class PackageCodegen extends GenerationStateAware {
         }
 
         return false;
-    }
-
-    private static void checkAllFilesHaveSamePackage(Collection<JetFile> packageFiles) {
-        FqName commonFqName = null;
-        for (JetFile file : packageFiles) {
-            FqName fqName = file.getPackageFqName();
-            if (commonFqName != null) {
-                if (!commonFqName.equals(fqName)) {
-                    throw new IllegalArgumentException("All files should have same package name");
-                }
-            }
-            else {
-                commonFqName = file.getPackageFqName();
-            }
-        }
     }
 
     public void done() {
