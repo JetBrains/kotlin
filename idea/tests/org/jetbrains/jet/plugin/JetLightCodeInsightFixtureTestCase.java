@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.startup.impl.StartupManagerImpl;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
+import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -68,5 +71,24 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
 
     protected String fileName() {
         return getTestName(false) + ".kt";
+    }
+
+    protected boolean performNotWriteEditorAction(String actionId) {
+        DataContext dataContext = ((EditorEx)myFixture.getEditor()).getDataContext();
+
+        ActionManagerEx managerEx = ActionManagerEx.getInstanceEx();
+        AnAction action = managerEx.getAction(actionId);
+        AnActionEvent event = new AnActionEvent(null, dataContext, ActionPlaces.UNKNOWN, new Presentation(), managerEx, 0);
+
+        action.update(event);
+        if (!event.getPresentation().isEnabled()) {
+            return false;
+        }
+
+        managerEx.fireBeforeActionPerformed(action, dataContext, event);
+        action.actionPerformed(event);
+
+        managerEx.fireAfterActionPerformed(action, dataContext, event);
+        return true;
     }
 }
