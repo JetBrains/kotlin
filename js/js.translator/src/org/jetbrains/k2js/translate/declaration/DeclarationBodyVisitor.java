@@ -73,7 +73,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
         ClassDescriptor descriptor = getClassDescriptor(data.bindingContext(), enumEntry);
         List<JetType> supertypes = getSupertypesWithoutFakes(descriptor);
         if (enumEntry.getBody() != null || supertypes.size() > 1) {
-            jsEnumEntryCreation = ClassTranslator.generateClassCreation(enumEntry, descriptor, data);
+            jsEnumEntryCreation = ClassTranslator.generateClassCreation(enumEntry, data);
         } else {
             assert supertypes.size() == 1 : "Simple Enum entry must have one supertype";
             jsEnumEntryCreation = new ClassInitializerTranslator(enumEntry, data).generateEnumEntryInstanceCreation(supertypes.get(0));
@@ -85,9 +85,9 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @Override
     public Void visitClassObject(@NotNull JetClassObject classObject, TranslationContext context) {
         JetObjectDeclaration declaration = classObject.getObjectDeclaration();
-        ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
-        JsExpression value = ClassTranslator.generateClassCreation(declaration, descriptor, context);
+        JsExpression value = ClassTranslator.generateClassCreation(declaration, context);
 
+        ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
         JsFunction fun = TranslationUtils.simpleReturnFunction(context.getScopeForDescriptor(descriptor), value);
         staticResult.add(createClassObjectInitializer(fun, context));
         return null;
