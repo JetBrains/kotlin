@@ -23,8 +23,6 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl
 import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.calls.CallResolver
-import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
@@ -34,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.di.*
 import kotlin.properties.Delegates
@@ -60,42 +57,36 @@ public val injectorGenerators: List<DependencyInjectorGenerator> by Delegates.la
 public class GenerateInjectors {
 
     private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
+        parameters(
+                javaClass<Project>(),
+                javaClass<TopDownAnalysisParameters>(),
+                javaClass<BindingTrace>()
+        )
+        publicParameter(javaClass<ModuleDescriptorImpl>())
+
         publicFields(
                 javaClass<TopDownAnalyzer>(),
-                javaClass<TopDownAnalysisContext>(),
-                javaClass<BodyResolver>(),
-                javaClass<ControlFlowAnalyzer>(),
-                javaClass<DeclarationsChecker>(),
-                javaClass<DescriptorResolver>()
+                javaClass<TopDownAnalysisContext>()
         )
-        field(javaClass<StorageManager>(), init = GivenExpression("topDownAnalysisParameters.getStorageManager()"))
-        field(javaClass<CallResolverExtensionProvider>())
 
-        publicParameter(javaClass<Project>())
-        parameter(javaClass<TopDownAnalysisParameters>())
-        publicParameters(
-                javaClass<BindingTrace>(),
-                javaClass<ModuleDescriptorImpl>()
-        )
+        field(javaClass<StorageManager>(), init = GivenExpression("topDownAnalysisParameters.getStorageManager()"))
+        field(javaClass<MutablePackageFragmentProvider>())
     }
 
     private val generatorForTopDownAnalyzerBasic =
             generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic", javaClass<GenerateInjectors>()) {
                 commonForTopDownAnalyzer()
-                fields(
-                        javaClass<DependencyClassByQualifiedNameResolverDummyImpl>(),
-                        javaClass<MutablePackageFragmentProvider>()
-                )
+
                 parameter(javaClass<PlatformToKotlinClassMap>())
+
+                field(javaClass<DependencyClassByQualifiedNameResolverDummyImpl>())
             }
 
     private val generatorForTopDownAnalyzerForJs =
             generator("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs", javaClass<GenerateInjectors>()) {
                 commonForTopDownAnalyzer()
-                fields(
-                        javaClass<DependencyClassByQualifiedNameResolverDummyImpl>(),
-                        javaClass<MutablePackageFragmentProvider>()
-                )
+
+                field(javaClass<DependencyClassByQualifiedNameResolverDummyImpl>())
                 field(javaClass<PlatformToKotlinClassMap>(), init = GivenExpression("org.jetbrains.jet.lang.PlatformToKotlinClassMap.EMPTY"))
             }
 
@@ -103,7 +94,9 @@ public class GenerateInjectors {
             generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm", javaClass<GenerateInjectors>()) {
                 implementInterface(javaClass<InjectorForTopDownAnalyzer>())
                 commonForTopDownAnalyzer()
+
                 publicField(javaClass<JavaDescriptorResolver>())
+
                 field(javaClass<JavaToKotlinClassMap>(), init = GivenExpression("org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap.getInstance()"))
                 fields(
                         javaClass<JavaClassFinderImpl>(),
@@ -119,7 +112,6 @@ public class GenerateInjectors {
 
     private val generatorForJavaDescriptorResolver =
             generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaDescriptorResolver", javaClass<GenerateInjectors>()) {
-
                 parameters(
                         javaClass<Project>(),
                         javaClass<BindingTrace>()
@@ -127,8 +119,11 @@ public class GenerateInjectors {
 
                 publicField(javaClass<GlobalContextImpl>(),
                             init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))
-                field(javaClass<StorageManager>(), init = GivenExpression("globalContext.getStorageManager()"))
+                publicField(javaClass<ModuleDescriptorImpl>(), name = "module",
+                            init = GivenExpression("org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule(\"<fake-jdr-module>\")"))
+                publicField(javaClass<JavaDescriptorResolver>())
                 publicField(javaClass<JavaClassFinderImpl>())
+
                 fields(
                         javaClass<TraceBasedExternalSignatureResolver>(),
                         javaClass<TraceBasedJavaResolverCache>(),
@@ -136,58 +131,57 @@ public class GenerateInjectors {
                         javaClass<PsiBasedMethodSignatureChecker>(),
                         javaClass<PsiBasedExternalAnnotationResolver>()
                 )
-                publicField(javaClass<JavaDescriptorResolver>())
+                field(javaClass<StorageManager>(), init = GivenExpression("globalContext.getStorageManager()"))
                 field(javaClass<VirtualFileFinder>(),
                       init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
-                publicField(javaClass<ModuleDescriptorImpl>(), name = "module",
-                            init = GivenExpression("org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule(\"<fake-jdr-module>\")"))
             }
 
     private val generatorForMacro =
             generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForMacros", javaClass<GenerateInjectors>()) {
+                parameters(
+                        javaClass<Project>(),
+                        javaClass<ModuleDescriptor>()
+                )
+
                 publicField(javaClass<ExpressionTypingServices>())
-                field(javaClass<CallResolverExtensionProvider>())
+
+                field(javaClass<PlatformToKotlinClassMap>(), init = GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"))
                 field(javaClass<GlobalContext>(), init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))
                 field(javaClass<StorageManager>(), init = GivenExpression("globalContext.getStorageManager()"))
-                field(javaClass<PlatformToKotlinClassMap>(), init = GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"))
-
-                publicParameter(javaClass<Project>())
-                parameter(javaClass<ModuleDescriptor>())
             }
 
     private val generatorForTests =
             generator("compiler/tests", "org.jetbrains.jet.di", "InjectorForTests", javaClass<GenerateInjectors>()) {
+                parameters(
+                        javaClass<Project>(),
+                        javaClass<ModuleDescriptor>()
+                )
+
                 publicFields(
                         javaClass<DescriptorResolver>(),
                         javaClass<ExpressionTypingServices>(),
-                        javaClass<TypeResolver>(),
-                        javaClass<CallResolver>()
+                        javaClass<TypeResolver>()
                 )
-                field(javaClass<CallResolverExtensionProvider>())
+
                 field(javaClass<StorageManager>(), init = GivenExpression("globalContext.getStorageManager()"))
-                publicField(javaClass<KotlinBuiltIns>(), init = GivenExpression("KotlinBuiltIns.getInstance()"))
                 field(javaClass<PlatformToKotlinClassMap>(), init = GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"))
                 field(javaClass<GlobalContext>(), init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))
-
-                publicParameter(javaClass<Project>())
-                parameter(javaClass<ModuleDescriptor>())
             }
 
     private val generatorForBodyResolve =
             generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForBodyResolve", javaClass<GenerateInjectors>()) {
-                publicField(javaClass<BodyResolver>())
-                field(javaClass<CallResolverExtensionProvider>())
-                field(javaClass<PlatformToKotlinClassMap>(), init = GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"))
-                field(javaClass<FunctionAnalyzerExtension>())
-                field(javaClass<StorageManager>(), init = GivenExpression("topDownAnalysisParameters.getStorageManager()"))
-
-                publicParameter(javaClass<Project>())
-                parameter(javaClass<TopDownAnalysisParameters>())
-                publicParameters(
+                parameters(
+                        javaClass<Project>(),
+                        javaClass<TopDownAnalysisParameters>(),
                         javaClass<BindingTrace>(),
-                        javaClass<BodiesResolveContext>()
+                        javaClass<BodiesResolveContext>(),
+                        javaClass<ModuleDescriptor>()
                 )
-                parameter(javaClass<ModuleDescriptor>())
+
+                publicField(javaClass<BodyResolver>())
+
+                field(javaClass<PlatformToKotlinClassMap>(), init = GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"))
+                field(javaClass<StorageManager>(), init = GivenExpression("topDownAnalysisParameters.getStorageManager()"))
             }
 
     private val generatorForLazyResolve =
@@ -201,7 +195,7 @@ public class GenerateInjectors {
                 )
 
                 publicField(javaClass<ResolveSession>())
-                field(javaClass<CallResolverExtensionProvider>())
+
                 field(javaClass<StorageManager>(), init = GivenExpression("resolveSession.getStorageManager()"))
                 field(javaClass<PlatformToKotlinClassMap>(), init = GivenExpression("moduleDescriptor.getPlatformToKotlinClassMap()"))
             }

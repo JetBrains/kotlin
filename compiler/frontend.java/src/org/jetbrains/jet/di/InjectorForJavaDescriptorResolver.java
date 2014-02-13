@@ -19,16 +19,16 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
@@ -43,16 +43,16 @@ public class InjectorForJavaDescriptorResolver {
     private final Project project;
     private final BindingTrace bindingTrace;
     private final GlobalContextImpl globalContext;
-    private final StorageManager storageManager;
+    private final ModuleDescriptorImpl module;
+    private final JavaDescriptorResolver javaDescriptorResolver;
     private final JavaClassFinderImpl javaClassFinder;
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private final TraceBasedJavaResolverCache traceBasedJavaResolverCache;
     private final TraceBasedErrorReporter traceBasedErrorReporter;
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
-    private final JavaDescriptorResolver javaDescriptorResolver;
+    private final StorageManager storageManager;
     private final VirtualFileFinder virtualFileFinder;
-    private final ModuleDescriptorImpl module;
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
@@ -65,17 +65,17 @@ public class InjectorForJavaDescriptorResolver {
         this.project = project;
         this.bindingTrace = bindingTrace;
         this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
+        this.module = org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule("<fake-jdr-module>");
         this.storageManager = globalContext.getStorageManager();
         this.javaClassFinder = new JavaClassFinderImpl();
-        this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
-        this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
-        this.traceBasedErrorReporter = new TraceBasedErrorReporter();
-        this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
-        this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
+        this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
+        this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
+        this.traceBasedErrorReporter = new TraceBasedErrorReporter();
+        this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
+        this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
         this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, getJavaClassFinder(), virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, traceBasedJavaResolverCache);
-        this.module = org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule("<fake-jdr-module>");
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModule());
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModule());
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer(storageManager);
@@ -114,16 +114,16 @@ public class InjectorForJavaDescriptorResolver {
         return this.globalContext;
     }
     
-    public JavaClassFinderImpl getJavaClassFinder() {
-        return this.javaClassFinder;
+    public ModuleDescriptorImpl getModule() {
+        return this.module;
     }
     
     public JavaDescriptorResolver getJavaDescriptorResolver() {
         return this.javaDescriptorResolver;
     }
     
-    public ModuleDescriptorImpl getModule() {
-        return this.module;
+    public JavaClassFinderImpl getJavaClassFinder() {
+        return this.javaClassFinder;
     }
     
 }

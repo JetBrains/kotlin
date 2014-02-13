@@ -16,13 +16,12 @@
 
 package org.jetbrains.jet.di;
 
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
-import org.jetbrains.jet.context.GlobalContext;
-import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -32,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -39,13 +39,12 @@ import javax.annotation.PreDestroy;
 @SuppressWarnings("ALL")
 public class InjectorForMacros {
     
-    private final ExpressionTypingServices expressionTypingServices;
-    private final CallResolverExtensionProvider callResolverExtensionProvider;
-    private final GlobalContext globalContext;
-    private final StorageManager storageManager;
-    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
+    private final ExpressionTypingServices expressionTypingServices;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final GlobalContext globalContext;
+    private final StorageManager storageManager;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -55,18 +54,18 @@ public class InjectorForMacros {
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
+    private final CallResolverExtensionProvider callResolverExtensionProvider;
     
     public InjectorForMacros(
         @NotNull Project project,
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
+        this.project = project;
+        this.moduleDescriptor = moduleDescriptor;
         this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.expressionTypingServices = new ExpressionTypingServices(globalContext, platformToKotlinClassMap);
-        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.storageManager = globalContext.getStorageManager();
-        this.project = project;
-        this.moduleDescriptor = moduleDescriptor;
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -76,6 +75,7 @@ public class InjectorForMacros {
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
+        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
 
         this.expressionTypingServices.setAnnotationResolver(annotationResolver);
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
@@ -120,10 +120,6 @@ public class InjectorForMacros {
     
     public ExpressionTypingServices getExpressionTypingServices() {
         return this.expressionTypingServices;
-    }
-    
-    public Project getProject() {
-        return this.project;
     }
     
 }

@@ -16,16 +16,14 @@
 
 package org.jetbrains.jet.di;
 
-import org.jetbrains.jet.lang.resolve.BodyResolver;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
-import org.jetbrains.jet.storage.StorageManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.resolve.BodyResolver;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -35,9 +33,11 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
 import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
+import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.annotations.NotNull;
@@ -47,16 +47,14 @@ import javax.annotation.PreDestroy;
 @SuppressWarnings("ALL")
 public class InjectorForBodyResolve {
     
-    private final BodyResolver bodyResolver;
-    private final CallResolverExtensionProvider callResolverExtensionProvider;
-    private final PlatformToKotlinClassMap platformToKotlinClassMap;
-    private final FunctionAnalyzerExtension functionAnalyzerExtension;
-    private final StorageManager storageManager;
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final BindingTrace bindingTrace;
     private final BodiesResolveContext bodiesResolveContext;
     private final ModuleDescriptor moduleDescriptor;
+    private final BodyResolver bodyResolver;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final StorageManager storageManager;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -66,9 +64,11 @@ public class InjectorForBodyResolve {
     private final DelegatedPropertyResolver delegatedPropertyResolver;
     private final TypeResolver typeResolver;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
+    private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final CandidateResolver candidateResolver;
     private final ControlFlowAnalyzer controlFlowAnalyzer;
     private final DeclarationsChecker declarationsChecker;
+    private final FunctionAnalyzerExtension functionAnalyzerExtension;
     private final ScriptBodyResolver scriptBodyResolver;
     private final TopDownAnalysisContext topDownAnalysisContext;
     
@@ -79,28 +79,28 @@ public class InjectorForBodyResolve {
         @NotNull BodiesResolveContext bodiesResolveContext,
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
-        this.bodyResolver = new BodyResolver();
-        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
-        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
-        this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
-        this.storageManager = topDownAnalysisParameters.getStorageManager();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.bindingTrace = bindingTrace;
         this.bodiesResolveContext = bodiesResolveContext;
         this.moduleDescriptor = moduleDescriptor;
+        this.bodyResolver = new BodyResolver();
+        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.storageManager = topDownAnalysisParameters.getStorageManager();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices(getBodiesResolveContext(), platformToKotlinClassMap);
+        this.expressionTypingServices = new ExpressionTypingServices(bodiesResolveContext, platformToKotlinClassMap);
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.typeResolver = new TypeResolver();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.candidateResolver = new CandidateResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
+        this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.topDownAnalysisContext = new TopDownAnalysisContext();
 
@@ -115,8 +115,6 @@ public class InjectorForBodyResolve {
         this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.bodyResolver.setTrace(bindingTrace);
-
-        functionAnalyzerExtension.setTrace(bindingTrace);
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setExpressionTypingServices(expressionTypingServices);
@@ -158,6 +156,8 @@ public class InjectorForBodyResolve {
 
         declarationsChecker.setTrace(bindingTrace);
 
+        functionAnalyzerExtension.setTrace(bindingTrace);
+
         scriptBodyResolver.setContext(topDownAnalysisContext);
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
         scriptBodyResolver.setTrace(bindingTrace);
@@ -172,18 +172,6 @@ public class InjectorForBodyResolve {
     
     public BodyResolver getBodyResolver() {
         return this.bodyResolver;
-    }
-    
-    public Project getProject() {
-        return this.project;
-    }
-    
-    public BindingTrace getBindingTrace() {
-        return this.bindingTrace;
-    }
-    
-    public BodiesResolveContext getBodiesResolveContext() {
-        return this.bodiesResolveContext;
     }
     
 }

@@ -16,23 +16,22 @@
 
 package org.jetbrains.jet.di;
 
+import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.context.GlobalContext;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
-import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
-import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
-import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
+import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
+import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
+import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
+import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -40,45 +39,43 @@ import javax.annotation.PreDestroy;
 @SuppressWarnings("ALL")
 public class InjectorForTests {
     
+    private final Project project;
+    private final ModuleDescriptor moduleDescriptor;
     private final DescriptorResolver descriptorResolver;
     private final ExpressionTypingServices expressionTypingServices;
     private final TypeResolver typeResolver;
-    private final CallResolver callResolver;
-    private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final StorageManager storageManager;
-    private final KotlinBuiltIns kotlinBuiltIns;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final GlobalContext globalContext;
-    private final Project project;
-    private final ModuleDescriptor moduleDescriptor;
     private final AnnotationResolver annotationResolver;
-    private final DelegatedPropertyResolver delegatedPropertyResolver;
-    private final CallExpressionResolver callExpressionResolver;
-    private final QualifiedExpressionResolver qualifiedExpressionResolver;
+    private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
     private final CandidateResolver candidateResolver;
+    private final DelegatedPropertyResolver delegatedPropertyResolver;
+    private final CallExpressionResolver callExpressionResolver;
+    private final CallResolverExtensionProvider callResolverExtensionProvider;
+    private final QualifiedExpressionResolver qualifiedExpressionResolver;
     
     public InjectorForTests(
         @NotNull Project project,
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
+        this.project = project;
+        this.moduleDescriptor = moduleDescriptor;
         this.descriptorResolver = new DescriptorResolver();
         this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.expressionTypingServices = new ExpressionTypingServices(globalContext, platformToKotlinClassMap);
         this.typeResolver = new TypeResolver();
-        this.callResolver = new CallResolver();
-        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.storageManager = globalContext.getStorageManager();
-        this.kotlinBuiltIns = KotlinBuiltIns.getInstance();
-        this.project = project;
-        this.moduleDescriptor = moduleDescriptor;
         this.annotationResolver = new AnnotationResolver();
-        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.callExpressionResolver = new CallExpressionResolver();
-        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
+        this.delegatedPropertyResolver = new DelegatedPropertyResolver();
+        this.callExpressionResolver = new CallExpressionResolver();
+        this.callResolverExtensionProvider = new CallResolverExtensionProvider();
+        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
         this.descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
@@ -98,22 +95,22 @@ public class InjectorForTests {
         this.typeResolver.setModuleDescriptor(moduleDescriptor);
         this.typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
-        this.callResolver.setArgumentTypeResolver(argumentTypeResolver);
-        this.callResolver.setCandidateResolver(candidateResolver);
-        this.callResolver.setExpressionTypingServices(expressionTypingServices);
-        this.callResolver.setTypeResolver(typeResolver);
-
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setExpressionTypingServices(expressionTypingServices);
 
-        delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
-
-        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
+        callResolver.setArgumentTypeResolver(argumentTypeResolver);
+        callResolver.setCandidateResolver(candidateResolver);
+        callResolver.setExpressionTypingServices(expressionTypingServices);
+        callResolver.setTypeResolver(typeResolver);
 
         argumentTypeResolver.setExpressionTypingServices(expressionTypingServices);
         argumentTypeResolver.setTypeResolver(typeResolver);
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
+
+        delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
     }
     
@@ -131,18 +128,6 @@ public class InjectorForTests {
     
     public TypeResolver getTypeResolver() {
         return this.typeResolver;
-    }
-    
-    public CallResolver getCallResolver() {
-        return this.callResolver;
-    }
-    
-    public KotlinBuiltIns getKotlinBuiltIns() {
-        return this.kotlinBuiltIns;
-    }
-    
-    public Project getProject() {
-        return this.project;
     }
     
 }

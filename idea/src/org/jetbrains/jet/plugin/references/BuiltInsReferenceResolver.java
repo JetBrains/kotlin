@@ -92,15 +92,16 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                         Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
                 ModuleDescriptorImpl module = new ModuleDescriptorImpl(
                         Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
+                BindingTraceContext trace = new BindingTraceContext();
                 InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                        myProject, topDownAnalysisParameters, new BindingTraceContext(), module, PlatformToKotlinClassMap.EMPTY);
+                        myProject, topDownAnalysisParameters, trace, module, PlatformToKotlinClassMap.EMPTY);
 
                 TopDownAnalyzer analyzer = injector.getTopDownAnalyzer();
                 analyzer.analyzeFiles(jetBuiltInsFiles, Collections.<AnalyzerScriptParameter>emptyList());
 
                 builtinsPackageFragment = analyzer.getPackageFragmentProvider().getOrCreateFragment(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
                 builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
-                bindingContext = injector.getBindingTrace().getBindingContext();
+                bindingContext = trace.getBindingContext();
             }
         };
 
