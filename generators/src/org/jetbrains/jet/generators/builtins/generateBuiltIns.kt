@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.generators.builtins.generateBuiltIns
 
+import org.jetbrains.jet.generators.builtins.arrayIterators.*
 import org.jetbrains.jet.generators.builtins.functions.*
 import org.jetbrains.jet.generators.builtins.iterators.*
 import org.jetbrains.jet.generators.builtins.progressionIterators.*
@@ -58,6 +59,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     }
 
     generate(File(BUILT_INS_DIR, "Iterators.kt")) { GenerateIterators(it) }
+    generate(File(RUNTIME_JVM_DIR, "internal/ArrayIterators.kt")) { GenerateArrayIterators(it) }
     generate(File(BUILT_INS_DIR, "ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
     generate(File(BUILT_INS_DIR, "Progressions.kt")) { GenerateProgressions(it) }
     generate(File(BUILT_INS_DIR, "Ranges.kt")) { GenerateRanges(it) }

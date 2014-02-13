@@ -18,6 +18,19 @@ package org.jetbrains.jet.generators.builtins
 
 import org.jetbrains.jet.generators.builtins.ProgressionKind.*
 
+enum class IteratorKind {
+    BYTE
+    CHAR
+    SHORT
+    INT
+    LONG
+    FLOAT
+    DOUBLE
+    BOOLEAN
+
+    val capitalized: String get() = name().toLowerCase().capitalize()
+}
+
 enum class ProgressionKind {
     BYTE
     CHAR
