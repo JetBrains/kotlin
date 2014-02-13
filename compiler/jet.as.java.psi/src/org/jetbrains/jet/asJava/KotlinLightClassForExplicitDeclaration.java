@@ -31,7 +31,6 @@ import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.LightClass;
 import com.intellij.psi.impl.light.LightMethod;
-import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
@@ -387,7 +386,12 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     @Override
     public PsiModifierList getModifierList() {
         if (modifierList == null) {
-            modifierList = new KotlinLightModifierList(computeModifiers());
+            modifierList = new KotlinLightModifierList(this.getManager(), computeModifiers()) {
+                @Override
+                public PsiAnnotationOwner getDelegate() {
+                    return KotlinLightClassForExplicitDeclaration.this.getDelegate().getModifierList();
+                }
+            };
         }
         return modifierList;
     }
@@ -564,39 +568,5 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         }
 
         return false;
-    }
-
-    private class KotlinLightModifierList extends LightModifierList {
-        public KotlinLightModifierList(@NotNull String[] modifiers) {
-            super(KotlinLightClassForExplicitDeclaration.this.getManager(), JetLanguage.INSTANCE, modifiers);
-        }
-
-        private PsiAnnotationOwner getDelegate() {
-            return KotlinLightClassForExplicitDeclaration.this.getDelegate().getModifierList();
-        }
-
-        @Override
-        @NotNull
-        public PsiAnnotation[] getAnnotations() {
-            return getDelegate().getAnnotations();
-        }
-
-        @Override
-        @NotNull
-        public PsiAnnotation[] getApplicableAnnotations() {
-            return getDelegate().getApplicableAnnotations();
-        }
-
-        @Override
-        @Nullable
-        public PsiAnnotation findAnnotation(@NotNull @NonNls String qualifiedName) {
-            return getDelegate().findAnnotation(qualifiedName);
-        }
-
-        @Override
-        @NotNull
-        public PsiAnnotation addAnnotation(@NotNull @NonNls String qualifiedName) {
-            return getDelegate().addAnnotation(qualifiedName);
-        }
     }
 }

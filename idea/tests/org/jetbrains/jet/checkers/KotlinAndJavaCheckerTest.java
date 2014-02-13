@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.jetbrains.jet.checkers;
 
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.nullable.NullableStuffInspection;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.siyeh.ig.bugs.StaticCallOnSubclassInspection;
 import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
@@ -27,7 +28,11 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 public class KotlinAndJavaCheckerTest extends DaemonAnalyzerTestCase {
     @Override
     protected LocalInspectionTool[] configureLocalInspectionTools() {
-        return new LocalInspectionTool[] { new StaticCallOnSubclassInspection(), new StaticFieldReferenceOnSubclassInspection()};
+        return new LocalInspectionTool[] {
+                new StaticCallOnSubclassInspection(),
+                new StaticFieldReferenceOnSubclassInspection(),
+                new NullableStuffInspection()
+        };
     }
 
     @Override
@@ -42,6 +47,10 @@ public class KotlinAndJavaCheckerTest extends DaemonAnalyzerTestCase {
 
     public void testName() throws Exception {
         doTest(false, false, "ClassObjects.java", "ClassObjects.kt");
+    }
+
+    public void testNoNotNullOnParameterInOverride() throws Exception {
+        doTest(true, true, "NoNotNullOnParameterInOverride.java", "NoNotNullOnParameterInOverride.kt");
     }
 
     public void testUsingKotlinPackageDeclarations() throws Exception {

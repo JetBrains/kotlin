@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.psi.PsiAnnotationOwner;
+import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.PsiParameter;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.light.LightParameter;
@@ -34,15 +37,30 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
         return name != null ? name : "p" + index;
     }
 
+    private final PsiModifierList modifierList;
     private final PsiParameter delegate;
     private final int index;
     private final KotlinLightMethod method;
 
-    public KotlinLightParameter(PsiParameter delegate, int index, KotlinLightMethod method) {
+    public KotlinLightParameter(final PsiParameter delegate, int index, KotlinLightMethod method) {
         super(getName(delegate, index), delegate.getType(), method, JetLanguage.INSTANCE);
+
         this.delegate = delegate;
         this.index = index;
         this.method = method;
+
+        this.modifierList = new KotlinLightModifierList(method.getManager(), ArrayUtil.EMPTY_STRING_ARRAY) {
+            @Override
+            public PsiAnnotationOwner getDelegate() {
+                return delegate.getModifierList();
+            }
+        };
+    }
+
+    @NotNull
+    @Override
+    public PsiModifierList getModifierList() {
+        return modifierList;
     }
 
     @NotNull
