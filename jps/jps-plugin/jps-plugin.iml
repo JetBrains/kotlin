@@ -16,6 +16,10 @@
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
     <orderEntry type="module" module-name="backend" scope="TEST" />
     <orderEntry type="module" module-name="descriptors" scope="TEST" />
+    <orderEntry type="module" module-name="frontend.java" scope="TEST" />
+    <orderEntry type="module" module-name="descriptor.loader.java" scope="TEST" />
+    <orderEntry type="module" module-name="serialization.java" scope="TEST" />
+    <orderEntry type="module" module-name="serialization" scope="TEST" />
     <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
   </component>
 </module>

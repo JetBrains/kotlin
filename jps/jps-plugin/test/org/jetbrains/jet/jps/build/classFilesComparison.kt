@@ -28,10 +28,6 @@ import com.google.common.hash.Hashing
 import com.intellij.openapi.util.io.FileUtil
 import com.google.common.collect.Sets
 import java.util.HashSet
-import com.intellij.openapi.vfs.local.CoreLocalFileSystem
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass
-import org.jetbrains.jet.storage.LockBasedStorageManager
-import org.jetbrains.jet.lang.resolve.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.descriptors.serialization.BitEncoding
 import org.jetbrains.jet.descriptors.serialization.DebugJavaProtoBuf
@@ -39,6 +35,7 @@ import com.google.protobuf.ExtensionRegistry
 import java.io.ByteArrayInputStream
 import org.jetbrains.jet.descriptors.serialization.DebugProtoBuf
 import java.util.Arrays
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass
 
 fun File.hash() = Files.hash(this, Hashing.crc32())
 
@@ -114,11 +111,40 @@ fun assertEqualDirectories(expected: File, actual: File, ignore: (File) -> Boole
 
 fun classFileToString(classFile: File): String {
     val out = StringWriter()
-    val traceVisitor = TraceClassVisitor(PrintWriter(out))
-    ClassReader(classFile.readBytes()).accept(traceVisitor, 0)
 
-    // TODO serialize protobuf
+    val classBytes = classFile.readBytes()
+
+    val traceVisitor = TraceClassVisitor(PrintWriter(out))
+    ClassReader(classBytes).accept(traceVisitor, 0)
+
+    val classHeader = VirtualFileKotlinClass.readClassHeader(classBytes)
+
+    val annotationDataEncoded = classHeader?.annotationData
+    if (annotationDataEncoded != null) {
+        ByteArrayInputStream(BitEncoding.decodeBytes(annotationDataEncoded)).use {
+            input ->
+
+        out.write("\n------ simpleNames proto -----\n${DebugProtoBuf.SimpleNameTable.parseDelimitedFrom(input)}")
+        out.write("\n------ qualifiedNames proto -----\n${DebugProtoBuf.QualifiedNameTable.parseDelimitedFrom(input)}")
+
+        when (classHeader!!.kind) {
+            KotlinClassHeader.Kind.PACKAGE_FACADE ->
+                out.write("\n------ package proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
+
+                KotlinClassHeader.Kind.CLASS ->
+                    out.write("\n------ class proto -----\n${DebugProtoBuf.Class.parseFrom(input, getExtensionRegistry())}")
+                else -> throw IllegalStateException()
+            }
+        }
+    }
+
     return out.toString()
+}
+
+fun getExtensionRegistry(): ExtensionRegistry {
+    val registry = ExtensionRegistry.newInstance()!!
+    DebugJavaProtoBuf.registerAllExtensions(registry)
+    return registry
 }
 
 fun fileToStringRepresentation(file: File): String {
