@@ -154,37 +154,6 @@ public class DependencyInjectorGenerator {
         implementsList.add(superInterface);
     }
 
-    public void addPublicParameter(Class<?> type) {
-        addPublicParameter(new DiType(type));
-    }
-
-    public void addPublicParameter(DiType type) {
-        addPublicParameter(type, true);
-    }
-
-    public void addPublicParameter(DiType type, boolean required) {
-        addParameter(true, type, var(type), required);
-    }
-
-
-    public void addParameter(Class<?> type) {
-        addParameter(DiType.fromReflectionType(type));
-    }
-
-    public void addParameter(DiType type) {
-        addParameter(type, true);
-    }
-
-    public void addParameter(Class<?> type, boolean required) {
-        addParameter(new DiType(type), required);
-    }
-
-    public void addParameter(DiType type, boolean required) {
-        addParameter(false, type, var(type), required);
-    }
-
-
-
     public void addParameter(boolean reexport, @NotNull DiType type, @Nullable String name, boolean required) {
         Field field = addField(reexport, type, name, null);
         Parameter parameter = new Parameter(type, name, field, required);
@@ -192,31 +161,6 @@ public class DependencyInjectorGenerator {
         field.setInitialization(new ParameterExpression(parameter));
         backsParameter.add(field);
         dependencies.addSatisfiedField(field);
-    }
-
-    public Field addPublicField(Class<?> type) {
-        return addPublicField(new DiType(type));
-    }
-
-    public Field addPublicField(DiType type) {
-        return addField(true, type, null, null);
-    }
-
-    public Field addField(Class<?> type) {
-        return addField(new DiType(type));
-    }
-
-    public Field addField(DiType type) {
-        return addField(false, type, null, null);
-    }
-
-    public Field addField(Enum<?> enu) {
-        Class<? extends Enum> clazz = enu.getClass();
-        return addField(false, clazz, null, new GivenExpression(clazz.getSimpleName() + "." + enu.name()));
-    }
-
-    public Field addField(boolean isPublic, Class<?> type, @Nullable String name, @Nullable Expression init) {
-        return addField(isPublic, new DiType(type), name, init);
     }
 
     public Field addField(boolean isPublic, DiType type, @Nullable String name, @Nullable Expression init) {
