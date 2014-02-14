@@ -1,4 +1,4 @@
-public final class Class implements jet.JetObject {
+public final class Class implements kotlin.internal.KObject {
     @org.jetbrains.annotations.Nullable
     private final java.lang.String nullableVal = "";
     @org.jetbrains.annotations.Nullable

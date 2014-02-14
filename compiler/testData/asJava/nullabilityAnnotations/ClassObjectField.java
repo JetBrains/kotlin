@@ -1,4 +1,4 @@
-public final class ClassObjectField implements jet.JetObject {
+public final class ClassObjectField implements kotlin.internal.KObject {
     @org.jetbrains.annotations.Nullable
     public static final java.lang.String x = "";
     private static final java.lang.String y = "";
@@ -7,7 +7,7 @@ public final class ClassObjectField implements jet.JetObject {
     @org.jetbrains.annotations.NotNull
     public ClassObjectField() { /* compiled code */ }
 
-    public static final class object implements jet.JetObject {
+    public static final class object implements kotlin.internal.KObject {
         @org.jetbrains.annotations.Nullable
         public final java.lang.String getX() { /* compiled code */ }
 

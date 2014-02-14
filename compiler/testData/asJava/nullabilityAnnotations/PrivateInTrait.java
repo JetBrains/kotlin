@@ -1,4 +1,4 @@
-public interface PrivateInTrait extends jet.JetObject {
+public interface PrivateInTrait extends kotlin.internal.KObject {
     @org.jetbrains.annotations.NotNull
     java.lang.String getNn();
 

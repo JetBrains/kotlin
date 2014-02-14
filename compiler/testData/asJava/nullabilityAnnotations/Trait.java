@@ -1,4 +1,4 @@
-public interface Trait extends jet.JetObject {
+public interface Trait extends kotlin.internal.KObject {
     @org.jetbrains.annotations.NotNull
     java.lang.String notNull(@org.jetbrains.annotations.NotNull @jet.runtime.typeinfo.JetValueParameter(name = "a") java.lang.String a);
 

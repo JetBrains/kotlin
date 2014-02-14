@@ -1,5 +1,7 @@
 // KT-4485 getGenericInterfaces vs getInterfaces for kotlin classes
 
+import kotlin.internal.KObject
+
 class SimpleClass
 
 class ClassWithNonGenericSuperInterface: Cloneable
@@ -8,7 +10,7 @@ class ClassWithGenericSuperInterface: java.util.Comparator<String> {
     override fun compare(a: String, b: String): Int = 0
 }
 
-class ExplicitJetObject: java.util.Comparator<String>, JetObject {
+class ExplicitKObject: java.util.Comparator<String>, KObject {
     override fun compare(a: String, b: String): Int = 0
 }
 
@@ -24,6 +26,6 @@ fun box(): String {
     check(javaClass<SimpleClass>())
     check(javaClass<ClassWithNonGenericSuperInterface>())
     check(javaClass<ClassWithGenericSuperInterface>())
-    check(javaClass<ExplicitJetObject>())
+    check(javaClass<ExplicitKObject>())
     return "OK"
 }
