@@ -1,7 +1,7 @@
 package foo
 
 class A() {
-  val a = 5
+    val a = 5
 }
 
 inline fun A.myInlineExtension() = a + 1

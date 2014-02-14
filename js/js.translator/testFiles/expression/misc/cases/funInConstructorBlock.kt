@@ -2,9 +2,9 @@ package foo
 
 class A() {
     fun lold() = true
-    val p: ()->Boolean
+    val p: () -> Boolean
     {
-        $p = {{lold()}()}
+        $p = { { lold() }() }
     }
 }
 

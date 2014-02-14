@@ -4,11 +4,11 @@ open class A() {
     open fun c() = 2
 }
 
-class B(): A() {
+class B() : A() {
 }
 
 fun B.d() = c() + 3
 
-fun box() : Boolean {
+fun box(): Boolean {
     return B().d() == 5
 }

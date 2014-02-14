@@ -1,24 +1,31 @@
 // Changed when traits were introduced. May not make sense any more
 
-open class X(val x : Int) {}
+open class X(val x: Int) {
+}
 trait Y {
-    abstract val y : Int
+    abstract val y: Int
 }
 
-class YImpl(override val y : Int) : Y {}
-
-class Point(x : Int, yy : Int) : X(x) , Y {
-    override val y : Int = yy
+class YImpl(override val y: Int) : Y {
 }
 
-trait Abstract {}
+class Point(x: Int, yy: Int) : X(x), Y {
+    override val y: Int = yy
+}
 
-class P1(x : Int, yy : Y) : Abstract, X(x), Y by yy {}
-class P2(x : Int, yy : Y) : X(x), Abstract, Y by yy {}
-class P3(x : Int, yy : Y) : X(x), Y by yy, Abstract {}
-class P4(x : Int, yy : Y) : Y by yy, Abstract, X(x) {}
+trait Abstract {
+}
 
-fun box() : String {
+class P1(x: Int, yy: Y) : Abstract, X(x), Y by yy {
+}
+class P2(x: Int, yy: Y) : X(x), Abstract, Y by yy {
+}
+class P3(x: Int, yy: Y) : X(x), Y by yy, Abstract {
+}
+class P4(x: Int, yy: Y) : Y by yy, Abstract, X(x) {
+}
+
+fun box(): String {
     if (X(239).x != 239) return "FAIL #1"
     if (YImpl(239).y != 239) return "FAIL #2"
 

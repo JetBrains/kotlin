@@ -1,19 +1,19 @@
 package foo
 
 trait Test {
-    fun addFoo(s:String) : String {
-       return s + "FOO"
+    fun addFoo(s: String): String {
+        return s + "FOO"
     }
 }
 
 trait ExtendedTest : Test {
-    fun hooray() : String {
+    fun hooray(): String {
         return "hooray"
     }
 }
 
 class A() : ExtendedTest {
-    fun eval() : String {
+    fun eval(): String {
         return addFoo(hooray());
     }
 }

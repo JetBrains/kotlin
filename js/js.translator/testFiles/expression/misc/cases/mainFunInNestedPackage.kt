@@ -2,6 +2,6 @@ package a.b.c
 
 import js.*
 
-fun main(args : Array<String>) {
-  println("ayee")
+fun main(args: Array<String>) {
+    println("ayee")
 }

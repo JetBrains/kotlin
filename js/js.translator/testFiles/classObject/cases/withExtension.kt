@@ -15,7 +15,7 @@ class B {
     }
 }
 
-fun box() : String {
+fun box(): String {
     if (A.a != 3) return "A.a != 3, it: ${A.a}"
     if (A.foo() != 5) return "A.foo() != 5, it: ${A.foo()}"
 

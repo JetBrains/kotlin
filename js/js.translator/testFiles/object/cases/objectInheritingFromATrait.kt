@@ -1,15 +1,15 @@
 package foo
 
 trait Foo {
-    fun execute(handler: ()->Unit) {
+    fun execute(handler: () -> Unit) {
         execute(false, handler)
     }
 
-    fun execute(onlyIfAttached: Boolean, handler: ()->Unit)
+    fun execute(onlyIfAttached: Boolean, handler: () -> Unit)
 }
 
 object foo : Foo {
-    override fun execute(onlyIfAttached: Boolean, handler: ()->Unit) {
+    override fun execute(onlyIfAttached: Boolean, handler: () -> Unit) {
         handler()
     }
 }

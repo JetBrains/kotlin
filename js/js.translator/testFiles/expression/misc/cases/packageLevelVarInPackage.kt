@@ -6,7 +6,7 @@ fun incC(i: Int) {
     c += c + i
 }
 
-fun box() : Any? {
+fun box(): Any? {
     for (i in 0..2) {
         incC(i)
     }

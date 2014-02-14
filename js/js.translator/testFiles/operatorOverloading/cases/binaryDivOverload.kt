@@ -2,7 +2,7 @@ package foo
 
 class A() {
 
-    fun div(other : A) = "hooray"
+    fun div(other: A) = "hooray"
 
 }
 

@@ -4,15 +4,15 @@ class Test() {
     var a = 0
 }
 
-var Test.b : Int
+var Test.b: Int
     get() = a * 3
-    set(c : Int) {
+    set(c: Int) {
         a = c - 1
     }
 
-val Test.d : Int = 44
+val Test.d: Int = 44
 
-fun box() : Boolean {
+fun box(): Boolean {
     val c = Test()
     if (c.a != 0) return false;
     if (c.b != 0) return false;

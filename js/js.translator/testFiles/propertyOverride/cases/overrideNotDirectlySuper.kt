@@ -5,7 +5,7 @@ open class A {
     fun getAInA(): Int = a
 }
 
-open class AA: A()
+open class AA : A()
 
 class B : AA() {
     override var a = 2

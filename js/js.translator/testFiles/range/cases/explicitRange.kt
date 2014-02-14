@@ -2,7 +2,7 @@ package foo
 
 import js.*
 
-fun box() : Boolean {
+fun box(): Boolean {
 
     var twoToFive = IntRange(2, 5)
 

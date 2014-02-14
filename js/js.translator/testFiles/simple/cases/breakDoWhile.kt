@@ -1,13 +1,14 @@
 package foo
 
-fun box() : Boolean {
+fun box(): Boolean {
     var i = 0
-     do {
+    do {
         if (i == 3) {
-          break;
+            break;
         }
         ++i;
-    } while ( i < 100)
+    }
+    while ( i < 100)
 
-  return i == 3
+    return i == 3
 }

@@ -7,7 +7,7 @@ class A() {
 
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
     var c = A()
     return (+c + -c == "hooraynot really")
 }

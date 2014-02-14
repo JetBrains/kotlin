@@ -9,7 +9,8 @@ enum class B(open val bar: Int) {
             y = 0
         }
     }
-    b : B(4){}
+    b : B(4) {
+    }
     c : B(5)
 }
 

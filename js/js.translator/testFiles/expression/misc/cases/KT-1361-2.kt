@@ -15,7 +15,7 @@ class Data(val rawData: Array<Int>, val width: Int, val height: Int) {
         rawData[(y * width + x) * 4 + 2] = color.blue;
     }
 
-    fun each(block: (x: Int, y: Int)->Unit) {
+    fun each(block: (x: Int, y: Int) -> Unit) {
         for (x in 0..width - 1) {
             for (y in 0..height - 1) {
                 block(x, y)
@@ -24,7 +24,7 @@ class Data(val rawData: Array<Int>, val width: Int, val height: Int) {
     }
 }
 
-class Color(r: Int, g: Int, b: Int): ColorLike {
+class Color(r: Int, g: Int, b: Int) : ColorLike {
     override val red: Int = r
     override val green: Int = g
     override val blue: Int = b
@@ -37,7 +37,7 @@ trait ColorLike {
 }
 
 fun box(): Boolean {
-    val d = Data(Array(4) {0}, 1, 1)
+    val d = Data(Array(4) { 0 }, 1, 1)
     if (d[0, 0].red != 0) {
         return false
     }

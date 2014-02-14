@@ -1,10 +1,10 @@
 package foo
 
-fun Int.same() : Int {
+fun Int.same(): Int {
     return this
 }
 
-fun Int.quadruple() : Int {
+fun Int.quadruple(): Int {
     return same() * 4;
 }
 

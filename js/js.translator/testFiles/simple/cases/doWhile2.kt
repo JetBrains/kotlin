@@ -1,10 +1,11 @@
 package foo
 
-fun box() : Boolean {
+fun box(): Boolean {
     var x = 2;
     do {
         x = 1;
-    } while(3 < 2)
+    }
+    while (3 < 2)
     if (x == 1) {
         return true;
     }

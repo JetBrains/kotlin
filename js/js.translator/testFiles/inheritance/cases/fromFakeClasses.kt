@@ -1,8 +1,8 @@
 package foo
 
-class FromAny: Any()
+class FromAny : Any()
 
-class FromItrable(val n: Int): Iterable<Int> {
+class FromItrable(val n: Int) : Iterable<Int> {
     override fun iterator() = object: Iterator<Int> {
         var i = 0
         override fun next() = i++
@@ -23,7 +23,8 @@ fun box(): String {
     val s = it.stringify()
     if (s != "012") return "s /*$s*/ != 012"
 
-    var ao = object : Any() {}
+    var ao = object : Any() {
+    }
     var ito = object : Iterable<Int> {
         override public fun iterator() = object: Iterator<Int> {
             var i = 0

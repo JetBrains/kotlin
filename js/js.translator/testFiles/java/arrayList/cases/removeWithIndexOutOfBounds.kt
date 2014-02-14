@@ -2,7 +2,7 @@ package foo
 
 import java.util.ArrayList
 
-fun box() : Boolean {
+fun box(): Boolean {
     var threwForEmptyList = false
 
     val arr = ArrayList<Int>()
@@ -10,7 +10,7 @@ fun box() : Boolean {
         arr.remove(2)
     }
     catch(e: IndexOutOfBoundsException) {
-      threwForEmptyList = true
+        threwForEmptyList = true
     }
 
     for (i in 0..10) {

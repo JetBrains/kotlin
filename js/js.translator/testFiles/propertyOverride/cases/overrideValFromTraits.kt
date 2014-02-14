@@ -33,7 +33,7 @@ trait B {
     var realBar: Int
 }
 
-class C: A, B {
+class C : A, B {
     override val bal: Int = 1
     override var bar: Int = 2
         get() {

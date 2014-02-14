@@ -1,4 +1,5 @@
 package foo
+
 class Delegate {
     fun get(t: Any?, p: PropertyMetadata): Int = 1
 }
@@ -6,5 +7,5 @@ class Delegate {
 val prop: Int by Delegate()
 
 fun box(): String {
-  return if(prop == 1) "OK" else "fail"
+    return if (prop == 1) "OK" else "fail"
 }

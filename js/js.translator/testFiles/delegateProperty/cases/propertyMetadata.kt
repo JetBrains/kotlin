@@ -5,7 +5,7 @@ trait WithName {
 }
 
 class GetPropertyName() {
-    fun get(withName: WithName, property: PropertyMetadata) : String {
+    fun get(withName: WithName, property: PropertyMetadata): String {
         return withName.name + ":" + property.name;
     }
     fun set(withName: WithName, property: PropertyMetadata, value: String) {

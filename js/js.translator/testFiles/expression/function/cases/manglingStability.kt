@@ -126,7 +126,7 @@ class RegExp(regexp: String, flags: String)
 
 //Testing
 
-fun test(testName: String, ff: Any, fb: Any){
+fun test(testName: String, ff: Any, fb: Any) {
     val f = ff.toString()
     val b = fb.toString().replaceAll("boo", "foo")
 
@@ -135,7 +135,7 @@ fun test(testName: String, ff: Any, fb: Any){
 
 fun box(): String {
     test("internal", internal_f, internal_b)
-    test("public", public_f,public_b )
+    test("public", public_f, public_b)
     test("private", private_f, private_b)
     test("mixed", mixed_f, mixed_b)
 

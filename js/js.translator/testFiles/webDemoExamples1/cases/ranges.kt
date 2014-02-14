@@ -1,15 +1,15 @@
 import java.util.ArrayList;
 
-fun main(args : Array<String>) {
+fun main(args: Array<String>) {
     val x = parseInt(args[0])
     //Check if a number lies within a range:
     val y = 10
-    if (x in 1..y-1)
+    if (x in 1..y - 1)
         println("OK")
 
     //Iterate over a range:
     for (a in 1..5)
-    print(" ${a}")
+        print(" ${a}")
 
     //Check if a number is out of range:
     println()

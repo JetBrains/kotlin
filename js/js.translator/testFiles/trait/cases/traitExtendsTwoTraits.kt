@@ -12,11 +12,11 @@ trait B {
     }
 }
 
-trait AD: A, B {
+trait AD : A, B {
 
 }
 
-class Test(): AD {
+class Test() : AD {
     fun eval(): String {
         return addFoo(hooray());
     }

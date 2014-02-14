@@ -39,4 +39,4 @@ fun testFloatingPointConversions(c: Number): Boolean {
 }
 
 fun box(): Boolean = testIntegerConversions(3) && testFloatingPointConversions(3.6) && testFloatingPointConversions(3.6.toFloat()) &&
- testIntegerConversions(3.toByte()) && testIntegerConversions(3.toShort())
+testIntegerConversions(3.toByte()) && testIntegerConversions(3.toShort())

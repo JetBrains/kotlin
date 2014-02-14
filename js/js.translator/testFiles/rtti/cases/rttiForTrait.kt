@@ -5,12 +5,13 @@ open class A
 
 trait B
 
-class C: A(), B
+class C : A(), B
 
 fun box(): String {
 
     val a = A()
-    val b = object : B {}
+    val b = object : B {
+    }
     val c = C()
 
     if (a is B) return "a is B"

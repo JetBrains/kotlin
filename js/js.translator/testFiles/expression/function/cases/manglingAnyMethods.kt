@@ -58,7 +58,7 @@ fun <T> Function0<T>.extractNames(): Array<String> {
 
 var testGroup = ""
 
-fun test(expected: String, f: ()->Unit){
+fun test(expected: String, f: () -> Unit) {
     val actual = f.extractNames()
 
     if (expected != actual[1]) {
@@ -70,8 +70,8 @@ val SIMPLE_EQUALS = "equals"
 val SIMPLE_HASH_CODE = "hashCode"
 val SIMPLE_TO_STRING = "toString"
 val STABLE_EQUALS = { equals(0) }.extractNames()[1]
-val STABLE_HASH_CODE = { hashCode()}.extractNames()[1]
-val STABLE_TO_STRING = { toString()}.extractNames()[1]
+val STABLE_HASH_CODE = { hashCode() }.extractNames()[1]
+val STABLE_TO_STRING = { toString() }.extractNames()[1]
 
 fun box(): String {
     testGroup = "Public Class"

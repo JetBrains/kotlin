@@ -2,9 +2,9 @@ package foo
 
 import java.util.ArrayList
 
-fun box() : Boolean {
+fun box(): Boolean {
     for (i in 0 rangeTo -1) {
-      return false
+        return false
     }
     return true
 }

@@ -9,16 +9,16 @@ class A() {
 }
 
 fun f(): String {
-     s += "3"
-     return ""
+    s += "3"
+    return ""
 }
 
 class B() {
     val a: A
-      get() {
-          s += "2"
-          return A()
-      }
+        get() {
+            s += "2"
+            return A()
+        }
 
     fun test() {
         s += "1"

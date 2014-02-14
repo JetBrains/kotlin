@@ -1,6 +1,6 @@
 package foo
 
-fun box() : String {
+fun box(): String {
     var name = "Hello"
     return ("o${name}o");
 }

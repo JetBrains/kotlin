@@ -1,6 +1,6 @@
 package foo
 
-val f = {(i: Int) -> i + 1}
+val f = {(i: Int) -> i + 1 }
 
 val a = Array(3, f)
 

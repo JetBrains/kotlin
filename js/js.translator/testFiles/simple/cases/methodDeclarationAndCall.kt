@@ -1,12 +1,12 @@
 package foo
 
 class Test() {
-    fun method() : Boolean {
+    fun method(): Boolean {
         return true;
     }
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
     var test = Test()
     return test.method()
 }

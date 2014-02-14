@@ -7,7 +7,7 @@ open class A(val barVal: Int) {
     open fun bar4(t: Int = 1) = t + 3 + barVal
 }
 
-class B: A(1) {
+class B : A(1) {
     override fun bar(): Int {
         return super.bar() + 10;
     }

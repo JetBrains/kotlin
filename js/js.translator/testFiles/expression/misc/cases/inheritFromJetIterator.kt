@@ -1,9 +1,9 @@
 package foo
 
 class TabIterator : Iterator<Any?> {
-    override fun hasNext():Boolean = false
+    override fun hasNext(): Boolean = false
 
-    override fun next():Any? {
+    override fun next(): Any? {
         return null
     }
 }

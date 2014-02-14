@@ -4,7 +4,7 @@ class ArrayWrapper<T>() {
     val contents = ArrayList<T>()
 
     fun add(item: T) {
-       contents.add(item)
+        contents.add(item)
     }
 
     fun minus(): ArrayWrapper<T> {

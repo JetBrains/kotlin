@@ -7,7 +7,7 @@ fun box(): String {
     val s = a as A?
     if (s != null) return "Failed when try cast Nullable with null value to Nullable"
 
-    val b : A? = A()
+    val b: A? = A()
     val n = b as A?
     if (n != b) return "Failed when try cast Nullable with not null value to Nullable"
 

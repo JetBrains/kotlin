@@ -6,14 +6,14 @@ open class A() {
 }
 
 trait Test {
-    fun addFoo(s:String) : String {
-       return s + "FOO"
+    fun addFoo(s: String): String {
+        return s + "FOO"
     }
 }
 
 
 class B() : Test, A() {
-    fun eval() : String {
+    fun eval(): String {
         return addFoo(value);
     }
 }

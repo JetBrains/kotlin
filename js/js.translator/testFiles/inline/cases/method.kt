@@ -1,11 +1,11 @@
 package foo
 
-fun box() : Boolean {
-  return (!(A().myInlineMethod()))
+fun box(): Boolean {
+    return (!(A().myInlineMethod()))
 }
 
 class A() {
-  inline fun myInlineMethod() : Boolean {
-    return false
-  }
+    inline fun myInlineMethod(): Boolean {
+        return false
+    }
 }

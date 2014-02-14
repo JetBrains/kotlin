@@ -1,18 +1,20 @@
 // Changed when traits were introduced. May not make sense any more
 
 open class Base() {
-    public var v : Int = 0
+    public var v: Int = 0
 }
 
-open class Left() : Base() {}
-trait Right : Base {}
+open class Left() : Base() {
+}
+trait Right : Base {
+}
 
 class D() : Left(), Right
 
-fun vl(l : Left) : Int = l.v
-fun vr(r : Right) : Int = r.v
+fun vl(l: Left): Int = l.v
+fun vr(r: Right): Int = r.v
 
-fun box() : String {
+fun box(): String {
     val d = D()
     d.v = 42
 

@@ -3,13 +3,13 @@ package foo
 import js.*
 
 native
-class A(b : Int) {
-    fun g() : Int = js.noImpl
-    fun m() : Int = js.noImpl
+class A(b: Int) {
+    fun g(): Int = js.noImpl
+    fun m(): Int = js.noImpl
 }
 
 
-fun box() : Boolean {
+fun box(): Boolean {
     if (A(2).g() != 4) {
         return false;
     }

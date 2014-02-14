@@ -3,7 +3,7 @@ package foo
 import java.util.ArrayList
 
 class N() : ArrayList<Any>() {
-    override fun add(el: Any)  : Boolean {
+    override fun add(el: Any): Boolean {
         if (!super<ArrayList>.add(el)) {
             throw Exception()
         }

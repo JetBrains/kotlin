@@ -1,9 +1,9 @@
 package foo
 
-val k = {"K"}
+val k = { "K" }
 
 fun test(): String {
-    val o = {"O"}
+    val o = { "O" }
 
     val funLit = { o() + k() }
     return funLit()

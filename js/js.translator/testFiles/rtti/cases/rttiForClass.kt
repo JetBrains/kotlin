@@ -4,9 +4,9 @@ class D
 
 open class A
 
-open class B: A()
+open class B : A()
 
-open class C: B()
+open class C : B()
 
 fun box(): String {
     val a: Any = A()

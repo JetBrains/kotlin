@@ -1,13 +1,12 @@
 package foo
 
-val String.prop : Int
-  get() = length
+val String.prop: Int
+    get() = length
 
-val Int.quadruple : Int
-  get() = this * 4
+val Int.quadruple: Int
+    get() = this * 4
 
-fun box() : Boolean
-{
+fun box(): Boolean {
     if ("1".prop != 1) return false;
     if ("11".prop != 2) return false;
     if (("121" + "123").prop != 6) return false;

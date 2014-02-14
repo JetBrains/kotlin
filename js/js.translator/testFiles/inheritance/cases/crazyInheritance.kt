@@ -11,17 +11,17 @@ open class A {
     }
 }
 
-trait T: A {
+trait T : A {
     override fun f1() = "T1"
     override fun f2() = "T2"
 }
 
-trait B: A {
+trait B : A {
     override fun f1() = "B1"
     override fun f3() = "B3"
 }
 
-trait N: B, T {
+trait N : B, T {
     override fun f1() = "N1"
 }
 
@@ -29,16 +29,20 @@ trait X {
     fun f4() = "X4"
 }
 
-class C: A(), N, X {
+class C : A(), N, X {
     override fun f4() = "C4"
 }
 
 fun box(): String {
     val a = A()
-    val t = object : T, A() {}
-    val b = object : B, A() {}
-    val n = object : N, A() {}
-    val x = object : X {}
+    val t = object : T, A() {
+    }
+    val b = object : B, A() {
+    }
+    val n = object : N, A() {
+    }
+    val x = object : X {
+    }
     val c = C()
 
     if (a.getSum() != "A1|A2|A3|A4") return "Bad a.getSum(), it: ${a.getSum()}"

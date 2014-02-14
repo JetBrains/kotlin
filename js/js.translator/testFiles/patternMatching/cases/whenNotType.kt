@@ -4,9 +4,9 @@ class A() {
 
 }
 
-fun box() : Boolean {
-  when(A()) {
-    !is A -> return false;
-    else -> return true;
-  }
+fun box(): Boolean {
+    when(A()) {
+        !is A -> return false;
+        else -> return true;
+    }
 }

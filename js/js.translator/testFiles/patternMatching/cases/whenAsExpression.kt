@@ -1,7 +1,7 @@
 package foo
 
 
-fun box() : Boolean {
+fun box(): Boolean {
 
     return (when(1) {
         2 -> 3

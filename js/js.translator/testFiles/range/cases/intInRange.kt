@@ -1,8 +1,7 @@
 package foo
 
 
-
-fun box() : Boolean {
+fun box(): Boolean {
 
     if (1 in -2..0) return false;
     if (1 in -10..-4) return false;

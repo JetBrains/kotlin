@@ -1,6 +1,6 @@
 package foo
 
-fun box() : Boolean {
+fun box(): Boolean {
 
     val a = 50;
     var b = 0;
@@ -8,7 +8,8 @@ fun box() : Boolean {
     do {
         b = b + 1;
         c = c + 2;
-    } while (b < a)
+    }
+    while (b < a)
     if (c == 100) {
         return true;
     }

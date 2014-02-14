@@ -1,6 +1,6 @@
 package foo
 
-fun box() : Boolean {
+fun box(): Boolean {
 
 
     (when (1) {

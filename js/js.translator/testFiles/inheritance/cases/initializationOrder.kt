@@ -21,6 +21,6 @@ class C() : B() {
     }
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
     return (C().order == "ABC") && (B().order == "AB") && (A().order == "A")
 }

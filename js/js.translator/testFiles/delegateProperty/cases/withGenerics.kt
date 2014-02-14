@@ -6,7 +6,7 @@ trait Getter<T> {
 
 class Delegate<T>(val getter: Getter<T>) {
     var t: T? = null
-    fun get(obj: Any, property: PropertyMetadata) : T {
+    fun get(obj: Any, property: PropertyMetadata): T {
         if (t != null) {
             return t!!
         }

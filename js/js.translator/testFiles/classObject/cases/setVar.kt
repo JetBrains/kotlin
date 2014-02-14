@@ -8,8 +8,7 @@ class A {
 }
 
 
-
-fun box() : String {
+fun box(): String {
     A.a = 2
     if (A.a != 2) return "A.a != 2, it: ${A.a}"
 

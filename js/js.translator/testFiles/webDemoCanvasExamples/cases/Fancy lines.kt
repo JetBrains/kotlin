@@ -41,7 +41,7 @@ class FancyLines() {
         y = height * Math.random();
 
         context.bezierCurveTo(width * Math.random(), height * Math.random(),
-                width * Math.random(), height * Math.random(), x, y);
+                              width * Math.random(), height * Math.random(), x, y);
 
         hue += Math.random() * 10;
 
@@ -61,7 +61,7 @@ class FancyLines() {
     }
 
     fun run() {
-        window.setInterval({line()}, 40);
-        window.setInterval({blank()}, 100);
+        window.setInterval({ line() }, 40);
+        window.setInterval({ blank() }, 100);
     }
 }

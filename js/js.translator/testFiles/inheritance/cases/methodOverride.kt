@@ -9,7 +9,7 @@ open class A {
     }
 }
 
-class B: A() {
+class B : A() {
     override fun f2(): Int {
         return 2
     }

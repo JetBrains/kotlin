@@ -9,7 +9,7 @@ class Range() {
     fun next() = start + if (reversed) -(--count) else (--count);
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
     val r = Range()
     if (r.next() != 9) {
         return false;

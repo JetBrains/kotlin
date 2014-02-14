@@ -10,10 +10,10 @@ class Foo(val name: String) {
 }
 
 fun callEqualsMethod(v1: Foo?, v2: Foo?): Boolean {
-  return v1 == v2
+    return v1 == v2
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
     val a = Foo("abc")
     val b = Foo("abc")
     val c = Foo("def")

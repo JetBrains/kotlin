@@ -5,13 +5,13 @@ import java.util.*
 fun box(): Boolean {
     val data = arrayList("foo", "bar")
     if (data.head != "foo") {
-      return false
+        return false
     }
     return true
 }
 
 
-public inline fun arrayList<T>(vararg values: T) : ArrayList<T>  {
+public inline fun arrayList<T>(vararg values: T): ArrayList<T> {
     val c = ArrayList<T>()
     for (v in values) {
         c.add(v)
@@ -19,7 +19,7 @@ public inline fun arrayList<T>(vararg values: T) : ArrayList<T>  {
     return c
 }
 
-public inline val <T> ArrayList<T>.head : T
+public inline val <T> ArrayList<T>.head: T
     get() {
-      return get(0)
+        return get(0)
     }

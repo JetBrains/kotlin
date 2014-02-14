@@ -1,16 +1,19 @@
 package foo
 
-fun bor() : Int {
+fun bor(): Int {
     val a = 2;
     val b = 3;
     var c = 4;
     if (a < 2) {
         return a;
-    } else if (a > 2) {
+    }
+    else if (a > 2) {
         return b;
-    } else if (a == c) {
+    }
+    else if (a == c) {
         return c;
-    } else {
+    }
+    else {
         return 5;
     }
 }

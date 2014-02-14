@@ -1,6 +1,6 @@
 package foo
 
-fun box() : Boolean {
+fun box(): Boolean {
 
     val a = 50;
     var b = 0;

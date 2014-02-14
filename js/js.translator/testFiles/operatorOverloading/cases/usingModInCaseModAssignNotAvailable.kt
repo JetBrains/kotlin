@@ -2,12 +2,12 @@ package foo
 
 class A() {
     var p = "yeah"
-    fun mod(other : A) : A {
+    fun mod(other: A): A {
         return A();
     }
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
     var c = A()
     val d = c;
     c %= A();

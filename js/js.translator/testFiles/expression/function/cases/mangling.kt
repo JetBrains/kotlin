@@ -1,96 +1,138 @@
 package foo
 
-public fun public_baz(i: Int) {}
-native public fun public_baz(a: String) {}
+public fun public_baz(i: Int) {
+}
+native public fun public_baz(a: String) {
+}
 
-fun internal_baz(i: Int) {}
-native fun internal_baz(a: String) {}
+fun internal_baz(i: Int) {
+}
+native fun internal_baz(a: String) {
+}
 
-private fun private_baz(i: Int) {}
-native private fun private_baz(a: String) {}
+private fun private_baz(i: Int) {
+}
+native private fun private_baz(a: String) {
+}
 
 public class PublicClass {
-    public fun public_baz(i: Int) {}
-    native public fun public_baz(a: String) {}
+    public fun public_baz(i: Int) {
+    }
+    native public fun public_baz(a: String) {
+    }
 
-    fun internal_baz(i: Int) {}
-    native fun internal_baz(a: String) {}
+    fun internal_baz(i: Int) {
+    }
+    native fun internal_baz(a: String) {
+    }
 
-    private fun private_baz(i: Int) {}
-    native private fun private_baz(a: String) {}
+    private fun private_baz(i: Int) {
+    }
+    native private fun private_baz(a: String) {
+    }
 
-    val call_private_baz = { private_baz(0)}
-    val call_private_native_baz = { private_baz("native")}
+    val call_private_baz = { private_baz(0) }
+    val call_private_native_baz = { private_baz("native") }
 }
 
 class InternalClass {
-    public fun public_baz(i: Int) {}
-    native public fun public_baz(a: String) {}
+    public fun public_baz(i: Int) {
+    }
+    native public fun public_baz(a: String) {
+    }
 
-    fun internal_baz(i: Int) {}
-    native fun internal_baz(a: String) {}
+    fun internal_baz(i: Int) {
+    }
+    native fun internal_baz(a: String) {
+    }
 
-    private fun private_baz(i: Int) {}
-    native private fun private_baz(a: String) {}
+    private fun private_baz(i: Int) {
+    }
+    native private fun private_baz(a: String) {
+    }
 
-    val call_private_baz = { private_baz(0)}
-    val call_private_native_baz = { private_baz("native")}
+    val call_private_baz = { private_baz(0) }
+    val call_private_native_baz = { private_baz("native") }
 }
 
 private class PrivateClass {
-    public fun public_baz(i: Int) {}
-    native public fun public_baz(a: String) {}
+    public fun public_baz(i: Int) {
+    }
+    native public fun public_baz(a: String) {
+    }
 
-    fun internal_baz(i: Int) {}
-    native fun internal_baz(a: String) {}
+    fun internal_baz(i: Int) {
+    }
+    native fun internal_baz(a: String) {
+    }
 
-    private fun private_baz(i: Int) {}
-    native private fun private_baz(a: String) {}
+    private fun private_baz(i: Int) {
+    }
+    native private fun private_baz(a: String) {
+    }
 
-    val call_private_baz = { private_baz(0)}
-    val call_private_native_baz = { private_baz("native")}
+    val call_private_baz = { private_baz(0) }
+    val call_private_native_baz = { private_baz("native") }
 }
 
 open public class OpenPublicClass {
-    public fun public_baz(i: Int) {}
-    native public fun public_baz(a: String) {}
+    public fun public_baz(i: Int) {
+    }
+    native public fun public_baz(a: String) {
+    }
 
-    fun internal_baz(i: Int) {}
-    native fun internal_baz(a: String) {}
+    fun internal_baz(i: Int) {
+    }
+    native fun internal_baz(a: String) {
+    }
 
-    private fun private_baz(i: Int) {}
-    native private fun private_baz(a: String) {}
+    private fun private_baz(i: Int) {
+    }
+    native private fun private_baz(a: String) {
+    }
 
-    val call_private_baz = { private_baz(0)}
-    val call_private_native_baz = { private_baz("native")}
+    val call_private_baz = { private_baz(0) }
+    val call_private_native_baz = { private_baz("native") }
 }
 
 open class OpenInternalClass {
-    public fun public_baz(i: Int) {}
-    native public fun public_baz(a: String) {}
+    public fun public_baz(i: Int) {
+    }
+    native public fun public_baz(a: String) {
+    }
 
-    fun internal_baz(i: Int) {}
-    native fun internal_baz(a: String) {}
+    fun internal_baz(i: Int) {
+    }
+    native fun internal_baz(a: String) {
+    }
 
-    private fun private_baz(i: Int) {}
-    native private fun private_baz(a: String) {}
+    private fun private_baz(i: Int) {
+    }
+    native private fun private_baz(a: String) {
+    }
 
-    val call_private_baz = { private_baz(0)}
-    val call_private_native_baz = { private_baz("native")}
+    val call_private_baz = { private_baz(0) }
+    val call_private_native_baz = { private_baz("native") }
 }
 
 open private class OpenPrivateClass {
-    public fun public_baz(i: Int) {}
-    native public fun public_baz(a: String) {}
+    public fun public_baz(i: Int) {
+    }
+    native public fun public_baz(a: String) {
+    }
 
-    fun internal_baz(i: Int) {}
-    native fun internal_baz(a: String) {}
+    fun internal_baz(i: Int) {
+    }
+    native fun internal_baz(a: String) {
+    }
 
-    private fun private_baz(i: Int) {}
-    native private fun private_baz(a: String) {}
+    private fun private_baz(i: Int) {
+    }
+    native private fun private_baz(a: String) {
+    }
 
-    val call_private_baz = { private_baz(0)}
-    val call_private_native_baz = { private_baz("native")}
+    val call_private_baz = { private_baz(0) }
+    val call_private_native_baz = { private_baz("native") }
 }
 
 // Helpers
@@ -119,7 +161,7 @@ fun Function0<Unit>.extractNames(): Array<String> {
 
 var testGroup = ""
 
-fun test(expected: String, f: ()->Unit){
+fun test(expected: String, f: () -> Unit) {
     val actual = f.extractNames()
 
     if (expected != actual[1]) {
@@ -127,7 +169,8 @@ fun test(expected: String, f: ()->Unit){
     }
 }
 
-public fun stable_mangled_baz(i: Int) {}
+public fun stable_mangled_baz(i: Int) {
+}
 
 val SIMPLE = "baz"
 val SIMPLE1 = "${SIMPLE}_1"
@@ -136,12 +179,12 @@ val STABLE = { stable_mangled_baz(0) }.extractNames()[1]
 
 fun box(): String {
     testGroup = "Top Level"
-    test(STABLE)  { public_baz(0) }
-    test(NATIVE)  { public_baz("native") }
+    test(STABLE) { public_baz(0) }
+    test(NATIVE) { public_baz("native") }
     test(SIMPLE1) { internal_baz(0) }
-    test(NATIVE)  { internal_baz("native") }
+    test(NATIVE) { internal_baz("native") }
     test(SIMPLE1) { private_baz(0) }
-    test(NATIVE)  { private_baz("native") }
+    test(NATIVE) { private_baz("native") }
 
     testGroup = "Public Class"
     test(STABLE) { PublicClass().public_baz(0) }

@@ -1,6 +1,5 @@
 package foo
 
-fun box() : Boolean
-{
+fun box(): Boolean {
     return !false;
 }

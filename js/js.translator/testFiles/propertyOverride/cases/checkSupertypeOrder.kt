@@ -11,7 +11,7 @@ open class B {
     open val bal = 239
 }
 
-class C1: B(), A {
+class C1 : B(), A {
     override val bal: Int = 14
 
     fun getBalA(): Int {
@@ -23,7 +23,7 @@ class C1: B(), A {
     }
 }
 
-class C2: A, B() {
+class C2 : A, B() {
     override val bal: Int = 14
 
     fun getBalA(): Int {

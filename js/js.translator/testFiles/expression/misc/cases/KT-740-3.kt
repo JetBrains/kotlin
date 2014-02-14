@@ -6,22 +6,22 @@ var c2 = 0
 
 class A() {
     var p = 0
-    fun divAssign(a : Int) {
+    fun divAssign(a: Int) {
         c1++;
     }
-    fun times(a : Int) : A {
+    fun times(a: Int): A {
         c2++;
         return this;
     }
 }
 
-var a : A = A()
-get() {
-  c0++
-  return $a
-}
+var a: A = A()
+    get() {
+        c0++
+        return $a
+    }
 
-fun box() : String {
+fun box(): String {
 
     a /= 3
     if (c0 != 1) {
@@ -35,7 +35,7 @@ fun box() : String {
         return "3"
     }
     if (c2 != 1) {
-      return "4"
+        return "4"
     }
     return "OK"
 }

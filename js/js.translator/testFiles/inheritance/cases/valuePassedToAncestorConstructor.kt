@@ -4,7 +4,7 @@ open class C(a: Int) {
     val b = a
 }
 
-class D(c: Int): C(c + 2) {
+class D(c: Int) : C(c + 2) {
 }
 
 fun box(): Boolean {

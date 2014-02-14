@@ -3,9 +3,9 @@ package kotlin.test
 import kotlin.test.*
 import js.*
 
-public var asserter : Asserter = JsTestsAsserter()
+public var asserter: Asserter = JsTestsAsserter()
 
-public class JsTestsAsserter(): Asserter {
+public class JsTestsAsserter() : Asserter {
     public override fun assertTrue(message: String, actual: Boolean) {
         assert(actual, message)
     }

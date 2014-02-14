@@ -1,6 +1,6 @@
 package foo
 
-fun run<T>(f:()->T) = f()
+fun run<T>(f: () -> T) = f()
 
 class Fail(val message: String) : RuntimeException(message) {
     val isFail = true // workaround for exception handling

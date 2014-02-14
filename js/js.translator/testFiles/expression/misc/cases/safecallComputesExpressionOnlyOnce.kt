@@ -2,9 +2,9 @@ package foo
 
 var i = 0
 
-fun test() : Int? = i++
+fun test(): Int? = i++
 
-fun box() : Boolean {
+fun box(): Boolean {
     if (i != 0) return false
     test()?.plus(1)
     if (i != 1) return false

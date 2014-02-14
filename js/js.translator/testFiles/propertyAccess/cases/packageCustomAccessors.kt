@@ -1,15 +1,15 @@
 package foo
 
-var a : Int
+var a: Int
 
 
-get() {
-    return 5
-}
-set(b) {
+    get() {
+        return 5
+    }
+    set(b) {
 
-}
+    }
 
-fun box() : Boolean {
+fun box(): Boolean {
     return (a == 5)
 }

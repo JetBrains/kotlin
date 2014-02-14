@@ -1,8 +1,8 @@
 package foo
 
-fun box() : Boolean {
+fun box(): Boolean {
 
-    while(2 < 1) {
+    while (2 < 1) {
         return false;
     }
     return true;

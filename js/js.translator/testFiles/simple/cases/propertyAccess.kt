@@ -4,6 +4,6 @@ class Test() {
     val p = true
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
     return Test().p
 }

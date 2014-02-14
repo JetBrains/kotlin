@@ -1,6 +1,6 @@
 package foo
 
-fun box() : Boolean {
+fun box(): Boolean {
     val a = "abc"
     val b = "abc"
     val c = "def"
