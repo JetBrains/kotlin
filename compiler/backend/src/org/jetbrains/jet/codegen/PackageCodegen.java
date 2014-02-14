@@ -390,10 +390,10 @@ public class PackageCodegen extends GenerationStateAware {
         DeclarationDescriptor parent = deserializedFunction.getContainingDeclaration();
         assert parent instanceof PackageFragmentDescriptor : "parent should be package, but was: " + parent;
 
-        assert deserializedFunction.getFunctionProto().hasExtension(JavaProtoBuf.implClassName)
+        assert deserializedFunction.getProto().hasExtension(JavaProtoBuf.implClassName)
                 : "implClassName extension is absent for " + deserializedFunction;
         Name shortName = deserializedFunction.getNameResolver()
-                .getName(deserializedFunction.getFunctionProto().getExtension(JavaProtoBuf.implClassName));
+                .getName(deserializedFunction.getProto().getExtension(JavaProtoBuf.implClassName));
         FqName packagePartFqName = ((PackageFragmentDescriptor) parent).getFqName().child(shortName);
         return JvmClassName.byFqNameWithoutInnerClasses(packagePartFqName).getInternalName();
     }

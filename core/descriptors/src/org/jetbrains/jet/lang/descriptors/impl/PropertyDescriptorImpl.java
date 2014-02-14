@@ -52,7 +52,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     private PropertySetterDescriptor setter;
     private boolean setterProjectedOut;
 
-    private PropertyDescriptorImpl(
+    protected PropertyDescriptorImpl(
             @Nullable PropertyDescriptor original,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
@@ -216,8 +216,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
 
     private PropertyDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
             DeclarationDescriptor newOwner, Modality newModality, Visibility newVisibility, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
-        PropertyDescriptorImpl substitutedDescriptor = new PropertyDescriptorImpl(preserveOriginal ? getOriginal() : null, newOwner,
-                getAnnotations(), newModality, newVisibility, isVar(), getName(), kind);
+        PropertyDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, newModality, newVisibility, preserveOriginal ? getOriginal() : null, kind);
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
@@ -289,6 +288,18 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         }
 
         return substitutedDescriptor;
+    }
+
+    @NotNull
+    protected PropertyDescriptorImpl createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @NotNull Modality newModality,
+            @NotNull Visibility newVisibility,
+            @Nullable PropertyDescriptor original,
+            @NotNull Kind kind
+    ) {
+        return new PropertyDescriptorImpl(original, newOwner,
+                getAnnotations(), newModality, newVisibility, isVar(), getName(), kind);
     }
 
     @NotNull

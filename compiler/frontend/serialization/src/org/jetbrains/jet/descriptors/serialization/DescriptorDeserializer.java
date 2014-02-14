@@ -136,14 +136,17 @@ public class DescriptorDeserializer {
     private PropertyDescriptor loadProperty(@NotNull final Callable proto) {
         final int flags = proto.getFlags();
 
-        PropertyDescriptorImpl property = new PropertyDescriptorImpl(
+        DeserializedPropertyDescriptor property = new DeserializedPropertyDescriptor(
+                null,
                 containingDeclaration,
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags)),
                 Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
                 nameResolver.getName(proto.getName()),
-                memberKind(Flags.MEMBER_KIND.get(flags))
+                memberKind(Flags.MEMBER_KIND.get(flags)),
+                proto,
+                nameResolver
         );
 
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());

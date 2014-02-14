@@ -85,7 +85,7 @@ public class InlineCodegenUtil {
         VirtualFile file;
         DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
         if (parentDeclaration instanceof PackageFragmentDescriptor) {
-            ProtoBuf.Callable proto = deserializedDescriptor.getFunctionProto();
+            ProtoBuf.Callable proto = deserializedDescriptor.getProto();
             if (!proto.hasExtension(JavaProtoBuf.implClassName)) {
                 throw new IllegalStateException("Function in namespace should have implClassName property in proto: " + deserializedDescriptor);
             }
