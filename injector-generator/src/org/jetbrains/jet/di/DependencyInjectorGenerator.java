@@ -19,7 +19,9 @@ package org.jetbrains.jet.di;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.utils.Printer;
@@ -154,8 +156,8 @@ public class DependencyInjectorGenerator {
         implementsList.add(superInterface);
     }
 
-    public void addParameter(boolean reexport, @NotNull DiType type, @Nullable String name, boolean required) {
-        Field field = addField(reexport, type, name, null);
+    public void addParameter(boolean reexport, @NotNull DiType type, @Nullable String name, boolean required, boolean useAsContext) {
+        Field field = addField(reexport, type, name, null, useAsContext);
         Parameter parameter = new Parameter(type, name, field, required);
         parameters.add(parameter);
         field.setInitialization(new ParameterExpression(parameter));
@@ -163,11 +165,20 @@ public class DependencyInjectorGenerator {
         dependencies.addSatisfiedField(field);
     }
 
-    public Field addField(boolean isPublic, DiType type, @Nullable String name, @Nullable Expression init) {
+    public Field addField(boolean isPublic, DiType type, @Nullable String name, @Nullable Expression init, boolean useAsContext) {
         Field field = Field.create(isPublic, type, name == null ? var(type) : name, init);
+        addField(field);
+        if (useAsContext) {
+            for (Field accessibleViaGetter : field.getFieldsAccessibleViaGetters()) {
+                addField(accessibleViaGetter);
+            }
+        }
+        return field;
+    }
+
+    private void addField(@NotNull Field field) {
         fields.add(field);
         dependencies.addField(field);
-        return field;
     }
 
     public void addFactoryMethod(@NotNull Class<?> returnType, Class<?>... parameterTypes) {
@@ -203,9 +214,19 @@ public class DependencyInjectorGenerator {
     }
 
     private void generateFields(Printer out) {
-        for (Field field : fields) {
+        for (Field field : getUsedFields()) {
             out.println("private final " + type(InjectorGeneratorUtil.getEffectiveFieldType(field)) + " " + field.getName() + ";");
         }
+    }
+
+    @NotNull
+    private List<Field> getUsedFields() {
+        return ContainerUtil.filter(fields, new Condition<Field>() {
+            @Override
+            public boolean value(Field field) {
+                return dependencies.getUsedFields().contains(field) || field.isPublic();
+            }
+        });
     }
 
     private void generateConstructor(String injectorClassName, Printer p) {
@@ -220,7 +241,7 @@ public class DependencyInjectorGenerator {
 
         p.pushIndent();
 
-        InjectionLogicGenerator.generateForFields(p, fields);
+        InjectionLogicGenerator.generateForFields(p, getUsedFields());
 
         p.popIndent();
         p.println("}");

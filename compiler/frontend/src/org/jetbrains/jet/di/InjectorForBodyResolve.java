@@ -18,12 +18,12 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
-import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -49,12 +49,12 @@ public class InjectorForBodyResolve {
     
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
+    private final StorageManager storageManager;
     private final BindingTrace bindingTrace;
     private final BodiesResolveContext bodiesResolveContext;
     private final ModuleDescriptor moduleDescriptor;
-    private final BodyResolver bodyResolver;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
-    private final StorageManager storageManager;
+    private final BodyResolver bodyResolver;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -81,12 +81,12 @@ public class InjectorForBodyResolve {
     ) {
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
+        this.storageManager = topDownAnalysisParameters.getStorageManager();
         this.bindingTrace = bindingTrace;
         this.bodiesResolveContext = bodiesResolveContext;
         this.moduleDescriptor = moduleDescriptor;
-        this.bodyResolver = new BodyResolver();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
-        this.storageManager = topDownAnalysisParameters.getStorageManager();
+        this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();

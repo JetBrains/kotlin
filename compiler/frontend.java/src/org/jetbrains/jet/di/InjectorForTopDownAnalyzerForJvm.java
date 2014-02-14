@@ -18,11 +18,11 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
-import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
@@ -69,11 +69,11 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
+    private final StorageManager storageManager;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptorImpl moduleDescriptor;
     private final TopDownAnalyzer topDownAnalyzer;
     private final TopDownAnalysisContext topDownAnalysisContext;
-    private final StorageManager storageManager;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final JavaToKotlinClassMap javaToKotlinClassMap;
@@ -120,11 +120,11 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     ) {
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
+        this.storageManager = topDownAnalysisParameters.getStorageManager();
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
         this.topDownAnalyzer = new TopDownAnalyzer();
         this.topDownAnalysisContext = new TopDownAnalysisContext();
-        this.storageManager = topDownAnalysisParameters.getStorageManager();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.javaClassFinder = new JavaClassFinderImpl();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);

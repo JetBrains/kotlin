@@ -18,8 +18,8 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -41,8 +41,8 @@ public class InjectorForMacros {
     
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
-    private final ExpressionTypingServices expressionTypingServices;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
+    private final ExpressionTypingServices expressionTypingServices;
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final AnnotationResolver annotationResolver;
@@ -62,8 +62,8 @@ public class InjectorForMacros {
     ) {
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
-        this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
+        this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.expressionTypingServices = new ExpressionTypingServices(globalContext, platformToKotlinClassMap);
         this.storageManager = globalContext.getStorageManager();
         this.annotationResolver = new AnnotationResolver();

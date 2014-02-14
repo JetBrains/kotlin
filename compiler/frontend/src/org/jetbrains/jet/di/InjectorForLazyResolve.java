@@ -18,12 +18,12 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.context.GlobalContextImpl;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -46,12 +46,12 @@ public class InjectorForLazyResolve {
     
     private final Project project;
     private final GlobalContextImpl globalContext;
+    private final LockBasedStorageManager lockBasedStorageManager;
     private final ModuleDescriptorImpl moduleDescriptor;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DeclarationProviderFactory declarationProviderFactory;
     private final BindingTrace bindingTrace;
     private final ResolveSession resolveSession;
-    private final StorageManager storageManager;
-    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -75,12 +75,12 @@ public class InjectorForLazyResolve {
     ) {
         this.project = project;
         this.globalContext = globalContext;
+        this.lockBasedStorageManager = globalContext.getStorageManager();
         this.moduleDescriptor = moduleDescriptor;
+        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
         this.bindingTrace = bindingTrace;
         this.resolveSession = new ResolveSession(project, globalContext, moduleDescriptor, declarationProviderFactory, bindingTrace);
-        this.storageManager = resolveSession.getStorageManager();
-        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -126,7 +126,7 @@ public class InjectorForLazyResolve {
         descriptorResolver.setAnnotationResolver(annotationResolver);
         descriptorResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         descriptorResolver.setExpressionTypingServices(expressionTypingServices);
-        descriptorResolver.setStorageManager(storageManager);
+        descriptorResolver.setStorageManager(lockBasedStorageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);

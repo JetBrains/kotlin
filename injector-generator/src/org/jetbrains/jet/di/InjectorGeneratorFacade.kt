@@ -32,17 +32,19 @@ public fun generator(
 public fun DependencyInjectorGenerator.field(
         fieldType: Class<*>,
         name: String = defaultName(fieldType),
-        init: Expression? = null
+        init: Expression? = null,
+        useAsContext: Boolean = false
 ) {
-    addField(false, DiType(fieldType), name, init)
+    addField(false, DiType(fieldType), name, init, useAsContext)
 }
 
 public fun DependencyInjectorGenerator.publicField(
         fieldType: Class<*>,
         name: String = defaultName(fieldType),
-        init: Expression? = null
+        init: Expression? = null,
+        useAsContext: Boolean = false
 ) {
-    addField(true, DiType(fieldType), name, init)
+    addField(true, DiType(fieldType), name, init, useAsContext)
 }
 
 public fun DependencyInjectorGenerator.fields(vararg types: Class<*>): Unit = types.forEach { field(it) }
@@ -50,16 +52,18 @@ public fun DependencyInjectorGenerator.publicFields(vararg types: Class<*>): Uni
 
 public fun DependencyInjectorGenerator.parameter(
         parameterType: Class<*>,
-        name: String = defaultName(parameterType)
+        name: String = defaultName(parameterType),
+        useAsContext: Boolean = false
 ) {
-    addParameter(false, DiType(parameterType), name, true)
+    addParameter(false, DiType(parameterType), name, true, useAsContext)
 }
 
 public fun DependencyInjectorGenerator.publicParameter(
         parameterType: Class<*>,
-        name: String = defaultName(parameterType)
+        name: String = defaultName(parameterType),
+        useAsContext: Boolean = false
 ) {
-    addParameter(true, DiType(parameterType), name, true)
+    addParameter(true, DiType(parameterType), name, true, useAsContext)
 }
 
 public fun DependencyInjectorGenerator.parameters(vararg types: Class<*>): Unit = types.forEach { parameter(it) }

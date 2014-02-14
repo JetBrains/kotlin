@@ -18,12 +18,12 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -41,12 +41,12 @@ public class InjectorForTests {
     
     private final Project project;
     private final ModuleDescriptor moduleDescriptor;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DescriptorResolver descriptorResolver;
     private final ExpressionTypingServices expressionTypingServices;
     private final TypeResolver typeResolver;
-    private final StorageManager storageManager;
-    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final GlobalContext globalContext;
+    private final StorageManager storageManager;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -62,9 +62,9 @@ public class InjectorForTests {
     ) {
         this.project = project;
         this.moduleDescriptor = moduleDescriptor;
+        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.descriptorResolver = new DescriptorResolver();
         this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
-        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.expressionTypingServices = new ExpressionTypingServices(globalContext, platformToKotlinClassMap);
         this.typeResolver = new TypeResolver();
         this.storageManager = globalContext.getStorageManager();
