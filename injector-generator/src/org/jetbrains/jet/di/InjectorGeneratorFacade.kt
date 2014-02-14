@@ -20,11 +20,11 @@ public fun generator(
         targetSourceRoot: String,
         injectorPackageName: String,
         injectorClassName: String,
-        generatorClass: Class<*>,
+        generatedBy: String,
         body: DependencyInjectorGenerator.() -> Unit
 ): DependencyInjectorGenerator {
     val generator = DependencyInjectorGenerator()
-    generator.configure(targetSourceRoot, injectorPackageName, injectorClassName, generatorClass)
+    generator.configure(targetSourceRoot, injectorPackageName, injectorClassName, generatedBy)
     generator.body()
     return generator
 }
