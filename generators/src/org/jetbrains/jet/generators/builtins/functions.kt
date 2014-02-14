@@ -108,13 +108,15 @@ class GenerateFunctionsImpl(out: PrintWriter, kind: FunctionKind) : GenerateFunc
     }
 
     override fun generateBody() {
+        out.println("import java.io.Serializable")
+        out.println()
         for (i in 0..MAX_PARAM_COUNT) {
             out.print("public abstract class " + kind.getImplClassName(i))
             generateTypeParameters(i, true)
             out.print(" : ")
             out.print(kind.getClassName(i))
             generateTypeParameters(i, false)
-            out.println(", DefaultJetObject() {")
+            out.println(", Serializable {")
             generateToStringForFunctionImpl()
             out.println("}")
         }
