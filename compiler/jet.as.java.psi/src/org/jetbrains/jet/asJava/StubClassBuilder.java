@@ -28,7 +28,7 @@ import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.jet.codegen.ClassBuilder;
+import org.jetbrains.jet.codegen.AbstractClassBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.List;
 
-public class StubClassBuilder extends ClassBuilder {
+public class StubClassBuilder extends AbstractClassBuilder {
     private static final InnerClassSourceStrategy<Object> EMPTY_STRATEGY = new InnerClassSourceStrategy<Object>() {
         @Override
         public Object findInnerClass(String s, Object o) {
