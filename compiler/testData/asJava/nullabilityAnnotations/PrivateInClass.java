@@ -1,4 +1,4 @@
-public final class PrivateInClass implements jet.JetObject {
+public final class PrivateInClass implements kotlin.jvm.internal.KObject {
     private final java.lang.String nn = "";
     private final java.lang.String n = "";
 

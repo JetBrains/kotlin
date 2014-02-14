@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jet;
+package kotlin.jvm.internal;
 
-public interface JetObject {
+public interface KObject {
 }

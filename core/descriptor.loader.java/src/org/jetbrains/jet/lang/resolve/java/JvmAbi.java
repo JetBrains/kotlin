@@ -46,7 +46,7 @@ public final class JvmAbi {
     public static final String INSTANCE_FIELD = "instance$";
     public static final String CLASS_OBJECT_FIELD = "object$";
 
-    public static final JvmClassName JET_OBJECT = JvmClassName.byFqNameWithoutInnerClasses("jet.JetObject");
+    public static final FqName K_OBJECT = new FqName("kotlin.jvm.internal.KObject");
 
     public static boolean isClassObjectFqName(@NotNull FqName fqName) {
         return fqName.lastSegmentIs(Name.identifier(CLASS_OBJECT_CLASS_NAME));

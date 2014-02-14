@@ -235,7 +235,7 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertTrue(aClass.isAnnotation());
         assertEquals(2, interfaces.length);
         assertEquals(
-                Sets.newHashSet("java.lang.annotation.Annotation", "jet.JetObject"),
+                Sets.newHashSet("java.lang.annotation.Annotation", "kotlin.jvm.internal.KObject"),
                 Sets.newHashSet(interfaces[0].getName(), interfaces[1].getName())
         );
     }
