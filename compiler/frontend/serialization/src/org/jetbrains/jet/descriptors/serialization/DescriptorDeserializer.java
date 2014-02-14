@@ -219,7 +219,7 @@ public class DescriptorDeserializer {
     @NotNull
     private CallableMemberDescriptor loadFunction(@NotNull Callable proto) {
         int flags = proto.getFlags();
-        DeserializedSimpleFunctionDescriptor function = new DeserializedSimpleFunctionDescriptor(
+        DeserializedSimpleFunctionDescriptor function = DeserializedSimpleFunctionDescriptor.create(
                 containingDeclaration, proto,
                 deserializers,
                 nameResolver

@@ -50,22 +50,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
+            @Nullable FunctionDescriptor original,
             @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind) {
         super(containingDeclaration, annotations, name);
-        this.original = this;
-        this.kind = kind;
-    }
-
-    protected FunctionDescriptorImpl(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull FunctionDescriptor original,
-            @NotNull Annotations annotations,
-            @NotNull Name name,
-            @NotNull Kind kind) {
-        super(containingDeclaration, annotations, name);
-        this.original = original;
+        this.original = original == null ? this : original;
         this.kind = kind;
     }
 

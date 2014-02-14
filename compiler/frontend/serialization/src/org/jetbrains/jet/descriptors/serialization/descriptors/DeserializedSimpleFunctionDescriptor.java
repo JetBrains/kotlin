@@ -17,6 +17,7 @@
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.DescriptorDeserializer;
 import org.jetbrains.jet.descriptors.serialization.Flags;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
@@ -35,20 +36,7 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
 
     private DeserializedSimpleFunctionDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull Annotations annotations,
-            @NotNull Name name,
-            @NotNull Kind kind,
-            @NotNull ProtoBuf.Callable functionProto,
-            @NotNull NameResolver nameResolver
-    ) {
-        super(containingDeclaration, annotations, name, kind);
-        this.functionProto = functionProto;
-        this.nameResolver = nameResolver;
-    }
-
-    private DeserializedSimpleFunctionDescriptor(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull SimpleFunctionDescriptor original,
+            @Nullable SimpleFunctionDescriptor original,
             @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind,
@@ -59,45 +47,17 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
         this.nameResolver = nameResolver;
     }
 
-    public DeserializedSimpleFunctionDescriptor(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull ProtoBuf.Callable functionProto,
-            @NotNull Deserializers deserializers,
-            @NotNull NameResolver nameResolver
-    ) {
-        this(containingDeclaration,
-             DescriptorDeserializer.getAnnotations(containingDeclaration, functionProto, functionProto.getFlags(),
-                                                   Deserializers.AnnotatedCallableKind.FUNCTION, deserializers.getAnnotationDeserializer(),
-                                                   nameResolver),
-             nameResolver.getName(functionProto.getName()),
-             DescriptorDeserializer.memberKind(Flags.MEMBER_KIND.get(functionProto.getFlags())),
-             functionProto,
-             nameResolver);
-    }
-
     @Override
     protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
-        if (preserveOriginal) {
-            return new DeserializedSimpleFunctionDescriptor(
-                    newOwner,
-                    getOriginal(),
-                    getAnnotations(),
-                    getName(),
-                    kind,
-                    functionProto,
-                    nameResolver
-            );
-        }
-        else {
-            return new DeserializedSimpleFunctionDescriptor(
-                    newOwner,
-                    getAnnotations(),
-                    getName(),
-                    kind,
-                    functionProto,
-                    nameResolver
-            );
-        }
+        return new DeserializedSimpleFunctionDescriptor(
+                newOwner,
+                preserveOriginal ? getOriginal() : null,
+                getAnnotations(),
+                getName(),
+                kind,
+                functionProto,
+                nameResolver
+        );
     }
 
     @NotNull
@@ -112,5 +72,25 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
 
     public NameResolver getNameResolver() {
         return nameResolver;
+    }
+
+    public static DeserializedSimpleFunctionDescriptor create(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull ProtoBuf.Callable functionProto,
+            @NotNull Deserializers deserializers,
+            @NotNull NameResolver nameResolver
+    ) {
+        Annotations annotations = DescriptorDeserializer.getAnnotations(containingDeclaration, functionProto, functionProto.getFlags(),
+                                                                        Deserializers.AnnotatedCallableKind.FUNCTION,
+                                                                        deserializers.getAnnotationDeserializer(),
+                                                                        nameResolver);
+        return new DeserializedSimpleFunctionDescriptor(
+                containingDeclaration,
+                null,
+                annotations,
+                nameResolver.getName(functionProto.getName()),
+                DescriptorDeserializer.memberKind(Flags.MEMBER_KIND.get(functionProto.getFlags())),
+                functionProto,
+                nameResolver);
     }
 }

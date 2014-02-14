@@ -38,12 +38,12 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull Name name,
             @NotNull Kind kind
     ) {
-        super(containingDeclaration, annotations, name, kind);
+        this(containingDeclaration, null, annotations, name, kind);
     }
 
     protected SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull SimpleFunctionDescriptor original,
+            @Nullable SimpleFunctionDescriptor original,
             @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind) {
@@ -76,30 +76,19 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
 
     @Override
     protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
-        if (preserveOriginal) {
-            return new SimpleFunctionDescriptorImpl(
-                    newOwner,
-                    getOriginal(),
-                    // TODO : safeSubstitute
-                    getAnnotations(),
-                    getName(),
-                    kind);
-        }
-        else {
-            return new SimpleFunctionDescriptorImpl(
-                    newOwner,
-                    // TODO : safeSubstitute
-                    getAnnotations(),
-                    getName(),
-                    kind);
-        }
+        return new SimpleFunctionDescriptorImpl(
+                newOwner,
+                preserveOriginal ? getOriginal() : null,
+                // TODO : safeSubstitute
+                getAnnotations(),
+                getName(),
+                kind);
     }
 
     @NotNull
     @Override
     public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
-        SimpleFunctionDescriptorImpl copy = (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, visibility, false, copyOverrides, kind);
-        return copy;
+        return (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, visibility, false, copyOverrides, kind);
     }
 
     @NotNull

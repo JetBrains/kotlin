@@ -40,7 +40,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull Annotations annotations, boolean isPrimary, Kind kind) {
-        super(containingDeclaration, annotations, NAME, kind);
+        super(containingDeclaration, null, annotations, NAME, kind);
         this.isPrimary = isPrimary;
     }
 
