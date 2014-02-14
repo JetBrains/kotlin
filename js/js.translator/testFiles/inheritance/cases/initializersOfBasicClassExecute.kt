@@ -8,6 +8,6 @@ class B() : A() {
 
 }
 
-fun box() : Int {
+fun box(): Int {
     return (B().a)
 }

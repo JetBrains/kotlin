@@ -1,7 +1,9 @@
 package foo
 
-fun Int.foo() {}
-fun String.foo() {}
+fun Int.foo() {
+}
+fun String.foo() {
+}
 
 val Int.bar = 1
 val String.bar = 2

@@ -1,16 +1,16 @@
 import java.util.ArrayList
 
 trait Tr {
-   fun extra() : String = "_"
+    fun extra(): String = "_"
 }
 
 class N() : ArrayList<Any>(), Tr {
-    override fun add(el: Any)  : Boolean {
+    override fun add(el: Any): Boolean {
         super<ArrayList>.add(el)
         return super<ArrayList>.add(el.toString() + super<Tr>.extra() + el + extra())
     }
 
-   override fun extra() : String = super<Tr>.extra() + super<Tr>.extra()
+    override fun extra(): String = super<Tr>.extra() + super<Tr>.extra()
 }
 
 fun box(): String {

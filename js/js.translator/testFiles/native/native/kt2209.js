@@ -1,1 +1,1 @@
-var chrome = {extension: {lastError:null}}
+var chrome = {extension: {lastError:null}};

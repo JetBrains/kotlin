@@ -43,6 +43,6 @@ trait L
 trait H : L
 trait Dummy
 
-fun box() : Boolean {
+fun box(): Boolean {
     return (C().order == "ABC") && (D().order == "ABD") && (E().order == "AE") && (C().bar() == "F") && (A().bar() == "F")
 }

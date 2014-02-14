@@ -2,7 +2,7 @@ package foo
 
 import js.*
 
-fun box() : Boolean {
+fun box(): Boolean {
 
     var d = 0
     for (i in 1..6) {

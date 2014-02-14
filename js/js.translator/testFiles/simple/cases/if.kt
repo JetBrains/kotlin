@@ -1,6 +1,6 @@
 package foo
 
-fun bol() : Int {
+fun bol(): Int {
     val a = 2;
     val b = 3;
     var c = 4;
@@ -12,7 +12,8 @@ fun bol() : Int {
     }
     if (a == c) {
         return c;
-    } else {
+    }
+    else {
         return 5;
     }
 }

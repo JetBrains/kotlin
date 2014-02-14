@@ -9,7 +9,7 @@ open class A(var a: Int) {
     fun eval() = a.modify();
 }
 
-class B(a: Int): A(a) {
+class B(a: Int) : A(a) {
     override fun Int.modify(): Int {
         return this - 2;
     }

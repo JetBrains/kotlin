@@ -4,7 +4,7 @@ trait I {
     fun test(): String
 }
 
-class P: I {
+class P : I {
     override fun test(): String {
         return "a" + test("b")
     }

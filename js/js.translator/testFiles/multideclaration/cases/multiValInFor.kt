@@ -3,9 +3,9 @@ package foo
 import java.util.ArrayList
 
 class A {
-    fun component1() : Int = 1
+    fun component1(): Int = 1
 }
-fun A.component2() : String = "n"
+fun A.component2(): String = "n"
 
 fun box(): String {
     val list = ArrayList<A>()
@@ -13,7 +13,7 @@ fun box(): String {
 
     var i = 0;
     var s = ""
-    for ((a,b) in list) {
+    for ((a, b) in list) {
         i = a;
         s = b;
     }

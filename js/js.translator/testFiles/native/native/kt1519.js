@@ -3,6 +3,6 @@ function Wow() {
     this.y = 2;
 }
 
-Wow.prototype.sum = function() {
+Wow.prototype.sum = function () {
     return this.x + this.y;
 };

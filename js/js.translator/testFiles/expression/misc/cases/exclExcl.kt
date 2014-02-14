@@ -1,8 +1,8 @@
 package foo
 
 
-fun box() : Boolean {
-  val a : Int? = 0
+fun box(): Boolean {
+    val a: Int? = 0
 
-  return (a!! + 3) == 3
+    return (a!! + 3) == 3
 }

@@ -2,14 +2,13 @@ package foo
 
 val y = 3
 
-fun f(a:Int) : Int {
-   val x = 42
-   val y = 50
+fun f(a: Int): Int {
+    val x = 42
+    val y = 50
 
-   return y
+    return y
 }
 
-fun box() : Int
-{
+fun box(): Int {
     return f(y)
 }

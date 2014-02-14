@@ -7,7 +7,7 @@ class Foo(val name: String) {
     }
 }
 
-fun box() : String {
+fun box(): String {
     val a = Foo("James")
     return a.toString()
 }

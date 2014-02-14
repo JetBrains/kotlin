@@ -56,7 +56,7 @@ class HelloKotlin() {
         // if you using chrome chances are good you wont see the shadow
         context.shadowColor = "#000000"
         context.shadowBlur = 5.0
-        context.shadowOffsetX = - 4.0
+        context.shadowOffsetX = -4.0
         context.shadowOffsetY = 4.0
         context.fillStyle = "rgb(242,160,110)"
         context.fillText(message, absX.toInt(), absY.toInt())
@@ -66,21 +66,21 @@ class HelloKotlin() {
     fun move() {
         val relTextWidth = textWidthInPixels / width
         if (relX > (1.0 - relTextWidth - relXVelocity.abs) || relX < relXVelocity.abs) {
-            relXVelocity *= - 1
+            relXVelocity *= -1
         }
         val relTextHeight = textHeightInPixels / height
         if (relY > (1.0 - relYVelocity.abs) || relY < relYVelocity.abs + relTextHeight) {
-            relYVelocity *= - 1
+            relYVelocity *= -1
         }
         relX += relXVelocity
         relY += relYVelocity
     }
 
-    fun randomVelocity() = 0.03 * Math.random() * (if (Math.random() < 0.5) 1 else - 1)
+    fun randomVelocity() = 0.03 * Math.random() * (if (Math.random() < 0.5) 1 else -1)
 
 
     val Double.abs: Double
-        get() = if (this > 0) this else - this
+        get() = if (this > 0) this else -this
 }
 
 fun renderBackground() {
@@ -99,11 +99,11 @@ fun main(args: Array<String>) {
         }
 
         window.setInterval({
-            renderBackground()
-            for (logo in logos) {
-                logo.draw()
-            }
-        }, interval)
+                               renderBackground()
+                               for (logo in logos) {
+                                   logo.draw()
+                               }
+                           }, interval)
     }
 }
 

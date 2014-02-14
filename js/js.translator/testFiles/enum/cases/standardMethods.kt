@@ -7,7 +7,8 @@ enum class Simple {
 }
 
 enum class A {
-    a : A() {}
+    a : A() {
+    }
     b : A()
     c
 }
@@ -21,8 +22,8 @@ fun box(): String {
     if (ok.ordinal() != 0) return "ok = Simple.Ok; ok.ordinal() != 0, it: ${ok.ordinal()}"
 
     val ok2 = Simple.valueOf("OK")
-    if(!ok2.equals(ok)) return "ok2 not equal ok"
-    if(!ok2.identityEquals(ok)) return "ok2 not identity equal ok"
+    if (!ok2.equals(ok)) return "ok2 not equal ok"
+    if (!ok2.identityEquals(ok)) return "ok2 not identity equal ok"
 
 
     if (EmptyEnum.values().size != 0) return "EmptyEnum.values().size != 0"

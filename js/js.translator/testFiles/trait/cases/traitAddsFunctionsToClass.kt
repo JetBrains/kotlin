@@ -1,11 +1,11 @@
 package foo
 
 trait Test {
-    fun addFoo(s:String) : String {
-       return s + "FOO"
+    fun addFoo(s: String): String {
+        return s + "FOO"
     }
 
-    fun addBar(s:String) : String {
+    fun addBar(s: String): String {
         return s + "BAR"
     }
 }
@@ -13,7 +13,7 @@ trait Test {
 
 class A() : Test {
     val string = "TEST"
-    fun value() : String {
+    fun value(): String {
         return addBar(addFoo(string))
     }
 }

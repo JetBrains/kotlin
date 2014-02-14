@@ -32,7 +32,7 @@ function test3(bar, dummy  /*, args */) {
 }
 
 var obj = {
-    test : function (size /*, args */) {
+    test: function (size /*, args */) {
         return (arguments.length - 1) === size;
     }
 };

@@ -2,16 +2,17 @@ package foo
 
 import js.*
 
-class RangeIterator(val start : Int, var count : Int, val reversed : Boolean) {
+class RangeIterator(val start: Int, var count: Int, val reversed: Boolean) {
 
     var i = start
 
-    fun next() : Int {
+    fun next(): Int {
         --count
         if (reversed) {
             i--
             return i + 1
-        } else {
+        }
+        else {
             i++
             return i - 1
         }
@@ -21,15 +22,16 @@ class RangeIterator(val start : Int, var count : Int, val reversed : Boolean) {
     fun hasNext() = (count > 0);
 }
 
-class NumberRange(val start : Int, val size : Int, val reversed : Boolean) {
+class NumberRange(val start: Int, val size: Int, val reversed: Boolean) {
 
-    val end : Int
-    get() = if (reversed) start - size + 1 else start + size - 1
+    val end: Int
+        get() = if (reversed) start - size + 1 else start + size - 1
 
-    fun contains(number : Int) : Boolean {
+    fun contains(number: Int): Boolean {
         if (reversed) {
             return (number <= start) && (number > start - size);
-        } else {
+        }
+        else {
             return (number >= start) && (number < start + size);
         }
     }
@@ -38,10 +40,9 @@ class NumberRange(val start : Int, val size : Int, val reversed : Boolean) {
 }
 
 
-
 fun box() = testRange() && testReversedRange();
 
-fun testRange() : Boolean {
+fun testRange(): Boolean {
 
     val oneToFive = NumberRange(1, 4, false);
     if (oneToFive.contains(5)) return false;
@@ -70,7 +71,7 @@ fun testRange() : Boolean {
 
 }
 
-fun testReversedRange() : Boolean {
+fun testReversedRange(): Boolean {
 
     println("Testing reversed range.");
 

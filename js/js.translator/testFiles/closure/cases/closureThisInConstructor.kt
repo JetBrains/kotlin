@@ -11,7 +11,7 @@ object foo {
         done = 3
     }
 
-    val extLambda: Int.()->Unit = {
+    val extLambda: Int.() -> Unit = {
         result = "foo.extLambda OK"
         done = this
     }
@@ -25,7 +25,7 @@ class Foo {
         done = -7
     }
 
-    val extLambda: Int.()->Unit = {
+    val extLambda: Int.() -> Unit = {
         result = "Foo::extLambda OK"
         done = this
     }

@@ -1,6 +1,6 @@
 package foo
 
-fun Int.quadruple() : Int {
+fun Int.quadruple(): Int {
     return this * 4;
 }
 

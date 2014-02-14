@@ -1,13 +1,12 @@
 package foo
 
 
-fun box() : Boolean
-{
+fun box(): Boolean {
     return f()
 }
 
-fun f() : Boolean {
-   return true
+fun f(): Boolean {
+    return true
 }
 
 

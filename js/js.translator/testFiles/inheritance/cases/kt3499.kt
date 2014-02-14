@@ -3,7 +3,7 @@ package foo
 trait A : B, E
 trait B
 open class C {
-  fun foo() = true
+    fun foo() = true
 }
 trait D
 trait E

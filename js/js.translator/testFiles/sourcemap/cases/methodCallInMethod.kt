@@ -3,7 +3,8 @@ package foo
 //KT-4054
 
 class A() {
-    fun f0() {}
+    fun f0() {
+    }
 
     fun f1() {
         f0()

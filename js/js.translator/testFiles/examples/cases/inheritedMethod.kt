@@ -1,13 +1,13 @@
 open class Foo() {
-  fun xyzzy(): String = "xyzzy"
+    fun xyzzy(): String = "xyzzy"
 }
 
-class Bar(): Foo() {
-  fun test(): String = xyzzy()
+class Bar() : Foo() {
+    fun test(): String = xyzzy()
 }
 
-fun box() : String {
-  val bar = Bar()
-  val f = bar.test()
-  return if (f == "xyzzy") "OK" else "fail"
+fun box(): String {
+    val bar = Bar()
+    val f = bar.test()
+    return if (f == "xyzzy") "OK" else "fail"
 }

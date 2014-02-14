@@ -3,9 +3,10 @@ package foo
 class A() {
     fun lold() = true
 
-    val p = {{
-        lold()
-    }()
+    val p = {
+        {
+            lold()
+        }()
     }
 }
 

@@ -1,8 +1,8 @@
 package foo
 
-class A(var a : Int) {
+class A(var a: Int) {
 
-    fun Int.modify() : Int {
+    fun Int.modify(): Int {
         return this * 3;
     }
 

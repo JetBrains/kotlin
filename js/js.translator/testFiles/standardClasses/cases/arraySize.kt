@@ -1,6 +1,7 @@
 package foo
 
-class A() {}
+class A() {
+}
 
 val a1 = arrayOfNulls<Int>(3)
 val a2 = arrayOfNulls<A>(2)

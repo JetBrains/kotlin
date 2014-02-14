@@ -1,17 +1,20 @@
 package foo
 
 open class Base() {
-    fun n(n : Int) : Int = n + 1
+    fun n(n: Int): Int = n + 1
 }
 
-trait Abstract {}
+trait Abstract {
+}
 
-class Derived1() : Base(), Abstract {}
-class Derived2() : Abstract, Base() {}
+class Derived1() : Base(), Abstract {
+}
+class Derived2() : Abstract, Base() {
+}
 
-fun test(s : Base) : Boolean = s.n(238) == 239
+fun test(s: Base): Boolean = s.n(238) == 239
 
-fun box() : String {
+fun box(): String {
     if (!test(Base())) return "Fail #1"
     if (!test(Derived1())) return "Fail #2"
     if (!test(Derived2())) return "Fail #3"

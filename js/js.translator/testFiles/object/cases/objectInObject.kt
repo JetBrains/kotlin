@@ -1,19 +1,25 @@
 package foo
 
 object A {
-  object query {val status = "complete"}
+    object query {
+        val status = "complete"
+    }
 }
 
 object B {
-  private val ov = "d"
-  object query {val status = "complete" + ov}
+    private val ov = "d"
+    object query {
+        val status = "complete" + ov
+    }
 }
 
 class C {
-  class object {
-    fun ov() = "d"
-  }
-  object query {val status = "complete" + ov()}
+    class object {
+        fun ov() = "d"
+    }
+    object query {
+        val status = "complete" + ov()
+    }
 }
 
 fun box() = A.query.status == "complete" && B.query.status == "completed"

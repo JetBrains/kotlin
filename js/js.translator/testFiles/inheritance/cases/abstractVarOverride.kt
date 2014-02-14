@@ -1,16 +1,16 @@
 package foo
 
 open abstract class A() {
-    abstract var pos : Int;
+    abstract var pos: Int;
 }
 
 class B() : A() {
-    override var pos : Int = 2
+    override var pos: Int = 2
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
 
-    val a : A = B()
+    val a: A = B()
     if (a.pos != 2) {
         return false;
     }

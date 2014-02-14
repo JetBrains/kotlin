@@ -1,6 +1,7 @@
 package foo
 
-class A(val c: Int) {}
+class A(val c: Int) {
+}
 
 
 fun A.inc() = A(5)

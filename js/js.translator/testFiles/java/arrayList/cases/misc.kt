@@ -2,7 +2,7 @@ package foo
 
 import java.util.ArrayList
 
-fun assertThat(a:Any, b:Any) {
+fun assertThat(a: Any, b: Any) {
     if (a != b) {
         throw Exception("$a is not equal to $b")
     }

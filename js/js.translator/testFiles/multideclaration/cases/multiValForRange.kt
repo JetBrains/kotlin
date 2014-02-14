@@ -1,12 +1,13 @@
 package foo
-class C(val i: Int): Comparable<C>, A() {
+
+class C(val i: Int) : Comparable<C>, A() {
     public override fun compareTo(other: C): Int {
         return if (other is C) other.i - i else 0
     }
 
 }
 
-fun ComparableRange<C>.iterator() : Iterator<C> {
+fun ComparableRange<C>.iterator(): Iterator<C> {
     var curI: Int = start.i - 1
 
     return object :Iterator<C> {
@@ -22,14 +23,14 @@ fun ComparableRange<C>.iterator() : Iterator<C> {
 }
 
 open class A {
-    fun component1() : Int = 1
+    fun component1(): Int = 1
 }
-fun A.component2() : String = "n"
+fun A.component2(): String = "n"
 
 fun box(): String {
     var i = 0;
     var s = ""
-    for ((a,b) in C(0)..C(2)) {
+    for ((a, b) in C(0)..C(2)) {
         i = a;
         s = b;
     }

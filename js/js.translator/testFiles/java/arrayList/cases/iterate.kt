@@ -2,7 +2,7 @@ package foo
 
 import java.util.ArrayList;
 
-fun box() : Boolean {
+fun box(): Boolean {
     var i = 0
     val arr = ArrayList<Int>();
     while (i++ < 10) {

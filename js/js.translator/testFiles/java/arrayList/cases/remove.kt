@@ -2,7 +2,7 @@ package foo
 
 import java.util.ArrayList
 
-fun box() : Boolean {
+fun box(): Boolean {
     val arr = ArrayList<Int>()
     for (i in 0..5) {
         arr.add(i)

@@ -1,6 +1,6 @@
 package foo
 
-fun box() : Boolean {
+fun box(): Boolean {
 
     val a = arrayOfNulls<Int>(2)
     a.set(1, 2)

@@ -6,7 +6,7 @@ class Foo(val postfix: String) {
     }
 }
 
-fun box() : String {
+fun box(): String {
     val a = Foo(" world!")
     return a("hello")
 }

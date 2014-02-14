@@ -1,6 +1,6 @@
 package foo
 
-fun box() : Boolean {
+fun box(): Boolean {
 
     if (!true.and(true)) {
         return false;
@@ -32,21 +32,21 @@ fun box() : Boolean {
         return false;
     }
     if (!true.xor(false)) {
-            return false;
-        }
+        return false;
+    }
 
     if (true.xor(true)) {
-            return false;
-        }
+        return false;
+    }
 
-        if (true.not()) {
-            return false;
+    if (true.not()) {
+        return false;
 
-        }
+    }
 
-        if (!false.not()) {
-            return false;
-        }
+    if (!false.not()) {
+        return false;
+    }
 
-        return true;
+    return true;
 }

@@ -1,4 +1,5 @@
 package foo
+
 class Delegate {
 }
 
@@ -9,5 +10,5 @@ class A {
 }
 
 fun box(): String {
-  return if(A().prop == 1) "OK" else "fail"
+    return if (A().prop == 1) "OK" else "fail"
 }

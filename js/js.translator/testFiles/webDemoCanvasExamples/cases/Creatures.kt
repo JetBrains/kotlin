@@ -60,10 +60,9 @@ abstract class Shape() {
 
 val Kotlin = Logo(v(250.0, 75.0))
 
-class Logo(override var pos: Vector): Shape()
-{
+class Logo(override var pos: Vector) : Shape() {
     val relSize: Double = 0.25
-    val shadowOffset = v(- 3.0, 3.0)
+    val shadowOffset = v(-3.0, 3.0)
     val imageSize = v(377.0, 393.0)
     var size: Vector = imageSize * relSize
     // get-only properties like this saves you lots of typing and are very expressive
@@ -75,9 +74,9 @@ class Logo(override var pos: Vector): Shape()
         size = imageSize * (state.size.x / imageSize.x) * relSize
         // getKotlinLogo() is a 'magic' function here defined only for purposes of demonstration but in fact it just find an element containing the logo
         state.context.drawImage(getImage("http://kotlin-demo.jetbrains.com/static/images/kotlinlogowobackground.png"), 0, 0,
-                imageSize.x.toInt(), imageSize.y.toInt(),
-                position.x.toInt(), position.y.toInt(),
-                size.x.toInt(), size.y.toInt())
+                                imageSize.x.toInt(), imageSize.y.toInt(),
+                                position.x.toInt(), position.y.toInt(),
+                                size.x.toInt(), size.y.toInt())
     }
 
     override fun draw(state: CanvasState) {
@@ -87,7 +86,8 @@ class Logo(override var pos: Vector): Shape()
             context.shadowed(shadowOffset, 0.2) {
                 drawLogo(state)
             }
-        } else {
+        }
+        else {
             drawLogo(state)
         }
     }
@@ -106,9 +106,9 @@ val gradientGenerator: RadialGradientGenerator? = null
         return $gradientGenerator
     }
 
-class Creature(override var pos: Vector, val state: CanvasState): Shape() {
+class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
 
-    val shadowOffset = v(- 5.0, 5.0)
+    val shadowOffset = v(-5.0, 5.0)
     val colorStops = gradientGenerator!!.getNext()
     val relSize = 0.05
     // these properties have no backing fields and in java/javascript they could be represented as little helper functions
@@ -138,7 +138,8 @@ class Creature(override var pos: Vector, val state: CanvasState): Shape() {
         val context = state.context
         if (!selected) {
             drawCreature(context)
-        } else {
+        }
+        else {
             drawCreatureWithShadow(context)
         }
     }
@@ -162,12 +163,12 @@ class Creature(override var pos: Vector, val state: CanvasState): Shape() {
     }
 
     fun tailPath(context: CanvasContext) {
-        val tailDirection = - directionToLogo
+        val tailDirection = -directionToLogo
         val tailPos = position + tailDirection * radius * 1.0
         val tailSize = radius * 1.6
         val angle = Math.PI / 6.0
         val p1 = tailPos + tailDirection.rotatedBy(angle) * tailSize
-        val p2 = tailPos + tailDirection.rotatedBy(- angle) * tailSize
+        val p2 = tailPos + tailDirection.rotatedBy(-angle) * tailSize
         val middlePoint = position + tailDirection * radius * 1.0
         context.moveTo(tailPos.x.toInt(), tailPos.y.toInt())
         context.lineTo(p1.x.toInt(), p1.y.toInt())
@@ -246,8 +247,8 @@ class CanvasState(val canvas: HTMLCanvasElement) {
         }
 
         window.setInterval({
-            draw()
-        }, interval)
+                               draw()
+                           }, interval)
     }
 
     fun mousePos(e: MouseEvent): Vector {
@@ -314,7 +315,7 @@ fun v(x: Double, y: Double) = Vector(x, y)
 
 class Vector(val x: Double = 0.0, val y: Double = 0.0) {
     fun plus(v: Vector) = v(x + v.x, y + v.y)
-    fun minus() = v(- x, - y)
+    fun minus() = v(-x, -y)
     fun minus(v: Vector) = v(x - v.x, y - v.y)
     fun times(koef: Double) = v(x * koef, y * koef)
     fun distanceTo(v: Vector) = Math.sqrt((this - v).sqr)
@@ -340,8 +341,8 @@ fun main(args: Array<String>) {
         state.addShape(Creature(state.size * 0.25, state))
         state.addShape(Creature(state.size * 0.75, state))
         window.setTimeout({
-            state.valid = false
-        }, 1000)
+                              state.valid = false
+                          }, 1000)
     }
 }
 

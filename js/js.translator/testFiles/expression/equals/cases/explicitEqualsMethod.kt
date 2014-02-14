@@ -13,7 +13,7 @@ class Bar() {
 
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
     val a = Foo("abc")
     val b = Foo("abc")
     val c = Foo("def")

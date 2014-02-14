@@ -1,7 +1,7 @@
-fun box() : String {
-    return invoker( {"OK"} )
+fun box(): String {
+    return invoker({ "OK" })
 }
 
-fun invoker(gen :  () -> String) : String {
+fun invoker(gen: () -> String): String {
     return gen()
 }

@@ -1,10 +1,10 @@
 package foo
 
 class A() {
-  val p = {true}
+    val p = { true }
 }
 
 
-fun box() : Boolean {
-  return A().p()
+fun box(): Boolean {
+    return A().p()
 }

@@ -6,18 +6,18 @@ trait C : A
 trait D : B, C
 trait E : C
 
-open class CB: B
-class CB2: CB()
+open class CB : B
+class CB2 : CB()
 
-class CD: D
+class CD : D
 
 fun testPhrase(o: Any): String {
     var s = ""
-    s += if(o is A) "Y" else "N"
-    s += if(o is B) "Y" else "N"
-    s += if(o is C) "Y" else "N"
-    s += if(o is D) "Y" else "N"
-    s += if(o is E) "Y" else "N"
+    s += if (o is A) "Y" else "N"
+    s += if (o is B) "Y" else "N"
+    s += if (o is C) "Y" else "N"
+    s += if (o is D) "Y" else "N"
+    s += if (o is E) "Y" else "N"
     return s
 }
 
@@ -25,7 +25,8 @@ fun box(): String {
     val b = CB()
     val b2 = CB2()
     val d = CD()
-    val e = object : E {}
+    val e = object : E {
+    }
 
     if (testPhrase(b) != "YYNNN") return "bad b, it: ${testPhrase(b)}"
     if (testPhrase(b2) != "YYNNN") return "bad b2, it: ${testPhrase(b2)}"

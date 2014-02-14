@@ -9,7 +9,7 @@ fun box(): String {
     val a1 = A(1)
     if (a0.a != 0) return "a0.a != 0, it: ${a0.a}"
     if (a1.a != 1) return "a1.a != 1, it: ${a1.a}"
-    
+
     val b1 = B()
     if (b1.a != 0) return "b1.a != 0, it: ${b1.a}"
     if (b1.b != "a") return "b1.b != 'a', it: ${b1.b}"

@@ -1,6 +1,7 @@
 package foo
 
 import java.util.*
+
 fun box(): Boolean {
     val data = ArrayList<String>()
     data.add("foo")

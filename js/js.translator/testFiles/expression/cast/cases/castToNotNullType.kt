@@ -5,10 +5,10 @@ class A
 fun checkCastNullableToNotNull(): Boolean {
     val a = null
     try {
-      val s = a as A
+        val s = a as A
     }
-    catch (e : Exception) {
-      return true
+    catch (e: Exception) {
+        return true
     }
     return false
 }

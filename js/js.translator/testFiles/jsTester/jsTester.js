@@ -41,8 +41,8 @@ var JsTests = (function () {
         reporter.testSuccess(testName);
     };
     return {
-        test:test,
-        assert:assert
+        test: test,
+        assert: assert
     }
 })();
 

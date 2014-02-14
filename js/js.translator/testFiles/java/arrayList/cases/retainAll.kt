@@ -31,8 +31,8 @@ fun box(): String {
     val withOtherElements = listOf(3, 54, null)
 
     return test(list, subset, removed = true, expected = subset) ?:
-           test(list, empty, removed = true, expected = empty) ?:
-           test(list, withOtherElements, removed = true, expected = listOf(3, null)) ?:
-           test(list, list, removed = false, expected = list) ?:
-           "OK"
+    test(list, empty, removed = true, expected = empty) ?:
+    test(list, withOtherElements, removed = true, expected = listOf(3, null)) ?:
+    test(list, list, removed = false, expected = list) ?:
+    "OK"
 }

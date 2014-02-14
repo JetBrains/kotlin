@@ -1,9 +1,9 @@
 package foo
 
 class MyInt() {
-  var b = 0
+    var b = 0
 
-    fun inc() : MyInt {
+    fun inc(): MyInt {
         val res = MyInt()
         res.b++;
         return res;
@@ -11,7 +11,7 @@ class MyInt() {
 }
 
 
-fun box() : Boolean {
+fun box(): Boolean {
     var c = MyInt()
     c++;
     return (c.b == 1);

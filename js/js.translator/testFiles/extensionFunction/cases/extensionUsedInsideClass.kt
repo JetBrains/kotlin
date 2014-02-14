@@ -1,10 +1,10 @@
 package foo
 
-class A(var a : Int) {
+class A(var a: Int) {
     fun eval() = f();
 }
 
-fun A.f() : Int {
+fun A.f(): Int {
     a = 3
     return 10
 }

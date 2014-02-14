@@ -1,10 +1,10 @@
 package foo
 
-class A(var i : Int) {
+class A(var i: Int) {
     override fun toString() = "a$i"
 }
 
-fun box() : Boolean {
+fun box(): Boolean {
     var p = A(2);
     var n = A(1);
     if ("$p$n" != "a2a1") {
