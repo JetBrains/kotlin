@@ -77,9 +77,6 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup, ParentCodegenAware {
-
-    private static final String CLASS_NO_PATTERN_MATCHED_EXCEPTION = "jet/NoPatternMatchedException";
-    private static final String CLASS_TYPE_CAST_EXCEPTION = "jet/TypeCastException";
     private static final Set<DeclarationDescriptor> INTEGRAL_RANGES = KotlinBuiltIns.getInstance().getIntegralRanges();
 
     private int myLastLineNumber = -1;
@@ -3587,7 +3584,7 @@ The "returned" value of try expression with no finally is either the last expres
                         v.ifnonnull(nonnull);
                         JetType leftType = bindingContext.get(BindingContext.EXPRESSION_TYPE, left);
                         assert leftType != null;
-                        throwNewException(CLASS_TYPE_CAST_EXCEPTION, DescriptorRenderer.TEXT.renderType(leftType) +
+                        throwNewException("kotlin/TypeCastException", DescriptorRenderer.TEXT.renderType(leftType) +
                                                                      " cannot be cast to " +
                                                                      DescriptorRenderer.TEXT.renderType(rightType));
                         v.mark(nonnull);
@@ -3730,7 +3727,7 @@ The "returned" value of try expression with no finally is either the last expres
                 // a result is expected
                 if (Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, expression))) {
                     // when() is supposed to be exhaustive
-                    throwNewException(CLASS_NO_PATTERN_MATCHED_EXCEPTION);
+                    throwNewException("kotlin/NoWhenBranchMatchedException");
                 }
                 else {
                     // non-exhaustive when() with no else -> Unit must be expected

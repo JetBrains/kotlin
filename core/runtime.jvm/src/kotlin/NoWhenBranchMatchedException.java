@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jet;
+package kotlin;
 
-public class NoPatternMatchedException extends RuntimeException {
+public class NoWhenBranchMatchedException extends RuntimeException {
 }
