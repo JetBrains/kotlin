@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.lang.annotation.Annotation;
 
-public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
+public class KotlinPackagePartAnnotationTest extends CodegenTestCase {
     public static final FqName PACKAGE_NAME = new FqName("test");
 
     @Override
@@ -36,7 +36,7 @@ public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testKotlinPackageFragmentIsWritten() throws Exception {
+    public void testKotlinPackagePartAnnotationIsWritten() throws Exception {
         loadText("package " + PACKAGE_NAME + "\n\nfun foo() = 42\n");
         String facadeFileName = JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(PACKAGE_NAME)).getInternalName() + ".class";
 
@@ -45,26 +45,26 @@ public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
             String filePath = outputFile.getRelativePath();
 
             if (!filePath.equals(facadeFileName)) {
-                // The file which is not a facade is a package fragment
+                // The file which is not a facade is a package part
                 String fqName = filePath.substring(0, filePath.length() - ".class".length()).replace('/', '.');
-                Class aClass = generateClass(fqName);
+                Class<?> aClass = generateClass(fqName);
 
-                Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT.asString());
+                Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_PACKAGE_PART.asString());
 
-                assertTrue("No KotlinPackageFragment annotation on a package fragment",
+                assertTrue("No KotlinPackagePart annotation on a package part",
                            aClass.isAnnotationPresent(annotationClass));
 
-                Annotation kotlinPackageFragment = aClass.getAnnotation(annotationClass);
+                Annotation kotlinPackagePart = aClass.getAnnotation(annotationClass);
 
-                Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(kotlinPackageFragment, "abiVersion");
+                Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(kotlinPackagePart, "abiVersion");
                 assertNotNull(version);
-                assertTrue("KotlinPackageFragment annotation is written with an unsupported format",
+                assertTrue("KotlinPackagePart annotation is written with an unsupported format",
                            AbiVersionUtil.isAbiVersionCompatible(version));
 
                 return;
             }
         }
 
-        fail("No package fragment was found: " + outputFiles.asList());
+        fail("No package part was found: " + outputFiles.asList());
     }
 }

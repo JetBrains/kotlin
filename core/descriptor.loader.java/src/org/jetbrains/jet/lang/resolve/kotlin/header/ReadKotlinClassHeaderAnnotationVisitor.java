@@ -22,12 +22,10 @@ import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.AbiVersionUtil.isAbiVersionCompatible;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*;
@@ -41,12 +39,15 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     static {
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_CLASS), CLASS);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE), PACKAGE_FACADE);
-        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE_FRAGMENT), PACKAGE_FRAGMENT);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE_PART), PACKAGE_PART);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_TRAIT_IMPL), TRAIT_IMPL);
-        //noinspection deprecation
-        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_JET_CLASS_ANNOTATION), INCOMPATIBLE_ABI_VERSION);
-        //noinspection deprecation
-        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(OLD_JET_PACKAGE_CLASS_ANNOTATION), INCOMPATIBLE_ABI_VERSION);
+
+        @SuppressWarnings("deprecation")
+        List<FqName> incompatible = Arrays.asList(OLD_JET_CLASS_ANNOTATION, OLD_JET_PACKAGE_CLASS_ANNOTATION, OLD_KOTLIN_CLASS,
+                                                  OLD_KOTLIN_PACKAGE, OLD_KOTLIN_PACKAGE_FRAGMENT, OLD_KOTLIN_TRAIT_IMPL);
+        for (FqName fqName : incompatible) {
+            HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(fqName), INCOMPATIBLE_ABI_VERSION);
+        }
     }
 
     private int version = AbiVersionUtil.INVALID_VERSION;
@@ -99,7 +100,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         if (newKind == CLASS || newKind == PACKAGE_FACADE) {
             return kotlinClassOrPackageVisitor(annotationClassName);
         }
-        else if (newKind == PACKAGE_FRAGMENT || newKind == TRAIT_IMPL) {
+        else if (newKind == PACKAGE_PART || newKind == TRAIT_IMPL) {
             return annotationWithAbiVersionVisitor(annotationClassName);
         }
 

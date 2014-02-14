@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -32,9 +31,12 @@ public final class AnnotationLoadingUtil {
     public static final FqName JETBRAINS_READONLY_ANNOTATION = new FqName("org.jetbrains.annotations.ReadOnly");
     public static final FqName JL_CLASS_FQ_NAME = new FqName("java.lang.Class");
 
+    @SuppressWarnings("deprecation")
     public static boolean isSpecialAnnotation(@NotNull FqName fqName) {
         return fqName.asString().startsWith("jet.runtime.typeinfo.")
             || fqName.equals(JETBRAINS_NOT_NULL_ANNOTATION)
+            || fqName.equals(JvmAnnotationNames.OLD_KOTLIN_CLASS)
+            || fqName.equals(JvmAnnotationNames.OLD_KOTLIN_PACKAGE)
             || fqName.equals(JvmAnnotationNames.KOTLIN_CLASS)
             || fqName.equals(JvmAnnotationNames.KOTLIN_PACKAGE);
     }

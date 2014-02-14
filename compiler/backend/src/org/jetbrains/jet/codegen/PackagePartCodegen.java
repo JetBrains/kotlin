@@ -77,7 +77,7 @@ public class PackagePartCodegen extends MemberCodegen {
         );
         v.visitSource(jetFile.getName(), null);
 
-        writeKotlinPackageFragmentAnnotation();
+        writeKotlinPackagePartAnnotation();
 
         for (JetDeclaration declaration : jetFile.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
@@ -90,8 +90,8 @@ public class PackagePartCodegen extends MemberCodegen {
         v.done();
     }
 
-    private void writeKotlinPackageFragmentAnnotation() {
-        AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT), true);
+    private void writeKotlinPackagePartAnnotation() {
+        AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE_PART), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         av.visitEnd();
     }
