@@ -316,7 +316,11 @@
                 <include name="**/*.class" if="${bootstrap.build.no.tests}"/>
               </zipfileset>
               <fileset dir="${output}/classes/compiler"/>
-              <fileset dir="${output}/builtins" includes="jet/**"/>
+              <fileset dir="${output}/builtins">
+                <include name="jet/**"/>
+                <include name="kotlin/**"/>
+                <exclude name="kotlin/internal/**"/>
+              </fileset>
               <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
 
               <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
@@ -587,7 +591,6 @@
                      classpath="${basedir}/core/builtins/src${path.separator}${basedir}/core/runtime.jvm/src"/>
 
         <javac2 destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" source="${java.target}" target="${java.target}">
-            <src path="${basedir}/core/builtins/src"/>
             <src path="${basedir}/core/runtime.jvm/src"/>
             <classpath location="${output}/classes/runtime"/>
         </javac2>

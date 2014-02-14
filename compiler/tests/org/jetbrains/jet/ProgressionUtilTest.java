@@ -16,27 +16,47 @@
 
 package org.jetbrains.jet;
 
-import jet.runtime.ProgressionUtil;
-import org.junit.Test;
+import com.intellij.testFramework.UsefulTestCase;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 
-import static junit.framework.Assert.assertEquals;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 
-public class ProgressionUtilTest {
+public class ProgressionUtilTest extends UsefulTestCase {
     private static final int MAX = Integer.MAX_VALUE;
     private static final int MIN = Integer.MIN_VALUE;
 
-    private static void doTest(int start, int end, int increment, int expected) {
-        int actualInt = ProgressionUtil.getProgressionFinalElement(start, end, increment);
+    private Method intMethod;
+    private Method longMethod;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        ClassLoader classLoader = new URLClassLoader(new URL[] {ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()}, null);
+        Class<?> progressionUtil = classLoader.loadClass("kotlin.internal.progressions.ProgressionsPackage");
+        this.intMethod = progressionUtil.getMethod("getProgressionFinalElement", int.class, int.class, int.class);
+        this.longMethod = progressionUtil.getMethod("getProgressionFinalElement", long.class, long.class, long.class);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        this.intMethod = null;
+        this.longMethod = null;
+        super.tearDown();
+    }
+
+    private void doTest(int start, int end, int increment, int expected) throws Exception {
+        Object actualInt = intMethod.invoke(null, start, end, increment);
         assertEquals(expected, actualInt);
 
-        long actualLong = ProgressionUtil.getProgressionFinalElement((long) start, (long) end, (long) increment);
-        assertEquals(expected, actualLong);
+        Object actualLong = longMethod.invoke(null, (long) start, (long) end, (long) increment);
+        assertEquals((long) expected, actualLong);
     }
 
     private static final int[] INTERESTING = new int[]{ MIN, MIN / 2, -239, -23, -1, 0, 1, 42, 239, MAX / 2, MAX };
 
-    @Test
-    public void testGetFinalElement() {
+    public void testGetFinalElement() throws Exception {
         // start == end
         for (int x : INTERESTING) {
             for (int increment : INTERESTING) if (increment != 0) {
