@@ -50,9 +50,10 @@ public class JUnitUsageGenTest extends CodegenTestCase {
         Class<?> packageClass = generatePackageClass();
         Method method = packageClass.getMethod("foo", Method.class);
         method.setAccessible(true);
-        Annotation annotation = method.getAnnotation(getCorrespondingAnnotationClass(Test.class));
-        assertEquals(ClassLoaderIsolationUtil.getAnnotationAttribute(annotation, "timeout"), 0l);
-        ClassLoaderIsolationUtil.assertEquals(Test.None.class, (Class<?>) ClassLoaderIsolationUtil.getAnnotationAttribute(annotation,
-                                                                                                                          "expected"));
+        Annotation annotation = method.getAnnotation(loadAnnotationClassQuietly(Test.class.getName()));
+        assertEquals(CodegenTestUtil.getAnnotationAttribute(annotation, "timeout"), Long.valueOf(0));
+        Class<?> expected = (Class<?>) CodegenTestUtil.getAnnotationAttribute(annotation, "expected");
+        assertNotNull(expected);
+        assertEquals(Test.None.class.getName(), expected.getName());
     }
 }

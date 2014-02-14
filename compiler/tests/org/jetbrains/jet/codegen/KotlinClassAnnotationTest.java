@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.codegen;
 
-import jet.KotlinClass;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 
@@ -48,13 +48,15 @@ public class KotlinClassAnnotationTest extends CodegenTestCase {
                  "}\n");
         Class aClass = generateClass(PACKAGE_NAME + "." + CLASS_NAME);
 
-        Class<? extends Annotation> annotationClass = getCorrespondingAnnotationClass(KotlinClass.class);
+        Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_CLASS.asString());
         assertTrue(aClass.isAnnotationPresent(annotationClass));
         Annotation kotlinClass = aClass.getAnnotation(annotationClass);
 
-        ClassData data = JavaProtoBufUtil.readClassDataFrom((String[]) ClassLoaderIsolationUtil.getAnnotationAttribute(kotlinClass, "data"));
+        String[] data = (String[]) CodegenTestUtil.getAnnotationAttribute(kotlinClass, "data");
+        assertNotNull(data);
+        ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
 
-        Set<String> callableNames = collectCallableNames(data.getClassProto().getMemberList(), data.getNameResolver());
+        Set<String> callableNames = collectCallableNames(classData.getClassProto().getMemberList(), classData.getNameResolver());
         assertSameElements(Arrays.asList("foo", "bar"), callableNames);
     }
 }

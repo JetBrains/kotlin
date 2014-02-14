@@ -138,4 +138,14 @@ public class CodegenTestUtil {
         }
         return r;
     }
+
+    @Nullable
+    public static Object getAnnotationAttribute(@NotNull Object annotation, @NotNull String name) {
+        try {
+            return annotation.getClass().getMethod(name).invoke(annotation);
+        }
+        catch (Exception e) {
+            throw UtilsPackage.rethrow(e);
+        }
+    }
 }

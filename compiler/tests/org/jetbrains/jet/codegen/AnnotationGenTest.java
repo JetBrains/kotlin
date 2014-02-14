@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import jet.JetObject;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
@@ -222,17 +222,17 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(annotation);
     }
 
-    public void testSimplestAnnotationClass() throws NoSuchFieldException, NoSuchMethodException {
+    public void testSimplestAnnotationClass() {
         loadText("annotation class A");
-        Class aClass = generateClass("A");
+        Class<?> aClass = generateClass("A");
         Class[] interfaces = aClass.getInterfaces();
-        assertEquals(2, interfaces.length);
         assertEquals(0, aClass.getDeclaredMethods().length);
-        Class annotationClass = getCorrespondingClass(Annotation.class);
-        Class jetObjectClass = getCorrespondingClass(JetObject.class);
-        assertTrue(annotationClass == interfaces[0] || annotationClass == interfaces[1]);
-        assertTrue(jetObjectClass == interfaces[0] || jetObjectClass == interfaces[1]);
         assertTrue(aClass.isAnnotation());
+        assertEquals(2, interfaces.length);
+        assertEquals(
+                Sets.newHashSet("java.lang.annotation.Annotation", "jet.JetObject"),
+                Sets.newHashSet(interfaces[0].getName(), interfaces[1].getName())
+        );
     }
 
     public void testAnnotationClassWithStringProperty()

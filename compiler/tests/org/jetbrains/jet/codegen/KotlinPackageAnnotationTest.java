@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.codegen;
 
-import jet.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -52,16 +52,17 @@ public class KotlinPackageAnnotationTest extends CodegenTestCase {
                  "object C\n");
         Class aClass = generateClass(PackageClassUtils.getPackageClassFqName(PACKAGE_NAME).asString());
 
-        Class<? extends Annotation> annotationClass = getCorrespondingAnnotationClass(KotlinPackage.class);
+        Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_PACKAGE.asString());
         assertTrue(aClass.isAnnotationPresent(annotationClass));
         assertTrue(aClass.isAnnotationPresent(annotationClass));
 
         Annotation kotlinPackage = aClass.getAnnotation(annotationClass);
 
-        PackageData data = JavaProtoBufUtil.readPackageDataFrom((String[]) ClassLoaderIsolationUtil.getAnnotationAttribute(kotlinPackage,
-                                                                                                                           "data"));
+        String[] data = (String[]) CodegenTestUtil.getAnnotationAttribute(kotlinPackage, "data");
+        assertNotNull(data);
+        PackageData packageData = JavaProtoBufUtil.readPackageDataFrom(data);
 
-        Set<String> callableNames = collectCallableNames(data.getPackageProto().getMemberList(), data.getNameResolver());
+        Set<String> callableNames = collectCallableNames(packageData.getPackageProto().getMemberList(), packageData.getNameResolver());
         assertSameElements(callableNames, Arrays.asList("foo", "bar"));
     }
 

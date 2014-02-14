@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
-import jet.KotlinPackageFragment;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -49,16 +49,17 @@ public class KotlinPackageFragmentAnnotationTest extends CodegenTestCase {
                 String fqName = filePath.substring(0, filePath.length() - ".class".length()).replace('/', '.');
                 Class aClass = generateClass(fqName);
 
-                Class<? extends Annotation> annotationClass = getCorrespondingAnnotationClass(KotlinPackageFragment.class);
+                Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT.asString());
 
                 assertTrue("No KotlinPackageFragment annotation on a package fragment",
                            aClass.isAnnotationPresent(annotationClass));
 
                 Annotation kotlinPackageFragment = aClass.getAnnotation(annotationClass);
 
+                Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(kotlinPackageFragment, "abiVersion");
+                assertNotNull(version);
                 assertTrue("KotlinPackageFragment annotation is written with an unsupported format",
-                           AbiVersionUtil.isAbiVersionCompatible(
-                                   (Integer) ClassLoaderIsolationUtil.getAnnotationAttribute(kotlinPackageFragment, "abiVersion")));
+                           AbiVersionUtil.isAbiVersionCompatible(version));
 
                 return;
             }

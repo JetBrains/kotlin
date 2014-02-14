@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 
@@ -30,24 +29,19 @@ public class JetValueParameterAnnotationTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
+    private static class ValueParameter {
+        public final String name;
+        public final String type;
+
+        private ValueParameter(@NotNull String name, @NotNull String type) {
+            this.name = name;
+            this.type = type;
+        }
+    }
+
     @NotNull
-    private static JetValueParameter valueParameter(@NotNull final String name, final boolean nullable) {
-        return new JetValueParameter() {
-            @Override
-            public String name() {
-                return name;
-            }
-
-            @Override
-            public String type() {
-                return nullable ? "?" : "";
-            }
-
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return JetValueParameter.class;
-            }
-        };
+    private static ValueParameter valueParameter(@NotNull String name, boolean nullable) {
+        return new ValueParameter(name, nullable ? "?" : "");
     }
 
     public void testOneNotNullParam() {
@@ -95,7 +89,7 @@ public class JetValueParameterAnnotationTest extends CodegenTestCase {
         );
     }
 
-    private void doTest(@NotNull String code, @NotNull JetValueParameter... expected) {
+    private void doTest(@NotNull String code, @NotNull ValueParameter... expected) {
         loadText(code);
 
         Annotation[][] annotations = generateFunction().getParameterAnnotations();
@@ -104,9 +98,9 @@ public class JetValueParameterAnnotationTest extends CodegenTestCase {
         for (int i = 0, length = annotations.length; i < length; i++) {
             assertSize(1, annotations[i]);
             Annotation annotation = annotations[i][0];
-            ClassLoaderIsolationUtil.assertEquals(JetValueParameter.class, annotation.annotationType());
-            assertEquals(expected[i].name(), ClassLoaderIsolationUtil.getAnnotationAttribute(annotation, "name"));
-            assertEquals(expected[i].type(), ClassLoaderIsolationUtil.getAnnotationAttribute(annotation, "type"));
+            assertEquals("jet.runtime.typeinfo.JetValueParameter", annotation.annotationType().getName());
+            assertEquals(expected[i].name, CodegenTestUtil.getAnnotationAttribute(annotation, "name"));
+            assertEquals(expected[i].type, CodegenTestUtil.getAnnotationAttribute(annotation, "type"));
         }
     }
 }
