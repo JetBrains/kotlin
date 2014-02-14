@@ -510,13 +510,13 @@ var SetIterator = Kotlin.createClassNow(Kotlin.Iterator,
         this.keys = set.toArray();
         this.index = 0;
     }, {
-        next: function() {
+        next: function () {
             return this.keys[this.index++];
         },
-        hasNext: function() {
+        hasNext: function () {
             return this.index < this.keys.length;
         },
-        remove: function() {
+        remove: function () {
             this.set.remove_za3rmp$(this.keys[this.index - 1]);
         }
 });
@@ -529,7 +529,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
         contains_za3rmp$: function (key) {
             return this.map[key] === true;
         },
-        iterator: function() {
+        iterator: function () {
             return new SetIterator(this);
         },
         add_za3rmp$: function (element) {
@@ -618,8 +618,9 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
                     var hn1 = iter1.hasNext();
                     var hn2 = iter2.hasNext();
                     if (hn1 != hn2) return false;
-                    if (!hn2)
+                    if (!hn2) {
                         return true;
+                    }
                     else {
                         var o1 = iter1.next();
                         var o2 = iter2.next();
@@ -630,15 +631,17 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
             return false;
         };
 
-        this.toString = function() {
+        this.toString = function () {
             var builder = "[";
             var iter = this.iterator();
             var first = true;
             while (iter.hasNext()) {
-                if (first)
+                if (first) {
                     first = false;
-                else
+                }
+                else {
                     builder += ", ";
+                }
                 builder += iter.next();
             }
             builder += "]";

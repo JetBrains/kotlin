@@ -18,15 +18,15 @@
 
 // todo inlined
 String.prototype.startsWith = function (s) {
-  return this.indexOf(s) === 0;
+    return this.indexOf(s) === 0;
 };
 
 String.prototype.endsWith = function (s) {
-  return this.indexOf(s, this.length - s.length) !== -1;
+    return this.indexOf(s, this.length - s.length) !== -1;
 };
 
 String.prototype.contains = function (s) {
-  return this.indexOf(s) !== -1;
+    return this.indexOf(s) !== -1;
 };
 
 (function () {
@@ -57,8 +57,8 @@ String.prototype.contains = function (s) {
             return o.toString();
         }
     };
-    
-    Kotlin.arrayToString = function(a) {
+
+    Kotlin.arrayToString = function (a) {
         return "[" + a.join(", ") + "]";
     };
 
@@ -85,11 +85,12 @@ String.prototype.contains = function (s) {
     };
 
     function throwAbstractFunctionInvocationError(funName) {
-        return function() {
+        return function () {
             var message;
             if (funName !== undefined) {
                 message = "Function " + funName + " is abstract";
-            } else {
+            }
+            else {
                 message = "Function is abstract";
             }
             throw new TypeError(message);
@@ -147,15 +148,16 @@ String.prototype.contains = function (s) {
                 return this.name();
             }
     });
-    (function (){
+    (function () {
         function valueOf(name) {
             return this[name];
         }
+
         function getValues() {
             return this.values$;
         }
 
-        Kotlin.createEnumEntries = function(enumEntryList) {
+        Kotlin.createEnumEntries = function (enumEntryList) {
             var i = 0;
             var values = [];
             for (var entryName in enumEntryList) {
@@ -175,7 +177,7 @@ String.prototype.contains = function (s) {
     })();
 
     Kotlin.PropertyMetadata = Kotlin.createClassNow(null,
-        function(name) {
+        function (name) {
             this.name = name;
         }
     );
@@ -185,8 +187,9 @@ String.prototype.contains = function (s) {
             var modified = false;
             var it = collection.iterator();
             while (it.hasNext()) {
-                if(this.add_za3rmp$(it.next()))
+                if (this.add_za3rmp$(it.next())) {
                     modified = true;
+                }
             }
             return modified
         },
@@ -194,7 +197,7 @@ String.prototype.contains = function (s) {
             var modified = false;
             var it = this.iterator();
             while (it.hasNext()) {
-                if(c.contains_za3rmp$(it.next())) {
+                if (c.contains_za3rmp$(it.next())) {
                     it.remove();
                     modified = true;
                 }
@@ -205,14 +208,14 @@ String.prototype.contains = function (s) {
             var modified = false;
             var it = this.iterator();
             while (it.hasNext()) {
-                if(!c.contains_za3rmp$(it.next())) {
+                if (!c.contains_za3rmp$(it.next())) {
                     it.remove();
                     modified = true;
                 }
             }
             return modified
         },
-        containsAll_xeylzf$ : function (c) {
+        containsAll_xeylzf$: function (c) {
             var it = c.iterator();
             while (it.hasNext()) {
                 if (!this.contains_za3rmp$(it.next())) return false;
@@ -342,7 +345,7 @@ String.prototype.contains = function (s) {
             toJSON: function () {
                 return this.array;
             },
-            checkRange: function(index) {
+            checkRange: function (index) {
                 if (index < 0 || index >= this.array.length) {
                     throw new RangeError();
                 }
@@ -365,12 +368,12 @@ String.prototype.contains = function (s) {
         close: throwAbstractFunctionInvocationError("Closeable#close")
     });
 
-    Kotlin.safeParseInt = function(str) {
+    Kotlin.safeParseInt = function (str) {
         var r = parseInt(str, 10);
         return isNaN(r) ? null : r;
     };
 
-    Kotlin.safeParseDouble = function(str) {
+    Kotlin.safeParseDouble = function (str) {
         var r = parseFloat(str);
         return isNaN(r) ? null : r;
     };
@@ -544,11 +547,11 @@ String.prototype.contains = function (s) {
         function () {
             this.string = "";
         }, {
-        append:function (obj) {
+        append: function (obj) {
             this.string = this.string + obj.toString();
             return this;
         },
-        toString:function () {
+        toString: function () {
             return this.string;
         }
     });
@@ -567,15 +570,21 @@ String.prototype.contains = function (s) {
     };
 
     Kotlin.numberArrayOfSize = function (size) {
-        return Kotlin.arrayFromFun(size, function(){ return 0; });
+        return Kotlin.arrayFromFun(size, function () {
+            return 0;
+        });
     };
 
     Kotlin.charArrayOfSize = function (size) {
-        return Kotlin.arrayFromFun(size, function(){ return '\0'; });
+        return Kotlin.arrayFromFun(size, function () {
+            return '\0';
+        });
     };
 
     Kotlin.booleanArrayOfSize = function (size) {
-        return Kotlin.arrayFromFun(size, function(){ return false; });
+        return Kotlin.arrayFromFun(size, function () {
+            return false;
+        });
     };
 
     Kotlin.arrayFromFun = function (size, initFun) {
@@ -614,7 +623,7 @@ String.prototype.contains = function (s) {
     };
 })();
 
-Kotlin.assignOwner = function(f, o) {
-  f.o = o;
-  return f;
+Kotlin.assignOwner = function (f, o) {
+    f.o = o;
+    return f;
 };

@@ -24,7 +24,7 @@ var Kotlin = {};
         if (obj == null) {
             array = [];
         }
-        else if(!Array.isArray(obj)) {
+        else if (!Array.isArray(obj)) {
             array = [obj];
         }
         else {
@@ -53,7 +53,7 @@ var Kotlin = {};
         return null;
     }
 
-    var emptyFunction = function() {
+    var emptyFunction = function () {
         return function() {};
     };
 
@@ -65,7 +65,7 @@ var Kotlin = {};
     };
 
     Kotlin.classCount = 0;
-    Kotlin.newClassIndex = function() {
+    Kotlin.newClassIndex = function () {
         var tmp = Kotlin.classCount;
         Kotlin.classCount++;
         return tmp;
@@ -83,7 +83,7 @@ var Kotlin = {};
             var base = baseGetter(bases[i]);
             for (var p in  base) {
                 if (base.hasOwnProperty(p)) {
-                    if(!current.hasOwnProperty(p) || current[p].$classIndex$ < base[p].$classIndex$) {
+                    if (!current.hasOwnProperty(p) || current[p].$classIndex$ < base[p].$classIndex$) {
                         current[p] = base[p];
                     }
                 }
@@ -107,7 +107,8 @@ var Kotlin = {};
                     property.$classIndex$ = metadata.classIndex;
                     if (typeof property === "function") {
                         metadata.functions[p] = property;
-                    } else {
+                    }
+                    else {
                         metadata.properties[p] = property;
                     }
                 }
@@ -141,7 +142,8 @@ var Kotlin = {};
         var prototypeObj;
         if (metadata.baseClass !== null) {
             prototypeObj = Object.create(metadata.baseClass.prototype);
-        } else {
+        }
+        else {
             prototypeObj = {};
         }
         Object.defineProperties(prototypeObj, metadata.properties);
@@ -184,7 +186,8 @@ var Kotlin = {};
     function getBases(basesFun) {
         if (typeof basesFun === "function") {
             return basesFun();
-        } else {
+        }
+        else {
             return basesFun;
         }
     }
@@ -195,6 +198,7 @@ var Kotlin = {};
             Object.defineProperty(this, $o.className, {value: klass});
             return klass;
         }
+
         $o.type = Kotlin.TYPE.INIT_FUN;
         return $o;
     };
@@ -205,6 +209,7 @@ var Kotlin = {};
             Object.defineProperty(this, $o.className, {value: klass});
             return klass;
         }
+
         $o.type = Kotlin.TYPE.INIT_FUN;
         return $o;
     };
@@ -213,15 +218,15 @@ var Kotlin = {};
         return Kotlin.createObjectNow(getBases(basesFun), constructor, functions);
     };
 
-    Kotlin.callGetter = function(thisObject, klass, propertyName) {
+    Kotlin.callGetter = function (thisObject, klass, propertyName) {
         return klass.$metadata$.properties[propertyName].get.call(thisObject);
     };
 
-    Kotlin.callSetter = function(thisObject, klass, propertyName, value) {
+    Kotlin.callSetter = function (thisObject, klass, propertyName, value) {
         klass.$metadata$.properties[propertyName].set.call(thisObject, value);
     };
 
-    function isInheritanceFromTrait (objConstructor, trait) {
+    function isInheritanceFromTrait(objConstructor, trait) {
         if (isNativeClass(objConstructor) || objConstructor.$metadata$.classIndex < trait.$metadata$.classIndex) {
             return false;
         }
@@ -243,7 +248,8 @@ var Kotlin = {};
     Kotlin.isType = function (object, klass) {
         if (object == null || klass == null) {
             return false;
-        } else {
+        }
+        else {
             if (object instanceof klass) {
                 return true;
             }
@@ -282,13 +288,15 @@ var Kotlin = {};
                     if (members[p].type === Kotlin.TYPE.INIT_FUN) {
                         members[p].className = p;
                         Object.defineProperty(definition, p, {
-                          get: members[p],
-                          configurable: true
+                            get: members[p],
+                            configurable: true
                         });
-                    } else {
+                    }
+                    else {
                         definition[p] = members[p];
                     }
-                } else {
+                }
+                else {
                     Object.defineProperty(definition, p, members[p]);
                 }
             }
@@ -312,11 +320,12 @@ var Kotlin = {};
 
         if (initializer === null) {
             definition.$initializer$ = emptyFunction();
-        } else {
+        }
+        else {
             definition.$initializer$ = initializer;
         }
         return definition;
-      };
+    };
 
     Kotlin.defineModule = function (id, declaration) {
         if (id in Kotlin.modules) {
