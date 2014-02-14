@@ -188,12 +188,21 @@ public abstract class LazyJavaMemberScope(
                     else Pair(jetType, null)
                 }
 
+            val name = if (function.getName().asString() == "equals" &&
+                           jValueParameters.size() == 1 &&
+                           KotlinBuiltIns.getInstance().getNullableAnyType() == outType) {
+                Name.identifier("other")
+            }
+            else {
+                // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
+                javaParameter.getName() ?: Name.identifier("p$index")
+            }
+
             ValueParameterDescriptorImpl(
                     function,
                     index,
                     c.resolveAnnotations(javaParameter),
-                    // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
-                    javaParameter.getName() ?: Name.identifier("p$index"),
+                    name,
                     outType,
                     false,
                     varargElementType
