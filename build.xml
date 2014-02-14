@@ -528,9 +528,7 @@
     </target>
 
     <target name="jdkAnnotations">
-        <pack_annotations jarfile="kotlin-jdk-annotations.jar"
-                          annotationsdir="${basedir}/jdk-annotations"
-                          title="${manifest.impl.title.kotlin.compiler.annotations.jdk}"/>
+      <copy file="dependencies/annotations/kotlin-jdk-annotations.jar" todir="${kotlin-home}/lib"/>
     </target>
 
     <target name="androidSdkAnnotations">

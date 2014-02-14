@@ -1,5 +1,0 @@
-<root>
-    <item name='javax.sound.sampled.spi.FormatConversionProvider boolean isConversionSupported(javax.sound.sampled.AudioFormat, javax.sound.sampled.AudioFormat) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

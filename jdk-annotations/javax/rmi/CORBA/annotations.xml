@@ -1,8 +1,0 @@
-<root>
-    <item name='javax.rmi.CORBA.Tie org.omg.CORBA.Object thisObject()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='javax.rmi.CORBA.Tie void orb(org.omg.CORBA.ORB) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

@@ -47,7 +47,6 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -272,6 +271,15 @@ public class JetTestUtils {
         return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
     }
 
+    @NotNull
+    public static File getJdkAnnotationsJar() {
+        File jdkAnnotations = new File("dependencies/annotations/kotlin-jdk-annotations.jar");
+        if (!jdkAnnotations.exists()) {
+            throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
+        }
+        return jdkAnnotations;
+    }
+
     public static void mkdirs(File file) throws IOException {
         if (file.isDirectory()) {
             return;
@@ -370,7 +378,7 @@ public class JetTestUtils {
         configuration.addAll(CLASSPATH_KEY, extraClasspath);
 
         if (configurationKind == ALL || configurationKind == JDK_AND_ANNOTATIONS) {
-            configuration.add(ANNOTATIONS_PATH_KEY, ForTestPackJdkAnnotations.jdkAnnotationsForTests());
+            configuration.add(ANNOTATIONS_PATH_KEY, getJdkAnnotationsJar());
         }
 
         return configuration;

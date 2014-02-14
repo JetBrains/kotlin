@@ -49,7 +49,7 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        kotlinAnnotationsRoot = VirtualFileManager.getInstance().findFileByUrl("file://jdk-annotations");
+        kotlinAnnotationsRoot = VirtualFileManager.getInstance().findFileByUrl("jar://dependencies/annotations/kotlin-jdk-annotations.jar!/");
         ideaAnnotationsRoot = VirtualFileManager.getInstance().findFileByUrl("jar://ideaSDK/lib/jdkAnnotations.jar!/");
     }
 

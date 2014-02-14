@@ -101,7 +101,7 @@ public class JdkAnnotationsValidityTest extends UsefulTestCase {
     }
 
     public void testNoErrorsInAlternativeSignatures() {
-        List<FqName> affectedClasses = getAffectedClasses("file://jdk-annotations");
+        List<FqName> affectedClasses = getAffectedClasses("jar://dependencies/annotations/kotlin-jdk-annotations.jar!/");
 
         Map<String, List<String>> errors = Maps.newLinkedHashMap();
 

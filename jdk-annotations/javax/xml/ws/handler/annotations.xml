@@ -1,5 +1,0 @@
-<root>
-    <item name='javax.xml.ws.handler.MessageContext.Scope javax.xml.ws.handler.MessageContext.Scope valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

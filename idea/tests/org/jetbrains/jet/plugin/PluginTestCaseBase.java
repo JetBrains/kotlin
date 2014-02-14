@@ -26,7 +26,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
+import org.jetbrains.jet.JetTestUtils;
 
 import java.io.File;
 
@@ -44,7 +44,7 @@ public class PluginTestCaseBase {
     private static Sdk getSdk(String sdkHome) {
         Sdk sdk = new JavaSdkImpl().createJdk("JDK", sdkHome, true);
         SdkModificator modificator = sdk.getSdkModificator();
-        VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(ForTestPackJdkAnnotations.jdkAnnotationsForTests());
+        VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(JetTestUtils.getJdkAnnotationsJar());
         assert file != null;
         modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(file), AnnotationOrderRootType.getInstance());
         modificator.commitChanges();

@@ -91,7 +91,7 @@ public class ForTestCompileRuntime {
                 "-noStdlib",
                 "-noJdkAnnotations",
                 "-suppress", "warnings",
-                "-annotations", "./jdk-annotations",
+                "-annotations", JetTestUtils.getJdkAnnotationsJar().getAbsolutePath(),
                 "-classpath", classPath
         );
         if (exitCode != ExitCode.OK) {

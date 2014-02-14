@@ -1,5 +1,0 @@
-<root>
-    <item name='javax.naming.event.NamingExceptionEvent void dispatch(javax.naming.event.NamingListener) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

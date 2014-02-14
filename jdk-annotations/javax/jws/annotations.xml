@@ -1,5 +1,0 @@
-<root>
-    <item name='javax.jws.WebParam.Mode javax.jws.WebParam.Mode valueOf(java.lang.String)'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

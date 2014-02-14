@@ -1,8 +1,0 @@
-<root>
-    <item name='javax.security.cert.X509Certificate javax.security.cert.X509Certificate getInstance(byte[]) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='javax.security.cert.X509Certificate javax.security.cert.X509Certificate getInstance(java.io.InputStream) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

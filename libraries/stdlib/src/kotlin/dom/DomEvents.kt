@@ -12,7 +12,7 @@ fun eventHandler(handler: (Event) -> Unit): EventListener {
 }
 
 private class EventListenerHandler(val handler: (Event) -> Unit): EventListener {
-    public override fun handleEvent(e: Event?) {
+    public override fun handleEvent(e: Event) {
         if (e != null) {
             handler(e)
         }

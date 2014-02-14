@@ -27,28 +27,28 @@
 
     <property name="continuous.idea.version" value=".lastSuccessful"/>
 
-    <target name="update" depends="fetch-third-party">
+    <target name="update" depends="fetch-third-party,fetch-annotations">
         <execute_update
             base.url="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/${public.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"
         />
     </target>
 
-    <target name="jb_update" depends="fetch-third-party">
+    <target name="jb_update" depends="fetch-third-party,fetch-annotations">
         <execute_update
             base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/bt3498/${jb.buildserver.build.id}:id"
             build.zip="${idea.archive.name}"
         />
     </target>
 
-    <target name="jb_update_continuous_local" depends="fetch-third-party">
+    <target name="jb_update_continuous_local" depends="fetch-third-party,fetch-annotations">
         <execute_update
             base.url="http://buildserver.labs.intellij.net/guestAuth/repository/download/ijplatform_IjPlatform13_IdeaTrunk_Installers/${continuous.idea.version}"
             build.zip="ideaIC-{build.number}.win.zip"
         />
     </target>
 
-    <target name="jb_update_continuous" depends="fetch-third-party">
+    <target name="jb_update_continuous" depends="fetch-third-party,fetch-annotations">
         <execute_update
             base.url="file:///${basedir}/idea_artifacts"
             build.zip="${idea.archive.name}"
@@ -342,4 +342,10 @@
 
         </sequential>
     </macrodef>
+
+    <target name="fetch-annotations">
+      <mkdir dir="dependencies/annotations"/>
+      <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-jdk-annotations.jar"
+           dest="dependencies/annotations/kotlin-jdk-annotations.jar" usetimestamp="true"/>
+    </target>
 </project>
