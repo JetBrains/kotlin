@@ -1023,7 +1023,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.load(incrementVar, incrementType);
 
             Type methodParamType = asmElementType.getSort() == Type.LONG ? Type.LONG_TYPE : Type.INT_TYPE;
-            v.invokestatic("jet/runtime/ProgressionUtil", "getProgressionFinalElement",
+            v.invokestatic("kotlin/internal/InternalPackage", "getProgressionFinalElement",
                            Type.getMethodDescriptor(methodParamType, methodParamType, methodParamType, methodParamType));
 
             finalVar = createLoopTempVariable(asmElementType);
