@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package jet;
+package kotlin;
 
 public class TypeCastException extends ClassCastException {
-
     public TypeCastException(String s) {
         super(s);
     }
