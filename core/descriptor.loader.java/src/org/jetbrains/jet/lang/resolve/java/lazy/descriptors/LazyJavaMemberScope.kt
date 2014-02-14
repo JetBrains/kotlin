@@ -188,12 +188,25 @@ public abstract class LazyJavaMemberScope(
                     else Pair(jetType, null)
                 }
 
+            val name = if (function.getName().asString() == "equals" &&
+                           jValueParameters.size() == 1 &&
+                           KotlinBuiltIns.getInstance().getNullableAnyType() == outType) {
+                // This is a hack to prevent numerous warnings on Kotlin classes that inherit Java classes: if you override "equals" in such
+                // class without this hack, you'll be warned that in the superclass the name is "p0" (regardless of the fact that it's
+                // "other" in Any)
+                // TODO: fix Java parameter name loading logic somehow (don't always load "p0", "p1", etc.)
+                Name.identifier("other")
+            }
+            else {
+                // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
+                javaParameter.getName() ?: Name.identifier("p$index")
+            }
+
             ValueParameterDescriptorImpl(
                     function,
                     index,
                     c.resolveAnnotations(javaParameter),
-                    // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
-                    javaParameter.getName() ?: Name.identifier("p$index"),
+                    name,
                     outType,
                     false,
                     varargElementType

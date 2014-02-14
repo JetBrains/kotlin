@@ -2,7 +2,7 @@ package test
 
 public trait InterfaceWithObjectMethods : java.lang.Object {
     public abstract override /*1*/ fun clone(): jet.Any?
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ p0: jet.Any?): jet.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: jet.Any?): jet.Boolean
     public abstract override /*1*/ fun finalize(): jet.Unit
     public final override /*1*/ /*fake_override*/ fun getClass(): java.lang.Class<out jet.Any?>
     public open override /*1*/ /*fake_override*/ fun hashCode(): jet.Int
