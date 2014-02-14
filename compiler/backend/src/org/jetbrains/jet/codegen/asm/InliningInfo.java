@@ -20,6 +20,8 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.Call;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +43,8 @@ public class InliningInfo {
 
     public final Call call;
 
+    public final Map<String, String> typeMapping;
+
     public InliningInfo(
             Map<Integer, LambdaInfo> map,
             List<InlinableAccess> accesses,
@@ -49,7 +53,8 @@ public class InliningInfo {
             GenerationState state,
             NameGenerator nameGenerator,
             CodegenContext startContext,
-            Call call
+            Call call,
+            Map<String, String> typeMapping
     ) {
         expresssionMap = map;
         inlinableAccesses = accesses;
@@ -59,9 +64,17 @@ public class InliningInfo {
         this.nameGenerator = nameGenerator;
         this.startContext = startContext;
         this.call = call;
+        this.typeMapping = typeMapping;
     }
 
     public InliningInfo subInline(NameGenerator generator) {
-        return new InliningInfo(expresssionMap, inlinableAccesses, constructorInvocation, remapper, state, generator, startContext, call);
+        return subInline(generator, Collections.<String, String>emptyMap());
+    }
+
+    public InliningInfo subInline(NameGenerator generator, Map<String, String> additionalTypeMappings) {
+        HashMap<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
+        newTypeMappings.putAll(additionalTypeMappings);
+        return new InliningInfo(expresssionMap, inlinableAccesses, constructorInvocation, remapper, state, generator, startContext, call,
+                                newTypeMappings);
     }
 }

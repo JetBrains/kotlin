@@ -10,6 +10,8 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.asm4.commons.Remapper;
+import org.jetbrains.asm4.commons.RemappingMethodAdapter;
 import org.jetbrains.asm4.tree.*;
 import org.jetbrains.asm4.tree.analysis.*;
 import org.jetbrains.jet.codegen.ClosureCodegen;
@@ -43,7 +45,7 @@ public class MethodInliner {
     //keeps order
     private final List<ConstructorInvocation> constructorInvocationList = new ArrayList<ConstructorInvocation>();
     //current state
-    private final Map<String, ConstructorInvocation> constructorInvocation = new LinkedHashMap<String, ConstructorInvocation>();
+    private final Map<String, String> currentTypeMapping = new HashMap<String, String>();
 
     /*
      *
@@ -107,7 +109,10 @@ public class MethodInliner {
 
         final Iterator<ConstructorInvocation> iterator = constructorInvocationList.iterator();
 
-        InlineAdapter inliner = new InlineAdapter(resultNode, parameters.totalSize()) {
+        RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(resultNode.access, resultNode.desc, resultNode,
+                                                                                   new TypeRemapper(currentTypeMapping, isSameModule));
+
+        InlineAdapter inliner = new InlineAdapter(remappingMethodAdapter, parameters.totalSize()) {
 
             private ConstructorInvocation invocation;
             @Override
@@ -116,24 +121,25 @@ public class MethodInliner {
                     invocation = iterator.next();
 
                     if (invocation.isInlinable()) {
-                        LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(), parent.subInline(parent.nameGenerator),
-                                                                              isSameModule);
+                        //TODO: need poping of type but what to do with local funs???
+                        Type newLambdaType = Type.getObjectType(parent.nameGenerator.genLambdaClassName());
+                        currentTypeMapping.put(invocation.getOwnerInternalName(), newLambdaType.getInternalName());
+                        LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(), parent.subInline(parent.nameGenerator, currentTypeMapping),
+                                                                              isSameModule, newLambdaType);
+
                         transformer.doTransform(invocation);
-                        super.anew(transformer.getNewLambdaType());
-                        constructorInvocation.put(invocation.getOwnerInternalName(), invocation);
-                    } else {
-                        super.anew(type);
                     }
+                    super.anew(type);
                 } else {
                     super.anew(type);
                 }
             }
 
-            //for local function support
-            @Override
-            public void checkcast(Type type) {
-                super.checkcast(changeOwnerIfLocalFun(type));
-            }
+            ////for local function support
+            //@Override
+            //public void checkcast(Type type) {
+            //    super.checkcast(changeOwnerIfLocalFun(type));
+            //}
 
             @Override
             public void visitMethodInsn(int opcode, String owner, String name, String desc) {
@@ -191,7 +197,7 @@ public class MethodInliner {
                     }
                 }
                 else {
-                    super.visitMethodInsn(opcode, changeOwnerIfLocalFun(owner), name, desc);
+                    super.visitMethodInsn(opcode, /*changeOwnerIfLocalFun(*/owner/*)*/, name, desc);
                 }
             }
         };
@@ -524,27 +530,5 @@ public class MethodInliner {
             }
             mv.visitVarInsn(next.getOpcode(Opcodes.ISTORE), shift);
         }
-    }
-
-    private Type changeOwnerIfLocalFun(Type oldType) {
-        if (isLambdaClass(oldType.getInternalName())) {
-            ConstructorInvocation invocation1 = constructorInvocation.get(oldType.getInternalName());
-            if (invocation1 != null && invocation1.isInlinable()) {
-                return invocation1.getNewLambdaType();
-            }
-        }
-
-        return oldType;
-    }
-
-    private String changeOwnerIfLocalFun(String oldType) {
-        if (isLambdaClass(oldType)) {
-            ConstructorInvocation invocation1 = constructorInvocation.get(oldType);
-            if (invocation1 != null && invocation1.isInlinable()) {
-                return invocation1.getNewLambdaType().getInternalName();
-            }
-        }
-
-        return oldType;
     }
 }

@@ -199,7 +199,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         InliningInfo info =
                 new InliningInfo(expressionMap, null, null, null, state,
                                  codegen.getInlineNameGenerator().subGenerator(functionDescriptor.getName().asString()),
-                                 codegen.getContext(), call);
+                                 codegen.getContext(), call, Collections.<String, String>emptyMap());
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, null, new LambdaFieldRemapper(), isSameModule); //with captured
 
