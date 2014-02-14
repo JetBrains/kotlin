@@ -137,7 +137,7 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
     }
 
     @NotNull
-    public ClassBuilder forPackageFragment(@NotNull Type asmType, @NotNull PsiFile sourceFile) {
+    public ClassBuilder forPackagePart(@NotNull Type asmType, @NotNull PsiFile sourceFile) {
         return newVisitor(asmType, sourceFile);
     }
 

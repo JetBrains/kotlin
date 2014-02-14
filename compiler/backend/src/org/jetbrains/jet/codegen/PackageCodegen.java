@@ -186,7 +186,7 @@ public class PackageCodegen extends MemberCodegen {
         if (!generateSrcClass) return null;
 
         Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
-        ClassBuilder builder = state.getFactory().forPackageFragment(packagePartType, file);
+        ClassBuilder builder = state.getFactory().forPackagePart(packagePartType, file);
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
