@@ -24,7 +24,7 @@ public class KotlinClassHeader {
     public enum Kind {
         CLASS,
         PACKAGE_FACADE,
-        PACKAGE_FRAGMENT,
+        PACKAGE_PART,
         TRAIT_IMPL,
         INCOMPATIBLE_ABI_VERSION
     }

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package jet;
+package kotlin.jvm.internal;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface KotlinTraitImpl {
+public @interface KotlinClass {
     int abiVersion();
+
+    String[] data();
 }

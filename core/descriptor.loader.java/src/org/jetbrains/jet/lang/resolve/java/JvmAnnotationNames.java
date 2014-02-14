@@ -16,32 +16,29 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import jet.KotlinClass;
-import jet.KotlinPackage;
-import jet.KotlinPackageFragment;
-import jet.KotlinTraitImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
-
 public final class JvmAnnotationNames {
-    public static final FqName KOTLIN_CLASS = fqNameByClass(KotlinClass.class);
-
-    public static final FqName KOTLIN_PACKAGE = fqNameByClass(KotlinPackage.class);
-
-    public static final FqName KOTLIN_PACKAGE_FRAGMENT = fqNameByClass(KotlinPackageFragment.class);
-
-    public static final FqName KOTLIN_TRAIT_IMPL = fqNameByClass(KotlinTraitImpl.class);
+    public static final FqName KOTLIN_CLASS = new FqName("kotlin.jvm.internal.KotlinClass");
+    public static final FqName KOTLIN_PACKAGE = new FqName("kotlin.jvm.internal.KotlinPackage");
+    public static final FqName KOTLIN_PACKAGE_PART = new FqName("kotlin.jvm.internal.KotlinPackagePart");
+    public static final FqName KOTLIN_TRAIT_IMPL = new FqName("kotlin.jvm.internal.KotlinTraitImpl");
 
     public static final String ABI_VERSION_FIELD_NAME = "abiVersion";
-
     public static final String DATA_FIELD_NAME = "data";
 
     @Deprecated
     public static final FqName OLD_JET_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetClass");
-
     @Deprecated
     public static final FqName OLD_JET_PACKAGE_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetPackageClass");
+    @Deprecated
+    public static final FqName OLD_KOTLIN_CLASS = new FqName("jet.KotlinClass");
+    @Deprecated
+    public static final FqName OLD_KOTLIN_PACKAGE = new FqName("jet.KotlinPackage");
+    @Deprecated
+    public static final FqName OLD_KOTLIN_PACKAGE_FRAGMENT = new FqName("jet.KotlinPackageFragment");
+    @Deprecated
+    public static final FqName OLD_KOTLIN_TRAIT_IMPL = new FqName("jet.KotlinTraitImpl");
 
     private JvmAnnotationNames() {
     }
