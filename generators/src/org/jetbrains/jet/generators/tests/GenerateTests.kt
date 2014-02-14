@@ -343,6 +343,7 @@ fun main(args: Array<String>) {
             model("intentions/reconstructedType", testMethod = "doTestReconstructType")
             model("intentions/removeUnnecessaryParentheses", testMethod = "doTestRemoveUnnecessaryParentheses")
             model("intentions/replaceWithDotQualifiedMethodCall", testMethod = "doTestReplaceWithDotQualifiedMethodCall")
+            model("intentions/replaceWithInfixFunctionCall", testMethod = "doTestReplaceWithInfixFunctionCall")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
