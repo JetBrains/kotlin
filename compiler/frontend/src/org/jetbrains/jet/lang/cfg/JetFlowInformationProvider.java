@@ -47,7 +47,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.plugin.MainFunctionDetector;
 
 import java.util.*;
 
@@ -557,7 +557,8 @@ public class JetFlowInformationProvider {
                         else if (element instanceof JetParameter) {
                             PsiElement psiElement = element.getParent().getParent();
                             if (psiElement instanceof JetFunction) {
-                                boolean isMain = (psiElement instanceof JetNamedFunction) && JetMainDetector.isMain((JetNamedFunction) psiElement);
+                                MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(trace.getBindingContext());
+                                boolean isMain = (psiElement instanceof JetNamedFunction) && mainFunctionDetector.isMain((JetNamedFunction) psiElement);
                                 if (psiElement instanceof JetFunctionLiteral) return;
                                 DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement);
                                 assert descriptor instanceof FunctionDescriptor : psiElement.getText();
