@@ -49,7 +49,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
-import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.utils.KotlinPaths;
 
 import java.io.File;
@@ -162,10 +162,11 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    private static FqName findMainClass(@NotNull List<JetFile> files) {
+    private static FqName findMainClass(@NotNull GenerationState generationState, @NotNull List<JetFile> files) {
+        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(generationState.getBindingContext());
         FqName mainClass = null;
         for (JetFile file : files) {
-            if (JetMainDetector.hasMain(file.getDeclarations())) {
+            if (mainFunctionDetector.hasMain(file.getDeclarations())) {
                 if (mainClass != null) {
                     // more than one main
                     return null;
@@ -184,12 +185,12 @@ public class KotlinToJVMBytecodeCompiler {
             boolean includeRuntime
     ) {
 
-        FqName mainClass = findMainClass(environment.getSourceFiles());
-
         GenerationState generationState = analyzeAndGenerate(environment);
         if (generationState == null) {
             return false;
         }
+
+        FqName mainClass = findMainClass(generationState, environment.getSourceFiles());
 
         try {
             OutputDirector outputDirector = outputDir != null ? new SingleDirectoryDirector(outputDir) : null;

@@ -27,14 +27,18 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
+import java.util.Collections;
 import java.util.List;
 
 public class JetRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
@@ -79,7 +83,10 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         PsiFile psiFile = location.getPsiElement().getContainingFile();
         if (psiFile instanceof JetFile) {
             JetFile jetFile = (JetFile) psiFile;
-            if (JetMainDetector.hasMain(jetFile.getDeclarations())) {
+            AnalyzerFacade analyzerFacade = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(jetFile);
+            ResolveSession resolveSession = analyzerFacade.getLazyResolveSession(jetFile.getProject(), Collections.singleton(jetFile));
+            MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(resolveSession);
+            if (mainFunctionDetector.hasMain(jetFile.getDeclarations())) {
                 return jetFile;
             }
         }

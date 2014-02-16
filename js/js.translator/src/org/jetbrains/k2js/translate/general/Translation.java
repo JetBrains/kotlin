@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.facade.exceptions.MainFunctionNotFoundException;
@@ -49,7 +50,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.plugin.JetMainDetector.getMainFunction;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.dangerous.DangerousData.collect;
@@ -170,7 +170,8 @@ public final class Translation {
     @Nullable
     private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull Collection<JetFile> files,
             @NotNull List<String> arguments) throws MainFunctionNotFoundException {
-        JetNamedFunction mainFunction = getMainFunction(files);
+        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext());
+        JetNamedFunction mainFunction = mainFunctionDetector.getMainFunction(files);
         if (mainFunction == null) {
             return null;
         }
