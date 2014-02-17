@@ -45,6 +45,9 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
             registerProvider(javaClass<JetPropertyDelegate>()) {
                 JetPropertyDelegationMethodsReference(it)
             }
+            registerProvider(javaClass<JetMultiDeclaration>()) {
+                JetMultiDeclarationReference(it)
+            }
         }
     }
 
