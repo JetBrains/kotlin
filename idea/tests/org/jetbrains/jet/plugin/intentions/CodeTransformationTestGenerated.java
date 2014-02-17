@@ -1227,57 +1227,9 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/replaceGetWithBrackets"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
-        @TestMetadata("inapplicableNoArgumentGet.kt")
-        public void testInapplicableNoArgumentGet() throws Exception {
-            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/inapplicableNoArgumentGet.kt");
-        }
-        
-        @TestMetadata("inapplicableOrphanGetNoArguments.kt")
-        public void testInapplicableOrphanGetNoArguments() throws Exception {
-            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/inapplicableOrphanGetNoArguments.kt");
-        }
-        
-        @TestMetadata("inapplicableOrphanGetWithArguments.kt")
-        public void testInapplicableOrphanGetWithArguments() throws Exception {
-            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/inapplicableOrphanGetWithArguments.kt");
-        }
-        
-        @TestMetadata("inapplicableSingleNamedArgumentGet.kt")
-        public void testInapplicableSingleNamedArgumentGet() throws Exception {
-            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/inapplicableSingleNamedArgumentGet.kt");
-        }
-        
-        @TestMetadata("inlineMathIndexGet.kt")
-        public void testInlineMathIndexGet() throws Exception {
-            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/inlineMathIndexGet.kt");
-        }
-        
-        @TestMetadata("multiIndexGet.kt")
-        public void testMultiIndexGet() throws Exception {
-            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/multiIndexGet.kt");
-        }
-        
-        @TestMetadata("standardGet.kt")
-        public void testStandardGet() throws Exception {
-            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/standardGet.kt");
-        }
-        
-        @TestMetadata("stringIndexGet.kt")
-        public void testStringIndexGet() throws Exception {
-            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/stringIndexGet.kt");
-        }
-        
-        @TestMetadata("variableIndexGet.kt")
-        public void testVariableIndexGet() throws Exception {
-            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/variableIndexGet.kt");
-        }
-        
-    }
-    
-    @TestMetadata("idea/testData/intentions/replaceGetWithBrackets")
-    public static class ReplaceGetWithBrackets extends AbstractCodeTransformationTest {
-        public void testAllFilesPresentInReplaceGetWithBrackets() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/replaceGetWithBrackets"), Pattern.compile("^(.+)\\.kt$"), true);
+        @TestMetadata("inapplicableMissingParen.kt")
+        public void testInapplicableMissingParen() throws Exception {
+            doTestReplaceGetWithBrackets("idea/testData/intentions/replaceGetWithBrackets/inapplicableMissingParen.kt");
         }
         
         @TestMetadata("inapplicableNoArgumentGet.kt")
@@ -1351,10 +1303,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         suite.addTestSuite(ConvertMemberToExtension.class);
         suite.addTestSuite(ReconstructedType.class);
         suite.addTestSuite(RemoveUnnecessaryParentheses.class);
-<<<<<<< HEAD
         suite.addTestSuite(ReplaceWithDotQualifiedMethodCall.class);
-=======
->>>>>>> 3c37de0... Working commit of the ReplaceGetWithBrackets intention. All the tests currently pass and cover most use cases; only potentially unwanted behavior is inconsistent caret placement (the caret attempts to stay in the original column).
         suite.addTestSuite(ReplaceGetWithBrackets.class);
         return suite;
     }

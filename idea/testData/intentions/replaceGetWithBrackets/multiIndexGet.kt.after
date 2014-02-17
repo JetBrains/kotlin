@@ -6,5 +6,5 @@ public class Foo {
 
 fun bar(){
     val f = Foo()
-    f[1, 2<caret>]
+    f[<caret>1, 2]
 }

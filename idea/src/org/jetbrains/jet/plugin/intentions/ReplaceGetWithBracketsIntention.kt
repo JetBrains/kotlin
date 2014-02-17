@@ -31,37 +31,53 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
+import com.intellij.psi.util.PsiUtil
+import org.jetbrains.jet.lang.psi.ValueArgument
+import com.siyeh.ig.junit.BeforeClassOrAfterClassIsPublicStaticVoidNoArgInspection
+import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import com.intellij.psi.impl.source.tree.PsiErrorElementImpl
+
 
 public class ReplaceGetWithBracketsIntention : JetSelfTargetingIntention<JetCallExpression>(
         "replace.get.with.brackets", javaClass()
 ) {
     override fun isApplicableTo(element: JetCallExpression): Boolean {
-        if (element.getParent() as? JetDotQualifiedExpression == null)
+        if (element.getParent() !is JetDotQualifiedExpression) {
             return false // ignore orphan get functions
-        val exp : JetExpression = element.getCalleeExpression() ?: return false //If there is no callee expression, we can't use the plugin
-        for (arg in element.getValueArguments()){
-            val childCount = arg?.asElement()?.getChildren()?.size ?: return false //Make sure there are arguments
-            if (childCount > 1) //Make sure only numbers/variables are used as indexes. Named arguments are not valid
-                return false
         }
-        return (exp.textMatches("get") && !element.getValueArguments().isEmpty()) //Check that function text matches 'get' and we have 1+ args
+
+        val calleeExpression = element.getCalleeExpression() ?: return false //If there is no callee expression, we can't use the plugin
+        val arguments = element.getValueArguments()
+        val lastNode = element.getNode().getLastChildNode()?.getLastChildNode()
+
+        if (lastNode is PsiErrorElementImpl) {
+            return false
+        }
 
 
+        for (arg in arguments){
+            if ((arg?.isNamed() ?: false)){ //Named arguments are invalid
+                return false
+            }
+        }
+
+        return (calleeExpression.textMatches("get") && !arguments.isEmpty()) //Check that function text matches 'get' and we have 1+ args
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
+        val parent = element.getParent() as JetDotQualifiedExpression
+        val prefix = parent.getReceiverExpression().getText()
+        assert(prefix != null, "Calling object name cannot be null/empty")
 
-        val par = element.getParent() as JetDotQualifiedExpression   //get calling object and function syntax. Unsafe cast should be fine
-        val prefix = par.getReceiverExpression().getText()         //get calling object name
-        assert(prefix!=null,"Calling object name cannot be null/empty")
+        val args = element.getValueArgumentList()?.getText()
+        assert(args != null, "Argument list cannot be null, should be checked in isApplicableTo")
 
-        val args = element.getValueArgumentList()?.getText()       //get arguments
-        assert(args!=null,"Argument list cannot be null, should be checked in isApplicableTo")
+        val trimmedArgs = args!!.substring(1, args.length-1)        //remove leading and trailing parentheses
+        val exp = JetPsiFactory.createExpression(element.getProject(), "$prefix[$trimmedArgs]")
 
-        val trimmedArgs = args!!.substring(1,args.length-1)        //remove leading and trailing parentheses
-        val exp = JetPsiFactory.createExpression(element.getProject(),"$prefix[$trimmedArgs]")
+        editor.getCaretModel().moveToOffset(element.getTextOffset())
 
-        par.replace(exp) //replace element
+        parent.replace(exp)
     }
 
 }

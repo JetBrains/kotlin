@@ -1,3 +1,1 @@
-someObject.get(10)
-
-anotherObject.get(1,2,3)
+someObj.get(10,2)
