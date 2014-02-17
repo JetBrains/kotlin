@@ -30,6 +30,14 @@ import org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclaration
 import java.io.File;
 
 public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
+    public void doTestElvisToIfThen(@NotNull String path) throws Exception {
+        doTestIntention(path, new ElvisToIfThenIntention());
+    }
+
+    public void doTestIfThenToElvis(@NotNull String path) throws Exception {
+        doTestIntention(path, new IfThenToElvisIntention());
+    }
+
     public void doTestFoldIfToAssignment(@NotNull String path) throws Exception {
         doTestIntention(path, new FoldIfToAssignmentIntention());
     }
