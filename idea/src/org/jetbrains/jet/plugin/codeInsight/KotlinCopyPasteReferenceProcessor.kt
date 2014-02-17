@@ -375,7 +375,7 @@ private fun PsiElement.isInCopiedArea(fileCopiedFrom: JetFile, startOffsets: Int
     }
 }
 
-private val DeclarationDescriptor.importableFqName: FqName?
+public val DeclarationDescriptor.importableFqName: FqName?
     get() {
         if (this is ConstructorDescriptor) return getContainingDeclaration().importableFqName
         val mayBeUnsafe = DescriptorUtils.getFqName(this)

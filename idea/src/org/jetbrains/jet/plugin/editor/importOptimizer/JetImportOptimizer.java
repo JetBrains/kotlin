@@ -20,24 +20,25 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ImportOptimizer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightPackage;
+import org.jetbrains.jet.plugin.references.JetReference;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.plugin.quickfix.ImportInsertHelper.needImport;
 
@@ -128,196 +129,25 @@ public class JetImportOptimizer implements ImportOptimizer {
             }
 
             @Override
-            public void visitReferenceExpression(@NotNull JetReferenceExpression expression) {
-                if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class) == null &&
-                        PsiTreeUtil.getParentOfType(expression, JetPackageDirective.class) == null) {
-
-                    PsiReference reference = expression.getReference();
-                    if (reference != null) {
-                        List<PsiElement> references = new ArrayList<PsiElement>();
-                        PsiElement resolve = reference.resolve();
-                        if (resolve != null) {
-                            references.add(resolve);
-                        }
-
-                        if (references.isEmpty() && reference instanceof PsiPolyVariantReference) {
-                            for (ResolveResult resolveResult : ((PsiPolyVariantReference)reference).multiResolve(true)) {
-                                references.add(resolveResult.getElement());
-                            }
-                        }
-
-                        for (PsiElement psiReference : references) {
-                            FqName fqName = getElementUsageFQName(psiReference);
-                            if (fqName != null) {
-                                usedQualifiedNames.add(fqName);
-                            }
+            public void visitJetElement(@NotNull JetElement element) {
+                if (PsiTreeUtil.getParentOfType(element, JetImportDirective.class) != null ||
+                    PsiTreeUtil.getParentOfType(element, JetPackageDirective.class) != null) {
+                    return;
+                }
+                PsiReference reference = element.getReference();
+                if (reference instanceof JetReference) {
+                    Collection<DeclarationDescriptor> referencedDescriptors = ((JetReference) reference).resolveToDescriptors();
+                    for (DeclarationDescriptor descriptor : referencedDescriptors) {
+                        FqName importableFqName = CodeInsightPackage.getImportableFqName(descriptor);
+                        if (importableFqName != null) {
+                            usedQualifiedNames.add(importableFqName);
                         }
                     }
                 }
-
-                super.visitReferenceExpression(expression);
-            }
-
-            @Override
-            public void visitForExpression(@NotNull JetForExpression expression) {
-                BindingContext context = AnalyzerFacadeWithCache.getContextForElement(expression);
-                ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, expression.getLoopRange());
-                addResolvedCallFqName(resolvedCall);
-
-                super.visitForExpression(expression);
-            }
-
-            @Override
-            public void visitMultiDeclaration(@NotNull JetMultiDeclaration declaration) {
-                BindingContext context = AnalyzerFacadeWithCache.getContextForElement(declaration);
-                List<JetMultiDeclarationEntry> entries = declaration.getEntries();
-                for (JetMultiDeclarationEntry entry : entries) {
-                    ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
-                    addResolvedCallFqName(resolvedCall);
-                }
-
-                super.visitMultiDeclaration(declaration);
-            }
-
-            private void addResolvedCallFqName(@Nullable ResolvedCall resolvedCall) {
-                if (resolvedCall != null) {
-                    CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-                    usedQualifiedNames.add(DescriptorUtils.getFqNameSafe(resultingDescriptor));
-                }
+                super.visitJetElement(element);
             }
         });
 
         return usedQualifiedNames;
-    }
-
-
-    @Nullable
-    public static FqName getElementUsageFQName(PsiElement element) {
-        if (element instanceof JetFile) {
-            return JetPsiUtil.getFQName((JetFile) element);
-        }
-
-        if (element instanceof JetSimpleNameExpression) {
-            JetPackageDirective packageDirective = PsiTreeUtil.getParentOfType(element, JetPackageDirective.class);
-            if (packageDirective != null) {
-                List<JetSimpleNameExpression> simpleNameExpressions = PsiTreeUtil.getChildrenOfTypeAsList(packageDirective, JetSimpleNameExpression.class);
-                FqName fqName = null;
-                for (JetSimpleNameExpression nameExpression : simpleNameExpressions) {
-                    Name referencedName = nameExpression.getReferencedNameAsName();
-                    if (fqName == null) {
-                        fqName = new FqName(referencedName.asString());
-                    } else {
-                        fqName = fqName.child(referencedName);
-                    }
-                    if (nameExpression.equals(element)) {
-                        return fqName;
-                    }
-                }
-            }
-        }
-
-        if (element instanceof JetNamedDeclaration) {
-            return JetPsiUtil.getFQName((JetNamedDeclaration) element);
-        }
-
-        if (element instanceof PsiClass) {
-            String qualifiedName = ((PsiClass) element).getQualifiedName();
-            if (qualifiedName != null) {
-                return new FqName(qualifiedName);
-            }
-        }
-
-        if (element instanceof PsiField) {
-            PsiField field = (PsiField) element;
-
-            FqName classFQN = getFqNameOfContainingClassForPsiMember(field);
-            if (classFQN == null) {
-                return null;
-            }
-
-            return combineClassFqNameWithMemberName(field.getContainingClass(), classFQN, field.getName());
-        }
-
-        // TODO: Still problem with kotlin global properties imported from class files
-        if (element instanceof PsiMethod) {
-            PsiMethod method = (PsiMethod) element;
-
-            FqName classFQN = getFqNameOfContainingClassForPsiMember(method);
-            if (classFQN == null) {
-                return null;
-            }
-            if (method.isConstructor()) {
-                return classFQN;
-            }
-
-            return combineClassFqNameWithMemberName(method.getContainingClass(), classFQN, method.getName());
-        }
-
-        if (element instanceof PsiPackage) {
-            return new FqName(((PsiPackage) element).getQualifiedName());
-        }
-
-        return null;
-    }
-
-    @Nullable
-    private static FqName combineClassFqNameWithMemberName(PsiClass containingClass, FqName classFQN, String memberName) {
-        if (memberName == null) {
-            return null;
-        }
-        if (JavaResolverPsiUtils.isCompiledKotlinPackageClass(containingClass)) {
-            return classFQN.parent().child(Name.identifier(memberName));
-        }
-        else {
-            return classFQN.child(Name.identifier(memberName));
-        }
-    }
-
-    @Nullable
-    private static FqName getFqNameOfContainingClassForPsiMember(PsiMember member) {
-        PsiClass containingClass = member.getContainingClass();
-        if (containingClass != null) {
-            String classFQNStr = containingClass.getQualifiedName();
-            if (classFQNStr != null) {
-                return new FqName(classFQNStr);
-            }
-        }
-        return null;
-    }
-
-    private static PsiElement getWithPreviousWhitespaces(PsiElement element) {
-        PsiElement result = element;
-
-        PsiElement siblingIterator = element.getPrevSibling();
-        while (siblingIterator != null) {
-            if (siblingIterator.getNode().getElementType() != TokenType.WHITE_SPACE) {
-                break;
-            }
-            else {
-                result = siblingIterator;
-            }
-
-            siblingIterator = siblingIterator.getPrevSibling();
-        }
-
-        return result;
-    }
-
-    private static PsiElement getWithFollowedWhitespaces(PsiElement element) {
-        PsiElement result = element;
-
-        PsiElement siblingIterator = element.getNextSibling();
-        while (siblingIterator != null) {
-            if (siblingIterator.getNode().getElementType() != TokenType.WHITE_SPACE) {
-                break;
-            }
-            else {
-                result = siblingIterator;
-            }
-
-            siblingIterator = siblingIterator.getNextSibling();
-        }
-
-        return result;
     }
 }
