@@ -4,11 +4,11 @@
     <buildFile url="file://$PROJECT_DIR$/grammar/buildGrammarLexer.xml" />
     <buildFile url="file://$PROJECT_DIR$/compiler/frontend/buildLexer.xml" />
     <buildFile url="file://$PROJECT_DIR$/build.xml">
-      <maximumHeapSize value="512" />
+      <maximumHeapSize value="1024" />
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/update_dependencies.xml" />
     <buildFile url="file://$PROJECT_DIR$/TeamCityBuild.xml">
-      <maximumHeapSize value="512" />
+      <maximumHeapSize value="1024" />
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/pluginPublisher/TeamCityPluginPublisher.xml" />
   </component>
