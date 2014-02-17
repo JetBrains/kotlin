@@ -135,12 +135,6 @@ public class MethodInliner {
                 }
             }
 
-            ////for local function support
-            //@Override
-            //public void checkcast(Type type) {
-            //    super.checkcast(changeOwnerIfLocalFun(type));
-            //}
-
             @Override
             public void visitMethodInsn(int opcode, String owner, String name, String desc) {
                 if (/*INLINE_RUNTIME.equals(owner) &&*/ isInvokeOnInlinable(owner, name)) { //TODO add method
@@ -164,7 +158,7 @@ public class MethodInliner {
 
                     this.setInlining(true);
                     MethodInliner inliner = new MethodInliner(info.getNode(), params, parent.subInline(parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
-                                                              capturedRemapper, isSameModule);
+                                                              capturedRemapper, true /*cause all call in same module as lambda*/);
 
                     VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(params, valueParamShift);
                     inliner.doTransformAndMerge(this.mv, remapper); //TODO add skipped this and receiver
@@ -193,11 +187,11 @@ public class MethodInliner {
                         super.visitMethodInsn(opcode, invocation.getNewLambdaType().getInternalName(), name, invocation.getNewConstructorDescriptor());
                         invocation = null;
                     } else {
-                        super.visitMethodInsn(opcode, owner, name, desc);
+                        super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc);
                     }
                 }
                 else {
-                    super.visitMethodInsn(opcode, /*changeOwnerIfLocalFun(*/owner/*)*/, name, desc);
+                    super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc);
                 }
             }
         };
@@ -530,5 +524,17 @@ public class MethodInliner {
             }
             mv.visitVarInsn(next.getOpcode(Opcodes.ISTORE), shift);
         }
+    }
+
+    public String changeOwnerForExternalPackage(String type, int opcode) {
+        if (isSameModule || (opcode & Opcodes.INVOKESTATIC) == 0) {
+            return type;
+        }
+
+        int i = type.indexOf('-');
+        if (i >= 0) {
+            return type.substring(0, i);
+        }
+        return type;
     }
 }
