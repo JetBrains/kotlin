@@ -1,4 +1,3 @@
-// IS_APPLICABLE: true
 fun foo() {
 	bar(2, {it * 3})
 }

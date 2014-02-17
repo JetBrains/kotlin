@@ -19,23 +19,34 @@ package org.jetbrains.jet.plugin.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.psi.JetFile
 
 public class MoveLambdaInsideParenthesisIntention : JetSelfTargetingIntention<JetCallExpression>(
         "move.lambda.inside.parenthesis", javaClass()) {
 
     override fun isApplicableTo(element: JetCallExpression): Boolean = !element.getFunctionLiteralArguments().isEmpty()
 
-    // ADD NAMED ARGUMENT SUPPORT - IE IF OTHERS ARE NAMED THEN WHEN MOVING THE LAMBDA INSIDE NAME IT TOO
     override fun applyTo(element: JetCallExpression, editor: Editor) {
         val funName = element.getCalleeExpression()?.getText()
-        val args = element.getValueArgumentList()?.getText()
-        val literals = element.getFunctionLiteralArguments()[0].getText() // we know the list isn't empty
-        if(args == null || funName == null || literals == null) return
-        val newExpressionString = if (args.size > 2) { // args.size == 2 when args = () - no parameters
-            "$funName${args.substring(0,args.size-1)},$literals)"
-        } else {
-            "$funName($literals)"
+        if(funName == null) return
+        var argsText = "("
+        for (value in element.getValueArguments()) {
+            if (value == null) continue
+            argsText = if (value.getArgumentName() != null) {
+                "$argsText${value.getArgumentName()?.getText()} = ${value.getArgumentExpression()?.getText()},"
+            } else {
+                "$argsText${value.getArgumentExpression()?.getText()},"
+            }
         }
-        element.replace(JetPsiFactory.createExpression(element.getProject(),newExpressionString))
+        if (element.getValueArguments().any({it?.getArgumentName() != null})) {
+            val context = AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingFile() as JetFile).getBindingContext()
+            val resolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
+            val literalName = resolvedCall?.getResultingDescriptor()?.getValueParameters()?.last?.getName().toString()
+            argsText = "$argsText$literalName = "
+        }
+        val newExpression = "$funName$argsText${element.getFunctionLiteralArguments()[0].getText()})"
+        element.replace(JetPsiFactory.createExpression(element.getProject(),newExpression))
     }
 }

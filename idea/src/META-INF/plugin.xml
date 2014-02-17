@@ -484,6 +484,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.MoveLambdaOutsideParenthesisIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.InsertCurlyBracesToTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>

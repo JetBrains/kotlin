@@ -348,6 +348,7 @@ fun main(args: Array<String>) {
             model("intentions/removeCurlyBracesFromTemplate", testMethod = "doTestRemoveCurlyFromTemplate")
             model("intentions/insertCurlyBracesToTemplate", testMethod = "doTestInsertCurlyToTemplate")
             model("intentions/moveLambdaInsideParenthesis", testMethod = "doTestMoveLambdaInsideParenthesis")
+            model("intentions/moveLambdaOutsideParenthesis", testMethod = "doTestMoveLambdaOutsideParenthesis")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
