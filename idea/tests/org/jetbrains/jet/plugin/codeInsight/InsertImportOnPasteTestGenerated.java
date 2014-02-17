@@ -228,6 +228,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy("idea/testData/copyPaste/imports/Local.kt");
         }
         
+        @TestMetadata("MultiDeclaration.kt")
+        public void testMultiDeclaration() throws Exception {
+            doTestCopy("idea/testData/copyPaste/imports/MultiDeclaration.kt");
+        }
+        
         @TestMetadata("MultiReferencePartiallyCopied.kt")
         public void testMultiReferencePartiallyCopied() throws Exception {
             doTestCopy("idea/testData/copyPaste/imports/MultiReferencePartiallyCopied.kt");
@@ -504,6 +509,11 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("Local.kt")
         public void testLocal() throws Exception {
             doTestCut("idea/testData/copyPaste/imports/Local.kt");
+        }
+        
+        @TestMetadata("MultiDeclaration.kt")
+        public void testMultiDeclaration() throws Exception {
+            doTestCut("idea/testData/copyPaste/imports/MultiDeclaration.kt");
         }
         
         @TestMetadata("MultiReferencePartiallyCopied.kt")
