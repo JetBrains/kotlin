@@ -9,4 +9,4 @@ annotation class Ann(
 
 Ann(1 <= 2, 1.0 <= 2.0, 1 <= 1, 1.0 <= 1.0) class MyClass
 
-// EXPECTED: Ann[b1 = true: jet.Boolean, b2 = true: jet.Boolean, b3 = true: jet.Boolean, b4 = true: jet.Boolean]
+// EXPECTED: Ann(b1 = true: Boolean, b2 = true: Boolean, b3 = true: Boolean, b4 = true: Boolean)

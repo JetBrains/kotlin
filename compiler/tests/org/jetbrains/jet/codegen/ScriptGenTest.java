@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -81,7 +81,7 @@ public class ScriptGenTest extends CodegenTestCase {
         }
         catch (Throwable e) {
             System.out.println(generateToText());
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 

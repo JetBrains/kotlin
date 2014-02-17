@@ -56,11 +56,6 @@ public class JetTypeProjection extends JetElementImpl implements JetModifierList
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitTypeProjection(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitTypeProjection(this, data);
     }

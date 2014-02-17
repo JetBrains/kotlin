@@ -8,4 +8,4 @@ annotation class Ann(
 
 Ann(1.0 + 1.0, 1.0 + 1, 1 + 1.0) class MyClass
 
-// EXPECTED: Ann[d1 = 2.0.toDouble(): jet.Double, d2 = 2.0.toDouble(): jet.Double, d3 = 2.0.toDouble(): jet.Double]
+// EXPECTED: Ann(d1 = 2.0.toDouble(): Double, d2 = 2.0.toDouble(): Double, d3 = 2.0.toDouble(): Double)

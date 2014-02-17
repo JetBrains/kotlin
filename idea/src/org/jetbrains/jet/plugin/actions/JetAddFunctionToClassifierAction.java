@@ -43,11 +43,10 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -116,7 +115,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                         PsiElement anchor = body.getRBrace();
                         JetNamedFunction insertedFunctionElement = (JetNamedFunction) body.addBefore(functionElement, anchor);
 
-                        ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(insertedFunctionElement));
+                        ShortenReferences.instance$.process(insertedFunctionElement);
                     }
                 });
             }

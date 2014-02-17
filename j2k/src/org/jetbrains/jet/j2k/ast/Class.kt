@@ -17,84 +17,67 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.J2KConverterFlags
 import org.jetbrains.jet.j2k.ast.types.ClassType
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.HashSet
 import java.util.ArrayList
 
-public open class Class(converter: Converter,
-                        val name: Identifier,
-                        val docComments: List<Node>,
-                        modifiers: Set<Modifier>,
-                        val typeParameters: List<Element>,
-                        val extendsTypes: List<Type>,
-                        val baseClassParams: List<Expression>,
-                        val implementsTypes: List<Type>,
-                        members: List<Node>) : Member(modifiers) {
-    val members = getMembers(members, converter)
-
+open class Class(
+        val converter: Converter,
+        val name: Identifier,
+        comments: MemberComments,
+        modifiers: Set<Modifier>,
+        val typeParameterList: TypeParameterList,
+        val extendsTypes: List<Type>,
+        val baseClassParams: List<Expression>,
+        val implementsTypes: List<Type>,
+        val members: List<Element>
+) : Member(comments, modifiers) {
     open val TYPE: String
         get() = "class"
 
-    private fun getPrimaryConstructor(): Constructor? {
-        return members.find { it is Constructor && it.isPrimary } as Constructor?
-    }
+    val classMembers = parseClassMembers(members)
 
     open fun primaryConstructorSignatureToKotlin(): String {
-        val maybeConstructor: Constructor? = getPrimaryConstructor()
-        return if (maybeConstructor != null) maybeConstructor.primarySignatureToKotlin() else "()"
+        val constructor = classMembers.primaryConstructor
+        return if (constructor != null) constructor.primarySignatureToKotlin() else "()"
     }
 
-    open fun primaryConstructorBodyToKotlin(): String? {
-        val maybeConstructor: Constructor? = getPrimaryConstructor()
+    fun primaryConstructorBodyToKotlin(): String? {
+        val maybeConstructor = classMembers.primaryConstructor
         if (maybeConstructor != null && !(maybeConstructor.block?.isEmpty() ?: true)) {
-            return maybeConstructor.primaryBodyToKotlin()
-        }
-
-        return ""
-    }
-
-    private fun hasWhere(): Boolean = typeParameters.any { it is TypeParameter && it.hasWhere() }
-
-    open fun typeParameterWhereToKotlin(): String {
-        if (hasWhere()) {
-            val wheres = typeParameters.filter { it is TypeParameter }.map { (it as TypeParameter).getWhereToKotlin() }
-            return " where " + wheres.makeString(", ") + " "
+            return "\n" + maybeConstructor.primaryBodyToKotlin() + "\n"
         }
         return ""
     }
 
-    open fun membersExceptConstructors(): List<Node> = members.filterNot { it is Constructor }
-
-    open fun secondaryConstructorsAsStaticInitFunction(): List<Function> {
-        return members.filter { it is Constructor && !it.isPrimary }.map { constructorToInit(it as Function) }
+    fun secondaryConstructorsAsStaticInitFunctions(): MemberList {
+        return MemberList(classMembers.secondaryConstructors.elements.map { if (it is Constructor) constructorToInit(it) else it })
     }
 
     private fun constructorToInit(f: Function): Function {
         val modifiers = HashSet<Modifier>(f.modifiers)
         modifiers.add(Modifier.STATIC)
-        val statements = ArrayList<Element>(f.block?.statements ?: listOf())
+        val statements = ArrayList(f.block?.statements ?: ArrayList())
         statements.add(ReturnStatement(Identifier("__")))
         val block = Block(statements)
-        val constructorTypeParameters = ArrayList<Element>()
-        constructorTypeParameters.addAll(typeParameters)
-        constructorTypeParameters.addAll(f.typeParameters)
-        return Function(Identifier("init"), arrayList(), modifiers, ClassType(name, constructorTypeParameters, false),
-                        constructorTypeParameters, f.params, block)
+        val constructorTypeParameters = ArrayList<TypeParameter>()
+        constructorTypeParameters.addAll(typeParameterList.parameters)
+        constructorTypeParameters.addAll(f.typeParameterList.parameters)
+        return Function(converter, Identifier("init"), MemberComments.Empty, modifiers,
+                        ClassType(name, constructorTypeParameters, false, converter),
+                        TypeParameterList(constructorTypeParameters), f.params, block)
     }
 
-    open fun typeParametersToKotlin(): String = typeParameters.toKotlin(", ", "<", ">")
-
-    open fun baseClassSignatureWithParams(): List<String> {
+    fun baseClassSignatureWithParams(): List<String> {
         if (TYPE.equals("class") && extendsTypes.size() == 1) {
             val baseParams = baseClassParams.toKotlin(", ")
-            return arrayList(extendsTypes[0].toKotlin() + "(" + baseParams + ")")
+            return arrayListOf(extendsTypes[0].toKotlin() + "(" + baseParams + ")")
         }
         return extendsTypes.map { it.toKotlin() }
     }
 
-    open fun implementTypesToKotlin(): String {
+    fun implementTypesToKotlin(): String {
         val allTypes = ArrayList<String>()
         allTypes.addAll(baseClassSignatureWithParams())
         allTypes.addAll(implementsTypes.map { it.toKotlin() })
@@ -104,65 +87,45 @@ public open class Class(converter: Converter,
             " : " + allTypes.makeString(", ")
     }
 
-    open fun modifiersToKotlin(): String {
+    fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()
         val modifier = accessModifier()
         if (modifier != null) {
             modifierList.add(modifier)
         }
-        if (needAbstractModifier()) {
+        if (isAbstract()) {
             modifierList.add(Modifier.ABSTRACT)
         }
-
-        if (needOpenModifier()) {
+        else if (needsOpenModifier()) {
             modifierList.add(Modifier.OPEN)
         }
         return modifierList.toKotlin()
     }
 
-    open fun needOpenModifier() = !modifiers.contains(Modifier.FINAL) && !modifiers.contains(Modifier.ABSTRACT)
+    open fun isDefinitelyFinal() = modifiers.contains(Modifier.FINAL)
 
-    open fun needAbstractModifier() = isAbstract()
+    open fun needsOpenModifier() = !isDefinitelyFinal() && converter.settings.openByDefault
 
-    open fun bodyToKotlin(): String {
-        return " {\n" + getNonStatic(membersExceptConstructors()).toKotlin("\n") + "\n" + primaryConstructorBodyToKotlin() + "\n" + classObjectToKotlin() + "\n}"
+    fun bodyToKotlin(): String {
+        return " {" + classMembers.nonStaticMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin() + "}"
     }
 
-    private fun classObjectToKotlin(): String {
-        val staticMembers = ArrayList<Node>()
-        staticMembers.addAll(secondaryConstructorsAsStaticInitFunction())
-        staticMembers.addAll(getStatic(membersExceptConstructors()))
-        return staticMembers.toKotlin("\n", "class object {\n", "\n}")
+    fun classObjectToKotlin(): String {
+        val secondaryConstructorsAsStaticInitFunctions = secondaryConstructorsAsStaticInitFunctions()
+        val staticMembers = classMembers.staticMembers
+        if (secondaryConstructorsAsStaticInitFunctions.isEmpty() && staticMembers.isEmpty()) {
+            return ""
+        }
+        return "\nclass object {${secondaryConstructorsAsStaticInitFunctions.toKotlin()}${staticMembers.toKotlin()}}"
     }
 
-    public override fun toKotlin(): String =
-            docComments.toKotlin("\n", "", "\n") +
+    override fun toKotlin(): String =
+            commentsToKotlin() +
             modifiersToKotlin() +
             TYPE + " " + name.toKotlin() +
-            typeParametersToKotlin() +
+            typeParameterList.toKotlin() +
             primaryConstructorSignatureToKotlin() +
             implementTypesToKotlin() +
-            typeParameterWhereToKotlin() +
+            typeParameterList.whereToKotlin().withPrefix(" ") +
             bodyToKotlin()
-
-    class object {
-        open fun getMembers(members: List<Node>, converter: Converter): List<Node> {
-            if (converter.hasFlag(J2KConverterFlags.SKIP_NON_PUBLIC_MEMBERS)) {
-                return members.filter {
-                    it is Comment ||
-                    (it as Member).accessModifier() == Modifier.PUBLIC ||
-                    (it as Member).accessModifier() == Modifier.PROTECTED
-                }
-            }
-            return members
-        }
-
-        private fun getStatic(members: List<Node>): List<Node> {
-            return members.filter { it is Member && it.isStatic() }
-        }
-
-        private fun getNonStatic(members: List<Node>): List<Node> {
-            return members.filterNot { it is Member && it.isStatic() }
-        }
-    }
 }

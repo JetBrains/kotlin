@@ -20,15 +20,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.List;
-
 class RootContext extends CodegenContext {
     public RootContext() {
-        super(new FakeDescriptor(), OwnerKind.NAMESPACE, null, null, null, null);
+        super(new FakeDescriptor(), OwnerKind.PACKAGE, null, null, null, null);
     }
 
     @Override
@@ -70,7 +68,7 @@ class RootContext extends CodegenContext {
 
         @NotNull
         @Override
-        public List<AnnotationDescriptor> getAnnotations() {
+        public Annotations getAnnotations() {
             throw new IllegalStateException();
         }
 

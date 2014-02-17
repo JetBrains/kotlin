@@ -31,7 +31,7 @@ fun Any?.vars(<!UNUSED_PARAMETER!>a<!>: Any?) : Int {
     if (example.ns.y is Int) {
         b = <!UNUSED_VALUE, DEBUG_INFO_AUTOCAST!>example.ns.y<!>
     }
-//    if (namespace.bottles.ns.y is Int) {
+//    if (package.bottles.ns.y is Int) {
 //        b = ns.y
 //    }
     if (Obj.y is Int) {

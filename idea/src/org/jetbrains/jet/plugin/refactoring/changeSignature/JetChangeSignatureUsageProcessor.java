@@ -131,7 +131,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         JetChangeInfo changeInfo = (JetChangeInfo) info;
         PsiElement function = info.getMethod();
         PsiElement element = function != null ? function : changeInfo.getContext();
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile)element.getContainingFile()).getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
         FunctionDescriptor oldDescriptor = changeInfo.getOldDescriptor();
         JetScope parametersScope = null;
         DeclarationDescriptor containingDeclaration = oldDescriptor != null ? oldDescriptor.getContainingDeclaration() : null;

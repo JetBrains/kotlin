@@ -1,0 +1,12 @@
+<root>
+  <item name='org.jetbrains.jps.builders.JpsBuildTestCase java.lang.String createFile(java.lang.String, java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='org.jetbrains.jps.builders.JpsBuildTestCase org.jetbrains.jps.builders.BuildResult makeAll()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='org.jetbrains.jps.builders.JpsBuildTestCase org.jetbrains.jps.model.module.JpsModule addModule(java.lang.String, java.lang.String...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

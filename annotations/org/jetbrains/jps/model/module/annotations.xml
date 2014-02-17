@@ -1,0 +1,5 @@
+<root>
+  <item name='org.jetbrains.jps.model.module.JpsModule org.jetbrains.jps.model.module.JpsDependenciesList getDependenciesList()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

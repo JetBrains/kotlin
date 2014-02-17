@@ -39,6 +39,7 @@ public class NullabilityAnnotationsTest extends KotlinAsJavaTestBase {
     @Override
     protected void extraConfiguration(@NotNull CompilerConfiguration configuration) {
         configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.getAnnotationsJar());
+        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, JetTestUtils.findMockJdkRtJar());
     }
 
     public void test_DefaultPackage() throws Exception {
@@ -82,6 +83,10 @@ public class NullabilityAnnotationsTest extends KotlinAsJavaTestBase {
     }
 
     public void testTraitClassObjectField() throws Exception {
+        doTest(getTestName(false));
+    }
+
+    public void testGeneric() throws Exception {
         doTest(getTestName(false));
     }
 

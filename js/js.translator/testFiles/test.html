@@ -1,11 +1,13 @@
-<!-- Only for developers -->
+<!-- for debugging tests in browser -->
 <html>
 <head>
-  <script src="kotlin_lib_ecma5.js"></script>
-  <script src="kotlin_lib.js"></script>
-  <script src="webDemoExamples2/out/life_v5.js"></script>
-  <script>
-    //console.assert(Kotlin.defs.foo.box());
+  <script type="application/javascript" src="kotlin_lib_ecma5.js"></script>
+  <script type="application/javascript" src="kotlin_lib.js"></script>
+
+  <script type="application/javascript" src="webDemoExamples2/out/life_v5.js"></script>
+
+  <script type="application/javascript" >
+    console.log(Kotlin.modules.JS_TESTS.foo.box());
   </script>
 </head>
 <body>

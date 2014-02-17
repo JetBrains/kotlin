@@ -33,11 +33,6 @@ public class JetCallExpression extends JetReferenceExpression implements JetCall
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitCallExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitCallExpression(this, data);
     }

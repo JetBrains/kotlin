@@ -1,0 +1,7 @@
+var r : Runnable = object: Runnable {
+    override fun run() {
+        throw UnsupportedOperationException()
+    }
+}
+
+//ELEMENT: object

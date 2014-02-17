@@ -37,6 +37,7 @@ public final class Namer {
     public static final String OUTER_CLASS_NAME = "$outer";
 
     private static final String CALL_FUNCTION = "call";
+    private static final String APPLY_FUNCTION = "apply";
     private static final String CLASS_OBJECT_NAME = "createClass";
     private static final String TRAIT_OBJECT_NAME = "createTrait";
     private static final String OBJECT_OBJECT_NAME = "createObject";
@@ -45,7 +46,7 @@ public final class Namer {
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
     private static final String SUPER_METHOD_NAME = "baseInitializer";
-    private static final String ROOT_NAMESPACE = "_";
+    private static final String ROOT_PACKAGE = "_";
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String CLASS_OBJECT_GETTER = "object";
@@ -54,7 +55,6 @@ public final class Namer {
 
 
     private static final String DELEGATE_POSTFIX = "$delegate";
-    private static final String PROPERTY_METADATA = "PropertyMetadata";
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -62,8 +62,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getRootNamespaceName() {
-        return ROOT_NAMESPACE;
+    public static String getRootPackageName() {
+        return ROOT_PACKAGE;
     }
 
     @NotNull
@@ -138,6 +138,10 @@ public final class Namer {
     @NotNull
     public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
         return new JsNameRef(CALL_FUNCTION, functionExpression);
+    }
+    @NotNull
+    public static JsNameRef getFunctionApplyRef(@NotNull JsExpression functionExpression) {
+        return new JsNameRef(APPLY_FUNCTION, functionExpression);
     }
 
     @NotNull
@@ -227,11 +231,6 @@ public final class Namer {
     }
 
     @NotNull
-    public JsNameRef propertyMetadataRef() {
-        return new JsNameRef(PROPERTY_METADATA, kotlinObject());
-    }
-
-    @NotNull
     private JsNameRef kotlin(@NotNull JsName name) {
         return new JsNameRef(name, kotlinObject());
     }
@@ -257,8 +256,8 @@ public final class Namer {
     }
 
     @NotNull
-    static String generateNamespaceName(@NotNull FqName packageFqName) {
-        return packageFqName.isRoot() ? getRootNamespaceName() : packageFqName.shortName().asString();
+    static String generatePackageName(@NotNull FqName packageFqName) {
+        return packageFqName.isRoot() ? getRootPackageName() : packageFqName.shortName().asString();
     }
 
     @NotNull

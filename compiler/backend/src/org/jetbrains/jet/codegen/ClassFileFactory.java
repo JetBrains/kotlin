@@ -44,7 +44,7 @@ import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageCl
 public final class ClassFileFactory extends GenerationStateAware implements OutputFileCollection {
     @NotNull private ClassBuilderFactory builderFactory;
 
-    private final Map<FqName, NamespaceCodegen> ns2codegen = new HashMap<FqName, NamespaceCodegen>();
+    private final Map<FqName, PackageCodegen> package2codegen = new HashMap<FqName, PackageCodegen>();
     private final Map<String, ClassBuilderAndSourceFileList> generators = new LinkedHashMap<String, ClassBuilderAndSourceFileList>();
     private boolean isDone = false;
 
@@ -74,7 +74,7 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
     private void done() {
         if (!isDone) {
             isDone = true;
-            for (NamespaceCodegen codegen : ns2codegen.values()) {
+            for (PackageCodegen codegen : package2codegen.values()) {
                 codegen.done();
             }
         }
@@ -110,9 +110,9 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
         return answer.toString();
     }
 
-    public NamespaceCodegen forNamespace(final FqName fqName, final Collection<JetFile> files) {
+    public PackageCodegen forPackage(final FqName fqName, final Collection<JetFile> files) {
         assert !isDone : "Already done!";
-        NamespaceCodegen codegen = ns2codegen.get(fqName);
+        PackageCodegen codegen = package2codegen.get(fqName);
         if (codegen == null) {
             ClassBuilderOnDemand onDemand = new ClassBuilderOnDemand() {
                 @NotNull
@@ -121,8 +121,8 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
                     return newVisitor(asmTypeByFqNameWithoutInnerClasses(getPackageClassFqName(fqName)), files);
                 }
             };
-            codegen = new NamespaceCodegen(onDemand, fqName, state, files);
-            ns2codegen.put(fqName, codegen);
+            codegen = new PackageCodegen(onDemand, fqName, state, files);
+            package2codegen.put(fqName, codegen);
         }
 
         return codegen;

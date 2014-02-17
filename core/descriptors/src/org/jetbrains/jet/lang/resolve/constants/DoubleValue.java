@@ -21,16 +21,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class DoubleValue implements CompileTimeConstant<Double> {
-    private final double value;
+public class DoubleValue extends CompileTimeConstant<Double> {
 
-    public DoubleValue(double value) {
-        this.value = value;
-    }
-
-    @Override
-    public Double getValue() {
-        return value;
+    public DoubleValue(double value, boolean canBeUsedInAnnotations) {
+        super(value, canBeUsedInAnnotations, false);
     }
 
     @NotNull

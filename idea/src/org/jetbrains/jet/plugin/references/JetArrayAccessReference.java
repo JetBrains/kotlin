@@ -20,9 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
-import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
@@ -38,17 +36,10 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
 
-class JetArrayAccessReference extends JetPsiReference implements MultiRangeReference {
-    private final JetArrayAccessExpression expression;
-
-    public static PsiReference[] create(JetArrayAccessExpression expression) {
-        JetContainerNode indicesNode = expression.getIndicesNode();
-        return indicesNode == null ? PsiReference.EMPTY_ARRAY : new PsiReference[] { new JetArrayAccessReference(expression) };
-    }
+class JetArrayAccessReference extends JetSimpleReference<JetArrayAccessExpression> implements MultiRangeReference {
 
     public JetArrayAccessReference(@NotNull JetArrayAccessExpression expression) {
         super(expression);
-        this.expression = expression;
     }
 
     @Override
@@ -56,19 +47,19 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
         return getElement().getTextRange().shiftRight(-getElement().getTextOffset());
     }
 
-    @Nullable
     @Override
-    protected Collection<? extends DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
+    @NotNull
+    protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
         List<DeclarationDescriptor> result = Lists.newArrayList();
 
-        ResolvedCall<FunctionDescriptor> getFunction = context.get(INDEXED_LVALUE_GET, expression);
+        ResolvedCall<FunctionDescriptor> getFunction = context.get(INDEXED_LVALUE_GET, getExpression());
         if (getFunction != null) {
-            result.add(getFunction.getResultingDescriptor());
+            result.add(getFunction.getCandidateDescriptor());
         }
 
-        ResolvedCall<FunctionDescriptor> setFunction = context.get(INDEXED_LVALUE_SET, expression);
+        ResolvedCall<FunctionDescriptor> setFunction = context.get(INDEXED_LVALUE_SET, getExpression());
         if (setFunction != null) {
-            result.add(setFunction.getResultingDescriptor());
+            result.add(setFunction.getCandidateDescriptor());
         }
 
         return result;
@@ -78,16 +69,16 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
     public List<TextRange> getRanges() {
         List<TextRange> list = new ArrayList<TextRange>();
 
-        JetContainerNode indices = expression.getIndicesNode();
+        JetContainerNode indices = getExpression().getIndicesNode();
         TextRange textRange = indices.getNode().findChildByType(JetTokens.LBRACKET).getTextRange();
-        TextRange lBracketRange = textRange.shiftRight(-expression.getTextOffset());
+        TextRange lBracketRange = textRange.shiftRight(-getExpression().getTextOffset());
 
         list.add(lBracketRange);
 
         ASTNode rBracket = indices.getNode().findChildByType(JetTokens.RBRACKET);
         if (rBracket != null) {
             textRange = rBracket.getTextRange();
-            TextRange rBracketRange = textRange.shiftRight(-expression.getTextOffset());
+            TextRange rBracketRange = textRange.shiftRight(-getExpression().getTextOffset());
             list.add(rBracketRange);
         }
 

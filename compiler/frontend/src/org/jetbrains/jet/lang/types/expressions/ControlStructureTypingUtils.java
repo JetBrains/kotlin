@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
@@ -32,11 +32,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemStatus;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintsUtil;
-import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
@@ -90,26 +86,25 @@ public class ControlStructureTypingUtils {
     ) {
         assert argumentNames.size() == isArgumentNullable.size();
 
-        List<AnnotationDescriptor> noAnnotations = Collections.emptyList();
         Name specialFunctionName = Name.identifierNoValidate("<SPECIAL-FUNCTION-FOR-" + constructionName + "-RESOLVE>");
 
         SimpleFunctionDescriptorImpl function = new SimpleFunctionDescriptorImpl(
                 ErrorUtils.getErrorModule(),//todo hack to avoid returning true in 'isError(DeclarationDescriptor)'
-                noAnnotations, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION);
+                Annotations.EMPTY, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION);
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
-                function, noAnnotations, false, Variance.INVARIANT,
+                function, Annotations.EMPTY, false, Variance.INVARIANT,
                 Name.identifierNoValidate("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
 
         JetType type = new JetTypeImpl(typeParameter.getTypeConstructor(), JetScope.EMPTY);
         JetType nullableType = new JetTypeImpl(
-                noAnnotations, typeParameter.getTypeConstructor(), true, Collections.<TypeProjection>emptyList(), JetScope.EMPTY);
+                Annotations.EMPTY, typeParameter.getTypeConstructor(), true, Collections.<TypeProjection>emptyList(), JetScope.EMPTY);
 
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
         for (int i = 0; i < argumentNames.size(); i++) {
             JetType argumentType = isArgumentNullable.get(i) ? nullableType : type;
             ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(
-                    function, i, noAnnotations, Name.identifier(argumentNames.get(i)), argumentType, false, null);
+                    function, i, Annotations.EMPTY, Name.identifier(argumentNames.get(i)), argumentType, false, null);
             valueParameters.add(valueParameter);
         }
         function.initialize(

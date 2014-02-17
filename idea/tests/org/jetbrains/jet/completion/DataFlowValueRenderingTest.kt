@@ -38,11 +38,9 @@ abstract class AbstractDataFlowValueRenderingTest: LightCodeInsightFixtureTestCa
         fixture.configureByFile(fileName)
 
         val jetFile = fixture.getFile() as JetFile
-        val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext()
-
         val element = jetFile.findElementAt(fixture.getCaretOffset())
-        val expression = PsiTreeUtil.getParentOfType(element, javaClass<JetExpression>())
-        val info = bindingContext.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expression)!!
+        val expression = PsiTreeUtil.getParentOfType(element, javaClass<JetExpression>())!!
+        val info = AnalyzerFacadeWithCache.getContextForElement(expression)[BindingContext.EXPRESSION_DATA_FLOW_INFO, expression]!!
 
         val allValues = (info.getCompleteTypeInfo().keySet() + info.getCompleteNullabilityInfo().keySet()).toSet()
         val actual = allValues.map { renderDataFlowValue(it) }.filterNotNull().sort().makeString("\n")

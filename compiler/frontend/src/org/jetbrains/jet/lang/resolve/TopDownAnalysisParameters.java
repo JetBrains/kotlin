@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicate;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.storage.ExceptionTracker;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.List;
 
@@ -27,6 +29,10 @@ import java.util.List;
  */
 public class TopDownAnalysisParameters {
     @NotNull
+    private final StorageManager storageManager;
+    @NotNull
+    private final ExceptionTracker exceptionTracker;
+    @NotNull
     private final Predicate<PsiFile> analyzeCompletely;
     private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
@@ -34,14 +40,31 @@ public class TopDownAnalysisParameters {
     private final List<AnalyzerScriptParameter> scriptParameters;
 
     public TopDownAnalysisParameters(
+            @NotNull StorageManager storageManager,
+            @NotNull ExceptionTracker exceptionTracker,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             boolean analyzingBootstrapLibrary,
             boolean declaredLocally,
-            @NotNull List<AnalyzerScriptParameter> scriptParameters) {
+            @NotNull List<AnalyzerScriptParameter> scriptParameters
+    ) {
+        this.storageManager = storageManager;
+        this.exceptionTracker = exceptionTracker;
         this.analyzeCompletely = analyzeCompletely;
         this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
         this.declaredLocally = declaredLocally;
         this.scriptParameters = scriptParameters;
+    }
+
+    //@Override
+    @NotNull
+    public StorageManager getStorageManager() {
+        return storageManager;
+    }
+
+    //@Override
+    @NotNull
+    public ExceptionTracker getExceptionTracker() {
+        return exceptionTracker;
     }
 
     @NotNull

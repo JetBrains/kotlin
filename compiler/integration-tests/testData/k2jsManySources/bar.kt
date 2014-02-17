@@ -1,1 +1,3 @@
+package bar
+
 fun bar() {}

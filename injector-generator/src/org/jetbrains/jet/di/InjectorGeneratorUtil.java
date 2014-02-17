@@ -53,6 +53,7 @@ public class InjectorGeneratorUtil {
         return r;
     }
 
+    @NotNull
     public static String var(@NotNull DiType type) {
         StringBuilder sb = new StringBuilder();
         sb.append(StringUtil.decapitalize(type.getClazz().getSimpleName().replaceFirst("(?<=.)Impl$", "")));

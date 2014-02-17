@@ -48,10 +48,23 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "        return 0\n" +
                         "    }\n" +
                         "    private fun foo2():Int {\n" +
-                        "        return foo1(12,\n" +
-                        "                13,\n" +
-                        "                14\n" +
-                        "        )\n" +
+                        "        try {" +
+                        "            return foo1(12,\n" +
+                        "                    13,\n" +
+                        "                    14\n" +
+                        "            )\n" +
+                        "        }" +
+                        "        catch (e: Exception) {" +
+                        "            return 0" +
+                        "        }" +
+                        "        finally {" +
+                        "           if (true) {" +
+                        "               return 1" +
+                        "           }" +
+                        "           else {" +
+                        "               return 2" +
+                        "           }" +
+                        "        }" +
                         "    }\n" +
                         "    private val f = {(a: Int)->a*2}\n" +
                         "}";
@@ -141,11 +154,19 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         // "ALIGN_MULTILINE_CHAINED_METHODS",
                         "ALIGN_MULTILINE_PARAMETERS",
                         "ALIGN_MULTILINE_PARAMETERS_IN_CALLS",
-                        "ALIGN_MULTILINE_METHOD_BRACKETS"
+                        "ALIGN_MULTILINE_METHOD_BRACKETS",
+                        "ELSE_ON_NEW_LINE",
+                        "WHILE_ON_NEW_LINE",
+                        "CATCH_ON_NEW_LINE",
+                        "FINALLY_ON_NEW_LINE"
                 );
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements");
                 consumer.showCustomOption(JetCodeStyleSettings.class, "ALIGN_IN_COLUMNS_CASE_BRANCH", "Align in columns 'case' branches",
                                           CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT);
+
+                consumer.showCustomOption(JetCodeStyleSettings.class, "LBRACE_ON_NEXT_LINE",
+                                          "Put left brace on new line",
+                                          CodeStyleSettingsCustomizable.WRAPPING_BRACES);
                 break;
             default:
                 consumer.showStandardOptions();

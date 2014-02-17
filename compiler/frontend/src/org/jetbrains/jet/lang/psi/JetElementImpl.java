@@ -44,8 +44,8 @@ public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
 
     @Override
     public final void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitorVoid) {
-            accept((JetVisitorVoid) visitor);
+        if (visitor instanceof JetVisitor) {
+            accept((JetVisitor) visitor, null);
         }
         else {
             visitor.visitElement(this);
@@ -57,11 +57,6 @@ public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
         JetPsiUtil.visitChildren(this, visitor, data);
     }
 
-    @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitJetElement(this);
-    }
-    
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitJetElement(this, data);

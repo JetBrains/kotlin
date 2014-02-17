@@ -30,6 +30,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
@@ -47,7 +48,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
     private final GlobalSearchScope searchScope;
     private final Collection<JetFile> files;
     private final int hashCode;
-    private final CachedValue<GeneratedLightClassData> javaFileStub;
+    private final CachedValue<LightClassStubWithData> javaFileStub;
     private final PsiModifierList modifierList;
     private final LightEmptyImplementsList implementsList;
 
@@ -89,6 +90,12 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
             if (!file.isValid()) return false;
         }
         return true;
+    }
+
+    @Nullable
+    @Override
+    public JetClassOrObject getOrigin() {
+        return null;
     }
 
     @Nullable

@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClass;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
-import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -67,7 +66,7 @@ public class RenameJetClassProcessor extends RenamePsiElementProcessor {
     private static JetClassOrObject getJetClassOrObject(@Nullable PsiElement element, boolean showErrors, @Nullable Editor editor) {
         if (element instanceof KotlinLightClass) {
             if (element instanceof KotlinLightClassForExplicitDeclaration) {
-                return ((KotlinLightClassForExplicitDeclaration) element).getJetClassOrObject();
+                return ((KotlinLightClassForExplicitDeclaration) element).getOrigin();
             }
             else if (element instanceof KotlinLightClassForPackage) {
                 if (showErrors) {

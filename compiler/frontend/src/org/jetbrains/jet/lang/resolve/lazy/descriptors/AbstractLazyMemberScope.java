@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         Collection<JetNamedFunction> declarations = declarationProvider.getFunctionDeclarations(name);
         for (JetNamedFunction functionDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration);
-            result.add(resolveSession.getInjector().getDescriptorResolver().resolveFunctionDescriptorWithAnnotationArguments(
+            result.add(resolveSession.getDescriptorResolver().resolveFunctionDescriptorWithAnnotationArguments(
                   thisDescriptor, resolutionScope,
                   functionDeclaration,
                   resolveSession.getTrace(),
@@ -160,7 +160,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         for (JetProperty propertyDeclaration : declarations) {
             JetScope resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration);
             PropertyDescriptor propertyDescriptor =
-                    resolveSession.getInjector().getDescriptorResolver().resolvePropertyDescriptor(
+                    resolveSession.getDescriptorResolver().resolvePropertyDescriptor(
                            thisDescriptor, resolutionScope,
                            propertyDeclaration,
                            resolveSession.getTrace(),
@@ -168,7 +168,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                            // thus doesn't have a surrounding data flow
                            DataFlowInfo.EMPTY);
             result.add(propertyDescriptor);
-            resolveSession.getInjector().getAnnotationResolver().resolveAnnotationsArguments(propertyDescriptor, resolveSession.getTrace(), resolutionScope);
+            resolveSession.getAnnotationResolver().resolveAnnotationsArguments(propertyDescriptor, resolveSession.getTrace(), resolutionScope);
         }
 
         getNonDeclaredProperties(name, result);

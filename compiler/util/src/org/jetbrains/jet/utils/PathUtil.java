@@ -18,13 +18,14 @@ package org.jetbrains.jet.utils;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.java.impl.JavaSdkUtil;
 
 import java.io.File;
+import java.util.List;
 
 public class PathUtil {
 
@@ -153,26 +154,7 @@ public class PathUtil {
     }
 
     @NotNull
-    public static File findRtJar() {
-        return findRtJar(System.getProperty("java.home"));
-    }
-
-    private static File findRtJar(String javaHome) {
-        if (SystemInfo.isMac && !SystemInfo.isJavaVersionAtLeast("1.7")) {
-            File classesJar = new File(new File(javaHome).getParentFile(), "Classes/classes.jar");
-            if (classesJar.exists()) {
-                return classesJar;
-            }
-
-            throw new IllegalArgumentException("No classes.jar found under " + classesJar.getParent());
-        }
-        else {
-            File rtJar = new File(javaHome, "lib/rt.jar");
-            if (rtJar.exists()) {
-                return rtJar;
-            }
-
-            throw new IllegalArgumentException("No rt.jar found under " + rtJar.getParent());
-        }
+    public static List<File> getJdkClassesRoots() {
+        return JavaSdkUtil.getJdkClassesRoots(new File(System.getProperty("java.home")), true);
     }
 }

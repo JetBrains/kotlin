@@ -20,9 +20,9 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collections;
 import java.util.Map;
@@ -59,6 +59,6 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
 
     @Override
     public String toString() {
-        return annotationType.toString() + DescriptorUtils.getSortedValueArguments(this, null);
+        return DescriptorRenderer.TEXT.renderAnnotation(this);
     }
 }

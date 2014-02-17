@@ -17,10 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor;
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
 
 public class JavaVisibilities {
     private JavaVisibilities() {
@@ -67,12 +67,10 @@ public class JavaVisibilities {
             // protected static function or property
             else {
                 DeclarationDescriptor whatDeclarationDescriptor = what.getContainingDeclaration();
-                assert whatDeclarationDescriptor instanceof JavaPackageFragmentDescriptor : "Only static declarations can have protected_static visibility";
-                whatClass = DescriptorResolverUtils
-                        .getClassForCorrespondingJavaPackage((JavaPackageFragmentDescriptor) whatDeclarationDescriptor);
+                assert whatDeclarationDescriptor instanceof JavaClassStaticsPackageFragmentDescriptor
+                        : "Only static declarations can have protected_static visibility";
+                whatClass = ((JavaClassStaticsPackageFragmentDescriptor) whatDeclarationDescriptor).getCorrespondingClass();
             }
-
-            assert whatClass != null : "Couldn't find ClassDescriptor for protected static member " + what;
 
             if (DescriptorUtils.isSubclass(fromClass, whatClass)) {
                 return true;
@@ -132,8 +130,18 @@ public class JavaVisibilities {
     };
 
     private static boolean areInSamePackage(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        PackageFragmentDescriptor whatPackage = DescriptorUtils.getParentOfType(first, PackageFragmentDescriptor.class, false);
-        PackageFragmentDescriptor fromPackage = DescriptorUtils.getParentOfType(second, PackageFragmentDescriptor.class, false);
+        PackageFragmentDescriptor whatPackage = getPackageStaticsAware(first);
+        PackageFragmentDescriptor fromPackage = getPackageStaticsAware(second);
         return fromPackage != null && whatPackage != null && whatPackage.getFqName().equals(fromPackage.getFqName());
+    }
+
+    @Nullable
+    private static PackageFragmentDescriptor getPackageStaticsAware(@NotNull DeclarationDescriptor member) {
+        PackageFragmentDescriptor packageFragment = DescriptorUtils.getParentOfType(member, PackageFragmentDescriptor.class, false);
+        if (packageFragment instanceof JavaClassStaticsPackageFragmentDescriptor) {
+            ClassDescriptor classForPackage = ((JavaClassStaticsPackageFragmentDescriptor) packageFragment).getCorrespondingClass();
+            return DescriptorUtils.getParentOfType(classForPackage, PackageFragmentDescriptor.class, false);
+        }
+        return packageFragment;
     }
 }

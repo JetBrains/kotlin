@@ -21,8 +21,11 @@ import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -178,6 +181,13 @@ public class DescriptorValidator {
         public Boolean visitPackageFragmentDescriptor(
                 PackageFragmentDescriptor descriptor, DiagnosticCollector collector
         ) {
+            if (descriptor instanceof JavaClassStaticsPackageFragmentDescriptor) {
+                JavaClassDescriptor correspondingClass = ((JavaClassStaticsPackageFragmentDescriptor) descriptor).getCorrespondingClass();
+                JavaClassStaticsPackageFragmentDescriptor correspondingPackageFragment = correspondingClass.getCorrespondingPackageFragment();
+                if (correspondingPackageFragment != descriptor) {
+                    report(collector, descriptor, "Corresponding class bound to another descriptor: " + correspondingPackageFragment);
+                }
+            }
             validateScope(descriptor.getMemberScope(), collector);
             return true;
         }
@@ -222,7 +232,14 @@ public class DescriptorValidator {
                 ClassDescriptor descriptor, DiagnosticCollector collector
         ) {
             validateTypeParameters(collector, descriptor.getTypeConstructor().getParameters());
-            validateTypes(descriptor, collector, descriptor.getTypeConstructor().getSupertypes());
+
+            Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+            if (supertypes.isEmpty() && descriptor.getKind() != ClassKind.TRAIT
+                && KotlinBuiltIns.getInstance().getAny() != descriptor
+                && KotlinBuiltIns.getInstance().getNothing() != descriptor) {
+                report(collector, descriptor, "No supertypes for non-trait");
+            }
+            validateTypes(descriptor, collector, supertypes);
 
             validateType(descriptor, descriptor.getDefaultType(), collector);
 
@@ -243,6 +260,17 @@ public class DescriptorValidator {
                 if (!descriptor.getConstructors().contains(primaryConstructor)) {
                     report(collector, primaryConstructor,
                            "Primary constructor not in getConstructors() result: " + descriptor.getConstructors());
+                }
+            }
+
+            if (descriptor instanceof JavaClassDescriptor) {
+                JavaClassStaticsPackageFragmentDescriptor
+                        correspondingPackageFragment = ((JavaClassDescriptor) descriptor).getCorrespondingPackageFragment();
+                if (correspondingPackageFragment != null) {
+                    JavaClassDescriptor correspondingClass = correspondingPackageFragment.getCorrespondingClass();
+                    if (correspondingClass != descriptor) {
+                        report(collector, descriptor, "Corresponding package bound to another descriptor: " + correspondingClass);
+                    }
                 }
             }
 

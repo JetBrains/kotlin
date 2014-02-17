@@ -30,7 +30,7 @@ public class GenerateInjectorsTest extends TestCase {
 
     public static TestSuite suite() throws IOException {
         TestSuite suite = new TestSuite();
-        for (DependencyInjectorGenerator generator : GenerateInjectors.createGenerators()) {
+        for (DependencyInjectorGenerator generator : InjectorsPackage.createInjectorGenerators()) {
             suite.addTest(new GenerateInjectorsTest(generator));
         }
         return suite;

@@ -42,6 +42,6 @@ public class JavaCompletionHandlerTest extends CompletionTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/injava/handlers/").getPath() + File.separator;
+        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/injava").getPath() + File.separator;
     }
 }

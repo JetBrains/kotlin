@@ -29,10 +29,6 @@ public class JetValueArgument extends JetElementImpl implements ValueArgument {
         super(node);
     }
 
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitArgument(this);
-    }
-
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitArgument(this, data);

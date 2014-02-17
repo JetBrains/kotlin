@@ -36,11 +36,6 @@ public class EmptyPackageMemberDeclarationProvider implements PackageMemberDecla
     private EmptyPackageMemberDeclarationProvider() {}
 
     @Override
-    public boolean isPackageDeclared(@NotNull Name name) {
-        return false;
-    }
-
-    @Override
     public Collection<FqName> getAllDeclaredPackages() {
         return Collections.emptyList();
     }

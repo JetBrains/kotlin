@@ -21,11 +21,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -35,9 +32,11 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
@@ -310,22 +309,6 @@ public class DescriptorUtils {
         return superClassDescriptor.equals(KotlinBuiltIns.getInstance().getAny());
     }
 
-    public static boolean inStaticContext(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof PackageFragmentDescriptor) {
-            return true;
-        }
-        if (containingDeclaration instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-
-            if (classDescriptor.getKind().isSingleton()) {
-                return inStaticContext(classDescriptor.getContainingDeclaration());
-            }
-
-        }
-        return false;
-    }
-
     public static boolean isEnumClassObject(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.CLASS_OBJECT) {
             DeclarationDescriptor containing = descriptor.getContainingDeclaration();
@@ -359,23 +342,6 @@ public class DescriptorUtils {
     @NotNull
     public static Visibility getSyntheticClassObjectVisibility() {
         return Visibilities.PUBLIC;
-    }
-
-    @NotNull
-    public static List<String> getSortedValueArguments(
-            @NotNull AnnotationDescriptor descriptor,
-            @Nullable DescriptorRenderer rendererForTypesIfNecessary
-    ) {
-        List<String> resultList = Lists.newArrayList();
-        for (Map.Entry<ValueParameterDescriptor, CompileTimeConstant<?>> entry : descriptor.getAllValueArguments().entrySet()) {
-            CompileTimeConstant<?> value = entry.getValue();
-            String typeSuffix = rendererForTypesIfNecessary == null
-                                ? ""
-                                : ": " + rendererForTypesIfNecessary.renderType(value.getType(KotlinBuiltIns.getInstance()));
-            resultList.add(entry.getKey().getName().asString() + " = " + value.toString() + typeSuffix);
-        }
-        Collections.sort(resultList);
-        return resultList;
     }
 
     @Nullable
@@ -496,19 +462,11 @@ public class DescriptorUtils {
     }
 
     /**
-     * @return true iff {@code descriptor}'s first non-class container is a namespace
+     * @return true iff {@code descriptor}'s first non-class container is a package
      */
     public static boolean isTopLevelOrInnerClass(@NotNull ClassDescriptor descriptor) {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         return isTopLevelDeclaration(descriptor) ||
                containing instanceof ClassDescriptor && isTopLevelOrInnerClass((ClassDescriptor) containing);
-    }
-
-    @TestOnly
-    @NotNull
-    public static PackageFragmentDescriptor getExactlyOnePackageFragment(@NotNull ModuleDescriptor module, @NotNull FqName fqName) {
-        List<PackageFragmentDescriptor> packageFragments = module.getPackageFragmentProvider().getPackageFragments(fqName);
-        assert packageFragments.size() == 1 : "Exactly one package fragment expected: " + packageFragments;
-        return packageFragments.get(0);
     }
 }

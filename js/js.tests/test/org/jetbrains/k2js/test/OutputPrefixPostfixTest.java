@@ -77,11 +77,11 @@ public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
     protected void runFunctionOutputTest(
             @NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull String kotlinFilename,
-            @NotNull String namespaceName,
+            @NotNull String packageName,
             @NotNull String functionName,
             @NotNull Object expectedResult
     ) throws Exception {
-        super.runFunctionOutputTest(ecmaVersions, kotlinFilename, namespaceName, functionName, expectedResult);
+        super.runFunctionOutputTest(ecmaVersions, kotlinFilename, packageName, functionName, expectedResult);
 
         for (EcmaVersion ecmaVersion : ecmaVersions) {
             String output = FileUtil.loadFile(new File(getOutputFilePath(filename, ecmaVersion)));

@@ -32,7 +32,7 @@ import java.io.File
 import java.net.URLClassLoader
 import java.util.HashSet
 
-object JavaToKotlinTranslator {
+public object JavaToKotlinTranslator {
     private val DISPOSABLE: Disposable? = Disposer.newDisposable()
 
     private fun createFile(text: String): PsiFile? {
@@ -40,14 +40,16 @@ object JavaToKotlinTranslator {
         return PsiFileFactory.getInstance(javaCoreEnvironment?.getProject())?.createFileFromText("test.java", JavaLanguage.INSTANCE, text)
     }
 
-    public fun createFile(project: Project, text: String): PsiFile? {
+    fun createFile(project: Project, text: String): PsiFile? {
         return PsiFileFactory.getInstance(project)?.createFileFromText("test.java", JavaLanguage.INSTANCE, text)
     }
 
     fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {
         val applicationEnvironment = JavaCoreApplicationEnvironment(DISPOSABLE)
         val javaCoreEnvironment = JavaCoreProjectEnvironment(DISPOSABLE, applicationEnvironment)
-        javaCoreEnvironment.addJarToClassPath(PathUtil.findRtJar())
+        for (root in PathUtil.getJdkClassesRoots()) {
+            javaCoreEnvironment.addJarToClassPath(root)
+        }
         val annotations: File? = findAnnotations()
         if (annotations != null && annotations.exists()) {
             javaCoreEnvironment.addJarToClassPath(annotations)
@@ -70,7 +72,7 @@ object JavaToKotlinTranslator {
                 .trim()
     }
 
-    public fun findAnnotations(): File? {
+    fun findAnnotations(): File? {
         var classLoader = javaClass<JavaToKotlinTranslator>().getClassLoader()
         while (classLoader != null) {
             val loader = classLoader
@@ -96,26 +98,15 @@ object JavaToKotlinTranslator {
     fun generateKotlinCode(javaCode: String): String {
         val file = createFile(javaCode)
         if (file is PsiJavaFile) {
-            val converter = Converter(file.getProject())
+            val converter = Converter(file.getProject(), TestSettings)
             setClassIdentifiers(converter, file)
-            return prettify(converter.fileToFile(file).toKotlin())
+            return prettify(converter.convertFile(file).toKotlin())
         }
-        return ""
-    }
-
-    fun generateKotlinCodeWithCompatibilityImport(javaCode: String): String {
-        val file = createFile(javaCode)
-        if (file is PsiJavaFile) {
-            val converter = Converter(file.getProject())
-            setClassIdentifiers(converter, file)
-            return prettify(converter.fileToFileWithCompatibilityImport(file).toKotlin())
-        }
-
         return ""
     }
 }
 
-public fun main(args: Array<String>) {
+fun main(args: Array<String>) {
     if (args.size == 1) {
         try {
             val kotlinCode = JavaToKotlinTranslator.generateKotlinCode(args[0])

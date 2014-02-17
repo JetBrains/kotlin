@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
@@ -41,7 +40,7 @@ import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImpl implements TypeParameterDescriptor {
     public static TypeParameterDescriptor createWithDefaultBound(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             boolean reified,
             @NotNull Variance variance,
             @NotNull Name name,
@@ -54,7 +53,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
 
     public static TypeParameterDescriptorImpl createForFurtherModification(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             boolean reified,
             @NotNull Variance variance,
             @NotNull Name name,
@@ -78,7 +77,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
 
     private TypeParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             boolean reified,
             @NotNull Variance variance,
             @NotNull Name name,
@@ -220,7 +219,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
         //checkInitialized();
         if (defaultType == null) {
             defaultType = new JetTypeImpl(
-                            Collections.<AnnotationDescriptor>emptyList(),
+                            Annotations.EMPTY,
                             getTypeConstructor(),
                             TypeUtils.hasNullableLowerBound(this),
                             Collections.<TypeProjection>emptyList(),

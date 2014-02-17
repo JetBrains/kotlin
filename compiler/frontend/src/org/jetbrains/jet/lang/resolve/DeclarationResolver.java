@@ -26,7 +26,10 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -88,23 +91,23 @@ public class DeclarationResolver {
 
 
     public void process(@NotNull JetScope rootScope) {
-        checkModifiersAndAnnotationsInNamespaceHeaders();
+        checkModifiersAndAnnotationsInPackageDirectives();
         resolveAnnotationConstructors();
         resolveConstructorHeaders();
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
         createFunctionsForDataClasses();
         importsResolver.processMembersImports();
-        checkRedeclarationsInNamespaces();
+        checkRedeclarationsInPackages();
         checkRedeclarationsInInnerClassNames();
     }
 
-    private void checkModifiersAndAnnotationsInNamespaceHeaders() {
+    private void checkModifiersAndAnnotationsInPackageDirectives() {
         for (JetFile file : context.getPackageFragments().keySet()) {
-            JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
-            if (namespaceHeader == null) continue;
+            JetPackageDirective packageDirective = file.getPackageDirective();
+            if (packageDirective == null) continue;
 
-            PsiElement firstChild = namespaceHeader.getFirstChild();
+            PsiElement firstChild = packageDirective.getFirstChild();
             if (!(firstChild instanceof JetModifierList)) continue;
             JetModifierList modifierList = (JetModifierList) firstChild;
 
@@ -151,19 +154,19 @@ public class DeclarationResolver {
             JetModifierList modifierList = entry.getKey().getModifierList();
             if (modifierList != null) {
                 MutableClassDescriptor descriptor = entry.getValue();
-                descriptor.getAnnotations().addAll(annotationResolver.resolveAnnotationsWithoutArguments(
+                descriptor.addAnnotations(annotationResolver.resolveAnnotationsWithoutArguments(
                         descriptor.getScopeForSupertypeResolution(), modifierList, trace));
             }
         }
     }
 
     private void resolveFunctionAndPropertyHeaders() {
-        for (Map.Entry<JetFile, WritableScope> entry : context.getNamespaceScopes().entrySet()) {
-            JetFile namespace = entry.getKey();
-            WritableScope namespaceScope = entry.getValue();
-            NamespaceLikeBuilder namespaceDescriptor = context.getPackageFragments().get(namespace).getBuilder();
+        for (Map.Entry<JetFile, WritableScope> entry : context.getFileScopes().entrySet()) {
+            JetFile file = entry.getKey();
+            WritableScope fileScope = entry.getValue();
+            PackageLikeBuilder packageBuilder = context.getPackageFragments().get(file).getBuilder();
 
-            resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceScope, namespaceScope, namespaceDescriptor);
+            resolveFunctionAndPropertyHeaders(file.getDeclarations(), fileScope, fileScope, fileScope, packageBuilder);
         }
         for (Map.Entry<JetClassOrObject, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
@@ -190,20 +193,20 @@ public class DeclarationResolver {
             @NotNull final JetScope scopeForFunctions,
             @NotNull final JetScope scopeForPropertyInitializers,
             @NotNull final JetScope scopeForPropertyAccessors,
-            @NotNull final NamespaceLikeBuilder namespaceLike)
+            @NotNull final PackageLikeBuilder packageLike)
     {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamedFunction(@NotNull JetNamedFunction function) {
                     SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(
-                            namespaceLike.getOwnerForChildren(),
+                            packageLike.getOwnerForChildren(),
                             scopeForFunctions,
                             function,
                             trace,
                             context.getOuterDataFlowInfo()
                     );
-                    namespaceLike.addFunctionDescriptor(functionDescriptor);
+                    packageLike.addFunctionDescriptor(functionDescriptor);
                     context.getFunctions().put(function, functionDescriptor);
                     context.registerDeclaringScope(function, scopeForFunctions);
                 }
@@ -211,12 +214,12 @@ public class DeclarationResolver {
                 @Override
                 public void visitProperty(@NotNull JetProperty property) {
                     PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                            namespaceLike.getOwnerForChildren(),
+                            packageLike.getOwnerForChildren(),
                             scopeForPropertyInitializers,
                             property,
                             trace,
                             context.getOuterDataFlowInfo());
-                    namespaceLike.addPropertyDescriptor(propertyDescriptor);
+                    packageLike.addPropertyDescriptor(propertyDescriptor);
                     context.getProperties().put(property, propertyDescriptor);
                     context.registerDeclaringScope(property, scopeForPropertyInitializers);
                     JetPropertyAccessor getter = property.getGetter();
@@ -277,6 +280,8 @@ public class DeclarationResolver {
             }
         }
 
+        boolean isAnnotationClass = DescriptorUtils.isAnnotationClass(classDescriptor);
+
         // TODO : not all the parameters are real properties
         JetScope memberScope = classDescriptor.getScopeForSupertypeResolution();
         ConstructorDescriptor constructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass, trace);
@@ -298,6 +303,9 @@ public class DeclarationResolver {
                     context.getPrimaryConstructorParameterProperties().put(parameter, propertyDescriptor);
                 }
                 else {
+                    if (isAnnotationClass) {
+                        trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter));
+                    }
                     notProperties.add(valueParameterDescriptor);
                 }
             }
@@ -309,7 +317,7 @@ public class DeclarationResolver {
         }
     }
 
-    private void checkRedeclarationsInNamespaces() {
+    private void checkRedeclarationsInPackages() {
         for (MutablePackageFragmentDescriptor packageFragment : Sets.newHashSet(context.getPackageFragments().values())) {
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
             JetScope packageViewScope = packageView.getMemberScope();
@@ -341,21 +349,22 @@ public class DeclarationResolver {
         }
     }
 
-    private Collection<PsiElement> getDeclarationsByDescriptor(DeclarationDescriptor declarationDescriptor) {
+    @NotNull
+    private Collection<PsiElement> getDeclarationsByDescriptor(@NotNull DeclarationDescriptor declarationDescriptor) {
         Collection<PsiElement> declarations;
         if (declarationDescriptor instanceof PackageViewDescriptor) {
             final PackageViewDescriptor aPackage = (PackageViewDescriptor)declarationDescriptor;
             Collection<JetFile> files = trace.get(BindingContext.PACKAGE_TO_FILES, aPackage.getFqName());
 
             if (files == null) {
-                throw new IllegalStateException("declarations corresponding to " + aPackage + " are not found");
+                return Collections.emptyList(); // package can be defined out of Kotlin sources, e. g. in library or Java code
             }
 
             declarations = Collections2.transform(files, new Function<JetFile, PsiElement>() {
                 @Override
                 public PsiElement apply(@Nullable JetFile file) {
                     assert file != null : "File is null for aPackage " + aPackage;
-                    return file.getNamespaceHeader().getNameIdentifier();
+                    return file.getPackageDirective().getNameIdentifier();
                 }
             });
         }

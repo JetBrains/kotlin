@@ -1,8 +1,0 @@
-<root>
-    <item name='org.bouncycastle.jcajce.provider.keystore.BC.Mappings void configure(org.bouncycastle.jcajce.provider.config.ConfigurableProvider) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.bouncycastle.jcajce.provider.keystore.PKCS12.Mappings void configure(org.bouncycastle.jcajce.provider.config.ConfigurableProvider) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

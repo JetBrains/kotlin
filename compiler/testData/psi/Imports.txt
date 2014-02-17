@@ -1,5 +1,5 @@
 JetFile: Imports.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION

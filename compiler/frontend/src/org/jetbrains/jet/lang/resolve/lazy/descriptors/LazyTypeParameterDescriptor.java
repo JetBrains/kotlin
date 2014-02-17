@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,8 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.lazy.LazyDescriptor;
+import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -32,7 +33,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Set;
 
-public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements TypeParameterDescriptor, LazyDescriptor {
+public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements TypeParameterDescriptor, LazyEntity {
     private final ResolveSession resolveSession;
 
     private final JetTypeParameter jetTypeParameter;
@@ -100,7 +101,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
     }
 
     private JetType resolveBoundType(@NotNull JetTypeReference boundTypeReference) {
-        return resolveSession.getInjector().getTypeResolver()
+        return resolveSession.getTypeResolver()
                     .resolveType(getContainingDeclaration().getScopeForClassHeaderResolution(), boundTypeReference,
                                  resolveSession.getTrace(), false);
     }
@@ -113,7 +114,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
     @Override
     public void forceResolveAllContents() {
-        getAnnotations();
+        ForceResolveUtil.forceResolveAllContents(getAnnotations());
         getClassObjectType();
         getContainingDeclaration();
         getDefaultType();

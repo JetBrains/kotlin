@@ -16,15 +16,23 @@
 
 package org.jetbrains.k2js.translate.utils;
 
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isOverride;
 
 public final class AnnotationsUtils {
 
@@ -65,15 +73,35 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    public static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor descriptor) {
-        for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
-            if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
-                continue;
-            }
-            String name = getNameForAnnotatedObject(descriptor, annotation);
-            return name != null ? name : descriptor.getName().asString();
+    public static String getNameForAnnotatedObjectWithOverrides(@NotNull DeclarationDescriptor declarationDescriptor) {
+        List<DeclarationDescriptor> descriptors;
+
+        if (declarationDescriptor instanceof CallableMemberDescriptor &&
+            isOverride((CallableMemberDescriptor) declarationDescriptor)) {
+
+            Set<CallableMemberDescriptor> overriddenDeclarations =
+                    BindingContextUtils.getAllOverriddenDeclarations((CallableMemberDescriptor) declarationDescriptor);
+
+            descriptors = ContainerUtil.mapNotNull(overriddenDeclarations, new Function<CallableMemberDescriptor, DeclarationDescriptor>() {
+                @Override
+                public DeclarationDescriptor fun(CallableMemberDescriptor descriptor) {
+                    return isOverride(descriptor) ? null : descriptor;
+                }
+            });
+        }
+        else {
+            descriptors = ContainerUtil.newArrayList(declarationDescriptor);
         }
 
+        for (DeclarationDescriptor descriptor : descriptors) {
+            for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
+                if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
+                    continue;
+                }
+                String name = getNameForAnnotatedObject(descriptor, annotation);
+                return name != null ? name : descriptor.getName().asString();
+            }
+        }
         return null;
     }
 
@@ -85,20 +113,7 @@ public final class AnnotationsUtils {
 
     @Nullable
     private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor, @NotNull String fqn) {
-        for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
-            if (getAnnotationClassFQName(annotationDescriptor).equals(fqn)) {
-                return annotationDescriptor;
-            }
-        }
-        return null;
-    }
-
-    @NotNull
-    private static String getAnnotationClassFQName(@NotNull AnnotationDescriptor annotationDescriptor) {
-        DeclarationDescriptor annotationDeclaration =
-                annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        assert annotationDeclaration != null : "Annotation supposed to have a declaration";
-        return DescriptorUtils.getFqName(annotationDeclaration).asString();
+        return descriptor.getAnnotations().findAnnotation(new FqName(fqn));
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {

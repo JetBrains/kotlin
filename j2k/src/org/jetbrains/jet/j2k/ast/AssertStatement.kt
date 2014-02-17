@@ -17,12 +17,12 @@
 package org.jetbrains.jet.j2k.ast
 
 
-public open class AssertStatement(val condition: Expression, val detail: Expression) : Statement() {
-    public override fun toKotlin(): String {
-        var detail: String? = (if (detail != Expression.EMPTY_EXPRESSION)
-            "(" + detail.toKotlin() + ")"
+class AssertStatement(val condition: Expression, val detail: Expression) : Statement() {
+    override fun toKotlin(): String {
+        val lazyStringMessage = if (detail != Expression.Empty)
+            " {" + detail.toKotlin() + "}"
         else
-            "")
-        return "assert" + detail + " {" + condition.toKotlin() + "}"
+            ""
+        return "assert(${condition.toKotlin()})$lazyStringMessage"
     }
 }

@@ -86,6 +86,6 @@ public final class StringTest extends AbstractExpressionTest {
     }
 
     public void testExtensionMethods() throws Exception {
-        fooBoxTest();
+        checkFooBoxIsOk();
     }
 }

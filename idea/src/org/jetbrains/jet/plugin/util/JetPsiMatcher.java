@@ -237,7 +237,7 @@ public class JetPsiMatcher {
         }
 
         @Override
-        public Boolean visitWhenConditionExpression(@NotNull JetWhenConditionWithExpression condition, JetElement data) {
+        public Boolean visitWhenConditionWithExpression(@NotNull JetWhenConditionWithExpression condition, JetElement data) {
             return checkElementMatch(condition.getExpression(), ((JetWhenConditionWithExpression) data).getExpression());
         }
 

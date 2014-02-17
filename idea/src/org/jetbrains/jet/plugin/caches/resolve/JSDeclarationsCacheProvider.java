@@ -77,7 +77,7 @@ class JSDeclarationsCacheProvider extends DeclarationsCacheProvider {
                     project,
                     cachedKey,
                     declarationsProvider,
-                    false
+                    true
             );
         }
     }

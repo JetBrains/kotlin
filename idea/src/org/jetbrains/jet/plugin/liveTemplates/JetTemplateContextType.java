@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.liveTemplates;
 
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
@@ -32,8 +31,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-import java.util.Arrays;
-
 public abstract class JetTemplateContextType extends TemplateContextType {
     protected JetTemplateContextType(@NotNull @NonNls String id, @NotNull String presentableName, @Nullable java.lang.Class<? extends TemplateContextType> baseContextType) {
         super(id, presentableName, baseContextType);
@@ -46,7 +43,7 @@ public abstract class JetTemplateContextType extends TemplateContextType {
             if (element instanceof PsiWhiteSpace || element instanceof PsiComment) {
                 return false;
             }
-            else if (PsiTreeUtil.getParentOfType(element, JetNamespaceHeader.class) != null
+            else if (PsiTreeUtil.getParentOfType(element, JetPackageDirective.class) != null
                     || PsiTreeUtil.getParentOfType(element, JetImportDirective.class) != null) {
                 return false;
             }
@@ -84,9 +81,9 @@ public abstract class JetTemplateContextType extends TemplateContextType {
         }
     }
 
-    public static class Namespace extends JetTemplateContextType {
-        public Namespace() {
-            super("KOTLIN_NAMESPACE", "Namespace", Generic.class);
+    public static class TopLevel extends JetTemplateContextType {
+        public TopLevel() {
+            super("KOTLIN_TOPLEVEL", "Top-level", Generic.class);
         }
 
         @Override

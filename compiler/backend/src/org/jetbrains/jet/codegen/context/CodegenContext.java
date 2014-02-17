@@ -26,7 +26,7 @@ import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -61,7 +61,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     public final MutableClosure closure;
 
-    private HashMap<DeclarationDescriptor, DeclarationDescriptor> accessors;
+    private Map<DeclarationDescriptor, DeclarationDescriptor> accessors;
 
     private Map<DeclarationDescriptor, CodegenContext> childContexts;
 
@@ -101,16 +101,17 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return thisDescriptor != null;
     }
 
-    public DeclarationDescriptor getClassOrNamespaceDescriptor() {
+    @NotNull
+    public ClassOrPackageFragmentDescriptor getClassOrPackageDescriptor() {
         CodegenContext c = this;
         while (true) {
             assert c != null;
             DeclarationDescriptor contextDescriptor = c.getContextDescriptor();
-            if (!(contextDescriptor instanceof ClassDescriptor) && !(contextDescriptor instanceof PackageFragmentDescriptor)) {
-                c = c.getParentContext();
+            if (contextDescriptor instanceof ClassOrPackageFragmentDescriptor) {
+                return (ClassOrPackageFragmentDescriptor) contextDescriptor;
             }
             else {
-                return contextDescriptor;
+                c = c.getParentContext();
             }
         }
     }
@@ -133,14 +134,15 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     private StackValue getOuterExpression(@Nullable StackValue prefix, boolean ignoreNoOuter, boolean captureThis) {
         if (lazyOuterExpression == null || lazyOuterExpression.invoke() == null) {
-            if (ignoreNoOuter) {
-                return null;
+            if (!ignoreNoOuter) {
+                throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor());
             }
-            else {
-                throw new UnsupportedOperationException();
-            }
+            return null;
         }
         if (captureThis) {
+            if (closure == null) {
+                throw new IllegalStateException("Can't capture this for context without closure: " + getContextDescriptor());
+            }
             closure.setCaptureThis();
         }
         return prefix != null ? StackValue.composed(prefix, lazyOuterExpression.invoke()) : lazyOuterExpression.invoke();
@@ -172,24 +174,19 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public ClassContext intoAnonymousClass(
-            @NotNull ClassDescriptor descriptor,
-            @NotNull ExpressionCodegen expressionCodegen
-    ) {
-        JetTypeMapper typeMapper = expressionCodegen.getState().getTypeMapper();
-        return new AnonymousClassContext(typeMapper, descriptor, OwnerKind.IMPLEMENTATION, this,
-                                         expressionCodegen);
+    public ClassContext intoAnonymousClass(@NotNull ClassDescriptor descriptor, @NotNull ExpressionCodegen codegen) {
+        return new AnonymousClassContext(codegen.getState().getTypeMapper(), descriptor, OwnerKind.IMPLEMENTATION, this, codegen);
     }
 
     @NotNull
     public MethodContext intoFunction(FunctionDescriptor descriptor) {
-        return new MethodContext(descriptor, getContextKind(), this);
+        return new MethodContext(descriptor, getContextKind(), this, null);
     }
 
     @NotNull
     public ConstructorContext intoConstructor(@Nullable ConstructorDescriptor descriptor, @Nullable MutableClosure closure) {
         if (descriptor == null) {
-            descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Collections.<AnnotationDescriptor>emptyList(), true)
+            descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Annotations.EMPTY, true)
                     .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                 Visibilities.PUBLIC);
         }
@@ -211,16 +208,18 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return new ClosureContext(typeMapper, funDescriptor, classDescriptor, this, localLookup);
     }
 
-    public FrameMap prepareFrame(JetTypeMapper mapper) {
+    @NotNull
+    public FrameMap prepareFrame(@NotNull JetTypeMapper typeMapper) {
         FrameMap frameMap = new FrameMap();
 
-        if (getContextKind() != OwnerKind.NAMESPACE) {
+        if (getContextKind() != OwnerKind.PACKAGE) {
             frameMap.enterTemp(OBJECT_TYPE);  // 0 slot for this
         }
 
         CallableDescriptor receiverDescriptor = getCallableDescriptorWithReceiver();
         if (receiverDescriptor != null) {
-            Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType());
+            //noinspection ConstantConditions
+            Type type = typeMapper.mapType(receiverDescriptor.getReceiverParameter().getType());
             frameMap.enterTemp(type);  // Next slot for receiver
         }
 
@@ -322,7 +321,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             }
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
-                if (aCase.isCase(d, state)) {
+                if (aCase.isCase(d)) {
                     Type classType = state.getBindingContext().get(ASM_TYPE, getThisDescriptor());
                     StackValue innerValue = aCase.innerValue(d, enclosingLocalLookup, state, closure, classType);
                     if (innerValue == null) {
@@ -366,27 +365,26 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return (FunctionDescriptor) accessibleDescriptorIfNeeded(fd, true);
     }
 
-    @NotNull
-    public void recordSyntheticAccessorIfNeeded(@NotNull FunctionDescriptor fd, @NotNull JetTypeMapper typeMapper) {
-        if (fd instanceof ConstructorDescriptor || needSyntheticAccessorInBindingTrace(fd, typeMapper)) {
+    public void recordSyntheticAccessorIfNeeded(@NotNull FunctionDescriptor fd, @NotNull BindingContext bindingContext) {
+        if (fd instanceof ConstructorDescriptor || needSyntheticAccessorInBindingTrace(fd, bindingContext)) {
             accessibleDescriptorIfNeeded(fd, false);
         }
     }
 
-    @NotNull
-    public void recordSyntheticAccessorIfNeeded(PropertyDescriptor propertyDescriptor, JetTypeMapper typeMapper) {
+    public void recordSyntheticAccessorIfNeeded(@NotNull PropertyDescriptor propertyDescriptor, @NotNull BindingContext typeMapper) {
         if (needSyntheticAccessorInBindingTrace(propertyDescriptor, typeMapper)) {
             accessibleDescriptorIfNeeded(propertyDescriptor, false);
         }
     }
 
-    private boolean needSyntheticAccessorInBindingTrace(@NotNull CallableMemberDescriptor descriptor, @NotNull JetTypeMapper typeMapper) {
-        Boolean result = typeMapper.getBindingContext().get(BindingContext.NEED_SYNTHETIC_ACCESSOR, descriptor);
-        return result == null ? false : result.booleanValue();
+    private static boolean needSyntheticAccessorInBindingTrace(
+            @NotNull CallableMemberDescriptor descriptor,
+            @NotNull BindingContext bindingContext
+    ) {
+        return Boolean.TRUE.equals(bindingContext.get(BindingContext.NEED_SYNTHETIC_ACCESSOR, descriptor));
     }
 
-    @NotNull
-    private int getAccessFlags(CallableMemberDescriptor descriptor) {
+    private static int getAccessFlags(@NotNull CallableMemberDescriptor descriptor) {
         int flag = getVisibilityAccessFlag(descriptor);
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
@@ -408,7 +406,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         CodegenContext descriptorContext = null;
-        if (!fromOutsideContext || getClassOrNamespaceDescriptor() != descriptor.getContainingDeclaration()) {
+        if (!fromOutsideContext || getClassOrPackageDescriptor() != descriptor.getContainingDeclaration()) {
             DeclarationDescriptor enclosed = descriptor.getContainingDeclaration();
             boolean isClassObjectMember = DescriptorUtils.isClassObject(enclosed);
             //go upper

@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
@@ -86,7 +86,7 @@ public class TypeUtils {
 
         @NotNull
         @Override
-        public List<AnnotationDescriptor> getAnnotations() {
+        public Annotations getAnnotations() {
             throw new IllegalStateException(name);
         }
 
@@ -116,10 +116,6 @@ public class TypeUtils {
 
     @NotNull
     public static JetType makeNullableAsSpecified(@NotNull JetType type, boolean nullable) {
-        if (type.isNullable() == nullable) {
-            return type;
-        }
-
         // Wrapping serves two purposes here
         // 1. It's requires less memory than copying with a changed nullability flag: a copy has many fields, while a wrapper has only one
         // 2. It preserves laziness of types
@@ -127,6 +123,11 @@ public class TypeUtils {
         // Unwrap to avoid long delegation call chains
         if (type instanceof AbstractTypeWithKnownNullability) {
             return makeNullableAsSpecified(((AbstractTypeWithKnownNullability) type).delegate, nullable);
+        }
+
+        // checking to preserve laziness
+        if (!(type instanceof LazyType) && type.isNullable() == nullable) {
+            return type;
         }
 
         return nullable ? new NullableType(type) : new NotNullType(type);
@@ -198,10 +199,7 @@ public class TypeUtils {
         }
 
 
-        List<AnnotationDescriptor> noAnnotations = Collections.<AnnotationDescriptor>emptyList();
-        TypeConstructor constructor = new IntersectionTypeConstructor(
-                noAnnotations,
-                resultingTypes);
+        TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.EMPTY, resultingTypes);
 
         JetScope[] scopes = new JetScope[resultingTypes.size()];
         int i = 0;
@@ -211,11 +209,11 @@ public class TypeUtils {
         }
 
         return new JetTypeImpl(
-                noAnnotations,
+                Annotations.EMPTY,
                 constructor,
                 allNullable,
                 Collections.<TypeProjection>emptyList(),
-                new ChainedScope(null, scopes)); // TODO : check intersectibility, don't use a chanied scope
+                new ChainedScope(null, "member scope for intersection type " + constructor, scopes)); // TODO : check intersectibility, don't use a chanied scope
     }
 
     private static class TypeUnifier {
@@ -359,7 +357,7 @@ public class TypeUtils {
         TypeConstructor typeConstructor = classDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
         return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 typeConstructor,
                 false,
                 arguments,
@@ -528,7 +526,7 @@ public class TypeUtils {
     private static boolean equalsOrContainsAsArgument(@Nullable JetType type, @NotNull Set<JetType> possibleArgumentTypes) {
         if (type == null) return false;
         if (possibleArgumentTypes.contains(type)) return true;
-        if (type instanceof NamespaceType) return false;
+        if (type instanceof PackageType) return false;
         for (TypeProjection projection : type.getArguments()) {
             if (equalsOrContainsAsArgument(projection.getType(), possibleArgumentTypes)) return true;
         }
@@ -766,7 +764,7 @@ public class TypeUtils {
 
         @Override
         @NotNull
-        public List<AnnotationDescriptor> getAnnotations() {
+        public Annotations getAnnotations() {
             return delegate.getAnnotations();
         }
     }

@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="util.runtime" exported="" />
     <orderEntry type="module" module-name="Kotlin" exported="" />
     <orderEntry type="library" exported="" name="kotlin-runtime" level="project" />
+    <orderEntry type="library" name="jps-model" level="project" />
   </component>
 </module>
 

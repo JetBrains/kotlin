@@ -64,7 +64,7 @@ public class SpecialFiles {
 
         excludedFiles.add("nestedInPackage.kt"); // Cannot change package name
         excludedFiles.add("importNestedClass.kt"); // Cannot change package name
-        excludedFiles.add("namespaceQualifiedMethod.kt"); // Cannot change package name
+        excludedFiles.add("packageQualifiedMethod.kt"); // Cannot change package name
         excludedFiles.add("classObjectToString.kt"); // Cannot change package name
 
         excludedFiles.add("kt326.kt"); // Commented
@@ -80,6 +80,8 @@ public class SpecialFiles {
 
         excludedFiles.add("genericBackingFieldSignature.kt"); // Wrong signature after package renaming
         excludedFiles.add("genericMethodSignature.kt"); // Wrong signature after package renaming
+
+        excludedFiles.add("classpath.kt"); // Some classes are not visible on android
     }
 
     private SpecialFiles() {

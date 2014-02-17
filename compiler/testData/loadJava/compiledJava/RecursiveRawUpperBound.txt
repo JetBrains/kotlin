@@ -1,0 +1,4 @@
+package test
+
+public trait RecursiveRawUpperBound</*0*/ T : test.RecursiveRawUpperBound<out jet.Any?>?> : java.lang.Object {
+}

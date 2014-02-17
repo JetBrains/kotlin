@@ -3,7 +3,7 @@ package test.browser
 import js.dom.html.document
 import org.w3c.dom.Node
 
-fun foo(): String {
+fun box(): String {
     val element = document.getElementById("foo")!!
     val textNode = document.createTextNode("Some Dynamically Created Content!!!")
     element.appendChild(textNode)

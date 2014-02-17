@@ -1,8 +1,5 @@
 package java.util
 
-library("collectionsMax")
-public fun max<T>(col: Collection<T>, comp: Comparator<T>): T = js.noImpl
-
 library
 public trait Comparator<T> {
     fun compare(obj1: T, obj2: T): Int;
@@ -35,11 +32,9 @@ public abstract class AbstractList<E>() : AbstractCollection<E>(), MutableList<E
     override fun set(index: Int, element: E): E = js.noImpl
 
     override fun add(e: E): Boolean = js.noImpl
-    library("addAt")
     override fun add(index: Int, element: E): Unit = js.noImpl
     override fun addAll(index: Int, c: Collection<E>): Boolean = js.noImpl
 
-    library("removeAt")
     override fun remove(index: Int): E = js.noImpl
 
     override fun indexOf(o: Any?): Int = js.noImpl

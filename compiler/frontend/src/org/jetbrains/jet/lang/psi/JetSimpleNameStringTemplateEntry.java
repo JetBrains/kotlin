@@ -26,11 +26,6 @@ public class JetSimpleNameStringTemplateEntry extends JetStringTemplateEntryWith
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitSimpleNameStringTemplateEntry(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitSimpleNameStringTemplateEntry(this, data);
     }

@@ -30,6 +30,7 @@ public class AnalyzeExhaust {
         return new AnalyzeExhaust(bindingContext, module, null, null);
     }
 
+    @NotNull
     public static AnalyzeExhaust success(@NotNull BindingContext bindingContext,
             @Nullable BodiesResolveContext bodiesResolveContext,
             @NotNull ModuleDescriptor module
@@ -37,6 +38,7 @@ public class AnalyzeExhaust {
         return new AnalyzeExhaust(bindingContext, module, bodiesResolveContext, null);
     }
 
+    @NotNull
     public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
         return new AnalyzeExhaust(bindingContext, ErrorUtils.getErrorModule(), null, error);
     }

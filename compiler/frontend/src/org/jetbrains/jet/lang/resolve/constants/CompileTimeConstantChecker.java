@@ -23,10 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetConstantExpression;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -137,9 +135,9 @@ public class CompileTimeConstantChecker {
             return false;
         }
 
-        CompileTimeConstant<?> compileTimeConstant = parseCharValue(expression);
-        if (compileTimeConstant instanceof ErrorCharValueWithDiagnostic) {
-            return reportError(((ErrorCharValueWithDiagnostic) compileTimeConstant).getDiagnostic());
+        Diagnostic diagnostic = parseCharacter(expression).getDiagnostic();
+        if (diagnostic != null) {
+            return reportError(diagnostic);
         }
         return false;
     }
@@ -152,30 +150,30 @@ public class CompileTimeConstantChecker {
     }
 
     @NotNull
-    private static CompileTimeConstant<?> parseCharValue(@NotNull JetConstantExpression expression) {
+    private static CharacterWithDiagnostic parseCharacter(@NotNull JetConstantExpression expression) {
         String text = expression.getText();
         // Strip the quotes
         if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
-            return createErrorValue(INCORRECT_CHARACTER_LITERAL.on(expression));
+            return createErrorCharacter(INCORRECT_CHARACTER_LITERAL.on(expression));
         }
         text = text.substring(1, text.length() - 1); // now there're no quotes
 
         if (text.length() == 0) {
-            return createErrorValue(EMPTY_CHARACTER_LITERAL.on(expression));
+            return createErrorCharacter(EMPTY_CHARACTER_LITERAL.on(expression));
         }
 
         if (text.charAt(0) != '\\') {
             // No escape
             if (text.length() == 1) {
-                return new CharValue(text.charAt(0));
+                return new CharacterWithDiagnostic(text.charAt(0));
             }
-            return createErrorValue(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.on(expression, expression));
+            return createErrorCharacter(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.on(expression, expression));
         }
-        return escapedStringToCharValue(text, expression);
+        return escapedStringToCharacter(text, expression);
     }
 
     @NotNull
-    public static CompileTimeConstant<?> escapedStringToCharValue(@NotNull String text, @NotNull JetElement expression) {
+    public static CharacterWithDiagnostic escapedStringToCharacter(@NotNull String text, @NotNull JetElement expression) {
         assert text.length() > 0 && text.charAt(0) == '\\' : "Only escaped sequences must be passed to this routine: " + text;
 
         // Escape
@@ -190,13 +188,13 @@ public class CompileTimeConstantChecker {
                 if (escaped == null) {
                     return illegalEscape(expression);
                 }
-                return new CharValue(escaped);
+                return new CharacterWithDiagnostic(escaped);
             case 5:
                 // unicode escape
                 if (escape.charAt(0) == 'u') {
                     try {
                         Integer intValue = Integer.valueOf(escape.substring(1), 16);
-                        return new CharValue((char) intValue.intValue());
+                        return new CharacterWithDiagnostic((char) intValue.intValue());
                     } catch (NumberFormatException e) {
                         // Will be reported below
                     }
@@ -207,46 +205,41 @@ public class CompileTimeConstantChecker {
     }
 
     @NotNull
-    private static CompileTimeConstant<?> illegalEscape(@NotNull JetElement expression) {
-        return createErrorValue(ILLEGAL_ESCAPE.on(expression, expression));
+    private static CharacterWithDiagnostic illegalEscape(@NotNull JetElement expression) {
+        return createErrorCharacter(ILLEGAL_ESCAPE.on(expression, expression));
     }
 
     @NotNull
-    private static ErrorValue createErrorValue(@NotNull Diagnostic diagnostic) {
-        return new ErrorCharValueWithDiagnostic(diagnostic);
+    private static CharacterWithDiagnostic createErrorCharacter(@NotNull Diagnostic diagnostic) {
+        return new CharacterWithDiagnostic(diagnostic);
     }
 
-    public static class ErrorCharValueWithDiagnostic extends ErrorValue {
-        private final Diagnostic diagnostic;
+    public static class CharacterWithDiagnostic {
+        private Diagnostic diagnostic;
+        private Character value;
 
-        public ErrorCharValueWithDiagnostic(@NotNull Diagnostic diagnostic) {
+        public CharacterWithDiagnostic(@NotNull Diagnostic diagnostic) {
             this.diagnostic = diagnostic;
         }
 
-        @NotNull
+        public CharacterWithDiagnostic(char value) {
+            this.value = value;
+        }
+
+        @Nullable
         public Diagnostic getDiagnostic() {
             return diagnostic;
         }
 
-        @NotNull
-        @Override
-        public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String toString() {
-            return DefaultErrorMessages.RENDERER.render(diagnostic);
+        @Nullable
+        public Character getValue() {
+            return value;
         }
     }
 
     @Nullable
     public static Character parseChar(@NotNull JetConstantExpression expression) {
-        CompileTimeConstant<?> compileTimeConstant = parseCharValue(expression);
-        if (compileTimeConstant instanceof CharValue) {
-            return ((CharValue) compileTimeConstant).getValue();
-        }
-        return null;
+        return parseCharacter(expression).getValue();
     }
 
     @Nullable

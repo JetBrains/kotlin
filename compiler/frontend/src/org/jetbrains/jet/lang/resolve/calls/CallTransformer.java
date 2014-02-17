@@ -200,7 +200,8 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                     functionCall, context.checkArguments, context.dataFlowInfoForArguments);
 
             // 'invoke' call resolve
-            OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenName(basicCallResolutionContext, task.reference, Name.identifier("invoke"));
+            OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenName(
+                    basicCallResolutionContext, task.reference, Name.identifier("invoke"), false);
             Collection<ResolvedCallWithTrace<FunctionDescriptor>> calls = ((OverloadResolutionResultsImpl<FunctionDescriptor>)results).getResultingCalls();
 
             return Collections2.transform(calls, new Function<ResolvedCallWithTrace<FunctionDescriptor>, ResolvedCallWithTrace<FunctionDescriptor>>() {

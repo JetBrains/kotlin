@@ -49,6 +49,9 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     private static final String OUT = "out/";
     private static final String EXPECTED = "expected/";
 
+    public static final String TEST_PACKAGE = "foo";
+    public static final String TEST_FUNCTION = "box";
+
     @NotNull
     private String mainDirectory = "";
 

@@ -74,7 +74,7 @@ public abstract class AbstractScopeAdapter implements JetScope {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
         return getWorkerScope().getDeclarationsByLabel(labelName);
     }
 

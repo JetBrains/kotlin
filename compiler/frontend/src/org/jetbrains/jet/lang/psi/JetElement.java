@@ -22,7 +22,5 @@ import org.jetbrains.annotations.NotNull;
 public interface JetElement extends NavigatablePsiElement {
     <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data);
 
-    void accept(@NotNull JetVisitorVoid visitor);
-
     <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data);
 }

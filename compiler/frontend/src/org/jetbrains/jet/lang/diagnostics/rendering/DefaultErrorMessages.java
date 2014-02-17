@@ -88,7 +88,7 @@ public class DefaultErrorMessages {
         MAP.put(RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED, "'return' is only allowed in function literals that have return types specified explicitly");
         MAP.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, "Projections are not allowed for immediate arguments of a supertype");
         MAP.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope");
-        MAP.put(EXPRESSION_EXPECTED_NAMESPACE_FOUND, "Expression expected, but a namespace name found");
+        MAP.put(EXPRESSION_EXPECTED_PACKAGE_FOUND, "Expression expected, but a package name found");
 
         MAP.put(CANNOT_IMPORT_FROM_ELEMENT, "Cannot import from ''{0}''", NAME);
         MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages", NAME);
@@ -97,7 +97,7 @@ public class DefaultErrorMessages {
         MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASSES_OR_SEPARATED);
 
         MAP.put(CANNOT_INFER_PARAMETER_TYPE,
-                "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) => ...} notation");
+                "Cannot infer a type for this parameter. To specify it explicitly use the {(p : Type) -> ...} notation");
 
         MAP.put(NO_BACKING_FIELD_ABSTRACT_PROPERTY, "This property doesn't have a backing field, because it's abstract");
         MAP.put(NO_BACKING_FIELD_CUSTOM_ACCESSORS,
@@ -216,7 +216,7 @@ public class DefaultErrorMessages {
 
         MAP.put(EQUALS_MISSING, "No method 'equals(jet.Any?) : jet.Boolean' available");
         MAP.put(ASSIGNMENT_IN_EXPRESSION_CONTEXT, "Assignments are not expressions, and only expressions are allowed in this context");
-        MAP.put(NAMESPACE_IS_NOT_AN_EXPRESSION, "'namespace' is not an expression, it can only be used on the left-hand side of a dot ('.')");
+        MAP.put(PACKAGE_IS_NOT_AN_EXPRESSION, "'package' is not an expression, it can only be used on the left-hand side of a dot ('.')");
         MAP.put(SUPER_IS_NOT_AN_EXPRESSION, "''{0}'' is not an expression, it can only be used on the left-hand side of a dot ('.')", TO_STRING);
         MAP.put(DECLARATION_IN_ILLEGAL_CONTEXT, "Declarations are not allowed in this position");
         MAP.put(SETTER_PARAMETER_WITH_DEFAULT_VALUE, "Setter parameters cannot have default values");
@@ -451,6 +451,9 @@ public class DefaultErrorMessages {
 
         MAP.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead.", NAME);
 
+        MAP.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes");
+        MAP.put(MISSING_VAL_ON_ANNOTATION_PARAMETER, "'val' keyword is missing on annotation parameter");
+        MAP.put(ANNOTATION_CLASS_CONSTRUCTOR_CALL, "Annotation class cannot be instantiated");
         MAP.put(NOT_AN_ANNOTATION_CLASS, "''{0}'' is not an annotation class", TO_STRING);
         MAP.put(ANNOTATION_CLASS_WITH_BODY, "Body is not allowed for annotation class");
         MAP.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member");

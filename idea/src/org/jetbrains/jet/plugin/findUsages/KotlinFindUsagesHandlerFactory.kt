@@ -31,8 +31,14 @@ import org.jetbrains.jet.plugin.findUsages.handlers.KotlinTypeParameterFindUsage
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.lang.psi.JetClassOrObject
+import com.intellij.find.findUsages.FindUsagesManager
+import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
+import com.intellij.psi.PsiMethod
+import org.jetbrains.jet.plugin.findUsages.handlers.DelegatingFindMemberUsagesHandler
 
 public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactory() {
+    val javaHandlerFactory = JavaFindUsagesHandlerFactory(project)
+
     val findFunctionOptions = KotlinFunctionFindUsagesOptions(project)
     val findPropertyOptions = KotlinPropertyFindUsagesOptions(project)
     val findClassOptions = KotlinClassFindUsagesOptions(project)
@@ -45,7 +51,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             element is JetParameter ||
             element is JetTypeParameter
 
-    public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler {
+    public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler? {
         when(element) {
             is JetClassOrObject ->
                 return KotlinFindClassUsagesHandler(element, this)
@@ -53,16 +59,10 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             is JetNamedFunction, is JetProperty, is JetParameter -> {
                 val declaration = element as JetNamedDeclaration
 
-                return if (forHighlightUsages) KotlinFindMemberUsagesHandler.getInstance(declaration, this)
-                else JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
-                    when (callables.size()) {
-                        0 -> null
-                        1 ->
-                            KotlinFindMemberUsagesHandler.getInstance(callables.get(0) as JetNamedDeclaration, this)
-                        else ->
-                            KotlinFindMemberUsagesHandler.getInstance(declaration, callables, this)
-                    }
-                } ?: FindUsagesHandler.NULL_HANDLER
+                if (forHighlightUsages) return KotlinFindMemberUsagesHandler.getInstance(declaration, this)
+                return JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")?.let { callables ->
+                    if (callables.empty) FindUsagesHandler.NULL_HANDLER else DelegatingFindMemberUsagesHandler(declaration, callables, this)
+                }
             }
 
             is JetTypeParameter ->

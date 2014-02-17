@@ -31,29 +31,31 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         super(main);
     }
 
-    public void runFunctionOutputTest(@NotNull String kotlinFilename, @NotNull String namespaceName,
+    public void runFunctionOutputTest(@NotNull String kotlinFilename, @NotNull String packageName,
             @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
-        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, kotlinFilename, namespaceName, functionName, expectedResult);
+        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, kotlinFilename, packageName, functionName, expectedResult);
     }
 
-    protected void runFunctionOutputTest(@NotNull Iterable<EcmaVersion> ecmaVersions, @NotNull String kotlinFilename,
-            @NotNull String namespaceName,
+    protected void runFunctionOutputTest(
+            @NotNull Iterable<EcmaVersion> ecmaVersions,
+            @NotNull String kotlinFilename,
+            @NotNull String packageName,
             @NotNull String functionName,
             @NotNull Object expectedResult) throws Exception {
         generateJavaScriptFiles(kotlinFilename, MainCallParameters.noCall(), ecmaVersions);
-        runRhinoTests(kotlinFilename, ecmaVersions, new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+        runRhinoTests(kotlinFilename, ecmaVersions, new RhinoFunctionResultChecker(packageName, functionName, expectedResult));
     }
 
     public void checkFooBoxIsTrue(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
-        runFunctionOutputTest(ecmaVersions, filename, "foo", "box", true);
+        runFunctionOutputTest(ecmaVersions, filename, TEST_PACKAGE, TEST_FUNCTION, true);
     }
 
     public void checkFooBoxIsTrue(@NotNull String filename) throws Exception {
-        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, filename, "foo", "box", true);
+        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, filename, TEST_PACKAGE, TEST_FUNCTION, true);
     }
 
     public void checkFooBoxIsValue(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions, Object expected) throws Exception {
-        runFunctionOutputTest(ecmaVersions, filename, "foo", "box", expected);
+        runFunctionOutputTest(ecmaVersions, filename, TEST_PACKAGE, TEST_FUNCTION, expected);
     }
 
     protected void fooBoxTest() throws Exception {
@@ -77,7 +79,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
     }
 
     protected void checkFooBoxIsOk(@NotNull Iterable<EcmaVersion> versions, @NotNull String filename) throws Exception {
-        runFunctionOutputTest(versions, filename, "foo", "box", "OK");
+        runFunctionOutputTest(versions, filename, TEST_PACKAGE, TEST_FUNCTION, "OK");
     }
 
     protected void checkOutput(@NotNull String kotlinFilename,

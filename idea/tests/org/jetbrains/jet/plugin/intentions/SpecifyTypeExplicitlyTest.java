@@ -66,6 +66,10 @@ public class SpecifyTypeExplicitlyTest extends AbstractQuickFixTest {
         doTest();
     }
 
+    public void testPublicMember() {
+        doTest();
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {

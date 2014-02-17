@@ -1,0 +1,6 @@
+<root>
+  <item
+      name='com.intellij.patterns.PlatformPatterns com.intellij.patterns.PsiElementPattern.Capture&lt;com.intellij.psi.PsiElement&gt; psiElement()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

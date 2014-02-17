@@ -1,0 +1,8 @@
+import java.util.Calendar
+
+fun foo(){
+    val l : java.util.Calendar = Calendar.getInstance(<caret>)
+}
+
+// ELEMENT: Calendar.getInstance
+// TAIL_TEXT: (TimeZone)

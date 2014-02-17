@@ -57,11 +57,6 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitClass(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitClass(this, data);
     }
@@ -210,7 +205,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
         }
         PsiFile file = getContainingFile();
         if (!(file instanceof JetFile)) return null;
-        String fileQualifiedName = ((JetFile) file).getNamespaceHeader().getQualifiedName();
+        String fileQualifiedName = ((JetFile) file).getPackageDirective().getQualifiedName();
         if (!fileQualifiedName.isEmpty()) {
             parts.add(fileQualifiedName);
         }

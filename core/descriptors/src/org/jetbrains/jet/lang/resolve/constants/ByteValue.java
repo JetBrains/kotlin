@@ -16,31 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.constants;
 
-import com.google.common.base.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public class ByteValue implements CompileTimeConstant<Byte> {
-    public static final Function<Long, ByteValue> CREATE = new Function<Long, ByteValue>() {
-        @Override
-        public ByteValue apply(@Nullable Long input) {
-            assert input != null;
-            return new ByteValue(input.byteValue());
-        }
-    };
+public class ByteValue extends CompileTimeConstant<Byte> {
 
-    private final byte value;
-
-    public ByteValue(byte value) {
-        this.value = value;
-    }
-
-    @Override
-    public Byte getValue() {
-        return value;
+    public ByteValue(byte value, boolean canBeUsedInAnnotations, boolean pure) {
+        super(value, canBeUsedInAnnotations, pure);
     }
 
     @NotNull

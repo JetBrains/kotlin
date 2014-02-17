@@ -7,4 +7,4 @@ annotation class Ann(
 
 Ann(true || false, true || true) class MyClass
 
-// EXPECTED: Ann[b1 = true: jet.Boolean, b2 = true: jet.Boolean]
+// EXPECTED: Ann(b1 = true: Boolean, b2 = true: Boolean)

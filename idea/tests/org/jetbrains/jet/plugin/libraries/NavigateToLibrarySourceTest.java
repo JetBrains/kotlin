@@ -30,7 +30,7 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
-import org.jetbrains.jet.plugin.references.JetPsiReference;
+import org.jetbrains.jet.plugin.references.JetReference;
 
 import java.util.*;
 
@@ -86,6 +86,14 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         doTest();
     }
 
+    public void testGenericFunctionWithInferredTypeArguments() {
+        doTest();
+    }
+
+    public void testGenericFunctionWithExplicitlyDeclaredTypeArguments() {
+        doTest();
+    }
+
     private void doTest() {
         myFixture.configureByFile(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
 
@@ -106,12 +114,12 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
         assertSameLines(expectedCode, actualCode);
     }
 
-    private Collection<JetPsiReference> collectInterestingReferences() {
+    private Collection<JetReference> collectInterestingReferences() {
         PsiFile psiFile = myFixture.getFile();
-        Map<PsiElement, JetPsiReference> referenceContainersToReferences = new LinkedHashMap<PsiElement, JetPsiReference>();
+        Map<PsiElement, JetReference> referenceContainersToReferences = new LinkedHashMap<PsiElement, JetReference>();
         for (int offset = 0; offset < psiFile.getTextLength(); offset++) {
             PsiReference ref = psiFile.findReferenceAt(offset);
-            if (ref instanceof JetPsiReference && !referenceContainersToReferences.containsKey(ref.getElement())) {
+            if (ref instanceof JetReference && !referenceContainersToReferences.containsKey(ref.getElement())) {
                 PsiElement target = ref.resolve();
                 if (target == null) continue;
                 PsiFile targetNavPsiFile = target.getNavigationElement().getContainingFile();
@@ -119,7 +127,7 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
                 VirtualFile targetNavFile = targetNavPsiFile.getVirtualFile();
                 if (targetNavFile == null) continue;
                 if (ProjectFileIndex.SERVICE.getInstance(getProject()).isInLibrarySource(targetNavFile)) {
-                    referenceContainersToReferences.put(ref.getElement(), (JetPsiReference)ref);
+                    referenceContainersToReferences.put(ref.getElement(), (JetReference)ref);
                 }
             }
         }
@@ -129,7 +137,7 @@ public class NavigateToLibrarySourceTest extends AbstractNavigateToLibraryTest {
     private String getActualAnnotatedLibraryCode() {
         MultiMap<PsiFile, Pair<Integer, Integer>> filesToNumbersAndOffsets = new MultiMap<PsiFile, Pair<Integer, Integer>>();
         int refNumber = 1;
-        for (JetPsiReference ref : collectInterestingReferences()) {
+        for (JetReference ref : collectInterestingReferences()) {
             PsiElement target = ref.resolve();
             assertNotNull(target);
             PsiElement navigationElement = target.getNavigationElement();

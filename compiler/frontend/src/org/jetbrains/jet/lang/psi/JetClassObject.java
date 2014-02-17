@@ -29,18 +29,19 @@ public class JetClassObject extends JetDeclarationImpl implements JetStatementEx
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitClassObject(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitClassObject(this, data);
     }
 
-    @Nullable @IfNotParsed
+    @NotNull
     public JetObjectDeclaration getObjectDeclaration() {
-        return (JetObjectDeclaration) findChildByType(JetNodeTypes.OBJECT_DECLARATION);
+        JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) findChildByType(JetNodeTypes.OBJECT_DECLARATION);
+
+        assert objectDeclaration != null :
+                String.format("It should be impossible to produce class object element without object child:\n %s",
+                              this.getParent().getText());
+
+        return objectDeclaration;
     }
 
     @Nullable @IfNotParsed

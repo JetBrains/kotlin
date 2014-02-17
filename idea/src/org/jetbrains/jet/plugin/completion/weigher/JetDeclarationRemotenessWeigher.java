@@ -67,7 +67,7 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
                 // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
                 if (QualifiedNamesUtil.isValidJavaFqName(fqName.toString())) {
                     ImportPath importPath = new ImportPath(fqName.toString());
-                    if (ImportInsertHelper.doNeedImport(importPath, file)) {
+                    if (ImportInsertHelper.needImport(importPath, file)) {
                         return MyResult.notImported;
                     }
                     else {

@@ -2,10 +2,10 @@
     <item name='android.opengl.GLSurfaceView GLSurfaceView(android.content.Context, android.util.AttributeSet) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.opengl.GLES11Ext void glMatrixIndexPointerOES(int, int, int, java.nio.Buffer) 3'>
+    <item name='android.opengl.ETC1Util android.opengl.ETC1Util.ETC1Texture compressTexture(java.nio.Buffer, int, int, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.opengl.ETC1Util android.opengl.ETC1Util.ETC1Texture createTexture(java.io.InputStream)'>
+    <item name='android.opengl.GLES11Ext void glMatrixIndexPointerOES(int, int, int, java.nio.Buffer) 3'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.GLSurfaceView.EGLWindowSurfaceFactory void destroySurface(javax.microedition.khronos.egl.EGL10, javax.microedition.khronos.egl.EGLDisplay, javax.microedition.khronos.egl.EGLSurface) 0'>
@@ -17,25 +17,28 @@
     <item name='android.opengl.ETC1Util void loadTexture(int, int, int, int, int, android.opengl.ETC1Util.ETC1Texture) 5'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.opengl.ETC1Util android.opengl.ETC1Util.ETC1Texture createTexture(java.io.InputStream) 0'>
+    <item name='android.opengl.GLSurfaceView.EGLConfigChooser javax.microedition.khronos.egl.EGLConfig chooseConfig(javax.microedition.khronos.egl.EGL10, javax.microedition.khronos.egl.EGLDisplay)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.opengl.GLSurfaceView.EGLConfigChooser javax.microedition.khronos.egl.EGLConfig chooseConfig(javax.microedition.khronos.egl.EGL10, javax.microedition.khronos.egl.EGLDisplay)'>
+    <item name='android.opengl.ETC1Util android.opengl.ETC1Util.ETC1Texture createTexture(java.io.InputStream) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.GLUtils int getType(android.graphics.Bitmap) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='android.opengl.GLUtils java.lang.String getEGLErrorString(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='android.opengl.GLES10 void glColorPointer(int, int, int, java.nio.Buffer) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.opengl.ETC1Util android.opengl.ETC1Util.ETC1Texture createTexture(java.io.InputStream)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.Matrix boolean invertM(float[], int, float[], int) 2'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.GLUtils void texSubImage2D(int, int, int, int, android.graphics.Bitmap) 4'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.opengl.ETC1Util android.opengl.ETC1Util.ETC1Texture compressTexture(java.nio.Buffer, int, int, int, int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.GLSurfaceView.EGLContextFactory javax.microedition.khronos.egl.EGLContext createContext(javax.microedition.khronos.egl.EGL10, javax.microedition.khronos.egl.EGLDisplay, javax.microedition.khronos.egl.EGLConfig) 0'>
@@ -78,9 +81,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.GLES20 void glVertexAttribPointer(int, int, int, boolean, int, java.nio.Buffer) 5'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='android.opengl.GLUtils java.lang.String getEGLErrorString(int)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.opengl.Matrix void frustumM(float[], int, float, float, float, float, float, float) 0'>

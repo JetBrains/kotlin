@@ -46,7 +46,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     private Class<?> getPackageSrcClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
-        return loader.loadClass(NamespaceCodegen.getNamespacePartInternalName(myFiles.getPsiFile()));
+        return loader.loadClass(PackageCodegen.getPackagePartInternalName(myFiles.getPsiFile()));
     }
 
     public void testPropField() throws Exception {

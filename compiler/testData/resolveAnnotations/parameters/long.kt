@@ -7,4 +7,4 @@ annotation class Ann(
 
 Ann(1, 1.toLong()) class MyClass
 
-// EXPECTED: Ann[b1 = IntegerValueType(1): IntegerValueType(1), b2 = 1.toLong(): jet.Long]
+// EXPECTED: Ann(b1 = IntegerValueType(1): IntegerValueType(1), b2 = 1.toLong(): Long)

@@ -6,5 +6,5 @@ JetFile: TextRightAfterLeadAsterisks.kt
     PsiElement(KDOC_TEXT)('test')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>

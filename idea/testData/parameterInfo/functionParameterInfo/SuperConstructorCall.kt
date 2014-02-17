@@ -6,4 +6,4 @@ class B(): A(<caret>5) {
         A(3)
     }
 }
-//Text: (x: Int), Disabled: false, Strikeout: false, Green: true
+//Text: (<highlight>x: Int</highlight>), Disabled: false, Strikeout: false, Green: true

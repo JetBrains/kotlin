@@ -1,0 +1,18 @@
+VARIABLES T
+
+SUPERTYPE T IntegerValueType(1)
+SUBTYPE T Any
+
+type parameter bounds:
+T >: IntegerValueType(1)(SPECIAL), <: jet.Any(SPECIAL)
+status:
+-hasConflictingConstraints: false
+-hasContradiction: false
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasUnknownParameters: false
+-hasViolatedUpperBound: false
+-isSuccessful: true
+
+result:
+T=jet.Int

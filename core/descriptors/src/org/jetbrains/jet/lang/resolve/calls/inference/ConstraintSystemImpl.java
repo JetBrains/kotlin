@@ -40,8 +40,8 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE;
-import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBoundsImpl.BoundKind.*;
-import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBoundsImpl.Bound;
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.*;
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.Bound;
 import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_TYPE_PARAMETER;
 import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 

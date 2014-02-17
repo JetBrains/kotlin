@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,7 +154,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
         ClassDescriptor descriptor = bindingContext.get(CLASS, enumEntry);
-        assert descriptor != null;
+        assert descriptor != null :
+                String.format("No descriptor for enum entry \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(enumEntry));
 
         boolean trivial = enumEntry.getDeclarations().isEmpty();
         if (!trivial) {
@@ -171,7 +172,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitClassObject(@NotNull JetClassObject classObject) {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, classObject.getObjectDeclaration());
-        assert classDescriptor != null;
+
+        assert classDescriptor != null : String.format("No class found in binding context for: \n---\n%s\n---\n",
+                                                       JetPsiUtil.getElementTextWithContext(classObject));
 
         String name = peekFromStack(nameStack) + JvmAbi.CLASS_OBJECT_SUFFIX;
         recordClosure(classObject, classDescriptor, name);
@@ -333,9 +336,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         // working around a problem with shallow analysis
         if (propertyDescriptor == null) return;
 
-        String nameForClassOrNamespaceMember = getNameForClassOrNamespaceMember(propertyDescriptor);
-        if (nameForClassOrNamespaceMember != null) {
-            nameStack.push(nameForClassOrNamespaceMember);
+        String nameForClassOrPackageMember = getNameForClassOrPackageMember(propertyDescriptor);
+        if (nameForClassOrPackageMember != null) {
+            nameStack.push(nameForClassOrPackageMember);
         }
         else {
             nameStack.push(peekFromStack(nameStack) + '$' + property.getName());
@@ -350,9 +353,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
 
-        String nameForClassOrNamespaceMember = getNameForClassOrNamespaceMember(functionDescriptor);
-        if (nameForClassOrNamespaceMember != null) {
-            nameStack.push(nameForClassOrNamespaceMember);
+        String nameForClassOrPackageMember = getNameForClassOrPackageMember(functionDescriptor);
+        if (nameForClassOrPackageMember != null) {
+            nameStack.push(nameForClassOrPackageMember);
             super.visitNamedFunction(function);
             nameStack.pop();
         }
@@ -371,7 +374,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @Nullable
-    private String getNameForClassOrNamespaceMember(@NotNull DeclarationDescriptor descriptor) {
+    private String getNameForClassOrPackageMember(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         String peek = peekFromStack(nameStack);

@@ -7,10 +7,6 @@ public data class ComparableRange<T: Comparable<T>> (
     public override fun contains(item: T): Boolean {
         return start <= item && item <= end
     }
-
-    public fun toString(): String {
-        return "$start..$end"
-    }
 }
 
 public fun <T: Comparable<T>> T.rangeTo(that: T): ComparableRange<T> {

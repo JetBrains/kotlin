@@ -19,6 +19,8 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
@@ -26,25 +28,28 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
-import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
-import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
-import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
+import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class CodegenUtil {
 
@@ -68,7 +73,7 @@ public class CodegenUtil {
         SimpleFunctionDescriptorImpl invokeDescriptor = new SimpleFunctionDescriptorImpl(
                 fd.getExpectedThisObject() != null
                 ? KotlinBuiltIns.getInstance().getExtensionFunction(arity) : KotlinBuiltIns.getInstance().getFunction(arity),
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 Name.identifier("invoke"),
                 CallableMemberDescriptor.Kind.DECLARATION);
 
@@ -83,31 +88,7 @@ public class CodegenUtil {
         return invokeDescriptor;
     }
 
-    public static JvmMethodSignature erasedInvokeSignature(FunctionDescriptor fd) {
-        BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
-
-        boolean isExtensionFunction = fd.getReceiverParameter() != null;
-        int paramCount = fd.getValueParameters().size();
-        if (isExtensionFunction) {
-            paramCount++;
-        }
-
-        signatureWriter.writeParametersStart();
-
-        for (int i = 0; i < paramCount; ++i) {
-            signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            signatureWriter.writeAsmType(OBJECT_TYPE);
-            signatureWriter.writeParameterTypeEnd();
-        }
-
-        signatureWriter.writeReturnType();
-        signatureWriter.writeAsmType(OBJECT_TYPE);
-        signatureWriter.writeReturnTypeEnd();
-
-        return signatureWriter.makeJvmMethodSignature("invoke");
-    }
-
-    public static boolean isConst(CalculatedClosure closure) {
+    public static boolean isConst(@NotNull CalculatedClosure closure) {
         return closure.getCaptureThis() == null && closure.getCaptureReceiverType() == null && closure.getCaptureVariables().isEmpty();
     }
 
@@ -277,5 +258,35 @@ public class CodegenUtil {
         }
 
         return null;
+    }
+
+    @NotNull
+    public static String[] getExceptions(@NotNull Annotated annotatedDescriptor, @NotNull final JetTypeMapper mapper) {
+        // Can't say 'throws.class', because 'throws' is a reserved work in Java
+        AnnotationDescriptor annotation = annotatedDescriptor.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
+        if (annotation == null) return ArrayUtil.EMPTY_STRING_ARRAY;
+
+        Collection<CompileTimeConstant<?>> values = annotation.getAllValueArguments().values();
+        if (values.isEmpty()) return ArrayUtil.EMPTY_STRING_ARRAY;
+
+        Object value = values.iterator().next();
+        if (!(value instanceof ArrayValue)) return ArrayUtil.EMPTY_STRING_ARRAY;
+        ArrayValue arrayValue = (ArrayValue) value;
+
+        List<String> strings = ContainerUtil.mapNotNull(
+                arrayValue.getValue(),
+                new Function<CompileTimeConstant<?>, String>() {
+                    @Override
+                    public String fun(CompileTimeConstant<?> constant) {
+                        if (constant instanceof JavaClassValue) {
+                            JavaClassValue classValue = (JavaClassValue) constant;
+                            ClassDescriptor classDescriptor = DescriptorUtils.getClassDescriptorForType(classValue.getValue());
+                            return mapper.mapClass(classDescriptor).getInternalName();
+                        }
+                        return null;
+                    }
+                }
+        );
+        return strings.toArray(new String[strings.size()]);
     }
 }

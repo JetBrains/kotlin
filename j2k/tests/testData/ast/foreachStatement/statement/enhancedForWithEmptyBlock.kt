@@ -1,3 +1,0 @@
-for (n in list)
-{
-}

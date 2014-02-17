@@ -34,11 +34,6 @@ public class JetSelfType extends JetTypeElement {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitSelfType(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitSelfType(this, data);
     }

@@ -12,7 +12,3 @@ class A() {
 fun box(): Boolean {
     return A().p()
 }
-
-fun main(arg: Array<String>) {
-    println(box())
-}

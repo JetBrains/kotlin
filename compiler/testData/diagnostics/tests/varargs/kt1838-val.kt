@@ -1,5 +1,5 @@
 class A(vararg val t : Int) {
     {
-        val t1 : IntArray = t
+        val <!UNUSED_VARIABLE!>t1<!> : IntArray = t
     }
 }

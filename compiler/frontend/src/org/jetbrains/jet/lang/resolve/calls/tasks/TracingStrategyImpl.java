@@ -59,9 +59,9 @@ public class TracingStrategyImpl implements TracingStrategy {
 
     @Override
     public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall) {
-        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+        CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getResultingDescriptor();
+            descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
         }
         DeclarationDescriptor storedReference = trace.get(REFERENCE_TARGET, reference);
         if (storedReference == null || !ErrorUtils.isError(descriptor)) {

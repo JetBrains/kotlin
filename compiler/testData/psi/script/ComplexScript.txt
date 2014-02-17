@@ -1,5 +1,5 @@
 JetFile: ComplexScript.ktscript
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   SCRIPT
     BLOCK

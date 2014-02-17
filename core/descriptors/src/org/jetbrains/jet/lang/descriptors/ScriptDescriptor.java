@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -61,7 +62,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
             @NotNull JetScope scriptScope,
             @NotNull Name className
     ) {
-        super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), NAME);
+        super(containingDeclaration, Annotations.EMPTY, NAME);
         this.priority = priority;
 
         classDescriptor = new ClassDescriptorImpl(containingDeclaration, className, Modality.FINAL,
@@ -80,7 +81,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
         scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
 
         PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(classDescriptor,
-                                                               Collections.<AnnotationDescriptor>emptyList(),
+                                                               Annotations.EMPTY,
                                                                Modality.FINAL,
                                                                Visibilities.PUBLIC,
                                                                false,
@@ -155,7 +156,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
     public void setValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
         this.valueParameters = valueParameters;
         ConstructorDescriptorImpl constructorDescriptor =
-                new ConstructorDescriptorImpl(classDescriptor, Collections.<AnnotationDescriptor>emptyList(), true)
+                new ConstructorDescriptorImpl(classDescriptor, Annotations.EMPTY, true)
                         .initialize(Collections.<TypeParameterDescriptor>emptyList(), valueParameters, Visibilities.PUBLIC);
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
 
@@ -164,7 +165,7 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
 
         for (ValueParameterDescriptor parameter : valueParameters) {
             PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(classDescriptor,
-                                                                   Collections.<AnnotationDescriptor>emptyList(),
+                                                                   Annotations.EMPTY,
                                                                    Modality.FINAL,
                                                                    Visibilities.PUBLIC,
                                                                    false,

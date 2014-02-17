@@ -23,15 +23,19 @@ import com.intellij.util.containers.ContainerUtil;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.CommonSupertypes;
+import org.jetbrains.jet.lang.types.DeferredType;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeInfo;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -45,11 +49,16 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
-import static org.jetbrains.jet.util.StorageUtil.createRecursionIntolerantLazyValueWithDefault;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
-    protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
+    private final GlobalContext globalContext;
+
+    protected ClosureExpressionsTypingVisitor(
+            @NotNull GlobalContext globalContext,
+            @NotNull ExpressionTypingInternals facade
+    ) {
         super(facade);
+        this.globalContext = globalContext;
     }
 
     @Override
@@ -67,14 +76,13 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @Override
             public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
                 if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
-                    JetType defaultType = DeferredType.create(context.trace, createRecursionIntolerantLazyValueWithDefault(
-                            ErrorUtils.createErrorType("Recursive dependency"),
-                            new Function0<JetType>() {
-                                @Override
-                                public JetType invoke() {
-                                    return descriptor.getDefaultType();
-                                }
-                            }));
+                    JetType defaultType = DeferredType.createRecursionIntolerant(globalContext.getStorageManager(), context.trace,
+                                                                                 new Function0<JetType>() {
+                                                                                     @Override
+                                                                                     public JetType invoke() {
+                                                                                         return descriptor.getDefaultType();
+                                                                                     }
+                                                                                 });
                     result[0] = defaultType;
                     if (!context.trace.get(PROCESSED, expression)) {
                         temporaryTrace.record(EXPRESSION_TYPE, expression, defaultType);
@@ -85,7 +93,9 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        TopDownAnalyzer.processClassOrObject(context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
+        TopDownAnalyzer.processClassOrObject(globalContext,
+                                             null, // don't need to add classifier of object literal to any scope
+                                             context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                              context.scope.getContainingDeclaration(),
                                              expression.getObjectDeclaration());
 
@@ -118,7 +128,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType receiver = DescriptorUtils.getReceiverParameterType(functionDescriptor.getReceiverParameter());
         List<JetType> valueParametersTypes = DescriptorUtils.getValueParametersTypes(functionDescriptor.getValueParameters());
         JetType resultType = KotlinBuiltIns.getInstance().getFunctionType(
-                Collections.<AnnotationDescriptor>emptyList(), receiver, valueParametersTypes, safeReturnType);
+                Annotations.EMPTY, receiver, valueParametersTypes, safeReturnType);
         if (!noExpectedType(expectedType) && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(expectedType)) {
             // all checks were done before
             return JetTypeInfo.create(resultType, context.dataFlowInfo);
@@ -175,7 +185,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
-                context.scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), CallableMemberDescriptor.Kind.DECLARATION);
+                context.scope.getContainingDeclaration(), Annotations.EMPTY, CallableMemberDescriptor.Kind.DECLARATION);
 
         List<ValueParameterDescriptor> valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral,
                                                                                                    functionDescriptor, functionTypeExpected);
@@ -223,7 +233,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (functionTypeExpected && !hasDeclaredValueParameters && expectedValueParameters.size() == 1) {
             ValueParameterDescriptor valueParameterDescriptor = expectedValueParameters.get(0);
             ValueParameterDescriptor it = new ValueParameterDescriptorImpl(
-                    functionDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("it"),
+                    functionDescriptor, 0, Annotations.EMPTY, Name.identifier("it"),
                     valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.getVarargElementType()
             );
             valueParameterDescriptors.add(it);

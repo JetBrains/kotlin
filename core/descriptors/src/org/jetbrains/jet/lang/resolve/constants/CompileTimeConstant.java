@@ -17,15 +17,38 @@
 package org.jetbrains.jet.lang.resolve.constants;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public interface CompileTimeConstant<T> {
-    T getValue();
+public abstract class CompileTimeConstant<T> {
+    protected final T value;
+    private final boolean canBeUsedInAnnotations;
+    // if false = constant type cannot be changed, ex. val a: Long = 1.toInt() (should be a TYPE_MISMATCH error, 1.toInt() isn't pure)
+    private final boolean isPure;
+
+    protected CompileTimeConstant(T value, boolean canBeUsedInAnnotations, boolean pure) {
+        this.value = value;
+        this.canBeUsedInAnnotations = canBeUsedInAnnotations;
+        this.isPure = pure;
+    }
+
+    public boolean canBeUsedInAnnotations() {
+        return canBeUsedInAnnotations;
+    }
+
+    public boolean isPure() {
+        return isPure;
+    }
+
+    @Nullable
+    public T getValue() {
+        return value;
+    }
 
     @NotNull
-    JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns);
+    public abstract JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns);
 
-    <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data);
+    public abstract <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data);
 }

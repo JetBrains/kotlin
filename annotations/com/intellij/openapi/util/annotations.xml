@@ -1,4 +1,8 @@
 <root>
+  <item
+      name='com.intellij.openapi.util.Conditions com.intellij.openapi.util.Condition&lt;T&gt; or(com.intellij.openapi.util.Condition&lt;T&gt;, com.intellij.openapi.util.Condition&lt;T&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.openapi.util.Key com.intellij.openapi.util.Key&lt;T&gt; create(java.lang.String)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

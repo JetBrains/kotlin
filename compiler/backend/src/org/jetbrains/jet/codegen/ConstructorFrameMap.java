@@ -29,7 +29,7 @@ public class ConstructorFrameMap extends FrameMap {
     public ConstructorFrameMap(@NotNull JvmMethodSignature signature) {
         enterTemp(OBJECT_TYPE); // this
 
-        for (JvmMethodParameterSignature parameterType : signature.getKotlinParameterTypes()) {
+        for (JvmMethodParameterSignature parameterType : signature.getValueParameters()) {
             if (parameterType.getKind() == JvmMethodParameterKind.OUTER) {
                 myOuterThisIndex = enterTemp(OBJECT_TYPE); // this0
             }

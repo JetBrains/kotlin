@@ -32,7 +32,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
@@ -45,7 +44,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.Collection;
 
 public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
-
     @Override
     public PsiElement getTarget(@NotNull DataContext dataContext) {
         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
@@ -54,7 +52,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
         Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
         if (editor != null) {
             PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-            if (!(file instanceof JetFile)) return null;
+            if (file == null) return null;
 
             if (!JetPluginUtil.isInSource(file)) return null;
             if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file)) return null;

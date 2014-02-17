@@ -54,9 +54,4 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
                 trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, labelResolver, callResolverExtension,
                 isAnnotationContext);
     }
-
-    @Override
-    protected SimpleResolutionContext self() {
-        return this;
-    }
 }

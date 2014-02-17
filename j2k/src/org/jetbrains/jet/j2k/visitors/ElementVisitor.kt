@@ -17,42 +17,41 @@
 package org.jetbrains.jet.j2k.visitors
 
 import com.intellij.psi.*
-import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.*
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.Type
-import org.jetbrains.jet.j2k.isAnnotatedAsNotNull
-import org.jetbrains.jet.j2k.isDefinitelyNotNull
 
-public open class ElementVisitor(val myConverter: Converter) : JavaElementVisitor() {
-    protected var myResult: Element = Element.EMPTY_ELEMENT
+open class ElementVisitor(val myConverter: Converter) : JavaElementVisitor() {
+    protected var myResult: Element = Element.Empty
 
-    public fun getConverter(): Converter {
+    fun getConverter(): Converter {
         return myConverter
     }
 
-    public open fun getResult(): Element {
+    open fun getResult(): Element {
         return myResult
     }
 
-    public override fun visitLocalVariable(variable: PsiLocalVariable?) {
+    override fun visitLocalVariable(variable: PsiLocalVariable?) {
         val theVariable = variable!!
-        var kType = myConverter.typeToType(theVariable.getType(), isAnnotatedAsNotNull(theVariable.getModifierList()))
+        var kType = myConverter.convertType(theVariable.getType(), isAnnotatedAsNotNull(theVariable.getModifierList()))
         if (theVariable.hasModifierProperty(PsiModifier.FINAL) && isDefinitelyNotNull(theVariable.getInitializer())) {
             kType = kType.convertedToNotNull();
         }
         myResult = LocalVariable(Identifier(theVariable.getName()!!),
-                                 Converter.modifiersListToModifiersSet(theVariable.getModifierList()),
+                                 myConverter.convertModifierList(theVariable.getModifierList()),
                                  kType,
-                                 myConverter.expressionToExpression(theVariable.getInitializer(), theVariable.getType()))
+                                 myConverter.convertExpression(theVariable.getInitializer(), theVariable.getType()),
+                                 myConverter)
     }
 
-    public override fun visitExpressionList(list: PsiExpressionList?) {
-        myResult = ExpressionList(myConverter.expressionsToExpressionList(list!!.getExpressions()))
+    override fun visitExpressionList(list: PsiExpressionList?) {
+        myResult = ExpressionList(myConverter.convertExpressions(list!!.getExpressions()))
     }
 
-    public override fun visitReferenceElement(reference: PsiJavaCodeReferenceElement?) {
+    override fun visitReferenceElement(reference: PsiJavaCodeReferenceElement?) {
         val theReference = reference!!
-        val types: List<Type> = myConverter.typesToTypeList(theReference.getTypeParameters())
+        val types: List<Type> = myConverter.convertTypes(theReference.getTypeParameters())
         if (!theReference.isQualified()) {
             myResult = ReferenceElement(Identifier(theReference.getReferenceName()!!), types)
         }
@@ -69,20 +68,24 @@ public open class ElementVisitor(val myConverter: Converter) : JavaElementVisito
         }
     }
 
-    public override fun visitTypeElement(`type`: PsiTypeElement?) {
-        myResult = TypeElement(myConverter.typeToType(`type`!!.getType()))
+    override fun visitTypeElement(`type`: PsiTypeElement?) {
+        myResult = TypeElement(myConverter.convertType(`type`!!.getType()))
     }
 
-    public override fun visitTypeParameter(classParameter: PsiTypeParameter?) {
+    override fun visitTypeParameter(classParameter: PsiTypeParameter?) {
         myResult = TypeParameter(Identifier(classParameter!!.getName()!!),
-                                 classParameter.getExtendsListTypes().map { myConverter.typeToType(it) })
+                                 classParameter.getExtendsListTypes().map { myConverter.convertType(it) })
     }
 
-    public override fun visitParameterList(list: PsiParameterList?) {
-        myResult = ParameterList(myConverter.parametersToParameterList(list!!.getParameters()).requireNoNulls())
+    override fun visitParameterList(list: PsiParameterList?) {
+        myResult = ParameterList(myConverter.convertParameterList(list!!.getParameters()).requireNoNulls())
     }
 
-    public override fun visitComment(comment: PsiComment?) {
-        myResult = Comment(comment?.getText()!!)
+    override fun visitComment(comment: PsiComment?) {
+        myResult = Comment(comment!!.getText()!!)
+    }
+
+    override fun visitWhiteSpace(space: PsiWhiteSpace?) {
+        myResult = WhiteSpace(space!!.getText()!!)
     }
 }

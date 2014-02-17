@@ -17,126 +17,167 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.util.Trinity;
-import com.intellij.util.containers.Stack;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.k2js.translate.LabelGenerator;
 import org.jetbrains.k2js.translate.context.AliasingContext;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.context.UsageTracker;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
 public class LiteralFunctionTranslator extends AbstractTranslator {
-    private final Stack<NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>> definitionPlaces =
-            new Stack<NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>>>();
-    private NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>> definitionPlace;
+    private static final String CAPTURED_VALUE_FIELD = "v";
 
-    public LiteralFunctionTranslator(@NotNull TranslationContext context) {
+    private final JetDeclarationWithBody declaration;
+    private final FunctionDescriptor descriptor;
+    private final JsFunction jsFunction;
+    private final TranslationContext functionContext;
+    private final boolean inConstructorOrTopLevel;
+    private final ClassDescriptor outerClass;
+    private final JsName receiverName;
+    private JsNameRef tempRef = null;
+
+    private LiteralFunctionTranslator(@NotNull JetDeclarationWithBody declaration, @NotNull TranslationContext context) {
         super(context);
-    }
 
-    public static Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> createPlace(@NotNull List<JsPropertyInitializer> list,
-            @NotNull JsExpression reference) {
-        return Trinity.create(list, new LabelGenerator('f'), reference);
-    }
+        this.declaration = declaration;
+        this.descriptor = getFunctionDescriptor(context().bindingContext(), declaration);
 
-    public void setDefinitionPlace(@Nullable NotNullLazyValue<Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression>> place) {
-        if (place == null) {
-            definitionPlaces.pop();
-            definitionPlace = definitionPlaces.isEmpty() ? null : definitionPlaces.peek();
-        }
-        else {
-            definitionPlaces.push(place);
-            definitionPlace = place;
-        }
-    }
-
-    public JsExpression translate(@NotNull JetDeclarationWithBody declaration, @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext outerContext) {
-        JsFunction fun = createFunction();
-        TranslationContext funContext;
-        boolean asInner;
-        ClassDescriptor outerClass;
-        AliasingContext aliasingContext;
         DeclarationDescriptor receiverDescriptor = getExpectedReceiverDescriptor(descriptor);
-        JsName receiverName;
+        jsFunction = new JsFunction(context().scope(), new JsBlock());
+
+        AliasingContext aliasingContext;
         if (receiverDescriptor == null) {
             receiverName = null;
             aliasingContext = null;
         }
         else {
-            receiverName = fun.getScope().declareName(Namer.getReceiverParameterName());
-            aliasingContext = outerContext.aliasingContext().inner(receiverDescriptor, receiverName.makeRef());
+            receiverName = jsFunction.getScope().declareName(Namer.getReceiverParameterName());
+            aliasingContext = context().aliasingContext().inner(receiverDescriptor, receiverName.makeRef());
         }
 
         if (descriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
             // KT-2388
-            asInner = true;
-            fun.setName(fun.getScope().declareName(Namer.CALLEE_NAME));
+            inConstructorOrTopLevel = true;
+            jsFunction.setName(jsFunction.getScope().declareName(Namer.CALLEE_NAME));
             outerClass = (ClassDescriptor) descriptor.getContainingDeclaration().getContainingDeclaration();
             assert outerClass != null;
 
-            if (receiverDescriptor == null) {
-                aliasingContext = outerContext.aliasingContext().notShareableThisAliased(outerClass, new JsNameRef("o", fun.getName().makeRef()));
+            if (aliasingContext == null) {
+                aliasingContext = context().aliasingContext();
             }
+
+            aliasingContext = aliasingContext.notShareableThisAliased(outerClass, new JsNameRef("o", jsFunction.getName().makeRef()));
         }
         else {
             outerClass = null;
-            asInner = DescriptorUtils.isTopLevelDeclaration(descriptor);
+            inConstructorOrTopLevel = DescriptorUtils.isTopLevelDeclaration(descriptor);
         }
 
-        funContext = outerContext.newFunctionBody(fun, aliasingContext,
-                                                  new UsageTracker(descriptor, outerContext.usageTracker(), outerClass));
+        UsageTracker funTracker = new UsageTracker(descriptor, context().usageTracker(), outerClass);
+        functionContext = context().newFunctionBody(jsFunction, aliasingContext, funTracker);
+    }
 
-        fun.getBody().getStatements().addAll(translateFunctionBody(descriptor, declaration, funContext).getStatements());
+    private void translateBody() {
+        JsBlock functionBody = translateFunctionBody(descriptor, declaration, functionContext);
+        jsFunction.getBody().getStatements().addAll(functionBody.getStatements());
+    }
 
-        InnerFunctionTranslator translator = null;
-        if (!asInner) {
-            translator = new InnerFunctionTranslator(descriptor, funContext, fun);
-        }
+    @NotNull
+    private JsExpression finish() {
+        JsExpression result;
 
-        if (asInner) {
-            addRegularParameters(descriptor, fun, funContext, receiverName);
+        if (inConstructorOrTopLevel) {
+            result = jsFunction;
+
             if (outerClass != null) {
-                UsageTracker usageTracker = funContext.usageTracker();
+                UsageTracker usageTracker = functionContext.usageTracker();
                 assert usageTracker != null;
                 if (usageTracker.isUsed()) {
-                    return new JsInvocation(context().namer().kotlin("assignOwner"), fun, JsLiteral.THIS);
+                    result = new JsInvocation(context().namer().kotlin("assignOwner"), jsFunction, JsLiteral.THIS);
                 }
                 else {
-                    fun.setName(null);
+                    jsFunction.setName(null);
                 }
             }
+        }
+        else {
+            JsNameRef funReference = context().define(getSuggestedName(functionContext, descriptor), jsFunction);
 
-            return fun;
+            InnerFunctionTranslator innerTranslator = new InnerFunctionTranslator(descriptor, functionContext, jsFunction, tempRef);
+            result = innerTranslator.translate(funReference, context());
         }
 
-        JsExpression result = translator.translate(createReference(fun), outerContext);
-        addRegularParameters(descriptor, fun, funContext, receiverName);
+        addRegularParameters(descriptor, jsFunction, functionContext, receiverName);
+
         return result;
     }
 
-    private JsNameRef createReference(JsFunction fun) {
-        Trinity<List<JsPropertyInitializer>, LabelGenerator, JsExpression> place = definitionPlace.getValue();
-        JsNameRef nameRef = new JsNameRef(place.second.generate(), place.third);
-        place.first.add(new JsPropertyInitializer(nameRef, fun));
-        return nameRef;
+    @NotNull
+    private JsExpression translate() {
+        translateBody();
+        return finish();
+    }
+
+    @NotNull
+    public JsVars translateLocalNamedFunction() {
+        // Add ability to capture this named function.
+        // Will be available like `foo.v` (for function `foo`)
+        // Can not generate direct call because function may have some closures.
+        JsName funName = functionContext.getNameForDescriptor(descriptor);
+        JsNameRef alias = new JsNameRef(CAPTURED_VALUE_FIELD, funName.makeRef());
+        functionContext.aliasingContext().registerAlias(descriptor, alias);
+
+        translateBody();
+
+        UsageTracker funTracker = functionContext.usageTracker();
+        assert funTracker != null;
+        boolean funIsCaptured = funTracker.isCaptured(descriptor);
+
+        // Create temporary variable name which will be contain reference to the function.
+        JsName temp;
+        if (funIsCaptured) {
+            assert !inConstructorOrTopLevel : "A recursive closure in constructor is unsupported.";
+            // Use `context()` because it should be created in the scope which contain call.
+            temp = context().scope().declareTemporary();
+            tempRef = temp.makeRef();
+        }
+        else {
+            temp = null;
+        }
+
+        JsExpression result = finish();
+
+        List<JsVars.JsVar> vars = new SmartList<JsVars.JsVar>();
+
+        if (funIsCaptured) {
+            JsVars.JsVar tempVar = new JsVars.JsVar(temp, new JsObjectLiteral());
+            vars.add(tempVar);
+
+            // Save `result` to the field of temporary variable if the function is captured.
+            result = JsAstUtils.assignment(new JsNameRef(CAPTURED_VALUE_FIELD, temp.makeRef()), result);
+
+        }
+
+        JsVars.JsVar fun = new JsVars.JsVar(funName, result);
+        vars.add(fun);
+
+        return new JsVars(vars, /*mulitline =*/ false);
     }
 
     private static void addRegularParameters(
@@ -151,26 +192,59 @@ public class LiteralFunctionTranslator extends AbstractTranslator {
         FunctionTranslator.addParameters(fun.getParameters(), descriptor, funContext);
     }
 
-    private JsFunction createFunction() {
-        return new JsFunction(context().scope(), new JsBlock());
+    private static String getSuggestedName(TranslationContext context, DeclarationDescriptor descriptor) {
+        String suggestedName = "";
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration != null &&
+            !(containingDeclaration instanceof ClassOrPackageFragmentDescriptor) &&
+            !(containingDeclaration instanceof AnonymousFunctionDescriptor)) {
+            suggestedName = context.getNameForDescriptor(containingDeclaration).getIdent();
+        }
+
+        if (!suggestedName.isEmpty() && !suggestedName.endsWith("$")) {
+            suggestedName += "$";
+        }
+
+        if (descriptor.getName().isSpecial()) {
+            suggestedName += "f";
+        }
+        else {
+            suggestedName += context.getNameForDescriptor(descriptor).getIdent();
+        }
+        return suggestedName;
     }
 
-    public JsExpression translate(
+    @NotNull
+    public static JsVars translateLocalNamedFunction(@NotNull JetDeclarationWithBody declaration, @NotNull TranslationContext outerContext) {
+        return new LiteralFunctionTranslator(declaration, outerContext).translateLocalNamedFunction();
+    }
+
+    @NotNull
+    public static JsExpression translate(@NotNull JetDeclarationWithBody declaration, @NotNull TranslationContext outerContext) {
+        return new LiteralFunctionTranslator(declaration, outerContext).translate();
+    }
+
+    // TODO: Probably should be moved to other place
+    @NotNull
+    public static JsExpression translate(
             @NotNull ClassDescriptor outerClass,
             @NotNull TranslationContext outerClassContext,
             @NotNull JetClassOrObject declaration,
             @NotNull ClassDescriptor descriptor,
             @NotNull ClassTranslator classTranslator
     ) {
-        JsFunction fun = createFunction();
+        JsFunction fun = new JsFunction(outerClassContext.scope(), new JsBlock());
         JsNameRef outerClassRef = fun.getScope().declareName(Namer.OUTER_CLASS_NAME).makeRef();
         UsageTracker usageTracker = new UsageTracker(descriptor, outerClassContext.usageTracker(), outerClass);
         AliasingContext aliasingContext = outerClassContext.aliasingContext().inner(outerClass, outerClassRef);
         TranslationContext funContext = outerClassContext.newFunctionBody(fun, aliasingContext, usageTracker);
 
         fun.getBody().getStatements().add(new JsReturn(classTranslator.translate(funContext)));
+
         JetClassBody body = declaration.getBody();
         assert body != null;
-        return new InnerObjectTranslator(funContext, fun).translate(createReference(fun), usageTracker.isUsed() ? outerClassRef : null);
+
+        JsNameRef define = funContext.define(getSuggestedName(funContext, descriptor), fun);
+        return new InnerObjectTranslator(funContext, fun).translate(define, usageTracker.isUsed() ? outerClassRef : null);
     }
 }

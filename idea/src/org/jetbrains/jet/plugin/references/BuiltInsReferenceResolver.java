@@ -22,7 +22,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -33,6 +34,8 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.LightClassUtil;
+import org.jetbrains.jet.context.ContextPackage;
+import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -43,7 +46,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.utils.UtilsPackage;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,6 +57,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
+    private static final File BUILT_INS_COMPILABLE_SRC_DIR = new File("core/builtins/src", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING);
+
     private volatile BindingContext bindingContext;
     private volatile Set<JetFile> builtInsSources;
     private volatile MutablePackageFragmentDescriptor builtinsPackageFragment;
@@ -77,19 +85,23 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         final Runnable initializeRunnable = new Runnable() {
             @Override
             public void run() {
+                GlobalContextImpl globalContext = ContextPackage.GlobalContext();
                 TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                        globalContext.getStorageManager(),
+                        globalContext.getExceptionTracker(),
                         Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
                 ModuleDescriptorImpl module = new ModuleDescriptorImpl(
                         Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
+                BindingTraceContext trace = new BindingTraceContext();
                 InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                        myProject, topDownAnalysisParameters, new BindingTraceContext(), module, PlatformToKotlinClassMap.EMPTY);
+                        myProject, topDownAnalysisParameters, trace, module, PlatformToKotlinClassMap.EMPTY);
 
                 TopDownAnalyzer analyzer = injector.getTopDownAnalyzer();
                 analyzer.analyzeFiles(jetBuiltInsFiles, Collections.<AnalyzerScriptParameter>emptyList());
 
                 builtinsPackageFragment = analyzer.getPackageFragmentProvider().getOrCreateFragment(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
                 builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
-                bindingContext = injector.getBindingTrace().getBindingContext();
+                bindingContext = trace.getBindingContext();
             }
         };
 
@@ -107,8 +119,28 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
 
     }
 
+    @NotNull
     private Set<JetFile> getJetBuiltInsFiles() {
-        URL url = LightClassUtil.getBuiltInsDirUrl();
+        Set<JetFile> builtIns = getBuiltInSourceFiles(LightClassUtil.getBuiltInsDirUrl());
+
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+            // In production, the above URL is enough as it contains sources for both native and compilable built-ins
+            // (it's simply "jet" directory in kotlin-plugin.jar)
+            // But in tests, sources of built-ins are not added to the classpath automatically, so we manually specify URLs for both:
+            // LightClassUtil.getBuiltInsDirUrl() does so for native built-ins and the code below for compilable built-ins
+            try {
+                builtIns.addAll(getBuiltInSourceFiles(BUILT_INS_COMPILABLE_SRC_DIR.toURI().toURL()));
+            }
+            catch (MalformedURLException e) {
+                throw UtilsPackage.rethrow(e);
+            }
+        }
+
+        return builtIns;
+    }
+
+    @NotNull
+    private Set<JetFile> getBuiltInSourceFiles(@NotNull URL url) {
         VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null : "Virtual file not found by URL: " + url;
 
@@ -138,7 +170,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             return ((ClassDescriptor) currentParent).getClassObjectDescriptor();
         }
         else {
-            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqNameSafe(originalDescriptor));
+            return bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, DescriptorUtils.getFqName(originalDescriptor));
         }
     }
 

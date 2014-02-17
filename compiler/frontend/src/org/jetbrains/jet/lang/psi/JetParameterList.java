@@ -41,15 +41,11 @@ public class JetParameterList extends JetElementImplStub<PsiJetParameterListStub
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitParameterList(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitParameterList(this, data);
     }
 
+    @NotNull
     public List<JetParameter> getParameters() {
         return Arrays.asList(getStubOrPsiChildren(JetStubElementTypes.VALUE_PARAMETER, JetParameter.ARRAY_FACTORY));
     }

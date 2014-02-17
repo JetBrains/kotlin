@@ -21,16 +21,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class FloatValue implements CompileTimeConstant<Float> {
-    private final float value;
+public class FloatValue extends CompileTimeConstant<Float> {
 
-    public FloatValue(float value) {
-        this.value = value;
-    }
-
-    @Override
-    public Float getValue() {
-        return value;
+    public FloatValue(float value, boolean canBeUsedInAnnotations) {
+        super(value, canBeUsedInAnnotations, false);
     }
 
     @NotNull

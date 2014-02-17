@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -28,6 +29,8 @@ import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
@@ -48,6 +51,7 @@ import org.jetbrains.jet.codegen.forTestCompile.ForTestPackJdkAnnotations;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -61,6 +65,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
@@ -220,8 +225,17 @@ public class JetTestUtils {
     private JetTestUtils() {
     }
 
-    public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace) {
-        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, Collections.<AnalyzerScriptParameter>emptyList());
+    @NotNull
+    public static AnalyzeExhaust analyzeFile(@NotNull JetFile file) {
+        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, Collections.<AnalyzerScriptParameter>emptyList());
+    }
+
+    @NotNull
+    public static AnalyzeExhaust analyzeFileWithoutBody(@NotNull JetFile file) {
+        return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(file.getProject(),
+                                                                    Collections.singleton(file),
+                                                                    Collections.<AnalyzerScriptParameter>emptyList(),
+                                                                    Predicates.<PsiFile>alwaysFalse());
     }
 
     @NotNull
@@ -313,7 +327,8 @@ public class JetTestUtils {
         }
     }
 
-    public static JetFile createFile(@NonNls String name, String text, @NotNull Project project) {
+    @NotNull
+    public static JetFile createFile(@NotNull @NonNls String name, @NotNull String text, @NotNull Project project) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         return (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(project)).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
@@ -343,7 +358,12 @@ public class JetTestUtils {
             @NotNull TestJdkKind jdkKind, @NotNull Collection<File> extraClasspath, @NotNull Collection<File> priorityClasspath) {
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.addAll(CLASSPATH_KEY, priorityClasspath);
-        configuration.add(CLASSPATH_KEY, jdkKind == TestJdkKind.MOCK_JDK ? findMockJdkRtJar() : PathUtil.findRtJar());
+        if (jdkKind == TestJdkKind.MOCK_JDK) {
+            configuration.add(CLASSPATH_KEY, findMockJdkRtJar());
+        }
+        else {
+            configuration.addAll(CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
+        }
         if (configurationKind == ALL) {
             configuration.add(CLASSPATH_KEY, ForTestCompileRuntime.runtimeJarForTests());
         }
@@ -507,6 +527,24 @@ public class JetTestUtils {
         }
         result.delete(result.length() - 1, result.length());
         return result.toString();
+    }
+
+    public static String getLastCommentInFile(JetFile file) {
+        PsiElement lastChild = file.getLastChild();
+        if (lastChild != null && lastChild.getNode().getElementType().equals(JetTokens.WHITE_SPACE)) {
+            lastChild = lastChild.getPrevSibling();
+        }
+        assert lastChild != null;
+
+        if (lastChild.getNode().getElementType().equals(JetTokens.BLOCK_COMMENT)) {
+            String lastChildText = lastChild.getText();
+            return lastChildText.substring(2, lastChildText.length() - 2).trim();
+        }
+        else if (lastChild.getNode().getElementType().equals(JetTokens.EOL_COMMENT)) {
+            return lastChild.getText().substring(2).trim();
+        } else {
+            throw new AssertionError("Test file '" + file.getName() + "' should end in a comment; last node was: " + lastChild);
+        }
     }
 
     public static void compileJavaFiles(@NotNull Collection<File> files, List<String> options) throws IOException {
@@ -710,7 +748,7 @@ public class JetTestUtils {
     public static MutablePackageFragmentDescriptor createTestPackageFragment(@NotNull Name testPackageName, @NotNull String moduleName) {
         ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule(moduleName);
         MutablePackageFragmentProvider provider = new MutablePackageFragmentProvider(module);
-        module.addFragmentProvider(provider);
+        module.addFragmentProvider(DependencyKind.SOURCES, provider);
         return provider.getOrCreateFragment(FqName.topLevel(testPackageName));
     }
 

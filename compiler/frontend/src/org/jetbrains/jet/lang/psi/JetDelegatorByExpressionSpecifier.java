@@ -26,11 +26,6 @@ public class JetDelegatorByExpressionSpecifier extends JetDelegationSpecifier {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitDelegationByExpressionSpecifier(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitDelegationByExpressionSpecifier(this, data);
     }

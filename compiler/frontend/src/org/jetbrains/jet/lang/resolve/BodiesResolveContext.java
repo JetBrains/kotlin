@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Function;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -27,11 +28,19 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.storage.ExceptionTracker;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Map;
 
-public interface BodiesResolveContext {
+public interface BodiesResolveContext extends GlobalContext {
+    @NotNull
+    @Override
+    StorageManager getStorageManager();
+    @NotNull
+    @Override
+    ExceptionTracker getExceptionTracker();
     Collection<JetFile> getFiles();
     Map<JetClassOrObject, MutableClassDescriptor> getClasses();
     Map<JetProperty, PropertyDescriptor> getProperties();

@@ -48,7 +48,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.plugin.caches.resolve.IDELightClassGenerationSupport;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.*;
 
 import java.util.*;
@@ -87,7 +87,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public String[] getAllClassNames() {
         Collection<String> classNames = JetShortClassNameIndex.getInstance().getAllKeys(project);
 
-        // .namespace classes can not be indexed, since they have no explicit declarations
+        // package classes can not be indexed, since they have no explicit declarations
         IDELightClassGenerationSupport lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project);
         Set<String> packageClassShortNames =
                 lightClassGenerationSupport.getAllPossiblePackageClasses(GlobalSearchScope.allScope(project)).keySet();
@@ -107,7 +107,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         IDELightClassGenerationSupport lightClassGenerationSupport = IDELightClassGenerationSupport.getInstanceForIDE(project);
         MultiMap<String, FqName> packageClasses = lightClassGenerationSupport.getAllPossiblePackageClasses(scope);
 
-        // .namespace classes can not be indexed, since they have no explicit declarations
+        // package classes can not be indexed, since they have no explicit declarations
         Collection<FqName> fqNames = packageClasses.get(name);
         if (!fqNames.isEmpty()) {
             for (FqName fqName : fqNames) {
@@ -181,7 +181,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<ClassDescriptor> getTopLevelObjectsByName(
             @NotNull String name,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
         BindingContext context = resolveSession.resolveToElement(expression);
@@ -197,7 +197,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         for (JetObjectDeclaration objectDeclaration : topObjects) {
             FqName fqName = JetPsiUtil.getFQName(objectDeclaration);
             assert fqName != null : "Local object declaration in JetTopLevelShortObjectNameIndex:" + objectDeclaration.getText();
-            result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, true));
+            result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, ResolveSessionUtils.SINGLETON_FILTER));
         }
 
         for (PsiClass psiClass : JetFromJavaDescriptorHelper
@@ -205,7 +205,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             String qualifiedName = psiClass.getQualifiedName();
             if (qualifiedName != null) {
                 FqName fqName = new FqName(qualifiedName);
-                result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, true));
+                result.addAll(ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(resolveSession, fqName, ResolveSessionUtils.SINGLETON_FILTER));
             }
         }
 
@@ -214,13 +214,13 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     @NotNull
     public Collection<FunctionDescriptor> getTopLevelFunctionDescriptorsByName(
-            @NotNull final String name,
+            @NotNull String name,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull GlobalSearchScope scope
     ) {
         // name parameter can differ from expression.getReferenceName() when expression contains completion suffix
-        Name referenceName = expression.getIdentifier() == null ? JetPsiUtil.getConventionName(expression) : Name.identifier(name);
+        final Name referenceName = expression.getIdentifier() == null ? JetPsiUtil.getConventionName(expression) : Name.identifier(name);
         if (referenceName == null || referenceName.toString().isEmpty()) {
             return Collections.emptyList();
         }
@@ -238,7 +238,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                 ContainerUtil.filter(getTopLevelFunctionFqNames(project, scope, false), new Condition<FqName>() {
                     @Override
                     public boolean value(FqName fqName) {
-                        return fqName.lastSegmentIs(Name.identifier(name));
+                        return fqName.lastSegmentIs(referenceName);
                     }
                 });
         for (FqName fqName : topLevelFunctionFqNames) {
@@ -288,12 +288,11 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<DeclarationDescriptor> getJetCallableExtensions(
             @NotNull final Condition<String> acceptedNameCondition,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull GlobalSearchScope searchScope
     ) {
         BindingContext context = resolveSession.resolveToElement(expression);
         JetExpression receiverExpression = expression.getReceiverExpression();
-
         if (receiverExpression == null) {
             return Collections.emptyList();
         }

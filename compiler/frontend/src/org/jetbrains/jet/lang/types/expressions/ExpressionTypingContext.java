@@ -111,11 +111,6 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                                            isAnnotationContext);
     }
 
-    @Override
-    protected ExpressionTypingContext self() {
-        return this;
-    }
-
 ///////////// LAZY ACCESSORS
 
     public CompileTimeConstantChecker getCompileTimeConstantChecker() {

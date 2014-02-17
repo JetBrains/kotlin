@@ -17,12 +17,11 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.annotations.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
@@ -36,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
-import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -45,11 +43,12 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.jet.lang.types.TypeUtils.getPrimitiveNumberType;
 
 public class AnnotationResolver {
 
@@ -67,7 +66,7 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotationsWithoutArguments(
+    public Annotations resolveAnnotationsWithoutArguments(
             @NotNull JetScope scope,
             @Nullable JetModifierList modifierList,
             @NotNull BindingTrace trace
@@ -76,7 +75,7 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotationsWithArguments(
+    public Annotations resolveAnnotationsWithArguments(
             @NotNull JetScope scope,
             @Nullable JetModifierList modifierList,
             @NotNull BindingTrace trace
@@ -85,7 +84,7 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotationsWithArguments(
+    public Annotations resolveAnnotationsWithArguments(
             @NotNull JetScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntries,
             @NotNull BindingTrace trace
@@ -93,26 +92,26 @@ public class AnnotationResolver {
         return resolveAnnotationEntries(scope, annotationEntries, trace, true);
     }
 
-    private List<AnnotationDescriptor> resolveAnnotations(
+    private Annotations resolveAnnotations(
             @NotNull JetScope scope,
             @Nullable JetModifierList modifierList,
             @NotNull BindingTrace trace,
             boolean shouldResolveArguments
     ) {
         if (modifierList == null) {
-            return Collections.emptyList();
+            return Annotations.EMPTY;
         }
         List<JetAnnotationEntry> annotationEntryElements = modifierList.getAnnotationEntries();
 
         return resolveAnnotationEntries(scope, annotationEntryElements, trace, shouldResolveArguments);
     }
 
-    private List<AnnotationDescriptor> resolveAnnotationEntries(
+    private Annotations resolveAnnotationEntries(
             @NotNull JetScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntryElements, @NotNull BindingTrace trace,
             boolean shouldResolveArguments
     ) {
-        if (annotationEntryElements.isEmpty()) return Collections.emptyList();
+        if (annotationEntryElements.isEmpty()) return Annotations.EMPTY;
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptorImpl descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
@@ -128,7 +127,7 @@ public class AnnotationResolver {
 
             result.add(descriptor);
         }
-        return result;
+        return new AnnotationsImpl(result);
     }
 
     public void resolveAnnotationStub(
@@ -217,14 +216,17 @@ public class AnnotationResolver {
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
 
             JetType varargElementType = parameterDescriptor.getVarargElementType();
-            List<CompileTimeConstant<?>> constants = resolveValueArguments(descriptorToArgument.getValue(), parameterDescriptor.getType(), trace);
+            boolean argumentsAsVararg = varargElementType != null && !hasSpread(descriptorToArgument.getValue());
+            List<CompileTimeConstant<?>> constants = resolveValueArguments(descriptorToArgument.getValue(),
+                                                                           argumentsAsVararg ? varargElementType : parameterDescriptor.getType(),
+                                                                           trace);
 
-            if (varargElementType != null && !hasSpread(descriptorToArgument.getValue())) {
+            if (argumentsAsVararg) {
                 JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
                 if (arrayType == null) {
                     arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
                 }
-                annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType));
+                annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType, true));
             }
             else {
                 for (CompileTimeConstant<?> constant : constants) {
@@ -232,6 +234,71 @@ public class AnnotationResolver {
                 }
             }
         }
+    }
+
+    private static void checkCompileTimeConstant(
+            @NotNull JetExpression argumentExpression,
+            @NotNull JetType expectedType,
+            @NotNull BindingTrace trace
+    ) {
+        JetType expressionType = trace.get(BindingContext.EXPRESSION_TYPE, argumentExpression);
+
+        if (expressionType == null || !expressionType.equals(expectedType)) {
+            // TYPE_MISMATCH should be reported otherwise
+            return;
+        }
+
+        // array(1, <!>null<!>, 3) - error should be reported on inner expression
+        if (argumentExpression instanceof JetCallExpression) {
+            Pair<List<JetExpression>, JetType> arrayArgument = getArgumentExpressionsForArrayCall((JetCallExpression) argumentExpression, trace);
+            if (arrayArgument != null) {
+                for (JetExpression expression : arrayArgument.getFirst()) {
+                    checkCompileTimeConstant(expression, arrayArgument.getSecond(), trace);
+                }
+            }
+        }
+
+        CompileTimeConstant<?> constant = trace.get(BindingContext.COMPILE_TIME_VALUE, argumentExpression);
+        if (constant != null && constant.canBeUsedInAnnotations()) {
+            return;
+        }
+
+        ClassifierDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
+        if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
+            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression));
+        }
+        else if (descriptor instanceof ClassDescriptor && CompileTimeConstantUtils.isJavaLangClass((ClassDescriptor) descriptor)) {
+            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL.on(argumentExpression));
+        }
+        else {
+            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CONST.on(argumentExpression));
+        }
+    }
+
+    @Nullable
+    private static Pair<List<JetExpression>, JetType> getArgumentExpressionsForArrayCall(
+            @NotNull JetCallExpression expression,
+            @NotNull BindingTrace trace
+    ) {
+        ResolvedCall<?> resolvedCall = trace.get(BindingContext.RESOLVED_CALL, (expression).getCalleeExpression());
+        if (resolvedCall == null || !CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
+            return null;
+        }
+
+        assert resolvedCall.getValueArguments().size() == 1 : "Array function should have only one vararg parameter";
+        Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> argumentEntry = resolvedCall.getValueArguments().entrySet().iterator().next();
+
+        List<JetExpression> result = Lists.newArrayList();
+        JetType elementType = argumentEntry.getKey().getVarargElementType();
+        for (ValueArgument valueArgument : argumentEntry.getValue().getArguments()) {
+            JetExpression valueArgumentExpression = valueArgument.getArgumentExpression();
+            if (valueArgumentExpression != null) {
+                if (elementType != null) {
+                    result.add(valueArgumentExpression);
+                }
+            }
+        }
+        return new Pair<List<JetExpression>, JetType>(result, elementType);
     }
 
     private static boolean hasSpread(@NotNull ResolvedValueArgument argument) {
@@ -251,28 +318,13 @@ public class AnnotationResolver {
             if (argumentExpression != null) {
                 CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(argumentExpression, trace, expectedType);
                 if (constant instanceof IntegerValueTypeConstant) {
-                    IntegerValueTypeConstructor typeConstructor = ((IntegerValueTypeConstant) constant).getValue();
-                    JetType defaultType = getPrimitiveNumberType(typeConstructor, expectedType);
+                    JetType defaultType = ((IntegerValueTypeConstant) constant).getType(expectedType);
                     ArgumentTypeResolver.updateNumberType(defaultType, argumentExpression, trace);
                 }
                 if (constant != null) {
                     constants.add(constant);
                 }
-                else {
-                    JetType expressionType = trace.get(BindingContext.EXPRESSION_TYPE, argumentExpression);
-                    if (expressionType != null && expressionType.equals(expectedType)) {
-                        ClassifierDescriptor descriptor = expressionType.getConstructor().getDeclarationDescriptor();
-                        if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
-                            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression));
-                        }
-                        else if (descriptor instanceof ClassDescriptor && AnnotationUtils.isJavaLangClass((ClassDescriptor) descriptor)) {
-                            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL.on(argumentExpression));
-                        }
-                        else {
-                            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CONST.on(argumentExpression));
-                        }
-                    }
-                }
+                checkCompileTimeConstant(argumentExpression, expectedType, trace);
             }
         }
         return constants;
@@ -280,7 +332,7 @@ public class AnnotationResolver {
 
     @SuppressWarnings("MethodMayBeStatic")
     @NotNull
-    public List<AnnotationDescriptor> getResolvedAnnotations(@NotNull List<JetAnnotationEntry> annotations, @NotNull BindingTrace trace) {
+    public Annotations getResolvedAnnotations(@NotNull List<JetAnnotationEntry> annotations, @NotNull BindingTrace trace) {
         List<AnnotationDescriptor> result = new ArrayList<AnnotationDescriptor>(annotations.size());
         for (JetAnnotationEntry annotation : annotations) {
             AnnotationDescriptor annotationDescriptor = trace.get(BindingContext.ANNOTATION, annotation);
@@ -291,7 +343,7 @@ public class AnnotationResolver {
             result.add(annotationDescriptor);
         }
 
-        return result;
+        return new AnnotationsImpl(result);
     }
 
     public static void reportUnsupportedAnnotationForTypeParameter(@NotNull JetModifierListOwner modifierListOwner, BindingTrace trace) {

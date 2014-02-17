@@ -1,0 +1,98 @@
+<root>
+  <item
+      name='com.intellij.refactoring.safeDelete.JavaSafeDeleteDelegate void createUsageInfoForParameter(com.intellij.psi.PsiReference, java.util.List&lt;com.intellij.usageView.UsageInfo&gt;, com.intellij.psi.PsiParameter, com.intellij.psi.PsiMethod)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun createUsageInfoForParameter(reference: PsiReference, usages: MutableList&lt;UsageInfo&gt;, parameter: PsiParameter, method: PsiMethod): Unit&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor java.util.Collection&lt;? extends com.intellij.psi.PsiElement&gt; getElementsToSearch(com.intellij.psi.PsiElement, com.intellij.openapi.module.Module, java.util.Collection&lt;com.intellij.psi.PsiElement&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun getElementsToSearch(element: PsiElement, module: Module?, allElementsToDelete: Collection&lt;PsiElement&gt;): Collection&lt;out PsiElement&gt;?&quot;"/>
+    </annotation>
+  </item>
+  <item name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate boolean handlesElement(com.intellij.psi.PsiElement)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun handlesElement(element: PsiElement): Boolean&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate boolean isToSearchForTextOccurrences(com.intellij.psi.PsiElement)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun isToSearchForTextOccurrences(element: PsiElement): Boolean&quot;"/>
+    </annotation>
+  </item>
+  <item name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate boolean isToSearchInComments(com.intellij.psi.PsiElement)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun isToSearchInComments(element: PsiElement): Boolean&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate com.intellij.refactoring.safeDelete.NonCodeUsageSearchInfo findUsages(com.intellij.psi.PsiElement, com.intellij.psi.PsiElement[], java.util.List&lt;com.intellij.usageView.UsageInfo&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun findUsages(element: PsiElement, allElementsToDelete: Array&lt;out PsiElement&gt;, result: MutableList&lt;UsageInfo&gt;): NonCodeUsageSearchInfo?&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate com.intellij.usageView.UsageInfo[] preprocessUsages(com.intellij.openapi.project.Project, com.intellij.usageView.UsageInfo[])'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun preprocessUsages(project: Project, usages: Array&lt;out UsageInfo&gt;): Array&lt;UsageInfo&gt;?&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate java.util.Collection&lt;? extends com.intellij.psi.PsiElement&gt; getElementsToSearch(com.intellij.psi.PsiElement, java.util.Collection&lt;com.intellij.psi.PsiElement&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun getElementsToSearch(element: PsiElement, allElementsToDelete: Collection&lt;PsiElement&gt;): Collection&lt;out PsiElement&gt;?&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate java.util.Collection&lt;com.intellij.psi.PsiElement&gt; getAdditionalElementsToDelete(com.intellij.psi.PsiElement, java.util.Collection&lt;com.intellij.psi.PsiElement&gt;, boolean)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun getAdditionalElementsToDelete(element: PsiElement, allElementsToDelete: Collection&lt;PsiElement&gt;, askUser: Boolean): MutableCollection&lt;PsiElement&gt;?&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate java.util.Collection&lt;java.lang.String&gt; findConflicts(com.intellij.psi.PsiElement, com.intellij.psi.PsiElement[])'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun findConflicts(element: PsiElement, allElementsToDelete: Array&lt;out PsiElement&gt;): MutableCollection&lt;String&gt;?&quot;"/>
+    </annotation>
+  </item>
+  <item name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate void prepareForDeletion(com.intellij.psi.PsiElement)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun prepareForDeletion(element: PsiElement): Unit&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate void setToSearchForTextOccurrences(com.intellij.psi.PsiElement, boolean)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun setToSearchForTextOccurrences(element: PsiElement, enabled: Boolean): Unit&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegate void setToSearchInComments(com.intellij.psi.PsiElement, boolean)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value" val="&quot;fun setToSearchInComments(element: PsiElement, enabled: Boolean): Unit&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegateBase java.util.Collection&lt;? extends com.intellij.psi.PsiElement&gt; getElementsToSearch(com.intellij.psi.PsiElement, com.intellij.openapi.module.Module, java.util.Collection&lt;com.intellij.psi.PsiElement&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun getElementsToSearch(element: PsiElement, module: Module?, allElementsToDelete: Collection&lt;PsiElement&gt;): Collection&lt;out PsiElement&gt;?&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegateBase java.util.Collection&lt;? extends com.intellij.psi.PsiElement&gt; getElementsToSearch(com.intellij.psi.PsiElement, java.util.Collection&lt;com.intellij.psi.PsiElement&gt;)'>
+    <annotation name='jet.runtime.typeinfo.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun getElementsToSearch(element: PsiElement, allElementsToDelete: Collection&lt;PsiElement&gt;): Collection&lt;out PsiElement&gt;?&quot;"/>
+    </annotation>
+  </item>
+</root>

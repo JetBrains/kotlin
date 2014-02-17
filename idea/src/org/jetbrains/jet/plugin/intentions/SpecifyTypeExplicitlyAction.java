@@ -45,7 +45,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -257,16 +257,14 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         manager.startTemplate(editor, builder.buildInlineTemplate(), new TemplateEditingAdapter() {
             @Override
             public void templateFinished(Template template, boolean brokenOff) {
-                ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(namedDeclaration));
+                ShortenReferences.instance$.process(getTypeRef(namedDeclaration));
             }
         });
     }
 
     private static void addTypeAnnotationSilently(Project project, JetNamedDeclaration namedDeclaration, PsiElement anchor) {
-        JetTypeReference typeReference = JetPsiFactory.createType(project, "Any");
-        namedDeclaration.addAfter(typeReference, anchor);
-        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColonAndWhiteSpaces(project);
-        namedDeclaration.addRangeAfter(colon.getFirst(), colon.getSecond(), anchor);
+        namedDeclaration.addAfter(JetPsiFactory.createType(project, "Any"), anchor);
+        namedDeclaration.addAfter(JetPsiFactory.createColon(project), anchor);
     }
 
     @Nullable

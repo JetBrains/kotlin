@@ -28,11 +28,6 @@ public abstract class JetExpressionImpl extends JetElementImpl implements JetExp
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitExpression(this, data);
     }

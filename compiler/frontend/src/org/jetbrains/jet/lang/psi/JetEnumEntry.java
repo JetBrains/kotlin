@@ -78,11 +78,6 @@ public class JetEnumEntry extends JetClass {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitEnumEntry(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitEnumEntry(this, data);
     }

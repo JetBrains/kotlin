@@ -16,4 +16,4 @@ Ann(
     s4 = "a${i}a$i"
 ) class MyClass
 
-// EXPECTED: Ann[s1 = "a1": jet.String, s2 = "a1 b": jet.String, s3 = "1": jet.String, s4 = "a1a1": jet.String]
+// EXPECTED: Ann(s1 = "a1": String, s2 = "a1 b": String, s3 = "1": String, s4 = "a1a1": String)

@@ -34,12 +34,12 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
-import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
@@ -48,13 +48,15 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
-public class KotlinJavaFileStubProvider implements CachedValueProvider<GeneratedLightClassData> {
+public class KotlinJavaFileStubProvider implements CachedValueProvider<LightClassStubWithData> {
 
     @NotNull
     public static KotlinJavaFileStubProvider createForPackageClass(
@@ -82,8 +84,8 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<Generated
 
                     @NotNull
                     @Override
-                    public GeneratedLightClassData createStubWithName(PsiJavaFileStub javaFileStub, BindingContext bindingContext) {
-                        return new GeneratedLightClassData(javaFileStub, "", null);
+                    public LightClassStubWithData createLightClassStubWithData(PsiJavaFileStub javaFileStub, BindingContext bindingContext) {
+                        return new LightClassStubWithData(javaFileStub, KotlinPackageLightClassData.instance$);
                     }
 
                     @NotNull
@@ -94,7 +96,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<Generated
 
                     @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
-                        NamespaceCodegen codegen = state.getFactory().forNamespace(packageFqName, files);
+                        PackageCodegen codegen = state.getFactory().forPackage(packageFqName, files);
                         codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
                         state.getFactory().asList();
                     }
@@ -120,17 +122,37 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<Generated
 
                     @NotNull
                     @Override
-                    public GeneratedLightClassData createStubWithName(PsiJavaFileStub javaFileStub, BindingContext bindingContext) {
+                    public LightClassStubWithData createLightClassStubWithData(PsiJavaFileStub javaFileStub, BindingContext bindingContext) {
                         ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
-                        assert (classDescriptor != null);
+                        if (classDescriptor == null) {
+                            return new LightClassStubWithData(
+                                    javaFileStub,
+                                    new OutermostKotlinClassLightClassData("", classOrObject, null, Collections.<JetClassOrObject, LightClassDataForKotlinClass>emptyMap())
+                            );
+                        }
 
-                        Type asmType = bindingContext.get(CodegenBinding.ASM_TYPE, classDescriptor);
-                        assert (asmType != null);
+                        String jvmInternalName = CodegenBinding.getJvmInternalName(bindingContext, classDescriptor);
+                        Collection<ClassDescriptor> allInnerClasses = CodegenBinding.getAllInnerClasses(bindingContext, classDescriptor);
 
-                        String jvmInternalName = asmType.getClassName();
-                        assert (jvmInternalName != null);
+                        Map<JetClassOrObject, LightClassDataForKotlinClass> innerClassesMap = ContainerUtil.newHashMap();
+                        for (ClassDescriptor innerClassDescriptor : allInnerClasses) {
+                            JetClassOrObject innerClass = (JetClassOrObject) BindingContextUtils.descriptorToDeclaration(
+                                    bindingContext, innerClassDescriptor
+                            );
+                            if (innerClass == null) continue;
 
-                        return new GeneratedLightClassData(javaFileStub, jvmInternalName, classDescriptor);
+                            InnerKotlinClassLightClassData innerLightClassData = new InnerKotlinClassLightClassData(
+                                    CodegenBinding.getJvmInternalName(bindingContext, innerClassDescriptor),
+                                    innerClass,
+                                    innerClassDescriptor
+                            );
+                            innerClassesMap.put(innerClass, innerLightClassData);
+                        }
+
+                        return new LightClassStubWithData(
+                                javaFileStub,
+                                new OutermostKotlinClassLightClassData(jvmInternalName, classOrObject, classDescriptor, innerClassesMap)
+                        );
                     }
 
                     @NotNull
@@ -147,8 +169,8 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<Generated
 
                     @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<JetFile> files) {
-                        NamespaceCodegen namespaceCodegen = state.getFactory().forNamespace(getPackageFqName(), files);
-                        namespaceCodegen.generateClassOrObject(classOrObject);
+                        PackageCodegen packageCodegen = state.getFactory().forPackage(getPackageFqName(), files);
+                        packageCodegen.generateClassOrObject(classOrObject);
                         state.getFactory().asList();
                     }
                 }
@@ -173,7 +195,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<Generated
 
     @Nullable
     @Override
-    public Result<GeneratedLightClassData> compute() {
+    public Result<LightClassStubWithData> compute() {
         FqName packageFqName = stubGenerationStrategy.getPackageFqName();
         Collection<JetFile> files = stubGenerationStrategy.getFiles();
 
@@ -221,7 +243,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<Generated
         }
 
         return Result.create(
-                stubGenerationStrategy.createStubWithName(javaFileStub, bindingContext),
+                stubGenerationStrategy.createLightClassStubWithData(javaFileStub, bindingContext),
                 local ? PsiModificationTracker.MODIFICATION_COUNT : PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
         );
     }
@@ -283,7 +305,7 @@ public class KotlinJavaFileStubProvider implements CachedValueProvider<Generated
     private interface StubGenerationStrategy {
         @NotNull LightClassConstructionContext createLightClassConstructionContext(@NotNull Collection<JetFile> files);
         @NotNull
-        GeneratedLightClassData createStubWithName(PsiJavaFileStub javaFileStub, BindingContext bindingContext);
+        LightClassStubWithData createLightClassStubWithData(PsiJavaFileStub javaFileStub, BindingContext bindingContext);
         @NotNull Collection<JetFile> getFiles();
         @NotNull FqName getPackageFqName();
         boolean generateDeclaredClasses();

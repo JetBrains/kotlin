@@ -59,8 +59,6 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-
 public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     private static final String SHOW_MARKERS_PROPERTY = "kotlin.signature.markers.enabled";
 
@@ -167,7 +165,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             @NotNull PsiMember member
     ) {
         if (member.hasModifierProperty(PsiModifier.STATIC)) {
-            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragmentProvider().getOrCreatePackage(classFqName);
+            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragment(classFqName);
             if (packageFragment == null) {
                 return null;
             }
@@ -175,7 +173,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return packageFragment.getMemberScope();
         }
         else {
-            ClassDescriptor klass = javaDescriptorResolver.resolveClass(classFqName, IGNORE_KOTLIN_SOURCES);
+            ClassDescriptor klass = javaDescriptorResolver.resolveClass(classFqName);
             if (klass == null) {
                 return null;
             }
@@ -201,7 +199,9 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         if (member instanceof PsiMethod) {
             if (((PsiMethod) member).isConstructor()) {
                 DeclarationDescriptor container = memberScope.getContainingDeclaration();
-                assert container instanceof JavaClassDescriptor : container + "\n" + memberScope;
+                if (!(container instanceof JavaClassDescriptor)) {
+                    return null;
+                }
                 ((JavaClassDescriptor) container).getConstructors();
             }
             else {

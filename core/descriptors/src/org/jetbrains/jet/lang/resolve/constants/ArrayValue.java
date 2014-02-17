@@ -23,19 +23,20 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
-public class ArrayValue implements CompileTimeConstant<List<CompileTimeConstant<?>>> {
+public class ArrayValue extends CompileTimeConstant<List<CompileTimeConstant<?>>> {
 
-    private final List<CompileTimeConstant<?>> value;
     private final JetType type;
 
-    public ArrayValue(@NotNull List<CompileTimeConstant<?>> value, @NotNull JetType type) {
-        this.value = value;
+    public ArrayValue(@NotNull List<CompileTimeConstant<?>> value, @NotNull JetType type, boolean canBeUsedInAnnotations) {
+        super(value, canBeUsedInAnnotations, false);
         this.type = type;
     }
 
-    @Override
     @NotNull
+    @Override
     public List<CompileTimeConstant<?>> getValue() {
+        List<CompileTimeConstant<?>> value = super.getValue();
+        assert value != null : "Guaranteed by constructor";
         return value;
     }
 

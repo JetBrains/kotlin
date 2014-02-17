@@ -54,7 +54,7 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
     }
 
     public void testMultipleCases() throws Exception {
-        runFunctionOutputTest("multipleCases.kt", "foo", "box", 2.0);
+        fooBoxIsValue(2.0);
     }
 
     public void testMatchNullableType() throws Exception {
@@ -74,8 +74,8 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
         }
     }
 
-    public void testKT1665() throws Exception {
-        checkOutput("kt1665.kt", "a", "");
+    public void testKt1665() throws Exception {
+        checkFooBoxIsOk();
     }
 
     public void testWhenWithoutExpression() throws Exception {

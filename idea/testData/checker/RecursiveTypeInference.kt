@@ -1,7 +1,7 @@
 //package a {
-    val afoo = <error descr="[TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM] Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly">abar()</error>
+    val afoo = abar()
 
-    fun abar() = <error>afoo</error>
+    fun abar() = <error descr="[TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM] Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly">afoo</error>
 //}
 
 //package b {

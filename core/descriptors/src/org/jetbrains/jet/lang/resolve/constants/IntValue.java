@@ -16,31 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.constants;
 
-import com.google.common.base.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public class IntValue implements CompileTimeConstant<Integer> {
-    public static final Function<Long, IntValue> CREATE = new Function<Long, IntValue>() {
-        @Override
-        public IntValue apply(@Nullable Long input) {
-            assert input != null;
-            return new IntValue(input.intValue());
-        }
-    };
+public class IntValue extends CompileTimeConstant<Integer> {
 
-    private final int value;
-
-    public IntValue(int value) {
-        this.value = value;
-    }
-
-    @Override
-    public Integer getValue() {
-        return value;
+    public IntValue(int value, boolean canBeUsedInAnnotations, boolean pure) {
+        super(value, canBeUsedInAnnotations, pure);
     }
 
     @NotNull

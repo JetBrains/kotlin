@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        ClassDescriptor classDescriptor = getTrace().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName);
+        ClassDescriptor classDescriptor = getTrace().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe());
         if (classDescriptor != null) {
             PsiElement element = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
             if (element != null && PsiSearchScopeUtil.isInScope(searchScope, element)) {
@@ -209,7 +209,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
     @Nullable
     @Override
     public PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject) {
-        return  KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
+        return KotlinLightClassForExplicitDeclaration.create(classOrObject.getManager(), classOrObject);
     }
 
     public static class BindingTraceContextWithoutScopeRecording extends BindingTraceContext {

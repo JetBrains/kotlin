@@ -14,16 +14,13 @@
     <item name='android.mtp.MtpServer void removeStorage(android.mtp.MtpStorage) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.mtp.MtpStorage java.lang.String getDescription()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
     <item name='android.mtp.MtpDatabase void addStorage(android.mtp.MtpStorage) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.mtp.MtpDatabase MtpDatabase(android.content.Context, java.lang.String, java.lang.String, java.lang.String[]) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.mtp.MtpStorage java.lang.String getPath()'>
+    <item name='android.mtp.MtpStorage java.lang.String getDescription()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

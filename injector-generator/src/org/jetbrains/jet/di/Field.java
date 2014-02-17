@@ -21,7 +21,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.jetbrains.jet.di.InjectorGeneratorUtil.var;
 
 class Field {
 
@@ -112,5 +118,37 @@ class Field {
         int result = type.hashCode();
         result = 31 * result + name.hashCode();
         return result;
+    }
+
+    @NotNull
+    public List<Field> getFieldsAccessibleViaGetters() {
+        Class<?> clazz = type.getClazz();
+        List<Field> result = Lists.newArrayList();
+        for (Method method : allGetters(clazz)) {
+            DiType type = DiType.fromReflectionType(method.getGenericReturnType());
+            result.add(create(false, type, var(type), new GivenExpression(this.getName() + "." + method.getName() + "()")));
+        }
+        return result;
+    }
+
+    @NotNull
+    private static Collection<Method> allGetters(@NotNull Class clazz) {
+        Map<String, Method> getters = new TreeMap<String, Method>();
+        for (Method method : clazz.getMethods()) {
+            if (method.getDeclaringClass() == Object.class) {
+                continue;
+            }
+            if (isGetter(method)) {
+                if (!getters.containsKey(method.getName())) {
+                    getters.put(method.getName(), method);
+                }
+            }
+        }
+        return getters.values();
+    }
+
+    private static boolean isGetter(@NotNull Method method) {
+        String name = method.getName();
+        return name.startsWith("get") && name.length() > 3 && method.getParameterTypes().length == 0;
     }
 }

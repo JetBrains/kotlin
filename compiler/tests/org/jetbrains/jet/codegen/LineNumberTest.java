@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
             text = FileUtil.loadFile(file);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
 
         return JetTestUtils.createFile(file.getName(), text, environment.getProject());
@@ -121,7 +121,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
             }
             catch (Throwable e) {
                 System.out.println(factory.createText());
-                throw ExceptionUtils.rethrow(e);
+                throw UtilsPackage.rethrow(e);
             }
         }
 
@@ -333,7 +333,7 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         assertNotNull(file);
         ClassReader reader = new ClassReader(file.asByteArray());
 
-        // There must be exactly one line number attribute for each static delegate in namespace.class, and it should point to the first
+        // There must be exactly one line number attribute for each static delegate in package facade class, and it should point to the first
         // line. There are two static delegates in this test, hence the [1, 1]
         List<Integer> expectedLineNumbers = Arrays.asList(1, 1);
         List<Integer> actualLineNumbers = readAllLineNumbers(reader);

@@ -17,17 +17,19 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
-import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.*
 import java.util.ArrayList
 
-public open class Field(val identifier: Identifier,
-                        val docComments: List<Node>,
-                        modifiers: Set<Modifier>,
-                        val `type`: Type,
-                        val initializer: Element,
-                        val writingAccesses: Int) : Member(modifiers) {
+open class Field(
+        val identifier: Identifier,
+        comments: MemberComments,
+        modifiers: Set<Modifier>,
+        val `type`: Type,
+        val initializer: Element,
+        val writingAccesses: Int
+) : Member(comments, modifiers) {
 
-    open fun modifiersToKotlin(): String {
+    fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()
         if (isAbstract()) {
             modifierList.add(Modifier.ABSTRACT)
@@ -41,17 +43,16 @@ public open class Field(val identifier: Identifier,
         return modifierList.toKotlin() + (if (isVal()) "val " else "var ")
     }
 
-    public open fun isVal(): Boolean = modifiers.contains(Modifier.FINAL)
-    public override fun isStatic(): Boolean = modifiers.contains(Modifier.STATIC)
+    fun isVal(): Boolean = modifiers.contains(Modifier.FINAL)
 
-    public override fun toKotlin(): String {
-        val declaration: String = docComments.toKotlin("\n", "", "\n") +
+    override fun toKotlin(): String {
+        val declaration: String = commentsToKotlin() +
         modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
         if (initializer.isEmpty()) {
             return declaration + ((if (isVal() && !isStatic() && writingAccesses != 0)
                 ""
             else
-                " = " + Converter.getDefaultInitializer(this)))
+                " = " + getDefaultInitializer(this)))
         }
 
         return declaration + " = " + initializer.toKotlin()

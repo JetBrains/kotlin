@@ -19,37 +19,29 @@ package org.jetbrains.jet.codegen.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Label;
-import org.jetbrains.jet.codegen.binding.MutableClosure;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
-public class MethodContext extends CodegenContext {
+public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
 
     private Label methodStartLabel;
-    
-    public MethodContext(
-            @NotNull FunctionDescriptor contextType,
-            @NotNull OwnerKind contextKind,
-            @NotNull CodegenContext parentContext
-    ) {
-        this(contextType, contextKind, parentContext, null);
-    }
 
     protected MethodContext(
-            @NotNull FunctionDescriptor contextType,
+            @NotNull FunctionDescriptor contextDescriptor,
             @NotNull OwnerKind contextKind,
             @NotNull CodegenContext parentContext,
             @Nullable MutableClosure closure
     ) {
-        super(contextType instanceof PropertyAccessorDescriptor
-              ? ((PropertyAccessorDescriptor) contextType).getCorrespondingProperty()
-              : contextType, contextKind, parentContext, closure,
+        super(contextDescriptor instanceof PropertyAccessorDescriptor
+              ? ((PropertyAccessorDescriptor) contextDescriptor).getCorrespondingProperty()
+              : contextDescriptor, contextKind, parentContext, closure,
               parentContext.hasThisDescriptor() ? parentContext.getThisDescriptor() : null, null);
     }
 

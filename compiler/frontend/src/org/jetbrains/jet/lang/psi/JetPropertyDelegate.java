@@ -17,9 +17,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceService;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -32,11 +29,6 @@ public class JetPropertyDelegate extends JetElementImpl {
     @Nullable
     public JetExpression getExpression() {
         return findChildByClass(JetExpression.class);
-    }
-
-    @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitPropertyDelegate(this);
     }
 
     @Override

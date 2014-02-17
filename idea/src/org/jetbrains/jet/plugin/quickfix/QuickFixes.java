@@ -132,6 +132,7 @@ public class QuickFixes {
 
         JetSingleIntentionActionFactory unresolvedReferenceFactory = AutoImportFix.createFactory();
         factories.put(UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
+        factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, unresolvedReferenceFactory);
 
         JetSingleIntentionActionFactory removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory();
         factories.put(USELESS_SIMPLE_IMPORT, removeImportFixFactory);

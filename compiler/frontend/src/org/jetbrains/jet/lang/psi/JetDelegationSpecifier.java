@@ -27,11 +27,6 @@ public class JetDelegationSpecifier extends JetElementImpl {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitDelegationSpecifier(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitDelegationSpecifier(this, data);
     }

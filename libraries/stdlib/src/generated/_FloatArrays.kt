@@ -184,6 +184,18 @@ public inline fun <K> FloatArray.groupByTo(result: MutableMap<K, MutableList<Flo
 }
 
 /**
+ * Returns first index of item, or -1 if the array does not contain item
+ */
+public fun FloatArray.indexOf(item: Float) : Int {
+    for (i in indices) {
+        if (item == this[i]) {
+            return i
+        }
+    }
+    return -1
+}
+
+/**
  * Returns true if the array is empty
  */
 public fun FloatArray.isEmpty() : Boolean {

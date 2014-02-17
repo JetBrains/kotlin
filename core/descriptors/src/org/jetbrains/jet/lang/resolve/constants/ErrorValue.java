@@ -22,7 +22,11 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public abstract class ErrorValue implements CompileTimeConstant<Void> {
+public abstract class ErrorValue extends CompileTimeConstant<Void> {
+
+    public ErrorValue() {
+        super(null, true, false);
+    }
 
     @Override
     @Deprecated // Should not be called, for this is not a real value, but a indication of an error

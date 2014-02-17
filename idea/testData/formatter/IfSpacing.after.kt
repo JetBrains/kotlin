@@ -7,8 +7,11 @@ fun f() {
     }
 
     if (true) {
+    } else {
     }
-    else {
+
+    if (true) {
+    } else {
     }
 
     if (true) {
@@ -19,17 +22,14 @@ fun f() {
     } else {
     }
 
-    if (true)
-    {
-    }
-    else
-    {
-    }
-
-    if (true)
-    {
-    }
-
-    else
+    if (true) {
+    } else
         3 > 2
+
+    if (true) (3) else (4)
+
+    if (true) (3) else (4)
+
+    if (true) (3)
+    else (4)
 }

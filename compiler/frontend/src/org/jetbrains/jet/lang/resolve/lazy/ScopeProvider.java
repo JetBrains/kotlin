@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.JetModuleUtil;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -66,12 +67,8 @@ public class ScopeProvider {
         return fileScopes.invoke(file);
     }
 
-    private JetScope createFileScope(JetFile file) {
-        PackageViewDescriptor rootPackageDescriptor = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT);
-        if (rootPackageDescriptor == null) {
-            throw new IllegalStateException("Root package not found");
-        }
-
+    @NotNull
+    private JetScope createFileScope(@NotNull JetFile file) {
         PackageViewDescriptor packageDescriptor = getFilePackageDescriptor(file);
 
         JetScope importsScope = LazyImportScope.createImportScopeForFile(
@@ -84,7 +81,7 @@ public class ScopeProvider {
         return new ChainedScope(resolveSession.getPackageFragment(JetPsiUtil.getFQName(file)),
                                 "File scope: " + file.getName(),
                                 packageDescriptor.getMemberScope(),
-                                rootPackageDescriptor.getMemberScope(),
+                                JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor()),
                                 importsScope,
                                 defaultImportsScope.invoke());
     }
@@ -95,7 +92,7 @@ public class ScopeProvider {
             throw new IllegalStateException("Root package not found");
         }
 
-        JetImportsFactory importsFactory = resolveSession.getInjector().getJetImportsFactory();
+        JetImportsFactory importsFactory = resolveSession.getJetImportsFactory();
         List<ImportPath> defaultImports = resolveSession.getModuleDescriptor().getDefaultImports();
 
         Collection<JetImportDirective> defaultImportDirectives = importsFactory.createImportDirectives(defaultImports);
@@ -105,17 +102,18 @@ public class ScopeProvider {
                 rootPackage,
                 Lists.reverse(Lists.newArrayList(defaultImportDirectives)),
                 TemporaryBindingTrace.create(resolveSession.getTrace(), "Transient trace for default imports lazy resolve"),
-                "Lazy default imports scope");
+                "Lazy default imports scope",
+                false);
     }
 
     @NotNull
     private PackageViewDescriptor getFilePackageDescriptor(JetFile file) {
-        JetNamespaceHeader header = file.getNamespaceHeader();
-        if (header == null) {
+        JetPackageDirective directive = file.getPackageDirective();
+        if (directive == null) {
             throw new IllegalArgumentException("Scripts are not supported: " + file.getName());
         }
 
-        FqName fqName = new FqName(header.getQualifiedName());
+        FqName fqName = new FqName(directive.getQualifiedName());
         PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(fqName);
 
         if (packageDescriptor == null) {

@@ -1,7 +1,7 @@
 open class JA() {
-    public var name: String = KA().foo("")
+    public var name: String = KBase().foo("") + KA().foo("")
 
     public open fun foo(): String {
-        return KA().foo("")
+        return KBase().foo("") + KA().foo("")
     }
 }

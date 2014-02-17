@@ -31,17 +31,13 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.LibrarySourcesConfig;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
-import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Map;
 
-import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject;
+import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.getNameForAnnotatedObjectWithOverrides;
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMangledName;
@@ -93,9 +89,6 @@ public final class StaticContext {
     @NotNull
     private final EcmaVersion ecmaVersion;
 
-    @NotNull
-    private LiteralFunctionTranslator literalFunctionTranslator;
-
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
             @NotNull Namer namer, @NotNull Intrinsics intrinsics,
@@ -107,15 +100,6 @@ public final class StaticContext {
         this.rootScope = rootScope;
         this.standardClasses = standardClasses;
         this.ecmaVersion = ecmaVersion;
-    }
-
-    public void initTranslators(TranslationContext programContext) {
-        literalFunctionTranslator = new LiteralFunctionTranslator(programContext);
-    }
-
-    @NotNull
-    public LiteralFunctionTranslator getLiteralFunctionTranslator() {
-        return literalFunctionTranslator;
     }
 
     public boolean isEcma5() {
@@ -167,6 +151,10 @@ public final class StaticContext {
         if (descriptor instanceof PackageViewDescriptor) {
             return getQualifiedReference(((PackageViewDescriptor) descriptor).getFqName());
         }
+        if (descriptor instanceof PackageFragmentDescriptor) {
+            return getQualifiedReference(((PackageFragmentDescriptor) descriptor).getFqName());
+        }
+
         return new JsNameRef(getNameForDescriptor(descriptor), getQualifierForDescriptor(descriptor));
     }
 
@@ -188,7 +176,7 @@ public final class StaticContext {
         return ContainerUtil.getOrCreate(packageNames, packageFqName, new Factory<JsName>() {
             @Override
             public JsName create() {
-                String name = Namer.generateNamespaceName(packageFqName);
+                String name = Namer.generatePackageName(packageFqName);
                 return getRootScope().declareName(name);
             }
         });
@@ -234,44 +222,14 @@ public final class StaticContext {
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     JsScope scope = getEnclosingScope(descriptor);
-                    DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
-                    if (!(descriptor instanceof FunctionDescriptor) || !(declaration instanceof ClassDescriptor)) {
-                        return scope.declareFreshName(descriptor.getName().asString());
+
+                    String suggestedName = descriptor.getName().asString();
+
+                    if (descriptor instanceof FunctionDescriptor) {
+                        suggestedName = getMangledName((FunctionDescriptor) descriptor);
                     }
 
-                    Collection<FunctionDescriptor> functions =
-                            ((ClassDescriptor) declaration).getDefaultType().getMemberScope().getFunctions(descriptor.getName());
-                    String name = descriptor.getName().asString();
-                    int counter = -1;
-                    if (functions.size() > 1) {
-                        // see testOverloadedFun
-                        FunctionDescriptor[] sorted = functions.toArray(new FunctionDescriptor[functions.size()]);
-                        Arrays.sort(sorted, new Comparator<FunctionDescriptor>() {
-                            @Override
-                            public int compare(@NotNull FunctionDescriptor a, @NotNull FunctionDescriptor b) {
-                                Integer result = Visibilities.compare(b.getVisibility(), a.getVisibility());
-                                if (result == null) {
-                                    return 0;
-                                }
-                                else if (result == 0) {
-                                    // open fun > not open fun
-                                    int aWeight = a.getModality().isOverridable() ? 1 : 0;
-                                    int bWeight = b.getModality().isOverridable() ? 1 : 0;
-                                    return bWeight - aWeight;
-                                }
-
-                                return result;
-                            }
-                        });
-                        for (FunctionDescriptor function : sorted) {
-                            if (function == descriptor) {
-                                break;
-                            }
-                            counter++;
-                        }
-                    }
-
-                    return scope.declareName(counter == -1 ? name : name + '_' + counter);
+                    return scope.declareFreshName(suggestedName);
                 }
             };
             Rule<JsName> constructorHasTheSameNameAsTheClass = new Rule<JsName>() {
@@ -305,7 +263,7 @@ public final class StaticContext {
                         return null;
                     }
 
-                    String nameFromAnnotation = getNameForAnnotatedObject(propertyDescriptor);
+                    String nameFromAnnotation = getNameForAnnotatedObjectWithOverrides(propertyDescriptor);
                     if (nameFromAnnotation != null) {
                         return declarePropertyOrPropertyAccessorName(descriptor, nameFromAnnotation, false);
                     }
@@ -333,7 +291,13 @@ public final class StaticContext {
             Rule<JsName> predefinedObjectsHasUnobfuscatableNames = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    String name = getNameForAnnotatedObject(descriptor);
+                    // The mixing of override and rename by annotation(e.g. native) is forbidden.
+                    if (descriptor instanceof CallableMemberDescriptor &&
+                        !((CallableMemberDescriptor) descriptor).getOverriddenDescriptors().isEmpty()) {
+                        return null;
+                    }
+
+                    String name = getNameForAnnotatedObjectWithOverrides(descriptor);
                     if (name != null) return getEnclosingScope(descriptor).declareName(name);
                     return null;
                 }
@@ -412,7 +376,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof PackageFragmentDescriptor)) {
                         return null;
                     }
-                    return getRootScope().innerScope("Namespace " + descriptor.getName());
+                    return getRootScope().innerScope("Package " + descriptor.getName());
                 }
             };
             //TODO: never get there
@@ -465,7 +429,7 @@ public final class StaticContext {
                 }
             };
             //TODO: review and refactor
-            Rule<JsNameRef> packageLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier = new Rule<JsNameRef>() {
+            Rule<JsNameRef> packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier = new Rule<JsNameRef>() {
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
                     DeclarationDescriptor containingDescriptor = getContainingDeclaration(descriptor);
@@ -525,23 +489,23 @@ public final class StaticContext {
             addRule(libraryObjectsHaveKotlinQualifier);
             addRule(constructorHaveTheSameQualifierAsTheClass);
             addRule(standardObjectsHaveKotlinQualifier);
-            addRule(packageLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier);
+            addRule(packageLevelDeclarationsHaveEnclosingPackagesNamesAsQualifier);
         }
     }
 
     private static class QualifierIsNullGenerator extends Generator<Boolean> {
 
         private QualifierIsNullGenerator() {
-            Rule<Boolean> propertiesHaveNoQualifiers = new Rule<Boolean>() {
+            Rule<Boolean> propertiesInClassHaveNoQualifiers = new Rule<Boolean>() {
                 @Override
                 public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!(descriptor instanceof PropertyDescriptor)) {
-                        return null;
+                    if ((descriptor instanceof PropertyDescriptor) && descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+                        return true;
                     }
-                    return true;
+                    return null;
                 }
             };
-            //TODO: hack!
+            //TODO: hack!  it seems like needed, only for Inheritance from native class
             Rule<Boolean> nativeObjectsHaveNoQualifiers = new Rule<Boolean>() {
                 @Override
                 public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
@@ -551,7 +515,7 @@ public final class StaticContext {
                     return true;
                 }
             };
-            addRule(propertiesHaveNoQualifiers);
+            addRule(propertiesInClassHaveNoQualifiers);
             addRule(nativeObjectsHaveNoQualifiers);
         }
     }

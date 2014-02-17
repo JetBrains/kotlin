@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
 
 private enum class RenameType {
     JAVA_CLASS
@@ -167,7 +168,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
     private fun doRenameInKotlinClass(renameParamsObject: JsonObject, context: TestContext,
                                       findDescriptorToRename: (ClassDescriptor) -> DeclarationDescriptor
     ) {
-        val classFqName = FqName(renameParamsObject.getString("classFQN"))
+        val classFqName = FqNameUnsafe(renameParamsObject.getString("classFQN"))
         val newName = renameParamsObject.getString("newName")
         val mainFilePath = renameParamsObject.getNullableString("mainFile") ?: "${getTestDirName(false)}.kt"
 

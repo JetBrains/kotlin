@@ -2,13 +2,13 @@ package test;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class doGenerateParamAssertions {
+public abstract class doGenerateParamAssertions<Type> {
 
-    public abstract void bar(@NotNull String s);
+    public abstract void doTest(@NotNull Type s);
     
-    public static void foo(doGenerateParamAssertions a) {
+    public static void runTest(doGenerateParamAssertions a) {
         try {
-            a.bar(null);
+            a.doTest(null);
         } catch (IllegalArgumentException e) {
             return;
         }

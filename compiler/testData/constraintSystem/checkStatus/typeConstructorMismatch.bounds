@@ -1,0 +1,17 @@
+VARIABLES T
+
+SUBTYPE List<T> Int
+
+type parameter bounds:
+T
+status:
+-hasConflictingConstraints: false
+-hasContradiction: true
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: true
+-hasUnknownParameters: true
+-hasViolatedUpperBound: false
+-isSuccessful: false
+
+result:
+T=???

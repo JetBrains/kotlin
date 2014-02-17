@@ -53,5 +53,8 @@ public abstract class FqNameBase {
     }
 
     @NotNull
+    public abstract Name shortNameOrSpecial();
+
+    @NotNull
     public abstract List<Name> pathSegments();
 }

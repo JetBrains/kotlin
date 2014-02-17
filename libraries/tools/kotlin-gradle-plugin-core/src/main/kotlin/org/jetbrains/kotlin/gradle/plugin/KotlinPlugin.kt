@@ -170,8 +170,7 @@ open class KotlinAndroidPlugin: Plugin<Project> {
 
         })
         val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
-        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version",
-                                                                                                                "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
     }
 
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {

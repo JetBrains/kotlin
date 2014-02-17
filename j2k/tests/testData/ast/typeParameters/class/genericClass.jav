@@ -1,1 +1,0 @@
-final class Comparable<T> {}

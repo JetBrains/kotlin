@@ -25,11 +25,6 @@ public class JetDelegatorToSuperClass extends JetDelegationSpecifier {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitDelegationToSuperClassSpecifier(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitDelegationToSuperClassSpecifier(this, data);
     }

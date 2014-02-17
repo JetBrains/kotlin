@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-interface Expression {
+public interface Expression {
     @NotNull
     String renderAsCode();
 

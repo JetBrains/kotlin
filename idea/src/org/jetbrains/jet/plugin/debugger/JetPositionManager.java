@@ -37,7 +37,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -131,8 +131,8 @@ public class JetPositionManager implements PositionManager {
             @Override
             @SuppressWarnings("unchecked")
             public void run() {
-                JetFile namespace = (JetFile) sourcePosition.getFile();
-                JetTypeMapper typeMapper = prepareTypeMapper(namespace);
+                JetFile file = (JetFile) sourcePosition.getFile();
+                JetTypeMapper typeMapper = prepareTypeMapper(file);
 
                 PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteral.class, JetNamedFunction.class);
                 if (element instanceof JetClassOrObject) {
@@ -154,7 +154,7 @@ public class JetPositionManager implements PositionManager {
                 }
 
                 if (result.isNull()) {
-                    result.set(NamespaceCodegen.getNamespacePartInternalName(namespace));
+                    result.set(PackageCodegen.getPackagePartInternalName(file));
                 }
             }
         });
@@ -186,12 +186,12 @@ public class JetPositionManager implements PositionManager {
                     AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
                     analyzeExhaust.throwIfError();
 
-                    Collection<JetFile> namespaceFiles = JetFilesProvider.getInstance(file.getProject()).allNamespaceFiles().fun(file);
+                    Collection<JetFile> packageFiles = JetFilesProvider.getInstance(file.getProject()).allPackageFiles().fun(file);
 
                     DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(analyzeExhaust.getBindingContext(), "trace created in JetPositionManager");
                     JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, ClassBuilderMode.FULL);
                     //noinspection unchecked
-                    CodegenBinding.initTrace(bindingTrace, namespaceFiles);
+                    CodegenBinding.initTrace(bindingTrace, packageFiles);
                     return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);
                 }
             }, false);

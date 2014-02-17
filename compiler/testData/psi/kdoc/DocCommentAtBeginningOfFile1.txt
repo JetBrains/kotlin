@@ -1,5 +1,5 @@
 JetFile: DocCommentAtBeginningOfFile1.kt
   KDoc
     PsiElement(KDOC_START)('/**')
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>

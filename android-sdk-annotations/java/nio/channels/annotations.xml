@@ -1,0 +1,221 @@
+<root>
+    <item name='java.nio.channels.DatagramChannel long write(java.nio.ByteBuffer[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel int read(java.nio.ByteBuffer, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Selector java.util.Set&lt;java.nio.channels.SelectionKey&gt; keys()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SelectionKey java.nio.channels.SelectionKey interestOps(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.ScatteringByteChannel long read(java.nio.ByteBuffer[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel java.nio.channels.DatagramChannel connect(java.net.SocketAddress)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel int send(java.nio.ByteBuffer, java.net.SocketAddress) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel int read(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel java.nio.channels.DatagramChannel connect(java.net.SocketAddress) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SocketChannel int read(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.InputStream newInputStream(java.nio.channels.ReadableByteChannel)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.GatheringByteChannel long write(java.nio.ByteBuffer[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.OutputStream newOutputStream(java.nio.channels.WritableByteChannel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.ScatteringByteChannel long read(java.nio.ByteBuffer[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Writer newWriter(java.nio.channels.WritableByteChannel, java.nio.charset.CharsetEncoder, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.nio.channels.WritableByteChannel newChannel(java.io.OutputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SocketChannel boolean connect(java.net.SocketAddress) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel.MapMode READ_ONLY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel long read(java.nio.ByteBuffer[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel.MapMode READ_WRITE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel java.nio.MappedByteBuffer map(java.nio.channels.FileChannel.MapMode, long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.InputStream newInputStream(java.nio.channels.ReadableByteChannel) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel long write(java.nio.ByteBuffer[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.ReadableByteChannel int read(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel java.net.SocketAddress receive(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel int read(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Pipe java.nio.channels.Pipe.SinkChannel sink()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel int write(java.nio.ByteBuffer, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SocketChannel long read(java.nio.ByteBuffer[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileLock java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel int write(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Reader newReader(java.nio.channels.ReadableByteChannel, java.nio.charset.CharsetDecoder, int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.ServerSocketChannel java.net.ServerSocket socket()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel java.nio.channels.FileChannel truncate(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel long read(java.nio.ByteBuffer[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.nio.channels.ReadableByteChannel newChannel(java.io.InputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Pipe java.nio.channels.Pipe.SourceChannel source()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SocketChannel long write(java.nio.ByteBuffer[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SelectableChannel java.nio.channels.SelectableChannel configureBlocking(boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel java.nio.MappedByteBuffer map(java.nio.channels.FileChannel.MapMode, long, long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Writer newWriter(java.nio.channels.WritableByteChannel, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel java.nio.channels.FileChannel position(long)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SelectableChannel java.nio.channels.SelectionKey register(java.nio.channels.Selector, int, java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.OutputStream newOutputStream(java.nio.channels.WritableByteChannel)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.GatheringByteChannel long write(java.nio.ByteBuffer[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.nio.channels.ReadableByteChannel newChannel(java.io.InputStream)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SocketChannel int write(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel long transferTo(long, long, java.nio.channels.WritableByteChannel) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.WritableByteChannel int write(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SelectableChannel java.lang.Object blockingLock()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Writer newWriter(java.nio.channels.WritableByteChannel, java.nio.charset.CharsetEncoder, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.nio.channels.WritableByteChannel newChannel(java.io.OutputStream) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SocketChannel long read(java.nio.ByteBuffer[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel.MapMode PRIVATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Reader newReader(java.nio.channels.ReadableByteChannel, java.nio.charset.CharsetDecoder, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Selector java.util.Set&lt;java.nio.channels.SelectionKey&gt; selectedKeys()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Reader newReader(java.nio.channels.ReadableByteChannel, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel long transferFrom(java.nio.channels.ReadableByteChannel, long, long) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Selector java.nio.channels.Selector wakeup()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Writer newWriter(java.nio.channels.WritableByteChannel, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel long read(java.nio.ByteBuffer[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel long write(java.nio.ByteBuffer[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel java.nio.channels.DatagramChannel disconnect()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel long read(java.nio.ByteBuffer[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.FileChannel long write(java.nio.ByteBuffer[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Writer newWriter(java.nio.channels.WritableByteChannel, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Reader newReader(java.nio.channels.ReadableByteChannel, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel int send(java.nio.ByteBuffer, java.net.SocketAddress) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.SocketChannel long write(java.nio.ByteBuffer[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Reader newReader(java.nio.channels.ReadableByteChannel, java.nio.charset.CharsetDecoder, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.DatagramChannel int write(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Writer newWriter(java.nio.channels.WritableByteChannel, java.nio.charset.CharsetEncoder, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.nio.channels.Channels java.io.Reader newReader(java.nio.channels.ReadableByteChannel, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

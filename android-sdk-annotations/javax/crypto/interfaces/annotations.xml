@@ -1,0 +1,5 @@
+<root>
+    <item name='javax.crypto.interfaces.PBEKey char[] getPassword()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

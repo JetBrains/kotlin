@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.ClassReader;
@@ -24,8 +26,13 @@ import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
+import org.jetbrains.jet.lang.resolve.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.storage.NullableLazyValue;
+import org.jetbrains.jet.storage.StorageManager;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.IOException;
 
@@ -34,10 +41,27 @@ import static org.jetbrains.asm4.Opcodes.ASM4;
 
 public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     private final VirtualFile file;
-    private JvmClassName className;
+    private final NotNullLazyValue<JvmClassName> className;
+    private final NullableLazyValue<KotlinClassHeader> classHeader;
 
-    public VirtualFileKotlinClass(@NotNull VirtualFile file) {
+    public VirtualFileKotlinClass(@NotNull StorageManager storageManager, @NotNull VirtualFile file) {
         this.file = file;
+        this.className = storageManager.createLazyValue(
+                new Function0<JvmClassName>() {
+                    @Override
+                    public JvmClassName invoke() {
+                        return computeClassName();
+                    }
+                }
+        );
+        this.classHeader = storageManager.createNullableLazyValue(
+                new Function0<KotlinClassHeader>() {
+                    @Override
+                    public KotlinClassHeader invoke() {
+                        return ReadKotlinClassHeaderAnnotationVisitor.read(VirtualFileKotlinClass.this);
+                    }
+                }
+        );
     }
 
     @NotNull
@@ -46,23 +70,31 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @NotNull
+    private JvmClassName computeClassName() {
+        final Ref<JvmClassName> classNameRef = Ref.create();
+        try {
+            new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(ASM4) {
+                @Override
+                public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+                    classNameRef.set(JvmClassName.byInternalName(name));
+                }
+            }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+        }
+        catch (IOException e) {
+            throw UtilsPackage.rethrow(e);
+        }
+        return classNameRef.get();
+    }
+
+    @NotNull
     @Override
     public JvmClassName getClassName() {
-        if (className == null) {
-            try {
-                new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(ASM4) {
-                    @Override
-                    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-                        className = JvmClassName.byInternalName(name);
-                    }
-                }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
-            }
-            catch (IOException e) {
-                throw ExceptionUtils.rethrow(e);
-            }
-        }
+        return className.invoke();
+    }
 
-        return className;
+    @Override
+    public KotlinClassHeader getClassHeader() {
+        return classHeader.invoke();
     }
 
     @Override
@@ -81,7 +113,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
             }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 
@@ -165,7 +197,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
             }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 

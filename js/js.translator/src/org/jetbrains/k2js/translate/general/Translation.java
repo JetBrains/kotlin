@@ -31,14 +31,14 @@ import org.jetbrains.k2js.facade.exceptions.MainFunctionNotFoundException;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
 import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.declaration.NamespaceDeclarationTranslator;
+import org.jetbrains.k2js.translate.declaration.PackageDeclarationTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
-import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.test.JSTestGenerator;
 import org.jetbrains.k2js.translate.test.JSTester;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -46,6 +46,7 @@ import org.jetbrains.k2js.translate.utils.dangerous.DangerousData;
 import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.plugin.JetMainDetector.getMainFunction;
@@ -75,9 +76,9 @@ public final class Translation {
 
     @NotNull
     public static JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
-        JsName aliasForExpression = context.aliasingContext().getAliasForExpression(expression);
+        JsExpression aliasForExpression = context.aliasingContext().getAliasForExpression(expression);
         if (aliasForExpression != null) {
-            return aliasForExpression.makeRef();
+            return aliasForExpression;
         }
         DangerousData data = collect(expression, context);
         if (data.shouldBeTranslated()) {
@@ -134,8 +135,7 @@ public final class Translation {
         statements.add(program.getStringLiteral("use strict").makeStmt());
 
         TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
-        staticContext.initTranslators(context);
-        statements.addAll(NamespaceDeclarationTranslator.translateFiles(files, context));
+        statements.addAll(PackageDeclarationTranslator.translateFiles(files, context));
         defineModule(context, statements, config.getModuleId());
 
         if (mainCallParameters.shouldBeGenerated()) {
@@ -149,10 +149,10 @@ public final class Translation {
     }
 
     private static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
-        JsName rootNamespaceName = context.scope().findName(Namer.getRootNamespaceName());
-        if (rootNamespaceName != null) {
+        JsName rootPackageName = context.scope().findName(Namer.getRootPackageName());
+        if (rootPackageName != null) {
             statements.add(new JsInvocation(context.namer().kotlin("defineModule"), context.program().getStringLiteral(moduleId),
-                                            rootNamespaceName.makeRef()).makeStmt());
+                                            rootPackageName.makeRef()).makeStmt());
         }
     }
 
@@ -175,9 +175,7 @@ public final class Translation {
             return null;
         }
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(context.bindingContext(), mainFunction);
-        return CallBuilder.build(context)
-                .args(new JsArrayLiteral(toStringLiteralList(arguments, context.program())))
-                .descriptor(functionDescriptor)
-                .translate().makeStmt();
+        JsArrayLiteral argument = new JsArrayLiteral(toStringLiteralList(arguments, context.program()));
+        return CallTranslator.instance$.buildCall(context, functionDescriptor, Collections.singletonList(argument), null).makeStmt();
     }
 }

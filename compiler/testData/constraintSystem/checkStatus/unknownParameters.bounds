@@ -1,0 +1,17 @@
+VARIABLES T
+
+SUBTYPE Any Any
+
+type parameter bounds:
+T
+status:
+-hasConflictingConstraints: false
+-hasContradiction: false
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasUnknownParameters: true
+-hasViolatedUpperBound: false
+-isSuccessful: false
+
+result:
+T=???

@@ -19,13 +19,10 @@ package org.jetbrains.jet.lang.resolve.lazy.declarations;
 import com.intellij.psi.NavigatablePsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
 
 public interface PackageMemberDeclarationProvider extends DeclarationProvider {
-
-    boolean isPackageDeclared(@NotNull Name name);
 
     Collection<FqName> getAllDeclaredPackages();
 

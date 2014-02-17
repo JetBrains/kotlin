@@ -1,0 +1,125 @@
+<root>
+    <item name='javax.crypto.spec.DESedeKeySpec DESedeKeySpec(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.PBEKeySpec PBEKeySpec(char[], byte[], int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.DESedeKeySpec byte[] getKey()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.RC5ParameterSpec RC5ParameterSpec(int, int, int, byte[]) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.RC2ParameterSpec RC2ParameterSpec(int, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.IvParameterSpec IvParameterSpec(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.PBEParameterSpec byte[] getSalt()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.DESedeKeySpec DESedeKeySpec(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.DESKeySpec boolean isWeak(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.RC5ParameterSpec RC5ParameterSpec(int, int, int, byte[], int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.DESKeySpec DESKeySpec(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.OAEPParameterSpec OAEPParameterSpec(java.lang.String, java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.spec.PSource) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.RC2ParameterSpec RC2ParameterSpec(int, byte[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.OAEPParameterSpec OAEPParameterSpec(java.lang.String, java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.spec.PSource) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.SecretKeySpec SecretKeySpec(byte[], int, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.SecretKeySpec SecretKeySpec(byte[], int, int, java.lang.String) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.PSource.PSpecified DEFAULT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.OAEPParameterSpec javax.crypto.spec.PSource getPSource()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.SecretKeySpec SecretKeySpec(byte[], java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.IvParameterSpec byte[] getIV()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.IvParameterSpec IvParameterSpec(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.PBEKeySpec PBEKeySpec(char[], byte[], int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.DESKeySpec DESKeySpec(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.GCMParameterSpec GCMParameterSpec(int, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.DESedeKeySpec boolean isParityAdjusted(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.SecretKeySpec java.lang.String getAlgorithm()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.SecretKeySpec byte[] getEncoded()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.OAEPParameterSpec java.lang.String getMGFAlgorithm()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.DESKeySpec boolean isParityAdjusted(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.PSource.PSpecified PSpecified(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.OAEPParameterSpec java.lang.String getDigestAlgorithm()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.PBEKeySpec char[] getPassword()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.PSource.PSpecified byte[] getValue()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.DESKeySpec byte[] getKey()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.SecretKeySpec java.lang.String getFormat()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.PSource PSource(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.OAEPParameterSpec DEFAULT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.PBEParameterSpec PBEParameterSpec(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.GCMParameterSpec GCMParameterSpec(int, byte[], int, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.SecretKeySpec SecretKeySpec(byte[], java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.spec.OAEPParameterSpec OAEPParameterSpec(java.lang.String, java.lang.String, java.security.spec.AlgorithmParameterSpec, javax.crypto.spec.PSource) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

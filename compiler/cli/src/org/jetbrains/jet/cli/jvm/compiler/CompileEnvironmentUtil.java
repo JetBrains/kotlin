@@ -42,7 +42,7 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -98,7 +98,7 @@ public class CompileEnvironmentUtil {
         if (runtimePath.exists()) {
             configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, runtimePath);
         }
-        configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.findRtJar());
+        configuration.addAll(JVMConfigurationKeys.CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
         File jdkAnnotationsPath = paths.getJdkAnnotationsPath();
         if (jdkAnnotationsPath.exists()) {
             configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, jdkAnnotationsPath);
@@ -149,8 +149,8 @@ public class CompileEnvironmentUtil {
             loader = new GeneratedClassLoader(factory, KotlinToJVMBytecodeCompiler.class.getClassLoader());
         }
         try {
-            Class namespaceClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
-            Method method = namespaceClass.getDeclaredMethod("project");
+            Class packageClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
+            Method method = packageClass.getDeclaredMethod("project");
             if (method == null) {
                 throw new CompileEnvironmentException("Module script " + moduleFile + " must define project() function");
             }
@@ -206,10 +206,10 @@ public class CompileEnvironmentUtil {
             throw new CompileEnvironmentException("Invalid jar path " + jarPath, e);
         }
         catch (IOException e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
         finally {
-            ExceptionUtils.closeQuietly(outputStream);
+            UtilsPackage.closeQuietly(outputStream);
         }
     }
 

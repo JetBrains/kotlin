@@ -26,9 +26,6 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 public abstract class FunctionGenerationStrategy {
 
     private FrameMap frameMap;
@@ -88,7 +85,7 @@ public abstract class FunctionGenerationStrategy {
                 @Nullable MemberCodegen parentCodegen
         ) {
             ExpressionCodegen codegen = new ExpressionCodegen(mv, getFrameMap(state.getTypeMapper(), context),
-                                                              signature.getAsmMethod().getReturnType(), context, state, parentCodegen);
+                                                              signature.getReturnType(), context, state, parentCodegen);
             doGenerateBody(codegen, signature);
         }
 

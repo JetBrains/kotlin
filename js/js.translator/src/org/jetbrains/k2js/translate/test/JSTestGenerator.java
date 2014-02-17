@@ -23,13 +23,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.JetTestFunctionDetector;
-import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 //TODO: use method object instead of static functions
@@ -59,7 +60,8 @@ public final class JSTestGenerator {
             @NotNull ClassDescriptor classDescriptor, @NotNull JSTester tester) {
         JsExpression expression = ReferenceTranslator.translateAsFQReference(classDescriptor, context);
         JsNew testClass = new JsNew(expression);
-        JsExpression functionToTestCall = CallBuilder.build(context).descriptor(functionDescriptor).receiver(testClass).translate();
+        JsExpression functionToTestCall = CallTranslator.instance$.buildCall(context, functionDescriptor,
+                                                                             Collections.<JsExpression>emptyList(), testClass);
         JsStringLiteral testName = context.program().getStringLiteral(classDescriptor.getName() + "." + functionDescriptor.getName());
         tester.constructTestMethodInvocation(functionToTestCall, testName);
     }

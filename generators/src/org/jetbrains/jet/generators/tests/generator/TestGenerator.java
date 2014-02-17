@@ -18,6 +18,7 @@ package org.jetbrains.jet.generators.tests.generator;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.di.GeneratorsFileUtil;
@@ -25,10 +26,7 @@ import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TestGenerator {
 
@@ -38,6 +36,8 @@ public class TestGenerator {
             "junit.framework.TestSuite"
     );
 
+    private static final Set<String> GENERATED_FILES = ContainerUtil.newHashSet();
+
     private final String baseDir;
     private final String suiteClassPackage;
     private final String suiteClassName;
@@ -45,6 +45,7 @@ public class TestGenerator {
     private final String baseTestClassName;
     private final Collection<TestClassModel> testClassModels;
     private final String generatorName;
+    private final String testSourceFilePath;
 
     public TestGenerator(
             @NotNull String baseDir,
@@ -52,7 +53,7 @@ public class TestGenerator {
             @NotNull String suiteClassName,
             @NotNull Class<? extends TestCase> baseTestClass,
             @NotNull Collection<? extends TestClassModel> testClassModels,
-            @NotNull Class<?> generatorClass
+            @NotNull String generatorClass
     ) {
         this.baseDir = baseDir;
         this.suiteClassPackage = suiteClassPackage;
@@ -60,7 +61,13 @@ public class TestGenerator {
         this.baseTestClassPackage = baseTestClass.getPackage().getName();
         this.baseTestClassName = baseTestClass.getSimpleName();
         this.testClassModels = Lists.newArrayList(testClassModels);
-        this.generatorName = generatorClass.getCanonicalName();
+        this.generatorName = generatorClass;
+
+        this.testSourceFilePath = this.baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java";
+
+        if (!GENERATED_FILES.add(testSourceFilePath)) {
+            throw new IllegalArgumentException("Same test file already generated in current session: " + testSourceFilePath);
+        }
     }
 
     public void generateAndSave() throws IOException {
@@ -128,7 +135,6 @@ public class TestGenerator {
             }, false);
         }
 
-        String testSourceFilePath = baseDir + "/" + suiteClassPackage.replace(".", "/") + "/" + suiteClassName + ".java";
         File testSourceFile = new File(testSourceFilePath);
         GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, out.toString(), false);
     }

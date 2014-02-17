@@ -17,12 +17,13 @@
 package org.jetbrains.jet.plugin.internal.resolvewindow;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -48,6 +49,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.internal.Location;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.util.InfinitePeriodicalTask;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 
@@ -154,9 +156,7 @@ public class ResolveToolWindow extends JPanel implements Disposable {
         }
     }
 
-    private final Alarm myUpdateAlarm;
     private final Editor myEditor;
-    private UpdateResolveToolWindowTask currentTask = null;
 
     private final Project myProject;
     private final ToolWindow toolWindow;
@@ -169,20 +169,12 @@ public class ResolveToolWindow extends JPanel implements Disposable {
                 .createEditor(EditorFactory.getInstance().createDocument(""), project, JetFileType.INSTANCE, true);
         add(myEditor.getComponent());
 
-        myUpdateAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
-        myUpdateAlarm.addRequest(new Runnable() {
+        new InfinitePeriodicalTask(UPDATE_DELAY, Alarm.ThreadToUse.SWING_THREAD, this, new Computable<LongRunningReadTask>() {
             @Override
-            public void run() {
-                myUpdateAlarm.addRequest(this, UPDATE_DELAY);
-                UpdateResolveToolWindowTask task = new UpdateResolveToolWindowTask();
-                task.init();
-
-                if (task.shouldStart(currentTask)) {
-                    currentTask = task;
-                    currentTask.run();
-                }
+            public LongRunningReadTask compute() {
+                return new UpdateResolveToolWindowTask();
             }
-        }, UPDATE_DELAY);
+        }).start();
 
         setText(DEFAULT_TEXT);
     }
@@ -361,12 +353,12 @@ public class ResolveToolWindow extends JPanel implements Disposable {
     }
 
     private void setText(@NotNull final String text) {
-        new WriteCommandAction(myProject) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
-            protected void run(Result result) throws Throwable {
-                myEditor.getDocument().setText(text);
+            public void run() {
+                myEditor.getDocument().setText(StringUtil.convertLineSeparators(text));
             }
-        }.execute();
+        });
     }
 
     @Override

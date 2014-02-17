@@ -41,23 +41,20 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * User: Alefas
- * Date: 17.01.12
- */
 public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWithTabActionSupport<
         JetValueArgumentList,
-        Pair<? extends FunctionDescriptor, CancelableResolveSession>,
+        Pair<? extends FunctionDescriptor, ResolveSessionForBodies>,
         JetValueArgument>
 {
     public final static Color GREEN_BACKGROUND = new JBColor(new Color(231, 254, 234), Gray._100);
@@ -111,7 +108,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
 
     @Nullable
     @Override
-    public Object[] getParametersForDocumentation(Pair<? extends FunctionDescriptor, CancelableResolveSession> p, ParameterInfoContext context) {
+    public Object[] getParametersForDocumentation(Pair<? extends FunctionDescriptor, ResolveSessionForBodies> p, ParameterInfoContext context) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY; //todo: ?
     }
 
@@ -199,7 +196,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
     }
 
     @Override
-    public void updateUI(Pair<? extends FunctionDescriptor, CancelableResolveSession> itemToShow, ParameterInfoUIContext context) {
+    public void updateUI(Pair<? extends FunctionDescriptor, ResolveSessionForBodies> itemToShow, ParameterInfoUIContext context) {
         //todo: when we will have ability to pass Array as vararg, implement such feature here too?
         if (context == null || context.getParameterOwner() == null || !context.getParameterOwner().isValid()) {
             context.setUIComponentEnabled(false);
@@ -215,7 +212,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
 
         FunctionDescriptor functionDescriptor = itemToShow.first;
-        CancelableResolveSession resolveSession = itemToShow.second;
+        ResolveSessionForBodies resolveSession = itemToShow.second;
 
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         List<JetValueArgument> valueArguments = argumentList.getArguments();
@@ -224,7 +221,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         int boldStartOffset = -1;
         int boldEndOffset = -1;
         boolean isGrey = false;
-        boolean isDeprecated = false; //todo: add deprecation check
+        boolean isDeprecated = KotlinBuiltIns.getInstance().isDeprecated(functionDescriptor);
 
         boolean[] usedIndexes = new boolean[valueParameters.size()];
         Arrays.fill(usedIndexes, false);
@@ -381,7 +378,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
             return null;
         }
 
-        CancelableResolveSession resolveSession =
+        ResolveSessionForBodies resolveSession =
                 AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) callNameExpression.getContainingFile());
         BindingContext bindingContext = resolveSession.resolveToElement(callNameExpression);
 
@@ -395,7 +392,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
 
         Name refName = callNameExpression.getReferencedNameAsName();
 
-        Collection<Pair<? extends DeclarationDescriptor, CancelableResolveSession>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, CancelableResolveSession>>();
+        Collection<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>> itemsToShow = new ArrayList<Pair<? extends DeclarationDescriptor, ResolveSessionForBodies>>();
         for (DeclarationDescriptor variant : variants) {
             if (variant instanceof FunctionDescriptor) {
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;

@@ -89,11 +89,11 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         return null;
     }
 
-    // scripts has no namespace header
+    // scripts have no package directive
     @Nullable
-    public JetNamespaceHeader getNamespaceHeader() {
-        ASTNode ast = getNode().findChildByType(JetNodeTypes.NAMESPACE_HEADER);
-        return ast != null ? (JetNamespaceHeader) ast.getPsi() : null;
+    public JetPackageDirective getPackageDirective() {
+        ASTNode ast = getNode().findChildByType(JetNodeTypes.PACKAGE_DIRECTIVE);
+        return ast != null ? (JetPackageDirective) ast.getPsi() : null;
     }
 
     @Nullable
@@ -103,8 +103,8 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
             return stub.getPackageName();
         }
 
-        JetNamespaceHeader statement = getNamespaceHeader();
-        return statement != null ? statement.getQualifiedName() : null;
+        JetPackageDirective directive = getPackageDirective();
+        return directive != null ? directive.getQualifiedName() : null;
     }
 
     @Nullable
@@ -129,8 +129,8 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
 
     @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JetVisitorVoid) {
-            accept((JetVisitorVoid) visitor);
+        if (visitor instanceof JetVisitor) {
+            accept((JetVisitor) visitor, null);
         }
         else {
             visitor.visitFile(this);
@@ -140,11 +140,6 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     @Override
     public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
         JetPsiUtil.visitChildren(this, visitor, data);
-    }
-
-    @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitJetFile(this);
     }
 
     @Override

@@ -21,25 +21,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class BooleanValue implements CompileTimeConstant<Boolean> {
+public class BooleanValue extends CompileTimeConstant<Boolean> {
 
-    public static final BooleanValue FALSE = new BooleanValue(false);
-    public static final BooleanValue TRUE = new BooleanValue(true);
-
-    private final boolean value;
-
-    private BooleanValue(boolean value) {
-        this.value = value;
-    }
-
-    @NotNull
-    public static BooleanValue valueOf(boolean value) {
-        return value ? TRUE : FALSE;
-    }
-
-    @Override
-    public Boolean getValue() {
-        return value;
+    public BooleanValue(boolean value, boolean canBeUseInAnnotation) {
+        super(value, canBeUseInAnnotation, false);
     }
 
     @NotNull

@@ -4,7 +4,7 @@
               name="main" toReformat="true" toShortenFQNames="true"
               value="fun main(args : Array&lt;String&gt;) {&#10;  $END$&#10;}">
         <context>
-            <option name="KOTLIN_NAMESPACE" value="true" />
+            <option name="KOTLIN_TOPLEVEL" value="true" />
         </context>
     </template>
 
@@ -71,7 +71,7 @@
         <context>
             <option name="KOTLIN_STATEMENT" value="true"/>
             <option name="KOTLIN_CLASS" value="true"/>
-            <option name="KOTLIN_NAMESPACE" value="true"/>
+            <option name="KOTLIN_TOPLEVEL" value="true"/>
         </context>
     </template>
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.fun0"
@@ -81,7 +81,7 @@
         <context>
             <option name="KOTLIN_STATEMENT" value="true"/>
             <option name="KOTLIN_CLASS" value="true"/>
-            <option name="KOTLIN_NAMESPACE" value="true"/>
+            <option name="KOTLIN_TOPLEVEL" value="true"/>
         </context>
     </template>
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.fun1"
@@ -94,7 +94,7 @@
         <context>
             <option name="KOTLIN_STATEMENT" value="true"/>
             <option name="KOTLIN_CLASS" value="true"/>
-            <option name="KOTLIN_NAMESPACE" value="true"/>
+            <option name="KOTLIN_TOPLEVEL" value="true"/>
         </context>
     </template>
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.fun2"
@@ -109,7 +109,7 @@
         <context>
             <option name="KOTLIN_STATEMENT" value="true"/>
             <option name="KOTLIN_CLASS" value="true"/>
-            <option name="KOTLIN_NAMESPACE" value="true"/>
+            <option name="KOTLIN_TOPLEVEL" value="true"/>
         </context>
     </template>
 
@@ -119,7 +119,7 @@
         <context>
             <option name="KOTLIN_STATEMENT" value="true"/>
             <option name="KOTLIN_CLASS" value="true"/>
-            <option name="KOTLIN_NAMESPACE" value="true"/>
+            <option name="KOTLIN_TOPLEVEL" value="true"/>
         </context>
     </template>
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.singleton"
@@ -128,7 +128,7 @@
         <context>
             <option name="KOTLIN_STATEMENT" value="true"/>
             <option name="KOTLIN_CLASS" value="true"/>
-            <option name="KOTLIN_NAMESPACE" value="true"/>
+            <option name="KOTLIN_TOPLEVEL" value="true"/>
         </context>
     </template>
 
@@ -159,7 +159,7 @@
         <variable alwaysStopAt="true" defaultValue="&quot;Unit&quot;" expression="" name="RETURN" />
         <context>
             <option name="KOTLIN_CLASS" value="true"/>
-            <option name="KOTLIN_NAMESPACE" value="true"/>
+            <option name="KOTLIN_TOPLEVEL" value="true"/>
         </context>
     </template>
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.exval"
@@ -170,7 +170,7 @@
         <variable alwaysStopAt="true" defaultValue="&quot;Any&quot;" expression="" name="TYPE" />
         <context>
             <option name="KOTLIN_CLASS" value="true"/>
-            <option name="KOTLIN_NAMESPACE" value="true"/>
+            <option name="KOTLIN_TOPLEVEL" value="true"/>
         </context>
     </template>
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.exvar"
@@ -181,7 +181,7 @@
         <variable alwaysStopAt="true" defaultValue="&quot;Any&quot;" expression="" name="TYPE" />
         <context>
             <option name="KOTLIN_CLASS" value="true"/>
-            <option name="KOTLIN_NAMESPACE" value="true"/>
+            <option name="KOTLIN_TOPLEVEL" value="true"/>
         </context>
     </template>
 
@@ -193,7 +193,7 @@
               name="psvm" toReformat="true" toShortenFQNames="true"
               value="fun main(args : Array&lt;String&gt;) {&#10;  $END$&#10;}">
         <context>
-            <option name="KOTLIN_NAMESPACE" value="true" />
+            <option name="KOTLIN_TOPLEVEL" value="true" />
         </context>
     </template>
 

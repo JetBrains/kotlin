@@ -43,6 +43,7 @@ public class JetCodeConformanceTest extends TestCase {
             new File("dist"),
             new File("docs"),
             new File("ideaSDK"),
+            new File("libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp"),
             new File("compiler/tests/org/jetbrains/jet/parsing/JetCodeConformanceTest.java"));
     public static final Pattern JAVADOC_PATTERN = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL);
 

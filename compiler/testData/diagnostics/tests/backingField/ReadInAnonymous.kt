@@ -1,6 +1,6 @@
 class ReadByAnotherPropertyInitializer() {
     val a = 1
     {
-        val x = $a
+        val <!UNUSED_VARIABLE!>x<!> = $a
     }
 }

@@ -16,10 +16,9 @@
 
 package org.jetbrains.jet.cli;
 
-import com.intellij.openapi.util.Ref;
+import com.intellij.execution.process.ProcessOutput;
+import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
@@ -27,7 +26,7 @@ import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
 public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
     private void doTest(@NotNull String argsFilePath, @NotNull String executableName, @NotNull String testDataDir) throws Exception {
@@ -35,38 +34,24 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
         File kotlincFile = new File(PathUtil.getKotlinPathsForDistDirectory().getHomePath(), "bin/" + executableFileName);
         assertTrue("kotlinc executable not found, probably you need to invoke 'dist' Ant target: " + kotlincFile.getAbsolutePath(), kotlincFile.exists());
 
-        String[] args = CliBaseTest.readArgs(argsFilePath, testDataDir, tmpdir.getAbsolutePath());
+        List<String> args = CliBaseTest.readArgs(argsFilePath, testDataDir, tmpdir.getAbsolutePath());
+        args.add(0, kotlincFile.getAbsolutePath());
+        ProcessOutput processOutput = ExecUtil.execAndGetOutput(args, null);
 
-        final Process process = Runtime.getRuntime().exec(ArrayUtil.prepend(kotlincFile.getAbsolutePath(), args));
+        String stdout = processOutput.getStdout();
+        String stderr = processOutput.getStderr();
+        int exitCode = processOutput.getExitCode();
 
-        final Ref<String> stderr = Ref.create();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    stderr.set(FileUtil.loadTextAndClose(process.getErrorStream()));
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
-
-        String output = FileUtil.loadTextAndClose(process.getInputStream());
-
-        int intExitCode = process.waitFor();
-        ExitCode exitCode = ExitCode.values()[intExitCode];
-
-        String normalizedOutput = CliBaseTest.getNormalizedCompilerOutput(output, exitCode, testDataDir);
+        String normalizedOutput = CliBaseTest.getNormalizedCompilerOutput(stdout, ExitCode.values()[exitCode], testDataDir);
         File outFile = new File(argsFilePath.replace(".args", ".out"));
 
         try {
             JetTestUtils.assertEqualsToFile(outFile, normalizedOutput);
         }
         catch (Exception e) {
-            System.out.println("exitcode " + intExitCode);
-            System.out.println("<stdout>" + output + "</stdout>");
-            System.out.println("<stderr>" + stderr + "</stderr>");
+            System.err.println("exitcode " + exitCode);
+            System.err.println("<stdout>" + stdout + "</stdout>");
+            System.err.println("<stderr>" + stderr + "</stderr>");
 
             throw e;
         }

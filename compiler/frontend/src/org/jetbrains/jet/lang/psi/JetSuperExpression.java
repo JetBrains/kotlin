@@ -21,15 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
-public class JetSuperExpression extends JetLabelQualifiedInstanceExpression {
+public class JetSuperExpression extends JetLabelQualifiedInstanceExpression implements JetStatementExpression {
 
     public JetSuperExpression(@NotNull ASTNode node) {
         super(node);
-    }
-
-    @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitSuperExpression(this);
     }
 
     @Override

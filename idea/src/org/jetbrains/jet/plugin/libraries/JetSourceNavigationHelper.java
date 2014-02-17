@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopes;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -42,19 +42,22 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
+import org.jetbrains.jet.context.ContextPackage;
+import org.jetbrains.jet.context.GlobalContextImpl;
+import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.lazy.storage.LockBasedLazyResolveStorageManager;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -115,7 +118,7 @@ public class JetSourceNavigationHelper {
         GlobalSearchScope resultScope = GlobalSearchScope.EMPTY_SCOPE;
         for (OrderEntry orderEntry : projectFileIndex.getOrderEntriesForFile(libraryFile)) {
             for (VirtualFile sourceDir : orderEntry.getFiles(OrderRootType.SOURCES)) {
-                resultScope = resultScope.uniteWith(GlobalSearchScopes.directoryScope(project, sourceDir, true));
+                resultScope = resultScope.uniteWith(GlobalSearchScopesCore.directoryScope(project, sourceDir, true));
             }
         }
         return resultScope;
@@ -213,25 +216,29 @@ public class JetSourceNavigationHelper {
         }
 
         Project project = decompiledDeclaration.getProject();
-        LockBasedLazyResolveStorageManager storageManager = new LockBasedLazyResolveStorageManager();
-        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(storageManager, getContainingFiles(candidates),
+        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
+        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
+                globalContext.getStorageManager(),
+                getContainingFiles(candidates),
                 new Predicate<FqName>() {
                     @Override
                     public boolean apply(@Nullable FqName fqName) {
                         return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(fqName);
                     }
                 });
+
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
                                                                          AnalyzerFacadeForJVM.DEFAULT_IMPORTS,
                                                                          PlatformToKotlinClassMap.EMPTY);
 
-        moduleDescriptor.addFragmentProvider(KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
+        moduleDescriptor.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 
-        KotlinCodeAnalyzer analyzer = new ResolveSession(
+        KotlinCodeAnalyzer analyzer = new InjectorForLazyResolve(
                 project,
-                storageManager,
+                globalContext,
                 moduleDescriptor,
-                providerFactory);
+                providerFactory,
+                new BindingTraceContext()).getResolveSession();
 
         for (JetNamedDeclaration candidate : candidates) {
             //noinspection unchecked
@@ -386,12 +393,12 @@ public class JetSourceNavigationHelper {
 
         return JavaPsiFacade.getInstance(project).findClass(fqName, new GlobalSearchScope(project) {
             @Override
-            public int compare(VirtualFile file1, VirtualFile file2) {
+            public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
                 return 0;
             }
 
             @Override
-            public boolean contains(VirtualFile file) {
+            public boolean contains(@NotNull VirtualFile file) {
                 List<OrderEntry> entries = idx.getOrderEntriesForFile(file);
                 for (OrderEntry entry : entries) {
                     if (orderEntries.contains(entry)) return true;

@@ -29,7 +29,6 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -48,11 +47,12 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil;
 
@@ -81,27 +81,33 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
         }
 
         String referenceName = element.getReferencedName();
+        if (element.getIdentifier() == null) {
+            Name conventionName = JetPsiUtil.getConventionName(element);
+            if (conventionName != null) {
+                referenceName = conventionName.asString();
+            }
+        }
 
-        if (!StringUtil.isNotEmpty(referenceName)) {
+        if (referenceName.isEmpty()) {
             return Collections.emptyList();
         }
 
-        CancelableResolveSession cancelableResolveSession =
+        ResolveSessionForBodies resolveSessionForBodies =
                 AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) element.getContainingFile());
 
         List<FqName> result = Lists.newArrayList();
         if (!isSuppressedTopLevelImportInPosition(element)) {
-            result.addAll(getClassNames(referenceName, (JetFile) file, cancelableResolveSession));
-            result.addAll(getJetTopLevelFunctions(referenceName, element, cancelableResolveSession, file.getProject()));
+            result.addAll(getClassNames(referenceName, (JetFile) file, resolveSessionForBodies));
+            result.addAll(getJetTopLevelFunctions(referenceName, element, resolveSessionForBodies, file.getProject()));
         }
 
-        result.addAll(getJetExtensionFunctions(referenceName, element, cancelableResolveSession, file.getProject()));
+        result.addAll(getJetExtensionFunctions(referenceName, element, resolveSessionForBodies, file.getProject()));
 
         return Collections2.filter(result, new Predicate<FqName>() {
             @Override
             public boolean apply(@Nullable FqName fqName) {
                 assert fqName != null;
-                return ImportInsertHelper.doNeedImport(new ImportPath(fqName, false), (JetFile) file);
+                return ImportInsertHelper.needImport(new ImportPath(fqName, false), (JetFile) file);
             }
         });
     }
@@ -113,7 +119,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     private static Collection<FqName> getJetTopLevelFunctions(
             @NotNull String referenceName,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull Project project
     ) {
         JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);
@@ -133,7 +139,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     private static Collection<FqName> getJetExtensionFunctions(
             @NotNull final String referenceName,
             @NotNull JetSimpleNameExpression expression,
-            @NotNull CancelableResolveSession resolveSession,
+            @NotNull ResolveSessionForBodies resolveSession,
             @NotNull Project project
     ) {
         JetShortNamesCache namesCache = JetShortNamesCache.getKotlinInstance(project);

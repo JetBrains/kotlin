@@ -19,14 +19,13 @@ package org.jetbrains.jet.lang.resolve.java.sam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaSupertypeResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -113,7 +112,7 @@ public class SingleAbstractMethodUtils {
             parameterTypes.add(parameter.getType());
         }
         return KotlinBuiltIns.getInstance().getFunctionType(
-                Collections.<AnnotationDescriptor>emptyList(), null, parameterTypes, returnType);
+                Annotations.EMPTY, null, parameterTypes, returnType);
     }
 
     private static boolean isSamInterface(@NotNull ClassDescriptor klass) {
@@ -133,7 +132,7 @@ public class SingleAbstractMethodUtils {
 
     @NotNull
     public static SamConstructorDescriptor createSamConstructorFunction(
-            @NotNull ClassOrNamespaceDescriptor owner,
+            @NotNull ClassOrPackageFragmentDescriptor owner,
             @NotNull JavaClassDescriptor samInterface
     ) {
         assert isSamInterface(samInterface) : samInterface;
@@ -148,7 +147,7 @@ public class SingleAbstractMethodUtils {
         assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
                                        ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
-                result, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("function"), parameterType, false, null);
+                result, 0, Annotations.EMPTY, Name.identifier("function"), parameterType, false, null);
 
         JetType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + samInterface.getDefaultType() +
@@ -353,7 +352,7 @@ public class SingleAbstractMethodUtils {
             }
             assert classifier instanceof JavaClass : "Classifier should be a class here: " + classifier;
             JavaClass javaClass = (JavaClass) classifier;
-            if (JavaSupertypeResolver.OBJECT_FQ_NAME.equals(javaClass.getFqName())) {
+            if (DescriptorResolverUtils.OBJECT_FQ_NAME.equals(javaClass.getFqName())) {
                 return true;
             }
             for (JavaMethod method : javaClass.getMethods()) {

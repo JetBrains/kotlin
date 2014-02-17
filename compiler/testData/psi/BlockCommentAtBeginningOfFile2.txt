@@ -1,4 +1,4 @@
 JetFile: BlockCommentAtBeginningOfFile2.kt
   PsiComment(BLOCK_COMMENT)('/*\n/*')
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>

@@ -28,11 +28,10 @@ import org.jetbrains.jet.lexer.JetTokens;
  * Special contributor for getting completion of type for extensions receiver.
  */
 public class JetExtensionReceiverTypeContributor extends CompletionContributor {
+    // A way to add reference into file at completion place
+    public static final String DUMMY_IDENTIFIER = "KotlinExtensionDummy.fake() {}";
 
-    static final String DUMMY_IDENTIFIER = "KotlinExtensionDummy.fake() {}";
-
-    static final ElementPattern<? extends PsiElement> ACTIVATION_PATTERN =
-            // TODO: Check for fun with generic type parameters
+    public static final ElementPattern<? extends PsiElement> ACTIVATION_PATTERN =
             PlatformPatterns.psiElement().afterLeaf(
                     JetTokens.FUN_KEYWORD.toString(),
                     JetTokens.VAL_KEYWORD.toString(),

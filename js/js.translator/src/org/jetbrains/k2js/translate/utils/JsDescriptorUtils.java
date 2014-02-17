@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -36,7 +37,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
@@ -98,6 +98,10 @@ public final class JsDescriptorUtils {
         return (functionDescriptor.getReceiverParameter() != null);
     }
 
+    public static boolean isOverride(@NotNull CallableMemberDescriptor descriptor) {
+        return !descriptor.getOverriddenDescriptors().isEmpty();
+    }
+
     //TODO: why callable descriptor
     @Nullable
     public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor callableDescriptor) {
@@ -109,12 +113,16 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static DeclarationDescriptor getDeclarationDescriptorForReceiver
-            (@NotNull ReceiverValue receiverParameter) {
-        DeclarationDescriptor declarationDescriptor =
-                receiverParameter.getType().getConstructor().getDeclarationDescriptor();
-        //TODO: WHY assert?
-        assert declarationDescriptor != null;
+    public static DeclarationDescriptor getDeclarationDescriptorForReceiver(@NotNull ReceiverValue receiverParameter) {
+        DeclarationDescriptor declarationDescriptor;
+
+        if (receiverParameter instanceof ThisReceiver) {
+            declarationDescriptor = ((ThisReceiver) receiverParameter).getDeclarationDescriptor();
+        }
+        else {
+            throw new UnsupportedOperationException("Unsupported receiver type: " + receiverParameter);
+        }
+
         return declarationDescriptor.getOriginal();
     }
 

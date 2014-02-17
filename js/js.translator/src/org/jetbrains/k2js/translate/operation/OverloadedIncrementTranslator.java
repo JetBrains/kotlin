@@ -20,32 +20,27 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.reference.CallBuilder;
-
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 public final class OverloadedIncrementTranslator extends IncrementTranslator {
 
     @NotNull
-    private final FunctionDescriptor operationDescriptor;
+    private final ResolvedCall<? extends FunctionDescriptor> resolvedCall;
 
     /*package*/ OverloadedIncrementTranslator(@NotNull JetUnaryExpression expression,
                                               @NotNull TranslationContext context) {
         super(expression, context);
-        FunctionDescriptor functionDescriptor = getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
-        assert functionDescriptor != null : "Descriptor should not be null for overloaded increment expression.";
-        this.operationDescriptor = functionDescriptor;
+        this.resolvedCall =  BindingUtils.getFunctionResolvedCall(context.bindingContext(), expression.getOperationReference());
     }
 
 
     @Override
     @NotNull
     protected JsExpression operationExpression(@NotNull JsExpression receiver) {
-        return CallBuilder.build(context())
-                .receiver(receiver)
-                .descriptor(operationDescriptor)
-                .translate();
+        return CallTranslator.instance$.translate(context(), resolvedCall, receiver);
     }
 
 }

@@ -28,11 +28,6 @@ public class JetBinaryExpressionWithTypeRHS extends JetExpressionImpl implements
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitBinaryWithTypeRHSExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitBinaryWithTypeRHSExpression(this, data);
     }

@@ -47,23 +47,23 @@ public class SDKDownloader {
     }
 
     public void downloadPlatform() {
-        download("http://dl-ssl.google.com/android/repository/android-16_r04.zip", platformZipPath);  //Same for all platforms
+        download("http://dl-ssl.google.com/android/repository/android-19_r02.zip", platformZipPath);  //Same for all platforms
     }
 
     private void downloadAbi() {
-        download("http://dl.google.com/android/repository/sysimg_armv7a-16_r03.zip", systemImages);  //Same for all platforms
+        download("http://dl.google.com/android/repository/sysimg_armv7a-19_r02.zip", systemImages);  //Same for all platforms
     }
 
     public void downloadPlatformTools() {
         String downloadURL;
         if (SystemInfo.isWindows) {
-            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r16-windows.zip";
+            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r19-windows.zip";
         }
         else if (SystemInfo.isMac) {
-            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r16-macosx.zip";
+            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r19-macosx.zip";
         }
         else if (SystemInfo.isUnix) {
-            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r16-linux.zip";
+            downloadURL = "http://dl-ssl.google.com/android/repository/platform-tools_r19-linux.zip";
         }
         else {
             throw new IllegalStateException("Your operating system doesn't supported yet.");
@@ -74,13 +74,13 @@ public class SDKDownloader {
     public void downloadTools() {
         String downloadURL;
         if (SystemInfo.isWindows) {
-            downloadURL = "http://dl.google.com/android/repository/tools_r16-windows.zip";
+            downloadURL = "http://dl.google.com/android/repository/tools_r19-windows.zip";
         }
         else if (SystemInfo.isMac) {
-            downloadURL = "http://dl.google.com/android/repository/tools_r16-macosx.zip";
+            downloadURL = "http://dl.google.com/android/repository/tools_r19-macosx.zip";
         }
         else if (SystemInfo.isUnix) {
-            downloadURL = "http://dl.google.com/android/repository/tools_r16-linux.zip";
+            downloadURL = "http://dl.google.com/android/repository/tools_r19-linux.zip";
         }
         else {
             throw new IllegalStateException("Your operating system doesn't supported yet.");
@@ -103,7 +103,7 @@ public class SDKDownloader {
 
     public void unzipAll() {
         unzip(platformZipPath, pathManager.getPlatformFolderInAndroidSdk());
-        unzip(systemImages, pathManager.getAndroidSdkRoot() + "/system-images/android-16/");
+        unzip(systemImages, pathManager.getAndroidSdkRoot() + "/system-images/android-19/");
         unzip(platformToolsZipPath, pathManager.getAndroidSdkRoot());
         unzip(toolsZipPath, pathManager.getAndroidSdkRoot());
         unzip(antZipPath, pathManager.getDependenciesRoot());

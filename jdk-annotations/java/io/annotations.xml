@@ -266,6 +266,9 @@
     <item name="java.io.File java.lang.String getPath()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>
+    <item name="java.io.File java.nio.file.Path toPath()">
+        <annotation name="org.jetbrains.annotations.NotNull"/>
+    </item>
     <item name="java.io.File java.lang.String toString()">
         <annotation name="org.jetbrains.annotations.NotNull"/>
     </item>

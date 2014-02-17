@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiReference;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.HashMap;
 import jet.Function1;
@@ -16,28 +17,29 @@ import org.jetbrains.jet.asJava.LightClassUtil;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 
-import java.util.List;
 import java.util.Map;
 
 public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
     protected final String scopeType;
 
     public KotlinCallTreeStructure(@NotNull Project project, PsiElement element, String scopeType) {
-        super(project, createNodeDescriptor(project, element, null));
+        super(project, createNodeDescriptor(project, element, null, false));
         this.scopeType = scopeType;
     }
 
-    protected static JetElement getEnclosingBlockForLocalDeclaration(PsiElement element) {
+    protected static JetElement getEnclosingElementForLocalDeclaration(PsiElement element) {
         return element instanceof JetNamedDeclaration
-                                   ? JetPsiUtil.getEnclosingBlockForLocalDeclaration((JetNamedDeclaration) element)
+                                   ? JetPsiUtil.getEnclosingElementForLocalDeclaration((JetNamedDeclaration) element)
                                    : null;
     }
 
-    protected static HierarchyNodeDescriptor createNodeDescriptor(Project project, PsiElement element, HierarchyNodeDescriptor parent) {
+    protected static HierarchyNodeDescriptor createNodeDescriptor(
+            Project project, PsiElement element, HierarchyNodeDescriptor parent, boolean navigateToReference
+    ) {
         boolean root = (parent == null);
         return element instanceof JetElement
-               ? new KotlinCallHierarchyNodeDescriptor(project, parent, element, root, false)
-               : new CallHierarchyNodeDescriptor(project, parent, element, root, false);
+               ? new KotlinCallHierarchyNodeDescriptor(project, parent, element, root, navigateToReference)
+               : new CallHierarchyNodeDescriptor(project, parent, element, root, navigateToReference);
     }
 
     protected static PsiElement getTargetElement(HierarchyNodeDescriptor descriptor) {
@@ -102,34 +104,40 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
     }
 
     protected Object[] collectNodeDescriptors(
-            HierarchyNodeDescriptor descriptor, List<? extends PsiElement> calleeElements, PsiClass basePsiClass
+            HierarchyNodeDescriptor descriptor, Map<PsiReference, PsiElement> referencesToCalleeElements, PsiClass basePsiClass
     ) {
         HashMap<PsiElement, HierarchyNodeDescriptor> declarationToDescriptorMap = new HashMap<PsiElement, HierarchyNodeDescriptor>();
-        for (PsiElement callee : calleeElements) {
+        for (Map.Entry<PsiReference, PsiElement> refToCallee : referencesToCalleeElements.entrySet()) {
+            PsiReference ref = refToCallee.getKey();
+            PsiElement callee = refToCallee.getValue();
+
             if (basePsiClass != null && !isInScope(basePsiClass, callee, scopeType)) continue;
 
-            addNodeDescriptorForElement(callee, declarationToDescriptorMap, descriptor);
+            addNodeDescriptorForElement(ref, callee, declarationToDescriptorMap, descriptor);
         }
         return declarationToDescriptorMap.values().toArray(new Object[declarationToDescriptorMap.size()]);
     }
 
     protected final void addNodeDescriptorForElement(
+            PsiReference reference,
             PsiElement element,
             Map<PsiElement, HierarchyNodeDescriptor> declarationToDescriptorMap,
             HierarchyNodeDescriptor descriptor
     ) {
         HierarchyNodeDescriptor d = declarationToDescriptorMap.get(element);
         if (d == null) {
-            d = createNodeDescriptor(myProject, element, descriptor);
+            d = createNodeDescriptor(myProject, element, descriptor, true);
             declarationToDescriptorMap.put(element, d);
         }
-        else {
-            if (d instanceof CallHierarchyNodeDescriptor) {
-                ((CallHierarchyNodeDescriptor) d).incrementUsageCount();
-            }
-            else if (d instanceof KotlinCallHierarchyNodeDescriptor) {
-                ((KotlinCallHierarchyNodeDescriptor) d).incrementUsageCount();
-            }
+        else if (d instanceof CallHierarchyNodeDescriptor) {
+            ((CallHierarchyNodeDescriptor) d).incrementUsageCount();
+        }
+
+        if (d instanceof CallHierarchyNodeDescriptor) {
+            ((CallHierarchyNodeDescriptor) d).addReference(reference);
+        }
+        else if (d instanceof KotlinCallHierarchyNodeDescriptor) {
+            ((KotlinCallHierarchyNodeDescriptor) d).addReference(reference);
         }
     }
 

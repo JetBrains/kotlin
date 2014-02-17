@@ -19,44 +19,44 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 
-import javax.inject.Inject;
-
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
-    private JavaClassResolver classResolver;
-    private JavaPackageFragmentProvider packageFragmentProvider;
+    private final ModuleDescriptor module;
 
-    @Inject
-    public void setClassResolver(JavaClassResolver classResolver) {
-        this.classResolver = classResolver;
-    }
+    private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
 
-    @Inject
-    public void setPackageFragmentProvider(JavaPackageFragmentProvider packageFragmentProvider) {
-        this.packageFragmentProvider = packageFragmentProvider;
-    }
-
-    @Nullable
-    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
-        return classResolver.resolveClass(qualifiedName, searchRule);
-    }
-
-    @Override
-    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
-        return classResolver.resolveClass(qualifiedName, IGNORE_KOTLIN_SOURCES);
+    public JavaDescriptorResolver(@NotNull LazyJavaPackageFragmentProvider provider, @NotNull ModuleDescriptor module) {
+        lazyJavaPackageFragmentProvider = provider;
+        this.module = module;
     }
 
     @NotNull
-    public JavaPackageFragmentProvider getPackageFragmentProvider() {
-        return packageFragmentProvider;
+    public ModuleDescriptor getModule() {
+        return module;
+    }
+
+    @NotNull
+    public PackageFragmentProvider getPackageFragmentProvider() {
+        return lazyJavaPackageFragmentProvider;
+    }
+
+    @Nullable
+    @Override
+    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
+        return lazyJavaPackageFragmentProvider.getClass(qualifiedName);
+    }
+
+    @Nullable
+    public PackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName) {
+        return lazyJavaPackageFragmentProvider.getPackageFragment(fqName);
     }
 }

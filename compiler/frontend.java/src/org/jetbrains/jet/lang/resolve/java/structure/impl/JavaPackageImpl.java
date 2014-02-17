@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -42,8 +41,7 @@ public class JavaPackageImpl extends JavaElementImpl<PsiPackage> implements Java
     @Override
     @NotNull
     public Collection<JavaPackage> getSubPackages() {
-        PsiPackage psiPackage = getPsi();
-        return packages(new JavaPsiFacadeKotlinHacks(psiPackage.getProject()).getSubPackages(psiPackage));
+        return packages(getPsi().getSubPackages());
     }
 
     @Override

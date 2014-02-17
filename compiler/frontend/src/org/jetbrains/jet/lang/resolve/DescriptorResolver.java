@@ -26,9 +26,10 @@ import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -42,6 +43,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -52,7 +54,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
-import static org.jetbrains.jet.util.StorageUtil.createRecursionIntolerantLazyValueWithDefault;
+import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 
 public class DescriptorResolver {
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");
@@ -66,6 +68,8 @@ public class DescriptorResolver {
     private ExpressionTypingServices expressionTypingServices;
     @NotNull
     private DelegatedPropertyResolver delegatedPropertyResolver;
+    @NotNull
+    private StorageManager storageManager;
 
     @Inject
     public void setTypeResolver(@NotNull TypeResolver typeResolver) {
@@ -87,6 +91,11 @@ public class DescriptorResolver {
         this.delegatedPropertyResolver = delegatedPropertyResolver;
     }
 
+    @Inject
+    public void setStorageManager(@NotNull StorageManager storageManager) {
+        this.storageManager = storageManager;
+    }
+
     public void resolveMutableClassDescriptor(
             @NotNull JetClass classElement,
             @NotNull MutableClassDescriptor descriptor,
@@ -101,7 +110,7 @@ public class DescriptorResolver {
 
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                     descriptor,
-                    Collections.<AnnotationDescriptor>emptyList(),
+                    Annotations.EMPTY,
                     typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                     typeParameter.getVariance(),
                     JetPsiUtil.safeName(typeParameter.getName()),
@@ -274,7 +283,7 @@ public class DescriptorResolver {
             @NotNull final JetNamedFunction function,
             @NotNull final BindingTrace trace,
             @NotNull final DataFlowInfo dataFlowInfo,
-            @NotNull List<AnnotationDescriptor> annotations
+            @NotNull Annotations annotations
     ) {
         final SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 containingDescriptor,
@@ -318,19 +327,17 @@ public class DescriptorResolver {
             JetExpression bodyExpression = function.getBodyExpression();
             if (bodyExpression != null) {
                 returnType =
-                        DeferredType.create(trace,
-                                            createRecursionIntolerantLazyValueWithDefault(
-                                                    ErrorUtils.createErrorType("Recursive dependency"),
-                                                    new Function0<JetType>() {
-                                                        @Override
-                                                        public JetType invoke() {
-                                                            JetType type = expressionTypingServices
-                                                                    .getBodyExpressionType(trace, scope, dataFlowInfo, function,
-                                                                                           functionDescriptor);
-                                                            return transformAnonymousTypeIfNeeded(functionDescriptor, function, type,
-                                                                                                  trace);
-                                                        }
-                                                    }));
+                        DeferredType.createRecursionIntolerant(
+                                storageManager,
+                                trace,
+                                new Function0<JetType>() {
+                                    @Override
+                                    public JetType invoke() {
+                                        JetType type = expressionTypingServices
+                                                .getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor);
+                                        return transformAnonymousTypeIfNeeded(functionDescriptor, function, type, trace);
+                                    }
+                                });
             }
             else {
                 returnType = ErrorUtils.createErrorType("No type, no body");
@@ -366,7 +373,7 @@ public class DescriptorResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 classDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 Name.identifier(functionName),
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
@@ -396,7 +403,7 @@ public class DescriptorResolver {
 
         SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 classDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 COPY_METHOD_NAME,
                 CallableMemberDescriptor.Kind.SYNTHESIZED
         );
@@ -521,7 +528,7 @@ public class DescriptorResolver {
     private static ValueParameterDescriptorImpl resolveValueParameterDescriptor(
             DeclarationDescriptor declarationDescriptor,
             JetParameter valueParameter, int index, JetType type, BindingTrace trace,
-            List<AnnotationDescriptor> annotations
+            Annotations annotations
     ) {
         JetType varargElementType = null;
         JetType variableType = type;
@@ -574,7 +581,7 @@ public class DescriptorResolver {
 
         TypeParameterDescriptorImpl typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                 containingDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 typeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
@@ -923,17 +930,16 @@ public class DescriptorResolver {
                     final JetProperty property = (JetProperty) variable;
                     final JetExpression propertyDelegateExpression = property.getDelegateExpression();
                     if (propertyDelegateExpression != null) {
-                        return DeferredType.create(
+                        return DeferredType.createRecursionIntolerant(
+                                storageManager,
                                 trace,
-                                createRecursionIntolerantLazyValueWithDefault(
-                                        ErrorUtils.createErrorType("Recursive dependency"),
-                                        new Function0<JetType>() {
-                                            @Override
-                                            public JetType invoke() {
-                                                return resolveDelegatedPropertyType(property, (PropertyDescriptor) variableDescriptor, scope,
-                                                                                    propertyDelegateExpression, dataFlowInfo, trace);
-                                            }
-                                        }));
+                                new Function0<JetType>() {
+                                    @Override
+                                    public JetType invoke() {
+                                        return resolveDelegatedPropertyType(property, (PropertyDescriptor) variableDescriptor, scope,
+                                                                            propertyDelegateExpression, dataFlowInfo, trace);
+                                    }
+                                });
                     }
                 }
                 if (!notLocal) {
@@ -943,20 +949,20 @@ public class DescriptorResolver {
             }
             else {
                 if (notLocal) {
-                    return DeferredType.create(trace,
-                                               createRecursionIntolerantLazyValueWithDefault(
-                                                       ErrorUtils.createErrorType("Recursive dependency"),
-                                                       new Function0<JetType>() {
-                                                           @Override
-                                                           public JetType invoke() {
-                                                               JetType type =
-                                                                       resolveInitializerType(scope, initializer, dataFlowInfo, trace);
+                    return DeferredType.createRecursionIntolerant(
+                            storageManager,
+                            trace,
+                            new Function0<JetType>() {
+                                @Override
+                                public JetType invoke() {
+                                    JetType type = resolveInitializerType(scope, initializer, dataFlowInfo, trace);
 
-                                                               return transformAnonymousTypeIfNeeded(variableDescriptor, variable, type,
-                                                                                                     trace);
-                                                           }
-                                                       }
-                                               ));
+                                    EvaluatePackage.recordCompileTimeValueForInitializerIfNeeded(
+                                            variableDescriptor, initializer, type, trace);
+                                    return transformAnonymousTypeIfNeeded(variableDescriptor, variable, type, trace);
+                                }
+                            }
+                    );
                 }
                 else {
                     return resolveInitializerType(scope, initializer, dataFlowInfo, trace);
@@ -1041,7 +1047,7 @@ public class DescriptorResolver {
         JetPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptorImpl setterDescriptor = null;
         if (setter != null) {
-            List<AnnotationDescriptor> annotations =
+            Annotations annotations =
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, setter.getModifierList(), trace);
             JetParameter parameter = setter.getParameter();
 
@@ -1109,7 +1115,7 @@ public class DescriptorResolver {
         PropertyGetterDescriptorImpl getterDescriptor;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
-            List<AnnotationDescriptor> annotations =
+            Annotations annotations =
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, getter.getModifierList(), trace);
 
             JetType outType = propertyDescriptor.getType();
@@ -1164,7 +1170,7 @@ public class DescriptorResolver {
                 resolveVisibilityFromModifiers(modifierList, getDefaultConstructorVisibility(classDescriptor)),
                 DescriptorUtils.isConstructorOfStaticNestedClass(constructorDescriptor));
         if (isAnnotationClass(classDescriptor)) {
-            AnnotationUtils.checkConstructorParametersType(valueParameters, trace);
+            CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace);
         }
         return constructor;
     }
@@ -1278,7 +1284,7 @@ public class DescriptorResolver {
         final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "values should be created in enum class: " + enumClassDescriptor;
         return DescriptorFactory
-                .createEnumClassObjectValuesMethod(classObject, DeferredType.create(trace, new Function0<JetType>() {
+                .createEnumClassObjectValuesMethod(classObject, DeferredType.create(NO_LOCKS, trace, new Function0<JetType>() {
                     @Override
                     public JetType invoke() {
                         return KotlinBuiltIns.getInstance().getArrayType(enumClassDescriptor.getDefaultType());
@@ -1295,7 +1301,7 @@ public class DescriptorResolver {
         final ClassDescriptor enumClassDescriptor = (ClassDescriptor) classObject.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(enumClassDescriptor) : "valueOf should be created in enum class: " + enumClassDescriptor;
         return DescriptorFactory
-                .createEnumClassObjectValueOfMethod(classObject, DeferredType.create(trace, new Function0<JetType>() {
+                .createEnumClassObjectValueOfMethod(classObject, DeferredType.create(NO_LOCKS, trace, new Function0<JetType>() {
                     @Override
                     public JetType invoke() {
                         return enumClassDescriptor.getDefaultType();

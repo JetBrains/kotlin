@@ -85,7 +85,7 @@ abstract class JetNamedDeclarationStub<T extends NamedStub> extends JetDeclarati
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        JetElement enclosingBlock = JetPsiUtil.getEnclosingBlockForLocalDeclaration(this);
+        JetElement enclosingBlock = JetPsiUtil.getEnclosingElementForLocalDeclaration(this);
         if (enclosingBlock != null) {
             return new LocalSearchScope(enclosingBlock);
         }

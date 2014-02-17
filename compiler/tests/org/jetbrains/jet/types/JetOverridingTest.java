@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 public class JetOverridingTest extends JetLiteFixture {
 
     private ModuleDescriptor root = JetTestUtils.createEmptyModule("<test_root>");
-    private KotlinBuiltIns builtIns;
     private DescriptorResolver descriptorResolver;
 
     @Override
@@ -46,13 +45,11 @@ public class JetOverridingTest extends JetLiteFixture {
     public void setUp() throws Exception {
         super.setUp();
         InjectorForTests injector = new InjectorForTests(getProject(), root);
-        builtIns = injector.getKotlinBuiltIns();
         descriptorResolver = injector.getDescriptorResolver();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        builtIns = null;
         descriptorResolver = null;
         super.tearDown();
     }
@@ -172,7 +169,7 @@ public class JetOverridingTest extends JetLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
-        return descriptorResolver.resolveFunctionDescriptor(root, builtIns.getBuiltInsPackageScope(), function,
+        return descriptorResolver.resolveFunctionDescriptor(root, KotlinBuiltIns.getInstance().getBuiltInsPackageScope(), function,
                                                             JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
     }
 }

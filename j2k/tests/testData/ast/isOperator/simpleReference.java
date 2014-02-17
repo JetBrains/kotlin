@@ -1,0 +1,2 @@
+//expression
+a instanceof String

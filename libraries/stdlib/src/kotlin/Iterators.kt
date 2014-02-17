@@ -112,16 +112,17 @@ class FunctionIterator<T:Any>(val nextFunction: () -> T?): AbstractIterator<T>()
 }
 
 /** An [[Iterator]] which iterates over a number of iterators in sequence */
-class CompositeIterator<T>(vararg iterators: Iterator<T>): AbstractIterator<T>() {
+fun CompositeIterator<T>(vararg iterators: Iterator<T>): CompositeIterator<T> = CompositeIterator(iterators.iterator())
 
-    val iteratorsIter = iterators.iterator()
+class CompositeIterator<T>(val iterators: Iterator<Iterator<T>>): AbstractIterator<T>() {
+
     var currentIter: Iterator<T>? = null
 
     override protected fun computeNext(): Unit {
         while (true) {
             if (currentIter == null) {
-                if (iteratorsIter.hasNext()) {
-                    currentIter = iteratorsIter.next()
+                if (iterators.hasNext()) {
+                    currentIter = iterators.next()
                 } else {
                     done()
                     return

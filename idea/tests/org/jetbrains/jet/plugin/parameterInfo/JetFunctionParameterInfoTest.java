@@ -24,12 +24,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetValueArgumentList;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
-/**
- * User: Alexander Podkhalyuzin
- * Date: 24.01.12
- */
 public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCase {
     public void testInheritedFunctions() {
         doTest();
@@ -83,6 +79,10 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
         doTest();
     }
     
+    public void testDeprecated() {
+        doTest();
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -110,14 +110,17 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
         MockUpdateParameterInfoContext updateContext = new MockUpdateParameterInfoContext(file, myFixture);
 
         //to update current parameter index
-        parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);
+        JetValueArgumentList elementForUpdating = parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);
+        if (elementForUpdating != null) {
+            parameterInfoHandler.updateParameterInfo(elementForUpdating, updateContext);
+        }
 
         MockParameterInfoUIContext parameterInfoUIContext =
                 new MockParameterInfoUIContext(parameterOwner, updateContext.getCurrentParameter());
 
         for (Object item : mockCreateParameterInfoContext.getItemsToShow()) {
             //noinspection unchecked
-            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, CancelableResolveSession>)item, parameterInfoUIContext);
+            parameterInfoHandler.updateUI((Pair<? extends FunctionDescriptor, ResolveSessionForBodies>)item, parameterInfoUIContext);
         }
         assertEquals(expectedResultText, parameterInfoUIContext.getResultText());
     }

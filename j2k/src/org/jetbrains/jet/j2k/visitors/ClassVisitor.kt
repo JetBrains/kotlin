@@ -23,11 +23,11 @@ import java.util.HashSet
 public open class ClassVisitor() : JavaRecursiveElementVisitor() {
     private val myClassIdentifiers = HashSet<String>()
 
-    public open fun getClassIdentifiers(): Set<String> {
+    public fun getClassIdentifiers(): Set<String> {
         return HashSet<String>(myClassIdentifiers)
     }
 
-    public override fun visitClass(aClass: PsiClass?) {
+    override fun visitClass(aClass: PsiClass?) {
         val qName = aClass?.getQualifiedName()
         if (qName != null) {
             myClassIdentifiers.add(qName)

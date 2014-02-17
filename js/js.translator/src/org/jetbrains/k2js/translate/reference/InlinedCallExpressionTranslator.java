@@ -31,6 +31,8 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.k2js.translate.callTranslator.CallInfo;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslatorPackage;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -41,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.reference.CallArgumentTranslator.translateSingleArgument;
-import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionForDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
@@ -61,16 +62,19 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     }
 
     @NotNull
-    public static JsExpression translate(@NotNull JetCallExpression expression,
-                                         @Nullable JsExpression receiver,
-                                         @NotNull CallType callType,
-                                         @NotNull TranslationContext context) {
-        return (new InlinedCallExpressionTranslator(expression, receiver, callType, context)).translate();
+    public static JsExpression translate(
+            @NotNull JetCallExpression expression,
+            @Nullable JsExpression receiver,
+            @NotNull TranslationContext context
+    ) {
+        return (new InlinedCallExpressionTranslator(expression, receiver, context)).translate();
     }
 
-    private InlinedCallExpressionTranslator(@NotNull JetCallExpression expression, @Nullable JsExpression receiver,
-                                            @NotNull CallType callType, @NotNull TranslationContext context) {
-        super(expression, receiver, callType, context);
+    private InlinedCallExpressionTranslator(
+            @NotNull JetCallExpression expression, @Nullable JsExpression receiver,
+            @NotNull TranslationContext context
+    ) {
+        super(expression, receiver, context);
     }
 
     @NotNull
@@ -117,13 +121,13 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     private TranslationContext createContextWithAliasForThisExpression(@NotNull TranslationContext contextForInlining) {
         TranslationContext contextWithAliasForThisExpression = contextForInlining;
         SimpleFunctionDescriptor functionDescriptor = getFunctionDescriptor();
-        CallParameters callParameters = resolveCallParameters(receiver, null, functionDescriptor, resolvedCall, contextForInlining);
-        JsExpression receiver = callParameters.getReceiver();
+        CallInfo callInfo = CallTranslatorPackage.getCallInfo(contextForInlining, resolvedCall, receiver);
+        JsExpression receiver = callInfo.getReceiverObject();
         if (receiver != null) {
             contextWithAliasForThisExpression =
                 contextWithAlias(contextWithAliasForThisExpression, receiver, getExpectedReceiverDescriptor(functionDescriptor));
         }
-        JsExpression thisObject = callParameters.getThisObject();
+        JsExpression thisObject = callInfo.getThisObject();
         if (thisObject != null) {
             contextWithAliasForThisExpression =
                 contextWithAlias(contextWithAliasForThisExpression, thisObject, getExpectedThisDescriptor(functionDescriptor));
@@ -137,7 +141,7 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
         TemporaryVariable aliasForReceiver = context().declareTemporary(aliasExpression);
         assert descriptorToAlias != null;
         TranslationContext newContext =
-                contextWithAliasForThisExpression.innerContextWithThisAliased(descriptorToAlias, aliasForReceiver.reference());
+                contextWithAliasForThisExpression.innerContextWithAliased(descriptorToAlias, aliasForReceiver.reference());
         newContext.addStatementToCurrentBlock(aliasForReceiver.assignmentExpression().makeStmt());
         return newContext;
     }

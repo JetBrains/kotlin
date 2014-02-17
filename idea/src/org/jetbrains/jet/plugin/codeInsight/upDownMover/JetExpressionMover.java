@@ -31,11 +31,7 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
     }
 
     private final static Class[] MOVABLE_ELEMENT_CLASSES = {
-            JetDeclaration.class,
-            JetBlockExpression.class,
-            // Only assignments
-            JetBinaryExpression.class,
-            JetCallExpression.class,
+            JetExpression.class,
             JetWhenEntry.class,
             JetValueArgument.class,
             PsiComment.class
@@ -45,7 +41,10 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
         @NotNull
         @Override
         public Boolean invoke(PsiElement element) {
-            return (!(element instanceof JetBinaryExpression) || JetPsiUtil.isAssignment(element));
+            return (!(element instanceof JetExpression)
+                    || element instanceof JetDeclaration
+                    || element instanceof JetBlockExpression
+                    || element.getParent() instanceof JetBlockExpression);
         }
     };
 
@@ -220,6 +219,13 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
 
     @Nullable
     private static LineRange getExpressionTargetRange(@NotNull Editor editor, @NotNull PsiElement sibling, boolean down) {
+        if (sibling instanceof JetIfExpression && !down) {
+            JetExpression elseBranch = ((JetIfExpression) sibling).getElse();
+            if (elseBranch instanceof JetBlockExpression) {
+                sibling = elseBranch;
+            }
+        }
+
         PsiElement start = sibling;
         PsiElement end = sibling;
 

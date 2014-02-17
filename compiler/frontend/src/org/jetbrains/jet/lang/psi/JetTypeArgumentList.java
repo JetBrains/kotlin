@@ -28,15 +28,11 @@ public class JetTypeArgumentList extends JetElementImpl {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitTypeArgumentList(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitTypeArgumentList(this, data);
     }
 
+    @NotNull
     public List<JetTypeProjection> getArguments() {
         return findChildrenByType(JetNodeTypes.TYPE_PROJECTION);
     }

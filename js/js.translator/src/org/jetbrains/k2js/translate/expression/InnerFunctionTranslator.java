@@ -20,20 +20,24 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 class InnerFunctionTranslator extends InnerDeclarationTranslator {
-    private final FunctionDescriptor descriptor;
+    @NotNull private final FunctionDescriptor descriptor;
+    @Nullable private final JsNameRef funRef;
 
     public InnerFunctionTranslator(
             @NotNull FunctionDescriptor descriptor,
             @NotNull TranslationContext context,
-            @NotNull JsFunction fun
+            @NotNull JsFunction fun,
+            @Nullable JsNameRef funRef
     ) {
         super(context, fun);
         this.descriptor = descriptor;
+        this.funRef = funRef;
     }
 
     @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
@@ -43,11 +47,24 @@ class InnerFunctionTranslator extends InnerDeclarationTranslator {
     }
 
     @Override
+    @NotNull
+    protected JsNameRef getParameterNameRefFor(@NotNull CallableDescriptor descriptor) {
+        if (descriptor == this.descriptor) {
+            assert funRef != null;
+            return funRef;
+        }
+
+        return super.getParameterNameRefFor(descriptor);
+    }
+
+    @Override
+    @NotNull
     protected JsExpression createExpression(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
         return nameRef;
     }
 
     @Override
+    @NotNull
     protected JsInvocation createInvocation(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
         return new JsInvocation(new JsNameRef("bind", nameRef), new SmartList<JsExpression>(self));
     }

@@ -19,10 +19,12 @@ package org.jetbrains.jet.codegen.state;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
+import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.SamWrapperClasses;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -107,10 +109,10 @@ public class GenerationState {
 
         this.typeMapper = new JetTypeMapper(bindingTrace, classBuilderMode);
 
-        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(typeMapper, this, builderFactory, project);
-
-        this.intrinsics = injector.getIntrinsics();
-        this.classFileFactory = injector.getClassFileFactory();
+        this.intrinsics = new IntrinsicMethods();
+        this.classFileFactory = new ClassFileFactory(this);
+        this.classFileFactory.setBuilderFactory(builderFactory);
+        this.intrinsics.init();
 
         this.generateNotNullAssertions = generateNotNullAssertions;
         this.generateNotNullParamAssertions = generateNotNullParamAssertions;

@@ -3,7 +3,7 @@ package kotlin
 
 private object _Assertions
 
-deprecated("Must be puplic to make assert() inlinable")
+deprecated("Must be public to make assert() inlinable")
 public val ASSERTIONS_ENABLED: Boolean = _Assertions.javaClass.desiredAssertionStatus()
 
 /**

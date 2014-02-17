@@ -1,5 +1,4 @@
-// "Suppress 'UNNECESSARY_NOT_NULL_ASSERTION' for object <anonymous>" "false"
-// ACTION: Remove unnecessary non-null assertion (!!)
+// "class com.intellij.codeInspection.SuppressIntentionAction" "false"
 
 fun foo() {
     object : Base(""<caret>!!) {

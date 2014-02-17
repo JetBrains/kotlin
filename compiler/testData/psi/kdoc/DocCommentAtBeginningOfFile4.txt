@@ -5,5 +5,5 @@ JetFile: DocCommentAtBeginningOfFile4.kt
     PsiElement(KDOC_TEXT)('/**foo*/')
     PsiWhiteSpace('\n\n')
     PsiElement(KDOC_TEXT)('asdfas')
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>

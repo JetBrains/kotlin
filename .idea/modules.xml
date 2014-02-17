@@ -7,6 +7,8 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/backend/backend.iml" filepath="$PROJECT_DIR$/compiler/backend/backend.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/compiler/backend-common/backend-common.iml" filepath="$PROJECT_DIR$/compiler/backend-common/backend-common.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/build-tools/build-tools.iml" filepath="$PROJECT_DIR$/build-tools/build-tools.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/builtins/builtins.iml" filepath="$PROJECT_DIR$/core/builtins/builtins.iml" group="core" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/builtins-serializer/builtins-serializer.iml" filepath="$PROJECT_DIR$/compiler/builtins-serializer/builtins-serializer.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli.iml" filepath="$PROJECT_DIR$/compiler/cli/cli.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/cli/cli-common/cli-common.iml" filepath="$PROJECT_DIR$/compiler/cli/cli-common/cli-common.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/compiler/integration-tests/compiler-integration-tests.iml" filepath="$PROJECT_DIR$/compiler/integration-tests/compiler-integration-tests.iml" group="compiler/cli" />
@@ -26,11 +28,12 @@
       <module fileurl="file://$PROJECT_DIR$/j2k/tests/j2k-tests.iml" filepath="$PROJECT_DIR$/j2k/tests/j2k-tests.iml" group="j2k" />
       <module fileurl="file://$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" filepath="$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/jps-plugin.iml" filepath="$PROJECT_DIR$/jps-plugin/jps-plugin.iml" group="ide/jps" />
+      <module fileurl="file://$PROJECT_DIR$/js/js.dart-ast/js.dart-ast.iml" filepath="$PROJECT_DIR$/js/js.dart-ast/js.dart-ast.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.tests/js.tests.iml" filepath="$PROJECT_DIR$/js/js.tests/js.tests.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/js/js.translator/js.translator.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" filepath="$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
-      <module fileurl="file://$PROJECT_DIR$/runtime/runtime.iml" filepath="$PROJECT_DIR$/runtime/runtime.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" filepath="$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/frontend/serialization/serialization.iml" filepath="$PROJECT_DIR$/compiler/frontend/serialization/serialization.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/core/serialization.java/serialization.java.iml" filepath="$PROJECT_DIR$/core/serialization.java/serialization.java.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />

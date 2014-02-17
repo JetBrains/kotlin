@@ -95,24 +95,19 @@ public class JetPsiFactory {
         return comma;
     }
 
-    //the pair contains the first and the last elements of a range
     @NotNull
-    public static Pair<PsiElement, PsiElement> createColonAndWhiteSpaces(Project project) {
-        JetProperty property = createProperty(project, "val x : Int");
-        return Pair.create(property.findElementAt(5), property.findElementAt(7));
-    }
-
-    //the pair contains the first and the last elements of a range
-    @NotNull
-    public static Pair<PsiElement, PsiElement> createTypeWhiteSpaceAndColon(Project project, String type) {
-        JetProperty property = createProperty(project, "val x: " + type);
-        return Pair.create(property.findElementAt(5), (PsiElement) property.getTypeRef());
-    }
-
-    @NotNull
-    public static ASTNode createColonNode(Project project) {
+    public static PsiElement createColon(Project project) {
         JetProperty property = createProperty(project, "val x: Int");
-        return property.getNode().findChildByType(JetTokens.COLON);
+        PsiElement colon = property.findElementAt(5);
+        assert colon != null;
+        return colon;
+    }
+
+    @NotNull
+    public static PsiElement createEQ(Project project) {
+        PsiElement eq = createFunction(project, "fun foo() = foo").getEqualsToken();
+        assert eq != null;
+        return eq;
     }
 
     @NotNull
@@ -301,8 +296,8 @@ public class JetPsiFactory {
             importDirectiveBuilder.append(" as ").append(alias.asString());
         }
 
-        JetFile namespace = createFile(project, importDirectiveBuilder.toString());
-        return namespace.getImportDirectives().iterator().next();
+        JetFile file = createFile(project, importDirectiveBuilder.toString());
+        return file.getImportDirectives().iterator().next();
     }
 
     @NotNull

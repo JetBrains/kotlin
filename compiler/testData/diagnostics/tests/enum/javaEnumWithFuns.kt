@@ -10,8 +10,6 @@ public enum A {
 
 // FILE: test.kt
 
-package vvv
-
 fun main() {
     val c = A.ENTRY
     c.s()

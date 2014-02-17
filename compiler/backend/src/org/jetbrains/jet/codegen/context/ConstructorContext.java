@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class ConstructorContext extends MethodContext {
-    private static final StackValue local1 = StackValue.local(1, OBJECT_TYPE);
+    private static final StackValue LOCAL_1 = StackValue.local(1, OBJECT_TYPE);
 
     public ConstructorContext(
             @NotNull ConstructorDescriptor contextDescriptor,
@@ -39,16 +39,16 @@ public class ConstructorContext extends MethodContext {
 
     @Override
     public StackValue getOuterExpression(StackValue prefix, boolean ignoreNoOuter) {
-        StackValue stackValue = closure != null && closure.getCaptureThis() != null ? local1 : null;
+        StackValue stackValue = closure != null && closure.getCaptureThis() != null ? LOCAL_1 : null;
         if (!ignoreNoOuter && stackValue == null) {
-            throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor().getContainingDeclaration());
+            throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor());
         }
         return stackValue;
     }
 
     @Override
     public String toString() {
-        return "Constructor: " + getContextDescriptor().getName();
+        return "Constructor: " + getContextDescriptor();
     }
 
     @NotNull

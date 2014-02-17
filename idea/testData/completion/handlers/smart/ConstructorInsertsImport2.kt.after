@@ -1,0 +1,11 @@
+import java.io.File
+import java.util.AbstractMap
+import java.util.HashMap
+
+class X<T> {
+    fun foo(p: java.util.HashMap<T, java.util.AbstractMap<T, java.io.File>>){}
+
+    fun f(){
+        foo(HashMap<T, AbstractMap<T, File>>(<caret>))
+    }
+}

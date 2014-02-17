@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -24,11 +25,13 @@ import java.util.List;
 
 public interface PackageFragmentProvider {
     @NotNull
+    @ReadOnly
     List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName);
 
     /**
      * @return declared subpackages of {@code fqName}
      */
     @NotNull
+    @ReadOnly
     Collection<FqName> getSubPackagesOf(@NotNull FqName fqName);
 }

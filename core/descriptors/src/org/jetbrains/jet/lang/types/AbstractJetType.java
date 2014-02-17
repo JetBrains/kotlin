@@ -41,7 +41,7 @@ public abstract class AbstractJetType implements JetType {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         List<TypeProjection> arguments = getArguments();
         return getConstructor() + (arguments.isEmpty() ? "" : "<" + argumentsToString(arguments) + ">") + (isNullable() ? "?" : "");
     }

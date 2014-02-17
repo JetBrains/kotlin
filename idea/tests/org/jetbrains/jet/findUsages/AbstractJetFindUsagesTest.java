@@ -267,15 +267,8 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         List<String> caretElementClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// PSI_ELEMENT: ");
         assert caretElementClassNames.size() == 1;
         //noinspection unchecked
-        Class<T> caretElementClass = (Class<T>)Class.forName(caretElementClassNames.get(0));
 
-        List<String> filteringRuleClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// FILTERING_RULES: ");
-        Collection<UsageFilteringRule> filters = new ArrayList<UsageFilteringRule>();
-        for (String filteringRuleClassName : filteringRuleClassNames) {
-            //noinspection unchecked
-            Class<UsageFilteringRule> klass = (Class<UsageFilteringRule>) Class.forName(filteringRuleClassName);
-            filters.add(klass.newInstance());
-        }
+        Class<T> caretElementClass = (Class<T>)Class.forName(caretElementClassNames.get(0));
 
         OptionsParser parser = OptionsParser.getParserByPsiElementClass(caretElementClass);
 
@@ -293,6 +286,7 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
                     }
                 }
         );
+
         assert extraFiles != null;
         for (File file : extraFiles) {
             myFixture.configureByFile(rootPath + file.getName());
@@ -305,7 +299,9 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         FindUsagesOptions options = parser != null ? parser.parse(mainFileText, getProject()) : null;
         Collection<UsageInfo> usageInfos = findUsages(caretElement, options);
 
-        Collection<UsageInfo2UsageAdapter> filteredUsages = getUsageAdapters(filters, usageInfos);
+        Collection<UsageInfo2UsageAdapter> filteredUsages = getUsageAdapters(
+                getTestFilteringRules(mainFileText, "// FILTERING_RULES: "),
+                usageInfos);
 
         Function<UsageInfo2UsageAdapter, String> convertToString = new Function<UsageInfo2UsageAdapter, String>() {
             @Override
@@ -381,5 +377,19 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         }
 
         return UsageType.UNCLASSIFIED;
+    }
+
+    private static Collection<UsageFilteringRule> getTestFilteringRules(String mainFileText, String directive)
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        List<String> filteringRuleClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, directive);
+
+        Collection<UsageFilteringRule> filters = new ArrayList<UsageFilteringRule>();
+        for (String filteringRuleClassName : filteringRuleClassNames) {
+            //noinspection unchecked
+            Class<UsageFilteringRule> klass = (Class<UsageFilteringRule>) Class.forName(filteringRuleClassName);
+            filters.add(klass.newInstance());
+        }
+
+        return filters;
     }
 }

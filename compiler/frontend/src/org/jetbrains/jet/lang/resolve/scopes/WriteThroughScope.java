@@ -47,7 +47,7 @@ public class WriteThroughScope extends WritableScopeWithImports {
 
     @Override
     @NotNull
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
         checkMayRead();
 
         return writableWorker.getDeclarationsByLabel(labelName);

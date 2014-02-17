@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetModifierList;
@@ -34,9 +33,12 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.*;
 
@@ -121,6 +123,14 @@ public abstract class AnnotationCodegen {
     private void generateNullabilityAnnotation(@Nullable JetType type, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
         if (type == null) return;
 
+        if (isBareTypeParameterWithNullableUpperBound(type)) {
+            // This is to account for the case of, say
+            //   class Function<R> { fun invoke(): R }
+            // it would be a shame to put @Nullable on the return type of the function, and force all callers to check for null,
+            // so we put no annotations
+            return;
+        }
+
         boolean isNullableType = CodegenUtil.isNullableType(type);
         if (!isNullableType && KotlinBuiltIns.getInstance().isPrimitiveType(type)) return;
 
@@ -130,6 +140,11 @@ public abstract class AnnotationCodegen {
         if (!annotationDescriptorsAlreadyPresent.contains(descriptor)) {
             visitAnnotation(descriptor, false).visitEnd();
         }
+    }
+
+    private static boolean isBareTypeParameterWithNullableUpperBound(@NotNull JetType type) {
+        ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
+        return !type.isNullable() && classifier instanceof TypeParameterDescriptor && TypeUtils.hasNullableSuperType(type);
     }
 
     private static boolean isVolatile(@NotNull AnnotationDescriptor annotationDescriptor) {
@@ -255,11 +270,8 @@ public abstract class AnnotationCodegen {
 
             @Override
             public Void visitNumberTypeValue(IntegerValueTypeConstant value, Void data) {
-                IntegerValueTypeConstructor typeConstructor = value.getValue();
-                Object numberType = EvaluatePackage.getValueForNumberType(typeConstructor, expectedType);
-                if (numberType != null) {
-                    annotationVisitor.visit(name, numberType);
-                }
+                Object numberType = value.getValue(expectedType);
+                annotationVisitor.visit(name, numberType);
                 return null;
             }
 
@@ -288,23 +300,19 @@ public abstract class AnnotationCodegen {
 
     @NotNull
     private RetentionPolicy getRetentionPolicy(@NotNull Annotated descriptor) {
-        for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
-            String internalName = typeMapper.mapType(annotationDescriptor.getType()).getInternalName();
-            if ("java/lang/annotation/Retention".equals(internalName)) {
-                Collection<CompileTimeConstant<?>> valueArguments = annotationDescriptor.getAllValueArguments().values();
-                assert valueArguments.size() == 1 : "Retention should have an argument: " + annotationDescriptor;
-                CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
-                assert compileTimeConstant instanceof EnumValue : "Retention argument should be enum value: " + compileTimeConstant;
-                ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
-                JetType classObjectType = enumEntry.getClassObjectType();
-                assert classObjectType != null : "Enum entry should have a class object: " + enumEntry;
-                assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName()) :
-                        "Retention argument should be of type RetentionPolicy: " + enumEntry;
-                return RetentionPolicy.valueOf(enumEntry.getName().asString());
-            }
-        }
+        AnnotationDescriptor retentionAnnotation = descriptor.getAnnotations().findAnnotation(new FqName(Retention.class.getName()));
+        if (retentionAnnotation == null) return RetentionPolicy.CLASS;
 
-        return RetentionPolicy.CLASS;
+        Collection<CompileTimeConstant<?>> valueArguments = retentionAnnotation.getAllValueArguments().values();
+        assert valueArguments.size() == 1 : "Retention should have an argument: " + retentionAnnotation + " on " + descriptor;
+        CompileTimeConstant<?> compileTimeConstant = valueArguments.iterator().next();
+        assert compileTimeConstant instanceof EnumValue : "Retention argument should be enum value: " + compileTimeConstant;
+        ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
+        JetType classObjectType = enumEntry.getClassObjectType();
+        assert classObjectType != null : "Enum entry should have a class object: " + enumEntry;
+        assert "java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName()) :
+                "Retention argument should be of type RetentionPolicy: " + enumEntry;
+        return RetentionPolicy.valueOf(enumEntry.getName().asString());
     }
 
     @NotNull

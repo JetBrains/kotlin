@@ -45,10 +45,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * User: Alefas
- * Date: 01.02.12
- */
 public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetExpression> {
 
     private final boolean myReplaceOccurrence;

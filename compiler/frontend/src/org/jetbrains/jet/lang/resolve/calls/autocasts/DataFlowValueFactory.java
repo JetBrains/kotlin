@@ -70,9 +70,6 @@ public class DataFlowValueFactory {
         else if (receiverValue instanceof ExpressionReceiver) {
             return createDataFlowValue(((ExpressionReceiver) receiverValue).getExpression(), receiverValue.getType(), bindingContext);
         }
-        else if (receiverValue instanceof AutoCastReceiver) {
-            return createDataFlowValue(((AutoCastReceiver) receiverValue).getOriginal(), bindingContext);
-        }
         else if (receiverValue == ReceiverValue.NO_RECEIVER) {
             throw new IllegalArgumentException("No DataFlowValue exists for ReceiverValue.NO_RECEIVER");
         }
@@ -89,12 +86,12 @@ public class DataFlowValueFactory {
     private static class IdentifierInfo {
         public final Object id;
         public final boolean isStable;
-        public final boolean isNamespace;
+        public final boolean isPackage;
 
-        private IdentifierInfo(Object id, boolean isStable, boolean isNamespace) {
+        private IdentifierInfo(Object id, boolean isStable, boolean isPackage) {
             this.id = id;
             this.isStable = isStable;
-            this.isNamespace = isNamespace;
+            this.isPackage = isPackage;
         }
     }
 
@@ -120,7 +117,7 @@ public class DataFlowValueFactory {
         if (selectorInfo.id == null) {
             return NO_IDENTIFIER_INFO;
         }
-        if (receiverInfo == null || receiverInfo == NO_IDENTIFIER_INFO || receiverInfo.isNamespace) {
+        if (receiverInfo == null || receiverInfo == NO_IDENTIFIER_INFO || receiverInfo.isPackage) {
             return selectorInfo;
         }
         return createInfo(Pair.create(receiverInfo.id, selectorInfo.id), receiverInfo.isStable && selectorInfo.isStable);
@@ -155,8 +152,8 @@ public class DataFlowValueFactory {
 
             return getIdForThisReceiver(declarationDescriptor);
         }
-        else if (expression instanceof JetRootNamespaceExpression) {
-            return createPackageInfo(JetModuleUtil.getRootNamespaceType(expression));
+        else if (expression instanceof JetRootPackageExpression) {
+            return createPackageInfo(JetModuleUtil.getRootPackageType(expression));
         }
         return NO_IDENTIFIER_INFO;
     }
@@ -189,9 +186,6 @@ public class DataFlowValueFactory {
     private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable JetExpression expression) {
         if (receiverValue instanceof ThisReceiver) {
             return getIdForThisReceiver(((ThisReceiver) receiverValue).getDeclarationDescriptor());
-        }
-        else if (receiverValue instanceof AutoCastReceiver) {
-            return getIdForImplicitReceiver(((AutoCastReceiver) receiverValue).getOriginal(), expression);
         }
         else {
             assert !(receiverValue instanceof TransientReceiver)

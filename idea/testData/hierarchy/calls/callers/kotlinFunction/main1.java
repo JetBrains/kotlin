@@ -1,7 +1,7 @@
 class JA {
-    public String name = new KA().foo("");
+    public String name = new KBase().foo("") + new KA().foo("");
 
     public String foo() {
-        return new KA().foo("");
+        return new KBase().foo("") + new KA().foo("");
     }
 }

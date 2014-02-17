@@ -1,0 +1,15 @@
+package test
+
+internal final class A {
+    /*primary*/ public constructor A()
+    
+    internal final class B {
+        /*primary*/ public constructor B()
+        
+        internal class object <class-object-for-B> {
+            /*primary*/ private constructor <class-object-for-B>()
+            internal final val TEST: jet.Int
+                internal final fun <get-TEST>(): jet.Int
+        }
+    }
+}

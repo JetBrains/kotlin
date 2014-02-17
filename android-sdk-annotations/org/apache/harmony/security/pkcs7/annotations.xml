@@ -1,5 +1,29 @@
 <root>
+    <item name='org.apache.harmony.security.pkcs7.ContentInfo ENCRYPTED_DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs7.ContentInfo SIGNED_AND_ENVELOPED_DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs7.ContentInfo ASN1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs7.ContentInfo DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs7.ContentInfo SIGNED_DATA'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs7.SignerInfo ASN1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.pkcs7.SignedData java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs7.ContentInfo java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs7.ContentInfo ENVELOPED_DATA'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.security.pkcs7.SignerInfo java.lang.String toString()'>
@@ -8,10 +32,16 @@
     <item name='org.apache.harmony.security.pkcs7.SignerInfo java.math.BigInteger getSerialNumber()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.security.pkcs7.SignedData ASN1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.apache.harmony.security.pkcs7.SignerInfo ISSUER_AND_SERIAL_NUMBER'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.security.pkcs7.SignerInfo javax.security.auth.x500.X500Principal getIssuer()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='org.apache.harmony.security.pkcs7.ContentInfo java.lang.String toString()'>
+    <item name='org.apache.harmony.security.pkcs7.ContentInfo DIGESTED_DATA'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

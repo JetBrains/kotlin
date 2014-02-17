@@ -1,4 +1,4 @@
-class <caret>C1{}
+class <caret>C1 {}
 
 fun f() {
   val c = C1();

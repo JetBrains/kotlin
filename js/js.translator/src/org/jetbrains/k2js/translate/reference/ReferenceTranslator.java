@@ -21,11 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.jet.lang.psi.JetPsiUtil.isBackingFieldReference;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 
 public final class ReferenceTranslator {
 
@@ -70,12 +75,25 @@ public final class ReferenceTranslator {
         if (isBackingFieldReference(referenceExpression)) {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }
-        if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
-            return PropertyAccessTranslator.newInstance(referenceExpression, receiver, CallType.NORMAL, context);
+        if (canBePropertyAccess(referenceExpression, context)) {
+            return VariableAccessTranslator.newInstance(context, referenceExpression, receiver);
         }
         if (ClassObjectAccessTranslator.isClassObjectReference(referenceExpression, context)) {
             return ClassObjectAccessTranslator.newInstance(referenceExpression, context);
         }
         return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }
+
+    public static boolean canBePropertyAccess(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+        JetSimpleNameExpression simpleNameExpression = null;
+        if (expression instanceof JetQualifiedExpression) {
+            simpleNameExpression = getSelectorAsSimpleName((JetQualifiedExpression) expression);
+        }
+        else if (expression instanceof JetSimpleNameExpression) {
+            simpleNameExpression = (JetSimpleNameExpression) expression;
+        }
+        return simpleNameExpression != null &&
+               (getDescriptorForReferenceExpression(context.bindingContext(), simpleNameExpression) instanceof PropertyDescriptor);
+    }
+
 }

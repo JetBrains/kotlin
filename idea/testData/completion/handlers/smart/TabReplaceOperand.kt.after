@@ -6,3 +6,6 @@ val c: String = ""
 fun bar() {
     if (b1 && b3 && b3) {}
 }
+
+//ELEMENT: b3
+//CHAR: \t

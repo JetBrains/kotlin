@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -128,7 +128,7 @@ public class KotlinBuiltIns {
                                                        Collections.<ImportPath>emptyList(),
                                                        PlatformToKotlinClassMap.EMPTY);
         builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), builtInsModule);
-        builtInsModule.addFragmentProvider(builtinsPackageFragment.packageFragmentProvider);
+        builtInsModule.addFragmentProvider(DependencyKind.SOURCES, builtinsPackageFragment.getProvider());
 
         this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
         this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
@@ -284,8 +284,7 @@ public class KotlinBuiltIns {
                 getBuiltInClassByName("ByteRange"),
                 getBuiltInClassByName("ShortRange"),
                 getBuiltInClassByName("CharRange"),
-                getBuiltInClassByName("IntRange"),
-                getBuiltInClassByName("LongRange")
+                getBuiltInClassByName("IntRange")
         );
     }
 
@@ -677,7 +676,7 @@ public class KotlinBuiltIns {
     public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 getArray().getTypeConstructor(),
                 false,
                 types,
@@ -695,7 +694,7 @@ public class KotlinBuiltIns {
         Variance projectionType = Variance.INVARIANT;
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
         return new JetTypeImpl(
-                Collections.<AnnotationDescriptor>emptyList(),
+                Annotations.EMPTY,
                 getEnum().getTypeConstructor(),
                 false,
                 types,
@@ -720,7 +719,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getFunctionType(
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @Nullable JetType receiverType,
             @NotNull List<JetType> parameterTypes,
             @NotNull JetType returnType
@@ -735,7 +734,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getKFunctionType(
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @Nullable JetType receiverType,
             @NotNull List<JetType> parameterTypes,
             @NotNull JetType returnType,
@@ -865,7 +864,7 @@ public class KotlinBuiltIns {
         for (int i = 0; i < parameterTypes.size(); i++) {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                    functionDescriptor, i, Collections.<AnnotationDescriptor>emptyList(),
+                    functionDescriptor, i, Annotations.EMPTY,
                     Name.identifier("p" + (i + 1)), parameterType.getType(), false, null);
             valueParameters.add(valueParameterDescriptor);
         }
@@ -905,17 +904,17 @@ public class KotlinBuiltIns {
     }
 
     public boolean isNothingOrNullableNothing(@NotNull JetType type) {
-        return !(type instanceof NamespaceType)
+        return !(type instanceof PackageType)
                && type.getConstructor() == getNothing().getTypeConstructor();
     }
 
     public boolean isAnyOrNullableAny(@NotNull JetType type) {
-        return !(type instanceof NamespaceType) &&
+        return !(type instanceof PackageType) &&
                type.getConstructor() == getAny().getTypeConstructor();
     }
 
     public boolean isUnit(@NotNull JetType type) {
-        return !(type instanceof NamespaceType) && type.equals(getUnitType());
+        return !(type instanceof PackageType) && type.equals(getUnitType());
     }
 
     public boolean isData(@NotNull ClassDescriptor classDescriptor) {
@@ -931,15 +930,8 @@ public class KotlinBuiltIns {
     }
 
     static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
-        List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
-        if (annotations != null) {
-            for (AnnotationDescriptor annotation : annotations) {
-                if (annotationClass.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        FqName fqName = DescriptorUtils.getFqName(annotationClass).toSafe();
+        return descriptor.getOriginal().getAnnotations().findAnnotation(fqName) != null;
     }
 
     public boolean isVolatile(@NotNull PropertyDescriptor descriptor) {

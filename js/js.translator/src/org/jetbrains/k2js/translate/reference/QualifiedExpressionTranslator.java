@@ -40,11 +40,7 @@ public final class QualifiedExpressionTranslator {
     public static AccessTranslator getAccessTranslator(@NotNull JetQualifiedExpression expression,
                                                        @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(expression, context);
-        PropertyAccessTranslator result =
-            PropertyAccessTranslator.newInstance(getNotNullSimpleNameSelector(expression), receiver,
-                                                 CallType.getCallTypeForQualifiedExpression(expression), context);
-        result.setCallType(CallType.getCallTypeForQualifiedExpression(expression));
-        return result;
+        return VariableAccessTranslator.newInstance(context, getNotNullSimpleNameSelector(expression), receiver);
     }
 
     @NotNull
@@ -52,24 +48,21 @@ public final class QualifiedExpressionTranslator {
                                                             @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(expression, context);
         JetExpression selector = getSelector(expression);
-        CallType callType = CallType.getCallTypeForQualifiedExpression(expression);
-        return dispatchToCorrectTranslator(receiver, selector, callType, context);
+        return dispatchToCorrectTranslator(receiver, selector, context);
     }
 
     @NotNull
     private static JsExpression dispatchToCorrectTranslator(
             @Nullable JsExpression receiver,
             @NotNull JetExpression selector,
-            @NotNull CallType callType,
             @NotNull TranslationContext context
     ) {
-        if (PropertyAccessTranslator.canBePropertyGetterCall(selector, context)) {
+        if (ReferenceTranslator.canBePropertyAccess(selector, context)) {
             assert selector instanceof JetSimpleNameExpression : "Selectors for properties must be simple names.";
-            return PropertyAccessTranslator.translateAsPropertyGetterCall
-                ((JetSimpleNameExpression)selector, receiver, callType, context);
+            return VariableAccessTranslator.newInstance(context, (JetSimpleNameExpression)selector, receiver).translateAsGet();
         }
         if (selector instanceof JetCallExpression) {
-            return invokeCallExpressionTranslator(receiver, selector, callType, context);
+            return invokeCallExpressionTranslator(receiver, selector, context);
         }
         //TODO: never get there
         if (selector instanceof JetSimpleNameExpression) {
@@ -83,12 +76,13 @@ public final class QualifiedExpressionTranslator {
     }
 
     @NotNull
-    private static JsExpression invokeCallExpressionTranslator(@Nullable JsExpression receiver,
+    private static JsExpression invokeCallExpressionTranslator(
+            @Nullable JsExpression receiver,
             @NotNull JetExpression selector,
-            @NotNull CallType callType,
-            @NotNull TranslationContext context) {
+            @NotNull TranslationContext context
+    ) {
         try {
-            return CallExpressionTranslator.translate((JetCallExpression) selector, receiver, callType, context);
+            return CallExpressionTranslator.translate((JetCallExpression) selector, receiver, context);
         } catch (RuntimeException e) {
             throw  ErrorReportingUtils.reportErrorWithLocation(selector, e);
         }

@@ -18,69 +18,60 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.ast.types.isUnit
+import org.jetbrains.jet.j2k.Converter
 
-public open class Function(val name: Identifier,
-                           val docComments: List<Node>,
-                           modifiers: Set<Modifier>,
-                           val `type`: Type,
-                           val typeParameters: List<Element>,
-                           val params: Element,
-                           var block: Block?) : Member(modifiers) {
-    private fun typeParametersToKotlin(): String {
-        return (if (typeParameters.size() > 0)
-            "<" + typeParameters.map { it.toKotlin() }.makeString(", ") + ">"
-        else
-            "")
-    }
+open class Function(
+        val converter: Converter,
+        val name: Identifier,
+        comments: MemberComments,
+        modifiers: Set<Modifier>,
+        val `type`: Type,
+        val typeParameterList: TypeParameterList,
+        val params: Element,
+        var block: Block?
+) : Member(comments, modifiers) {
 
-    private fun hasWhere(): Boolean = typeParameters.any { it is TypeParameter && it.hasWhere() }
-
-    private fun typeParameterWhereToKotlin(): String {
-        if (hasWhere())
-        {
-            val wheres = typeParameters.filter { it is TypeParameter }.map { ((it as TypeParameter).getWhereToKotlin() ) }
-            return " where " + wheres.makeString(", ") + " "
+    private fun modifiersToKotlin(): String {
+        val resultingModifiers = ArrayList<Modifier>()
+        val isOverride = modifiers.contains(Modifier.OVERRIDE)
+        if (isOverride) {
+            resultingModifiers.add(Modifier.OVERRIDE)
         }
 
-        return ""
-    }
-
-    open fun modifiersToKotlin(): String {
-        val modifierList = ArrayList<Modifier>()
         val accessModifier = accessModifier()
-        if (accessModifier != null) {
-            modifierList.add(accessModifier)
+        if (accessModifier != null && !isOverride) {
+            resultingModifiers.add(accessModifier)
         }
 
         if (isAbstract()) {
-            modifierList.add(Modifier.ABSTRACT)
+            resultingModifiers.add(Modifier.ABSTRACT)
         }
 
-        if (modifiers.contains(Modifier.OVERRIDE)) {
-            modifierList.add(Modifier.OVERRIDE)
-        }
-
-        if (!modifiers.contains(Modifier.ABSTRACT) &&
-        !modifiers.contains(Modifier.OVERRIDE) &&
+        if (converter.settings.openByDefault &&
+        !modifiers.contains(Modifier.ABSTRACT) &&
+        !isOverride &&
         !modifiers.contains(Modifier.FINAL) &&
         !modifiers.contains(Modifier.PRIVATE)) {
-            modifierList.add(Modifier.OPEN)
+            resultingModifiers.add(Modifier.OPEN)
         }
 
         if (modifiers.contains(Modifier.NOT_OPEN)) {
-            modifierList.remove(Modifier.OPEN)
+            resultingModifiers.remove(Modifier.OPEN)
         }
 
-        return modifierList.toKotlin()
+        return resultingModifiers.toKotlin()
     }
 
-    public override fun toKotlin(): String {
-        return docComments.toKotlin("\n", "", "\n") +
+    private fun returnTypeToKotlin() = if (!`type`.isUnit()) " : " + `type`.toKotlin() + " " else " "
+
+    override fun toKotlin(): String {
+        return commentsToKotlin() +
         modifiersToKotlin() +
-        "fun " + name.toKotlin() +
-        typeParametersToKotlin() +
-        "(" + params.toKotlin() + ") : " +
-        `type`.toKotlin() + " " + typeParameterWhereToKotlin() +
+        "fun ${typeParameterList.toKotlin().withSuffix(" ")}${name.toKotlin()}" +
+        "(${params.toKotlin()})" +
+        returnTypeToKotlin() +
+        typeParameterList.whereToKotlin() +
         block?.toKotlin()
     }
 }

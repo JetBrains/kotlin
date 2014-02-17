@@ -1,0 +1,6 @@
+<root>
+  <item
+      name='com.intellij.openapi.roots.ui.util.CompositeAppearance com.intellij.openapi.roots.ui.util.CompositeAppearance.DequeEnd getBeginning()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

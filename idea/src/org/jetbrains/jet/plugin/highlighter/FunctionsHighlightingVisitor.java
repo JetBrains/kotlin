@@ -81,7 +81,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                         FunctionDescriptor fun = (FunctionDescriptor) calleeDescriptor;
                         JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.FUNCTION_CALL);
                         if (DescriptorUtils.isTopLevelDeclaration(fun)) {
-                            JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.NAMESPACE_FUNCTION_CALL);
+                            JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.PACKAGE_FUNCTION_CALL);
                         }
                         if (fun.getReceiverParameter() != null) {
                             JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.EXTENSION_FUNCTION_CALL);

@@ -204,7 +204,7 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         // element may move only into class body
         else {
             PsiElement adjustedSibling = sibling;
-            if (adjustedSibling instanceof PsiComment || isEmptyNamespaceHeader(adjustedSibling)) {
+            if (adjustedSibling instanceof PsiComment || isEmptyPackageDirective(adjustedSibling)) {
                 adjustedSibling = PsiTreeUtil.getNextSiblingOfType(adjustedSibling, JetDeclaration.class);
             }
 
@@ -258,8 +258,8 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
         return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
     }
 
-    private static boolean isEmptyNamespaceHeader(PsiElement adjustedSibling) {
-        return adjustedSibling instanceof JetNamespaceHeader && adjustedSibling.getTextLength() == 0;
+    private static boolean isEmptyPackageDirective(PsiElement adjustedSibling) {
+        return adjustedSibling instanceof JetPackageDirective && adjustedSibling.getTextLength() == 0;
     }
 
     @Override

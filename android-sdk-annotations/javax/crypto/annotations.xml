@@ -1,0 +1,416 @@
+<root>
+    <item name='javax.crypto.SecretKeyFactorySpi java.security.spec.KeySpec engineGetKeySpec(javax.crypto.SecretKey, java.lang.Class) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher void updateAAD(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreementSpi void engineInit(java.security.Key, java.security.spec.AlgorithmParameterSpec, java.security.SecureRandom) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi int engineGetKeySize(java.security.Key) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac void init(java.security.Key) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory getInstance(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SealedObject java.lang.Object getObject(java.security.Key) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac javax.crypto.Mac getInstance(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory getInstance(java.lang.String, java.security.Provider) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int doFinal(java.nio.ByteBuffer, java.nio.ByteBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGenerator javax.crypto.KeyGenerator getInstance(java.lang.String, java.security.Provider) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(javax.crypto.Cipher)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi void engineInit(int, java.security.Key, java.security.AlgorithmParameters, java.security.SecureRandom) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int update(byte[], int, int, byte[], int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SealedObject SealedObject(java.io.Serializable, javax.crypto.Cipher) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherOutputStream void write(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGenerator javax.crypto.KeyGenerator getInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory getInstance(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher javax.crypto.Cipher getInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int update(byte[], int, int, byte[]) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.MacSpi byte[] engineDoFinal()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.MacSpi void engineUpdate(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher void updateAAD(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int doFinal(byte[], int, int, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int doFinal(java.nio.ByteBuffer, java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGenerator javax.crypto.KeyGenerator getInstance(java.lang.String, java.security.Provider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi java.security.Key engineUnwrap(byte[], java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi void engineSetMode(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(java.security.Key, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher Cipher(javax.crypto.CipherSpi, java.security.Provider, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi int engineUpdate(java.nio.ByteBuffer, java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi void engineInit(int, java.security.Key, java.security.AlgorithmParameters, java.security.SecureRandom) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher javax.crypto.Cipher getInstance(java.lang.String, java.security.Provider)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi void engineInit(int, java.security.Key, java.security.spec.AlgorithmParameterSpec, java.security.SecureRandom) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo EncryptedPrivateKeyInfo(java.security.AlgorithmParameters, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreement javax.crypto.KeyAgreement getInstance(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo byte[] getEncoded()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac javax.crypto.Mac getInstance(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreementSpi int engineGenerateSecret(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher void init(int, java.security.cert.Certificate) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactorySpi javax.crypto.SecretKey engineTranslateKey(javax.crypto.SecretKey)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.ExemptionMechanism javax.crypto.ExemptionMechanism getInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGenerator javax.crypto.KeyGenerator getInstance(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo byte[] getEncryptedData()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory getInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.ExemptionMechanism javax.crypto.ExemptionMechanism getInstance(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi int engineUpdate(byte[], int, int, byte[], int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher javax.crypto.Cipher getInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreementSpi javax.crypto.SecretKey engineGenerateSecret(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SealedObject java.lang.Object getObject(java.security.Key, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac javax.crypto.Mac getInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory getInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher void updateAAD(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreement javax.crypto.KeyAgreement getInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SealedObject java.lang.Object getObject(javax.crypto.Cipher) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher java.security.spec.AlgorithmParameterSpec getMaxAllowedParameterSpec(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.ExemptionMechanism javax.crypto.ExemptionMechanism getInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGenerator javax.crypto.KeyGenerator getInstance(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac javax.crypto.Mac getInstance(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac java.lang.Object clone()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher byte[] doFinal(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreement javax.crypto.KeyAgreement getInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGenerator javax.crypto.KeyGenerator getInstance(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(javax.crypto.Cipher) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher javax.crypto.Cipher getInstance(java.lang.String, java.security.Provider) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreementSpi java.security.Key engineDoPhase(java.security.Key, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SealedObject SealedObject(javax.crypto.SealedObject) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi byte[] engineUpdate(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.ExemptionMechanism javax.crypto.ExemptionMechanism getInstance(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher byte[] doFinal(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(java.security.Key, java.security.Provider)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreementSpi byte[] engineGenerateSecret()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactorySpi javax.crypto.SecretKey engineGenerateSecret(java.security.spec.KeySpec)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory getInstance(java.lang.String, java.security.Provider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherInputStream int read(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreement javax.crypto.KeyAgreement getInstance(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int doFinal(byte[], int, int, byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac void update(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi void engineInit(int, java.security.Key, java.security.SecureRandom) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi int engineDoFinal(java.nio.ByteBuffer, java.nio.ByteBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int update(java.nio.ByteBuffer, java.nio.ByteBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreementSpi javax.crypto.SecretKey engineGenerateSecret(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher javax.crypto.Cipher getInstance(java.lang.String, java.security.Provider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.ExemptionMechanism javax.crypto.ExemptionMechanism getInstance(java.lang.String, java.security.Provider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.MacSpi void engineUpdate(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac javax.crypto.Mac getInstance(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int update(byte[], int, int, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.ExemptionMechanism javax.crypto.ExemptionMechanism getInstance(java.lang.String, java.security.Provider)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi int engineDoFinal(java.nio.ByteBuffer, java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int getMaxAllowedKeyLength(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher javax.crypto.Cipher getInstance(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(java.security.Key, java.security.Provider) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreement javax.crypto.KeyAgreement getInstance(java.lang.String, java.security.Provider) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactorySpi javax.crypto.SecretKey engineGenerateSecret(java.security.spec.KeySpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi int engineDoFinal(byte[], int, int, byte[], int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher javax.crypto.Cipher getInstance(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac javax.crypto.Mac getInstance(java.lang.String, java.security.Provider) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(java.security.Key)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int update(byte[], int, int, byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi void engineUpdateAAD(java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactorySpi javax.crypto.SecretKey engineTranslateKey(javax.crypto.SecretKey) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.ExemptionMechanism javax.crypto.ExemptionMechanism getInstance(java.lang.String, java.security.Provider) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo EncryptedPrivateKeyInfo(java.lang.String, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac void init(java.security.Key, java.security.spec.AlgorithmParameterSpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreement javax.crypto.KeyAgreement getInstance(java.lang.String, java.security.Provider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher void init(int, java.security.cert.Certificate, java.security.SecureRandom) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory getInstance(java.lang.String, java.security.Provider)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher byte[] update(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi int engineUpdate(java.nio.ByteBuffer, java.nio.ByteBuffer) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac javax.crypto.Mac getInstance(java.lang.String, java.security.Provider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi int engineUpdate(byte[], int, int, byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGenerator javax.crypto.KeyGenerator getInstance(java.lang.String, java.security.Provider)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(java.security.Key, java.security.Provider) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(java.security.Key, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher javax.crypto.Cipher getInstance(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo EncryptedPrivateKeyInfo(java.security.AlgorithmParameters, byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreement javax.crypto.KeyAgreement getInstance(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGeneratorSpi void engineInit(java.security.spec.AlgorithmParameterSpec, java.security.SecureRandom) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactory javax.crypto.SecretKeyFactory getInstance(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreement javax.crypto.KeyAgreement getInstance(java.lang.String, java.security.Provider)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher byte[] update(byte[], int, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo EncryptedPrivateKeyInfo(java.lang.String, byte[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyAgreementSpi void engineInit(java.security.Key, java.security.SecureRandom) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactorySpi java.security.spec.KeySpec engineGetKeySpec(javax.crypto.SecretKey, java.lang.Class)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi java.security.Key engineUnwrap(byte[], java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(java.security.Key) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.ExemptionMechanism javax.crypto.ExemptionMechanism getInstance(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGenerator javax.crypto.KeyGenerator getInstance(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Cipher int update(java.nio.ByteBuffer, java.nio.ByteBuffer) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo java.security.spec.PKCS8EncodedKeySpec getKeySpec(java.security.Key, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.KeyGeneratorSpi javax.crypto.SecretKey engineGenerateKey()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.EncryptedPrivateKeyInfo EncryptedPrivateKeyInfo(byte[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.SecretKeyFactorySpi java.security.spec.KeySpec engineGetKeySpec(javax.crypto.SecretKey, java.lang.Class) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac void doFinal(byte[], int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.Mac javax.crypto.Mac getInstance(java.lang.String, java.security.Provider)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi byte[] engineWrap(java.security.Key) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.CipherSpi void engineSetPadding(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.crypto.MacSpi void engineInit(java.security.Key, java.security.spec.AlgorithmParameterSpec) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

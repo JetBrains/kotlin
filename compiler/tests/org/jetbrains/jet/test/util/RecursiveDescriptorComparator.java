@@ -76,14 +76,14 @@ public class RecursiveDescriptorComparator {
     }
 
     private void appendDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull Printer printer, boolean topLevel) {
-        if ((descriptor instanceof ClassOrNamespaceDescriptor || descriptor instanceof PackageViewDescriptor) && !topLevel) {
+        if ((descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) && !topLevel) {
             printer.println();
         }
 
         boolean isPrimaryConstructor = descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
         printer.print(isPrimaryConstructor && conf.checkPrimaryConstructors ? "/*primary*/ " : "", conf.renderer.render(descriptor));
 
-        if (descriptor instanceof ClassOrNamespaceDescriptor || descriptor instanceof PackageViewDescriptor) {
+        if (descriptor instanceof ClassOrPackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) {
             if (!topLevel) {
                 printer.printlnWithNoIndent(" {").pushIndent();
             }

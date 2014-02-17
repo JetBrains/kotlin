@@ -24,10 +24,6 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
-/**
- * User: Alefas
- * Date: 25.01.12
- */
 public class JetRefactoringBundle {
     private static Reference<ResourceBundle> ourBundle;
 

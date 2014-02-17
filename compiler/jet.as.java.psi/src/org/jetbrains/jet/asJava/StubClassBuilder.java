@@ -51,7 +51,7 @@ public class StubClassBuilder extends ClassBuilder {
     private final StubElement parent;
     private StubBuildingVisitor v;
     private final Stack<StubElement> parentStack;
-    private boolean isNamespace = false;
+    private boolean isPackageClass = false;
 
     public StubClassBuilder(@NotNull Stack<StubElement> parentStack) {
         this.parentStack = parentStack;
@@ -85,11 +85,11 @@ public class StubClassBuilder extends ClassBuilder {
             String packageClassName = PackageClassUtils.getPackageClassName(packageName);
 
             if (name.equals(packageClassName) || name.endsWith("/" + packageClassName)) {
-                isNamespace = true;
+                isPackageClass = true;
             }
         }
 
-        if (!isNamespace) {
+        if (!isPackageClass) {
             parentStack.push(v.getResult());
         }
 
@@ -150,7 +150,7 @@ public class StubClassBuilder extends ClassBuilder {
 
     @Override
     public void done() {
-        if (!isNamespace) {
+        if (!isPackageClass) {
             StubElement pop = parentStack.pop();
             assert pop == v.getResult();
         }

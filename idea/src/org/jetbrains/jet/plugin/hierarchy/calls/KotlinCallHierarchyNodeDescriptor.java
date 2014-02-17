@@ -14,6 +14,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.Function;
@@ -30,9 +31,12 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor implements Navigatable {
-    private int usageCount = 1;
+    private int usageCount = 0;
+    private final Set<PsiReference> references = new HashSet<PsiReference>();
     private final CallHierarchyNodeDescriptor javaDelegate;
 
     public KotlinCallHierarchyNodeDescriptor(@NotNull Project project,
@@ -48,8 +52,11 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
         return javaDelegate;
     }
 
-    public final void incrementUsageCount(){
-        usageCount++;
+    public final void addReference(PsiReference reference) {
+        if (references.add(reference)) {
+            usageCount++;
+        }
+        javaDelegate.addReference(reference);
     }
 
     public final PsiElement getTargetElement(){
@@ -58,7 +65,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
 
     @Override
     public final boolean isValid(){
-        return myElement != null && myElement.isValid();
+        return myElement.isValid();
     }
 
     @Override
@@ -141,8 +148,7 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
             elementText = ((JetFile) element).getName();
         }
         else if (element instanceof JetNamedDeclaration) {
-            BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
 
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (descriptor == null) return null;
@@ -211,18 +217,16 @@ public class KotlinCallHierarchyNodeDescriptor extends HierarchyNodeDescriptor i
 
     @Override
     public void navigate(boolean requestFocus) {
-        if (myElement instanceof Navigatable) {
-            ((Navigatable)myElement).navigate(requestFocus);
-        }
+        javaDelegate.navigate(requestFocus);
     }
 
     @Override
     public boolean canNavigate() {
-        return myElement instanceof Navigatable && ((Navigatable) myElement).canNavigate();
+        return javaDelegate.canNavigate();
     }
 
     @Override
     public boolean canNavigateToSource() {
-        return canNavigate();
+        return javaDelegate.canNavigateToSource();
     }
 }

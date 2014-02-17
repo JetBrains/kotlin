@@ -52,10 +52,13 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
     private final List<JsStatement> initializerStatements = new SmartList<JsStatement>();
 
-    public ClassInitializerTranslator(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
+    public ClassInitializerTranslator(
+            @NotNull JetClassOrObject classDeclaration,
+            @NotNull TranslationContext context
+    ) {
         // Note: it's important we use scope for class descriptor because anonymous function used in property initializers
         // belong to the properties themselves
-        super(context.newDeclaration(getConstructor(context.bindingContext(), classDeclaration)));
+        super(context.newDeclaration(getConstructor(context.bindingContext(), classDeclaration), null));
         this.classDeclaration = classDeclaration;
     }
 

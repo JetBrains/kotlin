@@ -19,25 +19,27 @@ package org.jetbrains.jet.j2k.visitors
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.J2KConverterFlags
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.*
 import java.util.LinkedList
 import com.intellij.openapi.util.text.StringUtil
 import java.util.ArrayList
+import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
 
-public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisitor<Type>() {
+private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
+
+open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisitor<Type>() {
     private var myResult: Type = EmptyType()
-    public open fun getResult(): Type {
+    open fun getResult(): Type {
         return myResult
     }
 
-    public override fun visitPrimitiveType(primitiveType: PsiPrimitiveType?): Type {
+    override fun visitPrimitiveType(primitiveType: PsiPrimitiveType?): Type {
         val name: String = primitiveType?.getCanonicalText()!!
         if (name == "void") {
-            myResult = PrimitiveType(Identifier("Unit"))
+            myResult = UnitType
         }
-        else if (Node.PRIMITIVE_TYPES.contains(name)) {
+        else if (PRIMITIVE_TYPES_NAMES.contains(name)) {
             myResult = PrimitiveType(Identifier(StringUtil.capitalize(name)))
         }
         else {
@@ -46,15 +48,15 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         return myResult
     }
 
-    public override fun visitArrayType(arrayType: PsiArrayType?): Type {
+    override fun visitArrayType(arrayType: PsiArrayType?): Type {
         if (myResult is EmptyType) {
-            myResult = ArrayType(myConverter.typeToType(arrayType?.getComponentType()), true)
+            myResult = ArrayType(myConverter.convertType(arrayType?.getComponentType()), true, myConverter)
         }
 
         return myResult
     }
 
-    public override fun visitClassType(classType: PsiClassType?): Type {
+    override fun visitClassType(classType: PsiClassType?): Type {
         if (classType == null) return myResult
         val identifier: Identifier = constructClassTypeIdentifier(classType)
         val resolvedClassTypeParams: List<Type> = createRawTypesForResolvedReference(classType)
@@ -63,18 +65,18 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
             if (resolvedClassTypeParams.size() == 1) {
                 if ((resolvedClassTypeParams.get(0) as ClassType).`type`.name == "Any") {
                     starParamList.add(StarProjectionType())
-                    myResult = ClassType(identifier, starParamList, true)
+                    myResult = ClassType(identifier, starParamList, true, myConverter)
                 }
                 else {
-                    myResult = ClassType(identifier, resolvedClassTypeParams, true)
+                    myResult = ClassType(identifier, resolvedClassTypeParams, true, myConverter)
                 }
             }
             else {
-                myResult = ClassType(identifier, resolvedClassTypeParams, true)
+                myResult = ClassType(identifier, resolvedClassTypeParams, true, myConverter)
             }
         }
         else {
-            myResult = ClassType(identifier, myConverter.typesToTypeList(classType.getParameters()), true)
+            myResult = ClassType(identifier, myConverter.convertTypes(classType.getParameters()), true, myConverter)
         }
         return myResult
     }
@@ -84,10 +86,6 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         if (psiClass != null) {
             val qualifiedName: String? = psiClass.getQualifiedName()
             if (qualifiedName != null) {
-                if (!qualifiedName.equals("java.lang.Object") && myConverter.hasFlag(J2KConverterFlags.FULLY_QUALIFIED_TYPE_NAMES)) {
-                    return Identifier(qualifiedName)
-                }
-
                 if (qualifiedName.equals(CommonClassNames.JAVA_LANG_ITERABLE)) {
                     return Identifier(CommonClassNames.JAVA_LANG_ITERABLE)
                 }
@@ -120,8 +118,8 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
                     val superTypes = p!!.getSuperTypes()
                     val boundType: Type = (if (superTypes.size > 0)
                         ClassType(Identifier(getClassTypeName(superTypes[0])),
-                                  myConverter.typesToTypeList(superTypes[0].getParameters()),
-                                  true)
+                                  myConverter.convertTypes(superTypes[0].getParameters()),
+                                  true, myConverter)
                     else
                         StarProjectionType())
                     typeParams.add(boundType)
@@ -132,13 +130,13 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         return typeParams
     }
 
-    public override fun visitWildcardType(wildcardType: PsiWildcardType?): Type {
+    override fun visitWildcardType(wildcardType: PsiWildcardType?): Type {
         if (wildcardType!!.isExtends()) {
-            myResult = OutProjectionType(myConverter.typeToType(wildcardType.getExtendsBound()))
+            myResult = OutProjectionType(myConverter.convertType(wildcardType.getExtendsBound()))
         }
         else
             if (wildcardType.isSuper()) {
-                myResult = InProjectionType(myConverter.typeToType(wildcardType.getSuperBound()))
+                myResult = InProjectionType(myConverter.convertType(wildcardType.getSuperBound()))
             }
             else {
                 myResult = StarProjectionType()
@@ -146,8 +144,8 @@ public open class TypeVisitor(private val myConverter: Converter) : PsiTypeVisit
         return myResult
     }
 
-    public override fun visitEllipsisType(ellipsisType: PsiEllipsisType?): Type {
-        myResult = VarArg(myConverter.typeToType(ellipsisType?.getComponentType()))
+    override fun visitEllipsisType(ellipsisType: PsiEllipsisType?): Type {
+        myResult = VarArg(myConverter.convertType(ellipsisType?.getComponentType()))
         return myResult
     }
 

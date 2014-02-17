@@ -23,12 +23,12 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.types.ref.JetTypeName;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +51,7 @@ public class ScriptHeaderResolver {
     public static final Key<Integer> PRIORITY_KEY = Key.create(JetScript.class.getName() + ".priority");
 
     @NotNull
-    private NamespaceFactory namespaceFactory;
+    private MutablePackageFragmentProvider packageFragmentProvider;
     @NotNull
     private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
     @NotNull
@@ -63,8 +62,8 @@ public class ScriptHeaderResolver {
     private TopDownAnalysisParameters topDownAnalysisParameters;
 
     @Inject
-    public void setNamespaceFactory(@NotNull NamespaceFactory namespaceFactory) {
-        this.namespaceFactory = namespaceFactory;
+    public void setPackageFragmentProvider(@NotNull MutablePackageFragmentProvider packageFragmentProvider) {
+        this.packageFragmentProvider = packageFragmentProvider;
     }
 
     @Inject
@@ -114,14 +113,14 @@ public class ScriptHeaderResolver {
             int index,
             @NotNull ScriptDescriptor script) {
         JetType type = resolveTypeName(scriptParameter.getType());
-        return new ValueParameterDescriptorImpl(script, index, Collections.<AnnotationDescriptor>emptyList(), scriptParameter.getName(), type, false, null);
+        return new ValueParameterDescriptorImpl(script, index, Annotations.EMPTY, scriptParameter.getName(), type, false, null);
     }
 
     public void processScriptHierarchy(@NotNull JetScript script, @NotNull JetScope outerScope) {
         JetFile file = (JetFile) script.getContainingFile();
-        JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
-        FqName fqName = namespaceHeader != null ? new FqName(namespaceHeader.getQualifiedName()) : FqName.ROOT;
-        PackageFragmentDescriptor ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(fqName);
+        JetPackageDirective packageDirective = file.getPackageDirective();
+        FqName fqName = packageDirective != null ? new FqName(packageDirective.getQualifiedName()) : FqName.ROOT;
+        PackageFragmentDescriptor ns = packageFragmentProvider.getOrCreateFragment(fqName);
 
         Integer priority = script.getUserData(PRIORITY_KEY);
         if (priority == null) {

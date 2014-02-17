@@ -19,8 +19,8 @@ package org.jetbrains.k2js.translate.intrinsic.functions.basic;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.translate.callTranslator.CallInfo;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.reference.CallTranslator;
 
 import java.util.List;
 
@@ -45,11 +45,20 @@ public abstract class FunctionIntrinsic {
         }
     };
 
+    @Nullable
+    protected static JsExpression getThisOrReceiverOrNull(@NotNull CallInfo callInfo) {
+        if (callInfo.getThisObject() != null) {
+            return callInfo.getThisObject();
+        } else {
+            return callInfo.getReceiverObject();
+        }
+    }
+
     @NotNull
-    public JsExpression apply(@NotNull CallTranslator callTranslator,
+    public JsExpression apply(@NotNull CallInfo callInfo,
             @NotNull List<JsExpression> arguments,
             @NotNull TranslationContext context) {
-        return apply(callTranslator.getCallParameters().getThisOrReceiverOrNull(), arguments, context);
+        return apply(getThisOrReceiverOrNull(callInfo), arguments, context);
     }
 
     @NotNull

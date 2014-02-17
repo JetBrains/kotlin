@@ -30,11 +30,13 @@ class InnerObjectTranslator extends InnerDeclarationTranslator {
     }
 
     @Override
+    @NotNull
     protected JsExpression createExpression(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
         return createInvocation(nameRef, self);
     }
 
     @Override
+    @NotNull
     protected JsInvocation createInvocation(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
         JsInvocation invocation = new JsInvocation(nameRef);
         if (self != null) {

@@ -30,6 +30,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.storage.ExceptionTracker;
+import org.jetbrains.jet.storage.StorageManager;
 
 import javax.inject.Inject;
 import java.io.PrintStream;
@@ -52,7 +54,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private Map<JetDeclaration, CallableMemberDescriptor> members = null;
 
     // File scopes - package scope extended with imports
-    protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
+    protected final Map<JetFile, WritableScope> fileScopes = Maps.newHashMap();
 
     public final Map<JetDeclarationContainer, DeclarationDescriptor> forDeferredResolver = Maps.newHashMap();
 
@@ -110,12 +112,22 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         return classes;
     }
 
-    public Map<JetFile, WritableScope> getNamespaceScopes() {
-        return namespaceScopes;
+    public Map<JetFile, WritableScope> getFileScopes() {
+        return fileScopes;
     }
 
     public Map<JetFile, MutablePackageFragmentDescriptor> getPackageFragments() {
         return packageFragments;
+    }
+
+    @Override
+    public StorageManager getStorageManager() {
+        return topDownAnalysisParameters.getStorageManager();
+    }
+
+    @Override
+    public ExceptionTracker getExceptionTracker() {
+        return topDownAnalysisParameters.getExceptionTracker();
     }
 
     @Override

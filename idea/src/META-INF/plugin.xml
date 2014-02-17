@@ -226,7 +226,7 @@
     <spellchecker.support implementationClass="org.jetbrains.jet.plugin.KotlinSpellcheckingStrategy" language="jet"/>
 
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Generic"/>
-    <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Namespace"/>
+    <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$TopLevel"/>
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Statement"/>
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Class"/>
     <liveTemplateContext implementation="org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Expression"/>
@@ -249,7 +249,9 @@
     <typedHandler implementation="org.jetbrains.jet.plugin.editor.KotlinTypedHandler"/>
     <backspaceHandlerDelegate implementation="org.jetbrains.jet.plugin.editor.KotlinBackspaceHandler"/>
 
-    <copyPastePostProcessor implementation="org.jetbrains.jet.plugin.conversion.copy.JavaCopyPastePostProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.jet.plugin.conversion.copy.ConvertJavaCopyPastePostProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.jet.plugin.codeInsight.KotlinCopyPasteReferenceProcessor"/>
+
     <lang.documentationProvider language="JAVA" implementationClass="org.jetbrains.jet.plugin.JetQuickDocumentationProvider" order="first"/>
     <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
     <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
@@ -270,7 +272,7 @@
                               forClass="org.jetbrains.jet.lang.psi.JetParameter"/>
     <gotoTargetRendererProvider id="JetGotoTargetRenderProvider" implementation="org.jetbrains.jet.plugin.JetGotoTargetRenderProvider"
                                 order="first"/>
-    <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>
+    <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider" order="first"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.jet.plugin.findUsages.KotlinFindUsagesHandlerFactory"/>
     <usageTypeProvider implementation="org.jetbrains.jet.plugin.findUsages.JetUsageTypeProvider"/>
     <refactoring.safeDeleteProcessor
@@ -299,6 +301,9 @@
         language="JAVA"
         implementationClass="org.jetbrains.jet.plugin.hierarchy.calls.KotlinCallHierarchyProvider"
         order="first" />
+    <methodHierarchyProvider
+        language="jet"
+        implementationClass="org.jetbrains.jet.plugin.hierarchy.overrides.KotlinOverrideHierarchyProvider" />
 
     <java.elementFinder implementation="org.jetbrains.jet.asJava.JavaElementFinder"/>
     <java.shortNamesCache implementation="org.jetbrains.jet.plugin.caches.JetShortNamesCache"/>
@@ -365,6 +370,11 @@
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ConvertToExpressionBodyAction</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -475,6 +485,11 @@
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.ReconstructTypeInCastOrIsAction</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ReplaceWithDotQualifiedMethodCallIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

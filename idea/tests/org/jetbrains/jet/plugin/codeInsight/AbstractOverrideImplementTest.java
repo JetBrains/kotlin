@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,8 +122,9 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
-        Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
+        final ResolveSessionForBodies resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(jetFile);
+        Set<CallableMemberDescriptor> descriptors =
+                handler.collectMethodsToGenerate(classOrObject, resolveSession.resolveToElement(classOrObject));
 
         final CallableMemberDescriptor singleToOverride;
         if (memberToOverride == null) {
@@ -151,7 +153,7 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
                 OverrideImplementMethodsHandler.generateMethods(
                         myFixture.getEditor(), classOrObject,
                         OverrideImplementMethodsHandler
-                                .membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride), bindingContext));
+                                .membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride), resolveSession.getBindingContext()));
             }
         }.execute();
     }
@@ -162,8 +164,7 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
-        final BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile)
-                .getBindingContext();
+        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
         Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 
         final ArrayList<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);

@@ -122,7 +122,7 @@ atomicExpression
   : loop
   : SimpleName
   : FieldName
-  : "namespace" // for the root namespace
+  : "package" // for the root package
   ;
 
 label

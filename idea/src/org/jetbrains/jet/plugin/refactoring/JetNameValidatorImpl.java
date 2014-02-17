@@ -30,10 +30,6 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.Collection;
 
-/**
- * User: Alefas
- * Date: 07.02.12
- */
 public class JetNameValidatorImpl extends JetNameValidator {
     private final PsiElement myContainer;
     private final PsiElement myAnchor;

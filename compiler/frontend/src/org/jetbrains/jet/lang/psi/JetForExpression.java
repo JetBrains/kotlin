@@ -28,11 +28,6 @@ public class JetForExpression extends JetLoopExpression {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitForExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitForExpression(this, data);
     }

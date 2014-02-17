@@ -67,7 +67,7 @@ public class GenerateJavaToKotlinMethodMap {
 
     public static CharSequence generateText() throws IOException {
         CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.add(CLASSPATH_KEY, PathUtil.findRtJar());
+        configuration.addAll(CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
 
         Disposable disposable = Disposer.newDisposable();
         try {

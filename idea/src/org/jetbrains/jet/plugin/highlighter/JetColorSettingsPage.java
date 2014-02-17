@@ -59,23 +59,23 @@ public class JetColorSettingsPage implements ColorSettingsPage {
                "[<ANNOTATION>Deprecated</ANNOTATION>]\n" +
                "<BUILTIN_ANNOTATION>public</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <INSTANCE_PROPERTY><MUTABLE_VARIABLE>prop1</MUTABLE_VARIABLE></INSTANCE_PROPERTY> : Int) {\n" +
                "    fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String?, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int, <PARAMETER>fl</PARAMETER> : <TRAIT>FunctionLike</TRAIT>) {\n" +
-               "        <FUNCTION_CALL><NAMESPACE_FUNCTION_CALL>println</NAMESPACE_FUNCTION_CALL></FUNCTION_CALL>(\"length\\nis ${<PARAMETER>nullable</PARAMETER><SAFE_ACCESS>?.</SAFE_ACCESS><INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <INVALID_STRING_ESCAPE><STRING_ESCAPE>\\e</STRING_ESCAPE></INVALID_STRING_ESCAPE>\")\n" +
+               "        <FUNCTION_CALL><PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL></FUNCTION_CALL>(\"length\\nis ${<PARAMETER>nullable</PARAMETER><SAFE_ACCESS>?.</SAFE_ACCESS><INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <INVALID_STRING_ESCAPE><STRING_ESCAPE>\\e</STRING_ESCAPE></INVALID_STRING_ESCAPE>\")\n" +
                "        val <LOCAL_VARIABLE>ints</LOCAL_VARIABLE> = java.util.<CONSTRUCTOR_CALL>ArrayList</CONSTRUCTOR_CALL><Int?>(2)\n" +
                "        <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>[0] = 102 + <PARAMETER><VARIABLE_AS_FUNCTION_CALL>f</VARIABLE_AS_FUNCTION_CALL></PARAMETER>() + <PARAMETER><VARIABLE_AS_FUNCTION_LIKE_CALL>fl</VARIABLE_AS_FUNCTION_LIKE_CALL></PARAMETER>()\n" +
                "        val <LOCAL_VARIABLE>myFun</LOCAL_VARIABLE> = <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW> <FUNCTION_LITERAL_BRACES_AND_ARROW>-></FUNCTION_LITERAL_BRACES_AND_ARROW> \"\" <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>;\n" +
                "        var <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE> = <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<FUNCTION_CALL>size</FUNCTION_CALL>()\n" +
-               "        if (!<LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_PROPERTY><NAMESPACE_PROPERTY>empty</NAMESPACE_PROPERTY></EXTENSION_PROPERTY>) {\n" +
-               "            <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_FUNCTION_CALL><NAMESPACE_FUNCTION_CALL><FUNCTION_CALL>forEach</FUNCTION_CALL></NAMESPACE_FUNCTION_CALL></EXTENSION_FUNCTION_CALL> @lit <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW>\n" +
+               "        if (!<LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_PROPERTY><PACKAGE_PROPERTY>empty</PACKAGE_PROPERTY></EXTENSION_PROPERTY>) {\n" +
+               "            <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_FUNCTION_CALL><PACKAGE_FUNCTION_CALL><FUNCTION_CALL>forEach</FUNCTION_CALL></PACKAGE_FUNCTION_CALL></EXTENSION_FUNCTION_CALL> @lit <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW>\n" +
                "                if (<FUNCTION_LITERAL_DEFAULT_PARAMETER>it</FUNCTION_LITERAL_DEFAULT_PARAMETER> == null) return @lit\n" +
-               "                <FUNCTION_CALL><NAMESPACE_FUNCTION_CALL>println</NAMESPACE_FUNCTION_CALL></FUNCTION_CALL>(<FUNCTION_LITERAL_DEFAULT_PARAMETER><AUTO_CASTED_VALUE>it</AUTO_CASTED_VALUE></FUNCTION_LITERAL_DEFAULT_PARAMETER> + <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE>)\n" +
+               "                <FUNCTION_CALL><PACKAGE_FUNCTION_CALL>println</PACKAGE_FUNCTION_CALL></FUNCTION_CALL>(<FUNCTION_LITERAL_DEFAULT_PARAMETER><AUTO_CASTED_VALUE>it</AUTO_CASTED_VALUE></FUNCTION_LITERAL_DEFAULT_PARAMETER> + <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE>)\n" +
                "            <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>\n" +
                "        }\n" +
                "    }\n" +
                "}\n" +
                "\n" +
-               "var <PROPERTY_WITH_BACKING_FIELD><NAMESPACE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></NAMESPACE_PROPERTY></PROPERTY_WITH_BACKING_FIELD> : Int = 5\n" +
+               "var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAGE_PROPERTY></PROPERTY_WITH_BACKING_FIELD> : Int = 5\n" +
                "    <KEYWORD>get</KEYWORD>() {\n" +
-               "        return <BACKING_FIELD_ACCESS><NAMESPACE_PROPERTY><MUTABLE_VARIABLE>$globalCounter</MUTABLE_VARIABLE></NAMESPACE_PROPERTY></BACKING_FIELD_ACCESS>\n" +
+               "        return <BACKING_FIELD_ACCESS><PACKAGE_PROPERTY><MUTABLE_VARIABLE>$globalCounter</MUTABLE_VARIABLE></PACKAGE_PROPERTY></BACKING_FIELD_ACCESS>\n" +
                "    }\n" +
                "\n" +
                "<KEYWORD>public</KEYWORD> <KEYWORD>abstract</KEYWORD> class <ABSTRACT_CLASS>Abstract</ABSTRACT_CLASS> {\n" +
@@ -142,7 +142,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.captured.variable"), JetHighlightingColors.WRAPPED_INTO_REF),
 
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.instance.property"), JetHighlightingColors.INSTANCE_PROPERTY),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.namespace.property"), JetHighlightingColors.NAMESPACE_PROPERTY),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.package.property"), JetHighlightingColors.PACKAGE_PROPERTY),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.property.with.backing"), JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.backing.field.access"), JetHighlightingColors.BACKING_FIELD_ACCESS),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.extension.property"), JetHighlightingColors.EXTENSION_PROPERTY),
@@ -150,7 +150,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.it"), JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.fun"), JetHighlightingColors.FUNCTION_DECLARATION),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.fun.call"), JetHighlightingColors.FUNCTION_CALL),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.namespace.fun.call"), JetHighlightingColors.NAMESPACE_FUNCTION_CALL),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.package.fun.call"), JetHighlightingColors.PACKAGE_FUNCTION_CALL),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.extension.fun.call"), JetHighlightingColors.EXTENSION_FUNCTION_CALL),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.constructor.call"), JetHighlightingColors.CONSTRUCTOR_CALL),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.variable.as.function.call"), JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL),

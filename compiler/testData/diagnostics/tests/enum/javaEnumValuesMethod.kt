@@ -5,8 +5,6 @@ public enum A {
 }
 
 // FILE: test.kt
-package vvv
-
 fun main() {
      A.values(): Array<A>
 }

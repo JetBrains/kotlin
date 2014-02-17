@@ -5,6 +5,10 @@ public class Outer {
         public String bar = "bar";
         public static String BAR = "BAR";
 
+        public A() {
+
+        }
+
         public void foo() {
 
         }

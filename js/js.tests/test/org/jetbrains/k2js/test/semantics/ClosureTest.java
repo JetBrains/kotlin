@@ -51,4 +51,37 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void testWrappedVariableInExtensionFun() throws Exception {
         fooBoxTest();
     }
+
+    public void testSimpleRecursion() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureFunctionByInnerFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureLocalFunctionByInnerFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    // TODO: fix
+    public void igonre_testClosureLocalFunctionByInnerFunctionInConstrunctor() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisInConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureFunctionAsArgument() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureLocalFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureLocalLiteralFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

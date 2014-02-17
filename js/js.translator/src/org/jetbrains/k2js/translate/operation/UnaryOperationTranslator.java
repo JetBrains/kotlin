@@ -20,19 +20,19 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionResolvedCall;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.isEqualLikeOperator;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.sure;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateExclForBinaryEqualLikeExpr;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 public final class UnaryOperationTranslator {
     private UnaryOperationTranslator() {
@@ -56,10 +56,8 @@ public final class UnaryOperationTranslator {
             return translateExclForBinaryEqualLikeExpr((JsBinaryOperation) baseExpression);
         }
 
-        return CallBuilder.build(context)
-                .receiver(TranslationUtils.translateBaseExpression(context, expression))
-                .resolvedCall(getResolvedCall(context.bindingContext(), expression.getOperationReference()))
-                .translate();
+        ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCall(context.bindingContext(), expression.getOperationReference());
+        return CallTranslator.instance$.translate(context, resolvedCall, baseExpression);
     }
 
     private static boolean isExclForBinaryEqualLikeExpr(@NotNull JetUnaryExpression expression, @NotNull JsExpression baseExpression) {

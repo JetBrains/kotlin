@@ -3,6 +3,16 @@ package foo
 var c0 = 0
 var c1 = 0
 var c2 = 0
+var c3 = 0
+
+fun cStr(): String {
+    return "${c0}${c1}${c2}${c3}"
+}
+
+fun get1(): Int {
+    c3++
+    return 1
+}
 
 class A() {
     var p = 0
@@ -24,31 +34,24 @@ val a: A = A()
 
 fun box(): String {
     var d = a[1]
-    if (c0 != 1) {
-        return "1"
+    if (cStr() != "1100") {
+        return "Fail: d = a[1], cStr(): ${cStr()}"
     }
-    if (c1 != 1) {
-        return "2"
-    }
+
     ++a[1]
-    if (c0 != 2) {
-        return "3"
+    if (cStr() != "2310") {
+        return "Fail: ++a[1], cStr(): ${cStr()}"
     }
-    if (c1 != 3) {
-        return "4"
-    }
-    if (c2 != 1) {
-        return "5"
-    }
+
     --a[1]
-    if (c0 != 3) {
-        return "6"
+    if (cStr() != "3520") {
+        return "Fail: --a[1], cStr(): ${cStr()}"
     }
-    if (c1 != 5) {
-        return "7"
+
+    ++a[get1()]
+    if (cStr() != "4731") {
+        return "Fail: ++a[get1()], cStr(): ${cStr()}"
     }
-    if (c2 != 2) {
-        return "8"
-    }
+
     return "OK"
 }

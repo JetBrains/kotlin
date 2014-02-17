@@ -8,7 +8,7 @@ ANNOTATION class MyClass [ANNOTATION]([ANNOTATION] param: Int, [ANNOTATION] val 
 
     ANNOTATION var prop: Int = 1
         [ANNOTATION] get
-        [ANNOTATION] set
+        [ANNOTATION] set([ANNOTATION] param) = $prop = param
     ANNOTATION fun foo([ANNOTATION] param: Int) {
         [ANNOTATION] class LocalClass { }
 
@@ -29,7 +29,7 @@ ANNOTATION object MyObject {
 
 ANNOTATION var topProp: Int = 1
     [ANNOTATION] get
-    [ANNOTATION] set
+    [ANNOTATION] set([ANNOTATION] param) = $topProp = param
 
 ANNOTATION fun topFoo([ANNOTATION] param: Int) {
 }

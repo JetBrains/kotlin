@@ -57,6 +57,22 @@ public class KotlinFunctionFindUsagesOptions(project: Project): KotlinCallableFi
         }
 }
 
+fun KotlinFunctionFindUsagesOptions.toJavaMethodOptions(project: Project): JavaMethodFindUsagesOptions {
+    val javaOptions = JavaMethodFindUsagesOptions(project)
+    javaOptions.fastTrack = fastTrack
+    javaOptions.isCheckDeepInheritance = isCheckDeepInheritance
+    javaOptions.isImplementingMethods = isImplementingMethods
+    javaOptions.isIncludeInherited = isIncludeInherited
+    javaOptions.isIncludeOverloadUsages = isIncludeOverloadUsages
+    javaOptions.isOverridingMethods = isOverridingMethods
+    javaOptions.isSearchForTextOccurrences = isSearchForTextOccurrences
+    javaOptions.isSkipImportStatements = isSkipImportStatements
+    javaOptions.isUsages = isUsages
+    javaOptions.searchScope = searchScope
+    
+    return javaOptions
+}
+
 public class KotlinPropertyFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaVariableFindUsagesOptions(project) {
     override var searchOverrides: Boolean = false
 }

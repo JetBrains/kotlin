@@ -28,16 +28,11 @@ public class JetImportDirective extends JetElementImpl {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitImportDirective(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitImportDirective(this, data);
     }
 
-    public boolean isAbsoluteInRootNamespace() {
+    public boolean isAbsoluteInRootPackage() {
         return findChildByType(JetTokens.PACKAGE_KEYWORD) != null;
     }
 

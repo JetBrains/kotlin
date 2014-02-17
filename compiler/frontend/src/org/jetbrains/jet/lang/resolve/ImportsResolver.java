@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -82,33 +81,34 @@ public class ImportsResolver {
 
     private void processImports(@NotNull LookupMode lookupMode) {
         for (JetFile file : context.getPackageFragments().keySet()) {
-            WritableScope namespaceScope = context.getNamespaceScopes().get(file);
-            processImportsInFile(lookupMode, namespaceScope, Lists.newArrayList(file.getImportDirectives()));
+            WritableScope fileScope = context.getFileScopes().get(file);
+            processImportsInFile(lookupMode, fileScope, Lists.newArrayList(file.getImportDirectives()), JetPsiUtil.getFQName(file).isRoot());
         }
         for (JetScript script : context.getScripts().keySet()) {
             WritableScope scriptScope = context.getScriptScopes().get(script);
-            processImportsInFile(lookupMode, scriptScope, script.getImportDirectives());
+            processImportsInFile(lookupMode, scriptScope, script.getImportDirectives(), true);
         }
     }
 
-    private void processImportsInFile(@NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives) {
-        processImportsInFile(lookupMode, scope, directives, moduleDescriptor, trace, qualifiedExpressionResolver, importsFactory);
+    private void processImportsInFile(@NotNull LookupMode lookupMode, WritableScope scope, List<JetImportDirective> directives, boolean inRootPackage) {
+        processImportsInFile(lookupMode, scope, directives, moduleDescriptor, trace, qualifiedExpressionResolver, importsFactory, inRootPackage);
     }
 
     private static void processImportsInFile(
             LookupMode lookupMode,
-            @NotNull WritableScope namespaceScope,
+            @NotNull WritableScope fileScope,
             @NotNull List<JetImportDirective> importDirectives,
             @NotNull ModuleDescriptor module,
             @NotNull BindingTrace trace,
             @NotNull QualifiedExpressionResolver qualifiedExpressionResolver,
-            @NotNull JetImportsFactory importsFactory
+            @NotNull JetImportsFactory importsFactory,
+            boolean inRootPackage
     ) {
-        @NotNull JetScope rootScope = module.getPackage(FqName.ROOT).getMemberScope();
+        @NotNull JetScope rootScope = JetModuleUtil.getSubpackagesOfRootScope(module);
 
-        Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
+        Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(fileScope);
         if (lookupMode == LookupMode.EVERYTHING) {
-            namespaceScope.clearImports();
+            fileScope.clearImports();
         }
 
         for (ImportPath defaultImportPath : module.getDefaultImports()) {
@@ -116,16 +116,18 @@ public class ImportsResolver {
                     trace, "transient trace to resolve default imports"); //not to trace errors of default imports
 
             JetImportDirective defaultImportDirective = importsFactory.createImportDirective(defaultImportPath);
-            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter,
+            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, fileScope, delayedImporter,
                                                                temporaryTrace, module, lookupMode);
         }
 
         Map<JetImportDirective, Collection<? extends DeclarationDescriptor>> resolvedDirectives = Maps.newHashMap();
 
+        JetScope rootScopeForFile = JetModuleUtil.getImportsResolutionScope(module, inRootPackage);
+
         for (JetImportDirective importDirective : importDirectives) {
             Collection<? extends DeclarationDescriptor> descriptors =
-                qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter,
-                                                                   trace, module, lookupMode);
+                    qualifiedExpressionResolver.processImportReference(importDirective, rootScopeForFile, fileScope, delayedImporter,
+                                                                       trace, module, lookupMode);
             if (!descriptors.isEmpty()) {
                 resolvedDirectives.put(importDirective, descriptors);
             }
@@ -141,7 +143,7 @@ public class ImportsResolver {
 
         if (lookupMode == LookupMode.EVERYTHING) {
             for (JetImportDirective importDirective : importDirectives) {
-                reportUselessImport(importDirective, namespaceScope, resolvedDirectives, trace);
+                reportUselessImport(importDirective, fileScope, resolvedDirectives, trace);
             }
         }
     }
@@ -163,7 +165,7 @@ public class ImportsResolver {
 
     private static void reportUselessImport(
         @NotNull JetImportDirective importDirective,
-        @NotNull WritableScope namespaceScope,
+        @NotNull WritableScope fileScope,
         @NotNull Map<JetImportDirective, Collection<? extends DeclarationDescriptor>> resolvedDirectives,
         @NotNull BindingTrace trace
     ) {
@@ -181,13 +183,13 @@ public class ImportsResolver {
         for (DeclarationDescriptor wasResolved : resolvedDirectives.get(importDirective)) {
             DeclarationDescriptor isResolved = null;
             if (wasResolved instanceof ClassDescriptor) {
-                isResolved = namespaceScope.getClassifier(aliasName);
+                isResolved = fileScope.getClassifier(aliasName);
             }
             else if (wasResolved instanceof VariableDescriptor) {
-                isResolved = namespaceScope.getLocalVariable(aliasName);
+                isResolved = fileScope.getLocalVariable(aliasName);
             }
             else if (wasResolved instanceof PackageViewDescriptor) {
-                isResolved = namespaceScope.getPackage(aliasName);
+                isResolved = fileScope.getPackage(aliasName);
             }
             if (isResolved == null || isResolved.equals(wasResolved)) {
                 uselessHiddenImport = false;

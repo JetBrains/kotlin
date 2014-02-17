@@ -19,17 +19,14 @@ package org.jetbrains.jet.plugin.search.ideaExtensions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.util.Computable;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.LightClassUtil;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 
 public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
@@ -69,7 +66,7 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                         return LightClassUtil.getLightClassMethod(function);
                     }
                 });
-                searchMethod(queryParameters, method);
+                searchNamedElement(queryParameters, method);
             }
         }
         else if (element instanceof JetProperty) {
@@ -82,14 +79,25 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
                         }
                     });
 
-            searchMethod(queryParameters, propertyMethods.getGetter());
-            searchMethod(queryParameters, propertyMethods.getSetter());
+            searchNamedElement(queryParameters, propertyMethods.getGetter());
+            searchNamedElement(queryParameters, propertyMethods.getSetter());
+        }
+        else if (element instanceof KotlinLightMethod) {
+            JetDeclaration declaration = ((KotlinLightMethod) element).getOrigin();
+            if (declaration instanceof JetProperty
+                || (declaration instanceof JetParameter && ((JetParameter) declaration).getValOrVarNode() != null)) {
+                searchNamedElement(queryParameters, (PsiNamedElement) declaration);
+            }
+            else if (declaration instanceof JetPropertyAccessor) {
+                searchNamedElement(queryParameters, PsiTreeUtil.getParentOfType(declaration, JetProperty.class));
+            }
         }
     }
 
-    private static void searchMethod(ReferencesSearch.SearchParameters queryParameters, PsiMethod method) {
-        if (method != null) {
-            queryParameters.getOptimizer().searchWord(method.getName(), queryParameters.getEffectiveSearchScope(), true, method);
+    private static void searchNamedElement(ReferencesSearch.SearchParameters queryParameters, PsiNamedElement element) {
+        String name = element != null ? element.getName() : null;
+        if (name != null) {
+            queryParameters.getOptimizer().searchWord(name, queryParameters.getEffectiveSearchScope(), true, element);
         }
     }
 }

@@ -23,14 +23,14 @@ import org.jetbrains.jet.j2k.ast.Identifier
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import org.jetbrains.jet.j2k.ast.MethodCallExpression
 
-public open class ExpressionVisitorForDirectObjectInheritors(converter: Converter) : ExpressionVisitor(converter) {
-    public override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
+open class ExpressionVisitorForDirectObjectInheritors(converter: Converter) : ExpressionVisitor(converter) {
+    override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
         val methodExpression = expression?.getMethodExpression()!!
         if (superMethodInvocation(methodExpression, "hashCode")) {
-            myResult = MethodCallExpression.build(Identifier("System", false), "identityHashCode", arrayList(Identifier("this")))
+            myResult = MethodCallExpression.build(Identifier("System", false), "identityHashCode", listOf(Identifier("this")))
         }
         else if (superMethodInvocation(methodExpression, "equals")) {
-            myResult = MethodCallExpression.build(Identifier("this", false), "identityEquals", getConverter().argumentsToExpressionList(expression!!))
+            myResult = MethodCallExpression.build(Identifier("this", false), "identityEquals", getConverter().convertArguments(expression!!))
         }
         else if (superMethodInvocation(methodExpression, "toString")) {
             myResult = DummyStringExpression(java.lang.String.format("getJavaClass<%s>.getName() + '@' + Integer.toHexString(hashCode())",

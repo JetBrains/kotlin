@@ -106,7 +106,3 @@ fun testReversedRange() : Boolean {
 
     return true;
 }
-
-fun main(args : Array<String>) {
-    println(box())
-}

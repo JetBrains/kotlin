@@ -26,11 +26,11 @@ import com.intellij.psi.PsiReference;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 /**
@@ -42,7 +42,7 @@ public class JetPackagesContributor extends CompletionContributor {
     static final String DUMMY_IDENTIFIER = "___package___";
 
     static final ElementPattern<? extends PsiElement> ACTIVATION_PATTERN =
-            PlatformPatterns.psiElement().inside(JetNamespaceHeader.class);
+            PlatformPatterns.psiElement().inside(JetPackageDirective.class);
 
 
     public JetPackagesContributor() {
@@ -71,7 +71,7 @@ public class JetPackagesContributor extends CompletionContributor {
                                int prefixLength = parameters.getOffset() - simpleNameReference.getExpression().getTextOffset();
                                result = result.withPrefixMatcher(new PlainPrefixMatcher(name.substring(0, prefixLength)));
 
-                               CancelableResolveSession resolveSession = AnalyzerFacadeWithCache
+                               ResolveSessionForBodies resolveSession = AnalyzerFacadeWithCache
                                        .getLazyResolveSessionForFile((JetFile) simpleNameReference.getExpression().getContainingFile());
                                BindingContext bindingContext = resolveSession.resolveToElement(simpleNameReference.getExpression());
 

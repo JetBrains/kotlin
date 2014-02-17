@@ -16,11 +16,13 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
+import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 public interface CallableMemberDescriptor extends CallableDescriptor, MemberDescriptor {
+    @KotlinSignature("fun getOverriddenDescriptors(): MutableSet<out CallableMemberDescriptor>")
     @NotNull
     @Override
     Set<? extends CallableMemberDescriptor> getOverriddenDescriptors();

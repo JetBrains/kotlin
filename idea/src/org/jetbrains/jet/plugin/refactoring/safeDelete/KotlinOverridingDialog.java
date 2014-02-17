@@ -30,14 +30,12 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.table.JBTable;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.impl.UsagePreviewPanel;
+import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
@@ -90,8 +88,7 @@ class KotlinOverridingDialog extends DialogWrapper {
     private static String formatElement(PsiElement element) {
         element = JetPsiUtil.ascendIfPropertyAccessor(element);
         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
-            BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+            BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) element);
 
             DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (declarationDescriptor instanceof CallableMemberDescriptor) {
@@ -116,6 +113,7 @@ class KotlinOverridingDialog extends DialogWrapper {
         return "#org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinOverridingDialog";
     }
 
+    @KotlinSignature("fun getSelected(): ArrayList<UsageInfo>")
     public ArrayList<UsageInfo> getSelected() {
         ArrayList<UsageInfo> result = new ArrayList<UsageInfo>();
         for (int i = 0; i < myChecked.length; i++) {

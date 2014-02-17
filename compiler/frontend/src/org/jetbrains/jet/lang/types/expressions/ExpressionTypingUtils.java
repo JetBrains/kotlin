@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -259,7 +258,7 @@ public class ExpressionTypingUtils {
     ) {
         JetType type = receiverArgument.getType();
 
-        if (type instanceof NamespaceType) {
+        if (type instanceof PackageType) {
             // This fake class ruins standard algorithms
             return false;
         }

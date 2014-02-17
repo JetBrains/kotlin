@@ -21,7 +21,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -50,7 +50,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind) {
         super(containingDeclaration, annotations, name);
@@ -61,7 +61,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull FunctionDescriptor original,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind) {
         super(containingDeclaration, annotations, name);

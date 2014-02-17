@@ -17,15 +17,13 @@
 package org.jetbrains.jet.j2k.ast
 
 
-public abstract class Expression() : Statement() {
-    public open fun isNullable(): Boolean {
+abstract class Expression() : Statement() {
+    open fun isNullable(): Boolean {
         return false
     }
 
-    class object {
-        public val EMPTY_EXPRESSION: Expression = object: Expression() {
-            public override fun toKotlin() = ""
-            public override fun isEmpty() = true
-        }
+    object Empty : Expression() {
+        override fun toKotlin() = ""
+        override fun isEmpty() = true
     }
 }

@@ -1,7 +1,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +11,6 @@ import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

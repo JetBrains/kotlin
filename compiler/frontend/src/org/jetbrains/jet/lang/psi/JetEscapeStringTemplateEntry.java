@@ -26,11 +26,6 @@ public class JetEscapeStringTemplateEntry extends JetStringTemplateEntry {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitEscapeStringTemplateEntry(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitEscapeStringTemplateEntry(this, data);
     }

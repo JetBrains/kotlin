@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -28,7 +28,7 @@ import java.util.List;
 public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
 
     public ScriptCodeDescriptor(@NotNull ScriptDescriptor containingDeclaration) {
-        super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), Name.special("<script-code>"), Kind.DECLARATION);
+        super(containingDeclaration, Annotations.EMPTY, Name.special("<script-code>"), Kind.DECLARATION);
         setVisibility(Visibilities.LOCAL);
     }
 

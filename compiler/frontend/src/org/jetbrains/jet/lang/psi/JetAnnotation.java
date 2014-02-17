@@ -28,11 +28,6 @@ public class JetAnnotation extends JetElementImpl {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitAnnotation(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitAnnotation(this, data);
     }

@@ -45,8 +45,8 @@ public class RangeIterationTest {
 
     test fun emptyRange() {
         doTest(10..5, 10, 5, 1, listOf())
-        doTest(10.toByte()..-5.toByte(), 10.toByte(), -5.toByte(), 1, listOf())
-        doTest(10.toShort()..-5.toShort(), 10.toShort(), -5.toShort(), 1, listOf())
+        doTest(10.toByte()..(-5).toByte(), 10.toByte(), (-5).toByte(), 1, listOf())
+        doTest(10.toShort()..(-5).toShort(), 10.toShort(), (-5).toShort(), 1, listOf())
         doTest(10.toLong()..-5.toLong(), 10.toLong(), -5.toLong(), 1.toLong(), listOf())
 
         doTest('z'..'a', 'z', 'a', 1, listOf())

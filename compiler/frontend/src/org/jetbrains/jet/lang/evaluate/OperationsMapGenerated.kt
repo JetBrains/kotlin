@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,6 +101,7 @@ private val binaryOperations: HashMap<BinaryOperationKey<*, *>, Pair<Function2<A
     binaryOperation(BOOLEAN, BOOLEAN, "or", { a, b -> a.or(b) }, emptyBinaryFun),     
     binaryOperation(BOOLEAN, ANY, "equals", { a, b -> a.equals(b) }, emptyBinaryFun),     
     binaryOperation(BOOLEAN, BOOLEAN, "and", { a, b -> a.and(b) }, emptyBinaryFun),     
+    binaryOperation(BOOLEAN, BOOLEAN, "compareTo", { a, b -> a.compareTo(b) }, emptyBinaryFun),     
     binaryOperation(BYTE, BYTE, "minus", { a, b -> a.minus(b) }, { a, b -> a.subtract(b) }),     
     binaryOperation(BYTE, CHAR, "minus", { a, b -> a.minus(b) }, emptyBinaryFun),     
     binaryOperation(BYTE, DOUBLE, "minus", { a, b -> a.minus(b) }, emptyBinaryFun),     

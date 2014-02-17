@@ -1,0 +1,18 @@
+VARIABLES T
+
+SUPERTYPE T IntegerValueType(1000)
+SUBTYPE T Byte
+
+type parameter bounds:
+T >: IntegerValueType(1000)(SPECIAL), <: jet.Byte(SPECIAL)
+status:
+-hasConflictingConstraints: true
+-hasContradiction: true
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasUnknownParameters: false
+-hasViolatedUpperBound: false
+-isSuccessful: false
+
+result:
+T=???

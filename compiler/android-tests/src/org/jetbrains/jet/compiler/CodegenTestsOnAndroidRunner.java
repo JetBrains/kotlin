@@ -114,9 +114,9 @@ public class CodegenTestsOnAndroidRunner {
     [exec] 	at java.lang.reflect.Method.invokeNative(Native Method)
     [exec] 	at org.jetbrains.jet.compiler.android.AbstractCodegenTestCaseOnAndroid.invokeBoxMethod(AbstractCodegenTestCaseOnAndroid.java:35)
     [exec] 	... 13 more
-    [exec] Caused by: java.lang.VerifyError: compiler_testData_codegen_regressions_kt344_jet.namespace$t6$foo$1
-    [exec] 	at compiler_testData_codegen_regressions_kt344_jet.namespace.t6(dummy.jet:94)
-    [exec] 	at compiler_testData_codegen_regressions_kt344_jet.namespace.box(dummy.jet:185)
+    [exec] Caused by: java.lang.VerifyError: compiler_testData_codegen_boxWithStdlib_regressions_kt344_kt.Compiler_testData_codegen_boxWithStdlib_regressions_kt344_ktPackage$t6$foo$1
+    [exec] 	at compiler_testData_codegen_boxWithStdlib_regressions_kt344_kt.Compiler_testData_codegen_boxWithStdlib_regressions_kt344_ktPackage.t6(dummy.jet:94)
+    [exec] 	at compiler_testData_codegen_boxWithStdlib_regressions_kt344_kt.Compiler_testData_codegen_boxWithStdlib_regressions_kt344_ktPackage.box(dummy.jet:185)
     [exec] 	... 16 more
     [exec] ...............
     [exec] Error in testKt529:

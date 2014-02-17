@@ -15,16 +15,16 @@ class WithC() {
   {
     $x = 1
     <error>$y</error> = 2
-    val b = x
+    val <warning>b</warning> = x
 
   }
 
   val a : Int get() = 1
 
   {
-    val z = <error>b</error>
-    val zz = x
-    val zzz = <error>$a</error>
+    val <warning>z</warning> = <error>b</error>
+    val <warning>zz</warning> = x
+    val <warning>zzz</warning> = <error>$a</error>
   }
 
 }

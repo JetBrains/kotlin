@@ -534,25 +534,36 @@ public class OverridingUtil {
             return;
         }
 
-        Visibility visibility = findMaxVisibility(memberDescriptor.getOverriddenDescriptors());
-        if (visibility == null) {
-            sink.cannotInferVisibility(memberDescriptor);
-            visibility = Visibilities.PUBLIC;
-        }
-
+        Visibility visibilityToInherit = computeVisibilityToInherit(memberDescriptor, sink);
         if (memberDescriptor instanceof PropertyDescriptorImpl) {
-            ((PropertyDescriptorImpl) memberDescriptor).setVisibility(visibility.normalize());
+            ((PropertyDescriptorImpl) memberDescriptor).setVisibility(visibilityToInherit);
             for (PropertyAccessorDescriptor accessor : ((PropertyDescriptor) memberDescriptor).getAccessors()) {
                 resolveUnknownVisibilityForMember(accessor, sink);
             }
         }
         else if (memberDescriptor instanceof FunctionDescriptorImpl) {
-            ((FunctionDescriptorImpl) memberDescriptor).setVisibility(visibility.normalize());
+            ((FunctionDescriptorImpl) memberDescriptor).setVisibility(visibilityToInherit);
         }
         else {
             assert memberDescriptor instanceof PropertyAccessorDescriptorImpl;
-            ((PropertyAccessorDescriptorImpl) memberDescriptor).setVisibility(visibility.normalize());
+            ((PropertyAccessorDescriptorImpl) memberDescriptor).setVisibility(visibilityToInherit);
         }
+    }
+
+    @NotNull
+    private static Visibility computeVisibilityToInherit(
+            @NotNull CallableMemberDescriptor memberDescriptor,
+            @NotNull NotInferredVisibilitySink sink
+    ) {
+        Visibility maxVisibility = findMaxVisibility(memberDescriptor.getOverriddenDescriptors());
+        if (maxVisibility == null) {
+            sink.cannotInferVisibility(memberDescriptor);
+            return Visibilities.PUBLIC;
+        }
+        if (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            return maxVisibility;
+        }
+        return maxVisibility.normalize();
     }
 
     @Nullable

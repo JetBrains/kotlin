@@ -33,10 +33,6 @@ import java.util.Collection;
 import static org.jetbrains.jet.plugin.projectView.JetProjectViewUtil.canRepresentPsiElement;
 import static org.jetbrains.jet.plugin.projectView.JetProjectViewUtil.getClassOrObjectChildren;
 
-/**
- * User: Alefas
- * Date: 15.02.12
- */
 public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObject> {
     protected JetClassOrObjectTreeNode(Project project, JetClassOrObject jetClassOrObject, ViewSettings viewSettings) {
         super(project, jetClassOrObject, viewSettings);

@@ -21,7 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jps.builders.BuildResult;
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
@@ -323,7 +323,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
                 return super.getPath().substring(1);
             }
         };
-        return NamespaceCodegen.getNamespacePartType(new FqName(packageClassFqName), fakeVirtualFile).getInternalName();
+        return PackageCodegen.getPackagePartType(new FqName(packageClassFqName), fakeVirtualFile).getInternalName();
     }
 
     private static enum Operation {

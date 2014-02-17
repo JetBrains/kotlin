@@ -1,5 +1,4 @@
-// "Suppress 'REDUNDANT_NULLABLE' for statement " "false"
-// ACTION: Remove redundant '?'
+// "class com.intellij.codeInspection.SuppressIntentionAction" "false"
 
 open class Base<T>
 class Child: Base<String?<caret>?>()

@@ -61,7 +61,7 @@ public class JetHighlightingColors {
     public static final TextAttributesKey PARAMETER = createTextAttributesKey("KOTLIN_PARAMETER", CodeInsightColors.PARAMETER_ATTRIBUTES);
     public static final TextAttributesKey WRAPPED_INTO_REF = createTextAttributesKey("KOTLIN_WRAPPED_INTO_REF", CodeInsightColors.IMPLICIT_ANONYMOUS_CLASS_PARAMETER_ATTRIBUTES);
     public static final TextAttributesKey INSTANCE_PROPERTY = createTextAttributesKey("KOTLIN_INSTANCE_PROPERTY", CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES);
-    public static final TextAttributesKey NAMESPACE_PROPERTY = createTextAttributesKey("KOTLIN_NAMESPACE_PROPERTY", CodeInsightColors.STATIC_FIELD_ATTRIBUTES);
+    public static final TextAttributesKey PACKAGE_PROPERTY = createTextAttributesKey("KOTLIN_PACKAGE_PROPERTY", CodeInsightColors.STATIC_FIELD_ATTRIBUTES);
     public static final TextAttributesKey PROPERTY_WITH_BACKING_FIELD = createTextAttributesKey("KOTLIN_PROPERTY_WITH_BACKING_FIELD");
     public static final TextAttributesKey BACKING_FIELD_ACCESS = createTextAttributesKey("KOTLIN_BACKING_FIELD_ACCESS");
     public static final TextAttributesKey EXTENSION_PROPERTY = createTextAttributesKey("KOTLIN_EXTENSION_PROPERTY");
@@ -70,7 +70,7 @@ public class JetHighlightingColors {
     public static final TextAttributesKey FUNCTION_LITERAL_DEFAULT_PARAMETER = createTextAttributesKey("KOTLIN_CLOSURE_DEFAULT_PARAMETER");
     public static final TextAttributesKey FUNCTION_DECLARATION = createTextAttributesKey("KOTLIN_FUNCTION_DECLARATION", CodeInsightColors.METHOD_DECLARATION_ATTRIBUTES);
     public static final TextAttributesKey FUNCTION_CALL = createTextAttributesKey("KOTLIN_FUNCTION_CALL", CodeInsightColors.METHOD_CALL_ATTRIBUTES);
-    public static final TextAttributesKey NAMESPACE_FUNCTION_CALL = createTextAttributesKey("KOTLIN_NAMESPACE_FUNCTION_CALL", CodeInsightColors.STATIC_METHOD_ATTRIBUTES);
+    public static final TextAttributesKey PACKAGE_FUNCTION_CALL = createTextAttributesKey("KOTLIN_PACKAGE_FUNCTION_CALL", CodeInsightColors.STATIC_METHOD_ATTRIBUTES);
     public static final TextAttributesKey EXTENSION_FUNCTION_CALL = createTextAttributesKey("KOTLIN_EXTENSION_FUNCTION_CALL");
     public static final TextAttributesKey CONSTRUCTOR_CALL = createTextAttributesKey("KOTLIN_CONSTRUCTOR", CodeInsightColors.CONSTRUCTOR_CALL_ATTRIBUTES);
     public static final TextAttributesKey VARIABLE_AS_FUNCTION_CALL = createTextAttributesKey("KOTLIN_VARIABLE_AS_FUNCTION");

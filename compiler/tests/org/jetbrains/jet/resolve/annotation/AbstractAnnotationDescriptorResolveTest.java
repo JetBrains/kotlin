@@ -20,6 +20,7 @@ package org.jetbrains.jet.resolve.annotation;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -29,12 +30,12 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +44,11 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
+    private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = new DescriptorRendererBuilder()
+                                                                                    .setVerbose(true)
+                                                                                    .setShortNames(true)
+                                                                                    .build();
+
     private static final String PATH = "compiler/testData/resolveAnnotations/testFile.kt";
 
     private static final FqName PACKAGE = new FqName("test");
@@ -55,6 +61,11 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     protected void doTest(@NotNull String content, @NotNull String expectedAnnotation) {
+        checkAnnotationOnAllExceptLocalDeclarations(content, expectedAnnotation);
+        checkAnnotationOnLocalDeclarations(expectedAnnotation);
+    }
+
+    protected void checkAnnotationOnAllExceptLocalDeclarations(String content, String expectedAnnotation) {
         PackageViewDescriptor test = getPackage(content);
         ClassDescriptor myClass = getClassDescriptor(test, "MyClass");
         checkDescriptor(expectedAnnotation, myClass);
@@ -62,13 +73,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         checkDescriptor(expectedAnnotation, getInnerClassDescriptor(myClass, "InnerClass"));
 
         FunctionDescriptor foo = getFunctionDescriptor(myClass, "foo");
-        checkDescriptor(expectedAnnotation, foo);
-        checkDescriptor(expectedAnnotation, getFunctionParameterDescriptor(foo, "param"));
-
-        checkDescriptor(expectedAnnotation, getLocalClassDescriptor("LocalClass"));
-        checkDescriptor(expectedAnnotation, getLocalObjectDescriptor("LocalObject"));
-        checkDescriptor(expectedAnnotation, getLocalFunDescriptor("localFun"));
-        checkDescriptor(expectedAnnotation, getLocalVarDescriptor("localVar"));
+        checkAnnotationsOnFunction(expectedAnnotation, foo);
 
         SimpleFunctionDescriptor anonymousFun = getAnonymousFunDescriptor();
         if (anonymousFun instanceof AnonymousFunctionDescriptor) {
@@ -78,23 +83,38 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         }
 
         PropertyDescriptor prop = getPropertyDescriptor(myClass, "prop");
-        checkDescriptor(expectedAnnotation, prop);
-        checkDescriptor(expectedAnnotation, prop.getGetter());
-        checkDescriptor(expectedAnnotation, prop.getSetter());
+        checkAnnotationsOnProperty(expectedAnnotation, prop);
 
         FunctionDescriptor topFoo = getFunctionDescriptor(test, "topFoo");
-        checkDescriptor(expectedAnnotation, topFoo);
-        checkDescriptor(expectedAnnotation, getFunctionParameterDescriptor(topFoo, "param"));
+        checkAnnotationsOnFunction(expectedAnnotation, topFoo);
 
-        PropertyDescriptor topProp = getPropertyDescriptor(test, "topProp");
-        checkDescriptor(expectedAnnotation, topProp);
-        checkDescriptor(expectedAnnotation, topProp.getGetter());
-        checkDescriptor(expectedAnnotation, topProp.getSetter());
+        PropertyDescriptor topProp = getPropertyDescriptor(test, "topProp", true);
+        checkAnnotationsOnProperty(expectedAnnotation, topProp);
 
         checkDescriptor(expectedAnnotation, getClassDescriptor(test, "MyObject"));
 
         checkDescriptor(expectedAnnotation, getConstructorParameterDescriptor(myClass, "consProp"));
         checkDescriptor(expectedAnnotation, getConstructorParameterDescriptor(myClass, "param"));
+    }
+
+    private void checkAnnotationOnLocalDeclarations(String expectedAnnotation) {
+        checkDescriptor(expectedAnnotation, getLocalClassDescriptor("LocalClass"));
+        checkDescriptor(expectedAnnotation, getLocalObjectDescriptor("LocalObject"));
+        checkDescriptor(expectedAnnotation, getLocalFunDescriptor("localFun"));
+        checkDescriptor(expectedAnnotation, getLocalVarDescriptor(context, "localVar"));
+    }
+
+    private static void checkAnnotationsOnProperty(String expectedAnnotation, PropertyDescriptor prop) {
+        checkDescriptor(expectedAnnotation, prop);
+        checkDescriptor(expectedAnnotation, prop.getGetter());
+        PropertySetterDescriptor propSetter = prop.getSetter();
+        assertNotNull(propSetter);
+        checkAnnotationsOnFunction(expectedAnnotation, propSetter);
+    }
+
+    private static void checkAnnotationsOnFunction(String expectedAnnotation, FunctionDescriptor foo) {
+        checkDescriptor(expectedAnnotation, foo);
+        checkDescriptor(expectedAnnotation, getFunctionParameterDescriptor(foo, "param"));
     }
 
     @NotNull
@@ -115,12 +135,30 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         return functions.iterator().next();
     }
 
-    @NotNull
-    protected static PropertyDescriptor getPropertyDescriptor(@NotNull PackageViewDescriptor packageView, @NotNull String name) {
+    @Nullable
+    protected static PropertyDescriptor getPropertyDescriptor(@NotNull PackageViewDescriptor packageView, @NotNull String name, boolean failOnMissing) {
         Name propertyName = Name.identifier(name);
         JetScope memberScope = packageView.getMemberScope();
         Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName);
-        assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + packageView.getName();
+        if (properties.isEmpty()) {
+            for (DeclarationDescriptor descriptor : memberScope.getAllDescriptors()) {
+                if (descriptor instanceof ClassDescriptor) {
+                    Collection<VariableDescriptor> classProperties =
+                            ((ClassDescriptor) descriptor).getMemberScope(Collections.<TypeProjection>emptyList())
+                                    .getProperties(propertyName);
+                    if (!classProperties.isEmpty()) {
+                        properties = classProperties;
+                        break;
+                    }
+                }
+            }
+        }
+        if (failOnMissing) {
+            assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + packageView.getName();
+        }
+        else if (properties.size() != 1) {
+            return null;
+        }
         return (PropertyDescriptor) properties.iterator().next();
     }
 
@@ -197,7 +235,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     }
 
     @NotNull
-    private VariableDescriptor getLocalVarDescriptor(@NotNull String name) {
+    protected static VariableDescriptor getLocalVarDescriptor(@NotNull BindingContext context, @NotNull String name) {
         for (VariableDescriptor descriptor : context.getSliceContents(BindingContext.VARIABLE).values()) {
             if (descriptor.getName().asString().equals(name)) {
                 return descriptor;
@@ -260,12 +298,17 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
     @NotNull
     protected PackageViewDescriptor getPackage(@NotNull String content) {
         JetFile ktFile = JetTestUtils.createFile("dummy.kt", content, getProject());
-        AnalyzeExhaust analyzeExhaust = JetTestUtils.analyzeFile(ktFile);
+        AnalyzeExhaust analyzeExhaust = analyzeFile(ktFile);
         context = analyzeExhaust.getBindingContext();
 
         PackageViewDescriptor packageView = analyzeExhaust.getModuleDescriptor().getPackage(PACKAGE);
-        assertNotNull("Failed to find namespace: " + PACKAGE, packageView);
+        assertNotNull("Failed to find package: " + PACKAGE, packageView);
         return packageView;
+    }
+
+    @NotNull
+    protected AnalyzeExhaust analyzeFile(@NotNull JetFile ktFile) {
+        return JetTestUtils.analyzeFile(ktFile);
     }
 
     protected static String getContent(@NotNull String annotationText) throws IOException {
@@ -277,7 +320,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         String actual = StringUtil.join(member.getAnnotations(), new Function<AnnotationDescriptor, String>() {
             @Override
             public String fun(AnnotationDescriptor annotationDescriptor) {
-                return annotationDescriptor.getType().toString() + DescriptorUtils.getSortedValueArguments(annotationDescriptor, DescriptorRenderer.TEXT);
+                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor);
             }
         }, " ");
         assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
@@ -288,7 +331,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
         return StringUtil.join(member.getAnnotations(), new Function<AnnotationDescriptor, String>() {
             @Override
             public String fun(AnnotationDescriptor annotationDescriptor) {
-                return annotationDescriptor.getType().toString() + DescriptorUtils.getSortedValueArguments(annotationDescriptor, DescriptorRenderer.TEXT);
+                return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationDescriptor);
             }
         }, " ");
     }

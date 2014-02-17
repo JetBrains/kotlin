@@ -1,0 +1,32 @@
+<root>
+    <item name='android.net.wimax.WimaxManagerConstants EXTRA_NEW_SIGNAL_LEVEL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wimax.WimaxManagerConstants EXTRA_WIMAX_STATE_INT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wimax.WimaxManagerConstants EXTRA_WIMAX_STATUS'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wimax.WimaxManagerConstants EXTRA_WIMAX_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wimax.WimaxManagerConstants EXTRA_4G_STATE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wimax.WimaxManagerConstants WIMAX_SERVICE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wimax.WimaxManagerConstants NET_4G_STATE_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wimax.WimaxManagerConstants SIGNAL_LEVEL_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wimax.WimaxManagerConstants EXTRA_WIMAX_STATE_DETAIL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.net.wimax.WimaxManagerConstants WIMAX_NETWORK_STATE_CHANGED_ACTION'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

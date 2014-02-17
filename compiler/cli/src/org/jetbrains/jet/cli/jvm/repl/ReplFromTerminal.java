@@ -22,7 +22,7 @@ import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -59,7 +59,7 @@ public class ReplFromTerminal {
             consoleReader.setHistoryEnabled(true);
             consoleReader.setHistory(new FileHistory(new File(new File(System.getProperty("user.home")), ".kotlin_history")));
         } catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 
@@ -72,13 +72,13 @@ public class ReplFromTerminal {
                 try {
                     waitRepl.wait();
                 } catch (Throwable e) {
-                    throw ExceptionUtils.rethrow(e);
+                    throw UtilsPackage.rethrow(e);
                 }
             }
             if (replInterpreter != null) {
                 return replInterpreter;
             }
-            throw ExceptionUtils.rethrow(replInitializationFailed);
+            throw UtilsPackage.rethrow(replInitializationFailed);
         }
     }
 
@@ -94,7 +94,7 @@ public class ReplFromTerminal {
                 }
             }
         } catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         } finally {
             try {
                 ((FileHistory) consoleReader.getHistory()).flush();
@@ -132,7 +132,7 @@ public class ReplFromTerminal {
             }
         }
         catch (Exception e) {
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 

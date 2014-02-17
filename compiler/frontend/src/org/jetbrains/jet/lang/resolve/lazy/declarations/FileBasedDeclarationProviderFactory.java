@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -83,12 +83,12 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     private static Index computeFilesByPackage(@NotNull Collection<JetFile> files) {
         Index index = new Index();
         for (JetFile file : files) {
-            JetNamespaceHeader header = file.getNamespaceHeader();
-            if (header == null) {
+            JetPackageDirective directive = file.getPackageDirective();
+            if (directive == null) {
                 throw new IllegalArgumentException("Scripts are not supported");
             }
 
-            FqName packageFqName = new FqName(header.getQualifiedName());
+            FqName packageFqName = new FqName(directive.getQualifiedName());
             addMeAndParentPackages(index, packageFqName);
             index.filesByPackage.put(packageFqName, file);
         }
@@ -104,10 +104,6 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
     /*package*/ boolean isPackageDeclaredExplicitly(@NotNull FqName packageFqName) {
         return index.invoke().declaredPackages.contains(packageFqName);
-    }
-
-    /*package*/ boolean isPackageDeclared(@NotNull FqName packageFqName) {
-        return isPackageDeclaredExplicitly(packageFqName) || isPackageDeclaredExternally.apply(packageFqName);
     }
 
     /*package*/ Collection<FqName> getAllDeclaredSubPackagesOf(@NotNull final FqName parent) {

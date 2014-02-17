@@ -32,6 +32,7 @@ import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public object JetUsageTypeProvider : UsageTypeProviderEx {
@@ -172,11 +173,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
         val reference = simpleName.getParentByType(javaClass<JetSimpleNameExpression>())
         if (reference == null) return null
 
-        val file = simpleName.getContainingFile()
-        if (file == null) return null
-
-        val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file as JetFile).getBindingContext()
-        val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, reference)
+        val descriptor = AnalyzerFacadeWithCache.getContextForElement(reference)[BindingContext.REFERENCE_TARGET, reference]
 
         return when (descriptor) {
             is ClassifierDescriptor -> if (DescriptorUtils.isSingleton(descriptor)) {

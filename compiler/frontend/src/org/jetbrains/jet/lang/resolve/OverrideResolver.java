@@ -21,10 +21,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -265,9 +267,22 @@ public class OverrideResolver {
         }
     }
 
-    public static void collectMissingImplementations(MutableClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
+    public static void collectMissingImplementations(
+            MutableClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl
+    ) {
         for (CallableMemberDescriptor descriptor : classDescriptor.getAllCallableMembers()) {
             collectMissingImplementations(descriptor, abstractNoImpl, manyImpl);
+        }
+    }
+
+    public static void collectMissingImplementations(
+            ClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl
+    ) {
+        Iterator<CallableMemberDescriptor> callableMembers = KotlinPackage.filterIsInstance(
+                classDescriptor.getDefaultType().getMemberScope().getAllDescriptors().iterator(), CallableMemberDescriptor.class
+        );
+        while (callableMembers.hasNext()) {
+            collectMissingImplementations(callableMembers.next(), abstractNoImpl, manyImpl);
         }
     }
 
@@ -408,9 +423,9 @@ public class OverrideResolver {
         return overriddenDeclarationsByDirectParent;
     }
 
-    public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(MutableClassDescriptor classDescriptor) {
+    public static Multimap<CallableMemberDescriptor, CallableMemberDescriptor> collectSuperMethods(ClassDescriptor classDescriptor) {
         Set<CallableMemberDescriptor> inheritedFunctions = Sets.newLinkedHashSet();
-        for (JetType supertype : classDescriptor.getSupertypes()) {
+        for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
             for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
                 if (descriptor instanceof CallableMemberDescriptor) {
                     CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor) descriptor;
@@ -565,10 +580,32 @@ public class OverrideResolver {
             if (invisibleOverriddenDescriptor != null) {
                 reportError.cannotOverrideInvisibleMember(invisibleOverriddenDescriptor);
             }
-            else {
+            else if (!shouldSuppressOverride(declared)) {
                 reportError.nothingToOverride();
             }
         }
+    }
+
+    // TODO: this is temporary to migrate equals, hashCode, toString from extensions to Any
+    private static boolean shouldSuppressOverride(@NotNull CallableMemberDescriptor descriptor) {
+        String name = descriptor.getName().asString();
+        JetType returnType = descriptor.getReturnType();
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+
+        if (name.equals("equals") && builtIns.getBooleanType().equals(returnType)) {
+            List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
+            return parameters.size() == 1 && builtIns.isAnyOrNullableAny(parameters.iterator().next().getType());
+        }
+
+        if (name.equals("hashCode") && builtIns.getIntType().equals(returnType)) {
+            return descriptor.getValueParameters().isEmpty();
+        }
+
+        if (name.equals("toString") && builtIns.getStringType().equals(returnType)) {
+            return descriptor.getValueParameters().isEmpty();
+        }
+
+        return false;
     }
 
     private void checkOverrideForComponentFunction(@NotNull final CallableMemberDescriptor componentFunction) {
@@ -618,14 +655,13 @@ public class OverrideResolver {
     @NotNull
     private JetAnnotationEntry findDataAnnotationForDataClass(@NotNull DeclarationDescriptor dataClass) {
         ClassDescriptor stdDataClassAnnotation = KotlinBuiltIns.getInstance().getDataClassAnnotation();
-        for (AnnotationDescriptor annotation : dataClass.getAnnotations()) {
-            if (stdDataClassAnnotation.equals(annotation.getType().getConstructor().getDeclarationDescriptor())) {
-                return BindingContextUtils.getNotNull(trace.getBindingContext(),
-                                                      BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT,
-                                                      annotation);
-            }
+        AnnotationDescriptor annotation = dataClass.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(stdDataClassAnnotation));
+        if (annotation == null) {
+            throw new IllegalStateException("No data annotation is found for data class " + dataClass);
         }
-        throw new IllegalStateException("No data annotation is found for data class");
+        return BindingContextUtils.getNotNull(trace.getBindingContext(),
+                                              BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT,
+                                              annotation);
     }
 
     private CallableMemberDescriptor findInvisibleOverriddenDescriptor(CallableMemberDescriptor declared, ClassDescriptor declaringClass) {

@@ -2,13 +2,19 @@
     <item name='android.telephony.cdma.CdmaCellLocation void fillInNotifierBundle(android.os.Bundle) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.cdma.CdmaSmsCbProgramData java.lang.String toString()'>
+    <item name='android.telephony.cdma.CdmaSmsCbProgramData CREATOR'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.cdma.CdmaCellLocation java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='android.telephony.cdma.CdmaSmsCbProgramResults CREATOR'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.telephony.cdma.CdmaSmsCbProgramResults java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
-    <item name='android.telephony.cdma.CdmaCellLocation java.lang.String toString()'>
+    <item name='android.telephony.cdma.CdmaSmsCbProgramData java.lang.String toString()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='android.telephony.cdma.CdmaCellLocation CdmaCellLocation(android.os.Bundle) 0'>

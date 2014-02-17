@@ -22,15 +22,13 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
-import org.jetbrains.jet.plugin.references.JetPsiReference;
+import org.jetbrains.jet.plugin.references.JetReference;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
@@ -41,7 +39,7 @@ public class ImportInsertHelper {
     }
 
     /**
-     * Add import directive into the PSI tree for the given namespace.
+     * Add import directive into the PSI tree for the given package.
      *
      * @param importFqn full name of the import
      * @param file File where directive should be added.
@@ -52,7 +50,7 @@ public class ImportInsertHelper {
 
     public static void addImportDirectiveOrChangeToFqName(@NotNull FqName importFqn, @NotNull JetFile file, int refOffset, @NotNull PsiElement targetElement) {
         PsiReference reference = file.findReferenceAt(refOffset);
-        if (reference instanceof JetPsiReference) {
+        if (reference instanceof JetReference) {
             PsiElement target = reference.resolve();
             if (target != null) {
                 boolean same = file.getManager().areElementsEquivalent(target, targetElement);
@@ -90,7 +88,7 @@ public class ImportInsertHelper {
             new OptimizeImportsProcessor(file.getProject(), file).runWithoutProgress();
         }
 
-        if (!doNeedImport(importPath, file)) {
+        if (!needImport(importPath, file)) {
             return;
         }
 
@@ -105,12 +103,12 @@ public class ImportInsertHelper {
         }
         else {
             JetImportList newDirective = JetPsiFactory.createImportDirectiveWithImportList(file.getProject(), importPath);
-            JetNamespaceHeader header = file.getNamespaceHeader();
-            if (header == null) {
+            JetPackageDirective packageDirective = file.getPackageDirective();
+            if (packageDirective == null) {
                 throw new IllegalStateException("Scripts are not supported: " + file.getName());
             }
 
-            header.getParent().addAfter(newDirective, header);
+            packageDirective.getParent().addAfter(newDirective, packageDirective);
         }
     }
 
@@ -144,11 +142,15 @@ public class ImportInsertHelper {
         return QualifiedNamesUtil.isImported(defaultImports, importPath);
     }
 
-    public static boolean doNeedImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
-        return doNeedImport(importPath, file, file.getImportDirectives());
+    public static boolean needImport(@NotNull FqName fqName, @NotNull JetFile file) {
+        return needImport(new ImportPath(fqName, false), file);
     }
 
-    public static boolean doNeedImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
+    public static boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        return needImport(importPath, file, file.getImportDirectives());
+    }
+
+    public static boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
         if (importPath.fqnPart().firstSegmentIs(JavaDescriptorResolver.JAVA_ROOT)) {
             FqName withoutJavaRoot = QualifiedNamesUtil.withoutFirstSegment(importPath.fqnPart());
             importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder(), importPath.getAlias());
@@ -169,16 +171,5 @@ public class ImportInsertHelper {
         }
 
         return true;
-    }
-
-    public static ClassDescriptor getTopLevelClass(ClassDescriptor classDescriptor) {
-        while (true) {
-            DeclarationDescriptor parent = classDescriptor.getContainingDeclaration();
-            if (parent instanceof ClassDescriptor) {
-                classDescriptor = (ClassDescriptor) parent;
-            } else {
-                return classDescriptor;
-            }
-        }
     }
 }

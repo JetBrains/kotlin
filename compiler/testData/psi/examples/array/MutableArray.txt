@@ -6,7 +6,7 @@ JetFile: MutableArray.kt
     PsiWhiteSpace('\n')
     PsiElement(KDOC_END)('*/')
   PsiWhiteSpace('\n\n')
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   CLASS
     MODIFIER_LIST

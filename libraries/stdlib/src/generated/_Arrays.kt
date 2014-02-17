@@ -199,6 +199,26 @@ public inline fun <T, K> Array<out T>.groupByTo(result: MutableMap<K, MutableLis
 }
 
 /**
+ * Returns first index of item, or -1 if the array does not contain item
+ */
+public fun <T> Array<out T>.indexOf(item: T) : Int {
+    if (item == null) {
+        for (i in indices) {
+            if (this[i] == null) {
+                return i
+            }
+        }
+    } else {
+        for (i in indices) {
+            if (item == this[i]) {
+                return i
+            }
+        }
+    }
+    return -1
+}
+
+/**
  * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."

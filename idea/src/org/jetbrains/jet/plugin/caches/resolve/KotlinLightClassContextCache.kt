@@ -45,8 +45,6 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil
 class KotlinLightClassContextCache(val project: Project) {
     private val cacheKey = Key.create<CachedValue<ResolveElementCache>>("KOTLIN_LIGHT_CLASS_CONTEXT_CACHE")
 
-    private val lock = Any()
-
     private val provider = object: CachedValueProvider<ResolveElementCache> {
         override fun compute(): CachedValueProvider.Result<ResolveElementCache> {
             val trace = DelegatingBindingTrace(
@@ -69,12 +67,12 @@ class KotlinLightClassContextCache(val project: Project) {
     }
 
     public fun getLightClassContext(classOrObject: JetClassOrObject): BindingContext {
-        if (!JetPsiUtil.isLocal(classOrObject)) {
-            return KotlinCacheManager.getInstance(project).getPossiblyIncompleteDeclarationsForLightClassGeneration().getBindingContext()
+        if (JetPsiUtil.isLocal(classOrObject)) {
+            val resolveElementCache = CachedValuesManager.getManager(project).getCachedValue(project, cacheKey, provider, false)
+            return resolveElementCache?.resolveToElement(classOrObject) ?: BindingContext.EMPTY
         }
 
-        val resolveElementCache = CachedValuesManager.getManager(project).getCachedValue(project, cacheKey, provider, false)
-        return resolveElementCache?.resolveElement(classOrObject) ?: BindingContext.EMPTY
+        return KotlinCacheManager.getInstance(project).getPossiblyIncompleteDeclarationsForLightClassGeneration().getBindingContext()
     }
 
 }

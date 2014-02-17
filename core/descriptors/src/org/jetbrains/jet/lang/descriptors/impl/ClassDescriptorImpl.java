@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -29,7 +30,6 @@ import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 public class ClassDescriptorImpl extends ClassDescriptorBase {
@@ -49,7 +49,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name);
         this.modality = modality;
 
-        this.typeConstructor = new TypeConstructorImpl(this, Collections.<AnnotationDescriptor>emptyList(), false, getName().asString(),
+        this.typeConstructor = new TypeConstructorImpl(this, Annotations.EMPTY, false, getName().asString(),
                                                        Collections.<TypeParameterDescriptor>emptyList(), supertypes);
     }
 
@@ -69,8 +69,8 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public List<AnnotationDescriptor> getAnnotations() {
-        return Collections.emptyList();
+    public Annotations getAnnotations() {
+        return Annotations.EMPTY;
     }
 
     @Override

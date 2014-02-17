@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
@@ -30,14 +29,12 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
+import org.jetbrains.k2js.translate.callTranslator.CallInfo;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
-import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
@@ -46,7 +43,6 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.generateInvocationArguments;
 
 public final class TopLevelFIF extends CompositeFIF {
     @NotNull
@@ -80,7 +76,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @NotNull
         @Override
         protected String operation() {
-            return "get";
+            return "get_s9cetl$";
         }
 
         @Nullable
@@ -104,7 +100,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @NotNull
         @Override
         protected String operation() {
-            return "put";
+            return "put_5yfy9u$";
         }
 
         @Nullable
@@ -124,6 +120,17 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
+    private static final FunctionIntrinsic PROPERTY_METADATA_IMPL = new FunctionIntrinsic() {
+        @NotNull
+        @Override
+        public JsExpression apply(
+                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+        ) {
+            JsNameRef functionRef = new JsNameRef("PropertyMetadata", Namer.KOTLIN_NAME);
+            return new JsNew(functionRef, arguments);
+        }
+    };
+
     @NotNull
     public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
 
@@ -137,44 +144,8 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
         add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
+        add(pattern("jet", "PropertyMetadataImpl", "<init>"), PROPERTY_METADATA_IMPL);
         add(pattern("jet", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
-        add(new DescriptorPredicate() {
-                @Override
-                public boolean apply(@NotNull FunctionDescriptor descriptor) {
-                    if (!descriptor.getName().asString().equals("invoke")) {
-                        return false;
-                    }
-                    int parameterCount = descriptor.getValueParameters().size();
-                    DeclarationDescriptor fun = descriptor.getContainingDeclaration();
-                    return fun == (descriptor.getReceiverParameter() == null
-                                   ? KotlinBuiltIns.getInstance().getFunction(parameterCount)
-                                   : KotlinBuiltIns.getInstance().getExtensionFunction(parameterCount));
-                }
-            }, new CallParametersAwareFunctionIntrinsic() {
-                @NotNull
-                @Override
-                public JsExpression apply(
-                        @NotNull CallTranslator callTranslator,
-                        @NotNull List<JsExpression> arguments,
-                        @NotNull TranslationContext context
-                ) {
-                    JsExpression thisExpression = callTranslator.getCallParameters().getThisObject();
-                    JsExpression functionReference = callTranslator.getCallParameters().getFunctionReference();
-                    if (thisExpression == null) {
-                        return new JsInvocation(functionReference, arguments);
-                    }
-                    else if (callTranslator.getResolvedCall().getReceiverArgument().exists()) {
-                        return callTranslator.extensionFunctionCall(false);
-                    }
-                    else {
-                        if (functionReference instanceof JsNameRef && ((JsNameRef) functionReference).getIdent().equals("invoke")) {
-                            return callTranslator.explicitInvokeCall();
-                        }
-                        return new JsInvocation(Namer.getFunctionCallRef(functionReference), generateInvocationArguments(thisExpression, arguments));
-                    }
-                }
-            }
-        );
 
         add(pattern("jet", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
         add(pattern("js", "set").receiverExists(), NATIVE_MAP_SET);
@@ -201,9 +172,9 @@ public final class TopLevelFIF extends CompositeFIF {
 
         @NotNull
         @Override
-        public JsExpression apply(@NotNull CallTranslator callTranslator, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
-            ExpressionReceiver expressionReceiver = getExpressionReceiver(callTranslator.getResolvedCall());
-            JsExpression thisOrReceiver = callTranslator.getCallParameters().getThisOrReceiverOrNull();
+        public JsExpression apply(@NotNull CallInfo callInfo, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context) {
+            ExpressionReceiver expressionReceiver = getExpressionReceiver(callInfo.getResolvedCall());
+            JsExpression thisOrReceiver = getThisOrReceiverOrNull(callInfo);
             assert thisOrReceiver != null;
             if (expressionReceiver != null) {
                 JetExpression expression = expressionReceiver.getExpression();
@@ -241,11 +212,11 @@ public final class TopLevelFIF extends CompositeFIF {
         @NotNull
         @Override
         public JsExpression apply(
-                @NotNull CallTranslator callTranslator,
+                @NotNull CallInfo callInfo,
                 @NotNull List<JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
-            JetType keyType = callTranslator.getResolvedCall().getTypeArguments().values().iterator().next();
+            JetType keyType = callInfo.getResolvedCall().getTypeArguments().values().iterator().next();
             Name keyTypeName = JsDescriptorUtils.getNameIfStandardType(keyType);
             String collectionClassName;
             if (keyTypeName != null &&
@@ -258,7 +229,7 @@ public final class TopLevelFIF extends CompositeFIF {
                 collectionClassName = isSet ? "ComplexHashSet" : "ComplexHashMap";
             }
 
-            return callTranslator.createConstructorCallExpression(context.namer().kotlin(collectionClassName));
+            return new JsNew(context.namer().kotlin(collectionClassName), arguments);
         }
     }
 }

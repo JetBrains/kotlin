@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import java.util.ArrayList
+
 fun List<Node>.toKotlin(separator: String, prefix: String = "", suffix: String = ""): String {
     val result = StringBuilder()
     if (size() > 0) {
@@ -40,5 +42,64 @@ fun Collection<Modifier>.toKotlin(separator: String = " "): String {
     return result.toString()
 }
 
-fun String.withPrefix(prefix: String) = if (isEmpty()) "" else prefix + this
-fun Expression.withPrefix(prefix: String) = if (isEmpty()) "" else prefix + toKotlin()
+fun String.withSuffix(suffix: String): String = if (isEmpty()) "" else this + suffix
+fun String.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + this
+fun Expression.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + toKotlin()
+
+open class WhiteSpaceSeparatedElementList(
+        val elements: List<Element>,
+        val minimalWhiteSpace: WhiteSpace,
+        val ensureSurroundedByWhiteSpace: Boolean = true
+) {
+    val nonEmptyElements = elements.filterNot { it.isEmpty() }
+
+    fun isEmpty() = nonEmptyElements.all { it is WhiteSpace }
+
+    fun toKotlin(): String {
+        if (isEmpty()) {
+            return ""
+        }
+        return nonEmptyElements.surroundWithWhiteSpaces().insertAndMergeWhiteSpaces().map { it.toKotlin() }.makeString("")
+    }
+
+    private fun List<Element>.surroundWithWhiteSpaces(): List<Element> {
+        if (!ensureSurroundedByWhiteSpace) {
+            return this
+        }
+        val result = ArrayList<Element>()
+        result.add(minimalWhiteSpace)
+        result.addAll(this)
+        result.add(minimalWhiteSpace)
+        return result
+    }
+
+
+    // ensure that there is whitespace between non-whitespace elements
+    // choose maximum among subsequent whitespaces
+    // all resulting whitespaces are at least minimal whitespace
+    private fun List<Element>.insertAndMergeWhiteSpaces(): List<Element> {
+        var currentWhiteSpace: WhiteSpace? = null
+        val result = ArrayList<Element>()
+        var isFirst = true
+        for (element in this) {
+            if (element is WhiteSpace) {
+                if (currentWhiteSpace == null || element > currentWhiteSpace!!) {
+                    currentWhiteSpace = if (element > minimalWhiteSpace) element else minimalWhiteSpace
+                }
+            }
+            else {
+                if (!isFirst) {
+                    //do not insert whitespace before first element
+                    result.add(currentWhiteSpace ?: minimalWhiteSpace)
+                }
+                result.add(element)
+                currentWhiteSpace = null
+            }
+            isFirst = false
+        }
+        if (currentWhiteSpace != null) {
+            result.add(currentWhiteSpace!!)
+        }
+        return result
+    }
+}

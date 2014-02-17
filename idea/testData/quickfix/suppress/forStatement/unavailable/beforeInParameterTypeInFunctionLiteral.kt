@@ -1,5 +1,4 @@
-// "Suppress 'REDUNDANT_NULLABLE' for statement " "false"
-// ACTION: Remove redundant '?'
+// "class com.intellij.codeInspection.SuppressIntentionAction" "false"
 
 fun foo() {
     any {

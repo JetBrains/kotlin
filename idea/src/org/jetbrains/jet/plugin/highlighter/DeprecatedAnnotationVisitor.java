@@ -33,8 +33,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.AnnotationLoadingUtil;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -220,14 +220,8 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     @Nullable
     private static AnnotationDescriptor getDeprecated(DeclarationDescriptor descriptor) {
-        for (AnnotationDescriptor annotation : descriptor.getAnnotations()) {
-            ClassDescriptor jetDeprecated = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
-            ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(annotation.getType());
-            if (jetDeprecated.equals(classDescriptor)) {
-                return annotation;
-            }
-        }
-        return null;
+        ClassDescriptor jetDeprecated = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
+        return descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(jetDeprecated));
     }
 
     private static String composeTooltipString(@NotNull DeclarationDescriptor declarationDescriptor, @NotNull AnnotationDescriptor descriptor) {
@@ -238,7 +232,7 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(descriptor.getType());
         assert classDescriptor != null : "ClassDescriptor for jet.deprecated mustn't be null";
         ValueParameterDescriptor parameter = DescriptorResolverUtils.getAnnotationParameterByName(
-                JavaAnnotationResolver.DEFAULT_ANNOTATION_MEMBER_NAME, classDescriptor);
+                AnnotationLoadingUtil.DEFAULT_ANNOTATION_MEMBER_NAME, classDescriptor);
         assert parameter != null : "jet.deprecated must have one parameter called value";
         CompileTimeConstant<?> valueArgument = descriptor.getValueArgument(parameter);
         assert valueArgument != null : "jet.deprecated must have value argument";

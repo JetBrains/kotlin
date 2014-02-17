@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsName;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +34,7 @@ public class AliasingContext {
         }
 
         @Override
-        public JsName getAliasForExpression(@NotNull JetExpression element) {
+        public JsExpression getAliasForExpression(@NotNull JetExpression element) {
             return null;
         }
 
@@ -53,7 +52,7 @@ public class AliasingContext {
     private Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors;
 
     @Nullable
-    private final Map<JetExpression, JsName> aliasesForExpressions;
+    private final Map<JetExpression, JsExpression> aliasesForExpressions;
 
     @Nullable
     private final AliasingContext parent;
@@ -65,7 +64,7 @@ public class AliasingContext {
     private AliasingContext(
             @Nullable AliasingContext parent,
             @Nullable Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors,
-            @Nullable Map<JetExpression, JsName> aliasesForExpressions
+            @Nullable Map<JetExpression, JsExpression> aliasesForExpressions
     ) {
         this.parent = parent;
         this.aliasesForDescriptors = aliasesForDescriptors;
@@ -92,7 +91,7 @@ public class AliasingContext {
     }
 
     @NotNull
-    public AliasingContext withExpressionsAliased(@NotNull Map<JetExpression, JsName> aliasesForExpressions) {
+    public AliasingContext withExpressionsAliased(@NotNull Map<JetExpression, JsExpression> aliasesForExpressions) {
         return new AliasingContext(this, null, aliasesForExpressions);
     }
 
@@ -115,8 +114,8 @@ public class AliasingContext {
     }
 
     @Nullable
-    public JsName getAliasForExpression(@NotNull JetExpression element) {
-        JsName alias = aliasesForExpressions == null ? null : aliasesForExpressions.get(element);
+    public JsExpression getAliasForExpression(@NotNull JetExpression element) {
+        JsExpression alias = aliasesForExpressions == null ? null : aliasesForExpressions.get(element);
         return alias != null || parent == null ? alias : parent.getAliasForExpression(element);
     }
 
@@ -138,7 +137,10 @@ public class AliasingContext {
                 aliasesForDescriptors.put(singletonMap.keySet().iterator().next(), singletonMap.values().iterator().next());
             }
             JsExpression prev = aliasesForDescriptors.put(descriptor, alias);
-            assert prev == null;
+            assert prev == null : "Alias for descriptor already registered." +
+                                  " Descriptor: " + descriptor +
+                                  " prev alias: " + prev +
+                                  " new alias: " + alias;
         }
     }
 }

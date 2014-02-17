@@ -18,21 +18,40 @@ package org.jetbrains.jet.lang.resolve.kotlin.header;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 
-public abstract class KotlinClassHeader {
-    @Nullable
-    public static KotlinClassHeader read(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        return ReadKotlinClassHeaderAnnotationVisitor.read(kotlinClass);
+public class KotlinClassHeader {
+
+    public enum Kind {
+        CLASS,
+        PACKAGE_FACADE,
+        PACKAGE_FRAGMENT,
+        TRAIT_IMPL,
+        INCOMPATIBLE_ABI_VERSION
     }
 
+    private final Kind kind;
     private final int version;
+    private final String[] data;
 
-    protected KotlinClassHeader(int version) {
+    public KotlinClassHeader(@NotNull Kind kind, int version, @Nullable String[] annotationData) {
+        assert (annotationData == null) == (kind != Kind.CLASS && kind != Kind.PACKAGE_FACADE)
+                : "Annotation data should be not null only for CLASS and PACKAGE_FACADE";
+        this.kind = kind;
         this.version = version;
+        this.data = annotationData;
+    }
+
+    @NotNull
+    public Kind getKind() {
+        return kind;
     }
 
     public int getVersion() {
         return version;
+    }
+
+    @Nullable
+    public String[] getAnnotationData() {
+        return data;
     }
 }

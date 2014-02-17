@@ -20,8 +20,13 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -50,18 +55,21 @@ import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisitor {
+    private final GlobalContext globalContext;
     private final WritableScope scope;
     private final BasicExpressionTypingVisitor basic;
     private final ControlStructureTypingVisitor controlStructures;
     private final PatternMatchingTypingVisitor patterns;
 
     public ExpressionTypingVisitorForStatements(
+            @NotNull GlobalContext globalContext,
             @NotNull ExpressionTypingInternals facade,
             @NotNull WritableScope scope,
             BasicExpressionTypingVisitor basic,
             @NotNull ControlStructureTypingVisitor controlStructures,
             @NotNull PatternMatchingTypingVisitor patterns) {
         super(facade);
+        this.globalContext = globalContext;
         this.scope = scope;
         this.basic = basic;
         this.controlStructures = controlStructures;
@@ -85,11 +93,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
-                context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration);
-        ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
-        if (classDescriptor != null) {
-            scope.addClassifierDescriptor(classDescriptor);
-        }
+                globalContext,
+                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration);
         return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);
     }
 
@@ -129,6 +134,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             JetType outType = propertyDescriptor.getType();
             JetTypeInfo typeInfo = facade.getTypeInfo(initializer, context.replaceExpectedType(outType));
             dataFlowInfo = typeInfo.getDataFlowInfo();
+
+            EvaluatePackage.recordCompileTimeValueForInitializerIfNeeded(propertyDescriptor, initializer, outType, context.trace);
         }
 
         {
@@ -171,8 +178,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
         context.expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
 
-        context.expressionTypingServices.resolveValueParameters(
-                function.getValueParameters(), functionDescriptor.getValueParameters(), scope, context.dataFlowInfo, context.trace);
+        context.expressionTypingServices.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(),
+                                                                scope, context.dataFlowInfo, context.trace, /* needCompleteAnalysis = */ true);
 
         ModifiersChecker.create(context.trace).checkModifiersForLocalDeclaration(function);
         return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
@@ -181,11 +188,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitClass(@NotNull JetClass klass, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
-                context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass);
-        ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, klass);
-        if (classDescriptor != null) {
-            scope.addClassifierDescriptor(classDescriptor);
-        }
+                globalContext,
+                scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass);
         return DataFlowUtils.checkStatementType(klass, context, context.dataFlowInfo);
     }
 

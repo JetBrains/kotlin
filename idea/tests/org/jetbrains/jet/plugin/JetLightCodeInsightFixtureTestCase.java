@@ -23,40 +23,47 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
-    LightProjectDescriptor projectDescriptor = null;
-
     @Override
     protected void setUp() throws Exception {
-        String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
-        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
-            projectDescriptor = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
-        }
-        else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
-            projectDescriptor = JetStdJSProjectDescriptor.INSTANCE;
-        }
-        else {
-            projectDescriptor = JetLightProjectDescriptor.INSTANCE;
-        }
-
         super.setUp();
-
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        projectDescriptor = null;
     }
 
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return projectDescriptor;
+        return getProjectDescriptorFromFileDirective();
+    }
+
+    protected LightProjectDescriptor getProjectDescriptorFromFileDirective() {
+        if (!getTestName(false).startsWith("AllFilesPresentIn")) {
+            try {
+                String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
+
+                List<String> withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:");
+                if (!withLibraryDirective.isEmpty()) {
+                    return new JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/" + withLibraryDirective.get(0), true);
+                }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
+                    return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+                }
+                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
+                    return JetStdJSProjectDescriptor.INSTANCE;
+                }
+            }
+            catch (IOException e) {
+                throw UtilsPackage.rethrow(e);
+            }
+        }
+
+        return JetLightProjectDescriptor.INSTANCE;
     }
 
     protected String fileName() {

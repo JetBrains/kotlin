@@ -11,7 +11,7 @@ import java.io.Writer
 * Represents a generic API to templates which should be usable
 * in JavaScript in a browser or on the server side stand alone or in a web app etc.
 *
-* To make things easier to implement in JS this namespace won't refer to any java.io or servlet
+* To make things easier to implement in JS this package won't refer to any java.io or servlet
 * stuff
 */
 trait Template {

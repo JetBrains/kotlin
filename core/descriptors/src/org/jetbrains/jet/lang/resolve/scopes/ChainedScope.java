@@ -30,16 +30,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.scopes.JetScopeSelectorUtil.*;
+
 public class ChainedScope implements JetScope {
     private final DeclarationDescriptor containingDeclaration;
     private final String debugName;
     private final JetScope[] scopeChain;
     private Collection<DeclarationDescriptor> allDescriptors;
     private List<ReceiverParameterDescriptor> implicitReceiverHierarchy;
-
-    public ChainedScope(DeclarationDescriptor containingDeclaration, JetScope... scopes) {
-        this(containingDeclaration, "Untitled chained scope", scopes);
-    }
 
     public ChainedScope(DeclarationDescriptor containingDeclaration, String debugName, JetScope... scopes) {
         this.containingDeclaration = containingDeclaration;
@@ -50,57 +48,29 @@ public class ChainedScope implements JetScope {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        for (JetScope scope : scopeChain) {
-            ClassifierDescriptor classifier = scope.getClassifier(name);
-            if (classifier != null) return classifier;
-        }
-        return null;
+        return getFirstMatch(scopeChain, name, CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR);
     }
 
     @Override
     public PackageViewDescriptor getPackage(@NotNull Name name) {
-        for (JetScope jetScope : scopeChain) {
-            PackageViewDescriptor aPackage = jetScope.getPackage(name);
-            if (aPackage != null) {
-                return aPackage;
-            }
-        }
-        return null;
+        return getFirstMatch(scopeChain, name, PACKAGE_SCOPE_SELECTOR);
     }
 
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull Name name) {
-        Set<VariableDescriptor> properties = Sets.newLinkedHashSet();
-        for (JetScope jetScope : scopeChain) {
-            properties.addAll(jetScope.getProperties(name));
-        }
-        return properties;
+        return getFromAllScopes(scopeChain, name, NAMED_PROPERTIES_SCOPE_SELECTOR);
     }
 
     @Override
     public VariableDescriptor getLocalVariable(@NotNull Name name) {
-        for (JetScope jetScope : scopeChain) {
-            VariableDescriptor variable = jetScope.getLocalVariable(name);
-            if (variable != null) {
-                return variable;
-            }
-        }
-        return null;
+        return getFirstMatch(scopeChain, name, VARIABLE_DESCRIPTOR_SCOPE_SELECTOR);
     }
 
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
-        if (scopeChain.length == 0) {
-            return Collections.emptySet();
-        }
-
-        Set<FunctionDescriptor> result = Sets.newLinkedHashSet();
-        for (JetScope jetScope : scopeChain) {
-            result.addAll(jetScope.getFunctions(name));
-        }
-        return result;
+        return getFromAllScopes(scopeChain, name, NAMED_FUNCTION_SCOPE_SELECTOR);
     }
 
     @NotNull

@@ -35,8 +35,8 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClass
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaFullPackageScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.storage.ExceptionTracker;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
@@ -55,7 +55,7 @@ import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.*;
 
 /*
-    The generated test compares namespace descriptors loaded from kotlin sources and read from compiled java.
+    The generated test compares package descriptors loaded from kotlin sources and read from compiled java.
 */
 public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
@@ -105,8 +105,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
 
-        checkUsageOfDeserializedScope(DescriptorUtils.getExactlyOnePackageFragment(packageFromBinary.getModule(), TEST_PACKAGE_FQNAME));
-
         for (DeclarationDescriptor descriptor : packageFromBinary.getMemberScope().getAllDescriptors()) {
             if (descriptor instanceof ClassDescriptor) {
                 assert descriptor instanceof DeserializedClassDescriptor : DescriptorUtils.getFqName(descriptor) + " is loaded as " + descriptor.getClass();
@@ -145,16 +143,22 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                 environment.getProject(),
                 new TopDownAnalysisParameters(
-                        Predicates.<PsiFile>alwaysFalse(), false, false, Collections.<AnalyzerScriptParameter>emptyList()),
+                        new LockBasedStorageManager(),
+                        new ExceptionTracker(), // dummy
+                        Predicates.<PsiFile>alwaysFalse(),
+                        false,
+                        false,
+                        Collections.<AnalyzerScriptParameter>emptyList()
+                ),
                 trace,
                 module);
 
-        module.addFragmentProvider(injectorForAnalyzer.getJavaPackageFragmentProvider());
+        module.addFragmentProvider(DependencyKind.BINARIES, injectorForAnalyzer.getJavaDescriptorResolver().getPackageFragmentProvider());
 
         injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
-        assert packageView != null : "Test namespace not found";
+        assert packageView != null : "Test package not found";
 
         checkJavaPackage(expectedFile, packageView, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
     }
@@ -167,10 +171,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assertTrue(testPackageDir.mkdir());
         FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
 
-        Pair<PackageViewDescriptor, BindingContext> javaNamespaceAndContext = loadTestPackageAndBindingContextFromJavaRoot(
+        Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY);
 
-        checkJavaPackage(expectedFile, javaNamespaceAndContext.first, javaNamespaceAndContext.second,
+        checkJavaPackage(expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
                          DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(ALLOW_ERROR_TYPES));
     }
 
@@ -208,7 +212,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     private static void checkForLoadErrorsAndCompare(
             @NotNull PackageViewDescriptor javaPackage,
             @NotNull BindingContext bindingContext,
-            @NotNull Runnable compareNamespacesRunnable
+            @NotNull Runnable comparePackagesRunnable
     ) {
         boolean fail = false;
         try {
@@ -226,7 +230,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             fail = true;
         }
 
-        compareNamespacesRunnable.run();
+        comparePackagesRunnable.run();
         if (fail) {
             fail("See error above");
         }
@@ -262,22 +266,5 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     private static File getTxtFile(String javaFileName) {
         return new File(javaFileName.replaceFirst("\\.java$", ".txt"));
-    }
-
-    private static void checkUsageOfDeserializedScope(@NotNull PackageFragmentDescriptor packageFromBinary) {
-        JetScope scope = packageFromBinary.getMemberScope();
-        boolean hasOwnMembers = false;
-        for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
-            if (declarationDescriptor instanceof CallableMemberDescriptor) {
-                hasOwnMembers = true;
-            }
-        }
-        if (hasOwnMembers) {
-            assert scope instanceof JavaFullPackageScope : "If namespace has members, members should be inside deserialized scope.";
-        }
-        else {
-            //NOTE: should probably change
-            assert !(scope instanceof JavaFullPackageScope) : "We don't use deserialized scopes for namespaces without members.";
-        }
     }
 }

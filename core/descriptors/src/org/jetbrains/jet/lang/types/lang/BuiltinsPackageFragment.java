@@ -4,9 +4,10 @@ import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -24,28 +25,27 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
-
 class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements PackageFragmentDescriptor {
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
     private final ModuleDescriptor module;
-    final PackageFragmentProvider packageFragmentProvider;
+    private final PackageFragmentProvider packageFragmentProvider;
 
     public BuiltinsPackageFragment(@NotNull StorageManager storageManager, @NotNull ModuleDescriptor module) {
-        super(Collections.<AnnotationDescriptor>emptyList(), KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
+        super(Annotations.EMPTY, KotlinBuiltIns.BUILT_INS_PACKAGE_NAME);
         this.module = module;
-        nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(this)));
+        nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(getFqName())));
 
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
-        members = new DeserializedPackageMemberScope(storageManager, this, UNSUPPORTED, new BuiltInsDescriptorFinder(storageManager),
-                                                     loadPackage(), nameResolver);
+        // TODO: support annotations
+        members = new DeserializedPackageMemberScope(storageManager, this, AnnotationDeserializer.UNSUPPORTED,
+                                                     new BuiltInsDescriptorFinder(storageManager), loadPackage(), nameResolver);
     }
 
     @NotNull
     private ProtoBuf.Package loadPackage() {
-        String packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(this);
+        String packageFilePath = BuiltInsSerializationUtil.getPackageFilePath(getFqName());
         InputStream stream = getStream(packageFilePath);
         try {
             return ProtoBuf.Package.parseFrom(stream);
@@ -59,6 +59,11 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
     @Override
     public JetScope getMemberScope() {
         return members;
+    }
+
+    @NotNull
+    public PackageFragmentProvider getProvider() {
+        return packageFragmentProvider;
     }
 
     @NotNull
@@ -127,13 +132,14 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
         private final NotNullLazyValue<Collection<Name>> classNames;
 
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
-            super(storageManager, UNSUPPORTED, packageFragmentProvider);
+            // TODO: support annotations
+            super(storageManager, AnnotationDeserializer.UNSUPPORTED, packageFragmentProvider);
 
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override
                 @NotNull
                 public Collection<Name> invoke() {
-                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(BuiltinsPackageFragment.this));
+                    InputStream in = getStream(BuiltInsSerializationUtil.getClassNamesFilePath(getFqName()));
 
                     try {
                         DataInputStream data = new DataInputStream(in);

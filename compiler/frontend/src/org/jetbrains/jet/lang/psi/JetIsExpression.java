@@ -28,11 +28,6 @@ public class JetIsExpression extends JetExpressionImpl implements JetOperationEx
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitIsExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitIsExpression(this, data);
     }

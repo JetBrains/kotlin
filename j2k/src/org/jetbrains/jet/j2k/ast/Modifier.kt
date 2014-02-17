@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-public enum class Modifier(val name: String) {
+enum class Modifier(val name: String) {
     PUBLIC: Modifier("public")
     PROTECTED: Modifier("protected")
     PRIVATE: Modifier("private")

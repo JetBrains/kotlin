@@ -35,6 +35,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.asJava.LightClassUtil;
+import org.jetbrains.jet.context.ContextPackage;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -81,17 +83,18 @@ public final class AnalyzerFacadeWithCache {
 
     @NotNull
     public static BindingContext getContextForElement(@NotNull JetElement jetElement) {
-        CancelableResolveSession cancelableResolveSession = getLazyResolveSessionForFile((JetFile) jetElement.getContainingFile());
-        return cancelableResolveSession.resolveToElement(jetElement);
+        ResolveSessionForBodies resolveSessionForBodies = getLazyResolveSessionForFile((JetFile) jetElement.getContainingFile());
+        return resolveSessionForBodies.resolveToElement(jetElement);
     }
 
-    public static CancelableResolveSession getLazyResolveSessionForFile(@NotNull JetFile file) {
+    @NotNull
+    public static ResolveSessionForBodies getLazyResolveSessionForFile(@NotNull JetFile file) {
         Project project = file.getProject();
         DeclarationsCacheProvider provider = KotlinCacheManager.getInstance(project).getRegisteredProvider(TargetPlatformDetector.getPlatform(file));
 
         if (!provider.areDeclarationsAvailable(file)) {
             // There can be request for temp files (in completion) or non-source (in library) files. Create temp sessions for them.
-            CachedValue<CancelableResolveSession> cachedValue;
+            CachedValue<ResolveSessionForBodies> cachedValue;
 
             synchronized (PER_FILE_SESSION_CACHE) {
                 cachedValue = PER_FILE_SESSION_CACHE.get(file);
@@ -110,17 +113,17 @@ public final class AnalyzerFacadeWithCache {
         return AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
     }
 
-    private static final SLRUCache<JetFile, CachedValue<CancelableResolveSession>> PER_FILE_SESSION_CACHE = new SLRUCache<JetFile, CachedValue<CancelableResolveSession>>(2, 3) {
+    private static final SLRUCache<JetFile, CachedValue<ResolveSessionForBodies>> PER_FILE_SESSION_CACHE = new SLRUCache<JetFile, CachedValue<ResolveSessionForBodies>>(2, 3) {
         @NotNull
         @Override
-        public CachedValue<CancelableResolveSession> createValue(final JetFile file) {
+        public CachedValue<ResolveSessionForBodies> createValue(final JetFile file) {
             final Project fileProject = file.getProject();
             return CachedValuesManager.getManager(fileProject).createCachedValue(
                     // Each value monitors OUT_OF_CODE_BLOCK_MODIFICATION_COUNT and modification tracker of the stored value
-                    new CachedValueProvider<CancelableResolveSession>() {
+                    new CachedValueProvider<ResolveSessionForBodies>() {
                         @Nullable
                         @Override
-                        public Result<CancelableResolveSession> compute() {
+                        public Result<ResolveSessionForBodies> compute() {
                             Project project = file.getProject();
 
 
@@ -137,7 +140,7 @@ public final class AnalyzerFacadeWithCache {
                             }
 
                             ResolveSession resolveSession = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).getLazyResolveSession(fileProject, files);
-                            return Result.create(new CancelableResolveSession(file, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+                            return Result.create(new ResolveSessionForBodies(file, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
                         }
                     },
                     true);
@@ -148,6 +151,7 @@ public final class AnalyzerFacadeWithCache {
         @Nullable
         @Override
         public Result<SLRUCache<JetFile, AnalyzeExhaust>> compute() {
+            final GlobalContext globalContext = ContextPackage.GlobalContext();
             SLRUCache<JetFile, AnalyzeExhaust> cache = new SLRUCache<JetFile, AnalyzeExhaust>(3, 8) {
 
                 @NotNull
@@ -160,7 +164,7 @@ public final class AnalyzerFacadeWithCache {
 
                         ApplicationUtils.warnTimeConsuming(LOG);
 
-                        AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file);
+                        AnalyzeExhaust analyzeExhaustHeaders = analyzeHeadersWithCacheOnFile(file, globalContext);
                         return analyzeBodies(analyzeExhaustHeaders, file);
                     }
                     catch (ProcessCanceledException e) {
@@ -176,10 +180,10 @@ public final class AnalyzerFacadeWithCache {
                     }
                 }
             };
-            return Result.create(cache, PsiModificationTracker.MODIFICATION_COUNT);
+            return Result.create(cache, PsiModificationTracker.MODIFICATION_COUNT, globalContext.getExceptionTracker());
         }
 
-        private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(@NotNull JetFile fileToCache) {
+        private static AnalyzeExhaust analyzeHeadersWithCacheOnFile(@NotNull JetFile fileToCache, @NotNull GlobalContext globalContext) {
             VirtualFile virtualFile = fileToCache.getVirtualFile();
             if (LightClassUtil.belongsToKotlinBuiltIns(fileToCache) ||
                 virtualFile != null && LibraryUtil.findLibraryEntry(virtualFile, fileToCache.getProject()) != null) {
@@ -187,12 +191,18 @@ public final class AnalyzerFacadeWithCache {
                 // Mark file to skip
                 fileToCache.putUserData(LibrarySourceHacks.SKIP_TOP_LEVEL_MEMBERS, true);
                 // Resolve this file, not only project files (as KotlinCacheManager do)
-                return AnalyzerFacadeForJVM.INSTANCE.analyzeFiles(
-                        fileToCache.getProject(),
-                        Collections.singleton(fileToCache),
-                        Collections.<AnalyzerScriptParameter>emptyList(),
-                        Predicates.<PsiFile>alwaysFalse()
-                );
+
+                return AnalyzerFacadeForJVM
+                        .analyzeFilesWithJavaIntegrationInGlobalContext(
+                                fileToCache.getProject(),
+                                Collections.singleton(fileToCache),
+                                new BindingTraceContext(),
+                                Collections.<AnalyzerScriptParameter>emptyList(),
+                                Predicates.<PsiFile>alwaysFalse(),
+                                true,
+                                AnalyzerFacadeForJVM.createJavaModule("<module>"),
+                                globalContext
+                        );
             }
 
             KotlinDeclarationsCache cache = KotlinCacheManagerUtil.getDeclarationsFromProject(fileToCache);

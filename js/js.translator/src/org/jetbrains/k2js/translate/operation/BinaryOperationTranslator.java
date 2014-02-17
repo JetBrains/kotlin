@@ -27,17 +27,16 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.operation.BinaryOperationIntrinsic;
-import org.jetbrains.k2js.translate.reference.CallBuilder;
-import org.jetbrains.k2js.translate.reference.CallType;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompareToCall;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionResolvedCall;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
@@ -128,24 +127,17 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression translateAsOverloadedBinaryOperation() {
-        CallBuilder callBuilder = setReceiverAndArguments();
-        ResolvedCall<?> resolvedCall = getResolvedCall(bindingContext(), expression.getOperationReference());
-        JsExpression result = callBuilder.resolvedCall(resolvedCall).type(CallType.NORMAL).translate();
+        ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCall(bindingContext(), expression.getOperationReference());
+        JsExpression result = CallTranslator.instance$.translate(context(), resolvedCall, getReceiver());
         return mayBeWrapWithNegation(result);
     }
 
     @NotNull
-    private CallBuilder setReceiverAndArguments() {
-        CallBuilder callBuilder = CallBuilder.build(context());
-
-        JsExpression leftExpression = translateLeftExpression(context(), expression);
-        JsExpression rightExpression = translateRightExpression(context(), expression);
-
+    private JsExpression getReceiver() {
         if (isInOrNotInOperation(expression)) {
-            return callBuilder.receiver(rightExpression).args(leftExpression);
-        }
-        else {
-            return callBuilder.receiver(leftExpression).args(rightExpression);
+            return translateRightExpression(context(), expression);
+        } else {
+            return translateLeftExpression(context(), expression);
         }
     }
 

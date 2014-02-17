@@ -111,6 +111,9 @@ public interface Errors {
 
     // Annotations
 
+    DiagnosticFactory0<JetDelegationSpecifierList> SUPERTYPES_FOR_ANNOTATION_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetParameter> MISSING_VAL_ON_ANNOTATION_PARAMETER = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetCallExpression> ANNOTATION_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetAnnotationEntry, String> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> ANNOTATION_CLASS_WITH_BODY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> INVALID_TYPE_OF_ANNOTATION_MEMBER = DiagnosticFactory0.create(ERROR);
@@ -552,7 +555,7 @@ public interface Errors {
     DiagnosticFactory0<JetBinaryExpression> ASSIGNMENT_IN_EXPRESSION_CONTEXT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetDeclaration> DECLARATION_IN_ILLEGAL_CONTEXT = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetSimpleNameExpression> EXPRESSION_EXPECTED_NAMESPACE_FOUND = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetSimpleNameExpression> EXPRESSION_EXPECTED_PACKAGE_FOUND = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetReturnExpression> RETURN_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetReturnExpression> RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED = DiagnosticFactory0.create(ERROR);
@@ -563,7 +566,7 @@ public interface Errors {
     DiagnosticFactory0<JetClassInitializer> ANONYMOUS_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetThisExpression> NO_THIS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetRootNamespaceExpression> NAMESPACE_IS_NOT_AN_EXPRESSION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetRootPackageExpression> PACKAGE_IS_NOT_AN_EXPRESSION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ClassifierDescriptor> NO_CLASS_OBJECT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, TypeParameterDescriptor> TYPE_PARAMETER_IS_NOT_AN_EXPRESSION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, TypeParameterDescriptor> TYPE_PARAMETER_ON_LHS_OF_DOT = DiagnosticFactory1.create(ERROR);
@@ -574,7 +577,7 @@ public interface Errors {
     //Inline and inlinable parameters
     DiagnosticFactory2<JetElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory2<JetElement, JetNamedDeclaration, DeclarationDescriptor> NOT_YET_SUPPORTED_IN_INLINE = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory1<JetElement, DeclarationDescriptor> NOTHING_TO_INLINE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<JetFunction, DeclarationDescriptor> NOTHING_TO_INLINE = DiagnosticFactory1.create(WARNING, NAMED_ELEMENT);
     DiagnosticFactory2<JetElement, JetExpression, DeclarationDescriptor> USAGE_IS_NOT_INLINABLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> NULLABLE_INLINE_PARAMETER = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> RECURSION_IN_INLINE = DiagnosticFactory2.create(ERROR);

@@ -22,29 +22,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.codeInsight.TipsManager;
-import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.plugin.project.CancelableResolveSession;
 
-public class JetSimpleNameReference extends JetPsiReference {
-
-    @NotNull
-    private final JetSimpleNameExpression myExpression;
+public class JetSimpleNameReference extends JetSimpleReference<JetSimpleNameExpression> {
 
     public JetSimpleNameReference(@NotNull JetSimpleNameExpression jetSimpleNameExpression) {
         super(jetSimpleNameExpression);
-        myExpression = jetSimpleNameExpression;
-    }
-
-    @NotNull
-    public JetSimpleNameExpression getExpression() {
-        return myExpression;
     }
 
     @NotNull
@@ -55,8 +40,8 @@ public class JetSimpleNameReference extends JetPsiReference {
 
     @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-        IElementType type = myExpression.getReferencedNameElementType();
-        Project project = myExpression.getProject();
+        IElementType type = getExpression().getReferencedNameElementType();
+        Project project = getExpression().getProject();
         PsiElement element;
         if (JetTokens.FIELD_IDENTIFIER == type) {
             element = JetPsiFactory.createFieldIdentifier(project, newElementName);
@@ -67,11 +52,11 @@ public class JetSimpleNameReference extends JetPsiReference {
         else {
             element = JetPsiFactory.createNameIdentifier(project, newElementName);
         }
-        return myExpression.getReferencedNameElement().replace(element);
+        return getExpression().getReferencedNameElement().replace(element);
     }
 
     @Override
     public String toString() {
-        return JetSimpleNameReference.class.getSimpleName() + ": " + myExpression.getText();
+        return JetSimpleNameReference.class.getSimpleName() + ": " + getExpression().getText();
     }
 }

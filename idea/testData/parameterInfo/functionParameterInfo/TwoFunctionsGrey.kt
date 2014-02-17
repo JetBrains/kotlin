@@ -8,5 +8,5 @@ open class A(x: Int) {
 }
 /*
 Text: (x: Int), Disabled: true, Strikeout: false, Green: false
-Text: (x: Int, y: Boolean), Disabled: false, Strikeout: false, Green: true
+Text: (x: Int, <highlight>y: Boolean</highlight>), Disabled: false, Strikeout: false, Green: true
 */

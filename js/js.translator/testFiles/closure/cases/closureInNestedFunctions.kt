@@ -41,10 +41,10 @@ fun litfun(): Boolean {
 }
 
 fun box(): String {
-    if (!funfun()) "funfun failed"
-    if (!litlit()) "litlit failed"
-    if (!funlit()) "funlit failed"
-    if (!litfun()) "litfun failed"
+    if (!funfun()) return "funfun failed"
+    if (!litlit()) return "litlit failed"
+    if (!funlit()) return "funlit failed"
+    if (!litfun()) return "litfun failed"
 
     return "OK"
 }

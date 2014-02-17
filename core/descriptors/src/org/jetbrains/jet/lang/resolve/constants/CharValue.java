@@ -21,17 +21,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class CharValue implements CompileTimeConstant<Character> {
+public class CharValue extends CompileTimeConstant<Character> {
 
-    private final char value;
-
-    public CharValue(char value) {
-        this.value = value;
-    }
-
-    @Override
-    public Character getValue() {
-        return value;
+    public CharValue(char value, boolean canBeUsedInAnnotations, boolean pure) {
+        super(value, canBeUsedInAnnotations, pure);
     }
 
     @NotNull

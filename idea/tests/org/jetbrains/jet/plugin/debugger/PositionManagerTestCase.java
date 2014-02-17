@@ -40,7 +40,7 @@ import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -64,7 +64,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
             configureByFile(path);
         }
         catch (Exception e) {
-            ExceptionUtils.rethrow(e);
+            UtilsPackage.rethrow(e);
         }
         performTest();
     }
@@ -77,7 +77,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
             PsiDocumentManager.getInstance(myProject).commitAllDocuments();
         }
         catch (Exception e) {
-            ExceptionUtils.rethrow(e);
+            UtilsPackage.rethrow(e);
         }
         performTest();
     }
@@ -107,7 +107,7 @@ public abstract class PositionManagerTestCase extends MultiFileTestCase {
                     }
                 }
                 catch (NoDataException e) {
-                    ExceptionUtils.rethrow(e);
+                    UtilsPackage.rethrow(e);
                 }
             }
         });

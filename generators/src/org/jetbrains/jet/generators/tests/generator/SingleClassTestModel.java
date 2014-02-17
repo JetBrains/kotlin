@@ -40,11 +40,16 @@ public class SingleClassTestModel implements TestClassModel {
 
     private Collection<TestMethodModel> testMethods;
 
-    public SingleClassTestModel(@NotNull File rootFile, @NotNull Pattern filenamePattern, @NotNull String doTestMethodName) {
+    public SingleClassTestModel(
+            @NotNull File rootFile,
+            @NotNull Pattern filenamePattern,
+            @NotNull String doTestMethodName,
+            @NotNull String testClassName
+    ) {
         this.rootFile = rootFile;
         this.filenamePattern = filenamePattern;
         this.doTestMethodName = doTestMethodName;
-        this.testClassName = StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(rootFile.getName()));
+        this.testClassName = testClassName;
     }
 
     @NotNull

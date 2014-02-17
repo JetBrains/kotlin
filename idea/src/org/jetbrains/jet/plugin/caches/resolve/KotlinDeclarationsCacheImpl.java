@@ -17,11 +17,13 @@
 package org.jetbrains.jet.plugin.caches.resolve;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.ModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 
-public class KotlinDeclarationsCacheImpl implements KotlinDeclarationsCache {
+public class KotlinDeclarationsCacheImpl implements KotlinDeclarationsCache, ModificationTracker {
 
     private static final Logger LOG = Logger.getInstance(KotlinDeclarationsCacheImpl.class);
 
@@ -38,6 +40,13 @@ public class KotlinDeclarationsCacheImpl implements KotlinDeclarationsCache {
     @NotNull
     public BindingContext getBindingContext() {
         return exhaust.getBindingContext();
+    }
+
+    @Override
+    public long getModificationCount() {
+        BodiesResolveContext context = exhaust.getBodiesResolveContext();
+        if (context == null) return 0;
+        return context.getExceptionTracker().getModificationCount();
     }
 
     @NotNull

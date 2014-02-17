@@ -39,7 +39,7 @@ public class BranchedUnfoldingUtils {
         if (JetPsiUtil.isAssignment(root)) {
             JetBinaryExpression assignment = (JetBinaryExpression) root;
 
-            assertNotNull(assignment.getLeft());
+            if (assignment.getLeft() == null) return null;
 
             JetExpression rhs = assignment.getRight();
             if (rhs instanceof JetIfExpression) return UnfoldableKind.ASSIGNMENT_TO_IF;
@@ -127,13 +127,13 @@ public class BranchedUnfoldingUtils {
         editor.getCaretModel().moveToOffset(resultElement.getTextOffset());
     }
 
-    public static void unfoldPropertyToIf(@NotNull JetProperty property, @NotNull JetFile file, @NotNull Editor editor) {
-        JetBinaryExpression assignment = DeclarationUtils.splitPropertyDeclaration(property, file);
+    public static void unfoldPropertyToIf(@NotNull JetProperty property, @NotNull Editor editor) {
+        JetBinaryExpression assignment = DeclarationUtils.splitPropertyDeclaration(property);
         unfoldAssignmentToIf(assignment, editor);
     }
 
-    public static void unfoldPropertyToWhen(@NotNull JetProperty property, @NotNull JetFile file, @NotNull Editor editor) {
-        JetBinaryExpression assignment = DeclarationUtils.splitPropertyDeclaration(property, file);
+    public static void unfoldPropertyToWhen(@NotNull JetProperty property, @NotNull Editor editor) {
+        JetBinaryExpression assignment = DeclarationUtils.splitPropertyDeclaration(property);
         unfoldAssignmentToWhen(assignment, editor);
     }
 

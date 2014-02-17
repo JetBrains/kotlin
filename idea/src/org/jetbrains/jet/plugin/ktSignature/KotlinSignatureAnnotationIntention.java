@@ -49,8 +49,6 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import javax.swing.*;
 
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
-
 public class KotlinSignatureAnnotationIntention extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setShortNames(true)
@@ -136,7 +134,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     private static String getDefaultSignature(@NotNull PsiMethod method, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver, BindingContext context) {
         if (method.getReturnType() == null) {
             // For constructor
-            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName, IGNORE_KOTLIN_SOURCES);
+            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
             assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
             classDescriptor.getConstructors();
 
@@ -187,12 +185,12 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     @NotNull
     private static JetScope getMemberScope(PsiModifierListOwner psiModifierListOwner, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver) {
         if (psiModifierListOwner.hasModifierProperty(PsiModifier.STATIC)) {
-            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragmentProvider().getOrCreatePackage(classFqName);
+            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragment(classFqName);
             assert packageFragment != null: "Couldn't resolve package fragment for " + classFqName;
             return packageFragment.getMemberScope();
         }
 
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName, IGNORE_KOTLIN_SOURCES);
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
         assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
         return classDescriptor.getDefaultType().getMemberScope();
     }

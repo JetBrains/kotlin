@@ -1,5 +1,5 @@
 JetFile: QuotedIdentifiers.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   FUN
     MODIFIER_LIST
@@ -15,7 +15,7 @@ JetFile: QuotedIdentifiers.kt
     PsiWhiteSpace(' ')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('`namespace`')
+    PsiElement(IDENTIFIER)('`package`')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')

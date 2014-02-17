@@ -1,5 +1,5 @@
 JetFile: functionTypes.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   CLASS
     PsiElement(class)('class')
@@ -74,9 +74,7 @@ JetFile: functionTypes.kt
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
           USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('namespace')
+            PsiElement(package)('package')
             PsiElement(DOT)('.')
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Int')

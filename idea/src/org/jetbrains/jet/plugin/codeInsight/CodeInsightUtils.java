@@ -146,10 +146,17 @@ public class CodeInsightUtils {
             return "null";
         }
         else if (type.equals(builtIns.getIntType()) || type.equals(builtIns.getLongType()) ||
-                 type.equals(builtIns.getShortType()) || type.equals(builtIns.getByteType()) ||
-                 type.equals(builtIns.getFloatType()) || type.equals(builtIns.getDoubleType()) ||
-                 type.equals(builtIns.getCharType())) {
+                 type.equals(builtIns.getShortType()) || type.equals(builtIns.getByteType())) {
             return "0";
+        }
+        else if (type.equals(builtIns.getFloatType())) {
+            return "0.0f";
+        }
+        else if (type.equals(builtIns.getDoubleType())) {
+            return "0.0";
+        }
+        else if (type.equals(builtIns.getCharType())) {
+            return "'\\u0000'";
         }
         else if (type.equals(builtIns.getBooleanType())) {
             return "false";

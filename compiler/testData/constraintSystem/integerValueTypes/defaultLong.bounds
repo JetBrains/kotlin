@@ -1,0 +1,18 @@
+VARIABLES T
+
+SUPERTYPE T IntegerValueType(1)
+SUPERTYPE T IntegerValueType(10000000000)
+
+type parameter bounds:
+T >: IntegerValueType(1)(SPECIAL), >: IntegerValueType(10000000000)(SPECIAL)
+status:
+-hasConflictingConstraints: false
+-hasContradiction: false
+-hasErrorInConstrainingTypes: false
+-hasTypeConstructorMismatch: false
+-hasUnknownParameters: false
+-hasViolatedUpperBound: false
+-isSuccessful: true
+
+result:
+T=jet.Long

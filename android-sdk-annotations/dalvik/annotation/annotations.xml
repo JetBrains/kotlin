@@ -1,8 +1,35 @@
 <root>
+    <item name='dalvik.annotation.TestLevel COMPLETE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='dalvik.annotation.TestLevel dalvik.annotation.TestLevel valueOf(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='dalvik.annotation.TestLevel ADDITIONAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.annotation.TestLevel SUFFICIENT'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.annotation.TestLevel TODO'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.annotation.TestLevel PARTIAL'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='dalvik.annotation.TestLevel dalvik.annotation.TestLevel valueOf(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.annotation.TestLevel NOT_FEASIBLE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.annotation.TestLevel NOT_NECESSARY'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.annotation.TestLevel PARTIAL_COMPLETE'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='dalvik.annotation.TestLevel PARTIAL_OK'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
 </root>

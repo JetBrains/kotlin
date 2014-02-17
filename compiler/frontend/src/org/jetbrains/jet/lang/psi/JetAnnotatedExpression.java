@@ -31,11 +31,6 @@ public class JetAnnotatedExpression extends JetExpressionImpl implements JetAnno
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitAnnotatedExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitAnnotatedExpression(this, data);
     }

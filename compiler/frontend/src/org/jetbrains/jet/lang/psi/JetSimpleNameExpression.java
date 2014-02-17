@@ -18,9 +18,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceService;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -38,10 +35,6 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
         super(node);
     }
 
-    /**
-     * null if it's not a code expression
-     * @return receiver expression
-     */
     @Nullable
     public JetExpression getReceiverExpression() {
         PsiElement parent = getParent();
@@ -58,10 +51,24 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
             parent = callExpression.getParent();
             if (parent instanceof JetQualifiedExpression) {
                 JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) parent;
-                return qualifiedExpression.getReceiverExpression();
+                JetExpression parentsReceiver = qualifiedExpression.getReceiverExpression();
+                if (parentsReceiver != callExpression) {
+                    return parentsReceiver;
+                }
             }
         }
-
+        else if (parent instanceof JetBinaryExpression && ((JetBinaryExpression) parent).getOperationReference() == this) {
+            return ((JetBinaryExpression) parent).getLeft();
+        }
+        else if (parent instanceof JetUnaryExpression && ((JetUnaryExpression) parent).getOperationReference() == this) {
+            return ((JetUnaryExpression) parent).getBaseExpression();
+        }
+        else if (parent instanceof JetUserType) {
+            JetUserType qualifier = ((JetUserType) parent).getQualifier();
+            if (qualifier != null) {
+                return qualifier.getReferenceExpression();
+            }
+        }
         return null;
     }
 
@@ -106,11 +113,6 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
     @Nullable @IfNotParsed
     public IElementType getReferencedNameElementType() {
         return getReferencedNameElement().getNode().getElementType();
-    }
-
-    @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitSimpleNameExpression(this);
     }
 
     @Override

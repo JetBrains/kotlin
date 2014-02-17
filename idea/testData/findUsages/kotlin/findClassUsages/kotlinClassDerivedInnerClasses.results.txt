@@ -1,0 +1,2 @@
+Unclassified usage (17: 15) class U: Z {
+Unclassified usage (4: 16) open class B: A() {

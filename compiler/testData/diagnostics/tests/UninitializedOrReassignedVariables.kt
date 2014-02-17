@@ -199,7 +199,7 @@ class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     {
         $x = 1
-        val b = x
+        val <!UNUSED_VARIABLE!>b<!> = x
     }
     val b = a
 

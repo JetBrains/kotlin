@@ -23,12 +23,10 @@ import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
-
-import java.util.List;
 
 public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescriptorImpl {
 
@@ -37,7 +35,7 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
 
     private DeserializedSimpleFunctionDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind,
             @NotNull ProtoBuf.Callable functionProto,
@@ -51,7 +49,7 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
     private DeserializedSimpleFunctionDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull SimpleFunctionDescriptor original,
-            @NotNull List<AnnotationDescriptor> annotations,
+            @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind,
             @NotNull ProtoBuf.Callable functionProto,

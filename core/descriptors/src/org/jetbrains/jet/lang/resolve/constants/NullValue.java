@@ -21,16 +21,12 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.JetType;
 
-public class NullValue implements CompileTimeConstant<Void> {
+public class NullValue extends CompileTimeConstant<Void> {
 
     public static final NullValue NULL = new NullValue();
 
     private NullValue() {
-    }
-
-    @Override
-    public Void getValue() {
-        return null;
+        super(null, false, false);
     }
 
     @NotNull

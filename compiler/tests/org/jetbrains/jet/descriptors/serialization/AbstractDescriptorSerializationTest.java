@@ -26,8 +26,8 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PackageViewDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
@@ -37,15 +37,14 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
+import org.jetbrains.jet.utils.builtinsSerializer.ClassSerializationUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jet.descriptors.serialization.ClassSerializationUtil.getClassId;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer.UNSUPPORTED;
-import static org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule.IGNORE_KOTLIN_SOURCES;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
 
 public abstract class AbstractDescriptorSerializationTest extends KotlinTestWithEnvironment {
@@ -62,22 +61,24 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 JetTestUtils.createFile(ktFile.getName(), FileUtil.loadFile(ktFile), getProject())
         ), getEnvironment());
 
-        PackageFragmentDescriptor testPackage = DescriptorUtils.getExactlyOnePackageFragment(
-                moduleDescriptor, FqName.topLevel(TEST_PACKAGE_NAME));
+        PackageViewDescriptor testPackage = moduleDescriptor.getPackage(FqName.topLevel(TEST_PACKAGE_NAME));
+        assert testPackage != null : "Test package not found: " + TEST_PACKAGE_NAME;
 
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         PackageFragmentDescriptor deserialized = serializeAndDeserialize(javaDescriptorResolver, testPackage);
 
+        PackageViewDescriptorImpl deserializedPackageView =
+                new PackageViewDescriptorImpl(moduleDescriptor, deserialized.getFqName(), Arrays.asList(deserialized));
         RecursiveDescriptorComparator
-                .validateAndCompareDescriptors(testPackage, deserialized, RecursiveDescriptorComparator.RECURSIVE, null);
+                .validateAndCompareDescriptors(testPackage, deserializedPackageView, RecursiveDescriptorComparator.RECURSIVE, null);
     }
 
     @NotNull
     private static PackageFragmentDescriptor serializeAndDeserialize(
             @NotNull JavaDescriptorResolver javaDescriptorResolver,
-            @NotNull PackageFragmentDescriptor testPackage
+            @NotNull PackageViewDescriptor testPackage
     ) {
         List<ClassDescriptor> classesAndObjects = getAllClassesAndObjects(testPackage.getMemberScope());
 
@@ -98,7 +99,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
                 javaDescriptorResolver, classDataMap, packageFragment.getContainingDeclaration().getPackageFragmentProvider());
 
         for (ClassDescriptor classDescriptor : classesAndObjects) {
-            ClassId classId = getClassId(classDescriptor);
+            ClassId classId = ClassSerializationUtil.instance$.getClassId(classDescriptor);
             ClassDescriptor descriptor = descriptorFinder.findClass(classId);
             assert descriptor != null : "Class not loaded: " + classId;
             packageFragment.getMemberScope().addClassifierDescriptor(descriptor);
@@ -137,9 +138,11 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
     }
 
     @NotNull
-    private static byte[] serializePackage(@NotNull PackageFragmentDescriptor descriptor) {
+    private static byte[] serializePackage(@NotNull PackageViewDescriptor descriptor) {
         DescriptorSerializer serializer = new DescriptorSerializer();
-        ProtoBuf.Package proto = serializer.packageProto(Collections.singleton(descriptor)).build();
+        List<PackageFragmentDescriptor> fragments =
+                descriptor.getModule().getPackageFragmentProvider().getPackageFragments(descriptor.getFqName());
+        ProtoBuf.Package proto = serializer.packageProto(fragments).build();
         PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), proto);
         return data.toBytes();
     }
@@ -149,7 +152,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         final Map<ClassDescriptor, byte[]> serializedClasses = new HashMap<ClassDescriptor, byte[]>();
         final DescriptorSerializer serializer = new DescriptorSerializer();
 
-        ClassSerializationUtil.serializeClasses(classes, serializer, new ClassSerializationUtil.Sink() {
+        ClassSerializationUtil.instance$.serializeClasses(classes, serializer, new ClassSerializationUtil.Sink() {
             @Override
             public void writeClass(@NotNull ClassDescriptor classDescriptor, @NotNull ProtoBuf.Class classProto) {
                 ClassData data = new ClassData(createNameResolver(serializer.getNameTable()), classProto);
@@ -178,7 +181,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
         @Override
         public ClassDescriptor findClass(@NotNull ClassId classId) {
             ClassDescriptor found = super.findClass(classId);
-            return found != null ? found : javaDescriptorResolver.resolveClass(classId.asSingleFqName().toSafe(), IGNORE_KOTLIN_SOURCES);
+            return found != null ? found : javaDescriptorResolver.resolveClass(classId.asSingleFqName().toSafe());
         }
 
         @Nullable

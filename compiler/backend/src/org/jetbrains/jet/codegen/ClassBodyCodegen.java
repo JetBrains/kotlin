@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -116,8 +116,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v);
         }
         else if (declaration instanceof JetClassOrObject) {
-            if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(
-                    state.getBindingContext(), (JetEnumEntry) declaration)) {
+            if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(state.getBindingContext(), (JetEnumEntry) declaration)) {
                 return;
             }
 
@@ -180,7 +179,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             MethodVisitor method = createOrGetClInitMethod();
             method.visitCode();
             SimpleFunctionDescriptorImpl clInit =
-                    new SimpleFunctionDescriptorImpl(descriptor, Collections.<AnnotationDescriptor>emptyList(),
+                    new SimpleFunctionDescriptorImpl(descriptor, Annotations.EMPTY,
                                                      Name.special("<clinit>"),
                                                      CallableMemberDescriptor.Kind.SYNTHESIZED);
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),

@@ -29,9 +29,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
-import org.jetbrains.jet.lang.resolve.kotlin.header.SerializedDataHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -51,10 +51,10 @@ public class JetFromJavaDescriptorHelper {
     /**
      * Get java equivalents for jet top level classes.
      */
-    static Collection<PsiClass> getClassesForJetNamespaces(Project project, GlobalSearchScope scope) {
+    static Collection<PsiClass> getClassesForKotlinPackages(Project project, GlobalSearchScope scope) {
         /* Will iterate through short name caches
-           Kotlin namespaces from jar a class files will be collected from java cache
-           Kotlin namespaces classes from sources will be collected with JetShortNamesCache.getClassesByName */
+           Kotlin packages from jar a class files will be collected from java cache
+           Kotlin package classes from sources will be collected with JetShortNamesCache.getClassesByName */
         return getClassesByAnnotation(KotlinPackage.class.getSimpleName(), project, scope);
     }
 
@@ -64,8 +64,8 @@ public class JetFromJavaDescriptorHelper {
     static Collection<String> getPossiblePackageDeclarationsNames(Project project, GlobalSearchScope scope) {
         Collection<String> result = new ArrayList<String>();
 
-        for (PsiClass jetNamespaceClass : getClassesForJetNamespaces(project, scope)) {
-            for (PsiMethod psiMethod : jetNamespaceClass.getMethods()) {
+        for (PsiClass packageClass : getClassesForKotlinPackages(project, scope)) {
+            for (PsiMethod psiMethod : packageClass.getMethods()) {
                 if (psiMethod.getModifierList().hasModifierProperty(PsiModifier.STATIC)) {
                     result.add(psiMethod.getName());
                 }
@@ -117,9 +117,10 @@ public class JetFromJavaDescriptorHelper {
     private static String[] getAnnotationDataForKotlinClass(@NotNull PsiClass psiClass) {
         VirtualFile virtualFile = getVirtualFileForPsiClass(psiClass);
         if (virtualFile != null) {
-            KotlinClassHeader header = KotlinClassHeader.read(new VirtualFileKotlinClass(virtualFile));
-            if (header instanceof SerializedDataHeader) {
-                return ((SerializedDataHeader) header).getAnnotationData();
+            KotlinJvmBinaryClass kotlinClass = VirtualFileFinder.SERVICE.getInstance(psiClass.getProject()).createKotlinClass(virtualFile);
+            KotlinClassHeader header = kotlinClass.getClassHeader();
+            if (header != null) {
+                return header.getAnnotationData();
             }
         }
         return null;

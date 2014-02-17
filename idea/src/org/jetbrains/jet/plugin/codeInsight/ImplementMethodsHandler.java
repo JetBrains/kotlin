@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -32,7 +32,7 @@ import java.util.Set;
 public class ImplementMethodsHandler extends OverrideImplementMethodsHandler implements IntentionAction {
 
     @Override
-    protected Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor) {
+    protected Set<CallableMemberDescriptor> collectMethodsToGenerate(ClassDescriptor descriptor) {
         Set<CallableMemberDescriptor> missingImplementations = Sets.newLinkedHashSet();
         OverrideResolver.collectMissingImplementations(descriptor, missingImplementations, missingImplementations);
         return missingImplementations;

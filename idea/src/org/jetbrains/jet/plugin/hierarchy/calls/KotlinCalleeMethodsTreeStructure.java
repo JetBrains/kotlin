@@ -23,15 +23,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.util.ArrayUtil;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
     private final CalleeMethodsTreeStructure javaTreeStructure;
@@ -47,54 +48,57 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         this.javaTreeStructure = new CalleeMethodsTreeStructure(project, representativePsiMethod, scopeType);
     }
 
-    private static List<? extends PsiElement> getCalleeElements(@NotNull JetElement rootElement, BindingContext bindingContext) {
-        final ArrayList<PsiElement> result = new ArrayList<PsiElement>();
-        JetVisitorVoid visitor = new CalleeReferenceVisitorBase(bindingContext, false) {
-            @Override
-            protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
-                result.add(declaration);
-            }
-        };
-
+    private static Map<PsiReference, PsiElement> getReferencesToCalleeElements(@NotNull JetElement rootElement) {
+        List<JetElement> elementsToAnalyze = new ArrayList<JetElement>();
         if (rootElement instanceof JetNamedFunction) {
-            JetExpression body = ((JetNamedFunction) rootElement).getBodyExpression();
-            if (body != null) {
-                body.accept(visitor);
-            }
+            elementsToAnalyze.add(((JetNamedFunction) rootElement).getBodyExpression());
         } else if (rootElement instanceof JetProperty) {
             for (JetPropertyAccessor accessor : ((JetProperty) rootElement).getAccessors()) {
                 JetExpression body = accessor.getBodyExpression();
                 if (body != null) {
-                    body.accept(visitor);
+                    elementsToAnalyze.add(body);
                 }
             }
         } else {
             JetClassOrObject classOrObject = (JetClassOrObject) rootElement;
             for (JetDelegationSpecifier specifier : classOrObject.getDelegationSpecifiers()) {
                 if (specifier instanceof JetCallElement) {
-                    specifier.accept(visitor);
+                    elementsToAnalyze.add(specifier);
                 }
             }
 
             JetClassBody body = classOrObject.getBody();
             if (body != null) {
                 for (JetClassInitializer initializer : body.getAnonymousInitializers()) {
-                    initializer.getBody().accept(visitor);
+                    elementsToAnalyze.add(initializer.getBody());
                 }
                 for (JetProperty property : body.getProperties()) {
                     JetExpression initializer = property.getInitializer();
                     if (initializer != null) {
-                        initializer.accept(visitor);
+                        elementsToAnalyze.add(initializer);
                     }
                 }
             }
         }
 
-        return result;
+        final Map<PsiReference, PsiElement> referencesToCalleeElements = new HashMap<PsiReference, PsiElement>();
+        for (JetElement element : elementsToAnalyze) {
+            element.accept(
+                    new CalleeReferenceVisitorBase(AnalyzerFacadeWithCache.getContextForElement(element), false) {
+                        @Override
+                        protected void processDeclaration(JetReferenceExpression reference, PsiElement declaration) {
+                            referencesToCalleeElements.put(reference.getReference(), declaration);
+                        }
+                    }
+            );
+        }
+
+        return referencesToCalleeElements;
     }
 
+    @NotNull
     @Override
-    protected Object[] buildChildren(HierarchyNodeDescriptor descriptor) {
+    protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
         PsiElement targetElement = getTargetElement(descriptor);
 
         // Kotlin class constructor invoked from Java code
@@ -118,20 +122,14 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
             return buildChildrenByKotlinTarget(descriptor, (JetElement) targetElement);
         }
 
-        if (javaTreeStructure != null) {
-            CallHierarchyNodeDescriptor javaDescriptor = descriptor instanceof CallHierarchyNodeDescriptor
-                                                         ? (CallHierarchyNodeDescriptor) descriptor
-                                                         : ((KotlinCallHierarchyNodeDescriptor)descriptor).getJavaDelegate();
-            return javaTreeStructure.getChildElements(javaDescriptor);
-        }
-
-        return ArrayUtil.EMPTY_OBJECT_ARRAY;
+        CallHierarchyNodeDescriptor javaDescriptor = descriptor instanceof CallHierarchyNodeDescriptor
+                                                     ? (CallHierarchyNodeDescriptor) descriptor
+                                                     : ((KotlinCallHierarchyNodeDescriptor)descriptor).getJavaDelegate();
+        return javaTreeStructure.getChildElements(javaDescriptor);
     }
 
     private Object[] buildChildrenByKotlinTarget(HierarchyNodeDescriptor descriptor, JetElement targetElement) {
-        BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) targetElement.getContainingFile()).getBindingContext();
-        List<? extends PsiElement> calleeDescriptors = getCalleeElements((JetElement) targetElement, bindingContext);
-        return collectNodeDescriptors(descriptor, calleeDescriptors, representativePsiClass);
+        Map<PsiReference, PsiElement> referencesToCalleeElements = getReferencesToCalleeElements(targetElement);
+        return collectNodeDescriptors(descriptor, referencesToCalleeElements, representativePsiClass);
     }
 }

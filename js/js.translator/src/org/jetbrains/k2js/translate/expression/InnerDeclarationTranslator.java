@@ -21,8 +21,8 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.context.UsageTracker;
 
 import java.util.List;
 
@@ -38,35 +38,43 @@ abstract class InnerDeclarationTranslator {
         this.fun = fun;
     }
 
+    @NotNull
     public JsExpression translate(@NotNull JsNameRef nameRef, @Nullable JsExpression self) {
-        boolean hasCaptured = context.usageTracker().hasCaptured();
+        UsageTracker usageTracker = context.usageTracker();
+        assert usageTracker != null : "Usage tracker should not be null for InnerDeclarationTranslator";
+
+        boolean hasCaptured = usageTracker.hasCaptured();
         if (!hasCaptured && self == JsLiteral.NULL) {
             return createExpression(nameRef, self);
         }
 
         JsInvocation invocation = createInvocation(nameRef, self);
         if (hasCaptured) {
-            final List<JsExpression> expressions = invocation.getArguments();
-            context.usageTracker().forEachCaptured(new Consumer<CallableDescriptor>() {
+            final List<JsExpression> invocationArguments = invocation.getArguments();
+            usageTracker.forEachCaptured(new Consumer<CallableDescriptor>() {
                 @Override
                 public void consume(CallableDescriptor descriptor) {
-                    JsName name;
-                    if (descriptor instanceof VariableDescriptor) {
-                        name = context.getNameForDescriptor(descriptor);
-                    }
-                    else {
-                        name = ((JsNameRef) context.getAliasForDescriptor(descriptor)).getName();
-                        assert name != null;
-                    }
-                    fun.getParameters().add(new JsParameter(name));
-                    expressions.add(name.makeRef());
+                    fun.getParameters().add(new JsParameter(getParameterNameFor(descriptor)));
+                    invocationArguments.add(getParameterNameRefFor(descriptor));
                 }
             });
         }
         return invocation;
     }
 
+    @NotNull
+    protected JsName getParameterNameFor(@NotNull CallableDescriptor descriptor) {
+        return context.getNameForDescriptor(descriptor);
+    }
+
+    @NotNull
+    protected JsNameRef getParameterNameRefFor(@NotNull CallableDescriptor descriptor) {
+        return getParameterNameFor(descriptor).makeRef();
+    }
+
+    @NotNull
     protected abstract JsExpression createExpression(@NotNull JsNameRef nameRef, @Nullable JsExpression self);
 
+    @NotNull
     protected abstract JsInvocation createInvocation(@NotNull JsNameRef nameRef, @Nullable JsExpression self);
 }

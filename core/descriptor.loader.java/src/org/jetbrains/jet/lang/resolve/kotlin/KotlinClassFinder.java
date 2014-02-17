@@ -16,11 +16,18 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface KotlinClassFinder {
+
     @Nullable
-    KotlinJvmBinaryClass find(@NotNull FqName fqName);
+    KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName);
+
+    @NotNull
+    KotlinJvmBinaryClass createKotlinClass(@NotNull VirtualFile virtualFile);
 }

@@ -26,7 +26,7 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.CodegenTestCase;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -102,7 +102,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         }
         catch (Throwable e) {
             System.out.println(generateToText());
-            throw ExceptionUtils.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 }

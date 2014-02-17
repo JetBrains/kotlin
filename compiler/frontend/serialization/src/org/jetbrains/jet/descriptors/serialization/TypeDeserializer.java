@@ -25,7 +25,7 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeP
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
@@ -205,7 +205,7 @@ public class TypeDeserializer {
         return debugName;
     }
 
-    private class DeserializedType extends AbstractJetType {
+    private class DeserializedType extends AbstractJetType implements LazyType {
         private final ProtoBuf.Type typeProto;
         private final NotNullLazyValue<TypeConstructor> constructor;
         private final List<TypeProjection> arguments;
@@ -270,8 +270,8 @@ public class TypeDeserializer {
 
         @NotNull
         @Override
-        public List<AnnotationDescriptor> getAnnotations() {
-            return Collections.emptyList();
+        public Annotations getAnnotations() {
+            return Annotations.EMPTY;
         }
     }
 }

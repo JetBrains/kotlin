@@ -24,6 +24,6 @@ annotation class Annotation7(val name: String) <!ANNOTATION_CLASS_WITH_BODY!>{}<
 
 annotation class Annotation8(var name: String = "") <!ANNOTATION_CLASS_WITH_BODY!>{}<!>
 
-annotation class Annotation9(name: String)
+annotation class Annotation9(val name: String)
 
 annotation class Annotation10

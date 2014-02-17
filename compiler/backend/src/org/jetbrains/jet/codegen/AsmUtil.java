@@ -150,7 +150,7 @@ public class AsmUtil {
     }
 
     public static boolean isStatic(OwnerKind kind) {
-        return kind == OwnerKind.NAMESPACE || kind == OwnerKind.TRAIT_IMPL;
+        return kind == OwnerKind.PACKAGE || kind == OwnerKind.TRAIT_IMPL;
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind) {
@@ -491,7 +491,7 @@ public class AsmUtil {
             if (type == null || isNullableType(type)) continue;
 
             int index = frameMap.getIndex(parameter);
-            Type asmType = state.getTypeMapper().mapReturnType(type);
+            Type asmType = state.getTypeMapper().mapType(type);
             if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
                 v.load(index, asmType);
                 v.visitLdcInsn(parameter.getName().asString());
@@ -532,7 +532,7 @@ public class AsmUtil {
         JetType type = descriptor.getReturnType();
         if (type == null || isNullableType(type)) return;
 
-        Type asmType = state.getTypeMapper().mapReturnType(type);
+        Type asmType = state.getTypeMapper().mapReturnType(descriptor);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
             v.dup();
             v.visitLdcInsn(descriptor.getContainingDeclaration().getName().asString());

@@ -24,10 +24,9 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.PsiClassStub;
+import com.intellij.psi.impl.light.LightTypeParameterListBuilder;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.StubElement;
@@ -42,7 +41,7 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.utils.ExceptionUtils;
+import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jet.utils.KotlinVfsUtil;
 
 import java.io.File;
@@ -53,11 +52,11 @@ import java.util.*;
 public class LightClassUtil {
     private static final Logger LOG = Logger.getInstance(LightClassUtil.class);
 
-    public static final File BUILT_INS_SRC_DIR = new File("idea/builtinsSrc", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING);
+    public static final File BUILT_INS_SRC_DIR = new File("core/builtins/native", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING);
 
     /**
      * Checks whether the given file is loaded from the location where Kotlin's built-in classes are defined.
-     * As of today, this is idea/builtinsSrc/jet directory and files such as Any.jet, Nothing.jet etc.
+     * As of today, this is core/builtins/native/jet directory and files such as Any.kt, Nothing.kt etc.
      *
      * Used to skip JetLightClass creation for built-ins, because built-in classes have no Java counterparts
      */
@@ -98,7 +97,7 @@ public class LightClassUtil {
                                    FileUtil.toSystemIndependentName(BUILT_INS_SRC_DIR.getAbsolutePath()));
                 }
                 catch (MalformedURLException e) {
-                    throw ExceptionUtils.rethrow(e);
+                    throw UtilsPackage.rethrow(e);
                 }
             }
 
@@ -287,6 +286,24 @@ public class LightClassUtil {
         }
 
         return new PropertyAccessorsPsiMethods(getterWrapper, setterWrapper);
+    }
+
+    @NotNull
+    public static PsiTypeParameterList buildLightTypeParameterList(
+            PsiTypeParameterListOwner owner,
+            JetDeclaration declaration) {
+        LightTypeParameterListBuilder builder = new LightTypeParameterListBuilder(owner.getManager(), owner.getLanguage());
+        if (declaration instanceof JetTypeParameterListOwner) {
+            JetTypeParameterListOwner typeParameterListOwner = (JetTypeParameterListOwner) declaration;
+            List<JetTypeParameter> parameters = typeParameterListOwner.getTypeParameters();
+            for (int i = 0; i < parameters.size(); i++) {
+                JetTypeParameter jetTypeParameter = parameters.get(i);
+                String name = jetTypeParameter.getName();
+                String safeName = name == null ? "__no_name__" : name;
+                builder.addParameter(new KotlinLightTypeParameter(owner, i, safeName));
+            }
+        }
+        return builder;
     }
 
     public static class PropertyAccessorsPsiMethods implements Iterable<PsiMethod> {

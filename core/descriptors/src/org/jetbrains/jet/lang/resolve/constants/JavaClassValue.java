@@ -21,14 +21,13 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public class JavaClassValue implements CompileTimeConstant<JetType> {
+public class JavaClassValue extends CompileTimeConstant<JetType> {
 
-    private final JetType value;
-
-    public JavaClassValue(JetType value) {
-        this.value = value;
+    public JavaClassValue(@NotNull JetType value) {
+        super(value, true, false);
     }
 
+    @NotNull
     @Override
     public JetType getValue() {
         return value.getArguments().iterator().next().getType();

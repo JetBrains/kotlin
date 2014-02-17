@@ -48,10 +48,6 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     protected final List<JsPropertyInitializer> staticResult;
     protected final List<JsPropertyInitializer> enumEntryList = new SmartList<JsPropertyInitializer>();
 
-    public DeclarationBodyVisitor() {
-        this(new SmartList<JsPropertyInitializer>(), new SmartList<JsPropertyInitializer>());
-    }
-
     public DeclarationBodyVisitor(@NotNull List<JsPropertyInitializer> result, @NotNull List<JsPropertyInitializer> staticResult) {
         this.result = result;
         this.staticResult = staticResult;
@@ -89,7 +85,6 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     @Override
     public Void visitClassObject(@NotNull JetClassObject classObject, TranslationContext context) {
         JetObjectDeclaration declaration = classObject.getObjectDeclaration();
-        assert declaration != null : "Declaration for class object must be not null";
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
         JsExpression value = ClassTranslator.generateClassCreation(declaration, descriptor, context);
 

@@ -24,11 +24,11 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
+import org.jetbrains.jet.lang.resolve.java.AnnotationLoadingUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -41,7 +41,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
 
 public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
-    private static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
+    public static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
 
     private static JavaToKotlinClassMap instance = null;
 
@@ -109,9 +109,9 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         AnnotationDescriptorImpl annotation = new AnnotationDescriptorImpl();
         annotation.setAnnotationType(annotationClass.getDefaultType());
         ValueParameterDescriptor value = DescriptorResolverUtils.getAnnotationParameterByName(
-                JavaAnnotationResolver.DEFAULT_ANNOTATION_MEMBER_NAME, annotationClass);
+                AnnotationLoadingUtil.DEFAULT_ANNOTATION_MEMBER_NAME, annotationClass);
         assert value != null : "jet.deprecated must have one parameter called value";
-        annotation.setValueArgument(value, new StringValue("Deprecated in Java"));
+        annotation.setValueArgument(value, new StringValue("Deprecated in Java", true));
         return annotation;
     }
 

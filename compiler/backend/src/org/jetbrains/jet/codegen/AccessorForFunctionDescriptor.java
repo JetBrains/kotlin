@@ -18,7 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -35,7 +35,7 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
             @NotNull DeclarationDescriptor containingDeclaration,
             int index
     ) {
-        super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(),
+        super(containingDeclaration, Annotations.EMPTY,
               Name.identifier((descriptor instanceof ConstructorDescriptor ? "$init" : descriptor.getName()) + "$b$" + index),
               Kind.DECLARATION);
 

@@ -40,10 +40,12 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
         this.variableCall = variableCall;
     }
 
+    @NotNull
     public ResolvedCallWithTrace<FunctionDescriptor> getFunctionCall() {
         return functionCall;
     }
 
+    @NotNull
     public ResolvedCallWithTrace<VariableDescriptor> getVariableCall() {
         return variableCall;
     }
@@ -99,10 +101,7 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     @NotNull
     @Override
     public ResolutionStatus getStatus() {
-        if (variableCall.getStatus() == ResolutionStatus.SUCCESS) {
-            return functionCall.getStatus();
-        }
-        return variableCall.getStatus();
+        return variableCall.getStatus().combine(functionCall.getStatus());
     }
 
     @Override

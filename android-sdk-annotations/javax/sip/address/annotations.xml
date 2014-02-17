@@ -1,0 +1,80 @@
+<root>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.Address createAddress()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.SipURI void setHeader(java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.Address createAddress(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.SipURI createSipURI(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.SipURI createSipURI(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.Address void setURI(javax.sip.address.URI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.SipURI void setTransportParam(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.TelURL createTelURL(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.Router javax.sip.address.Hop getNextHop(javax.sip.message.Request) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.SipURI createSipURI(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.Address createAddress(java.lang.String, javax.sip.address.URI) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.URI createURI(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.SipURI java.lang.String getUserAtHostPort()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.Address createAddress(javax.sip.address.URI) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.SipURI java.lang.String getUserAtHost()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.TelURL createTelURL(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.SipURI void setHost(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.Hop java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.SipURI java.lang.String getHeader(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.URI java.lang.String toString()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.URI createURI(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.Address createAddress(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.Address createAddress(javax.sip.address.URI)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.Address createAddress(java.lang.String, javax.sip.address.URI)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.AddressFactory javax.sip.address.SipURI createSipURI(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='javax.sip.address.SipURI void setMAddrParam(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

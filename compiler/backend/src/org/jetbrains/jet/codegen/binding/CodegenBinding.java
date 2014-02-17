@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.binding;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
@@ -40,7 +39,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 
 public class CodegenBinding {
@@ -63,7 +61,7 @@ public class CodegenBinding {
 
     public static void initTrace(BindingTrace bindingTrace, Collection<JetFile> files) {
         CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(bindingTrace);
-        for (JetFile file : allFilesInNamespaces(bindingTrace.getBindingContext(), files)) {
+        for (JetFile file : allFilesInPackages(bindingTrace.getBindingContext(), files)) {
             file.accept(visitor);
         }
     }
@@ -225,7 +223,7 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static Collection<JetFile> allFilesInNamespaces(BindingContext bindingContext, Collection<JetFile> files) {
+    public static Collection<JetFile> allFilesInPackages(BindingContext bindingContext, Collection<JetFile> files) {
         // todo: we use Set and add given files but ignoring other scripts because something non-clear kept in binding
         // for scripts especially in case of REPL
 
@@ -262,22 +260,6 @@ public class CodegenBinding {
         });
 
         return sortedAnswer;
-    }
-
-    public static boolean isObjectLiteral(BindingContext bindingContext, ClassDescriptor declaration) {
-        PsiElement psiElement = descriptorToDeclaration(bindingContext, declaration);
-        if (psiElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) psiElement).isObjectLiteral()) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isObjectDeclaration(BindingContext bindingContext, ClassDescriptor declaration) {
-        PsiElement psiElement = descriptorToDeclaration(bindingContext, declaration);
-        if (psiElement instanceof JetObjectDeclaration && !((JetObjectDeclaration) psiElement).isObjectLiteral()) {
-            return true;
-        }
-        return false;
     }
 
     public static boolean isLocalNamedFun(DeclarationDescriptor fd) {
@@ -342,10 +324,7 @@ public class CodegenBinding {
         return closure != null && closure.getCaptureThis() != null;
     }
 
-    private static JetDelegatorToSuperCall findSuperCall(
-            BindingContext bindingContext,
-            JetElement classOrObject
-    ) {
+    private static JetDelegatorToSuperCall findSuperCall(BindingContext bindingContext, JetElement classOrObject) {
         if (!(classOrObject instanceof JetClassOrObject)) {
             return null;
         }
@@ -353,10 +332,15 @@ public class CodegenBinding {
         if (classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait()) {
             return null;
         }
+
         for (JetDelegationSpecifier specifier : ((JetClassOrObject) classOrObject).getDelegationSpecifiers()) {
             if (specifier instanceof JetDelegatorToSuperCall) {
-                JetType superType = bindingContext.get(TYPE, specifier.getTypeReference());
-                assert superType != null;
+                JetTypeReference typeReference = specifier.getTypeReference();
+
+                JetType superType = bindingContext.get(TYPE, typeReference);
+                assert superType != null: String.format(
+                        "No type in binding context for  \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(specifier));
+
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
                 assert superClassDescriptor != null;
                 if (!isInterface(superClassDescriptor)) {
@@ -366,5 +350,41 @@ public class CodegenBinding {
         }
 
         return null;
+    }
+
+    @NotNull
+    public static Collection<ClassDescriptor> getAllInnerClasses(
+            @NotNull BindingContext bindingContext, @NotNull ClassDescriptor outermostClass
+    ) {
+        Collection<ClassDescriptor> innerClasses = bindingContext.get(INNER_CLASSES, outermostClass);
+        if (innerClasses == null || innerClasses.isEmpty()) return Collections.emptySet();
+
+        Set<ClassDescriptor> allInnerClasses = new HashSet<ClassDescriptor>();
+
+        Deque<ClassDescriptor> stack = new ArrayDeque<ClassDescriptor>(innerClasses);
+        do {
+            ClassDescriptor currentClass = stack.pop();
+            if (allInnerClasses.add(currentClass)) {
+                Collection<ClassDescriptor> nextClasses = bindingContext.get(INNER_CLASSES, currentClass);
+                if (nextClasses != null) {
+                    for (ClassDescriptor nextClass : nextClasses) {
+                        stack.push(nextClass);
+                    }
+                }
+            }
+        } while (!stack.isEmpty());
+
+        return allInnerClasses;
+    }
+
+    @NotNull
+    public static String getJvmInternalName(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
+        Type asmType = bindingContext.get(ASM_TYPE, classDescriptor);
+        assert asmType != null : "ASM_TYPE not present for " + classDescriptor;
+
+        String jvmInternalName = asmType.getClassName();
+        assert jvmInternalName != null : "No internal name for " + asmType + " for class " + classDescriptor;
+
+        return jvmInternalName;
     }
 }

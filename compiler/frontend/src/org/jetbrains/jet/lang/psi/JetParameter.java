@@ -53,11 +53,6 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitParameter(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitParameter(this, data);
     }

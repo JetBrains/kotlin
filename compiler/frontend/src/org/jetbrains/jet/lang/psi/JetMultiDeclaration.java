@@ -33,11 +33,6 @@ public class JetMultiDeclaration extends JetDeclarationImpl {
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitMultiDeclaration(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitMultiDeclaration(this, data);
     }

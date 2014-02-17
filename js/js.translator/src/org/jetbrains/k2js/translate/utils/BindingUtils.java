@@ -27,7 +27,9 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.List;
 
@@ -154,10 +156,19 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static ResolvedCall<?> getResolvedCallForCallExpression(@NotNull BindingContext context,
+    public static ResolvedCall<? extends FunctionDescriptor> getResolvedCallForCallExpression(@NotNull BindingContext context,
             @NotNull JetCallExpression expression) {
         JetExpression calleeExpression = PsiUtils.getCallee(expression);
-        return getResolvedCall(context, calleeExpression);
+        return getFunctionResolvedCall(context, calleeExpression);
+    }
+
+    @NotNull
+    public static ResolvedCall<? extends FunctionDescriptor> getFunctionResolvedCall(@NotNull BindingContext context,
+            @NotNull JetExpression expression) {
+        ResolvedCall<?> resolvedCall = getResolvedCall(context, expression);
+        assert resolvedCall.getResultingDescriptor() instanceof FunctionDescriptor
+                : message(expression, "ResolvedCall for this expression must be ResolvedCall<? extends FunctionDescriptor>");
+        return (ResolvedCall<? extends FunctionDescriptor>) resolvedCall;
     }
 
     public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {
@@ -187,7 +198,19 @@ public final class BindingUtils {
     public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull JetExpression expression) {
         CompileTimeConstant<?> compileTimeValue = context.get(BindingContext.COMPILE_TIME_VALUE, expression);
         if (compileTimeValue != null) {
-            return compileTimeValue.getValue();
+            return getCompileTimeValue(context, expression, compileTimeValue);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull JetExpression expression, @NotNull CompileTimeConstant<?> constant) {
+        if (constant != null) {
+            if (constant instanceof IntegerValueTypeConstant) {
+                JetType expectedType = context.get(BindingContext.EXPRESSION_TYPE, expression);
+                return ((IntegerValueTypeConstant) constant).getValue(expectedType == null ? TypeUtils.NO_EXPECTED_TYPE : expectedType);
+            }
+            return constant.getValue();
         }
         return null;
     }

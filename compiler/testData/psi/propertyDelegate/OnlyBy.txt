@@ -1,5 +1,5 @@
 JetFile: OnlyBy.kt
-  NAMESPACE_HEADER
+  PACKAGE_DIRECTIVE
     <empty list>
   PROPERTY
     PsiElement(val)('val')

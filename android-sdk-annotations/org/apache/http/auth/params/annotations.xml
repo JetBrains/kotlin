@@ -11,4 +11,7 @@
     <item name='org.apache.http.auth.params.AuthParams java.lang.String getCredentialCharset(org.apache.http.params.HttpParams)'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.http.auth.params.AuthPNames CREDENTIAL_CHARSET'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>

@@ -4,6 +4,8 @@ import jet.Function0;
 import jet.Function1;
 import jet.Unit;
 import junit.framework.TestCase;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.util.ReenteringLazyValueComputationException;
 
 import java.util.ArrayList;
@@ -128,6 +130,27 @@ public class StorageManagerTest extends TestCase {
         ExceptionCounterFunction counter = new ExceptionCounterFunction();
         MemoizedFunctionToNullable<String, String> f = m.createMemoizedFunctionWithNullableValues(counter);
         doTestExceptionPreserved(apply(f, ""), UnsupportedOperationException.class, counter);
+    }
+
+    public void testRecursionDetection() throws Exception {
+        class C {
+            MemoizedFunctionToNotNull<String, String> rec = m.createMemoizedFunction(
+                    new Function1<String, String>() {
+                        @Override
+                        public String invoke(String s) {
+                            return rec.invoke("!!!");
+                        }
+                    }
+            );
+        }
+
+        try {
+            new C().rec.invoke("");
+            fail();
+        }
+        catch (AssertionError e) {
+            assertTrue(e.getMessage().startsWith("Recursion detected on input: !!!"));
+        }
     }
 
     // Values
@@ -382,6 +405,88 @@ public class StorageManagerTest extends TestCase {
         }
 
         assertEquals("second", c.rec.invoke());
+    }
+
+    public void testFallThrough() throws Exception {
+        final CounterImpl c = new CounterImpl();
+        class C {
+            NotNullLazyValue<Integer> rec = LockBasedStorageManager.NO_LOCKS.createLazyValue(new Function0<Integer>() {
+                @Override
+                public Integer invoke() {
+                    c.inc();
+                    if (c.getCount() < 2) {
+                        return rec.invoke();
+                    }
+                    else {
+                        return c.getCount();
+                    }
+                }
+            });
+        }
+
+        assertEquals(2, new C().rec.invoke().intValue());
+        assertEquals(2, c.getCount());
+    }
+
+    // ExceptionHandlingStrategy
+
+    public void testExceptionHandlingStrategyForLazyValues() throws Exception {
+        class RethrownException extends RuntimeException {}
+
+        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(new LockBasedStorageManager.ExceptionHandlingStrategy() {
+            @NotNull
+            @Override
+            public RuntimeException handleException(@NotNull Throwable throwable) {
+                throw new RethrownException();
+            }
+        });
+        try {
+            m.createLazyValue(
+                    new Function0<Object>() {
+                        @Nullable
+                        @Override
+                        public Object invoke() {
+                            throw new RuntimeException();
+                        }
+                    }
+            ).invoke();
+            fail("Exception should have occurred");
+        }
+        catch (RethrownException ignored) {
+        }
+    }
+
+    public void testExceptionHandlingStrategyForMemoizedFunctions() throws Exception {
+        class RethrownException extends RuntimeException {}
+
+        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(new LockBasedStorageManager.ExceptionHandlingStrategy() {
+            @NotNull
+            @Override
+            public RuntimeException handleException(@NotNull Throwable throwable) {
+                throw new RethrownException();
+            }
+        });
+        try {
+            m.createMemoizedFunction(
+                    new Function1<Object, Object>() {
+                        @Nullable
+                        @Override
+                        public Object invoke(@Nullable Object o) {
+                            throw new RuntimeException();
+                        }
+                    }
+            ).invoke("");
+            fail("Exception should have occurred");
+        }
+        catch (RethrownException ignored) {
+        }
+    }
+
+    // toString()
+
+    public void testToString() throws Exception {
+        assertTrue("Should mention the setUp() method of this class: " + m.toString(),
+                   m.toString().contains(getClass().getSimpleName() + ".setUp("));
     }
 
     // Utilities

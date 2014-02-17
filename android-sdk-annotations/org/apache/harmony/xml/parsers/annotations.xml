@@ -5,6 +5,9 @@
     <item name='org.apache.harmony.xml.parsers.DocumentBuilderFactoryImpl java.lang.Object getAttribute(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
+    <item name='org.apache.harmony.xml.parsers.SAXParserFactoryImpl javax.xml.parsers.SAXParser newSAXParser()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
     <item name='org.apache.harmony.xml.parsers.SAXParserFactoryImpl boolean getFeature(java.lang.String) 0'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
@@ -15,9 +18,6 @@
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.parsers.DocumentBuilderFactoryImpl void setAttribute(java.lang.String, java.lang.Object) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.harmony.xml.parsers.SAXParserFactoryImpl javax.xml.parsers.SAXParser newSAXParser()'>
         <annotation name='org.jetbrains.annotations.NotNull'/>
     </item>
     <item name='org.apache.harmony.xml.parsers.DocumentBuilderFactoryImpl void setAttribute(java.lang.String, java.lang.Object) 1'>

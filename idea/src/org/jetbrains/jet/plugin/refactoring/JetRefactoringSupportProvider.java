@@ -20,20 +20,17 @@ import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureHandler;
 import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetIntroduceVariableHandler;
-import org.jetbrains.jet.plugin.refactoring.safeDelete.KotlinSafeDeleteProcessor;
+import org.jetbrains.jet.plugin.refactoring.safeDelete.SafeDeletePackage;
 
-/**
- * User: Alefas
- * Date: 25.01.12
- */
 public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
     @Override
-    public boolean isSafeDeleteAvailable(PsiElement element) {
-        return KotlinSafeDeleteProcessor.canDeleteElement(element);
+    public boolean isSafeDeleteAvailable(@NotNull PsiElement element) {
+        return SafeDeletePackage.canDeleteElement(element);
     }
 
     @Override
@@ -42,7 +39,7 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
     }
 
     @Override
-    public boolean isInplaceRenameAvailable(PsiElement element, PsiElement context) {
+    public boolean isInplaceRenameAvailable(@NotNull PsiElement element, PsiElement context) {
         if (element instanceof JetProperty) {
             JetProperty property = (JetProperty) element;
             if (property.isLocal()) return true;
@@ -50,6 +47,16 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
         else if (element instanceof JetFunction) {
             JetFunction function = (JetFunction) element;
             if (function.isLocal()) return true;
+        }
+        else if (element instanceof JetParameter) {
+            PsiElement parent = element.getParent();
+            if (parent instanceof JetForExpression) {
+                return true;
+            }
+            if (parent instanceof JetParameterList) {
+                PsiElement grandparent = parent.getParent();
+                return grandparent instanceof JetCatchClause || grandparent instanceof JetFunctionLiteral;
+            }
         }
         return false;
     }

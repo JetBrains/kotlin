@@ -35,7 +35,7 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
 public class QualifiedExpressionResolver {
-    private static final Predicate<DeclarationDescriptor> CLASSIFIERS_AND_NAMESPACES = new Predicate<DeclarationDescriptor>() {
+    private static final Predicate<DeclarationDescriptor> CLASSIFIERS_AND_PACKAGE_VIEWS = new Predicate<DeclarationDescriptor>() {
         @Override
         public boolean apply(@Nullable DeclarationDescriptor descriptor) {
             return descriptor instanceof ClassifierDescriptor || descriptor instanceof PackageViewDescriptor;
@@ -70,7 +70,7 @@ public class QualifiedExpressionResolver {
             @NotNull ModuleDescriptor module,
             @NotNull LookupMode lookupMode
     ) {
-        if (importDirective.isAbsoluteInRootNamespace()) {
+        if (importDirective.isAbsoluteInRootPackage()) {
             trace.report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
             return Collections.emptyList();
         }
@@ -158,7 +158,7 @@ public class QualifiedExpressionResolver {
     public Collection<? extends DeclarationDescriptor> lookupDescriptorsForUserType(@NotNull JetUserType userType,
             @NotNull JetScope outerScope, @NotNull BindingTrace trace) {
 
-        if (userType.isAbsoluteInRootNamespace()) {
+        if (userType.isAbsoluteInRootPackage()) {
             trace.report(Errors.UNSUPPORTED.on(userType, "package"));
             return Collections.emptyList();
         }
@@ -241,9 +241,9 @@ public class QualifiedExpressionResolver {
 
     @NotNull
     public Collection<? extends DeclarationDescriptor> lookupDescriptorsForSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression,
-            @NotNull JetScope outerScope, @NotNull JetScope scopeToCheckVisibility, @NotNull BindingTrace trace, @NotNull LookupMode lookupMode, boolean namespaceLevel, boolean storeResult) {
+            @NotNull JetScope outerScope, @NotNull JetScope scopeToCheckVisibility, @NotNull BindingTrace trace, @NotNull LookupMode lookupMode, boolean packageLevel, boolean storeResult) {
 
-        LookupResult lookupResult = lookupSimpleNameReference(referenceExpression, outerScope, lookupMode, namespaceLevel);
+        LookupResult lookupResult = lookupSimpleNameReference(referenceExpression, outerScope, lookupMode, packageLevel);
         if (lookupResult == LookupResult.EMPTY) return Collections.emptyList();
         return filterAndStoreResolutionResult(Collections.singletonList((SuccessfulLookupResult)lookupResult), referenceExpression, trace, scopeToCheckVisibility,
                                               lookupMode, storeResult);
@@ -251,7 +251,7 @@ public class QualifiedExpressionResolver {
 
     @NotNull
     private LookupResult lookupSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression,
-            @NotNull JetScope outerScope, @NotNull LookupMode lookupMode, boolean namespaceLevel) {
+            @NotNull JetScope outerScope, @NotNull LookupMode lookupMode, boolean packageLevel) {
 
         Name referencedName = referenceExpression.getReferencedNameAsName();
 
@@ -275,7 +275,7 @@ public class QualifiedExpressionResolver {
                 descriptors.add(localVariable);
             }
         }
-        return new SuccessfulLookupResult(descriptors, outerScope, namespaceLevel);
+        return new SuccessfulLookupResult(descriptors, outerScope, packageLevel);
     }
 
     @NotNull
@@ -305,17 +305,17 @@ public class QualifiedExpressionResolver {
 
         Collection<DeclarationDescriptor> filteredDescriptors;
         if (lookupMode == LookupMode.ONLY_CLASSES) {
-            filteredDescriptors = Collections2.filter(descriptors, CLASSIFIERS_AND_NAMESPACES);
+            filteredDescriptors = Collections2.filter(descriptors, CLASSIFIERS_AND_PACKAGE_VIEWS);
         }
         else {
             filteredDescriptors = Sets.newLinkedHashSet();
-            //functions and properties can be imported if lookupResult.namespaceLevel == true
+            //functions and properties can be imported if lookupResult.packageLevel == true
             for (SuccessfulLookupResult lookupResult : lookupResults) {
-                if (lookupResult.namespaceLevel) {
+                if (lookupResult.packageLevel) {
                     filteredDescriptors.addAll(lookupResult.descriptors);
                     continue;
                 }
-                filteredDescriptors.addAll(Collections2.filter(lookupResult.descriptors, CLASSIFIERS_AND_NAMESPACES));
+                filteredDescriptors.addAll(Collections2.filter(lookupResult.descriptors, CLASSIFIERS_AND_PACKAGE_VIEWS));
             }
         }
         if (storeResult) {
@@ -338,7 +338,7 @@ public class QualifiedExpressionResolver {
         JetScope resolutionScope = possibleResolutionScopes.iterator().next();
 
         // A special case - will fill all trace information
-        if (resolveClassNamespaceAmbiguity(canBeImportedDescriptors, referenceExpression, resolutionScope, trace, scopeToCheckVisibility)) {
+        if (resolveClassPackageAmbiguity(canBeImportedDescriptors, referenceExpression, resolutionScope, trace, scopeToCheckVisibility)) {
             return;
         }
 
@@ -379,14 +379,18 @@ public class QualifiedExpressionResolver {
     }
 
     /**
-     * This method tries to resolve descriptors ambiguity between class descriptor and namespace descriptor for the same class.
+     * This method tries to resolve descriptors ambiguity between class descriptor and package descriptor for the same class.
      * It's ok choose class for expression reference resolution.
      *
      * @return <code>true</code> if method has successfully resolved ambiguity
      */
-    private boolean resolveClassNamespaceAmbiguity(@NotNull Collection<? extends DeclarationDescriptor> filteredDescriptors,
-        @NotNull JetSimpleNameExpression referenceExpression, @NotNull JetScope resolutionScope, @NotNull BindingTrace trace,
-        @NotNull JetScope scopeToCheckVisibility) {
+    private boolean resolveClassPackageAmbiguity(
+            @NotNull Collection<? extends DeclarationDescriptor> filteredDescriptors,
+            @NotNull JetSimpleNameExpression referenceExpression,
+            @NotNull JetScope resolutionScope,
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scopeToCheckVisibility
+    ) {
 
         if (filteredDescriptors.size() == 2) {
             PackageViewDescriptor packageView = null;
@@ -430,14 +434,15 @@ public class QualifiedExpressionResolver {
     private static class SuccessfulLookupResult implements LookupResult {
         final Collection<? extends DeclarationDescriptor> descriptors;
         final JetScope resolutionScope;
-        final boolean namespaceLevel;
+        final boolean packageLevel;
 
         private SuccessfulLookupResult(Collection<? extends DeclarationDescriptor> descriptors,
                                        JetScope resolutionScope,
-                                       boolean namespaceLevel) {
+                                       boolean packageLevel
+        ) {
             this.descriptors = descriptors;
             this.resolutionScope = resolutionScope;
-            this.namespaceLevel = namespaceLevel;
+            this.packageLevel = packageLevel;
         }
     }
 }

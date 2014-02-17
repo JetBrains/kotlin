@@ -20,7 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-public interface PackageFragmentDescriptor extends ClassOrNamespaceDescriptor {
+public interface PackageFragmentDescriptor extends ClassOrPackageFragmentDescriptor {
+
     @NotNull
     @Override
     ModuleDescriptor getContainingDeclaration();

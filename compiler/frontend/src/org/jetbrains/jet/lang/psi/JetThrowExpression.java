@@ -26,11 +26,6 @@ public class JetThrowExpression extends JetExpressionImpl implements JetStatemen
     }
 
     @Override
-    public void accept(@NotNull JetVisitorVoid visitor) {
-        visitor.visitThrowExpression(this);
-    }
-
-    @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitThrowExpression(this, data);
     }

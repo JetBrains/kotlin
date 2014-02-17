@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.psi.PsiElement;
+import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -31,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
@@ -74,9 +76,8 @@ public interface BindingContext {
     WritableSlice<JetAnnotationEntry, AnnotationDescriptorImpl> ANNOTATION =
             Slices.<JetAnnotationEntry, AnnotationDescriptorImpl>sliceBuilder().setOpposite(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT).build();
 
-    WritableSlice<JetExpression, Boolean> IS_PURE_CONSTANT_EXPRESSION = Slices.createSimpleSlice();
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
-    WritableSlice<PropertyDescriptor, CompileTimeConstant<?>> COMPILE_TIME_INITIALIZER = Slices.createSimpleSlice();
+    WritableSlice<VariableDescriptor, CompileTimeConstant<?>> COMPILE_TIME_INITIALIZER = Slices.createSimpleSlice();
 
     WritableSlice<JetTypeReference, JetType> TYPE = Slices.createSimpleSlice();
     WritableSlice<JetExpression, JetType> EXPRESSION_TYPE = new BasicWritableSlice<JetExpression, JetType>(DO_NOTHING);
@@ -92,6 +93,7 @@ public interface BindingContext {
     WritableSlice<JetElement, ConstraintSystemCompleter> CONSTRAINT_SYSTEM_COMPLETER = new BasicWritableSlice<JetElement, ConstraintSystemCompleter>(DO_NOTHING);
     WritableSlice<JetElement, Call> CALL = new BasicWritableSlice<JetElement, Call>(DO_NOTHING);
 
+    @KotlinSignature("val AMBIGUOUS_REFERENCE_TARGET: WritableSlice<JetReferenceExpression, Collection<DeclarationDescriptor>>")
     WritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>> AMBIGUOUS_REFERENCE_TARGET =
             new BasicWritableSlice<JetReferenceExpression, Collection<? extends DeclarationDescriptor>>(DO_NOTHING);
 
@@ -235,6 +237,7 @@ public interface BindingContext {
             .setFurtherLookupSlices(DECLARATIONS_TO_DESCRIPTORS).build();
 
     WritableSlice<JetReferenceExpression, PsiElement> LABEL_TARGET = Slices.<JetReferenceExpression, PsiElement>sliceBuilder().build();
+    @KotlinSignature("val AMBIGUOUS_LABEL_TARGET: WritableSlice<JetReferenceExpression, Collection<PsiElement>>")
     WritableSlice<JetReferenceExpression, Collection<? extends PsiElement>> AMBIGUOUS_LABEL_TARGET =
             Slices.<JetReferenceExpression, Collection<? extends PsiElement>>sliceBuilder().build();
     WritableSlice<ValueParameterDescriptor, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY =
@@ -245,7 +248,7 @@ public interface BindingContext {
     WritableSlice<ClassDescriptor, FunctionDescriptor> DATA_CLASS_COPY_FUNCTION =
             Slices.<ClassDescriptor, FunctionDescriptor>sliceBuilder().build();
 
-    WritableSlice<FqName, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqName, ClassDescriptor>(DO_NOTHING, true);
+    WritableSlice<FqNameUnsafe, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqNameUnsafe, ClassDescriptor>(DO_NOTHING, true);
     WritableSlice<JetFile, PackageFragmentDescriptor> FILE_TO_PACKAGE_FRAGMENT = Slices.createSimpleSlice();
     WritableSlice<FqName, Collection<JetFile>> PACKAGE_TO_FILES = Slices.createSimpleSlice();
 

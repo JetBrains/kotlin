@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -35,16 +36,16 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     private static final Name NAME = Name.special("<init>");
 
-    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
+    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull Annotations annotations, boolean isPrimary) {
         this(containingDeclaration, annotations, isPrimary, Kind.DECLARATION);
     }
 
-    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary, Kind kind) {
+    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull Annotations annotations, boolean isPrimary, Kind kind) {
         super(containingDeclaration, annotations, NAME, kind);
         this.isPrimary = isPrimary;
     }
 
-    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull ConstructorDescriptor original, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
+    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull ConstructorDescriptor original, @NotNull Annotations annotations, boolean isPrimary) {
         super(containingDeclaration, original, annotations, NAME, Kind.DECLARATION);
         this.isPrimary = isPrimary;
     }
@@ -108,7 +109,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         return new ConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
                 this,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                Annotations.EMPTY, // TODO
                 isPrimary);
     }
 

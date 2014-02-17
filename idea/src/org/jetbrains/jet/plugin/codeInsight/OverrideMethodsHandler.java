@@ -17,7 +17,8 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 
@@ -26,10 +27,15 @@ import java.util.Set;
 
 public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
     @Override
-    protected Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor) {
+    protected Set<CallableMemberDescriptor> collectMethodsToGenerate(ClassDescriptor descriptor) {
         Set<CallableMemberDescriptor> superMethods = OverrideResolver.collectSuperMethods(descriptor).keySet();
-        for (CallableMemberDescriptor member : descriptor.getDeclaredCallableMembers()) {
-            superMethods.removeAll(member.getOverriddenDescriptors());
+        for (DeclarationDescriptor member : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (member instanceof CallableMemberDescriptor) {
+                CallableMemberDescriptor callable = (CallableMemberDescriptor) member;
+                if (callable.getKind().isReal()) {
+                    superMethods.removeAll(callable.getOverriddenDescriptors());
+                }
+            }
         }
         Set<CallableMemberDescriptor> result = new HashSet<CallableMemberDescriptor>();
         for (CallableMemberDescriptor superMethod : superMethods) {
