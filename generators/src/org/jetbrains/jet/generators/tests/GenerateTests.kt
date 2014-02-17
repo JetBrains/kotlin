@@ -94,6 +94,7 @@ import org.jetbrains.jet.plugin.intentions.AbstractIntentionTest
 import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithStdLib
 import org.jetbrains.jet.plugin.codeInsight.AbstractInsertImportOnPasteTest
 import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTest
+import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -291,6 +292,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractGotoSuperTest>()) {
             model("navigation/gotoSuper", extension = "test")
+        }
+
+        testClass(javaClass<AbstractKotlinGotoTest>()) {
+            model("navigation/gotoSymbol")
         }
 
         testClass(javaClass<AbstractQuickFixMultiFileTest>()) {

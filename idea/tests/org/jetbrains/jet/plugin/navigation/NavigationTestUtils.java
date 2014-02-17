@@ -21,20 +21,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
-import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.progress.util.ProgressIndicatorBase;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -68,38 +63,5 @@ public final class NavigationTestUtils {
         else {
             UsefulTestCase.assertOrderedEquals(Collections.emptyList(), expectedReferences);
         }
-    }
-
-    public static void assertGotoSymbol(@NotNull Project project, @NotNull Editor editor) {
-
-        List<String> searchTextList = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// SEARCH_TEXT:");
-        Assert.assertFalse("There's no search text in test data file given. Use '// SEARCH_TEXT:' directive",
-                           searchTextList.isEmpty());
-
-        List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
-        boolean enableCheckbox = InTextDirectivesUtils.isDirectiveDefined(editor.getDocument().getText(), "// CHECK_BOX");
-
-        String searchText = searchTextList.get(0);
-
-        List<Object> elementsByName = new ArrayList<Object>();
-
-        GotoSymbolModel2 model = new GotoSymbolModel2(project);
-        String[] names = model.getNames(enableCheckbox);
-        for (String name : names) {
-            if (name != null && name.startsWith(searchText)) {
-                elementsByName.addAll(Arrays.asList(model.getElementsByName(name, enableCheckbox, name + "*")));
-            }
-        }
-
-        List<String> renderedElements = Lists.transform(elementsByName, new Function<Object, String>() {
-            @Override
-            public String apply(@Nullable Object element) {
-                Assert.assertNotNull(element);
-                Assert.assertTrue(element instanceof PsiElement);
-                return ReferenceUtils.renderAsGotoImplementation((PsiElement) element);
-            }
-        });
-
-        UsefulTestCase.assertOrderedEquals(Ordering.natural().sortedCopy(renderedElements), expectedReferences);
     }
 }
