@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
+import org.jetbrains.jet.lang.resolve.name.NamePackage;
 
 import java.util.*;
 
@@ -96,7 +96,7 @@ public class JetImportOptimizer implements ImportOptimizer {
         }
 
         for (FqName usedName : usedNames) {
-            if (QualifiedNamesUtil.isImported(importPath, usedName)) {
+            if (NamePackage.isImported(usedName, importPath)) {
                 return true;
             }
         }
@@ -207,7 +207,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                     if (fqName == null) {
                         fqName = new FqName(referencedName.asString());
                     } else {
-                        fqName = QualifiedNamesUtil.combine(fqName, referencedName);
+                        fqName = fqName.child(referencedName);
                     }
                     if (nameExpression.equals(element)) {
                         return fqName;
@@ -266,10 +266,10 @@ public class JetImportOptimizer implements ImportOptimizer {
             return null;
         }
         if (JavaResolverPsiUtils.isCompiledKotlinPackageClass(containingClass)) {
-            return QualifiedNamesUtil.combine(classFQN.parent(), Name.identifier(memberName));
+            return classFQN.parent().child(Name.identifier(memberName));
         }
         else {
-            return QualifiedNamesUtil.combine(classFQN, Name.identifier(memberName));
+            return classFQN.child(Name.identifier(memberName));
         }
     }
 

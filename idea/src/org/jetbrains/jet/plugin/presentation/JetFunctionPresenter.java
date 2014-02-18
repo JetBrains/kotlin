@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 
@@ -65,7 +64,7 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFu
                 if (name != null) {
                     JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
                     String extensionLocation = receiverTypeRef != null ? "for " + receiverTypeRef.getText() + " " : "";
-                    return String.format("(%sin %s)", extensionLocation, QualifiedNamesUtil.withoutLastSegment(name));
+                    return String.format("(%sin %s)", extensionLocation, name.parent());
                 }
 
                 return "";

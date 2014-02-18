@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import com.intellij.psi.PsiImportStatementBase
 import org.jetbrains.jet.j2k.*
 import com.intellij.psi.PsiImportList
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.util.QualifiedNamesUtil
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
+import org.jetbrains.jet.lang.resolve.name.isValidJavaFqName
 
 
 class Import(val name: String) : Element {
@@ -33,7 +33,7 @@ class ImportList(val imports: List<Import>) : Element {
         !it.name.isEmpty() && it.name !in NOT_NULL_ANNOTATIONS
     }.filter {
         // If name is invalid, like with star imports, don't try to filter
-        if (!QualifiedNamesUtil.isValidJavaFqName(it.name))
+        if (!isValidJavaFqName(it.name))
             true
         else {
             // If imported class has a kotlin analog, drop the import

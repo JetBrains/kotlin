@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamed;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,7 +80,7 @@ public class ResolveSessionUtils {
         while (true) {
             PackageViewDescriptor packageDescriptor = analyzer.getModuleDescriptor().getPackage(packageFqName);
             if (packageDescriptor != null) {
-                FqName classInPackagePath = new FqName(QualifiedNamesUtil.tail(packageFqName, fqName));
+                FqName classInPackagePath = NamePackage.tail(fqName, packageFqName);
                 Collection<ClassDescriptor> descriptors = getClassOrObjectDescriptorsByFqName(packageDescriptor, classInPackagePath, filter);
                 classDescriptors.addAll(descriptors);
             }

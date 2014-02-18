@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
     private final JetFile file;
@@ -65,7 +65,7 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
             if (descriptor != null) {
                 FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
                 // Invalid name can be met for class object descriptor: Test.MyTest.A.<no name provided>.testOther
-                if (QualifiedNamesUtil.isValidJavaFqName(fqName.toString())) {
+                if (NamePackage.isValidJavaFqName(fqName.toString())) {
                     ImportPath importPath = new ImportPath(fqName.toString());
                     if (ImportInsertHelper.needImport(importPath, file)) {
                         return MyResult.notImported;

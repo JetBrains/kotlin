@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
+import org.jetbrains.jet.lang.resolve.name.NamePackage;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -110,12 +110,12 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
 
         Collection<NavigatablePsiElement> resultElements = Lists.newArrayList();
         for (FqName declaredPackage : index.invoke().filesByPackage.keys()) {
-            if (QualifiedNamesUtil.isSubpackageOf(declaredPackage, fqName)) {
+            if (NamePackage.isSubpackageOf(declaredPackage, fqName)) {
                 Collection<JetFile> files = index.invoke().filesByPackage.get(declaredPackage);
                 resultElements.addAll(ContainerUtil.map(files, new Function<JetFile, NavigatablePsiElement>() {
                     @Override
                     public NavigatablePsiElement fun(JetFile file) {
-                        return JetPsiUtil.getPackageReference(file, QualifiedNamesUtil.numberOfSegments(fqName) - 1);
+                        return JetPsiUtil.getPackageReference(file, NamePackage.numberOfSegments(fqName) - 1);
                     }
                 }));
             }

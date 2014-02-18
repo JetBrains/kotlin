@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -145,8 +144,7 @@ public class JetFromJavaDescriptorHelper {
             FqName classFQN = new FqName(qualifiedName);
 
             if (JavaResolverPsiUtils.isCompiledKotlinPackageClass(containingClass)) {
-                FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
-                return QualifiedNamesUtil.combine(classParentFQN, Name.identifier(method.getName()));
+                return classFQN.parent().child(Name.identifier(method.getName()));
             }
         }
 

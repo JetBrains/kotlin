@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.references.JetReference;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
+import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
 import java.util.List;
@@ -122,7 +122,7 @@ public class ImportInsertHelper {
 
         if (!importPath.isAllUnder() && !importPath.hasAlias()) {
             // Single element import without .* and alias is useless
-            if (QualifiedNamesUtil.isOneSegmentFQN(importPath.fqnPart())) {
+            if (NamePackage.isOneSegmentFQN(importPath.fqnPart())) {
                 return true;
             }
 
@@ -139,7 +139,7 @@ public class ImportInsertHelper {
         List<ImportPath> defaultImports = ProjectStructureUtil.isJsKotlinModule(contextFile)
                                    ? AnalyzerFacadeForJS.DEFAULT_IMPORTS
                                    : AnalyzerFacadeForJVM.DEFAULT_IMPORTS;
-        return QualifiedNamesUtil.isImported(defaultImports, importPath);
+        return NamePackage.isImported(importPath, defaultImports);
     }
 
     public static boolean needImport(@NotNull FqName fqName, @NotNull JetFile file) {
@@ -152,7 +152,7 @@ public class ImportInsertHelper {
 
     public static boolean needImport(@NotNull ImportPath importPath, @NotNull JetFile file, List<JetImportDirective> importDirectives) {
         if (importPath.fqnPart().firstSegmentIs(JavaDescriptorResolver.JAVA_ROOT)) {
-            FqName withoutJavaRoot = QualifiedNamesUtil.withoutFirstSegment(importPath.fqnPart());
+            FqName withoutJavaRoot = NamePackage.withoutFirstSegment(importPath.fqnPart());
             importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder(), importPath.getAlias());
         }
 
@@ -164,7 +164,7 @@ public class ImportInsertHelper {
             // Check if import is already present
             for (JetImportDirective directive : importDirectives) {
                 ImportPath existentImportPath = JetPsiUtil.getImportPath(directive);
-                if (existentImportPath != null && QualifiedNamesUtil.isImported(existentImportPath, importPath)) {
+                if (existentImportPath != null && NamePackage.isImported(importPath, existentImportPath)) {
                     return false;
                 }
             }

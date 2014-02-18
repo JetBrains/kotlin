@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
+import org.jetbrains.jet.lang.resolve.name.NamePackage;
 
 import java.util.Collection;
 import java.util.List;
@@ -110,7 +110,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
     }
 
     private PsiClass[] doFindClasses(String qualifiedNameString, GlobalSearchScope scope) {
-        if (!QualifiedNamesUtil.isValidJavaFqName(qualifiedNameString)) {
+        if (!NamePackage.isValidJavaFqName(qualifiedNameString)) {
             return PsiClass.EMPTY_ARRAY;
         }
 
@@ -182,7 +182,7 @@ public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacade
 
     @Override
     public PsiPackage findPackage(@NotNull String qualifiedNameString) {
-        if (!QualifiedNamesUtil.isValidJavaFqName(qualifiedNameString)) {
+        if (!NamePackage.isValidJavaFqName(qualifiedNameString)) {
             return null;
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
+import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -104,22 +104,22 @@ public class FqNameTest {
 
     @Test
     public void isValidJavaFqName() {
-        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName(""));
-        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("a"));
-        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("1"));
-        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("a.a"));
-        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("org.jetbrains"));
-        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("$"));
-        Assert.assertTrue(QualifiedNamesUtil.isValidJavaFqName("org.A$B"));
+        Assert.assertTrue(NamePackage.isValidJavaFqName(""));
+        Assert.assertTrue(NamePackage.isValidJavaFqName("a"));
+        Assert.assertTrue(NamePackage.isValidJavaFqName("1"));
+        Assert.assertTrue(NamePackage.isValidJavaFqName("a.a"));
+        Assert.assertTrue(NamePackage.isValidJavaFqName("org.jetbrains"));
+        Assert.assertTrue(NamePackage.isValidJavaFqName("$"));
+        Assert.assertTrue(NamePackage.isValidJavaFqName("org.A$B"));
 
-        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("."));
-        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName(".."));
-        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a."));
-        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName(".a"));
-        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a..b"));
-        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a.b.."));
-        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a.b."));
-        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a.b...)"));
-        Assert.assertFalse(QualifiedNamesUtil.isValidJavaFqName("a.b.<special>"));
+        Assert.assertFalse(NamePackage.isValidJavaFqName("."));
+        Assert.assertFalse(NamePackage.isValidJavaFqName(".."));
+        Assert.assertFalse(NamePackage.isValidJavaFqName("a."));
+        Assert.assertFalse(NamePackage.isValidJavaFqName(".a"));
+        Assert.assertFalse(NamePackage.isValidJavaFqName("a..b"));
+        Assert.assertFalse(NamePackage.isValidJavaFqName("a.b.."));
+        Assert.assertFalse(NamePackage.isValidJavaFqName("a.b."));
+        Assert.assertFalse(NamePackage.isValidJavaFqName("a.b...)"));
+        Assert.assertFalse(NamePackage.isValidJavaFqName("a.b.<special>"));
     }
 }

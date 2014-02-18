@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.LightClassConstructionContext;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -40,13 +43,13 @@ import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 import org.jetbrains.jet.utils.Profiler;
 
 import java.util.*;
@@ -231,10 +234,10 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         for (JetFile file : files) {
             FqName fqName = JetPsiUtil.getFQName(file);
 
-            assert QualifiedNamesUtil.isSubpackageOf(fqName, fqn) : "Registered package is not a subpackage of actually declared package:\n" +
-                                                                    "in index: " + fqn + "\n" +
-                                                                    "declared: " + fqName;
-            FqName subpackage = QualifiedNamesUtil.plusOneSegment(fqn, fqName);
+            assert NamePackage.isSubpackageOf(fqName, fqn) : "Registered package is not a subpackage of actually declared package:\n" +
+                                                             "in index: " + fqn + "\n" +
+                                                             "declared: " + fqName;
+            FqName subpackage = NamePackage.plusOneSegment(fqn, fqName);
             if (subpackage != null) {
                 result.add(subpackage);
             }
