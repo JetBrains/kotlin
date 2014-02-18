@@ -46,11 +46,10 @@ public class DescriptorDeserializersStorage {
                     @Override
                     public Storage invoke(@NotNull KotlinJvmBinaryClass kotlinClass) {
                         try {
-                            return loadMemberAnnotationsFromClass(kotlinClass);
+                            return loadAnnotationsAndInitializers(kotlinClass);
                         }
                         catch (IOException e) {
-                            errorReporter.reportAnnotationLoadingError(
-                                    "Error loading member annotations from Kotlin class: " + kotlinClass, e);
+                            errorReporter.reportLoadingError("Error loading member information from Kotlin class: " + kotlinClass, e);
                             return Storage.EMPTY;
                         }
                     }
@@ -73,11 +72,11 @@ public class DescriptorDeserializersStorage {
     }
 
     @NotNull
-    private Storage loadMemberAnnotationsFromClass(@NotNull KotlinJvmBinaryClass kotlinClass) throws IOException {
+    private Storage loadAnnotationsAndInitializers(@NotNull KotlinJvmBinaryClass kotlinClass) throws IOException {
         final Map<MemberSignature, List<AnnotationDescriptor>> memberAnnotations = new HashMap<MemberSignature, List<AnnotationDescriptor>>();
         final Map<MemberSignature, CompileTimeConstant<?>> propertyConstants = new HashMap<MemberSignature, CompileTimeConstant<?>>();
 
-        kotlinClass.loadMemberAnnotations(new KotlinJvmBinaryClass.MemberVisitor() {
+        kotlinClass.visitMembers(new KotlinJvmBinaryClass.MemberVisitor() {
             @Nullable
             @Override
             public KotlinJvmBinaryClass.MethodAnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc) {

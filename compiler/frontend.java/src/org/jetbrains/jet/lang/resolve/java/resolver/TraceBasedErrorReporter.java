@@ -59,7 +59,7 @@ public class TraceBasedErrorReporter implements ErrorReporter {
     }
 
     @Override
-    public void reportAnnotationLoadingError(@NotNull String message, @Nullable Exception exception) {
+    public void reportLoadingError(@NotNull String message, @Nullable Exception exception) {
         LOG.error(message, exception);
     }
 }

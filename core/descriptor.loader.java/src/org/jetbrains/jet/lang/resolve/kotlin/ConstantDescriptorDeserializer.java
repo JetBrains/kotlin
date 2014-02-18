@@ -67,9 +67,9 @@ public class ConstantDescriptorDeserializer extends BaseDescriptorDeserializer i
         MemberSignature signature = getCallableSignature(proto, nameResolver, kind);
         if (signature == null) return null;
 
-        KotlinJvmBinaryClass kotlinClass = findClassWithMemberAnnotations(container, proto, nameResolver, kind);
+        KotlinJvmBinaryClass kotlinClass = findClassWithAnnotationsAndInitializers(container, proto, nameResolver, kind);
         if (kotlinClass == null) {
-            errorReporter.reportAnnotationLoadingError("Kotlin class for loading property constant is not found: " + container, null);
+            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: " + container, null);
             return null;
         }
 

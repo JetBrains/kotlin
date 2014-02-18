@@ -203,7 +203,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         private val LOG = Logger.getInstance(javaClass<DeserializerForDecompiler>())
 
         private object LOGGING_REPORTER: ErrorReporter {
-            override fun reportAnnotationLoadingError(message: String, exception: Exception?) {
+            override fun reportLoadingError(message: String, exception: Exception?) {
                 LOG.error(message, exception)
             }
             override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {

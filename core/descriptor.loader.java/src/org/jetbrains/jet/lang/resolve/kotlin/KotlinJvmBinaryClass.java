@@ -28,7 +28,7 @@ public interface KotlinJvmBinaryClass {
 
     void loadClassAnnotations(@NotNull AnnotationVisitor visitor);
 
-    void loadMemberAnnotations(@NotNull MemberVisitor visitor);
+    void visitMembers(@NotNull MemberVisitor visitor);
 
     @Nullable
     KotlinClassHeader getClassHeader();
