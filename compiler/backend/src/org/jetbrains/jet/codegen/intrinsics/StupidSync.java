@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_FUNCTION0_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.FUNCTION0_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
 public class StupidSync extends IntrinsicMethod {
@@ -43,8 +43,8 @@ public class StupidSync extends IntrinsicMethod {
             @Nullable List<JetExpression> arguments,
             StackValue receiver
     ) {
-        codegen.pushMethodArguments((JetCallExpression) element, Arrays.asList(OBJECT_TYPE, JET_FUNCTION0_TYPE));
-        v.invokestatic("kotlin/internal/Intrinsics", "stupidSync", "(Ljava/lang/Object;Ljet/Function0;)Ljava/lang/Object;");
+        codegen.pushMethodArguments((JetCallExpression) element, Arrays.asList(OBJECT_TYPE, FUNCTION0_TYPE));
+        v.invokestatic("kotlin/internal/Intrinsics", "stupidSync", Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, FUNCTION0_TYPE));
         return OBJECT_TYPE;
     }
 }

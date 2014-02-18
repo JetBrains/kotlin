@@ -1189,7 +1189,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else {
             Type type = expressionType(expression);
-            Type targetType = type.equals(JET_UNIT_TYPE) ? type : OBJECT_TYPE;
+            Type targetType = type.equals(UNIT_TYPE) ? type : OBJECT_TYPE;
 
             gen(expression, targetType);
 
@@ -3319,7 +3319,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.iconst(0);
             v.store(indexIndex, Type.INT_TYPE);
 
-            gen(args.get(1), JET_FUNCTION1_TYPE);
+            gen(args.get(1), FUNCTION1_TYPE);
 
             Label begin = new Label();
             Label end = new Label();
@@ -3331,7 +3331,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.dup2();
             v.load(indexIndex, Type.INT_TYPE);
             v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
-            v.invokeinterface("jet/Function1", "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
+            v.invokeinterface(FUNCTION1_TYPE.getInternalName(), "invoke", "(Ljava/lang/Object;)Ljava/lang/Object;");
             v.load(indexIndex, Type.INT_TYPE);
             v.iinc(indexIndex, 1);
             v.swap();

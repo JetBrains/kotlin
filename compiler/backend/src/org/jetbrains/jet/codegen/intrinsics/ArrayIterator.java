@@ -39,6 +39,7 @@ import java.util.List;
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
+import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 
 public class ArrayIterator extends IntrinsicMethod {
     @NotNull
@@ -66,7 +67,8 @@ public class ArrayIterator extends IntrinsicMethod {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
             ClassDescriptor arrayClass = KotlinBuiltIns.getInstance().getPrimitiveArrayClassDescriptor(primitiveType);
             if (containingDeclaration.equals(arrayClass)) {
-                String iteratorDesc = asmDescByFqNameWithoutInnerClasses(new FqName("jet." + primitiveType.getTypeName() + "Iterator"));
+                FqName fqName = new FqName(BUILT_INS_PACKAGE_FQ_NAME + "." + primitiveType.getTypeName() + "Iterator");
+                String iteratorDesc = asmDescByFqNameWithoutInnerClasses(fqName);
                 String methodSignature = "([" + asmTypeForPrimitive(jvmPrimitiveType) + ")" + iteratorDesc;
                 v.invokestatic("kotlin/internal/InternalPackage", "iterator", methodSignature);
                 return Type.getType(iteratorDesc);

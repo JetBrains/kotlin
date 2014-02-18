@@ -22,6 +22,8 @@ import org.jetbrains.asm4.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+
 public class AsmTypeConstants {
     private static final Map<Class<?>, Type> TYPES_MAP = new HashMap<Class<?>, Type>();
 
@@ -29,10 +31,10 @@ public class AsmTypeConstants {
     public static final Type JAVA_STRING_TYPE = getType(String.class);
     public static final Type JAVA_THROWABLE_TYPE = getType(Throwable.class);
 
-    public static final Type JET_UNIT_TYPE = Type.getObjectType("jet/Unit");
-    public static final Type JET_FUNCTION0_TYPE = Type.getObjectType("jet/Function0");
-    public static final Type JET_FUNCTION1_TYPE = Type.getObjectType("jet/Function1");
-    public static final Type JET_INT_RANGE_TYPE = Type.getObjectType("jet/IntRange");
+    public static final Type UNIT_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Unit");
+    public static final Type FUNCTION0_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Function0");
+    public static final Type FUNCTION1_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Function1");
+    public static final Type INT_RANGE_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/IntRange");
 
     public static final Type OBJECT_REF_TYPE = Type.getObjectType("kotlin/internal/Ref$ObjectRef");
 

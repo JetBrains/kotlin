@@ -42,7 +42,7 @@ public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
     private static final Set<String> FAKE_CLASSES = ContainerUtil.immutableSet(
             getFqNameSafe(KotlinBuiltIns.getInstance().getAny()).asString(),
-            "jet.Iterable"
+            getFqNameSafe(KotlinBuiltIns.getInstance().getIterable()).asString()
     );
 
     private JsDescriptorUtils() {
