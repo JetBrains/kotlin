@@ -21,10 +21,10 @@ import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -61,10 +61,10 @@ public class InjectorForTopDownAnalyzerBasic {
     private final StorageManager storageManager;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptorImpl moduleDescriptor;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final TopDownAnalyzer topDownAnalyzer;
     private final TopDownAnalysisContext topDownAnalysisContext;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
-    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DependencyClassByQualifiedNameResolverDummyImpl dependencyClassByQualifiedNameResolverDummy;
     private final BodyResolver bodyResolver;
     private final AnnotationResolver annotationResolver;
@@ -94,18 +94,17 @@ public class InjectorForTopDownAnalyzerBasic {
         @NotNull Project project,
         @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
         @NotNull BindingTrace bindingTrace,
-        @NotNull ModuleDescriptorImpl moduleDescriptor,
-        @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
+        @NotNull ModuleDescriptorImpl moduleDescriptor
     ) {
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.storageManager = topDownAnalysisParameters.getStorageManager();
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
+        this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.topDownAnalyzer = new TopDownAnalyzer();
         this.topDownAnalysisContext = new TopDownAnalysisContext();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
-        this.platformToKotlinClassMap = platformToKotlinClassMap;
         this.dependencyClassByQualifiedNameResolverDummy = new DependencyClassByQualifiedNameResolverDummyImpl();
         this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();

@@ -181,7 +181,7 @@ public class TopDownAnalyzer {
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
                 object.getProject(), topDownAnalysisParameters, new ObservableBindingTrace(context.trace),
-                moduleDescriptor, context.expressionTypingServices.getPlatformToKotlinClassMap());
+                moduleDescriptor);
 
         injector.getTopDownAnalysisContext().setOuterDataFlowInfo(context.dataFlowInfo);
 

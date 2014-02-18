@@ -64,7 +64,7 @@ private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
     parameter(javaClass<Project>())
     parameter(javaClass<TopDownAnalysisParameters>(), useAsContext = true)
     parameter(javaClass<BindingTrace>())
-    publicParameter(javaClass<ModuleDescriptorImpl>())
+    publicParameter(javaClass<ModuleDescriptorImpl>(), useAsContext = true)
 
     publicFields(
             javaClass<TopDownAnalyzer>(),
@@ -78,8 +78,6 @@ private fun generatorForTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic") {
             commonForTopDownAnalyzer()
 
-            parameter(javaClass<PlatformToKotlinClassMap>())
-
             field(javaClass<DependencyClassByQualifiedNameResolverDummyImpl>())
         }
 
@@ -88,7 +86,6 @@ private fun generatorForTopDownAnalyzerForJs() =
             commonForTopDownAnalyzer()
 
             field(javaClass<DependencyClassByQualifiedNameResolverDummyImpl>())
-            field(javaClass<PlatformToKotlinClassMap>(), init = GivenExpression("org.jetbrains.jet.lang.PlatformToKotlinClassMap.EMPTY"))
         }
 
 private fun generatorForTopDownAnalyzerForJvm() =
@@ -98,7 +95,6 @@ private fun generatorForTopDownAnalyzerForJvm() =
 
             publicField(javaClass<JavaDescriptorResolver>())
 
-            field(javaClass<JavaToKotlinClassMap>(), init = GivenExpression("org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap.getInstance()"))
             fields(
                     javaClass<JavaClassFinderImpl>(),
                     javaClass<TraceBasedExternalSignatureResolver>(),

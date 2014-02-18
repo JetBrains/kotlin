@@ -94,7 +94,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                         Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
                 BindingTraceContext trace = new BindingTraceContext();
                 InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                        myProject, topDownAnalysisParameters, trace, module, PlatformToKotlinClassMap.EMPTY);
+                        myProject, topDownAnalysisParameters, trace, module);
 
                 TopDownAnalyzer analyzer = injector.getTopDownAnalyzer();
                 analyzer.analyzeFiles(jetBuiltInsFiles, Collections.<AnalyzerScriptParameter>emptyList());
