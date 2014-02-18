@@ -1,5 +1,0 @@
-<root>
-    <item name='javax.security.auth.callback.PasswordCallback PasswordCallback(java.lang.String, boolean) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

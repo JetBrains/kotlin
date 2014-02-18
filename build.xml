@@ -532,9 +532,7 @@
     </target>
 
     <target name="androidSdkAnnotations">
-        <pack_annotations jarfile="kotlin-android-sdk-annotations.jar"
-                          annotationsdir="${basedir}/android-sdk-annotations"
-                          title="${manifest.impl.title.kotlin.compiler.annotations.android.sdk}"/>
+      <copy file="dependencies/annotations/kotlin-android-sdk-annotations.jar" todir="${kotlin-home}/lib"/>
     </target>
 
     <macrodef name="pack_annotations">

@@ -1,8 +1,0 @@
-<root>
-    <item name='org.apache.http.client.entity.UrlEncodedFormEntity UrlEncodedFormEntity(java.util.List&lt;? extends org.apache.http.NameValuePair&gt;) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-    <item name='org.apache.http.client.entity.UrlEncodedFormEntity UrlEncodedFormEntity(java.util.List&lt;? extends org.apache.http.NameValuePair&gt;, java.lang.String) 0'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>
